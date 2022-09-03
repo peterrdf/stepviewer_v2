@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5563C7C7-40B7-41C4-AC13-28312FF26DA5}</ProjectGuid>
+    <RootNamespace>MySTEPViewer</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./../lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./../lib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>stepengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>./../lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_USE_SHADERS;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>./../lib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>stepengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+    <Text Include="res\fragment_shader.txt" />
+    <Text Include="res\fragment_shader2.txt" />
+    <Text Include="res\fragment_shader3.txt" />
+    <Text Include="res\vertex_shader.txt" />
+    <Text Include="res\vertex_shader2.txt" />
+    <Text Include="res\vertex_shader3.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Assembly.h" />
+    <ClInclude Include="BinnPhongGLProgram.h" />
+    <ClInclude Include="BinnPhongOGLPipeline.h" />
+    <ClInclude Include="Cohorts.h" />
+    <ClInclude Include="ConceptualFace.h" />
+    <ClInclude Include="FileView.h" />
+    <ClInclude Include="GLProgram.h" />
+    <ClInclude Include="GLShader.h" />
+    <ClInclude Include="IFCDecompContTreeView.h" />
+    <ClInclude Include="IFC\BoolIFCProperty.h" />
+    <ClInclude Include="IFC\COLORS.h" />
+    <ClInclude Include="IFC\DoubleIFCProperty.h" />
+    <ClInclude Include="IFC\IFCClass.h" />
+    <ClInclude Include="IFC\IFCEntity.h" />
+    <ClInclude Include="IFC\IFCMaterial.h" />
+    <ClInclude Include="IFC\IFCModel.h" />
+    <ClInclude Include="IFC\IFCObject.h" />
+    <ClInclude Include="IFC\IFCProperty.h" />
+    <ClInclude Include="IFC\IFCPropertyRestriction.h" />
+    <ClInclude Include="IFC\IFCUnit.h" />
+    <ClInclude Include="IFC\IntIFCProperty.h" />
+    <ClInclude Include="IFC\ObjectIFCProperty.h" />
+    <ClInclude Include="IFC\OpenGLIFCView.h" />
+    <ClInclude Include="IFC\Point3D.h" />
+    <ClInclude Include="IFC\StringIFCProperty.h" />
+    <ClInclude Include="OGLPipeline.h" />
+    <ClInclude Include="OpenGLView.h" />
+    <ClInclude Include="ProductDefinition.h" />
+    <ClInclude Include="ProductInstance.h" />
+    <ClInclude Include="SearchClassesDialog.h" />
+    <ClInclude Include="SearchInstancesDialog.h" />
+    <ClInclude Include="SimpleOGLPipeline.h" />
+    <ClInclude Include="STEPInstance.h" />
+    <ClInclude Include="STEPItemData.h" />
+    <ClInclude Include="STEPModelBase.h" />
+    <ClInclude Include="STEPModelFactory.h" />
+    <ClInclude Include="STEPProductsTreeView.h" />
+    <ClInclude Include="STEPTreeViewBase.h" />
+    <ClInclude Include="STEPViewer.h" />
+    <ClInclude Include="STEPViewerDoc.h" />
+    <ClInclude Include="STEPViewerView.h" />
+    <ClInclude Include="ClassView.h" />
+    <ClInclude Include="ClassViewConsts.h" />
+    <ClInclude Include="FileViewConsts.h" />
+    <ClInclude Include="Generic.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="OpenGLContext.h" />
+    <ClInclude Include="OpenGLSTEPView.h" />
+    <ClInclude Include="PropertiesWnd.h" />
+    <ClInclude Include="STEPController.h" />
+    <ClInclude Include="STEPModel.h" />
+    <ClInclude Include="STEPView.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="ViewTree.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Assembly.cpp" />
+    <ClCompile Include="BinnPhongGLProgram.cpp" />
+    <ClCompile Include="BinnPhongOGLPipeline.cpp" />
+    <ClCompile Include="ConceptualFace.cpp" />
+    <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="GLProgram.cpp" />
+    <ClCompile Include="GLShader.cpp" />
+    <ClCompile Include="IFCDecompContTreeView.cpp" />
+    <ClCompile Include="IFC\BoolIFCProperty.cpp" />
+    <ClCompile Include="IFC\COLORS.cpp" />
+    <ClCompile Include="IFC\DoubleIFCProperty.cpp" />
+    <ClCompile Include="IFC\IFCClass.cpp" />
+    <ClCompile Include="IFC\IFCEntity.cpp" />
+    <ClCompile Include="IFC\IFCMaterial.cpp" />
+    <ClCompile Include="IFC\IFCModel.cpp" />
+    <ClCompile Include="IFC\IFCObject.cpp" />
+    <ClCompile Include="IFC\IFCProperty.cpp" />
+    <ClCompile Include="IFC\IFCPropertyRestriction.cpp" />
+    <ClCompile Include="IFC\IFCUnit.cpp" />
+    <ClCompile Include="IFC\IntIFCProperty.cpp" />
+    <ClCompile Include="IFC\ObjectIFCProperty.cpp" />
+    <ClCompile Include="IFC\OpenGLIFCView.cpp" />
+    <ClCompile Include="IFC\Point3D.cpp" />
+    <ClCompile Include="IFC\StringIFCProperty.cpp" />
+    <ClCompile Include="OGLPipeline.cpp" />
+    <ClCompile Include="OpenGLView.cpp" />
+    <ClCompile Include="ProductDefinition.cpp" />
+    <ClCompile Include="ProductInstance.cpp" />
+    <ClCompile Include="SearchClassesDialog.cpp" />
+    <ClCompile Include="SearchInstancesDialog.cpp" />
+    <ClCompile Include="SimpleOGLPipeline.cpp" />
+    <ClCompile Include="STEPInstance.cpp" />
+    <ClCompile Include="STEPItemData.cpp" />
+    <ClCompile Include="STEPModelBase.cpp" />
+    <ClCompile Include="STEPProductsTreeView.cpp" />
+    <ClCompile Include="STEPViewer.cpp" />
+    <ClCompile Include="STEPViewerDoc.cpp" />
+    <ClCompile Include="STEPViewerView.cpp" />
+    <ClCompile Include="ClassView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="OpenGLContext.cpp" />
+    <ClCompile Include="OpenGLSTEPView.cpp" />
+    <ClCompile Include="PropertiesWnd.cpp" />
+    <ClCompile Include="STEPController.cpp" />
+    <ClCompile Include="STEPModel.cpp" />
+    <ClCompile Include="STEPView.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ViewTree.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="STEPViewer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\none.bmp" />
+    <Image Include="res\property.bmp" />
+    <Image Include="res\propertySet.bmp" />
+    <Image Include="res\selectedAll.bmp" />
+    <Image Include="res\selectedNone.bmp" />
+    <Image Include="res\selectedPart.bmp" />
+    <Image Include="res\STEPViewer.ico" />
+    <Image Include="res\STEPViewerDoc.ico" />
+    <Image Include="res\bmp00001.bmp" />
+    <Image Include="res\classview.bmp" />
+    <Image Include="res\classview_hc.bmp" />
+    <Image Include="res\class_view.ico" />
+    <Image Include="res\class_view_hc.ico" />
+    <Image Include="res\explorer.bmp" />
+    <Image Include="res\explorer_hc.bmp" />
+    <Image Include="res\fileview.bmp" />
+    <Image Include="res\fileview_hc.bmp" />
+    <Image Include="res\file_view.ico" />
+    <Image Include="res\file_view_hc.ico" />
+    <Image Include="res\menuimages.bmp" />
+    <Image Include="res\menuimages_hc.bmp" />
+    <Image Include="res\properties.bmp" />
+    <Image Include="res\properties_hc.bmp" />
+    <Image Include="res\properties_wnd.ico" />
+    <Image Include="res\properties_wnd_hc.ico" />
+    <Image Include="res\sort.bmp" />
+    <Image Include="res\sort_24.bmp" />
+    <Image Include="res\sort_hc.bmp" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\Toolbar256.bmp" />
+    <Image Include="UserImages.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MySTEPViewer.rc2" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="STEPViewer.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
