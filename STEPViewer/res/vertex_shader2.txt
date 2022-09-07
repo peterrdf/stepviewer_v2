@@ -1,4 +1,5 @@
 uniform float uUseBinnPhongModel;
+uniform float uUseTexture;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
