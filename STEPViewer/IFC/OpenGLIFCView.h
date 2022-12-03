@@ -109,13 +109,11 @@ private: // Members
 	// Window
 	CWnd * m_pWnd;
 
-#ifdef _USE_SHADERS	
 	CBinnPhongGLProgram* m_pProgram;   // Program
 	CGLShader* m_pVertSh;		       // Vertex shader
 	CGLShader* m_pFragSh;              // Fragment shader  
 
 	glm::mat4 m_modelViewMatrix;
-#endif // _USE_SHADERS
 
 	// --------------------------------------------------------------------------------------------
 	// Tooltip

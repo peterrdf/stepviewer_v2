@@ -291,7 +291,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 		(LPCWSTR)L"Arial");             // Font Name
 	ASSERT(m_hFont != NULL);	
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 	
 	//m_pProgram = new CBinnPhongOGLPipeline();
@@ -319,7 +318,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 		AfxMessageBox(_T("Program linking error!"));
 
 	m_modelViewMatrix = glm::identity<glm::mat4>();
-#endif // _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -392,10 +390,8 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	delete m_pSelectedInstanceMaterial;
 	delete m_pPointedInstanceMaterial;
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 
-#ifdef _USE_SHADERS
 	m_pProgram->DetachShader(m_pVertSh);
 	m_pProgram->DetachShader(m_pFragSh);
 
@@ -406,10 +402,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	m_pVertSh = NULL;
 	delete m_pFragSh;
 	m_pFragSh = NULL;
-#endif // _USE_SHADERS
-
-	//delete m_pProgram;
-#endif // _USE_SHADERS
 
 	if (m_pOGLContext != NULL)
 	{
@@ -1564,7 +1556,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		return;
 	}	
 
-#ifdef _USE_SHADERS
 	BOOL bResult = m_pOGLContext->MakeCurrent();
 	VERIFY(bResult);
 
@@ -1729,232 +1720,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	*Selection support
 	*/
 	DrawInstancesFrameBuffer();
-#else
-	/*
-	* Convert the selected point in Open GL coordinates
-	*/
-	//if (m_ptSelectedPoint != CPoint(-1, -1))
-	//{
-	//	GetOGLPos(m_ptSelectedPoint.x, m_ptSelectedPoint.y, -FLT_MAX, m_arSelectedPoint[0], m_arSelectedPoint[1], m_arSelectedPoint[2]);
-
-	//	/*
-	//	* Project/unproject the camera
-	//	*/
-	//	GLdouble dOutX, dOutY, dOutZ;
-	//	OGLProject(m_fXTranslation, m_fYTranslation, m_fZTranslation, dOutX, dOutY, dOutZ);
-
-	//	GetOGLPos((int)dOutX, (int)dOutY, (float)dOutZ, m_arCamera[0], m_arCamera[1], m_arCamera[2]);
-
-	//	m_ptSelectedPoint = CPoint(-1, -1);
-	//}	
-
-	glEnable(GL_COLOR_MATERIAL);
-
-	glEnable(GL_FRAMEBUFFER_SRGB);
-
-	glShadeModel(GL_SMOOTH);
-
-	glEnable(GL_LIGHTING);
-
-	/*
-	* Light model, http://www.glprogramming.com/red/chapter05.html
-	*/
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, m_arLightModelAmbient);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, m_bLightModelLocalViewer ? GL_TRUE : GL_FALSE);
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, m_bLightModel2Sided ? GL_TRUE : GL_FALSE);
-
-	/*
-	* Lights
-	*/
-	for (size_t iLight = 0; iLight < m_vecOGLLights.size(); iLight++)
-	{
-		if (!m_vecOGLLights[iLight].isEnabled())
-		{
-			glDisable(m_vecOGLLights[iLight].getLight());
-
-			continue;
-		}
-
-		glEnable(m_vecOGLLights[iLight].getLight());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_AMBIENT, m_vecOGLLights[iLight].getAmbient());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_DIFFUSE, m_vecOGLLights[iLight].getDiffuse());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_SPECULAR, m_vecOGLLights[iLight].getSpecular());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_POSITION, m_vecOGLLights[iLight].getPosition());
-	}
-
-	// Shininess between 0 and 128
-	float fShininess = 64.f;
-	glMaterialfv(GL_FRONT, GL_SHININESS, &fShininess);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef(m_fXTranslation, m_fYTranslation, m_fZTranslation);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-	glRotatef(m_fXAngle, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_fYAngle, 0.0f, 1.0f, 0.0f);
-
-	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-
-	/*
-	Non-transparent faces
-	*/
-	DrawFaces(false);
-
-	/*
-	Transparent faces
-	*/
-	DrawFaces(true);
-
-	/*
-	Pointed instance
-	*/
-	//DrawPointedInstance();
-
-	/*
-	Pointed face
-	*/
-	//DrawPointedFace();
-
-	/*
-	Faces polygons
-	*/
-	//DrawFacesPolygons();
-
-	/*
-	Conceptual faces polygons
-	*/
-	DrawConceptualFacesPolygons();
-
-	/*
-	Lines
-	*/
-	DrawLines();
-
-	/*
-	Points
-	*/
-	DrawPoints();
-
-	/*
-	Bounding boxes
-	*/
-	//DrawBoundingBoxes();
-
-	/*
-	Normal vectors
-	*/
-	//DrawNormalVectors();
-
-	/*
-	Tangent vectors
-	*/
-	//DrawTangentVectors();
-
-	/*
-	Bi-Normal vectors
-	*/
-	//DrawBiNormalVectors();
-
-	/*
-	* Selected point plane/view plane
-	*/
-	/*if ((m_arSelectedPoint[0] != -FLT_MAX) && (m_arSelectedPoint[1] != -FLT_MAX) && (m_arSelectedPoint[2] != -FLT_MAX) &&
-		(m_arCamera[0] != -FLT_MAX) && (m_arCamera[1] != -FLT_MAX) && (m_arCamera[2] != -FLT_MAX))
-	{
-		glDisable(GL_LIGHTING);
-
-		glLineWidth(m_fLineWidth);
-		glColor3f(.0f, .0f, .0f);
-
-		glBegin(GL_LINES);
-
-		const float fStep = (fXmax - fXmin) / 10.f;
-
-		for (int i = 0; i < 5; i++)
-		{
-			glVertex3f(m_arSelectedPoint[0] + (i * fStep), m_arSelectedPoint[1], m_arSelectedPoint[2]);
-			glVertex3f(m_arCamera[0] + (i * fStep), m_arCamera[1], -m_arCamera[2]);
-		}
-
-		for (int i = 0; i < 5; i++)
-		{
-			glVertex3f(m_arSelectedPoint[0] - (i * fStep), m_arSelectedPoint[1], m_arSelectedPoint[2]);
-			glVertex3f(m_arCamera[0] - (i * fStep), m_arCamera[1], -m_arCamera[2]);
-		}
-
-		glEnd();
-
-		glEnable(GL_LIGHTING);
-
-		COpenGL::Check4Errors();
-	}*/
-
-	/*
-	Clip space
-	*/
-	// DISABLED
-	//DrawClipSpace();
-
-	/*
-	Scene
-	*/
-	DrawCoordinateSystem();
-
-	/*
-	End
-	*/
-#ifdef _LINUX
-	m_pWnd->SwapBuffers();
-#else
-	SwapBuffers(*pDC);
-#endif // _LINUX
-
-	/*
-	Selection support
-	*/
-	DrawInstancesFrameBuffer();
-	//DrawFacesFrameBuffer();
-#endif	
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2562,7 +2327,6 @@ void COpenGLSTEPView::DrawCoordinateSystem()
 {
 	const float ARROW_SIZE = 1.5f;
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -2621,40 +2385,6 @@ void COpenGLSTEPView::DrawCoordinateSystem()
 	glVertex3d(0., 0., 0. + ARROW_SIZE);
 	glEnd();
 	DrawTextGDI(L"Z", 0.f, 0.f, ARROW_SIZE + (ARROW_SIZE * 0.05f));
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor3f(0.0f, 0.0f, 0.0f);	
-
-	glLineWidth(2.0);
-
-	// X axis
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glBegin(GL_LINES);
-	glVertex3d(0., 0., 0.);
-	glVertex3d(0. + ARROW_SIZE, 0., 0.);
-	glEnd();
-	DrawTextGDI(L"X", ARROW_SIZE + (ARROW_SIZE * 0.05f), 0.f, 0.f);
-
-	// Y axis
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glBegin(GL_LINES);
-	glVertex3d(0., 0., 0.);
-	glVertex3d(0., 0. + ARROW_SIZE, 0.);
-	glEnd();
-	DrawTextGDI(L"Y", 0.f, ARROW_SIZE + (ARROW_SIZE * 0.05f), 0.f);
-
-	// Z axis
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glBegin(GL_LINES);
-	glVertex3d(0., 0., 0.);
-	glVertex3d(0., 0., 0. + ARROW_SIZE);
-	glEnd();
-	DrawTextGDI(L"Z", 0.f, 0.f, ARROW_SIZE + (ARROW_SIZE * 0.05f));
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGL::Check4Errors();
 }
@@ -2750,7 +2480,6 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -2937,145 +2666,6 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 	} // for (size_t iDrawMetaData = ...
 
 	glDisableVertexAttribArray(m_pProgram->getVertexNormal());
-#else
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-			glNormalPointer(GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 3));
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-
-				/*
-				* Transformations
-				*/
-				GLint iMatrixMode = 0;
-				glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-				glMatrixMode(GL_MODELVIEW);
-
-				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-				{
-					auto pProductInstance = vecProductInstances[iInstance];
-
-					if (!pProductInstance->getEnable())
-					{
-						continue;
-					}
-
-					glPushMatrix();
-					glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-					glMultMatrixd((GLdouble*)pProductInstance->getTransformationMatrix());
-					glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-					/*
-					* Conceptual faces
-					*/
-					for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pProductDefinition->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-					{
-						CSTEPGeometryWithMaterial* pGeometryWithMaterial = pProductDefinition->conceptualFacesMaterials()[iGeometryWithMaterial];
-
-						const CSTEPMaterial* pMaterial =
-							pProductInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-							pProductInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-							pGeometryWithMaterial->getMaterial();
-
-						if (bTransparent)
-						{
-							if (pMaterial->A() == 1.0)
-							{
-								continue;
-							}
-						}
-						else
-						{
-							if (pMaterial->A() < 1.0)
-							{
-								continue;
-							}
-						}
-
-						/*
-						* Material - Ambient color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-						glColor4f(
-							pMaterial->getAmbientColor().R(),
-							pMaterial->getAmbientColor().G(),
-							pMaterial->getAmbientColor().B(),
-							pMaterial->A());
-
-						/*
-						* Material - Diffuse color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-						glColor4f(
-							pMaterial->getDiffuseColor().R() / 2.f,
-							pMaterial->getDiffuseColor().G() / 2.f,
-							pMaterial->getDiffuseColor().B() / 2.f,
-							pMaterial->A());
-
-						/*
-						* Material - Specular color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-						glColor4f(
-							pMaterial->getSpecularColor().R() / 2.f,
-							pMaterial->getSpecularColor().G() / 2.f,
-							pMaterial->getSpecularColor().B() / 2.f,
-							pMaterial->A());
-
-						/*
-						* Material - Emissive color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-						glColor4f(
-							pMaterial->getEmissiveColor().R() / 3.f,
-							pMaterial->getEmissiveColor().G() / 3.f,
-							pMaterial->getEmissiveColor().B() / 3.f,
-							pMaterial->A());
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-
-						glDrawElementsBaseVertex(GL_TRIANGLES,
-							(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-							GL_UNSIGNED_INT,
-							(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-							pProductDefinition->VBOOffset());
-
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-					} // for (size_t iMaterial = ...
-
-					glPopMatrix();
-				} // for (size_t iInstance = ...
-
-				glMatrixMode(iMatrixMode);
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-#endif // _USE_SHADERS
 
 	if (bTransparent)
 	{
@@ -3131,7 +2721,6 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3241,89 +2830,6 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-
-				/*
-				* Transformations
-				*/
-				GLint iMatrixMode = 0;
-				glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-				glMatrixMode(GL_MODELVIEW);
-
-				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-				{
-					auto pProductInstance = vecProductInstances[iInstance];
-
-					if (!pProductInstance->getEnable())
-					{
-						continue;
-					}
-
-					glPushMatrix();
-					glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-					glMultMatrixd((GLdouble*)pProductInstance->getTransformationMatrix());
-					glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-					/*
-					* Wireframes
-					*/
-					for (size_t iWireframesCohort = 0; iWireframesCohort < pProductDefinition->conceptualFacesCohorts().size(); iWireframesCohort++)
-					{
-						CWireframesCohort* pWireframesCohort = pProductDefinition->conceptualFacesCohorts()[iWireframesCohort];
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-						glDrawElementsBaseVertex(GL_LINES,
-							(GLsizei)pWireframesCohort->getIndicesCount(),
-							GL_UNSIGNED_INT,
-							(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-							pProductDefinition->VBOOffset());
-
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-					} // for (size_t iWireframesCohort = ...
-
-					glPopMatrix();
-				} // for (size_t iInstance = ...				
-
-				glMatrixMode(iMatrixMode);
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGL::Check4Errors();
 
@@ -3369,7 +2875,6 @@ void COpenGLSTEPView::DrawLines()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3479,89 +2984,6 @@ void COpenGLSTEPView::DrawLines()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-
-				/*
-				* Transformations
-				*/
-				GLint iMatrixMode = 0;
-				glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-				glMatrixMode(GL_MODELVIEW);
-
-				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-				{
-					auto pProductInstance = vecProductInstances[iInstance];
-
-					if (!pProductInstance->getEnable())
-					{
-						continue;
-					}
-
-					glPushMatrix();
-					glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-					glMultMatrixd((GLdouble*)pProductInstance->getTransformationMatrix());
-					glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-					/*
-					* Lines
-					*/
-					for (size_t iLinesCohort = 0; iLinesCohort < pProductDefinition->linesCohorts().size(); iLinesCohort++)
-					{
-						CLinesCohort* pLinesCohort = pProductDefinition->linesCohorts()[iLinesCohort];
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
-
-						glDrawElementsBaseVertex(GL_LINES,
-							(GLsizei)pLinesCohort->getIndicesCount(),
-							GL_UNSIGNED_INT,
-							(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
-							pProductDefinition->VBOOffset());
-
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-					} // for (size_t iLinesCohort = ...
-
-					glPopMatrix();
-				} // for (size_t iInstance = ...	
-
-				glMatrixMode(iMatrixMode);
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // #ifdef _USE_SHADERS	
 
 	COpenGL::Check4Errors();
 
@@ -3607,7 +3029,6 @@ void COpenGLSTEPView::DrawPoints()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3717,89 +3138,6 @@ void COpenGLSTEPView::DrawPoints()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glPointSize(m_fPointSize);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-
-				/*
-				* Transformations
-				*/
-				GLint iMatrixMode = 0;
-				glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-				glMatrixMode(GL_MODELVIEW);
-
-				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-				{
-					auto pProductInstance = vecProductInstances[iInstance];
-
-					if (!pProductInstance->getEnable())
-					{
-						continue;
-					}
-
-					glPushMatrix();
-					glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-					glMultMatrixd((GLdouble*)pProductInstance->getTransformationMatrix());
-					glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-					/*
-					* Points
-					*/
-					for (size_t iPointsCohort = 0; iPointsCohort < pProductDefinition->pointsCohorts().size(); iPointsCohort++)
-					{
-						CPointsCohort* pPointsCohort = pProductDefinition->pointsCohorts()[iPointsCohort];
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pPointsCohort->IBO());
-
-						glDrawElementsBaseVertex(GL_POINTS,
-							(GLsizei)pPointsCohort->getIndicesCount(),
-							GL_UNSIGNED_INT,
-							(void*)(sizeof(GLuint) * pPointsCohort->IBOOffset()),
-							pProductDefinition->VBOOffset());
-
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-					} // for (size_t iPointsCohort = ...
-
-					glPopMatrix();
-				} // for (size_t iInstance = ...
-
-				glMatrixMode(iMatrixMode);
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS	
 
 	COpenGL::Check4Errors();
 
@@ -3973,7 +3311,6 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -4097,160 +3434,6 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glEnable(GL_COLOR_MATERIAL);
-
-	glShadeModel(GL_FLAT);
-
-	glDisable(GL_LIGHTING);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef(m_fXTranslation, m_fYTranslation, m_fZTranslation);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-	glRotatef(m_fXAngle, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_fYAngle, 0.0f, 1.0f, 0.0f);
-
-	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-
-	fXTranslation = 0.f;
-	fYTranslation = 0.f;
-	fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
-
-	/*
-	* Draw
-	*/
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-
-				/*
-				* Transformations
-				*/
-				GLint iMatrixMode = 0;
-				glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-				glMatrixMode(GL_MODELVIEW);
-
-				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-				{
-					auto pProductInstance = vecProductInstances[iInstance];
-
-					if (!pProductInstance->getEnable())
-					{
-						continue;
-					}
-
-					glPushMatrix();
-					glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-					glMultMatrixd((GLdouble*)pProductInstance->getTransformationMatrix());
-					glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-					/*
-					* Ambient color
-					*/
-					map<int64_t, CSTEPColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pProductInstance->getID());
-					ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
-
-					/*
-					* Conceptual faces
-					*/
-					for (size_t iMaterial = 0; iMaterial < pProductDefinition->conceptualFacesMaterials().size(); iMaterial++)
-					{
-						CSTEPGeometryWithMaterial* pGeometryWithMaterial = pProductDefinition->conceptualFacesMaterials()[iMaterial];
-
-						glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-						glColor4f(
-							itSelectionColor->second.R(),
-							itSelectionColor->second.G(),
-							itSelectionColor->second.B(),
-							1.f);
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-
-						glDrawElementsBaseVertex(GL_TRIANGLES,
-							(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-							GL_UNSIGNED_INT,
-							(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-							pProductDefinition->VBOOffset());
-
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);						
-					} // for (size_t iMaterial = ...
-
-					glPopMatrix();
-				} // for (size_t iInstance = ...				
-
-				glMatrixMode(iMatrixMode);
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

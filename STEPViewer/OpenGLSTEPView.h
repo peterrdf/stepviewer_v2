@@ -206,17 +206,11 @@ private: // Members
 	CWnd * m_pWnd;
 #endif // _LINUX
 
-#ifdef _USE_SHADERS
-	//CBinnPhongOGLPipeline* m_pBinnPhongOGLPipeline;
-
-#ifdef _USE_SHADERS
 	CBinnPhongGLProgram* m_pProgram;	               // Program
 	CGLShader* m_pVertSh;		       // Vertex shader
 	CGLShader* m_pFragSh;
-#endif // _USE_SHADERS
 
 	glm::mat4 m_modelViewMatrix;
-#endif // _USE_SHADERS
 
 	// --------------------------------------------------------------------------------------------
 	// Faces

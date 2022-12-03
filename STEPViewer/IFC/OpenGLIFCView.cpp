@@ -95,7 +95,6 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	m_dOriginY = 0.;
 	m_dOriginZ = 0.;
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 
 	m_pProgram = new CBinnPhongGLProgram();
@@ -121,7 +120,6 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 		AfxMessageBox(_T("Program linking error!"));
 
 	m_modelViewMatrix = glm::identity<glm::mat4>();
-#endif // _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -139,7 +137,6 @@ COpenGLIFCView::~COpenGLIFCView()
 		m_hFont = NULL;
 	}
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 
 	m_pProgram->DetachShader(m_pVertSh);
@@ -152,7 +149,6 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_pVertSh = NULL;
 	delete m_pFragSh;
 	m_pFragSh = NULL;
-#endif // _USE_SHADERS
 
 	if (m_pOGLContext != NULL)
 	{
@@ -798,7 +794,6 @@ BOOL COpenGLIFCView::AreWireframesShown()
 	BOOL bResult = m_pOGLContext->MakeCurrent();
 	VERIFY(bResult);
 
-#ifdef _USE_SHADERS
 #ifdef _ENABLE_OPENGL_DEBUG
 	m_pOGLContext->EnableDebug();
 #endif
@@ -944,165 +939,6 @@ BOOL COpenGLIFCView::AreWireframesShown()
 	* Selection support
 	*/
 	DrawFacesFrameBuffer();
-#else
-	glViewport(0, 0, rcClient.Width(), rcClient.Height());
-
-	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_MULTISAMPLE);
-
-	glEnable(GL_COLOR_MATERIAL);
-
-	glEnable(GL_FRAMEBUFFER_SRGB);
-	glShadeModel(GL_SMOOTH);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-
-	GLfloat diffuseLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-
-	GLfloat specularLight[] = { 0.1f, 0.1f, 0.1f, 0.5f };
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-
-	GLfloat lightPosition[] = { -2.0f, -2.0f, -2.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)rcClient.Width() / (GLdouble)rcClient.Height();
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 100000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	switch (m_enProjectionType)
-	{
-		case ptPerspective:
-		{
-			glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-		}
-		break;
-
-		case ptIsometric:
-		{
-			glOrtho(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	}
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();	
-
-	/*
-	* Pan/Zoom
-	*/	
-	glTranslated(m_dXTranslation, m_dYTranslation, m_dZTranslation);
-
-	/*
-	* Move the origin
-	*/
-	glTranslated(m_dOriginX, m_dOriginY, m_dOriginZ);
-
-	/*
-	* Rotate
-	*/
-	glRotated(m_dXAngle, 1.0f, 0.0f, 0.0f);
-	glRotated(m_dYAngle, 0.0f, 0.0f, 1.0f);
-
-	/*
-	* Restore the origin
-	*/
-	glTranslated(-m_dOriginX, -m_dOriginY, -m_dOriginZ);		
-
-	/*
-	Non-transparent faces
-	*/
-	DrawFaces(false);
-
-	/*
-	Transparent faces
-	*/
-	DrawFaces(true);
-
-	/*
-	Picked conceptual face
-	*/
-	//DrawPickedFace();
-
-	/*
-	Selected point
-	*/
-	//DrawDistance();
-
-	/*
-	Picked point
-	*/
-	//DrawPickedPoint();
-
-	/*
-	Bounding boxes
-	*/
-	//DrawBoundingBoxes();
-
-	/*
-	Wireframes
-	*/
-	DrawLines();
-
-	/*
-	Wireframes
-	*/
-	DrawWireframes();
-
-	/*
-	Scene
-	*/
-	DrawScene((float)ARROW_SIZE_I, (float)ARROW_SIZE_II);
-
-	/*
-	View Origin
-	*/
-	//DrawInstanceOrigin();
-
-	SwapBuffers(*pDC);
-
-	/*
-	Selection support
-	*/
-	DrawFacesFrameBuffer();
-
-	/*
-	Measures - Area (Conceptual Faces)
-	*/
-	//DrawConceptualFacesFrameBuffer();
-
-	/*
-	Measures - Edges (Conceptual Faces Polygons)
-	*/
-	//DrawWireframesFrameBuffer();
-#endif // _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2440,7 +2276,6 @@ void COpenGLIFCView::ResetView()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawScene(float arrowSizeI, float arrowSizeII)
 {
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -2551,106 +2386,6 @@ void COpenGLIFCView::DrawScene(float arrowSizeI, float arrowSizeII)
 		glEnd();
 		DrawTextGDI(L"Z", 0.f, 0.f, arrowSizeII + (arrowSizeII * 0.05f));
 	} // if (!m_bDetailsViewMode)
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-/*	glBegin(GL_LINE_LOOP);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(-1.0f, 1.0f, 1.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
-	glVertex3f(-1.0f, 1.0f, -1.0f);
-	glVertex3f(1.0f, 1.0f, -1.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 1.0f, -1.0f);
-	glVertex3f(-1.0f, 1.0f, -1.0f);
-	glVertex3f(-1.0f, 1.0f, 1.0f);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
-	glVertex3f(1.0f, 1.0f, -1.0f);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
-	glVertex3f(-1.0f, 1.0f, 1.0f);
-	glVertex3f(-1.0f, 1.0f, -1.0f);
-	glEnd();	//	*/
-
-	if (!m_bDetailsViewMode)
-	{
-		// X axis
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX + arrowSizeI, m_dOriginY, m_dOriginZ);
-		glEnd();
-
-		// Y axis
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX, m_dOriginY + arrowSizeI, m_dOriginZ);
-		glEnd();
-
-		// Z axis
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ + arrowSizeI);
-		glEnd();
-
-		glLineWidth(2.0);
-
-		// X axis
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0. + arrowSizeII, 0., 0.);
-		glEnd();
-		DrawTextGDI(L"X", arrowSizeII + (arrowSizeII * 0.05f), 0.f, 0.f);
-
-		// Y axis
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0., 0. + arrowSizeII, 0.);
-		glEnd();
-		DrawTextGDI(L"Y", 0.f, arrowSizeII + (arrowSizeII * 0.05f), 0.f);
-
-		// Z axis
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0., 0., 0. + arrowSizeII);
-		glEnd();
-		DrawTextGDI(L"Z", 0.f, 0.f, arrowSizeII + (arrowSizeII * 0.05f));
-	} // if (!m_bDetailsViewMode)
-
-	glEnable(GL_LIGHTING);
-#endif _USE_SHADERS
 
 	COpenGL::Check4Errors();
 }
@@ -2688,7 +2423,6 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -2813,120 +2547,6 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 	} // for (size_t iDrawMetaData = ...
 
 	glDisableVertexAttribArray(m_pProgram->getVertexNormal());
-#else
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
-
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * BUFFER_VERTEX_LENGTH, NULL);
-			glNormalPointer(GL_FLOAT, sizeof(GLfloat) * BUFFER_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 3));
-
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
-
-					continue;
-				}
-
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pIFCObject->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-				{
-					CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iGeometryWithMaterial];
-
-					const CIFCMaterial* pMaterial =
-						/*Picked?*/ (pModel == m_pPickedIFCObjectModel) && (pIFCObject == m_pPickedIFCObject) ? pModel->getOnMouseOverMaterial()
-						/*Selected?*/ : pIFCObject->selected() && !m_bDetailsViewMode ? pModel->getSelectionMaterial() :
-						/*User-defined?*/pIFCObject->getUserDefinedMaterial() != NULL ? pIFCObject->getUserDefinedMaterial() :
-						/*Use conceptual face material*/pGeometryWithMaterial->getMaterial();
-
-					if (bTransparent)
-					{
-						if (pMaterial->A() == 1.0)
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (pMaterial->A() < 1.0)
-						{
-							continue;
-						}
-					}
-
-					/*
-					* Material - Ambient color
-					*/
-					glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-					glColor4f(
-						pMaterial->getAmbientColor().R(),
-						pMaterial->getAmbientColor().G(),
-						pMaterial->getAmbientColor().B(),
-						pMaterial->A());
-
-					/*
-					* Material - Diffuse color
-					*/
-					glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-					glColor4f(
-						pMaterial->getDiffuseColor().R(),
-						pMaterial->getDiffuseColor().G(),
-						pMaterial->getDiffuseColor().B(),
-						pMaterial->A());
-
-					/*
-					* Material - Specular color
-					*/
-					glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-					glColor4f(
-						pMaterial->getSpecularColor().R(),
-						pMaterial->getSpecularColor().G(),
-						pMaterial->getSpecularColor().B(),
-						pMaterial->A());
-
-					/*
-					* Material - Emissive color
-					*/
-					glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-					glColor4f(
-						pMaterial->getEmissiveColor().R(),
-						pMaterial->getEmissiveColor().G(),
-						pMaterial->getEmissiveColor().B(),
-						pMaterial->A());
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iMaterial = ...
-
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-#endif // _USE_SHADERS
 
 	if (bTransparent)
 	{
@@ -3340,7 +2960,6 @@ void COpenGLIFCView::DrawLines()
 		return;
 	}
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3408,63 +3027,6 @@ void COpenGLIFCView::DrawLines()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
-
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * BUFFER_VERTEX_LENGTH, NULL);
-
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreLinesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
-
-					continue;
-				}
-
-				/*
-				* Lines
-				*/
-				for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
-				{
-					CLinesCohort* pLinesCohort = pIFCObject->linesCohorts()[iLinesCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pLinesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iLinesCohort = ...
-
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGL::Check4Errors();
 }
@@ -3495,7 +3057,6 @@ void COpenGLIFCView::DrawWireframes()
 		return;
 	}
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3631,161 +3192,6 @@ void COpenGLIFCView::DrawWireframes()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	// One-based index used for the selection frame buffer
-	int_t iLineID = 1;
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
-
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * BUFFER_VERTEX_LENGTH, NULL);
-
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
-
-					continue;
-				}
-
-				/*
-				* Wireframes
-				*/
-				for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-				{
-					CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pWireframesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iWireframesCohort = ...
-
-				/*
-				* Picked edge
-				*/
-				if ((m_enViewMode == vmMeasureEdge) && (pIFCObject == m_pPickedIFCObject) && !m_setPickedIFCObjectEdges.empty())
-				{
-					glDisable(GL_DEPTH_TEST);
-
-					for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-					{
-						CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
-
-						for (int_t iLine = 0; iLine < pWireframesCohort->getIndicesCount() / 2; iLine++)
-						{
-							set<int_t>::iterator itEdge = m_setPickedIFCObjectEdges.find(iLineID++);
-							if (itEdge != m_setPickedIFCObjectEdges.end())
-							{
-								glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-								glLineWidth(3.0);
-								glColor4f(1.f, 0.f, 0.f, 1.0);
-
-								/*
-								* Draw
-								*/
-								glDrawElementsBaseVertex(GL_LINES,
-									(GLsizei)2,
-									GL_UNSIGNED_INT,
-									(void*)(sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2))),
-									iOffset);
-
-								/*
-								* Read the indices
-								*/
-								/*GLuint indices[2];
-								glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-									sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2)),
-									2 * sizeof(GLuint),
-									indices);*/
-
-									/*
-									* Read the vertices
-									*/
-									/*GLfloat vertex1[BUFFER_VERTEX_LENGTH];
-									glGetBufferSubData(GL_ARRAY_BUFFER,
-										sizeof(GLfloat) * ((iOffset + indices[0]) * BUFFER_VERTEX_LENGTH),
-										BUFFER_VERTEX_LENGTH * sizeof(GLfloat), vertex1);
-
-									GLfloat vertex2[BUFFER_VERTEX_LENGTH];
-									glGetBufferSubData(GL_ARRAY_BUFFER,
-										sizeof(GLfloat) * ((iOffset + indices[1]) * BUFFER_VERTEX_LENGTH),
-										BUFFER_VERTEX_LENGTH * sizeof(GLfloat), vertex2);*/
-
-										//double dLength = sqrt(pow(vertex1[0] - vertex2[0], 2.) + pow(vertex1[1] - vertex2[1], 2.) + pow(vertex1[2] - vertex2[2], 2.));
-										//dLength = (m_dScaleFactor * dLength) / 2.;
-
-										//dSum += dLength;
-
-								glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-								glLineWidth(1.0);
-								glColor4f(0.f, 0.f, 0.f, 1.0);
-							} // if (itEdge != ...
-						} // for (int_t iLine = ...
-					} // for (size_t iWireframesCohort = ...
-
-					glEnable(GL_DEPTH_TEST);
-				} // if ((m_enViewMode == vmMeasureEdge) && ...
-
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	// OBSOLETE - the client will receive OnMeasureEdge event
-	/*
-	* Lengths/Sum
-	*/
-	//if ((m_enViewMode == vmMeasureEdge) && !m_setPickedIFCObjectEdges.empty())
-	//{
-	//	wchar_t szBuffer[100];
-	//	swprintf(szBuffer, 100, L"Length = %.2f\n", dSum);		
-
-	//	POINT point = { 0, 0 };
-	//	if (GetCursorPos(&point))
-	//	{
-	//		m_pWnd->ScreenToClient(&point);
-
-	//		double dX = 0.;
-	//		double dY = 0.;
-	//		double dZ = 0.;
-	//		bool bResult = GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ);
-	//		ASSERT(bResult);
-
-	//		dZ += dZ >= 0 ? -m_dZTranslation * 0.1 : m_dZTranslation * 0.1;
-
-	//		glColor4f(0.f, 0.f, 1.f, 1.0);
-	//		DrawTextGDI(szBuffer, (float)dX, (float)dY, (float)dZ);
-	//	}
-	//} // if ((m_enViewMode == vmMeasureEdge) && ...	
-
-	glEnable(GL_LIGHTING);
-#endif _USE_SHADERS
 
 	COpenGL::Check4Errors();
 }
@@ -3893,7 +3299,6 @@ void COpenGLIFCView::DrawFacesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);	
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3964,137 +3369,6 @@ void COpenGLIFCView::DrawFacesFrameBuffer()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glEnable(GL_COLOR_MATERIAL);
-
-	glShadeModel(GL_FLAT);
-
-	glDisable(GL_LIGHTING);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)rcClient.Width() / (GLdouble)rcClient.Height();
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 100000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	switch (m_enProjectionType)
-	{
-		case ptPerspective:
-		{
-			glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-		}
-		break;
-
-		case ptIsometric:
-		{
-			glOrtho(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	}
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	/*
-	* Pan/Zoom
-	*/
-	glTranslated(m_dXTranslation, m_dYTranslation, m_dZTranslation);
-
-	/*
-	* Move the origin
-	*/
-	glTranslated(m_dOriginX, m_dOriginY, m_dOriginZ);
-
-	/*
-	* Rotate
-	*/
-	glRotated(m_dXAngle, 1.0f, 0.0f, 0.0f);
-	glRotated(m_dYAngle, 0.0f, 0.0f, 1.0f);
-
-	/*
-	* Restore the origin
-	*/
-	glTranslated(-m_dOriginX, -m_dOriginY, -m_dOriginZ);
-
-	/*
-	* Draw
-	*/
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
-
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * BUFFER_VERTEX_LENGTH, NULL);
-
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
-
-					continue;
-				}
-
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iMaterial = 0; iMaterial < pIFCObject->conceptualFacesMaterials().size(); iMaterial++)
-				{
-					CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iMaterial];
-
-					/*
-					* Ambient color
-					*/
-					glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-					glColor4f(
-						pIFCObject->rgbID()->R(),
-						pIFCObject->rgbID()->G(),
-						pIFCObject->rgbID()->B(),
-						1.0f);
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iMaterial = ...
-
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
