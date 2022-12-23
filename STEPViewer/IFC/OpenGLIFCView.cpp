@@ -2272,7 +2272,7 @@ void COpenGLIFCView::ResetView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawScene(float arrowSizeI, float arrowSizeII)
+void COpenGLIFCView::DrawScene(float /*arrowSizeI*/, float /*arrowSizeII*/)
 {
 	//glProgramUniform1f(
 	//	m_pProgram->GetID(),

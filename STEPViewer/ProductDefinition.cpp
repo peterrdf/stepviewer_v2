@@ -84,8 +84,7 @@ void CProductDefinition::Calculate()
 	setting += flagbit27;	 //	SPECULAR
 
 	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
-	int64_t iVertexElementSizeInBytes = SetFormat(iModel, setting, mask);
-	VERIFY(iVertexElementSizeInBytes == VERTEX_LENGTH * sizeof(float));
+	SetFormat(iModel, setting, mask);
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f();
