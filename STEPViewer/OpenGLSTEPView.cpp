@@ -574,6 +574,13 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
     iWidth = szClient.GetWidth();
     iHeight = szClient.GetHeight();
 #else    
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+	m_pOGLContext->enableDebug();
+#endif
+
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
@@ -663,12 +670,12 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	/*
 	* Non-transparent faces
 	*/
-	DrawFaces(false);
+	//DrawFaces(false);
 
 	/*
 	* Transparent faces
 	*/
-	DrawFaces(true);
+	//DrawFaces(true);
 
 	/*
 	* Conceptual faces polygons
@@ -678,17 +685,17 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	/*
 	* Lines
 	*/
-	DrawLines();
+	//DrawLines();
 
 	/*
 	* Points
 	*/
-	DrawPoints();
+	//DrawPoints();
 
 	/*
 	* Scene
 	*/
-	DrawCoordinateSystem();
+	//DrawCoordinateSystem();
 
 	/*
 	* End
@@ -702,7 +709,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	/*
 	*Selection support
 	*/
-	DrawInstancesFrameBuffer();
+	//DrawInstancesFrameBuffer();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1617,14 +1624,14 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
-
 	m_pOGLProgram->enableBinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
+
+	float fXTranslation = 0.f;
+	float fYTranslation = 0.f;
+	float fZTranslation = 0.f;
+	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1649,14 +1656,14 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 transformationMatrix = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
 				*/
 				glm::mat4 matModelView = m_matModelView;
 				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-				matModelView = matModelView * transformationMatrix;
+				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->setModelViewMatrix(matModelView);
