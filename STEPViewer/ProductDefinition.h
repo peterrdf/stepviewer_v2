@@ -38,9 +38,7 @@ private: // Members
 	// Geometry
 	bool m_bCalculated;	
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
-	int_t m_iVerticesCount;
 	_indices_i32* m_pIndexBuffer;
-	int_t m_iIndicesCount;
 	int64_t m_iConceptualFacesCount;
 
 	// Primitives
@@ -94,6 +92,7 @@ public: // Methods
 	int64_t getIndicesCount() const;
 	float * getVertices() const;
 	int64_t getVerticesCount() const;
+	int64_t getVertexLength() const;
 	int64_t getConceptualFacesCount() const;
 
 	const vector<_primitives> & getTriangles() const;

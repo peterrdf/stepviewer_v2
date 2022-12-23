@@ -17,9 +17,7 @@ CProductDefinition::CProductDefinition()
 	, m_iNextProductInstance(-1)
 	, m_bCalculated(false)
 	, m_pVertexBuffer(NULL)
-	, m_iVerticesCount(0)
 	, m_pIndexBuffer(NULL)
-	, m_iIndicesCount(0)
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
 	, m_vecConcFacePolygons()
@@ -87,7 +85,7 @@ void CProductDefinition::Calculate()
 
 	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
 	int64_t iVertexElementSizeInBytes = SetFormat(iModel, setting, mask);
-	ASSERT(iVertexElementSizeInBytes == VERTEX_LENGTH * sizeof(float));
+	VERIFY(iVertexElementSizeInBytes == VERTEX_LENGTH * sizeof(float));
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f();
@@ -634,7 +632,7 @@ void CProductDefinition::Calculate()
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
 {
-	if (m_iVerticesCount == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -737,7 +735,7 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
 {
-	if (m_iVerticesCount == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -771,7 +769,7 @@ void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, fl
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInstance, float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
 {
-	if (m_iVerticesCount == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -910,7 +908,7 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
 {
-	if (m_iVerticesCount == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}	
@@ -918,7 +916,7 @@ void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, f
 	/**
 	* Vertices
 	*/
-	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] -= fXmin;
@@ -948,15 +946,15 @@ void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, f
 // ------------------------------------------------------------------------------------------------
 float* CProductDefinition::BuildVBOVertexBuffer()
 {
-	ASSERT(m_iVerticesCount > 0);
+	ASSERT(getVerticesCount() > 0);
 
 	/*
 	* Faces Vertex Buffer
 	*/
-	float* pVBOVertices = new float[m_iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-	memset(pVBOVertices, 0, m_iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
+	float* pVBOVertices = new float[getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH];
+	memset(pVBOVertices, 0, getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 
-	for (int64_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
+	for (int64_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
 		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0];
 		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1];
@@ -1044,24 +1042,50 @@ int CProductDefinition::getNextProductInstance()
 // ------------------------------------------------------------------------------------------------
 int32_t* CProductDefinition::getIndices() const
 {
-	return m_pIndexBuffer->data();
+	if (m_pIndexBuffer != nullptr)
+	{
+		return m_pIndexBuffer->data();
+	}
+
+	return nullptr;
 }
 
 int64_t CProductDefinition::getIndicesCount() const
 {
-	return m_iIndicesCount;
+	if (m_pIndexBuffer != nullptr)
+	{
+		return m_pIndexBuffer->size();
+	}
+
+	return 0;
 }
 
 // ------------------------------------------------------------------------------------------------
 float* CProductDefinition::getVertices() const
 {
-	return m_pVertexBuffer->data();
+	if (m_pVertexBuffer != nullptr)
+	{
+		return m_pVertexBuffer->data();
+	}
+
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
 int64_t CProductDefinition::getVerticesCount() const
 {
-	return m_iVerticesCount;
+	if (m_pVertexBuffer != nullptr)
+	{
+		return m_pVertexBuffer->size();
+	}
+
+	return 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+int64_t CProductDefinition::getVertexLength() const
+{
+	return VERTEX_LENGTH;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1134,11 +1158,9 @@ void CProductDefinition::Clean()
 {
 	delete[] m_pVertexBuffer;
 	m_pVertexBuffer = NULL;
-	m_iVerticesCount = 0;
 
 	delete[] m_pIndexBuffer;
 	m_pIndexBuffer = NULL;
-	m_iIndicesCount = 0;
 
 	m_iConceptualFacesCount = 0;
 

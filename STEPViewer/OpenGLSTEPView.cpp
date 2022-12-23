@@ -33,7 +33,7 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 	, m_fPointSize(1.f)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_pInstanceSelectionFrameBuffer(nullptr)
+	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_bDisableSelectionBuffer(FALSE)
 	, m_pPointedInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
@@ -300,35 +300,34 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
-	
+	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();	
 
+	// Data
 	const map<int_t, CProductDefinition*>& mapProductDefinitions = pModel->getProductDefinitions();
 
 	// VBO
 	GLuint iVerticesCount = 0;
-	vector<CProductDefinition*> vecProductDefinitionsGroup;
+	vector<CProductDefinition*> vecProductDefinitionsCohort;
 
-	//// IBO - Materials
-	//GLuint iMaterialsIndicesCount = 0;
-	//vector<CSTEPGeometryWithMaterial*> vecSTEPMaterialsGroup;
+	// IBO - Conceptual faces
+	GLuint iConcFacesIndicesCount = 0;
+	vector<_cohort*> vecConcFacesCohorts;
 
-	//// IBO - Lines
-	//GLuint iLinesIndicesCount = 0;
-	//vector<CLinesCohort*> vecLinesCohorts;
+	// IBO - Conceptual face polygons
+	GLuint iConcFacePolygonsIndicesCount = 0;
+	vector<_cohort*> vecConcFacePolygonsCohorts;
 
-	//// IBO - Points
-	//GLuint iPointsIndicesCount = 0;
-	//vector<CPointsCohort*> vecPointsCohorts;
+	// IBO - Lines
+	GLuint iLinesIndicesCount = 0;
+	vector<_cohort*> vecLinesCohorts;
 
-	//// IBO - Conceptual Faces
-	//GLuint iConceptualFacesIndicesCount = 0;
-	//vector<CWireframesCohort*> vecConceptualFacesCohorts;
+	// IBO - Points
+	GLuint iPointsIndicesCount = 0;
+	vector<_cohort*> vecPointsCohorts;
 
-	map<int_t, CProductDefinition*>::const_iterator itProductDefinitions = mapProductDefinitions.begin();
-	for (; itProductDefinitions != mapProductDefinitions.end(); itProductDefinitions++)
+	for (auto itProductDefinitions = mapProductDefinitions.begin(); itProductDefinitions != mapProductDefinitions.end(); itProductDefinitions++)
 	{
-		CProductDefinition* pProductDefinition = itProductDefinitions->second;
+		auto pProductDefinition = itProductDefinitions->second;
 		if (pProductDefinition->getVerticesCount() == 0)
 		{
 			continue;
@@ -339,543 +338,196 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 		*/
 
 		/**
-		* VBO - Conceptual faces, wireframes, etc.
+		* VBO - Conceptual faces, polygons, etc.
 		*/
 		if (((int_t)iVerticesCount + pProductDefinition->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			//ASSERT(!vecProductDefinitionsGroup.empty());
+			if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
+			{
+				assert(false);
 
-			//int_t iCohortVerticesCount = 0;
-			//float* pVertices = GetVertices(vecProductDefinitionsGroup, iCohortVerticesCount);
-			//if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
-			//{
-			//	ASSERT(0);
+				return;
+			}
 
-			//	return;
-			//}
-
-			//ASSERT(iCohortVerticesCount == iVerticesCount);
-
-			//GLuint iVBO = 0;
-			//glGenBuffers(1, &iVBO);
-
-			//ASSERT(iVBO != 0);
-
-			//glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-			//glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-			//TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
-
-			///*
-			//* Store VBO/offset
-			//*/
-			//GLsizei iVBOOffset = 0;
-			//for (size_t iProductDefinition = 0; iProductDefinition < vecProductDefinitionsGroup.size(); iProductDefinition++)
-			//{
-			//	vecProductDefinitionsGroup[iProductDefinition]->VBO() = iVBO;
-			//	vecProductDefinitionsGroup[iProductDefinition]->VBOOffset() = iVBOOffset;
-
-			//	iVBOOffset += (GLsizei)vecProductDefinitionsGroup[iProductDefinition]->getVerticesCount();
-			//} // for (size_t iProductDefinition = ...
-
-			//delete[] pVertices;
-
-			//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-			//_oglUtils::checkForErrors();
-
-			//CSTEPDrawMetaData* pDrawMetaData = new CSTEPDrawMetaData(mdtGeometry);
-			//pDrawMetaData->AddGroup(iVBO, vecProductDefinitionsGroup);
-
-			//m_veCSTEPDrawMetaData.push_back(pDrawMetaData);
-
-			//iVerticesCount = 0;
-			//vecProductDefinitionsGroup.clear();
-		} // if (((int_t)iVerticesCount + pProductDefinition->getVerticesCount()) > ...		
+			iVerticesCount = 0;
+			vecProductDefinitionsCohort.clear();
+		}
 
 		/*
-		* IBO - Materials
+		* IBO - Conceptual faces
 		*/
-		//for (size_t iMaterial = 0; iMaterial < pProductDefinition->conceptualFacesMaterials().size(); iMaterial++)
-		//{
-		//	if ((int_t)(iMaterialsIndicesCount + pProductDefinition->conceptualFacesMaterials()[iMaterial]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-		//	{
-		//		ASSERT(!vecSTEPMaterialsGroup.empty());
+		for (size_t iFacesCohort = 0; iFacesCohort < pProductDefinition->concFacesCohorts().size(); iFacesCohort++)
+		{
+			if ((int_t)(iConcFacesIndicesCount + pProductDefinition->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			{
+				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+				{
+					assert(false);
 
-		//		GLuint iIBO = 0;
-		//		glGenBuffers(1, &iIBO);
+					return;
+				}
 
-		//		ASSERT(iIBO != 0);
+				iConcFacesIndicesCount = 0;
+				vecConcFacesCohorts.clear();
+			}
 
-		//		m_vecIBOs.push_back(iIBO);
+			iConcFacesIndicesCount += (GLsizei)pProductDefinition->concFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pProductDefinition->concFacesCohorts()[iFacesCohort]);
+		}
 
-		//		int_t iGroupIndicesCount = 0;
-		//		unsigned int* pIndices = GetMaterialsIndices(vecSTEPMaterialsGroup, iGroupIndicesCount);
-		//		if ((iGroupIndicesCount == 0) || (pIndices == nullptr))
-		//		{
-		//			ASSERT(0);
+		/*
+		* IBO - Conceptual face polygons
+		*/
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pProductDefinition->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		{
+			if ((int_t)(iConcFacePolygonsIndicesCount + pProductDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			{
+				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+				{
+					assert(false);
 
-		//			return;
-		//		}
+					return;
+				}
 
-		//		ASSERT(iMaterialsIndicesCount == iGroupIndicesCount);
+				iConcFacePolygonsIndicesCount = 0;
+				vecConcFacePolygonsCohorts.clear();
+			}
 
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iMaterialsIndicesCount, pIndices, GL_STATIC_DRAW);
-
-		//		delete[] pIndices;
-
-		//		/*
-		//		* Store IBO/offset
-		//		*/
-		//		GLsizei iIBOOffset = 0;
-		//		for (size_t iMaterial2 = 0; iMaterial2 < vecSTEPMaterialsGroup.size(); iMaterial2++)
-		//		{
-		//			vecSTEPMaterialsGroup[iMaterial2]->IBO() = iIBO;
-		//			vecSTEPMaterialsGroup[iMaterial2]->IBOOffset() = iIBOOffset;
-
-		//			iIBOOffset += (GLsizei)vecSTEPMaterialsGroup[iMaterial2]->getIndicesCount();
-		//		}
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//		_oglUtils::checkForErrors();
-
-		//		iMaterialsIndicesCount = 0;
-		//		vecSTEPMaterialsGroup.clear();
-		//	} // if ((int_t)(iMaterialsIndicesCount + ...	
-
-		//	iMaterialsIndicesCount += (GLsizei)pProductDefinition->conceptualFacesMaterials()[iMaterial]->getIndicesCount();
-		//	vecSTEPMaterialsGroup.push_back(pProductDefinition->conceptualFacesMaterials()[iMaterial]);
-		//} // for (size_t iMaterial = ...	
+			iConcFacePolygonsIndicesCount += (GLsizei)pProductDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pProductDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+		}
 
 		/*
 		* IBO - Lines
 		*/
-		//for (size_t iLinesCohort = 0; iLinesCohort < pProductDefinition->linesCohorts().size(); iLinesCohort++)
-		//{
-		//	if ((int_t)(iLinesIndicesCount + pProductDefinition->linesCohorts()[iLinesCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-		//	{
-		//		ASSERT(!vecLinesCohorts.empty());
+		for (size_t iLinesCohort = 0; iLinesCohort < pProductDefinition->linesCohorts().size(); iLinesCohort++)
+		{
+			if ((int_t)(iLinesIndicesCount + pProductDefinition->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			{
+				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+				{
+					assert(false);
 
-		//		GLuint iIBO = 0;
-		//		glGenBuffers(1, &iIBO);
+					return;
+				}
 
-		//		ASSERT(iIBO != 0);
+				iLinesIndicesCount = 0;
+				vecLinesCohorts.clear();
+			}
 
-		//		m_vecIBOs.push_back(iIBO);
-
-		//		int_t iCohortIndicesCount = 0;
-		//		unsigned int* pIndices = GetLinesCohortsIndices(vecLinesCohorts, iCohortIndicesCount);
-		//		if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-		//		{
-		//			ASSERT(0);
-
-		//			return;
-		//		}
-
-		//		ASSERT(iLinesIndicesCount == iCohortIndicesCount);
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iLinesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-		//		delete[] pIndices;
-
-		//		/*
-		//		* Store IBO/offset
-		//		*/
-		//		GLsizei iIBOOffset = 0;
-		//		for (size_t iLinesCohort2 = 0; iLinesCohort2 < vecLinesCohorts.size(); iLinesCohort2++)
-		//		{
-		//			vecLinesCohorts[iLinesCohort2]->IBO() = iIBO;
-		//			vecLinesCohorts[iLinesCohort2]->IBOOffset() = iIBOOffset;
-
-		//			iIBOOffset += (GLsizei)vecLinesCohorts[iLinesCohort2]->getIndicesCount();
-		//		} // for (size_t iLinesCohort2 = ...				
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//		_oglUtils::checkForErrors();
-
-		//		iLinesIndicesCount = 0;
-		//		vecLinesCohorts.clear();
-		//	} // if ((int_t)(iLinesIndicesCount + ...	
-
-		//	iLinesIndicesCount += (GLsizei)pProductDefinition->linesCohorts()[iLinesCohort]->getIndicesCount();
-		//	vecLinesCohorts.push_back(pProductDefinition->linesCohorts()[iLinesCohort]);
-		//} // for (size_t iLinesCohort = ...	
+			iLinesIndicesCount += (GLsizei)pProductDefinition->linesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pProductDefinition->linesCohorts()[iLinesCohort]);
+		}
 
 		/*
 		* IBO - Points
 		*/
-		//for (size_t iPointsCohort = 0; iPointsCohort < pProductDefinition->pointsCohorts().size(); iPointsCohort++)
-		//{
-		//	if ((int_t)(iPointsIndicesCount + pProductDefinition->pointsCohorts()[iPointsCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-		//	{
-		//		ASSERT(!vecPointsCohorts.empty());
+		for (size_t iPointsCohort = 0; iPointsCohort < pProductDefinition->pointsCohorts().size(); iPointsCohort++)
+		{
+			if ((int_t)(iPointsIndicesCount + pProductDefinition->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			{
+				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+				{
+					assert(false);
 
-		//		GLuint iIBO = 0;
-		//		glGenBuffers(1, &iIBO);
+					return;
+				}
 
-		//		ASSERT(iIBO != 0);
+				iPointsIndicesCount = 0;
+				vecPointsCohorts.clear();
+			}
 
-		//		m_vecIBOs.push_back(iIBO);
-
-		//		int_t iCohortIndicesCount = 0;
-		//		unsigned int* pIndices = GetPointsCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
-		//		if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-		//		{
-		//			ASSERT(0);
-
-		//			return;
-		//		}
-
-		//		ASSERT(iPointsIndicesCount == iCohortIndicesCount);
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iPointsIndicesCount, pIndices, GL_STATIC_DRAW);
-
-		//		delete[] pIndices;
-
-		//		/*
-		//		* Store IBO/offset
-		//		*/
-		//		GLsizei iIBOOffset = 0;
-		//		for (size_t iPointsCohort2 = 0; iPointsCohort2 < vecPointsCohorts.size(); iPointsCohort2++)
-		//		{
-		//			vecPointsCohorts[iPointsCohort2]->IBO() = iIBO;
-		//			vecPointsCohorts[iPointsCohort2]->IBOOffset() = iIBOOffset;
-
-		//			iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->getIndicesCount();
-		//		} // for (size_t iPointsCohort2 = ...				
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//		_oglUtils::checkForErrors();
-
-		//		iPointsIndicesCount = 0;
-		//		vecPointsCohorts.clear();
-		//	} // if ((int_t)(iPointsIndicesCount + ...	
-
-		//	iPointsIndicesCount += (GLsizei)pProductDefinition->pointsCohorts()[iPointsCohort]->getIndicesCount();
-		//	vecPointsCohorts.push_back(pProductDefinition->pointsCohorts()[iPointsCohort]);
-		//} // for (size_t iPointsCohort = ...	
-
-		/*
-		* IBO - Conceptual Faces
-		*/
-		//for (size_t iConceptualFacesCohort = 0; iConceptualFacesCohort < pProductDefinition->conceptualFacesCohorts().size(); iConceptualFacesCohort++)
-		//{
-		//	if ((int_t)(iConceptualFacesIndicesCount + pProductDefinition->conceptualFacesCohorts()[iConceptualFacesCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-		//	{
-		//		ASSERT(!vecConceptualFacesCohorts.empty());
-
-		//		GLuint iIBO = 0;
-		//		glGenBuffers(1, &iIBO);
-
-		//		ASSERT(iIBO != 0);
-
-		//		m_vecIBOs.push_back(iIBO);
-
-		//		int_t iCohortIndicesCount = 0;
-		//		unsigned int* pIndices = GetWireframesCohortsIndices(vecConceptualFacesCohorts, iCohortIndicesCount);
-		//		if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-		//		{
-		//			ASSERT(0);
-
-		//			return;
-		//		}
-
-		//		ASSERT(iConceptualFacesIndicesCount == iCohortIndicesCount);
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iConceptualFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-		//		delete[] pIndices;
-
-		//		/*
-		//		* Store IBO/offset
-		//		*/
-		//		GLsizei iIBOOffset = 0;
-		//		for (size_t iConceptualFacesCohort2 = 0; iConceptualFacesCohort2 < vecConceptualFacesCohorts.size(); iConceptualFacesCohort2++)
-		//		{
-		//			vecConceptualFacesCohorts[iConceptualFacesCohort2]->IBO() = iIBO;
-		//			vecConceptualFacesCohorts[iConceptualFacesCohort2]->IBOOffset() = iIBOOffset;
-
-		//			iIBOOffset += (GLsizei)vecConceptualFacesCohorts[iConceptualFacesCohort2]->getIndicesCount();
-		//		} // for (size_t iConceptualFacesCohort2 = ...				
-
-		//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//		_oglUtils::checkForErrors();
-
-		//		iConceptualFacesIndicesCount = 0;
-		//		vecConceptualFacesCohorts.clear();
-		//	} // if ((int_t)(iConceptualFacesIndicesCount + ...	
-
-		//	iConceptualFacesIndicesCount += (GLsizei)pProductDefinition->conceptualFacesCohorts()[iConceptualFacesCohort]->getIndicesCount();
-		//	vecConceptualFacesCohorts.push_back(pProductDefinition->conceptualFacesCohorts()[iConceptualFacesCohort]);
-		//} // for (size_t iConceptualFacesCohort = ...			
+			iPointsIndicesCount += (GLsizei)pProductDefinition->pointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pProductDefinition->pointsCohorts()[iPointsCohort]);
+		}
 
 		iVerticesCount += (GLsizei)pProductDefinition->getVerticesCount();
-		vecProductDefinitionsGroup.push_back(pProductDefinition);
-	} // for (; itProductDefinitions != ...
+		vecProductDefinitionsCohort.push_back(pProductDefinition);
+	} // for (auto itProductDefinitions = ...
 
 	/******************************************************************************************
 	* Geometry
 	*/
 
 	/*
-	* VBO - Conceptual faces, wireframes, etc.
+	* VBO - Conceptual faces, polygons, etc.
 	*/
 	if (iVerticesCount > 0)
 	{
-		//ASSERT(!vecProductDefinitionsGroup.empty());
+		if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
+		{
+			assert(false);
 
-		//int_t iCohortVerticesCount = 0;
-		//float* pVertices = GetVertices(vecProductDefinitionsGroup, iCohortVerticesCount);
-		//if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
-		//{
-		//	ASSERT(0);
+			return;
+		}
 
-		//	return;
-		//}
-
-		//ASSERT(iCohortVerticesCount == iVerticesCount);
-
-		//GLuint iVBO = 0;
-		//glGenBuffers(1, &iVBO);
-
-		//ASSERT(iVBO != 0);
-
-		//glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-		//TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
-
-		///*
-		//* Store VBO/offset
-		//*/
-		//GLsizei iVBOOffset = 0;
-		//for (size_t iProductDefinition = 0; iProductDefinition < vecProductDefinitionsGroup.size(); iProductDefinition++)
-		//{
-		//	vecProductDefinitionsGroup[iProductDefinition]->VBO() = iVBO;
-		//	vecProductDefinitionsGroup[iProductDefinition]->VBOOffset() = iVBOOffset;
-
-		//	iVBOOffset += (GLsizei)vecProductDefinitionsGroup[iProductDefinition]->getVerticesCount();
-		//} // for (size_t iProductDefinition = ...
-
-		//delete[] pVertices;
-
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//_oglUtils::checkForErrors();
-
-		//CSTEPDrawMetaData* pDrawMetaData = new CSTEPDrawMetaData(mdtGeometry);
-		//pDrawMetaData->AddGroup(iVBO, vecProductDefinitionsGroup);
-
-		//m_veCSTEPDrawMetaData.push_back(pDrawMetaData);
-
-		//iVerticesCount = 0;
-		//vecProductDefinitionsGroup.clear();
+		iVerticesCount = 0;
+		vecProductDefinitionsCohort.clear();
 	} // if (iVerticesCount > 0)	
 
 	/*
-	* IBO - Materials
+	* IBO - Conceptual faces
 	*/
-	//if (iMaterialsIndicesCount > 0)
-	//{
-	//	ASSERT(!vecSTEPMaterialsGroup.empty());
+	if (iConcFacesIndicesCount > 0)
+	{
+		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+		{
+			assert(false);
 
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
+			return;
+		}
 
-	//	ASSERT(iIBO != 0);
+		iConcFacesIndicesCount = 0;
+		vecConcFacesCohorts.clear();
+	}
 
-	//	m_vecIBOs.push_back(iIBO);
+	/*
+	* IBO - Conceptual face polygons
+	*/
+	if (iConcFacePolygonsIndicesCount > 0)
+	{
+		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+		{
+			assert(false);
 
-	//	int_t iGroupIndicesCount = 0;
-	//	unsigned int* pIndices = GetMaterialsIndices(vecSTEPMaterialsGroup, iGroupIndicesCount);
-	//	if ((iGroupIndicesCount == 0) || (pIndices == nullptr))
-	//	{
-	//		ASSERT(0);
+			return;
+		}
 
-	//		return;
-	//	}
-
-	//	ASSERT(iMaterialsIndicesCount == iGroupIndicesCount);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iMaterialsIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iMaterial2 = 0; iMaterial2 < vecSTEPMaterialsGroup.size(); iMaterial2++)
-	//	{
-	//		vecSTEPMaterialsGroup[iMaterial2]->IBO() = iIBO;
-	//		vecSTEPMaterialsGroup[iMaterial2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecSTEPMaterialsGroup[iMaterial2]->getIndicesCount();
-	//	}
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iMaterialsIndicesCount = 0;
-	//	vecSTEPMaterialsGroup.clear();
-	//} // if (iMaterialsIndicesCount > 0)
+		iConcFacePolygonsIndicesCount = 0;
+		vecConcFacePolygonsCohorts.clear();
+	}
 
 	/*
 	* IBO - Lines
 	*/
-	//if (iLinesIndicesCount > 0)
-	//{
-	//	ASSERT(!vecLinesCohorts.empty());
+	if (iLinesIndicesCount > 0)
+	{
+		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+		{
+			assert(false);
 
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
+			return;
+		}
 
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iCohortIndicesCount = 0;
-	//	unsigned int* pIndices = GetLinesCohortsIndices(vecLinesCohorts, iCohortIndicesCount);
-	//	if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iLinesIndicesCount == iCohortIndicesCount);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iLinesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iLinesCohort2 = 0; iLinesCohort2 < vecLinesCohorts.size(); iLinesCohort2++)
-	//	{
-	//		vecLinesCohorts[iLinesCohort2]->IBO() = iIBO;
-	//		vecLinesCohorts[iLinesCohort2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecLinesCohorts[iLinesCohort2]->getIndicesCount();
-	//	} // for (size_t iLinesCohort2 = ...				
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iLinesIndicesCount = 0;
-	//	vecLinesCohorts.clear();
-	//} // if (iLinesIndicesCount > 0)		
-
-	//if (iPointsIndicesCount > 0)
-	//{
-	//	ASSERT(!vecPointsCohorts.empty());
-
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
-
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iCohortIndicesCount = 0;
-	//	unsigned int* pIndices = GetPointsCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
-	//	if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iPointsIndicesCount == iCohortIndicesCount);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iPointsIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iPointsCohort2 = 0; iPointsCohort2 < vecPointsCohorts.size(); iPointsCohort2++)
-	//	{
-	//		vecPointsCohorts[iPointsCohort2]->IBO() = iIBO;
-	//		vecPointsCohorts[iPointsCohort2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->getIndicesCount();
-	//	} // for (size_t iPointsCohort2 = ...				
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iPointsIndicesCount = 0;
-	//	vecPointsCohorts.clear();
-	//} // if (iPointsIndicesCount > 0)
+		iLinesIndicesCount = 0;
+		vecLinesCohorts.clear();
+	}
 
 	/*
-	* IBO - Conceptual Faces
+	* IBO - Points
 	*/
-	//if (iConceptualFacesIndicesCount > 0)
-	//{
-	//	ASSERT(!vecConceptualFacesCohorts.empty());
+	if (iPointsIndicesCount > 0)
+	{
+		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+		{
+			assert(false);
 
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
+			return;
+		}
 
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iCohortIndicesCount = 0;
-	//	unsigned int* pIndices = GetWireframesCohortsIndices(vecConceptualFacesCohorts, iCohortIndicesCount);
-	//	if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iConceptualFacesIndicesCount == iCohortIndicesCount);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iConceptualFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iConceptualFacesCohort2 = 0; iConceptualFacesCohort2 < vecConceptualFacesCohorts.size(); iConceptualFacesCohort2++)
-	//	{
-	//		vecConceptualFacesCohorts[iConceptualFacesCohort2]->IBO() = iIBO;
-	//		vecConceptualFacesCohorts[iConceptualFacesCohort2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecConceptualFacesCohorts[iConceptualFacesCohort2]->getIndicesCount();
-	//	} // for (size_t iConceptualFacesCohort2 = ...				
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iConceptualFacesIndicesCount = 0;
-	//	vecConceptualFacesCohorts.clear();
-	//} // if (iConceptualFacesIndicesCount > 0)
+		iPointsIndicesCount = 0;
+		vecPointsCohorts.clear();
+	}
 
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
@@ -1445,33 +1097,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-float* COpenGLSTEPView::GetVertices(const vector<CProductDefinition*>& vecProductDefinitions, int_t& iVerticesCount)
-{
-	iVerticesCount = 0;
-	for (size_t iProductDefinition = 0; iProductDefinition < vecProductDefinitions.size(); iProductDefinition++)
-	{
-		iVerticesCount += vecProductDefinitions[iProductDefinition]->getVerticesCount();
-	}
-
-	float* pVertices = new float[iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-
-	int_t iOffset = 0;
-	for (size_t iProductDefinition = 0; iProductDefinition < vecProductDefinitions.size(); iProductDefinition++)
-	{
-		float* pVBOVertices = vecProductDefinitions[iProductDefinition]->BuildVBOVertexBuffer();
-
-		memcpy((float*)pVertices + iOffset, pVBOVertices,
-			vecProductDefinitions[iProductDefinition]->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-
-		delete[] pVBOVertices;
-
-		iOffset += vecProductDefinitions[iProductDefinition]->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH;
-	}
-
-	return pVertices;
-}
-
-// ------------------------------------------------------------------------------------------------
 unsigned int* COpenGLSTEPView::GetMaterialsIndices(const vector<_face*>& vecMaterials, int_t & iIndicesCount)
 {
 	ASSERT(FALSE); //NOT IMPL!!!!
@@ -1768,7 +1393,7 @@ bool COpenGLSTEPView::DrawTextGDI(const wchar_t* szText, float fX, float fY, flo
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawFaces(bool bTransparent)
+void COpenGLSTEPView::DrawFaces(bool /*bTransparent*/)
 {
 	//if (!m_bShowFaces)
 	//{

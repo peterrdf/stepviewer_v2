@@ -191,10 +191,6 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Helper
-	float* GetVertices(const vector<CProductDefinition*>& vecProductDefinitions, int_t& iVerticesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
 	unsigned int* GetMaterialsIndices(const vector<_face*>& vecMaterials, int_t& iIndicesCount);
 
 	// --------------------------------------------------------------------------------------------
