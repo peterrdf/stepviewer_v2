@@ -586,126 +586,79 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		return;
 	}	
 
-//	BOOL bResult = m_pOGLContext->MakeCurrent();
-//	VERIFY(bResult);
-//
-//#ifdef _ENABLE_OPENGL_DEBUG
-//	m_pOGLContext->EnableDebug();
-//#endif
-//
-//	m_pProgram->Use();
-//
-//	glViewport(0, 0, iWidth, iHeight);
-//
-//	glClearColor(1.0, 1.0, 1.0, 1.0);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	// Set up the parameters
-//	glEnable(GL_DEPTH_TEST);
-//	glDepthFunc(GL_LEQUAL);
-//
-//	glShadeModel(GL_SMOOTH);
-//
-//	/*
-//	* Light
-//	*/
-//	glProgramUniform3f(
-//		m_pProgram->GetID(),
-//		m_pProgram->getPointLightingLocation(), 
-//		0.f, 
-//		0.f, 
-//		10000.f);
-//
-//	/*
-//	* Shininess
-//	*/
-//	glProgramUniform1f(
-//		m_pProgram->GetID(), 
-//		m_pProgram->getMaterialShininess(), 
-//		30.f);
-//
-//	/*
-//	* Projection Matrix
-//	*/
-//	// fovY     - Field of vision in degrees in the y direction
-//	// aspect   - Aspect ratio of the viewport
-//	// zNear    - The near clipping distance
-//	// zFar     - The far clipping distance
-//	GLdouble fovY = 45.0;
-//	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-//	GLdouble zNear = 0.001;
-//	GLdouble zFar = 1000000.0;
-//
-//	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-//	GLdouble fW = fH * aspect;
-//
-//	glm::mat4 projectionMatrix = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(), 
-//		m_pProgram->getPMatrix(), 
-//		1, 
-//		false, 
-//		value_ptr(projectionMatrix));
-//
-//	/*
-//	* Model-View Matrix
-//	*/
-//	m_modelViewMatrix = glm::identity<glm::mat4>();
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
-//
-//	float fXmin = -1.f;
-//	float fXmax = 1.f;
-//	float fYmin = -1.f;
-//	float fYmax = 1.f;
-//	float fZmin = -1.f;
-//	float fZmax = 1.f;
-//	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-//
-//	float fXTranslation = fXmin;
-//	fXTranslation += (fXmax - fXmin) / 2.f;
-//	fXTranslation = -fXTranslation;
-//
-//	float fYTranslation = fYmin;
-//	fYTranslation += (fYmax - fYmin) / 2.f;
-//	fYTranslation = -fYTranslation;
-//
-//	float fZTranslation = fZmin;
-//	fZTranslation += (fZmax - fZmin) / 2.f;
-//	fZTranslation = -fZTranslation;
-//
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-//
-//	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-//	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-//
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(), 
-//		m_pProgram->getMVMatrix(), 
-//		1, 
-//		false, 
-//		glm::value_ptr(m_modelViewMatrix));
-//
-//	/*
-//	* Normal Matrix
-//	*/
-//	glm::mat4 normalMatrix = m_modelViewMatrix;
-//	normalMatrix = glm::inverse(normalMatrix);
-//	normalMatrix = glm::transpose(normalMatrix);
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(), 
-//		m_pProgram->getNMatrix(), 
-//		1, 
-//		false, 
-//		value_ptr(normalMatrix));
-	
+	m_pOGLProgram->use();
+
+	glViewport(0, 0, iWidth, iHeight);
+
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
+	m_pOGLProgram->setMaterialShininess(30.f);
+
 	/*
-	* Binn-Phong Model
+	* Projection Matrix
 	*/
-	//glBindProgramPipeline(m_pProgram->getPipeline());
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = 45.0;
+	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+	GLdouble zNear = 0.001;
+	GLdouble zFar = 1000000.0;
+
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
+
+	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+	m_pOGLProgram->setProjectionMatrix(matProjection);
+
+	/*
+	* Model-View Matrix
+	*/
+	m_matModelView = glm::identity<glm::mat4>();
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	float fXTranslation = fXmin;
+	fXTranslation += (fXmax - fXmin) / 2.f;
+	fXTranslation = -fXTranslation;
+
+	float fYTranslation = fYmin;
+	fYTranslation += (fYmax - fYmin) / 2.f;
+	fYTranslation = -fYTranslation;
+
+	float fZTranslation = fZmin;
+	fZTranslation += (fZmax - fZmin) / 2.f;
+	fZTranslation = -fZTranslation;
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+
+	/*
+	* Normal Matrix
+	*/
+	glm::mat4 matNormal = m_matModelView;
+	matNormal = glm::inverse(matNormal);
+	matNormal = glm::transpose(matNormal);
+	m_pOGLProgram->setNormalMatrix(matNormal);
+
+	m_pOGLProgram->enableBinnPhongModel(true);
 
 	/*
 	* Non-transparent faces
@@ -1002,11 +955,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::Reset()
 {
-	m_fXAngle = 30.0f;
-	m_fYAngle = 30.0f;
-	m_fXTranslation = 0.0f;
-	m_fYTranslation = 0.0f;
-	m_fZTranslation = -5.0f;
+	_reset();
 
 	m_bShowFaces = TRUE;
 	m_bShowFacesPolygons = FALSE;
@@ -1638,155 +1587,104 @@ void COpenGLSTEPView::DrawFaces(bool /*bTransparent*/)
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawConceptualFacesPolygons()
 {
-	//if (!m_bShowConceptualFacesPolygons)
-	//{
-	//	return;
-	//}
+	if (!m_bShowConceptualFacesPolygons)
+	{
+		return;
+	}
 
-	//CSTEPController* pController = GetController();
-	//ASSERT(pController != NULL);
+	CSTEPController* pController = GetController();
+	ASSERT(pController != NULL);
 
-	//if (pController->GetModel() == nullptr)
-	//{
-	//	ASSERT(FALSE);
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
 
-	//	return;
-	//}
+		return;
+	}
 
-	//auto pModel = pController->GetModel()->As<CSTEPModel>();
-	//if (pModel == nullptr)
-	//{
-	//	ASSERT(FALSE);
+	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
 
-	//	return;
-	//}
+		return;
+	}
 
-	//if (pModel->getProductDefinitions().empty())
-	//{
-	//	return;
-	//}
+	if (pModel->getProductDefinitions().empty())
+	{
+		return;
+	}
 
-	//std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	//float fXTranslation = 0.f;
-	//float fYTranslation = 0.f;
-	//float fZTranslation = 0.f;
-	//pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+	float fXTranslation = 0.f;
+	float fYTranslation = 0.f;
+	float fZTranslation = 0.f;
+	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	0.f);
+	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->setTransparency(1.f);
 
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	0.f, 
-	//	0.f, 
-	//	0.f);
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getTransparency(),
-	//	1.f);
+		for (auto pProductDefinition : itCohort.second)
+		{
+			if (pProductDefinition->concFacePolygonsCohorts().empty())
+			{
+				continue;
+			}
 
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-	//	{
-	//		continue;
-	//	}
+			auto vecProductInstances = pProductDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			{
+				auto pProductInstance = vecProductInstances[iInstance];
+				if (!pProductInstance->getEnable())
+				{
+					continue;
+				}
 
-	//	const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
+				/*
+				* Transformation Matrix
+				*/
+				glm::mat4 transformationMatrix = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
 
-	//	map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-	//	for (; itGroups != mapGroups.end(); itGroups++)
-	//	{
-	//		bool bBindVBO = true;			
+				/*
+				* Model-View Matrix
+				*/
+				glm::mat4 matModelView = m_matModelView;
+				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+				matModelView = matModelView * transformationMatrix;
+				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-	//		{
-	//			CProductDefinition* pProductDefinition = itGroups->second[iObject];
+				m_pOGLProgram->setModelViewMatrix(matModelView);
+				
+				for (size_t iCohort = 0; iCohort < pProductDefinition->concFacePolygonsCohorts().size(); iCohort++)
+				{
+					_cohort* pCohort = pProductDefinition->concFacePolygonsCohorts()[iCohort];
 
-	//			const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-	//			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-	//			{
-	//				auto pProductInstance = vecProductInstances[iInstance];
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glDrawElementsBaseVertex(GL_LINES,
+						(GLsizei)pCohort->indices().size(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						pProductDefinition->VBOOffset());
+				}
+			} // for (size_t iInstance = ...			
+		} // for (auto pProductDefinition ...
 
-	//				if (!pProductInstance->getEnable())
-	//				{
-	//					continue;
-	//				}
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
 
-	//				if (pProductDefinition->conceptualFacesCohorts().empty())
-	//				{
-	//					continue;
-	//				}
+	// Restore Model-View Matrix
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
 
-	//				if (bBindVBO)
-	//				{
-	//					glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-	//					glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-	//					glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+	_oglUtils::checkForErrors();
 
-	//					bBindVBO = false;
-	//				}
-
-	//				/*
-	//				* Transformation Matrix
-	//				*/
-	//				glm::mat4 transformationMatrix = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
-
-	//				/*
-	//				* Model-View Matrix
-	//				*/
-	//				glm::mat4 modelViewMatrix = m_modelViewMatrix;
-	//				modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	//				modelViewMatrix = modelViewMatrix * transformationMatrix;
-	//				modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-	//				glProgramUniformMatrix4fv(
-	//					m_pProgram->GetID(), 
-	//					m_pProgram->getMVMatrix(), 
-	//					1, 
-	//					false, 
-	//					glm::value_ptr(modelViewMatrix));
-
-	//				/*
-	//				* Wireframes
-	//				*/
-	//				GLuint iCurrentIBO = 0;
-	//				for (size_t iWireframesCohort = 0; iWireframesCohort < pProductDefinition->conceptualFacesCohorts().size(); iWireframesCohort++)
-	//				{
-	//					CWireframesCohort* pWireframesCohort = pProductDefinition->conceptualFacesCohorts()[iWireframesCohort];
-
-	//					if (iCurrentIBO != pWireframesCohort->IBO())
-	//					{
-	//						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-	//						iCurrentIBO = pWireframesCohort->IBO();
-	//					}						
-
-	//					glDrawElementsBaseVertex(GL_LINES,
-	//						(GLsizei)pWireframesCohort->getIndicesCount(),
-	//						GL_UNSIGNED_INT,
-	//						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-	//						pProductDefinition->VBOOffset());
-
-	//					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//				} // for (size_t iWireframesCohort = ...
-	//			} // for (size_t iInstance = ...
-	//		} // for (size_t iObject = ...
-
-	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	} // for (; itGroups != ...
-	//} // for (size_t iDrawMetaData = ...
-
-	//_oglUtils::checkForErrors();
-
-	//std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	//TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------

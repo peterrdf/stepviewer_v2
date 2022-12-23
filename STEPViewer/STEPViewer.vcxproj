@@ -195,22 +195,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="res\fragment_shader.txt" />
     <Text Include="res\fragment_shader2.txt" />
-    <Text Include="res\fragment_shader3.txt" />
-    <Text Include="res\vertex_shader.txt" />
     <Text Include="res\vertex_shader2.txt" />
-    <Text Include="res\vertex_shader3.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assembly.h" />
-    <ClInclude Include="BinnPhongGLProgram.h" />
-    <ClInclude Include="BinnPhongOGLPipeline.h" />
     <ClInclude Include="Cohorts.h" />
     <ClInclude Include="ConceptualFace.h" />
     <ClInclude Include="FileView.h" />
-    <ClInclude Include="GLProgram.h" />
-    <ClInclude Include="GLShader.h" />
     <ClInclude Include="IFCDecompContTreeView.h" />
     <ClInclude Include="IFC\BoolIFCProperty.h" />
     <ClInclude Include="IFC\COLORS.h" />
@@ -228,7 +220,6 @@
     <ClInclude Include="IFC\OpenGLIFCView.h" />
     <ClInclude Include="IFC\Point3D.h" />
     <ClInclude Include="IFC\StringIFCProperty.h" />
-    <ClInclude Include="OGLPipeline.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
@@ -262,12 +253,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />
-    <ClCompile Include="BinnPhongGLProgram.cpp" />
-    <ClCompile Include="BinnPhongOGLPipeline.cpp" />
     <ClCompile Include="ConceptualFace.cpp" />
     <ClCompile Include="FileView.cpp" />
-    <ClCompile Include="GLProgram.cpp" />
-    <ClCompile Include="GLShader.cpp" />
     <ClCompile Include="IFCDecompContTreeView.cpp" />
     <ClCompile Include="IFC\BoolIFCProperty.cpp" />
     <ClCompile Include="IFC\COLORS.cpp" />
@@ -285,13 +272,11 @@
     <ClCompile Include="IFC\OpenGLIFCView.cpp" />
     <ClCompile Include="IFC\Point3D.cpp" />
     <ClCompile Include="IFC\StringIFCProperty.cpp" />
-    <ClCompile Include="OGLPipeline.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />
     <ClCompile Include="SearchClassesDialog.cpp" />
     <ClCompile Include="SearchInstancesDialog.cpp" />
-    <ClCompile Include="SimpleOGLPipeline.cpp" />
     <ClCompile Include="STEPInstance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
     <ClCompile Include="STEPModelBase.cpp" />

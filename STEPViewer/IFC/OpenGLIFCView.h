@@ -4,8 +4,6 @@
 #include "STEPView.h"
 #include "IFCObject.h"
 #include "OpenGLView.h"
-#include "BinnPhongGLProgram.h"
-#include "GLShader.h"
 
 #include "vec3.hpp"
 #include "vec4.hpp"
@@ -107,10 +105,6 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Window
 	CWnd * m_pWnd;
-
-	CBinnPhongGLProgram* m_pProgram;   // Program
-	CGLShader* m_pVertSh;		       // Vertex shader
-	CGLShader* m_pFragSh;              // Fragment shader  
 
 	glm::mat4 m_modelViewMatrix;
 

@@ -137,7 +137,7 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	//m_pOGLContext->MakeCurrent();
 
-	m_pProgram->DetachShader(m_pVertSh);
+	/*m_pProgram->DetachShader(m_pVertSh);
 	m_pProgram->DetachShader(m_pFragSh);
 
 	delete m_pProgram;
@@ -146,7 +146,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	delete m_pVertSh;
 	m_pVertSh = NULL;
 	delete m_pFragSh;
-	m_pFragSh = NULL;
+	m_pFragSh = NULL;*/
 
 	/*if (m_pOGLContext != NULL)
 	{
@@ -2274,116 +2274,116 @@ void COpenGLIFCView::ResetView()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawScene(float arrowSizeI, float arrowSizeII)
 {
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->geUseBinnPhongModel(),
-		0.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->geUseBinnPhongModel(),
+	//	0.f);
 
-	glProgramUniformMatrix4fv(
-		m_pProgram->GetID(),
-		m_pProgram->getMVMatrix(),
-		1,
-		false,
-		glm::value_ptr(m_modelViewMatrix));
+	//glProgramUniformMatrix4fv(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getMVMatrix(),
+	//	1,
+	//	false,
+	//	glm::value_ptr(m_modelViewMatrix));
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->getTransparency(),
-		1.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getTransparency(),
+	//	1.f);
 
-	// X axis
-	glProgramUniform3f(
-		m_pProgram->GetID(),
-		m_pProgram->getMaterialAmbientColor(),
-		1.f,
-		0.f,
-		0.f);
+	//// X axis
+	//glProgramUniform3f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getMaterialAmbientColor(),
+	//	1.f,
+	//	0.f,
+	//	0.f);
 
-	if (!m_bDetailsViewMode)
-	{
-		// X axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			1.f,
-			0.f,
-			0.f);
+	//if (!m_bDetailsViewMode)
+	//{
+	//	// X axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		1.f,
+	//		0.f,
+	//		0.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX + arrowSizeI, m_dOriginY, m_dOriginZ);
-		glEnd();
+	//	glBegin(GL_LINES);
+	//	glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
+	//	glVertex3d(m_dOriginX + arrowSizeI, m_dOriginY, m_dOriginZ);
+	//	glEnd();
 
-		// Y axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			0.f,
-			1.f,
-			0.f);
+	//	// Y axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		0.f,
+	//		1.f,
+	//		0.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX, m_dOriginY + arrowSizeI, m_dOriginZ);
-		glEnd();
+	//	glBegin(GL_LINES);
+	//	glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
+	//	glVertex3d(m_dOriginX, m_dOriginY + arrowSizeI, m_dOriginZ);
+	//	glEnd();
 
-		// Z axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			0.f,
-			0.f,
-			1.f);
+	//	// Z axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		0.f,
+	//		0.f,
+	//		1.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
-		glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ + arrowSizeI);
-		glEnd();
+	//	glBegin(GL_LINES);
+	//	glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ);
+	//	glVertex3d(m_dOriginX, m_dOriginY, m_dOriginZ + arrowSizeI);
+	//	glEnd();
 
-		glLineWidth(2.0);
+	//	glLineWidth(2.0);
 
-		// X axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			1.f,
-			0.f,
-			0.f);
+	//	// X axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		1.f,
+	//		0.f,
+	//		0.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0. + arrowSizeII, 0., 0.);
-		glEnd();
-		DrawTextGDI(L"X", arrowSizeII + (arrowSizeII * 0.05f), 0.f, 0.f);
+	//	glBegin(GL_LINES);
+	//	glVertex3d(0., 0., 0.);
+	//	glVertex3d(0. + arrowSizeII, 0., 0.);
+	//	glEnd();
+	//	DrawTextGDI(L"X", arrowSizeII + (arrowSizeII * 0.05f), 0.f, 0.f);
 
-		// Y axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			0.f,
-			1.f,
-			0.f);
+	//	// Y axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		0.f,
+	//		1.f,
+	//		0.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0., 0. + arrowSizeII, 0.);
-		glEnd();
-		DrawTextGDI(L"Y", 0.f, arrowSizeII + (arrowSizeII * 0.05f), 0.f);
+	//	glBegin(GL_LINES);
+	//	glVertex3d(0., 0., 0.);
+	//	glVertex3d(0., 0. + arrowSizeII, 0.);
+	//	glEnd();
+	//	DrawTextGDI(L"Y", 0.f, arrowSizeII + (arrowSizeII * 0.05f), 0.f);
 
-		// Z axis
-		glProgramUniform3f(
-			m_pProgram->GetID(),
-			m_pProgram->getMaterialAmbientColor(),
-			0.f,
-			0.f,
-			1.f);
+	//	// Z axis
+	//	glProgramUniform3f(
+	//		m_pProgram->GetID(),
+	//		m_pProgram->getMaterialAmbientColor(),
+	//		0.f,
+	//		0.f,
+	//		1.f);
 
-		glBegin(GL_LINES);
-		glVertex3d(0., 0., 0.);
-		glVertex3d(0., 0., 0. + arrowSizeII);
-		glEnd();
-		DrawTextGDI(L"Z", 0.f, 0.f, arrowSizeII + (arrowSizeII * 0.05f));
-	} // if (!m_bDetailsViewMode)
+	//	glBegin(GL_LINES);
+	//	glVertex3d(0., 0., 0.);
+	//	glVertex3d(0., 0., 0. + arrowSizeII);
+	//	glEnd();
+	//	DrawTextGDI(L"Z", 0.f, 0.f, arrowSizeII + (arrowSizeII * 0.05f));
+	//} // if (!m_bDetailsViewMode)
 
 	_oglUtils::checkForErrors();
 }
@@ -2421,135 +2421,135 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->geUseBinnPhongModel(),
-		1.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->geUseBinnPhongModel(),
+	//	1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
+	//{
+	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
 
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
+	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
+	//	for (; itGroups != mapGroups.end(); itGroups++)
+	//	{
+	//		GLsizei iOffset = 0;
+	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+	//		{
+	//			CIFCObject* pIFCObject = itGroups->second[iObject];
+	//			if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
+	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
+	//			{
+	//				iOffset += (GLsizei)pIFCObject->verticesCount();
 
-					continue;
-				}
+	//				continue;
+	//			}
 
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pIFCObject->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-				{
-					CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iGeometryWithMaterial];
+	//			/*
+	//			* Conceptual faces
+	//			*/
+	//			for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pIFCObject->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
+	//			{
+	//				CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iGeometryWithMaterial];
 
-					const CIFCMaterial* pMaterial =
-						/*Picked?*/ (pModel == m_pPickedIFCObjectModel) && (pIFCObject == m_pPickedIFCObject) ? pModel->getOnMouseOverMaterial()
-						/*Selected?*/ : pIFCObject->selected() && !m_bDetailsViewMode ? pModel->getSelectionMaterial() :
-						/*User-defined?*/pIFCObject->getUserDefinedMaterial() != NULL ? pIFCObject->getUserDefinedMaterial() :
-						/*Use conceptual face material*/pGeometryWithMaterial->getMaterial();
+	//				const CIFCMaterial* pMaterial =
+	//					/*Picked?*/ (pModel == m_pPickedIFCObjectModel) && (pIFCObject == m_pPickedIFCObject) ? pModel->getOnMouseOverMaterial()
+	//					/*Selected?*/ : pIFCObject->selected() && !m_bDetailsViewMode ? pModel->getSelectionMaterial() :
+	//					/*User-defined?*/pIFCObject->getUserDefinedMaterial() != NULL ? pIFCObject->getUserDefinedMaterial() :
+	//					/*Use conceptual face material*/pGeometryWithMaterial->getMaterial();
 
-					if (bTransparent)
-					{
-						if (pMaterial->A() == 1.0)
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (pMaterial->A() < 1.0)
-						{
-							continue;
-						}
-					}
+	//				if (bTransparent)
+	//				{
+	//					if (pMaterial->A() == 1.0)
+	//					{
+	//						continue;
+	//					}
+	//				}
+	//				else
+	//				{
+	//					if (pMaterial->A() < 1.0)
+	//					{
+	//						continue;
+	//					}
+	//				}
 
-					/*
-					* VBO
-					*/
-					glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-					glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-					glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-					glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-					glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+	//				/*
+	//				* VBO
+	//				*/
+	//				glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+	//				glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+	//				glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+	//				glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+	//				glEnableVertexAttribArray(m_pProgram->getVertexNormal());
 
-					/*
-					* Material - Ambient color
-					*/
-					glProgramUniform3f(m_pProgram->GetID(),
-						m_pProgram->getMaterialAmbientColor(),
-						pMaterial->getAmbientColor().R(),
-						pMaterial->getAmbientColor().G(),
-						pMaterial->getAmbientColor().B());
+	//				/*
+	//				* Material - Ambient color
+	//				*/
+	//				glProgramUniform3f(m_pProgram->GetID(),
+	//					m_pProgram->getMaterialAmbientColor(),
+	//					pMaterial->getAmbientColor().R(),
+	//					pMaterial->getAmbientColor().G(),
+	//					pMaterial->getAmbientColor().B());
 
-					/*
-					* Material - Transparency
-					*/
-					glProgramUniform1f(
-						m_pProgram->GetID(),
-						m_pProgram->getTransparency(),
-						pMaterial->A());
+	//				/*
+	//				* Material - Transparency
+	//				*/
+	//				glProgramUniform1f(
+	//					m_pProgram->GetID(),
+	//					m_pProgram->getTransparency(),
+	//					pMaterial->A());
 
-					/*
-					* Material - Diffuse color
-					*/
-					glProgramUniform3f(m_pProgram->GetID(),
-						m_pProgram->getMaterialDiffuseColor(),
-						pMaterial->getDiffuseColor().R() / 2.f,
-						pMaterial->getDiffuseColor().G() / 2.f,
-						pMaterial->getDiffuseColor().B() / 2.f);
+	//				/*
+	//				* Material - Diffuse color
+	//				*/
+	//				glProgramUniform3f(m_pProgram->GetID(),
+	//					m_pProgram->getMaterialDiffuseColor(),
+	//					pMaterial->getDiffuseColor().R() / 2.f,
+	//					pMaterial->getDiffuseColor().G() / 2.f,
+	//					pMaterial->getDiffuseColor().B() / 2.f);
 
-					/*
-					* Material - Specular color
-					*/
-					glProgramUniform3f(m_pProgram->GetID(),
-						m_pProgram->getMaterialSpecularColor(),
-						pMaterial->getSpecularColor().R() / 2.f,
-						pMaterial->getSpecularColor().G() / 2.f,
-						pMaterial->getSpecularColor().B() / 2.f);
+	//				/*
+	//				* Material - Specular color
+	//				*/
+	//				glProgramUniform3f(m_pProgram->GetID(),
+	//					m_pProgram->getMaterialSpecularColor(),
+	//					pMaterial->getSpecularColor().R() / 2.f,
+	//					pMaterial->getSpecularColor().G() / 2.f,
+	//					pMaterial->getSpecularColor().B() / 2.f);
 
-					/*
-					* Material - Emissive color
-					*/
-					glProgramUniform3f(m_pProgram->GetID(),
-						m_pProgram->getMaterialEmissiveColor(),
-						pMaterial->getEmissiveColor().R() / 3.f,
-						pMaterial->getEmissiveColor().G() / 3.f,
-						pMaterial->getEmissiveColor().B() / 3.f);
+	//				/*
+	//				* Material - Emissive color
+	//				*/
+	//				glProgramUniform3f(m_pProgram->GetID(),
+	//					m_pProgram->getMaterialEmissiveColor(),
+	//					pMaterial->getEmissiveColor().R() / 3.f,
+	//					pMaterial->getEmissiveColor().G() / 3.f,
+	//					pMaterial->getEmissiveColor().B() / 3.f);
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-					
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iMaterial = ...
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
+	//				
+	//				glDrawElementsBaseVertex(GL_TRIANGLES,
+	//					(GLsizei)pGeometryWithMaterial->getIndicesCount(),
+	//					GL_UNSIGNED_INT,
+	//					(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
+	//					iOffset);
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//			} // for (size_t iMaterial = ...
 
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
+	//			iOffset += (GLsizei)pIFCObject->verticesCount();
+	//		} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	} // for (; itGroups != ...
+	//} // for (size_t iDrawMetaData = ...
 
-	glDisableVertexAttribArray(m_pProgram->getVertexNormal());
+	//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 
-	if (bTransparent)
-	{
-		glDisable(GL_BLEND);
-	}
+	//if (bTransparent)
+	//{
+	//	glDisable(GL_BLEND);
+	//}
 
 	_oglUtils::checkForErrors();
 }
@@ -2958,73 +2958,73 @@ void COpenGLIFCView::DrawLines()
 		return;
 	}
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->geUseBinnPhongModel(),
-		0.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->geUseBinnPhongModel(),
+	//	0.f);
 
-	glProgramUniform3f(
-		m_pProgram->GetID(),
-		m_pProgram->getMaterialAmbientColor(),
-		0.f,
-		0.f,
-		0.f);
+	//glProgramUniform3f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getMaterialAmbientColor(),
+	//	0.f,
+	//	0.f,
+	//	0.f);
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->getTransparency(),
-		1.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getTransparency(),
+	//	1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
+	//{
+	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
 
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreLinesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
+	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
+	//	for (; itGroups != mapGroups.end(); itGroups++)
+	//	{
+	//		GLsizei iOffset = 0;
+	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+	//		{
+	//			CIFCObject* pIFCObject = itGroups->second[iObject];
+	//			if (!pIFCObject->visible__() || !pIFCObject->AreLinesShown() ||
+	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
+	//			{
+	//				iOffset += (GLsizei)pIFCObject->verticesCount();
 
-					continue;
-				}
+	//				continue;
+	//			}
 
-				/*
-				* VBO
-				*/
-				glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-				glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-				glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+	//			/*
+	//			* VBO
+	//			*/
+	//			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+	//			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+	//			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 
-				/*
-				* Lines
-				*/
-				for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
-				{
-					CLinesCohort* pLinesCohort = pIFCObject->linesCohorts()[iLinesCohort];
+	//			/*
+	//			* Lines
+	//			*/
+	//			for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
+	//			{
+	//				CLinesCohort* pLinesCohort = pIFCObject->linesCohorts()[iLinesCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
 
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pLinesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iLinesCohort = ...
+	//				glDrawElementsBaseVertex(GL_LINES,
+	//					(GLsizei)pLinesCohort->getIndicesCount(),
+	//					GL_UNSIGNED_INT,
+	//					(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
+	//					iOffset);
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//			} // for (size_t iLinesCohort = ...
 
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
+	//			iOffset += (GLsizei)pIFCObject->verticesCount();
+	//		} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	} // for (; itGroups != ...
+	//} // for (size_t iDrawMetaData = ...
 
 	_oglUtils::checkForErrors();
 }
@@ -3055,141 +3055,141 @@ void COpenGLIFCView::DrawWireframes()
 		return;
 	}
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->geUseBinnPhongModel(),
-		0.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->geUseBinnPhongModel(),
+	//	0.f);
 
-	glProgramUniform3f(
-		m_pProgram->GetID(),
-		m_pProgram->getMaterialAmbientColor(),
-		0.f,
-		0.f,
-		0.f);
+	//glProgramUniform3f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getMaterialAmbientColor(),
+	//	0.f,
+	//	0.f,
+	//	0.f);
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->getTransparency(),
-		1.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getTransparency(),
+	//	1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
+	//{
+	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
 
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
+	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
+	//	for (; itGroups != mapGroups.end(); itGroups++)
+	//	{
+	//		GLsizei iOffset = 0;
+	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+	//		{
+	//			CIFCObject* pIFCObject = itGroups->second[iObject];
+	//			if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
+	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
+	//			{
+	//				iOffset += (GLsizei)pIFCObject->verticesCount();
 
-					continue;
-				}
+	//				continue;
+	//			}
 
-				/*
-				* VBO
-				*/
-				glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-				glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-				glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+	//			/*
+	//			* VBO
+	//			*/
+	//			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+	//			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+	//			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 
-				/*
-				* Wireframes
-				*/
-				for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-				{
-					CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
+	//			/*
+	//			* Wireframes
+	//			*/
+	//			for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
+	//			{
+	//				CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
 
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pWireframesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iWireframesCohort = ...
+	//				glDrawElementsBaseVertex(GL_LINES,
+	//					(GLsizei)pWireframesCohort->getIndicesCount(),
+	//					GL_UNSIGNED_INT,
+	//					(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
+	//					iOffset);
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//			} // for (size_t iWireframesCohort = ...
 
-				/*
-				* Picked edge
-				*/
-				//if ((m_enViewMode == vmMeasureEdge) && (pIFCObject == m_pPickedIFCObject) && !m_setPickedIFCObjectEdges.empty())
-				//{
-				//	glDisable(GL_DEPTH_TEST);
+	//			/*
+	//			* Picked edge
+	//			*/
+	//			//if ((m_enViewMode == vmMeasureEdge) && (pIFCObject == m_pPickedIFCObject) && !m_setPickedIFCObjectEdges.empty())
+	//			//{
+	//			//	glDisable(GL_DEPTH_TEST);
 
-				//	for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-				//	{
-				//		CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
+	//			//	for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
+	//			//	{
+	//			//		CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
 
-				//		for (int_t iLine = 0; iLine < pWireframesCohort->getIndicesCount() / 2; iLine++)
-				//		{
-				//			set<int_t>::iterator itEdge = m_setPickedIFCObjectEdges.find(iLineID++);
-				//			if (itEdge != m_setPickedIFCObjectEdges.end())
-				//			{
-				//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
+	//			//		for (int_t iLine = 0; iLine < pWireframesCohort->getIndicesCount() / 2; iLine++)
+	//			//		{
+	//			//			set<int_t>::iterator itEdge = m_setPickedIFCObjectEdges.find(iLineID++);
+	//			//			if (itEdge != m_setPickedIFCObjectEdges.end())
+	//			//			{
+	//			//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
 
-				//				glLineWidth(3.0);
-				//				glColor4f(1.f, 0.f, 0.f, 1.0);
+	//			//				glLineWidth(3.0);
+	//			//				glColor4f(1.f, 0.f, 0.f, 1.0);
 
-				//				/*
-				//				* Draw
-				//				*/
-				//				glDrawElementsBaseVertex(GL_LINES,
-				//					(GLsizei)2,
-				//					GL_UNSIGNED_INT,
-				//					(void*)(sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2))),
-				//					iOffset);
+	//			//				/*
+	//			//				* Draw
+	//			//				*/
+	//			//				glDrawElementsBaseVertex(GL_LINES,
+	//			//					(GLsizei)2,
+	//			//					GL_UNSIGNED_INT,
+	//			//					(void*)(sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2))),
+	//			//					iOffset);
 
-				//				/*
-				//				* Read the indices
-				//				*/
-				//				/*GLuint indices[2];
-				//				glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-				//					sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2)),
-				//					2 * sizeof(GLuint),
-				//					indices);*/
+	//			//				/*
+	//			//				* Read the indices
+	//			//				*/
+	//			//				/*GLuint indices[2];
+	//			//				glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
+	//			//					sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2)),
+	//			//					2 * sizeof(GLuint),
+	//			//					indices);*/
 
-				//					/*
-				//					* Read the vertices
-				//					*/
-				//					/*GLfloat vertex1[GEOMETRY_VBO_VERTEX_LENGTH];
-				//					glGetBufferSubData(GL_ARRAY_BUFFER,
-				//						sizeof(GLfloat) * ((iOffset + indices[0]) * GEOMETRY_VBO_VERTEX_LENGTH),
-				//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex1);
+	//			//					/*
+	//			//					* Read the vertices
+	//			//					*/
+	//			//					/*GLfloat vertex1[GEOMETRY_VBO_VERTEX_LENGTH];
+	//			//					glGetBufferSubData(GL_ARRAY_BUFFER,
+	//			//						sizeof(GLfloat) * ((iOffset + indices[0]) * GEOMETRY_VBO_VERTEX_LENGTH),
+	//			//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex1);
 
-				//					GLfloat vertex2[GEOMETRY_VBO_VERTEX_LENGTH];
-				//					glGetBufferSubData(GL_ARRAY_BUFFER,
-				//						sizeof(GLfloat) * ((iOffset + indices[1]) * GEOMETRY_VBO_VERTEX_LENGTH),
-				//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex2);*/
+	//			//					GLfloat vertex2[GEOMETRY_VBO_VERTEX_LENGTH];
+	//			//					glGetBufferSubData(GL_ARRAY_BUFFER,
+	//			//						sizeof(GLfloat) * ((iOffset + indices[1]) * GEOMETRY_VBO_VERTEX_LENGTH),
+	//			//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex2);*/
 
-				//						//double dLength = sqrt(pow(vertex1[0] - vertex2[0], 2.) + pow(vertex1[1] - vertex2[1], 2.) + pow(vertex1[2] - vertex2[2], 2.));
-				//						//dLength = (m_dScaleFactor * dLength) / 2.;
+	//			//						//double dLength = sqrt(pow(vertex1[0] - vertex2[0], 2.) + pow(vertex1[1] - vertex2[1], 2.) + pow(vertex1[2] - vertex2[2], 2.));
+	//			//						//dLength = (m_dScaleFactor * dLength) / 2.;
 
-				//						//dSum += dLength;
+	//			//						//dSum += dLength;
 
-				//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//			//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-				//				glLineWidth(1.0);
-				//				glColor4f(0.f, 0.f, 0.f, 1.0);
-				//			} // if (itEdge != ...
-				//		} // for (int_t iLine = ...
-				//	} // for (size_t iWireframesCohort = ...
+	//			//				glLineWidth(1.0);
+	//			//				glColor4f(0.f, 0.f, 0.f, 1.0);
+	//			//			} // if (itEdge != ...
+	//			//		} // for (int_t iLine = ...
+	//			//	} // for (size_t iWireframesCohort = ...
 
-				//	glEnable(GL_DEPTH_TEST);
-				//} // if ((m_enViewMode == vmMeasureEdge) && ...
+	//			//	glEnable(GL_DEPTH_TEST);
+	//			//} // if ((m_enViewMode == vmMeasureEdge) && ...
 
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
+	//			iOffset += (GLsizei)pIFCObject->verticesCount();
+	//		} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	} // for (; itGroups != ...
+	//} // for (size_t iDrawMetaData = ...
 
 	_oglUtils::checkForErrors();
 }
@@ -3294,81 +3294,81 @@ void COpenGLIFCView::DrawFacesFrameBuffer()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);	
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LEQUAL);	
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->geUseBinnPhongModel(),
-		0.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->geUseBinnPhongModel(),
+	//	0.f);
 
-	glProgramUniform1f(
-		m_pProgram->GetID(),
-		m_pProgram->getTransparency(),
-		1.f);
+	//glProgramUniform1f(
+	//	m_pProgram->GetID(),
+	//	m_pProgram->getTransparency(),
+	//	1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	{
-		const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
+	//{
+	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
 
-		map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			GLsizei iOffset = 0;
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CIFCObject* pIFCObject = itGroups->second[iObject];
-				if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-					(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-				{
-					iOffset += (GLsizei)pIFCObject->verticesCount();
+	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
+	//	for (; itGroups != mapGroups.end(); itGroups++)
+	//	{
+	//		GLsizei iOffset = 0;
+	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+	//		{
+	//			CIFCObject* pIFCObject = itGroups->second[iObject];
+	//			if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
+	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
+	//			{
+	//				iOffset += (GLsizei)pIFCObject->verticesCount();
 
-					continue;
-				}
+	//				continue;
+	//			}
 
-				glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-				glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-				glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+	//			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+	//			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+	//			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iMaterial = 0; iMaterial < pIFCObject->conceptualFacesMaterials().size(); iMaterial++)
-				{
-					CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iMaterial];
+	//			/*
+	//			* Conceptual faces
+	//			*/
+	//			for (size_t iMaterial = 0; iMaterial < pIFCObject->conceptualFacesMaterials().size(); iMaterial++)
+	//			{
+	//				CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iMaterial];
 
-					/*
-					* Ambient color
-					*/
-					/*
-					* Material - Ambient color
-					*/
-					glProgramUniform3f(
-						m_pProgram->GetID(),
-						m_pProgram->getMaterialAmbientColor(),
-						pIFCObject->rgbID()->R(),
-						pIFCObject->rgbID()->G(),
-						pIFCObject->rgbID()->B());
+	//				/*
+	//				* Ambient color
+	//				*/
+	//				/*
+	//				* Material - Ambient color
+	//				*/
+	//				glProgramUniform3f(
+	//					m_pProgram->GetID(),
+	//					m_pProgram->getMaterialAmbientColor(),
+	//					pIFCObject->rgbID()->R(),
+	//					pIFCObject->rgbID()->G(),
+	//					pIFCObject->rgbID()->B());
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
 
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						iOffset);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iMaterial = ...
+	//				glDrawElementsBaseVertex(GL_TRIANGLES,
+	//					(GLsizei)pGeometryWithMaterial->getIndicesCount(),
+	//					GL_UNSIGNED_INT,
+	//					(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
+	//					iOffset);
+	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//			} // for (size_t iMaterial = ...
 
-				iOffset += (GLsizei)pIFCObject->verticesCount();
-			} // for (size_t iObject = ...
+	//			iOffset += (GLsizei)pIFCObject->verticesCount();
+	//		} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	} // for (; itGroups != ...
+	//} // for (size_t iDrawMetaData = ...
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	_oglUtils::checkForErrors();
 }
