@@ -5,9 +5,7 @@
 // ------------------------------------------------------------------------------------------------
 CProductDefinition::CProductDefinition()
 	: m_iExpressID(0)
-	, m_iInstance(0)
-	, m_vecProductInstances()
-	, m_iNextProductInstance(-1)
+	, m_iInstance(0)	
 	, m_strId(L"")
 	, m_strName(L"")
 	, m_strDescription(L"")
@@ -15,6 +13,8 @@ CProductDefinition::CProductDefinition()
 	, m_strProductName(L"")
 	, m_iRelatingProductRefs(0)
 	, m_iRelatedProductRefs(0)
+	, m_vecProductInstances()
+	, m_iNextProductInstance(-1)
 	, m_bCalculated(false)
 	, m_pVertexBuffer(NULL)
 	, m_iVerticesCount(0)
@@ -22,13 +22,13 @@ CProductDefinition::CProductDefinition()
 	, m_iIndicesCount(0)
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
+	, m_vecConcFacePolygons()
 	, m_vecLines()
-	, m_vecPoints()
-	, m_vecConceptualFacesPolygons()
-	, m_vecMaterials()
+	, m_vecPoints()	
+	, m_vecConcFacesCohorts()
+	, m_vecConcFacePolygonsCohorts()
 	, m_vecLinesCohorts()
-	, m_vecPointsCohorts()
-	, m_vecConceptualFacesCohorts()
+	, m_vecPointsCohorts()	
 	, m_bEnable(true)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
@@ -89,24 +89,39 @@ void CProductDefinition::Calculate()
 	int64_t iVertexElementSizeInBytes = SetFormat(iModel, setting, mask);
 	ASSERT(iVertexElementSizeInBytes == VERTEX_LENGTH * sizeof(float));
 
-	CalculateInstance(m_iInstance, &m_iVerticesCount, &m_iIndicesCount, nullptr);
+	ASSERT(m_pVertexBuffer == nullptr);
+	m_pVertexBuffer = new _vertices_f();
 
-	if ((m_iVerticesCount == 0) || (m_iIndicesCount == 0))
+	ASSERT(m_pIndexBuffer == nullptr);
+	m_pIndexBuffer = new _indices_i32();
+
+	CalculateInstance(m_iInstance, &m_pVertexBuffer->size(), &m_pIndexBuffer->size(), NULL);
+	if ((m_pVertexBuffer->size() == 0) || (m_pIndexBuffer->size() == 0))
 	{
 		return;
 	}
 
-	m_pVertexBuffer = new float[m_iVerticesCount * ((int_t)iVertexElementSizeInBytes / sizeof(float))];
-	m_pIndexBuffer = new int32_t[m_iIndicesCount];
+	/**
+	* Retrieves the vertices
+	*/
+	m_pVertexBuffer->vertexLength() = SetFormat(iModel, 0, 0) / sizeof(float);
 
-	//	http://rdf.bg/gkdoc/CP64/UpdateInstanceVertexBuffer.html
-	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer);
+	m_pVertexBuffer->data() = new float[m_pVertexBuffer->size() * m_pVertexBuffer->vertexLength()];
+	memset(m_pVertexBuffer->data(), 0, m_pVertexBuffer->size() * m_pVertexBuffer->vertexLength() * sizeof(float));
 
-	//	http://rdf.bg/gkdoc/CP64/UpdateInstanceIndexBuffer.html
-	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer);
+	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
+
+	/**
+	* Retrieves the indices
+	*/
+	m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
+	memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
+
+	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 
 	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConceptualFaces;
+	MATERIALS mapMaterial2ConcFaces;
+	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 
 	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
@@ -116,236 +131,263 @@ void CProductDefinition::Calculate()
 		int64_t iStartIndexTriangles = 0;
 		int64_t iIndicesCountTriangles = 0;
 		int64_t iStartIndexLines = 0;
-		int64_t iLinesIndicesCount = 0;
+		int64_t iIndicesCountLines = 0;
 		int64_t iStartIndexPoints = 0;
-		int64_t iPointsIndicesCount = 0;
+		int64_t iIndicesCountPoints = 0;
 		int64_t iStartIndexConceptualFacePolygons = 0;
-		int64_t iConceptualFacePolygonsIndicesCount = 0;
+		int64_t iIndicesCountConceptualFacePolygons = 0;
 		GetConceptualFaceEx(m_iInstance, iConceptualFace,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
-			&iStartIndexLines, &iLinesIndicesCount,
-			&iStartIndexPoints, &iPointsIndicesCount,
+			&iStartIndexLines, &iIndicesCountLines,
+			&iStartIndexPoints, &iIndicesCountPoints,
 			0, 0,
-			&iStartIndexConceptualFacePolygons, &iConceptualFacePolygonsIndicesCount);
+			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
 
 		if (iIndicesCountTriangles > 0)
 		{
 			/*
 			* Material
 			*/
-			int32_t iIndexValue = *(m_pIndexBuffer + iStartIndexTriangles);
+			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(m_pVertexBuffer + iIndexValue + 6);
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(m_pVertexBuffer + iIndexValue + 7);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 7);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertexBuffer + iIndexValue + 8);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertexBuffer + iIndexValue + 9);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
 			* Material
 			*/
-			CSTEPGeometryWithMaterial* pGeometryWithMaterial = new CSTEPGeometryWithMaterial(
-				iAmbientColor, iDiffuseColor, iEmissiveColor, iSpecularColor, fTransparency,
-				NULL);
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				nullptr);
 
-			MATERIALS::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.find(*pGeometryWithMaterial);
-			if (itMaterial2ConceptualFaces == mapMaterial2ConceptualFaces.end())
+			auto itMaterial2ConceptualFaces = mapMaterial2ConcFaces.find(material);
+			if (itMaterial2ConceptualFaces == mapMaterial2ConcFaces.end())
 			{
-				vector<CConceptualFace> vecConceptualFaces;
-
-				CConceptualFace conceptualFace;
-				conceptualFace.index() = iConceptualFace;
-				conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-				conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-				vecConceptualFaces.push_back(conceptualFace);
-
-				mapMaterial2ConceptualFaces[*pGeometryWithMaterial] = vecConceptualFaces;
+				mapMaterial2ConcFaces[material] = vector<_face>{ _face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles) };
 			}
 			else
 			{
-				CConceptualFace conceptualFace;
-				conceptualFace.index() = iConceptualFace;
-				conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-				conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-				itMaterial2ConceptualFaces->second.push_back(conceptualFace);
+				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles));
 			}
-
-			delete pGeometryWithMaterial;
 		}
 
 		if (iIndicesCountTriangles > 0)
 		{
-			m_vecTriangles.push_back(pair<int64_t, int64_t>(iStartIndexTriangles, iIndicesCountTriangles));
+			m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
 		}
 
-		if (iLinesIndicesCount > 0)
+		if (iIndicesCountConceptualFacePolygons > 0)
 		{
-			m_vecLines.push_back(pair<int64_t, int64_t>(iStartIndexLines, iLinesIndicesCount));
+			m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
 		}
 
-		if (iPointsIndicesCount > 0)
+		if (iIndicesCountLines > 0)
 		{
-			m_vecPoints.push_back(pair<int64_t, int64_t>(iStartIndexPoints, iPointsIndicesCount));
+			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
 		}
 
-		if (iConceptualFacePolygonsIndicesCount > 0)
+		if (iIndicesCountPoints > 0)
 		{
-			m_vecConceptualFacesPolygons.push_back(pair<int64_t, int64_t>(iStartIndexConceptualFacePolygons, iConceptualFacePolygonsIndicesCount));
-		}
+			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
+			iIndexValue *= VERTEX_LENGTH;
+
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
+			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
+			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 7);
+			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
+			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
+			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			/*
+			* Material
+			*/
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				nullptr);
+
+			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
+			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
+			{
+				mapMaterial2ConcFacePoints[material] = vector<_face>{ _face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints) };
+			}
+			else
+			{
+				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints));
+			}
+
+			m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
+		} // if (iIndicesCountPoints > 0)
 	} // for (int64_t iConceptualFace = ...	
 
-		/*
-	* Group the triangles
+	/*
+	* Group the faces
 	*/
-	MATERIALS::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.begin();
-	for (; itMaterial2ConceptualFaces != mapMaterial2ConceptualFaces.end(); itMaterial2ConceptualFaces++)
+	MATERIALS::iterator itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
+	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
-		CSTEPGeometryWithMaterial* pGeometryWithMaterial = NULL;
+		_facesCohort* pCohort = nullptr;
 
-		for (size_t iConceptualFace = 0; iConceptualFace < itMaterial2ConceptualFaces->second.size(); iConceptualFace++)
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
 		{
-			CConceptualFace& conceptualFace = itMaterial2ConceptualFaces->second[iConceptualFace];
+			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
 
-			int_t iStartIndexTriangles = conceptualFace.trianglesStartIndex();
-			int_t iIndicesCountTriangles = conceptualFace.trianglesIndicesCount();
+			int_t iStartIndexTriangles = concFace.startIndex();
+			int_t iIndicesCountTriangles = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesCountTriangles > MAX_INDICES_COUNT)
+			if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 			{
-				while (iIndicesCountTriangles > MAX_INDICES_COUNT)
+				while (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 				{
-					// INDICES
-					CSTEPGeometryWithMaterial* pNewMaterial = new CSTEPGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + MAX_INDICES_COUNT; iIndex++)
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndexTriangles;
+						iIndex < iStartIndexTriangles + _oglUtils::getIndicesCountLimit();
+						iIndex++)
 					{
-						pNewMaterial->addIndex(m_pIndexBuffer[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					m_vecMaterials.push_back(pNewMaterial);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
 					*/
-					conceptualFace.trianglesStartIndex() = 0;
+					concFace.startIndex() = 0;
 
 					// Conceptual faces
-					pNewMaterial->conceptualFaces().push_back(conceptualFace);
+					pNewCohort->faces().push_back(concFace);
 
-					iIndicesCountTriangles -= MAX_INDICES_COUNT;
-					iStartIndexTriangles += MAX_INDICES_COUNT;
+					iIndicesCountTriangles -= _oglUtils::getIndicesCountLimit();
+					iStartIndexTriangles += _oglUtils::getIndicesCountLimit();
 				}
 
 				if (iIndicesCountTriangles > 0)
 				{
-					// INDICES
-					CSTEPGeometryWithMaterial* pNewMaterial = new CSTEPGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndexTriangles;
+						iIndex < iStartIndexTriangles + iIndicesCountTriangles;
+						iIndex++)
 					{
-						pNewMaterial->addIndex(m_pIndexBuffer[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					m_vecMaterials.push_back(pNewMaterial);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
 					*/
-					conceptualFace.trianglesStartIndex() = 0;
+					concFace.startIndex() = 0;
 
 					// Conceptual faces
-					pNewMaterial->conceptualFaces().push_back(conceptualFace);
+					pNewCohort->faces().push_back(concFace);
 				}
 
 				continue;
-			} // if (iIndicesCountTriangles > MAX_INDICES_COUNT)	
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
 
 			/*
 			* Create material
 			*/
-			if (pGeometryWithMaterial == NULL)
+			if (pCohort == nullptr)
 			{
-				pGeometryWithMaterial = new CSTEPGeometryWithMaterial(itMaterial2ConceptualFaces->first);
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				m_vecMaterials.push_back(pGeometryWithMaterial);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
 			* Check the limit
 			*/
-			if (pGeometryWithMaterial->getIndicesCount() + iIndicesCountTriangles > MAX_INDICES_COUNT)
+			if (pCohort->indices().size() + iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 			{
-				pGeometryWithMaterial = new CSTEPGeometryWithMaterial(itMaterial2ConceptualFaces->first);
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				m_vecMaterials.push_back(pGeometryWithMaterial);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
 			* Update Conceptual face start index
 			*/
-			conceptualFace.trianglesStartIndex() = pGeometryWithMaterial->getIndicesCount();
+			concFace.startIndex() = pCohort->indices().size();
 
 			/*
 			* Add the indices
 			*/
 			for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
 			{
-				pGeometryWithMaterial->addIndex(m_pIndexBuffer[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			}
 
 			// Conceptual faces
-			pGeometryWithMaterial->conceptualFaces().push_back(conceptualFace);
-		} // for (size_t iConceptualFace = ...				
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
 
 	/*
 	* Group the polygons
 	*/
-	if (!m_vecConceptualFacesPolygons.empty())
+	if (!m_vecConcFacePolygons.empty())
 	{
 		/*
 		* Use the last cohort (if any)
 		*/
-		CWireframesCohort* pWireframesCohort = m_vecConceptualFacesCohorts.empty() ? NULL : m_vecConceptualFacesCohorts[m_vecConceptualFacesCohorts.size() - 1];
+		_cohort* pCohort = concFacePolygonsCohorts().empty() ? NULL : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pWireframesCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pWireframesCohort = new CWireframesCohort();
-			m_vecConceptualFacesCohorts.push_back(pWireframesCohort);
+			pCohort = new _cohort();
+			concFacePolygonsCohorts().push_back(pCohort);
 		}
 
-		for (size_t iFace = 0; iFace < m_vecConceptualFacesPolygons.size(); iFace++)
+		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndexFacesPolygons = m_vecConceptualFacesPolygons[iFace].first;
-			int_t iIndicesFacesPolygonsCount = m_vecConceptualFacesPolygons[iFace].second;
+			int_t iStartIndexFacesPolygons = m_vecConcFacePolygons[iFace].startIndex();
+			int_t iIndicesFacesPolygonsCount = m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesFacesPolygonsCount > MAX_INDICES_COUNT / 2)
+			if (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 			{
-				while (iIndicesFacesPolygonsCount > MAX_INDICES_COUNT / 2)
+				while (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
-					pWireframesCohort = new CWireframesCohort();
-					m_vecConceptualFacesCohorts.push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + MAX_INDICES_COUNT / 2; iIndex++)
+					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _oglUtils::getIndicesCountLimit() / 2; iIndex++)
 					{
-						if (m_pIndexBuffer[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -354,26 +396,26 @@ void CProductDefinition::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
 					} // for (int_t iIndex = ...
 
-					iIndicesFacesPolygonsCount -= MAX_INDICES_COUNT / 2;
-					iStartIndexFacesPolygons += MAX_INDICES_COUNT / 2;
-				} // while (iIndicesFacesPolygonsCount > MAX_INDICES_COUNT / 2)
+					iIndicesFacesPolygonsCount -= _oglUtils::getIndicesCountLimit() / 2;
+					iStartIndexFacesPolygons += _oglUtils::getIndicesCountLimit() / 2;
+				} // while (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
-					pWireframesCohort = new CWireframesCohort();
-					m_vecConceptualFacesCohorts.push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 					{
-						if (m_pIndexBuffer[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -382,8 +424,8 @@ void CProductDefinition::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -391,21 +433,21 @@ void CProductDefinition::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesFacesPolygonsCount > MAX_INDICES_COUNT / 2)
+			} // if (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->getIndicesCount() + (iIndicesFacesPolygonsCount * 2)) > MAX_INDICES_COUNT)
+			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
-				pWireframesCohort = new CWireframesCohort();
-				m_vecConceptualFacesCohorts.push_back(pWireframesCohort);
+				pCohort = new _cohort();
+				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
 			int_t iPreviousIndex = -1;
 			for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 			{
-				if (m_pIndexBuffer[iIndex] < 0)
+				if (m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					iPreviousIndex = -1;
 
@@ -414,8 +456,8 @@ void CProductDefinition::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pWireframesCohort->addIndex(m_pIndexBuffer[iPreviousIndex]);
-					pWireframesCohort->addIndex(m_pIndexBuffer[iIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -423,12 +465,12 @@ void CProductDefinition::Calculate()
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < m_vecConceptualFacesCohorts.size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < concFacesCohorts().size(); iCohort++)
 		{
-			ASSERT(m_vecConceptualFacesCohorts[iCohort]->getIndicesCount() <= MAX_INDICES_COUNT);
+			ASSERT(concFacesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
-	} // if (!m_vecConceptualFacesPolygons.empty())	
+	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
 	* Group the lines
@@ -438,46 +480,46 @@ void CProductDefinition::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		CLinesCohort* pLinesCohort = m_vecLinesCohorts.empty() ? NULL : m_vecLinesCohorts[m_vecLinesCohorts.size() - 1];
+		auto pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pLinesCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pLinesCohort = new CLinesCohort();
-			m_vecLinesCohorts.push_back(pLinesCohort);
+			pCohort = new _cohort();
+			linesCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
 		{
-			int_t iStartIndexLines = m_vecLines[iFace].first;
-			int_t iIndicesLinesCount = m_vecLines[iFace].second;
+			int_t iStartIndexLines = m_vecLines[iFace].startIndex();
+			int_t iIndicesLinesCount = m_vecLines[iFace].indicesCount();
 
 			/*
 			* Check the limit
 			*/
-			if (pLinesCohort->getIndicesCount() + iIndicesLinesCount > MAX_INDICES_COUNT)
+			if (pCohort->indices().size() + iIndicesLinesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pLinesCohort = new CLinesCohort();
-				m_vecLinesCohorts.push_back(pLinesCohort);
+				pCohort = new _cohort();
+				linesCohorts().push_back(pCohort);
 			}
 
 			for (int_t iIndex = iStartIndexLines; iIndex < iStartIndexLines + iIndicesLinesCount; iIndex++)
 			{
-				if (m_pIndexBuffer[iIndex] < 0)
+				if (m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					continue;
 				}
 
-				pLinesCohort->addIndex(m_pIndexBuffer[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < m_vecLinesCohorts.size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
 		{
-			ASSERT(m_vecLinesCohorts[iCohort]->getIndicesCount() <= MAX_INDICES_COUNT);
+			ASSERT(linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -485,49 +527,108 @@ void CProductDefinition::Calculate()
 	/*
 	* Group the points
 	*/
-	if (!m_vecPoints.empty())
+	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
+	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
 	{
-		/*
-		* Use the last cohort (if any)
-		*/
-		CPointsCohort* pPointsCohort = m_vecPointsCohorts.empty() ? NULL : m_vecPointsCohorts[m_vecPointsCohorts.size() - 1];
+		_facesCohort* pCohort = nullptr;
 
-		/*
-		* Create the cohort
-		*/
-		if (pPointsCohort == NULL)
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFacePoints->second.size(); iConcFace++)
 		{
-			pPointsCohort = new CPointsCohort();
-			m_vecPointsCohorts.push_back(pPointsCohort);
-		}
+			_face& concFace = itMaterial2ConcFacePoints->second[iConcFace];
 
-		for (size_t iFace = 0; iFace < m_vecPoints.size(); iFace++)
-		{
-			int_t iStartIndexPoints = m_vecPoints[iFace].first;
-			int_t iIndicesPointsCount = m_vecPoints[iFace].second;
+			int_t iStartIndexPoints = concFace.startIndex();
+			int_t iIndicesCountPoints = concFace.indicesCount();
+
+			/*
+			* Split the conceptual face - isolated case
+			*/
+			if (iIndicesCountPoints > _oglUtils::getIndicesCountLimit())
+			{
+				while (iIndicesCountPoints > _oglUtils::getIndicesCountLimit())
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					for (int_t iIndex = iStartIndexPoints;
+						iIndex < iStartIndexPoints + _oglUtils::getIndicesCountLimit();
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pointsCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+
+					iIndicesCountPoints -= _oglUtils::getIndicesCountLimit();
+					iStartIndexPoints += _oglUtils::getIndicesCountLimit();
+				}
+
+				if (iIndicesCountPoints > 0)
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					for (int_t iIndex = iStartIndexPoints;
+						iIndex < iStartIndexPoints + iIndicesCountPoints;
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pointsCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+				}
+
+				continue;
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
+
+			/*
+			* Create material
+			*/
+			if (pCohort == nullptr)
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+
+				pointsCohorts().push_back(pCohort);
+			}
 
 			/*
 			* Check the limit
 			*/
-			if (pPointsCohort->getIndicesCount() + iIndicesPointsCount > MAX_INDICES_COUNT)
+			if (pCohort->indices().size() + iIndicesCountPoints > _oglUtils::getIndicesCountLimit())
 			{
-				pPointsCohort = new CPointsCohort();
-				m_vecPointsCohorts.push_back(pPointsCohort);
+				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+
+				pointsCohorts().push_back(pCohort);
 			}
 
-			for (int_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesPointsCount; iIndex++)
-			{
-				pPointsCohort->addIndex(m_pIndexBuffer[iIndex]);
-			}
-		} // for (size_t iFace = ...
+			/*
+			* Update Conceptual face start index
+			*/
+			concFace.startIndex() = pCohort->indices().size();
 
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < m_vecPointsCohorts.size(); iCohort++)
-		{
-			ASSERT(m_vecPointsCohorts[iCohort]->getIndicesCount() <= MAX_INDICES_COUNT);
-		}
-#endif
-	} // if (!m_vecPoints.empty())
+			/*
+			* Add the indices
+			*/
+			for (int_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesCountPoints; iIndex++)
+			{
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+			}
+
+			// Conceptual faces
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
+	} // for (; itMaterial2ConceptualFaces != ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -545,7 +646,9 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 	{
 		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
 		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].first; iIndex < m_vecTriangles[iTriangle].first + m_vecTriangles[iTriangle].second; iIndex++)
+			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex(); 
+				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
+				iIndex++)
 			{
 				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
 				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
@@ -560,11 +663,13 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 	/*
 	* Conceptual faces polygons
 	*/
-	if (!m_vecConceptualFacesPolygons.empty())
+	if (!m_vecConcFacePolygons.empty())
 	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConceptualFacesPolygons.size(); iPolygon++)
+		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecConceptualFacesPolygons[iPolygon].first; iIndex < m_vecConceptualFacesPolygons[iPolygon].first + m_vecConceptualFacesPolygons[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex(); 
+				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
+				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
 				{
@@ -579,7 +684,7 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
-	} // if (!m_vecConceptualFacesPolygons.empty())
+	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
 	* Lines
@@ -588,7 +693,9 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecLines[iPolygon].first; iIndex < m_vecLines[iPolygon].first + m_vecLines[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecLines[iPolygon].startIndex(); 
+				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
+				iIndex++)
 			{
 				if (getIndices()[iIndex] == -1)
 				{
@@ -612,7 +719,9 @@ void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmi
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].first; iIndex < m_vecPoints[iPolygon].first + m_vecPoints[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex(); 
+				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount(); 
+				iIndex++)
 			{
 				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
 				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
@@ -674,7 +783,9 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 	{
 		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
 		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].first; iIndex < m_vecTriangles[iTriangle].first + m_vecTriangles[iTriangle].second; iIndex++)
+			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
+				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
+				iIndex++)
 			{
 				VECTOR3 vecPoint =
 				{
@@ -698,11 +809,13 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 	/*
 	* Conceptual faces polygons
 	*/
-	if (!m_vecConceptualFacesPolygons.empty())
+	if (!m_vecConcFacePolygons.empty())
 	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConceptualFacesPolygons.size(); iPolygon++)
+		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecConceptualFacesPolygons[iPolygon].first; iIndex < m_vecConceptualFacesPolygons[iPolygon].first + m_vecConceptualFacesPolygons[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
+				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
+				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
 				{
@@ -726,7 +839,7 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 				fZmax = (float)fmax(fZmax, vecPoint.z);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
-	} // if (!m_vecConceptualFacesPolygons.empty())
+	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
 	* Lines
@@ -735,7 +848,9 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecLines[iPolygon].first; iIndex < m_vecLines[iPolygon].first + m_vecLines[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
+				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
+				iIndex++)
 			{
 				if (getIndices()[iIndex] == -1)
 				{
@@ -768,7 +883,9 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].first; iIndex < m_vecPoints[iPolygon].first + m_vecPoints[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex(); 
+				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
+				iIndex++)
 			{
 				VECTOR3 vecPoint =
 				{
@@ -804,19 +921,19 @@ void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, f
 	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH)] -= fXmin;
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 1] -= fYmin;
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 2] -= fZmin;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] -= fXmin;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] -= fYmin;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] -= fZmin;
 
 		// center
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH)] -= ((fXmax - fXmin) / 2.0f);
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 1] -= ((fYmax - fYmin) / 2.0f);
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 2] -= ((fZmax - fZmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] -= ((fXmax - fXmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] -= ((fYmax - fYmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] -= ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
 	}	
 
 	/**
@@ -841,13 +958,13 @@ float* CProductDefinition::BuildVBOVertexBuffer()
 
 	for (int64_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
 	{
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 0];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 1];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 2];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2];
 
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 3];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 4];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = m_pVertexBuffer[(iVertex * VERTEX_LENGTH) + 5];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 3];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 4];
+		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 5];
 	} // for (size_t iIndex = ...		
 
 	return pVBOVertices;
@@ -863,23 +980,6 @@ int_t CProductDefinition::getExpressID() const
 int_t CProductDefinition::getInstance() const
 {
 	return m_iInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<CProductInstance*>& CProductDefinition::getProductInstances() const
-{
-	return m_vecProductInstances;
-}
-
-// ------------------------------------------------------------------------------------------------
-int CProductDefinition::getNextProductInstance()
-{
-	if (++m_iNextProductInstance >= m_vecProductInstances.size())
-	{
-		m_iNextProductInstance = 0;
-	}
-
-	return m_iNextProductInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -925,9 +1025,26 @@ int_t CProductDefinition::getRelatedProductRefs() const
 }
 
 // ------------------------------------------------------------------------------------------------
+const vector<CProductInstance*>& CProductDefinition::getProductInstances() const
+{
+	return m_vecProductInstances;
+}
+
+// ------------------------------------------------------------------------------------------------
+int CProductDefinition::getNextProductInstance()
+{
+	if (++m_iNextProductInstance >= m_vecProductInstances.size())
+	{
+		m_iNextProductInstance = 0;
+	}
+
+	return m_iNextProductInstance;
+}
+
+// ------------------------------------------------------------------------------------------------
 int32_t* CProductDefinition::getIndices() const
 {
-	return m_pIndexBuffer;
+	return m_pIndexBuffer->data();
 }
 
 int64_t CProductDefinition::getIndicesCount() const
@@ -938,7 +1055,7 @@ int64_t CProductDefinition::getIndicesCount() const
 // ------------------------------------------------------------------------------------------------
 float* CProductDefinition::getVertices() const
 {
-	return m_pVertexBuffer;
+	return m_pVertexBuffer->data();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -954,51 +1071,50 @@ int64_t CProductDefinition::getConceptualFacesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> >& CProductDefinition::getTriangles() const
+const vector<_primitives >& CProductDefinition::getTriangles() const
 {
 	return m_vecTriangles;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> >& CProductDefinition::getLines() const
+const vector<_primitives >& CProductDefinition::getLines() const
 {
 	return m_vecLines;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> >& CProductDefinition::getPoints() const
+const vector<_primitives >& CProductDefinition::getPoints() const
 {
 	return m_vecPoints;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> >& CProductDefinition::getConceptualFacesPolygons() const
+const vector<_primitives >& CProductDefinition::getConcFacesPolygons() const
 {
-	return m_vecConceptualFacesPolygons;
+	return m_vecConcFacePolygons;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CSTEPGeometryWithMaterial*>& CProductDefinition::conceptualFacesMaterials()
+vector<_facesCohort*>& CProductDefinition::concFacesCohorts()
 {
-	return m_vecMaterials;
+	return m_vecConcFacesCohorts;
+}
+
+vector<_cohort*>& CProductDefinition::concFacePolygonsCohorts()
+{
+	return m_vecConcFacePolygonsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort*>& CProductDefinition::linesCohorts()
+vector<_cohort*>& CProductDefinition::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CPointsCohort*>& CProductDefinition::pointsCohorts()
+vector<_facesCohort*>& CProductDefinition::pointsCohorts()
 {
 	return m_vecPointsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<CWireframesCohort*>& CProductDefinition::conceptualFacesCohorts()
-{
-	return m_vecConceptualFacesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1027,31 +1143,12 @@ void CProductDefinition::Clean()
 	m_iConceptualFacesCount = 0;
 
 	m_vecTriangles.clear();
+	m_vecConcFacePolygons.clear();
 	m_vecLines.clear();
-	m_vecPoints.clear();
-	m_vecConceptualFacesPolygons.clear();
+	m_vecPoints.clear();	
 
-	for (size_t iMaterial = 0; iMaterial < m_vecMaterials.size(); iMaterial++)
-	{
-		delete m_vecMaterials[iMaterial];
-	}
-	m_vecMaterials.clear();
-
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecLinesCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecLinesCohorts[iLinesCohort];
-	}
-	m_vecLinesCohorts.clear();
-
-	for (size_t iPointsCohort = 0; iPointsCohort < m_vecPointsCohorts.size(); iPointsCohort++)
-	{
-		delete m_vecPointsCohorts[iPointsCohort];
-	}
-	m_vecPointsCohorts.clear();
-
-	for (size_t iWireframesCohort = 0; iWireframesCohort < m_vecConceptualFacesCohorts.size(); iWireframesCohort++)
-	{
-		delete m_vecConceptualFacesCohorts[iWireframesCohort];
-	}
-	m_vecConceptualFacesCohorts.clear();
+	_cohort::clear(m_vecConcFacesCohorts);
+	_cohort::clear(m_vecConcFacePolygonsCohorts);
+	_cohort::clear(m_vecLinesCohorts);
+	_cohort::clear(m_vecPointsCohorts);
 }

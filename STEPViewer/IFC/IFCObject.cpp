@@ -512,14 +512,14 @@ void CIFCObject::CalculateMinMaxValues(float & fXmin, float & fXmax, float & fYm
 {
 	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
 	{
-		fXmin = fmin(fXmin, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)]);
-		fXmax = fmax(fXmax, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)]);
+		fXmin = fmin(fXmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
+		fXmax = fmax(fXmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
 
-		fYmin = fmin(fYmin, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1]);
-		fYmax = fmax(fYmax, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1]);
+		fYmin = fmin(fYmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
+		fYmax = fmax(fYmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
 
-		fZmin = fmin(fZmin, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2]);
-		fZmax = fmax(fZmax, m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2]);
+		fZmin = fmin(fZmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
+		fZmax = fmax(fZmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
 	}
 }
 
@@ -535,14 +535,14 @@ void CIFCObject::CalculateMinMaxValues(float * pVertices, int_t iVerticesCount)
 
 	for (int_t iVertex = 0; iVertex < iVerticesCount; iVertex++)
 	{
-		fXmin = fmin(fXmin, pVertices[(iVertex * BUFFER_VERTEX_LENGTH)]);
-		fXmax = fmax(fXmax, pVertices[(iVertex * BUFFER_VERTEX_LENGTH)]);
+		fXmin = fmin(fXmin, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
+		fXmax = fmax(fXmax, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
 
-		fYmin = fmin(fYmin, pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1]);
-		fYmax = fmax(fYmax, pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1]);
+		fYmin = fmin(fYmin, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
+		fYmax = fmax(fYmax, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
 
-		fZmin = fmin(fZmin, pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2]);
-		fZmax = fmax(fZmax, pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2]);
+		fZmin = fmin(fZmin, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
+		fZmax = fmax(fZmax, pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
 	}
 
 	m_prXMinMax = pair<float, float>(fXmin, fXmax);
@@ -563,19 +563,19 @@ void CIFCObject::Scale(float fXmin, float fXmax, float fYmin, float fYmax, float
 	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] - fXmin;
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] - fYmin;
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] - fZmin;
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - fXmin;
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - fYmin;
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - fZmin;
 
 		// center
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
 }
 
@@ -592,18 +592,18 @@ void CIFCObject::Scale(float * pVertices, int_t iVerticesCount, float fXmin, flo
 	for (int_t iVertex = 0; iVertex < iVerticesCount; iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] - fXmin;
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] - fYmin;
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] - fZmin;
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - fXmin;
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - fYmin;
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - fZmin;
 
 		// center
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-		pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = pVertices[(iVertex * BUFFER_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
 }

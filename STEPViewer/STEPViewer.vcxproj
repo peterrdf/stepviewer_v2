@@ -109,7 +109,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -249,7 +249,6 @@
     <ClInclude Include="FileViewConsts.h" />
     <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="OpenGLContext.h" />
     <ClInclude Include="OpenGLSTEPView.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="STEPController.h" />
@@ -302,7 +301,6 @@
     <ClCompile Include="STEPViewerView.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
-    <ClCompile Include="OpenGLContext.cpp" />
     <ClCompile Include="OpenGLSTEPView.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="STEPController.cpp" />

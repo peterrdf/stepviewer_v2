@@ -30,79 +30,10 @@ typedef unsigned int UINT;
 // ------------------------------------------------------------------------------------------------
 // X, Y, Z, Nx, Ny, Nz
 #define GEOMETRY_VBO_VERTEX_LENGTH  6
-#define BUFFER_VERTEX_LENGTH  6
 
 // ------------------------------------------------------------------------------------------------
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
-// ------------------------------------------------------------------------------------------------
-#define MAX_INDICES_COUNT 64800
-
-// ------------------------------------------------------------------------------------------------
-// OpenGL
-class COpenGL
-{
-
-private: // Members
-
-public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// glBufferData, size arg
-	static GLsizei GetGeometryVerticesCountLimit()
-	{
-#ifdef WIN64
-		return numeric_limits<GLint>::max() / (GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-#else
-		return 6500000;
-#endif
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// glBufferData, size arg
-	static GLsizei GetIndicesCountLimit()
-	{
-		return MAX_INDICES_COUNT;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Wrapper for glGetError()/gluErrorStringWIN()
-	static void Check4Errors()
-	{
-		GLenum errLast = GL_NO_ERROR;
-
-		for (;;)
-		{
-			GLenum err = glGetError();
-			if (err == GL_NO_ERROR)
-				return;
-
-			// normally the error is reset by the call to glGetError() but if
-			// glGetError() itself returns an error, we risk looping forever here
-			// so check that we get a different error than the last time
-			if (err == errLast)
-			{
-#ifdef _LINUX
-                wxLogError(wxT("OpenGL error state couldn't be reset."));
-#else
-				MessageBox(NULL, L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
-#endif // _LINUX
-
-				return;
-			}
-
-			errLast = err;
-
-#ifdef _LINUX
-            wxLogError(wxT("OpenGL error %d"), err);
-#else
-            MessageBox(NULL, (const wchar_t *)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
-#endif // _LINUX
-		}
-	}
-};
-
-// ------------------------------------------------------------------------------------------------
 static  const   int64_t    flagbit0 = 1;                           // 2^^0                          0000.0000..0000.0001
 static  const   int64_t    flagbit1 = 2;                           // 2^^1                          0000.0000..0000.0010
 static  const   int64_t    flagbit2 = 4;                           // 2^^2                          0000.0000..0000.0100
@@ -123,13 +54,12 @@ static  const   int64_t    flagbit13 = 8192;                       // 2^^13     
 static  const   int64_t    flagbit14 = 16384;                      // 2^^14                         0100.0000..0000.0000
 static  const   int64_t    flagbit15 = 32768;                      // 2^^15                         1000.0000..0000.0000
 
-static const    int64_t	   flagbit17 = 131072;							   // 2^^15							1000.0000..0000.0000
+static const    int64_t	   flagbit17 = 131072;					   // 2^^15							1000.0000..0000.0000
 
 static	const   int64_t    flagbit24 = 16777216;
 static	const   int64_t    flagbit25 = 33554432;
 static	const   int64_t    flagbit26 = 67108864;
 static	const   int64_t    flagbit27 = 134217728;
-
 
 // ------------------------------------------------------------------------------------------------
 struct MATRIX

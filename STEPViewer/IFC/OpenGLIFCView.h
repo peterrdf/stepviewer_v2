@@ -3,7 +3,6 @@
 
 #include "STEPView.h"
 #include "IFCObject.h"
-#include "OpenGLContext.h"
 #include "OpenGLView.h"
 #include "BinnPhongGLProgram.h"
 #include "GLShader.h"
@@ -150,10 +149,6 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Wireframes
 	BOOL m_bShowWireframes;
-
-	// --------------------------------------------------------------------------------------------
-	// OpenGL context
-	COpenGLContext * m_pOGLContext;	
 
 	// --------------------------------------------------------------------------------------------
 	// Rotation - X; radians

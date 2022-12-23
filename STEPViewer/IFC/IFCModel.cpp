@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "_oglUtils.h"
 #include "IFCModel.h"
 
 #include <cwchar>
@@ -659,15 +660,15 @@ float * CIFCModel::GetVertices(const vector<CIFCObject *> & vecIFCObjects, int_t
 		iVerticesCount += vecIFCObjects[iIFCobject]->verticesCount();
 	}
 
-	float * pVertices = new float[iVerticesCount * BUFFER_VERTEX_LENGTH];
+	float * pVertices = new float[iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
 	
 	int_t iOffset = 0;
 	for (size_t iIFCobject = 0; iIFCobject < vecIFCObjects.size(); iIFCobject++)
 	{
 		memcpy((float *)pVertices + iOffset, vecIFCObjects[iIFCobject]->vertices(),
-			vecIFCObjects[iIFCobject]->verticesCount() * BUFFER_VERTEX_LENGTH * sizeof(float));
+			vecIFCObjects[iIFCobject]->verticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 
-		iOffset += vecIFCObjects[iIFCobject]->verticesCount() * BUFFER_VERTEX_LENGTH;
+		iOffset += vecIFCObjects[iIFCobject]->verticesCount() * GEOMETRY_VBO_VERTEX_LENGTH;
 	}
 
 	return pVertices;
@@ -1473,13 +1474,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				/*
 				* Split the conceptual face - isolated case
 				*/
-				if (iIndicesCountTriangles > MAX_INDICES_COUNT)
+				if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 				{
-					while (iIndicesCountTriangles > MAX_INDICES_COUNT)
+					while (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 					{
 						// INDICES
 						CIFCGeometryWithMaterial * pNewMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-						for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + MAX_INDICES_COUNT; iIndex++)
+						for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + _oglUtils::getIndicesCountLimit(); iIndex++)
 						{							
 							pNewMaterial->addIndex(pIndices[iIndex]);
 						}
@@ -1494,8 +1495,8 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 						// Conceptual faces
 						pNewMaterial->conceptualFaces().push_back(conceptualFace);
 
-						iIndicesCountTriangles -= MAX_INDICES_COUNT;
-						iStartIndexTriangles += MAX_INDICES_COUNT;
+						iIndicesCountTriangles -= _oglUtils::getIndicesCountLimit();
+						iStartIndexTriangles += _oglUtils::getIndicesCountLimit();
 					}
 
 					if (iIndicesCountTriangles > 0)
@@ -1519,7 +1520,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 					}					
 
 					continue;
-				} // if (iIndicesCountTriangles > MAX_INDICES_COUNT)	
+				} // if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())	
 
 				/*
 				* Create material
@@ -1534,7 +1535,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				/*
 				* Check the limit
 				*/
-				if (pMaterial->getIndicesCount() + iIndicesCountTriangles > MAX_INDICES_COUNT)
+				if (pMaterial->getIndicesCount() + iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 				{
 					pMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
 
@@ -1582,7 +1583,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				/*
 				* Check the limit
 				*/
-				if (pWireframesCohort->getIndicesCount() + iIndicesFacesPolygonsCount > MAX_INDICES_COUNT)
+				if (pWireframesCohort->getIndicesCount() + iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit())
 				{
 					pWireframesCohort = new CWireframesCohort();
 					pIFCObject->wireframesCohorts().push_back(pWireframesCohort);
@@ -1632,7 +1633,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				/*
 				* Check the limit
 				*/
-				if (pLinesCohort->getIndicesCount() + iIndicesLinesCount > MAX_INDICES_COUNT)
+				if (pLinesCohort->getIndicesCount() + iIndicesLinesCount > _oglUtils::getIndicesCountLimit())
 				{
 					pLinesCohort = new CLinesCohort();
 					pIFCObject->linesCohorts().push_back(pLinesCohort);
@@ -1667,15 +1668,15 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		/*
 		* Copy the vertices - <X, Y, Z, Nx, Ny, Nz>
 		*/
-		pIFCObject->vertices() = new float[(int_t) iVerticesCount * BUFFER_VERTEX_LENGTH];
+		pIFCObject->vertices() = new float[(int_t) iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
 		for (int_t iVertex = 0; iVertex < iVerticesCount; iVertex++)
 		{
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 0] = pVertices[(iVertex * VERTEX_LENGTH) + 0];
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 1] = pVertices[(iVertex * VERTEX_LENGTH) + 1];
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 2] = pVertices[(iVertex * VERTEX_LENGTH) + 2];
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 3] = pVertices[(iVertex * VERTEX_LENGTH) + 3];
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 4] = pVertices[(iVertex * VERTEX_LENGTH) + 4];
-			pIFCObject->vertices()[(iVertex * BUFFER_VERTEX_LENGTH) + 5] = pVertices[(iVertex * VERTEX_LENGTH) + 5];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = pVertices[(iVertex * VERTEX_LENGTH) + 0];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * VERTEX_LENGTH) + 1];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * VERTEX_LENGTH) + 2];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = pVertices[(iVertex * VERTEX_LENGTH) + 3];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = pVertices[(iVertex * VERTEX_LENGTH) + 4];
+			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = pVertices[(iVertex * VERTEX_LENGTH) + 5];
 		} // for (int_t iVertex = ...
 
 		delete[] pVertices;
