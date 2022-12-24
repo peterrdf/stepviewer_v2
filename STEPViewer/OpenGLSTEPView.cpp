@@ -709,7 +709,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	/*
 	*Selection support
 	*/
-	//DrawInstancesFrameBuffer();
+	DrawInstancesFrameBuffer();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1747,296 +1747,185 @@ void COpenGLSTEPView::DrawPoints()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-//	if (m_bDisableSelectionBuffer)
-//	{
-//		return;
-//	}
-//
-//	CSTEPController * pController = GetController();
-//	ASSERT(pController != NULL);
-//
-//	if (pController->GetModel() == nullptr)
-//	{
-//		ASSERT(FALSE);
-//
-//		return;
-//	}
-//
-//	auto pModel = pController->GetModel()->As<CSTEPModel>();
-//	if (pModel == nullptr)
-//	{
-//		ASSERT(FALSE);
-//
-//		return;
-//	}
-//
-//	if (pModel->getProductDefinitions().empty())
-//	{
-//		return;
-//	}
-//
-//	/*
-//	* Create a frame buffer
-//	*/
-//
-//	int iWidth = 0;
-//	int iHeight = 0;
-//
-//#ifdef _LINUX
-//	const wxSize szClient = m_pWnd->GetClientSize();
-//
-//	iWidth = szClient.GetWidth();
-//	iHeight = szClient.GetHeight();
-//#else
-//	CRect rcClient;
-//	m_pWnd->GetClientRect(&rcClient);
-//
-//	iWidth = rcClient.Width();
-//	iHeight = rcClient.Height();
-//#endif // _LINUX
-//
-//	if ((iWidth < 20) || (iHeight < 20))
-//	{
-//		return;
-//	}
-//
-//	BOOL bResult = m_pOGLContext->MakeCurrent();
-//	VERIFY(bResult);
-//
-//	if (m_iInstanceSelectionFrameBuffer == 0)
-//	{
-//		ASSERT(m_iInstanceSelectionTextureBuffer == 0);
-//		ASSERT(m_iInstanceSelectionDepthRenderBuffer == 0);
-//
-//		/*
-//		* Frame buffer
-//		*/
-//		glGenFramebuffers(1, &m_iInstanceSelectionFrameBuffer);
-//		ASSERT(m_iInstanceSelectionFrameBuffer != 0);
-//
-//		glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
-//
-//		/*
-//		* Texture buffer
-//		*/
-//		glGenTextures(1, &m_iInstanceSelectionTextureBuffer);
-//		ASSERT(m_iInstanceSelectionTextureBuffer != 0);
-//
-//		glBindTexture(GL_TEXTURE_2D, m_iInstanceSelectionTextureBuffer);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//
-//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-//
-//		glBindTexture(GL_TEXTURE_2D, 0);
-//
-//		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iInstanceSelectionTextureBuffer, 0);
-//
-//		/*
-//		* Depth buffer
-//		*/
-//		glGenRenderbuffers(1, &m_iInstanceSelectionDepthRenderBuffer);
-//		ASSERT(m_iInstanceSelectionDepthRenderBuffer != 0);
-//
-//		glBindRenderbuffer(GL_RENDERBUFFER, m_iInstanceSelectionDepthRenderBuffer);
-//		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
-//
-//		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-//
-//		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iInstanceSelectionDepthRenderBuffer);
-//
-//		GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-//		glDrawBuffers(1, arDrawBuffers);
-//
-//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//		_oglUtils::checkForErrors();
-//	} // if (m_iInstanceSelectionFrameBuffer == 0)
-//
-//	/*
-//	* Selection colors
-//	*/
-//	if (m_mapInstancesSelectionColors.empty())
-//	{
-//		const float STEP = 1.0f / 255.0f;
-//
-//		const map<int64_t, CProductInstance *> & mapProductInstances = pModel->getProductInstances();
-//
-//		map<int64_t, CProductInstance*>::const_iterator itProductInstances = mapProductInstances.begin();
-//		for (; itProductInstances != mapProductInstances.end(); itProductInstances++)
-//		{
-//			CProductInstance* pProductInstance = itProductInstances->second;			
-//
-//			const vector<pair<int64_t, int64_t> > & vecTriangles = pProductInstance->getProductDefinition()->getTriangles();
-//			if (vecTriangles.empty())
-//			{
-//				continue;
-//			}
-//
-//			float fR = floorf((float)pProductInstance->getID() / (255.0f * 255.0f));
-//			if (fR >= 1.0f)
-//			{
-//				fR *= STEP;
-//			}
-//
-//			float fG = floorf((float)pProductInstance->getID() / 255.0f);
-//			if (fG >= 1.0f)
-//			{
-//				fG *= STEP;
-//			}
-//
-//			float fB = (float)(pProductInstance->getID() % 255);
-//			fB *= STEP;
-//
-//			ASSERT(m_mapInstancesSelectionColors.find(pProductInstance->getID()) == m_mapInstancesSelectionColors.end());
-//			m_mapInstancesSelectionColors[pProductInstance->getID()] = CSTEPColor(fR, fG, fB);
-//		} // for (; itProductInstances != ...
-//	} // if (m_mapInstancesSelectionColors.empty())
-//
-//	/*
-//	* Draw
-//	*/
-//
-//	glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
-//
-//	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
-//
-//	glClearColor(0.0, 0.0, 0.0, 0.0);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	// Set up the parameters
-//	glEnable(GL_DEPTH_TEST);
-//	glDepthFunc(GL_LEQUAL);
-//
-//	glProgramUniform1f(
-//		m_pProgram->GetID(),
-//		m_pProgram->geUseBinnPhongModel(),
-//		0.f);
-//
-//	glProgramUniform1f(
-//		m_pProgram->GetID(),
-//		m_pProgram->getTransparency(),
-//		1.f);
-//
-//	float fXTranslation = 0.f;
-//	float fYTranslation = 0.f;
-//	float fZTranslation = 0.f;
-//	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
-//
-//	for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-//	{
-//		if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-//		{
-//			continue;
-//		}
-//
-//		const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
-//
-//		map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-//		for (; itGroups != mapGroups.end(); itGroups++)
-//		{
-//			bool bBindVBO = true;			
-//
-//			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-//			{
-//				CProductDefinition* pProductDefinition = itGroups->second[iObject];
-//
-//				const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-//				for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-//				{
-//					auto pProductInstance = vecProductInstances[iInstance];
-//
-//					if (!pProductInstance->getEnable())
-//					{
-//						continue;
-//					}
-//
-//					if (pProductDefinition->conceptualFacesMaterials().empty())
-//					{
-//						continue;
-//					}
-//
-//					if (bBindVBO)
-//					{
-//						glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-//						glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, 0);
-//						glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-//
-//						bBindVBO = false;
-//					}
-//
-//					/*
-//					* Transformation Matrix
-//					*/
-//					glm::mat4 transformationMatrix = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
-//
-//					/*
-//					* Model-View Matrix
-//					*/
-//					glm::mat4 modelViewMatrix = m_modelViewMatrix;
-//					modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-//					modelViewMatrix = modelViewMatrix * transformationMatrix;
-//					modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-//
-//					glProgramUniformMatrix4fv(
-//						m_pProgram->GetID(),
-//						m_pProgram->getMVMatrix(),
-//						1, 
-//						false, 
-//						glm::value_ptr(modelViewMatrix));
-//
-//					/*
-//					* Ambient color
-//					*/
-//					map<int64_t, CSTEPColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pProductInstance->getID());
-//					ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
-//
-//					/*
-//					* Material - Ambient color
-//					*/
-//					glProgramUniform3f(
-//						m_pProgram->GetID(),
-//						m_pProgram->getMaterialAmbientColor(),
-//						itSelectionColor->second.R(),
-//						itSelectionColor->second.G(),
-//						itSelectionColor->second.B());
-//
-//					/*
-//					* Conceptual faces
-//					*/
-//					GLuint iCurrentIBO = 0;
-//					for (size_t iMaterial = 0; iMaterial < pProductDefinition->conceptualFacesMaterials().size(); iMaterial++)
-//					{
-//						CSTEPGeometryWithMaterial* pGeometryWithMaterial = pProductDefinition->conceptualFacesMaterials()[iMaterial];						
-//
-//						if (iCurrentIBO != pGeometryWithMaterial->IBO())
-//						{
-//							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-//
-//							iCurrentIBO = pGeometryWithMaterial->IBO();
-//						}						
-//
-//						glDrawElementsBaseVertex(GL_TRIANGLES,
-//							(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-//							GL_UNSIGNED_INT,
-//							(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-//							pProductDefinition->VBOOffset());
-//
-//						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);						
-//					} // for (size_t iMaterial = ...
-//				} // for (size_t iInstance = ...
-//			} // for (size_t iObject = ...
-//
-//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//			glBindBuffer(GL_ARRAY_BUFFER, 0);
-//		} // for (; itGroups != ...
-//	} // for (size_t iDrawMetaData = ...
-//
-//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//	_oglUtils::checkForErrors();
+	if (m_bDisableSelectionBuffer)
+	{
+		return;
+	}
+
+	CSTEPController * pController = GetController();
+	ASSERT(pController != NULL);
+
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pModel->getProductDefinitions().empty())
+	{
+		return;
+	}
+
+	/*
+	* Create a frame buffer
+	*/
+
+	int iWidth = 0;
+	int iHeight = 0;
+
+#ifdef _LINUX
+	const wxSize szClient = m_pWnd->GetClientSize();
+
+	iWidth = szClient.GetWidth();
+	iHeight = szClient.GetHeight();
+#else
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	iWidth = rcClient.Width();
+	iHeight = rcClient.Height();
+#endif // _LINUX
+
+	if ((iWidth < 20) || (iHeight < 20))
+	{
+		return;
+	}
+
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+	m_pInstanceSelectionFrameBuffer->create();
+
+	/*
+	* Selection colors
+	*/
+	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+	{
+		auto mapProductDefinitions = pModel->getProductDefinitions();
+		for (auto itProductDefinition = mapProductDefinitions.begin(); 
+			itProductDefinition != mapProductDefinitions.end(); 
+			itProductDefinition++)
+		{
+			if (itProductDefinition->second->getTriangles().empty())
+			{
+				continue;
+			}
+
+			auto vecProductInstances = itProductDefinition->second->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			{
+				auto pProductInstance = vecProductInstances[iInstance];
+				if (!pProductInstance->getEnable())
+				{
+					continue;
+				}
+
+				float fR, fG, fB;
+				_i64RGBCoder::encode(pProductInstance->getID(), fR, fG, fB);
+
+				m_pInstanceSelectionFrameBuffer->encoding()[pProductInstance->getID()] = _color(fR, fG, fB);
+			}
+		}
+	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+
+	/*
+	* Draw
+	*/
+
+	m_pInstanceSelectionFrameBuffer->bind();
+
+	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setTransparency(1.f);
+
+	float fXTranslation = 0.f;
+	float fYTranslation = 0.f;
+	float fZTranslation = 0.f;
+	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
+
+		for (auto pProductDefinition : itCohort.second)
+		{
+			if (pProductDefinition->getTriangles().empty())
+			{
+				continue;
+			}
+
+			auto vecProductInstances = pProductDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			{
+				auto pProductInstance = vecProductInstances[iInstance];
+				if (!pProductInstance->getEnable())
+				{
+					continue;
+				}
+
+				/*
+				* Transformation Matrix
+				*/
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
+
+				/*
+				* Model-View Matrix
+				*/
+				glm::mat4 matModelView = m_matModelView;
+				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+				matModelView = matModelView * matTransformation;
+				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+				m_pOGLProgram->setModelViewMatrix(matModelView);
+
+				for (size_t iCohort = 0; iCohort < pProductDefinition->concFacesCohorts().size(); iCohort++)
+				{
+					auto pCohort = pProductDefinition->concFacesCohorts()[iCohort];
+
+					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pProductInstance->getID());
+					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
+
+					m_pOGLProgram->setAmbientColor(
+						itSelectionColor->second.r(),
+						itSelectionColor->second.g(),
+						itSelectionColor->second.b());
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glDrawElementsBaseVertex(GL_TRIANGLES,
+						(GLsizei)pCohort->indices().size(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						pProductDefinition->VBOOffset());
+				}
+			} // for (size_t iInstance = ...			
+		} // for (auto pProductDefinition ...
+
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
+
+	// Restore Model-View Matrix
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+
+	m_pInstanceSelectionFrameBuffer->unbind();
+
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2068,7 +1957,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		/*
 		* Select an instance
 		*/
-		if (!pModel->getProductDefinitions().empty())// TODO!!! && m_iInstanceSelectionFrameBuffer != 0)
+		if (m_pInstanceSelectionFrameBuffer->isInitialized())
 		{
 			int iWidth = 0;
 			int iHeight = 0;
@@ -2094,11 +1983,10 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			//TODO!!!
-			/*double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
+			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
+			m_pInstanceSelectionFrameBuffer->bind();
 
 			glReadPixels(
 				(GLint)dX,
@@ -2108,7 +1996,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+			m_pInstanceSelectionFrameBuffer->unbind();
 
 			CProductInstance * pPointedInstance = NULL;
 
@@ -2133,77 +2021,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
                 m_pWnd->RedrawWindow();
 #endif // _LINUX
 			}
-		} // if (!pModel->getProductDefinitions().empty() && ...
-
-		/*
-		* Select a face
-		*/
-		//ASSERT(0); // todo
-//		if ((m_iFaceSelectionFrameBuffer != 0) && (m_pSelectedInstance != NULL))
-//		{
-//			int iWidth = 0;
-//			int iHeight = 0;
-//
-//#ifdef _LINUX
-//			m_pOGLContext->SetCurrent(*m_pWnd);
-//
-//			const wxSize szClient = m_pWnd->GetClientSize();
-//
-//			iWidth = szClient.GetWidth();
-//			iHeight = szClient.GetHeight();
-//#else
-//			BOOL bResult = m_pOGLContext->MakeCurrent();
-//			VERIFY(bResult);
-//
-//			CRect rcClient;
-//			m_pWnd->GetClientRect(&rcClient);
-//
-//			iWidth = rcClient.Width();
-//			iHeight = rcClient.Height();
-//#endif // _LINUX
-//
-//			GLubyte arPixels[4];
-//			memset(arPixels, 0, sizeof(GLubyte) * 4);
-//
-//			double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
-//			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
-//
-//			glBindFramebuffer(GL_FRAMEBUFFER, m_iFaceSelectionFrameBuffer);
-//
-//			glReadPixels(
-//				(GLint)dX,
-//				(GLint)dY,
-//				1, 1,
-//				GL_RGBA,
-//				GL_UNSIGNED_BYTE,
-//				arPixels);
-//
-//			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//			int64_t iPointedFace = -1;
-//
-//			if (arPixels[3] != 0)
-//			{
-//				int64_t iObjectID =
-//					(arPixels[0/*R*/] * (255 * 255)) +
-//					(arPixels[1/*G*/] * 255) +
-//					arPixels[2/*B*/];
-//
-//				iPointedFace = iObjectID;
-//				ASSERT(m_mapFacesSelectionColors.find(iPointedFace) != m_mapFacesSelectionColors.end());
-//			} // if (arPixels[3] != 0)
-//
-//			if (m_iPointedFace != iPointedFace)
-//			{
-//				m_iPointedFace = iPointedFace;
-//
-//#ifdef _LINUX
-//                m_pWnd->Refresh(false);
-//#else
-//                m_pWnd->RedrawWindow();
-//#endif // _LINUX
-//			}
-//		} // if ((m_iFaceSelectionFrameBuffer != 0) && ...
+		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
 	if (m_ptPrevMousePosition.x == -1)
