@@ -190,22 +190,6 @@ protected: // Methods
 private: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetMaterialsIndices(const vector<_face*>& vecMaterials, int_t& iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetLinesCohortsIndices(const vector<CLinesCohort*>& vecLinesCohorts, int_t& iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetPointsCohortsIndices(const vector<CPointsCohort*>& vecPointsCohorts, int_t& iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetWireframesCohortsIndices(const vector<CWireframesCohort*>& vecWireframesCohorts, int_t& iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
 	// Scene
 	void DrawClipSpace();
 

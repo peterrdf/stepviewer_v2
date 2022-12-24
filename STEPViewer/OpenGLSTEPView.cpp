@@ -1053,105 +1053,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-unsigned int* COpenGLSTEPView::GetMaterialsIndices(const vector<_face*>& vecMaterials, int_t & iIndicesCount)
-{
-	ASSERT(FALSE); //NOT IMPL!!!!
-
-	iIndicesCount = 0;
-	for (size_t iMaterial = 0; iMaterial < vecMaterials.size(); iMaterial++)
-	{
-		iIndicesCount += vecMaterials[iMaterial]->indicesCount();
-	}
-
-	unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-	/*int_t iOffset = 0;
-	for (size_t iMaterial = 0; iMaterial < vecMaterials.size(); iMaterial++)
-	{
-		memcpy((unsigned int*)pIndices + iOffset, vecMaterials[iMaterial]->getIndices(),
-			vecMaterials[iMaterial]->indicesCount() * sizeof(unsigned int));
-
-		iOffset += vecMaterials[iMaterial]->indicesCount();
-	}*/
-
-	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int* COpenGLSTEPView::GetLinesCohortsIndices(const vector<CLinesCohort*>& vecLinesCohorts, int_t& iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecLinesCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecLinesCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecLinesCohorts.size(); iCohort++)
-	{
-		memcpy((unsigned int*)pIndices + iOffset, vecLinesCohorts[iCohort]->getIndices(),
-			vecLinesCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecLinesCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int* COpenGLSTEPView::GetPointsCohortsIndices(const vector<CPointsCohort*>& vecPointsCohorts, int_t& iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecPointsCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecPointsCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecPointsCohorts.size(); iCohort++)
-	{
-		memcpy((unsigned int*)pIndices + iOffset, vecPointsCohorts[iCohort]->getIndices(),
-			vecPointsCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecPointsCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int* COpenGLSTEPView::GetWireframesCohortsIndices(const vector<CWireframesCohort*>& vecWireframesCohorts, int_t& iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecWireframesCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecWireframesCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecWireframesCohorts.size(); iCohort++)
-	{
-		if (vecWireframesCohorts[iCohort]->getIndicesCount() == 0)
-		{
-			continue;
-		}
-
-		memcpy((unsigned int*)pIndices + iOffset, vecWireframesCohorts[iCohort]->getIndices(),
-			vecWireframesCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecWireframesCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawClipSpace()
 {
 	/*CSTEPController* pController = GetController();
@@ -1349,246 +1250,138 @@ bool COpenGLSTEPView::DrawTextGDI(const wchar_t* szText, float fX, float fY, flo
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawFaces(bool /*bTransparent*/)
+void COpenGLSTEPView::DrawFaces(bool bTransparent)
 {
-	//if (!m_bShowFaces)
-	//{
-	//	return;
-	//}
+	if (!m_bShowFaces)
+	{
+		return;
+	}
 
-	//CSTEPController* pController = GetController();
-	//ASSERT(pController != NULL);
+	CSTEPController* pController = GetController();
+	ASSERT(pController != NULL);
 
-	//if (pController->GetModel() == nullptr)
-	//{
-	//	ASSERT(FALSE);
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
 
-	//	return;
-	//}
+		return;
+	}
 
-	//auto pModel = pController->GetModel()->As<CSTEPModel>();
-	//if (pModel == nullptr)
-	//{
-	//	ASSERT(FALSE);
+	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
 
-	//	return;
-	//}
+		return;
+	}
 
-	//if (pModel->getProductDefinitions().empty())
-	//{
-	//	return;
-	//}
+	if (pModel->getProductDefinitions().empty())
+	{
+		return;
+	}
 
-	//std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	//float fXTranslation = 0.f;
-	//float fYTranslation = 0.f;
-	//float fZTranslation = 0.f;
-	//pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
+	if (bTransparent)
+	{
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 
-	//if (bTransparent)
-	//{
-	//	glEnable(GL_BLEND);
-	//	glBlendEquation(GL_FUNC_ADD);
-	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//}
+	m_pOGLProgram->enableBinnPhongModel(true);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	1.f);
+	float fXTranslation = 0.f;
+	float fYTranslation = 0.f;
+	float fZTranslation = 0.f;
+	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
 
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_veCSTEPDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	if (m_veCSTEPDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-	//	{
-	//		continue;
-	//	}
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
 
-	//	const map<GLuint, vector<CProductDefinition*>>& mapGroups = m_veCSTEPDrawMetaData[iDrawMetaData]->getVBOGroups();
+		for (auto pProductDefinition : itCohort.second)
+		{
+			if (pProductDefinition->concFacesCohorts().empty())
+			{
+				continue;
+			}
 
-	//	map<GLuint, vector<CProductDefinition*>>::const_iterator itGroups = mapGroups.begin();
-	//	for (; itGroups != mapGroups.end(); itGroups++)
-	//	{
-	//		bool bBindVBO = true;			
+			auto vecProductInstances = pProductDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			{
+				auto pProductInstance = vecProductInstances[iInstance];
+				if (!pProductInstance->getEnable())
+				{
+					continue;
+				}
 
-	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-	//		{
-	//			CProductDefinition* pProductDefinition = itGroups->second[iObject];
+				/*
+				* Transformation Matrix
+				*/
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
 
-	//			const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-	//			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
-	//			{
-	//				auto pProductInstance = vecProductInstances[iInstance];
+				/*
+				* Model-View Matrix
+				*/
+				glm::mat4 matModelView = m_matModelView;
+				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+				matModelView = matModelView * matTransformation;
+				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-	//				if (!pProductInstance->getEnable())
-	//				{
-	//					continue;
-	//				}
+				m_pOGLProgram->setModelViewMatrix(matModelView);
 
-	//				if (pProductDefinition->conceptualFacesMaterials().empty())
-	//				{
-	//					continue;
-	//				}		
+				for (size_t iCohort = 0; iCohort < pProductDefinition->concFacesCohorts().size(); iCohort++)
+				{
+					auto pCohort = pProductDefinition->concFacesCohorts()[iCohort];
 
-	//				bool bTransform = true;					
+					const _material* pMaterial =
+						pProductInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+						pProductInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						pCohort->getMaterial();
 
-	//				/*
-	//				* Conceptual faces
-	//				*/
-	//				GLuint iCurrentIBO = 0;
-	//				for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pProductDefinition->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-	//				{
-	//					CSTEPGeometryWithMaterial* pGeometryWithMaterial = pProductDefinition->conceptualFacesMaterials()[iGeometryWithMaterial];
+					if (bTransparent)
+					{
+						if (pMaterial->getA() == 1.0)
+						{
+							continue;
+						}
+					}
+					else
+					{
+						if (pMaterial->getA() < 1.0)
+						{
+							continue;
+						}
+					}
 
-	//					const CSTEPMaterial* pMaterial =
-	//						pProductInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-	//						pProductInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-	//						pGeometryWithMaterial->getMaterial();
+					m_pOGLProgram->setMaterial(pMaterial);
 
-	//					if (bTransparent)
-	//					{
-	//						if (pMaterial->A() == 1.0)
-	//						{
-	//							continue;
-	//						}
-	//					}
-	//					else
-	//					{
-	//						if (pMaterial->A() < 1.0)
-	//						{
-	//							continue;
-	//						}
-	//					}
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glDrawElementsBaseVertex(GL_TRIANGLES,
+						(GLsizei)pCohort->indices().size(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						pProductDefinition->VBOOffset());
+				}
+			} // for (size_t iInstance = ...			
+		} // for (auto pProductDefinition ...
 
-	//					if (bBindVBO)
-	//					{
-	//						glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-	//						glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-	//						glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-	//						glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-	//						glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
 
-	//						bBindVBO = false;
-	//					}
+	if (bTransparent)
+	{
+		glDisable(GL_BLEND);
+	}
 
-	//					if (bTransform)
-	//					{
-	//						/*
-	//						* Transformation Matrix
-	//						*/
-	//						glm::mat4 transformationMatrix = glm::make_mat4((GLdouble*)pProductInstance->getTransformationMatrix());
+	// Restore Model-View Matrix
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
 
-	//						/*
-	//						* Model-View Matrix
-	//						*/
-	//						glm::mat4 modelViewMatrix = m_modelViewMatrix;
-	//						modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	//						modelViewMatrix = modelViewMatrix * transformationMatrix;
-	//						modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+	_oglUtils::checkForErrors();
 
-	//						glProgramUniformMatrix4fv(
-	//							m_pProgram->GetID(),
-	//							m_pProgram->getMVMatrix(),
-	//							1,
-	//							false,
-	//							glm::value_ptr(modelViewMatrix));
-
-	//						/*
-	//						* Normal Matrix
-	//						*/
-	//						glm::mat4 normalMatrix = modelViewMatrix;
-	//						normalMatrix = glm::inverse(normalMatrix);
-	//						normalMatrix = glm::transpose(normalMatrix);
-
-	//						glProgramUniformMatrix4fv(
-	//							m_pProgram->GetID(),
-	//							m_pProgram->getNMatrix(),
-	//							1,
-	//							false,
-	//							value_ptr(normalMatrix));
-
-	//						bTransform = false;
-	//					}
-
-	//					/*
-	//					* Material - Ambient color
-	//					*/
-	//					glProgramUniform3f(m_pProgram->GetID(),
-	//						m_pProgram->getMaterialAmbientColor(),
-	//						pMaterial->getAmbientColor().R(),
-	//						pMaterial->getAmbientColor().G(),
-	//						pMaterial->getAmbientColor().B());
-
-	//					/*
-	//					* Material - Transparency
-	//					*/
-	//					glProgramUniform1f(
-	//						m_pProgram->GetID(),
-	//						m_pProgram->getTransparency(),
-	//						pMaterial->A());
-
-	//					/*
-	//					* Material - Diffuse color
-	//					*/
-	//					glProgramUniform3f(m_pProgram->GetID(),
-	//						m_pProgram->getMaterialDiffuseColor(),
-	//						pMaterial->getDiffuseColor().R() / 2.f,
-	//						pMaterial->getDiffuseColor().G() / 2.f,
-	//						pMaterial->getDiffuseColor().B() / 2.f);
-
-	//					/*
-	//					* Material - Specular color
-	//					*/
-	//					glProgramUniform3f(m_pProgram->GetID(),
-	//						m_pProgram->getMaterialSpecularColor(),
-	//						pMaterial->getSpecularColor().R() / 2.f,
-	//						pMaterial->getSpecularColor().G() / 2.f,
-	//						pMaterial->getSpecularColor().B() / 2.f);
-
-	//					/*
-	//					* Material - Emissive color
-	//					*/
-	//					glProgramUniform3f(m_pProgram->GetID(),
-	//						m_pProgram->getMaterialEmissiveColor(),
-	//						pMaterial->getEmissiveColor().R() / 3.f,
-	//						pMaterial->getEmissiveColor().G() / 3.f,
-	//						pMaterial->getEmissiveColor().B() / 3.f);
-
-	//					if (iCurrentIBO != pGeometryWithMaterial->IBO())
-	//					{
-	//						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-
-	//						iCurrentIBO = pGeometryWithMaterial->IBO();
-	//					}						
-
-	//					glDrawElementsBaseVertex(GL_TRIANGLES,
-	//						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-	//						GL_UNSIGNED_INT,
-	//						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-	//						pProductDefinition->VBOOffset());
-
-	//					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//				} // for (size_t iMaterial = ...
-	//			} // for (size_t iInstance = ...
-	//		} // for (size_t iObject = ...
-
-	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	} // for (; itGroups != ...
-	//} // for (size_t iDrawMetaData = ...
-
-	//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
-
-	//if (bTransparent)
-	//{
-	//	glDisable(GL_BLEND);
-	//}
-
-	//_oglUtils::checkForErrors();
-
-	//std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	//TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
 // ------------------------------------------------------------------------------------------------
