@@ -72,8 +72,6 @@ public: // Methods
 	void CalculateMinMaxTransform(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
 	void CalculateMinMaxTransform(CProductInstance* pProductInstance, float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
-
-	float* BuildVBOVertexBuffer();
 	
 	int_t getExpressID() const;
 	int_t getInstance() const;	

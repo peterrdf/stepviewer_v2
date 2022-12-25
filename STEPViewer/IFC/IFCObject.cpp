@@ -26,8 +26,6 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 	, m_prXMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prYMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prZMinMax(pair<float, float>(-1.f, 1.f))
-	, m_vecConceptualFacesArea()
-	, m_dVolume(0.)
 	, m_bReferenced(false)
 	, m_bVisible__(true)
 	, m_bSelectable__(true)
@@ -225,31 +223,6 @@ const pair<float, float> & CIFCObject::getYMinMax() const
 const pair<float, float> & CIFCObject::getZMinMax() const
 {
 	return m_prZMinMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<double>& CIFCObject::conceptualFacesArea()
-{
-	return m_vecConceptualFacesArea;
-}
-
-// ------------------------------------------------------------------------------------------------
-double CIFCObject::getConceptualFaceArea(int_t iFace)
-{
-	if ((iFace < 0) || (iFace >= (int_t)m_vecConceptualFacesArea.size()))
-	{
-		ASSERT(FALSE);
-
-		return 0.;
-	}
-
-	return m_vecConceptualFacesArea[iFace];
-}
-
-// ------------------------------------------------------------------------------------------------
-double& CIFCObject::volume()
-{
-	return m_dVolume;
 }
 
 // ------------------------------------------------------------------------------------------------

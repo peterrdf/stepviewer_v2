@@ -955,31 +955,6 @@ void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, f
 }
 
 // ------------------------------------------------------------------------------------------------
-float* CProductDefinition::BuildVBOVertexBuffer()
-{
-	ASSERT(getVerticesCount() > 0);
-
-	/*
-	* Faces Vertex Buffer
-	*/
-	float* pVBOVertices = new float[getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH];
-	memset(pVBOVertices, 0, getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-
-	for (int64_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
-	{
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2];
-
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 3];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 4];
-		pVBOVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 5];
-	} // for (size_t iIndex = ...		
-
-	return pVBOVertices;
-}
-
-// ------------------------------------------------------------------------------------------------
 int_t CProductDefinition::getExpressID() const
 {
 	return m_iExpressID;

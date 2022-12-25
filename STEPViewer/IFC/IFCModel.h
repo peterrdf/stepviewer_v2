@@ -278,22 +278,6 @@ public: // Methods
 	const CIFCMaterial * getBoundingBoxMaterial() const;
 
 	// --------------------------------------------------------------------------------------------
-	// Group of vertices
-	float * GetVertices(const vector<CIFCObject *> & vecIFCObjects, int_t & iVerticesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Group of indices
-	unsigned int * GetMaterialsIndices(const vector<CIFCGeometryWithMaterial *> & vecIFCMaterials, int_t & iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Group of indices
-	unsigned int * GetWireframesCohortsIndices(const vector<CWireframesCohort *> & vecWireframesCohorts, int_t & iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Group of indices
-	unsigned int * GetLinesCohortsIndices(const vector<CLinesCohort *> & vecLinesCohorts, int_t & iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
 	// Support for properties
 	void LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity);
 

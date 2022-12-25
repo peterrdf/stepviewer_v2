@@ -652,98 +652,6 @@ const CIFCMaterial * CIFCModel::getBoundingBoxMaterial() const
 }
 
 // ------------------------------------------------------------------------------------------------
-float * CIFCModel::GetVertices(const vector<CIFCObject *> & vecIFCObjects, int_t & iVerticesCount)
-{
-	iVerticesCount = 0;
-	for (size_t iIFCobject = 0; iIFCobject < vecIFCObjects.size(); iIFCobject++)
-	{
-		iVerticesCount += vecIFCObjects[iIFCobject]->verticesCount();
-	}
-
-	float * pVertices = new float[iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-	
-	int_t iOffset = 0;
-	for (size_t iIFCobject = 0; iIFCobject < vecIFCObjects.size(); iIFCobject++)
-	{
-		memcpy((float *)pVertices + iOffset, vecIFCObjects[iIFCobject]->vertices(),
-			vecIFCObjects[iIFCobject]->verticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-
-		iOffset += vecIFCObjects[iIFCobject]->verticesCount() * GEOMETRY_VBO_VERTEX_LENGTH;
-	}
-
-	return pVertices;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int * CIFCModel::GetMaterialsIndices(const vector<CIFCGeometryWithMaterial *> & vecIFCMaterials, int_t & iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iMaterial = 0; iMaterial < vecIFCMaterials.size(); iMaterial++)
-	{
-		iIndicesCount += vecIFCMaterials[iMaterial]->getIndicesCount();
-	}
-
-	unsigned int * pIndies = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iMaterial = 0; iMaterial < vecIFCMaterials.size(); iMaterial++)
-	{
-		memcpy((unsigned int *)pIndies + iOffset, vecIFCMaterials[iMaterial]->getIndices(),
-			vecIFCMaterials[iMaterial]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecIFCMaterials[iMaterial]->getIndicesCount();
-	}
-
-	return pIndies;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int * CIFCModel::GetWireframesCohortsIndices(const vector<CWireframesCohort *> & vecWireframesCohorts, int_t & iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecWireframesCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecWireframesCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int * pIndies = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecWireframesCohorts.size(); iCohort++)
-	{
-		memcpy((unsigned int *)pIndies + iOffset, vecWireframesCohorts[iCohort]->getIndices(),
-			vecWireframesCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecWireframesCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndies;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int * CIFCModel::GetLinesCohortsIndices(const vector<CLinesCohort *> & vecLinesCohorts, int_t & iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecLinesCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecLinesCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int * pIndies = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecLinesCohorts.size(); iCohort++)
-	{
-		memcpy((unsigned int *)pIndies + iOffset, vecLinesCohorts[iCohort]->getIndices(),
-			vecLinesCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecLinesCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndies;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity)
 {
 	wchar_t	* szQuantityName = NULL;
@@ -1255,7 +1163,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
 	setting += flagbit12;    // WIREFRAME ON
-///	setting += flagbit17;    // OPENGL
+	setting += 0;		     // OPENGL
 	setting += flagbit24;	 //	AMBIENT
 	setting += flagbit25;	 //	DIFFUSE
 	setting += flagbit26;	 //	EMISSIVE
@@ -1331,21 +1239,11 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		pIFCObject->verticesCount() = (int_t)iVerticesCount;
 
 		
-		float * pVertices = new float[(int_t) iVerticesCount * VERTEX_LENGTH];
+		float * pVertices = new float[(int_t)iVerticesCount * VERTEX_LENGTH];
 		UpdateInstanceVertexBuffer(iOWLInstance, pVertices);
-///		for (int_t i = 0; i < iVerticesCount; i++) {
-///			pVertices[i * VERTEX_LENGTH + 2] = -pVertices[i * VERTEX_LENGTH + 2];
-///			pVertices[i * VERTEX_LENGTH + 5] = -pVertices[i * VERTEX_LENGTH + 5];
-///		}
 
 		int32_t * pIndices = new int32_t[(int_t) iIndicesCount];
 		UpdateInstanceIndexBuffer(iOWLInstance, pIndices);
-
-		/*
-		* Volume
-		*/
-		double dVolume = GetVolume(iOWLInstance, pVertices, pIndices);
-		pIFCObject->volume() = abs(dVolume);
 		
 		// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 		map<CIFCGeometryWithMaterial, vector<CConceptualFace>, CIFCGeometryWithMaterialComparator> mapMaterial2ConceptualFaces;
@@ -1374,19 +1272,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			int_t iStartIndexFacesPolygons = 0;
 			int_t iIndicesCountFacesPolygons = 0;
 
-			int_t iConceptualFace = getConceptualFaceEx(
+			getConceptualFaceEx(
 				iInstance, iFace,
 				&iStartIndexTriangles, &iIndicesCountTriangles,
 				&iStartIndexLines, &iIndicesCountLines,
 				&iStartIndexPoints, &iIndicesCountPoints,
 				&iStartIndexFacesPolygons, &iIndicesCountFacesPolygons,
-				0, 0);		
-
-			/*
-			* Area
-			*/
-			double dArea = GetConceptualFaceArea(iConceptualFace, pVertices, pIndices);
-			pIFCObject->conceptualFacesArea().push_back(dArea);			
+				0, 0);
 
 			if (iIndicesCountTriangles > 0)
 			{
