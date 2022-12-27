@@ -61,176 +61,66 @@ private: // Members
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
-#ifdef _LINUX
-    COpenGLSTEPView(wxGLCanvas * pWnd);
-#else
-	COpenGLSTEPView(CWnd * pWnd);
-#endif //_LINUX
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
+	COpenGLSTEPView(CWnd* pWnd);
 	virtual ~COpenGLSTEPView();
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
+	
 	void ShowFaces(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	BOOL AreFacesShown() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void ShowFacesPolygons(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	BOOL AreFacesPolygonsShown() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void ShowConceptualFacesPolygons(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	BOOL AreConceptualFacesPolygonsShown() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void ShowLines(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	BOOL AreLinesShown() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void SetLineWidth(GLfloat fWidth);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	GLfloat GetLineWidth() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void ShowPoints(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	BOOL ArePointsShown() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void SetPointSize(GLfloat fSize);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	GLfloat GetPointSize() const;
 
-	// --------------------------------------------------------------------------------------------
-	// COpenGLView
 	virtual void Load();
 
-	// --------------------------------------------------------------------------------------------
-	// COpenGLView
-#ifdef _LINUX
-    void Draw(wxPaintDC * pDC);
-#else
-	virtual void Draw(CDC * pDC);
-#endif // _LINUX
+	virtual void Draw(CDC* pDC);
 
-	// --------------------------------------------------------------------------------------------
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 
-	// --------------------------------------------------------------------------------------------
-	// COpenGLView
-	virtual void OnContextMenu(CWnd* pWnd, CPoint point);	
-
-	// --------------------------------------------------------------------------------------------
 	// CSTEPView
-	virtual void OnWorldDimensionsChanged();	
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
+	virtual void OnWorldDimensionsChanged();
 	virtual void Reset();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstancePropertySelected();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnEnableAllInstances(CSTEPView* pSender);
 
 protected: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Overridden
+	// CSTEPView
 	virtual void OnControllerChanged();
 
 private: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// Scene
 	void DrawClipSpace();
-
-	// --------------------------------------------------------------------------------------------
-	// Scene
 	void DrawCoordinateSystem();
 
 	// --------------------------------------------------------------------------------------------
 	// https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-wglusefontbitmapsa
 	bool DrawTextGDI(const wchar_t* szText, float fX, float fY, float fZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Faces
+	
 	void DrawFaces(bool bTransparent);
-
-	// --------------------------------------------------------------------------------------------
-	// Conceptual faces polygons
 	void DrawConceptualFacesPolygons();
-
-	// --------------------------------------------------------------------------------------------
-	// Lines
 	void DrawLines();
-
-	// --------------------------------------------------------------------------------------------
-	// Points
 	void DrawPoints();
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
 	void DrawInstancesFrameBuffer();
 
-	// --------------------------------------------------------------------------------------------
-	// Handler
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 
-	// --------------------------------------------------------------------------------------------
-	// Rotate
 	void Rotate(float fXSpin, float fYSpin);
-
-	// --------------------------------------------------------------------------------------------
-	// Zoom
 	void Zoom(float fZTranslation);
 };
 

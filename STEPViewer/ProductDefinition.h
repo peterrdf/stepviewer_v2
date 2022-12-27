@@ -106,6 +106,7 @@ public: // Methods
 	vector<_cohort*>& linesCohorts();
 	vector<_facesCohort*>& pointsCohorts();	
 
+	// VBO (OpenGL)
 	GLuint& VBO();
 	GLsizei& VBOOffset();
 

@@ -244,7 +244,7 @@ void CProductDefinition::Calculate()
 	/*
 	* Group the faces
 	*/
-	MATERIALS::iterator itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
+	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
 	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
 		_facesCohort* pCohort = nullptr;

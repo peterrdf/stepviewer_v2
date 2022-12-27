@@ -30,8 +30,7 @@ using namespace boost::chrono;
 
 IMPLEMENT_DYNCREATE(CMySTEPViewerDoc, CDocument)
 
-BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)	
-	ON_COMMAND(ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY, &CMySTEPViewerDoc::OnViewScaleAndCenterAllGeometry)
+BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_FILE_OPEN, &CMySTEPViewerDoc::OnFileOpen)
 END_MESSAGE_MAP()
 
@@ -175,12 +174,6 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 	ASSERT(FALSE); // TODO
 
 	return TRUE;
-}
-
-void CMySTEPViewerDoc::OnViewScaleAndCenterAllGeometry()
-{
-	ASSERT(FALSE); // OBSOLETE
-	//ScaleAndCenter();
 }
 
 void CMySTEPViewerDoc::OnFileOpen()

@@ -1593,6 +1593,7 @@ void COpenGLSTEPView::DrawLines()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawPoints()
 {
+	ASSERT(FALSE); // TODO
 	//if (!m_bShowPoints)
 	//{
 	//	return;
