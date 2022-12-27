@@ -1209,17 +1209,14 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	CalculateInstance(iInstance, &iVerticesCount, &iIndicesCount, 0);
 	if ((iVerticesCount > 0) && (iIndicesCount > 0))
 	{
-		// X, Y, Z, Nx, Ny, Nz, Ambient, Diffuse, Emissive, Specular		
-		if (m_geometryStarted == false) {
-			float * pVertices = new float[(int_t) iVerticesCount * VERTEX_LENGTH];
+		if (!m_geometryStarted) 
+		{
+			float* pVertices = new float[(int_t) iVerticesCount * VERTEX_LENGTH];
 			UpdateInstanceVertexBuffer(iInstance, pVertices);
 
-///			SetVertexBufferOffset(m_iIFCModel, -pVertices[0], pVertices[2], -pVertices[1]);
 			SetVertexBufferOffset(m_iIFCModel, -pVertices[0], -pVertices[1], -pVertices[2]);
 			m_offsetX = pVertices[0];
-///			m_offsetY = -pVertices[2];
 			m_offsetY = pVertices[1];
-///			m_offsetZ = pVertices[1];
 			m_offsetZ = pVertices[2];
 
 			delete[] pVertices;

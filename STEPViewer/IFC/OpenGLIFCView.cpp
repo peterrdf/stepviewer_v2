@@ -909,34 +909,34 @@ BOOL COpenGLIFCView::AreWireframesShown()
 	/*
 	* Non-transparent faces
 	*/
-	DrawFaces(false);
+	//DrawFaces(false);
 
 	/*
 	* Transparent faces
 	*/
-	DrawFaces(true);
-
-	/*
-	* Lines
-	*/
-	DrawLines();
+	//DrawFaces(true);	
 
 	/*
 	* Wireframes
 	*/
-	DrawWireframes();
+	//DrawWireframes();
+
+	/*
+	* Lines
+	*/
+	//DrawLines();
 
 	/*
 	* Scene
 	*/
-	DrawScene((float)ARROW_SIZE_I, (float)ARROW_SIZE_II);	
+	//DrawScene((float)ARROW_SIZE_I, (float)ARROW_SIZE_II);	
 
 	SwapBuffers(*pDC);
 
 	/*
 	* Selection support
 	*/
-	DrawFacesFrameBuffer();
+	//DrawFacesFrameBuffer();
 }
 
 // ------------------------------------------------------------------------------------------------
