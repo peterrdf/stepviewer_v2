@@ -162,10 +162,6 @@ public: // Methods
 	bool Load(const wchar_t* szIFCFile, int64_t iInstance);
 
 	// --------------------------------------------------------------------------------------------
-	// View Geometry
-	CIFCObject* Loadinstance(int_t iInstance, int_t iEntity, const wchar_t* szEntityName, bool& bNewInstance);
-
-	// --------------------------------------------------------------------------------------------
 	// Getter
 	int_t getModel() const;
 

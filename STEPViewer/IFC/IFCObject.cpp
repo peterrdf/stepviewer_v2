@@ -15,7 +15,6 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 	, m_iExpressID(0)
 	, m_iParentExpressID(0)
 	, m_iID(0)
-	, m_pRGBID(new CIFCColor())
 	, m_pVertices(NULL)
 	, m_iVerticesCount(0)
 	, m_iConceptualFacesCount(0)
@@ -36,16 +35,6 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
-	m_Origin = { 0, 0., 0. };
-	m_XVec = { 0, 0., 0. };
-	m_YVec = { 0, 0., 0. };
-	m_ZVec = { 0, 0., 0. };
-
-	std::fill(std::begin(m_origin), std::end(m_origin), 0.f);
-	std::fill(std::begin(m_xDim), std::end(m_xDim), 0.f);
-	std::fill(std::begin(m_yDim), std::end(m_yDim), 0.f);
-	std::fill(std::begin(m_zDim), std::end(m_zDim), 0.f);
-
 	m_iExpressID = internalGetP21Line(m_iInstance);
 
 	{
@@ -95,9 +84,7 @@ CIFCObject::~CIFCObject()
 	{
 		delete m_vecWireframesCohorts[iWireframesCohort];
 	}
-	m_vecWireframesCohorts.clear();	
-
-	delete m_pRGBID;
+	m_vecWireframesCohorts.clear();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -140,12 +127,6 @@ int_t CIFCObject::parentExpressID() const
 int_t & CIFCObject::ID()
 {
 	return m_iID;
-}
-
-// ------------------------------------------------------------------------------------------------
-CIFCColor * CIFCObject::rgbID()
-{
-	return m_pRGBID;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -283,189 +264,6 @@ BOOL CIFCObject::AreWireframesShown()
 bool & CIFCObject::selected()
 {
 	return m_bSelected;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::SetMinimumBBox(float * origin, float * xDim, float * yDim, float * zDim)
-{
-	m_origin[0] = origin[0];
-	m_origin[1] = origin[1];
-	m_origin[2] = origin[2];
-
-	m_xDim[0] = xDim[0];
-	m_xDim[1] = xDim[1];
-	m_xDim[2] = xDim[2];
-
-	m_yDim[0] = yDim[0];
-	m_yDim[1] = yDim[1];
-	m_yDim[2] = yDim[2];
-
-	m_zDim[0] = zDim[0];
-	m_zDim[1] = zDim[1];
-	m_zDim[2] = zDim[2];
-}
-
-// ------------------------------------------------------------------------------------------------
-VECTOR3 * CIFCObject::getOrigin()
-{
-	return &m_Origin;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setOrigin(VECTOR3 * vec)
-{
-	m_Origin.x = vec->x;
-	m_Origin.y = vec->y;
-	m_Origin.z = vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-VECTOR3 * CIFCObject::getXVec()
-{
-	return &m_XVec;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setXVec(VECTOR3 * vec)
-{
-	m_XVec.x = vec->x;
-	m_XVec.y = vec->y;
-	m_XVec.z = vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-VECTOR3 * CIFCObject::getYVec()
-{
-	return &m_YVec;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setYVec(VECTOR3 * vec)
-{
-	m_YVec.x = vec->x;
-	m_YVec.y = vec->y;
-	m_YVec.z = vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-VECTOR3 * CIFCObject::getZVec()
-{
-	return &m_ZVec;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setZVec(VECTOR3 * vec)
-{
-	m_ZVec.x = vec->x;
-	m_ZVec.y = vec->y;
-	m_ZVec.z = vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-float * CIFCObject::getBBoxOrigin()
-{
-	return m_origin;
-}
-
-// --------------------------------------------------------------------------------------------
-void CIFCObject::setBBoxOrigin(VECTOR3 * vec)
-{
-	m_origin[0] = (float)vec->x;
-	m_origin[1] = (float)vec->y;
-	m_origin[2] = (float)vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-float * CIFCObject::getBBoxX()
-{
-	return m_xDim;
-}
-
-// --------------------------------------------------------------------------------------------
-void CIFCObject::setBBoxX(VECTOR3 * vec)
-{
-	m_xDim[0] = (float)vec->x;
-	m_xDim[1] = (float)vec->y;
-	m_xDim[2] = (float)vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-float * CIFCObject::getBBoxY()
-{
-	return m_yDim;
-}
-
-// --------------------------------------------------------------------------------------------
-void CIFCObject::setBBoxY(VECTOR3 * vec)
-{
-	m_yDim[0] = (float)vec->x;
-	m_yDim[1] = (float)vec->y;
-	m_yDim[2] = (float)vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-float * CIFCObject::getBBoxZ()
-{
-	return m_zDim;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setBBoxZ(VECTOR3 * vec)
-{
-	m_zDim[0] = (float)vec->x;
-	m_zDim[1] = (float)vec->y;
-	m_zDim[2] = (float)vec->z;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::UpdateBBox(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
-{
-	std::fill(std::begin(m_origin), std::end(m_origin), 0.f);
-	std::fill(std::begin(m_xDim), std::end(m_xDim), 0.f);
-	std::fill(std::begin(m_yDim), std::end(m_yDim), 0.f);
-	std::fill(std::begin(m_zDim), std::end(m_zDim), 0.f);
-
-	VECTOR3 origin = m_Origin;
-
-	origin.x -= m_pIFCModel->getXoffset();
-	origin.y -= m_pIFCModel->getYoffset();
-	origin.z -= m_pIFCModel->getZoffset();
-
-	m_origin[0] = (float)origin.x;
-	m_origin[1] = (float)origin.z;
-	m_origin[2] = (float)-origin.y;
-
-	m_xDim[0] = (float)m_XVec.x;
-	m_xDim[1] = (float)m_XVec.z;
-	m_xDim[2] = (float)-m_XVec.y;
-
-	m_yDim[0] = (float)m_YVec.x;
-	m_yDim[1] = (float)m_YVec.z;
-	m_yDim[2] = (float)-m_YVec.y;
-
-	m_zDim[0] = (float)m_ZVec.x;
-	m_zDim[1] = (float)m_ZVec.z;
-	m_zDim[2] = (float)-m_ZVec.y;
-
-	m_origin[0] -= (fXmin + fXmax) / 2;
-	m_origin[1] -= (fYmin + fYmax) / 2;
-	m_origin[2] -= (fZmin + fZmax) / 2;
-
-	m_origin[0] /= (fResoltuion / 2.0f);
-	m_origin[1] /= (fResoltuion / 2.0f);
-	m_origin[2] /= (fResoltuion / 2.0f);
-
-	m_xDim[0] /= (fResoltuion / 2.0f);
-	m_xDim[1] /= (fResoltuion / 2.0f);
-	m_xDim[2] /= (fResoltuion / 2.0f);
-
-	m_yDim[0] /= (fResoltuion / 2.0f);
-	m_yDim[1] /= (fResoltuion / 2.0f);
-	m_yDim[2] /= (fResoltuion / 2.0f);
-
-	m_zDim[0] /= (fResoltuion / 2.0f);
-	m_zDim[1] /= (fResoltuion / 2.0f);
-	m_zDim[2] /= (fResoltuion / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------

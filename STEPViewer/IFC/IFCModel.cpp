@@ -291,108 +291,40 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, fZmax - fZmin);
 
 	/*
-	* Build selection colors
+	* Build selection colors - TODO!!!
 	*/
-	const float STEP = 1.0f / 255.0f;
+	//const float STEP = 1.0f / 255.0f;
 
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
-	{
-		CIFCObject* pIFCObject = m_vecIFCObjects[iIFCObject];
+	//for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
+	//{
+	//	CIFCObject* pIFCObject = m_vecIFCObjects[iIFCObject];
 
-		if (!pIFCObject->hasGeometry())
-		{
-			// skip the objects without geometry
-			continue;
-		}
+	//	if (!pIFCObject->hasGeometry())
+	//	{
+	//		// skip the objects without geometry
+	//		continue;
+	//	}
 
-		float fR = floor((float)pIFCObject->ID() / (255.0f * 255.0f));
-		if (fR >= 1.0f)
-		{
-			fR *= STEP;
-		}
+	//	float fR = floor((float)pIFCObject->ID() / (255.0f * 255.0f));
+	//	if (fR >= 1.0f)
+	//	{
+	//		fR *= STEP;
+	//	}
 
-		float fG = floor((float)pIFCObject->ID() / 255.0f);
-		if (fG >= 1.0f)
-		{
-			fG *= STEP;
-		}
+	//	float fG = floor((float)pIFCObject->ID() / 255.0f);
+	//	if (fG >= 1.0f)
+	//	{
+	//		fG *= STEP;
+	//	}
 
-		float fB = (float)(pIFCObject->ID() % 255);
-		fB *= STEP;
+	//	float fB = (float)(pIFCObject->ID() % 255);
+	//	fB *= STEP;
 
-		ASSERT(pIFCObject->rgbID() != NULL);
-		pIFCObject->rgbID()->Init(fR, fG, fB);
-	} // for (; itIFCCobject != ...		
+	//	ASSERT(pIFCObject->rgbID() != NULL);
+	//	pIFCObject->rgbID()->Init(fR, fG, fB);
+	//} // for (; itIFCCobject != ...		
 
 	return true;
-}
-
-// ------------------------------------------------------------------------------------------------
-CIFCObject* CIFCModel::Loadinstance(int_t iInstance, int_t iEntity, const wchar_t* szEntityName, bool& bNewInstance)
-{
-	ASSERT(iInstance != 0);
-
-	if (m_mapIFCObjects.find(iInstance) != m_mapIFCObjects.end())
-	{
-		bNewInstance = false;
-
-		return m_mapIFCObjects[iInstance];
-	}
-
-	bNewInstance = true;
-
-	int_t iOWLInstance = 0;
-	owlBuildInstance(m_iIFCModel, iInstance, &iOWLInstance);
-
-	wchar_t* szInstanceGUIDW = nullptr;
-	sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
-
-	CIFCObject* pIFCObject = RetrieveGeometry(szInstanceGUIDW != NULL ? szInstanceGUIDW : L"", iEntity, szEntityName, iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	pIFCObject->ID() = s_iObjectID++;
-
-	pIFCObject->visible__() = true;
-
-	/*
-	* Min/Max
-	*/
-	if (pIFCObject->hasGeometry())
-	{
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-
-		pIFCObject->CalculateMinMaxValues(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-		const float STEP = 1.0f / 255.0f;
-
-		float fR = floor((float)pIFCObject->ID() / (255.0f * 255.0f));
-		if (fR >= 1.0f)
-		{
-			fR *= STEP;
-		}
-
-		float fG = floor((float)pIFCObject->ID() / 255.0f);
-		if (fG >= 1.0f)
-		{
-			fG *= STEP;
-		}
-
-		float fB = (float)(pIFCObject->ID() % 255);
-		fB *= STEP;
-
-		ASSERT(pIFCObject->rgbID() != NULL);
-		pIFCObject->rgbID()->Init(fR, fG, fB);
-	} // if (pIFCObject->hasGeometry())
-
-	m_vecIFCObjects.push_back(pIFCObject);
-	m_mapID2IFCObject[pIFCObject->ID()] = pIFCObject;
-	m_mapExpressID2IFCObject[pIFCObject->expressID()] = pIFCObject;
-	m_mapIFCObjects[iInstance] = pIFCObject;
-
-	return pIFCObject;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1570,43 +1502,6 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 		delete[] pVertices;
 		delete[] pIndices;
-
-		//
-		//	get bounding box
-		//
-		double	transformationMatrix[12], startVector[3], endVector[3];
-		GetBoundingBox(iInstance, transformationMatrix, startVector, endVector);
-
-		MATRIX	* matrix = (MATRIX*)transformationMatrix;
-		VECTOR3	originVec;
-
-		Vec3Transform(&originVec, (VECTOR3*)startVector, matrix);
-		pIFCObject->setOrigin(&originVec);
-
-		VECTOR3	myVec;
-		VECTOR3	xVec;
-		xVec.x = endVector[0];
-		xVec.y = startVector[1];
-		xVec.z = startVector[2];
-		Vec3Transform(&myVec, &xVec, matrix);
-		Vec3Subtract(&myVec, &myVec, &originVec);
-		pIFCObject->setXVec(&myVec);
-
-		VECTOR3	yVec;
-		yVec.x = startVector[0];
-		yVec.y = endVector[1];
-		yVec.z = startVector[2];
-		Vec3Transform(&myVec, &yVec, matrix);
-		Vec3Subtract(&myVec, &myVec, &originVec);
-		pIFCObject->setYVec(&myVec);
-
-		VECTOR3	zVec;
-		zVec.x = startVector[0];
-		zVec.y = startVector[1];
-		zVec.z = endVector[2];
-		Vec3Transform(&myVec, &zVec, matrix);
-		Vec3Subtract(&myVec, &myVec, &originVec);
-		pIFCObject->setZVec(&myVec);
 	} // if ((iVerticesCount > 0) && ...	
 
 	/*
