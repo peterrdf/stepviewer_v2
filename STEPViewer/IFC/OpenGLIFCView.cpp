@@ -1151,30 +1151,11 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 					*/
 					if (!m_bDetailsViewMode && (GetKeyState(VK_CONTROL) & 0x8000))
 					{
-						bool isSelected;
-						if (m_pPickedIFCObject->selected()) {
-							isSelected = false;
-						}
-						else {
-							isSelected = true;
-						}
-
-						m_pPickedIFCObject->selected() = isSelected;
+						m_pPickedIFCObject->setSelected(m_pPickedIFCObject->getSelected());
 
 						m_pWnd->RedrawWindow();
 
 						GetController()->SelectInstance(this, m_pPickedIFCObject);
-
-						//if (m_pPickedIFCObject != NULL) {
-						//	int64_t	expressID = m_pPickedIFCObject->expressID();
-						//	if (isSelected == false) {
-						//		expressID = -expressID;
-						//	}
-						//	//GetController()->FireOnSelectInstance(this, expressID);
-						//}
-						//else {
-						//	//GetController()->FireOnSelectInstance(this, 0);
-						//}
 					}
 				} // else if (GetKeyState(VK_MENU) & 0x8000)				
 			} // else if (GetKeyState(VK_SHIFT) & 0x8000)
@@ -1194,7 +1175,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				{
 					CIFCObject * pIFCObject = vecIFCObjects[iIFCObject];
 
-					pIFCObject->selected() = false;
+					pIFCObject->setSelected(false);
 				}
 
 				m_pWnd->RedrawWindow();

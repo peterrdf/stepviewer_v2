@@ -15,22 +15,22 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 	, m_iExpressID(0)
 	, m_iParentExpressID(0)
 	, m_iID(0)
-	, m_pVertices(NULL)
-	, m_iVerticesCount(0)
+	, m_pVertexBuffer(NULL)
+	, m_pIndexBuffer(NULL)
 	, m_iConceptualFacesCount(0)
-	, m_vecConceptualFacesMaterials()
+	, m_vecTriangles()
+	, m_vecConcFacePolygons()
+	, m_vecLines()
+	, m_vecPoints()
+	, m_vecConcFacesCohorts()
+	, m_vecConcFacePolygonsCohorts()
 	, m_vecLinesCohorts()
-	, m_vecWireframesCohorts()
-	, m_pUserDefinedMaterial(NULL)
+	, m_vecPointsCohorts()
 	, m_prXMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prYMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prZMinMax(pair<float, float>(-1.f, 1.f))
 	, m_bReferenced(false)
-	, m_bVisible__(true)
-	, m_bSelectable__(true)
-	, m_bShowFaces(true)
-	, m_bShowWireframes(true)
-	, m_bShowLines(true)
+	, m_bEnable(true)
 	, m_bSelected(false)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
@@ -38,25 +38,25 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 	m_iExpressID = internalGetP21Line(m_iInstance);
 
 	{
-		int_t	m_iInstanceRelAggregates = 0;
-		sdaiGetAttrBN(m_iInstance, "Decomposes", sdaiINSTANCE, &m_iInstanceRelAggregates);
-		if (m_iInstanceRelAggregates) {
-			int_t	m_iInstanceParent = 0;
-			sdaiGetAttrBN(m_iInstanceRelAggregates, "RelatingObject", sdaiINSTANCE, &m_iInstanceParent);
-			if (m_iInstanceParent) {
-				m_iParentExpressID = internalGetP21Line(m_iInstanceParent);
+		int_t iInstanceRelAggregates = 0;
+		sdaiGetAttrBN(m_iInstance, "Decomposes", sdaiINSTANCE, &iInstanceRelAggregates);
+		if (iInstanceRelAggregates) {
+			int_t iInstanceParent = 0;
+			sdaiGetAttrBN(iInstanceRelAggregates, "RelatingObject", sdaiINSTANCE, &iInstanceParent);
+			if (iInstanceParent) {
+				m_iParentExpressID = internalGetP21Line(iInstanceParent);
 			}
 		}
 	}
 	
 	{
-		int_t	m_iInstanceRelContainedInSpatialStructure = 0;
-		sdaiGetAttrBN(m_iInstance, "ContainedInStructure", sdaiINSTANCE, &m_iInstanceRelContainedInSpatialStructure);
-		if (m_iInstanceRelContainedInSpatialStructure) {
-			int_t	m_iInstanceParent = 0;
-			sdaiGetAttrBN(m_iInstanceRelContainedInSpatialStructure, "RelatingStructure", sdaiINSTANCE, &m_iInstanceParent);
-			if (m_iInstanceParent) {
-				m_iParentExpressID = internalGetP21Line(m_iInstanceParent);
+		int_t iInstanceRelContainedInSpatialStructure = 0;
+		sdaiGetAttrBN(m_iInstance, "ContainedInStructure", sdaiINSTANCE, &iInstanceRelContainedInSpatialStructure);
+		if (iInstanceRelContainedInSpatialStructure) {
+			int_t iInstanceParent = 0;
+			sdaiGetAttrBN(iInstanceRelContainedInSpatialStructure, "RelatingStructure", sdaiINSTANCE, &iInstanceParent);
+			if (iInstanceParent) {
+				m_iParentExpressID = internalGetP21Line(iInstanceParent);
 			}
 		}
 	}
@@ -65,26 +65,7 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 // ------------------------------------------------------------------------------------------------
 CIFCObject::~CIFCObject()
 {
-	delete[] m_pVertices;
-	m_pVertices = NULL;
-
-	for (size_t iMaterial = 0; iMaterial < m_vecConceptualFacesMaterials.size(); iMaterial++)
-	{
-		delete m_vecConceptualFacesMaterials[iMaterial];
-	}
-	m_vecConceptualFacesMaterials.clear();
-
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecLinesCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecLinesCohorts[iLinesCohort];
-	}
-	m_vecLinesCohorts.clear();	
-
-	for (size_t iWireframesCohort = 0; iWireframesCohort < m_vecWireframesCohorts.size(); iWireframesCohort++)
-	{
-		delete m_vecWireframesCohorts[iWireframesCohort];
-	}
-	m_vecWireframesCohorts.clear();
+	Clean();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -132,7 +113,7 @@ int_t & CIFCObject::ID()
 // ------------------------------------------------------------------------------------------------
 bool CIFCObject::hasGeometry() const
 {
-	return (m_pVertices != NULL) && (m_iVerticesCount > 0);
+	return (m_pVertexBuffer != NULL) && (m_pVertexBuffer->size() > 0);
 }
 
 CIFCModel * CIFCObject::GetModel() const
@@ -141,15 +122,53 @@ CIFCModel * CIFCObject::GetModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-float *& CIFCObject::vertices()
+float* CIFCObject::getVertices()
 {
-	return m_pVertices;
+	if (m_pVertexBuffer != nullptr)
+	{
+		return m_pVertexBuffer->data();
+	}
+
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t & CIFCObject::verticesCount()
+int_t CIFCObject::getVerticesCount()
 {
-	return m_iVerticesCount;
+	if (m_pVertexBuffer != nullptr)
+	{
+		return m_pVertexBuffer->size();
+	}
+
+	return 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+int64_t CIFCObject::getVertexLength() const
+{
+	return VERTEX_LENGTH;
+}
+
+// ------------------------------------------------------------------------------------------------
+int32_t* CIFCObject::getIndices() const
+{
+	if (m_pIndexBuffer != nullptr)
+	{
+		return m_pIndexBuffer->data();
+	}
+
+	return nullptr;
+}
+
+// ------------------------------------------------------------------------------------------------
+int64_t CIFCObject::getIndicesCount() const
+{
+	if (m_pIndexBuffer != nullptr)
+	{
+		return m_pIndexBuffer->size();
+	}
+
+	return 0;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -159,33 +178,50 @@ int_t & CIFCObject::conceptualFacesCount()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CIFCGeometryWithMaterial *> & CIFCObject::conceptualFacesMaterials()
+const vector<_primitives >& CIFCObject::getTriangles() const
 {
-	return m_vecConceptualFacesMaterials;
+	return m_vecTriangles;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort *> & CIFCObject::linesCohorts()
+const vector<_primitives >& CIFCObject::getLines() const
+{
+	return m_vecLines;
+}
+
+// ------------------------------------------------------------------------------------------------
+const vector<_primitives >& CIFCObject::getPoints() const
+{
+	return m_vecPoints;
+}
+
+// ------------------------------------------------------------------------------------------------
+const vector<_primitives >& CIFCObject::getConcFacesPolygons() const
+{
+	return m_vecConcFacePolygons;
+}
+
+// ------------------------------------------------------------------------------------------------
+vector<_facesCohort*>& CIFCObject::concFacesCohorts()
+{
+	return m_vecConcFacesCohorts;
+}
+
+vector<_cohort*>& CIFCObject::concFacePolygonsCohorts()
+{
+	return m_vecConcFacePolygonsCohorts;
+}
+
+// ------------------------------------------------------------------------------------------------
+vector<_cohort*>& CIFCObject::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CWireframesCohort *> & CIFCObject::wireframesCohorts()
+vector<_facesCohort*>& CIFCObject::pointsCohorts()
 {
-	return m_vecWireframesCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-const CIFCMaterial * CIFCObject::getUserDefinedMaterial() const
-{
-	return m_pUserDefinedMaterial;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::setUserDefinedMaterial(CIFCMaterial * pIFCMaterial)
-{
-	m_pUserDefinedMaterial = pIFCMaterial;
+	return m_vecPointsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -213,55 +249,25 @@ bool&  CIFCObject::referenced()
 }
 
 // ------------------------------------------------------------------------------------------------
-bool & CIFCObject::visible__()
+bool CIFCObject::getEnable() const
 {
-	return m_bVisible__;
+	return m_bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool & CIFCObject::selectable__()
+void CIFCObject::setEnable(bool bEnable)
 {
-	return m_bSelectable__;
+	m_bEnable = bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::ShowFaces(BOOL bShow)
+void CIFCObject::setSelected(bool bSelected)
 {
-	m_bShowFaces = bShow;
+	m_bSelected = bSelected;
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CIFCObject::AreFacesShown()
-{
-	return m_bShowFaces;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::ShowLines(BOOL bShow)
-{
-	m_bShowLines = bShow;
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL CIFCObject::AreLinesShown()
-{
-	return m_bShowLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCObject::ShowWireframes(BOOL bShow)
-{
-	m_bShowWireframes = bShow;
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL CIFCObject::AreWireframesShown()
-{
-	return m_bShowWireframes;
-}
-
-// ------------------------------------------------------------------------------------------------
-bool & CIFCObject::selected()
+bool CIFCObject::getSelected() const
 {
 	return m_bSelected;
 }
@@ -279,23 +285,28 @@ GLsizei & CIFCObject::VBOOffset()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::CalculateMinMaxValues(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
+void CIFCObject::CalculateMinMaxValues(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
 {
-	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
+	if (getVerticesCount() == 0)
 	{
-		fXmin = fmin(fXmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
-		fXmax = fmax(fXmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
+		return;
+	}
 
-		fYmin = fmin(fYmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
-		fYmax = fmax(fYmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
+	{
+		fXmin = fmin(fXmin, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
+		fXmax = fmax(fXmax, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)]);
 
-		fZmin = fmin(fZmin, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
-		fZmax = fmax(fZmax, m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
+		fYmin = fmin(fYmin, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
+		fYmax = fmax(fYmax, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1]);
+
+		fZmin = fmin(fZmin, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
+		fZmax = fmax(fZmax, m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2]);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::CalculateMinMaxValues(float * pVertices, int_t iVerticesCount)
+void CIFCObject::CalculateMinMaxValues(float* pVertices, int_t iVerticesCount)
 {
 	float fXmin = FLT_MAX;
 	float fXmax = -FLT_MAX;
@@ -324,29 +335,29 @@ void CIFCObject::CalculateMinMaxValues(float * pVertices, int_t iVerticesCount)
 // ------------------------------------------------------------------------------------------------
 void CIFCObject::Scale(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
 {
-	if (m_iVerticesCount == 0)
+	if (getVerticesCount() == 0)
 	{
-		ATLASSERT(FALSE);
+		ASSERT(FALSE);
 
 		return;
 	}
 
-	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - fXmin;
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - fYmin;
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - fZmin;
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - fXmin;
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - fYmin;
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - fZmin;
 
 		// center
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
 }
 
@@ -377,4 +388,26 @@ void CIFCObject::Scale(float * pVertices, int_t iVerticesCount, float fXmin, flo
 		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
 		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCObject::Clean()
+{
+	delete m_pVertexBuffer;
+	m_pVertexBuffer = NULL;
+
+	delete m_pIndexBuffer;
+	m_pIndexBuffer = NULL;
+
+	m_iConceptualFacesCount = 0;
+
+	m_vecTriangles.clear();
+	m_vecConcFacePolygons.clear();
+	m_vecLines.clear();
+	m_vecPoints.clear();
+
+	_cohort::clear(m_vecConcFacesCohorts);
+	_cohort::clear(m_vecConcFacePolygonsCohorts);
+	_cohort::clear(m_vecLinesCohorts);
+	_cohort::clear(m_vecPointsCohorts);
 }

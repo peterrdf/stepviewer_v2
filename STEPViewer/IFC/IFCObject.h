@@ -1,6 +1,8 @@
 #ifndef IFCOBJECT_H
 #define IFCOBJECT_H
 
+#include "_oglUtils.h"
+
 #include <glew.h>
 
 #include "STEPInstance.h"
@@ -33,31 +35,34 @@ private: // Members
 	int64_t m_iExpressID;
 	int64_t m_iParentExpressID;
 	int_t m_iID;
-
-	float* m_pVertices;
-	int_t m_iVerticesCount;
 	
+	// Geometry
+	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
+	_indices_i32* m_pIndexBuffer;
 	int64_t m_iConceptualFacesCount;
 
-	vector<CIFCGeometryWithMaterial *> m_vecConceptualFacesMaterials;
+	// Primitives
+	vector<_primitives> m_vecTriangles;
+	vector<_primitives> m_vecConcFacePolygons;
+	vector<_primitives> m_vecLines;
+	vector<_primitives> m_vecPoints;
 
-	
-	vector<CLinesCohort *> m_vecLinesCohorts;
-	vector<CWireframesCohort *> m_vecWireframesCohorts;
+	// Materials
+	vector<_facesCohort*> m_vecConcFacesCohorts;
 
-	CIFCMaterial * m_pUserDefinedMaterial;
+	// Cohorts
+	vector<_cohort*> m_vecConcFacePolygonsCohorts;
+	vector<_cohort*> m_vecLinesCohorts;
+	vector<_facesCohort*> m_vecPointsCohorts;
 
+	// Model
 	pair<float, float> m_prXMinMax;
 	pair<float, float> m_prYMinMax;
 	pair<float, float> m_prZMinMax;	
 	
+	// UI
 	bool m_bReferenced;
-	bool m_bVisible__;
-	bool m_bSelectable__;
-
-	BOOL m_bShowFaces;
-	BOOL m_bShowWireframes;
-	BOOL m_bShowLines;
+	bool m_bEnable;
 	bool m_bSelected;
 
 	// VBO (OpenGL)
@@ -81,42 +86,48 @@ public: // Methods
 
 	CIFCModel* GetModel() const;
 	
-	float *& vertices();
-	int_t & verticesCount();
+	float* getVertices();
+	int_t getVerticesCount();
+	int64_t getVertexLength() const;
+	int32_t* getIndices() const;
+	int64_t getIndicesCount() const;
+	int64_t& conceptualFacesCount();
 
-	int64_t & conceptualFacesCount();
+	const vector<_primitives>& getTriangles() const;
+	const vector<_primitives>& getLines() const;
+	const vector<_primitives>& getPoints() const;
+	const vector<_primitives>& getConcFacesPolygons() const;
 
-	vector<CIFCGeometryWithMaterial *> & conceptualFacesMaterials();
+	// Materials
+	vector<_facesCohort*>& concFacesCohorts();
 
-	vector<CLinesCohort *> & linesCohorts();
-	vector<CWireframesCohort *> & wireframesCohorts();
-	const CIFCMaterial * CIFCObject::getUserDefinedMaterial() const;
-	void CIFCObject::setUserDefinedMaterial(CIFCMaterial * pIFCMaterial);
+	// Cohorts
+	vector<_cohort*>& concFacePolygonsCohorts();
+	vector<_cohort*>& linesCohorts();
+	vector<_facesCohort*>& pointsCohorts();
 
-	const pair<float, float> & getXMinMax() const;
-	const pair<float, float> & getYMinMax() const;
-	const pair<float, float> & getZMinMax() const;
+	const pair<float, float>& getXMinMax() const;
+	const pair<float, float>& getYMinMax() const;
+	const pair<float, float>& getZMinMax() const;
 
+	// State
 	bool& referenced();
-	bool & visible__();
-	bool & selectable__();
-
-	void ShowFaces(BOOL bShow);
-	BOOL AreFacesShown();
-	void ShowLines(BOOL bShow);
-	BOOL AreLinesShown();
-	void ShowWireframes(BOOL bShow);
-	BOOL AreWireframesShown();
-
-	bool& selected();	
+	bool getEnable() const;
+	void setEnable(bool bEnable);
+	void setSelected(bool bSelected);
+	bool getSelected() const;
 	
 	GLuint & VBO();
 	GLsizei & VBOOffset();
 	
-	void CalculateMinMaxValues(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
-	void CalculateMinMaxValues(float * pVertices, int_t iVerticesCount);
+	void CalculateMinMaxValues(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
+	void CalculateMinMaxValues(float* pVertices, int_t iVerticesCount);
 	void Scale(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
-	static void Scale(float * pVertices, int_t iVerticesCount, float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);	
+	static void Scale(float* pVertices, int_t iVerticesCount, float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);	
+
+private: // Methods
+
+	void Clean();
 };
 
 #endif // IFCOBJECT_H

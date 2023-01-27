@@ -254,14 +254,6 @@ public: // Methods
 	void SetSelectMaterial(CIFCMaterial * pOnMouseOverMaterial, CIFCMaterial * pOnSelectMaterial, CIFCMaterial * pBoundingBoxMaterial);
 
 	// --------------------------------------------------------------------------------------------
-	// User-defined materials
-	void SetFallbackColor(CIFCMaterial * pMaterial);
-
-	// --------------------------------------------------------------------------------------------
-	// User-defined materials
-	void SetFallbackColorPerEntity(CString entityName, CIFCMaterial * pMaterial);
-
-	// --------------------------------------------------------------------------------------------
 	// Getter
 	const CIFCMaterial * getOnMouseOverMaterial() const;
 

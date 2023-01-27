@@ -26,8 +26,7 @@ CProductDefinition::CProductDefinition()
 	, m_vecConcFacesCohorts()
 	, m_vecConcFacePolygonsCohorts()
 	, m_vecLinesCohorts()
-	, m_vecPointsCohorts()	
-	, m_bEnable(true)
+	, m_vecPointsCohorts()
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
@@ -1142,10 +1141,10 @@ GLsizei& CProductDefinition::VBOOffset()
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::Clean()
 {
-	delete[] m_pVertexBuffer;
+	delete m_pVertexBuffer;
 	m_pVertexBuffer = NULL;
 
-	delete[] m_pIndexBuffer;
+	delete m_pIndexBuffer;
 	m_pIndexBuffer = NULL;
 
 	m_iConceptualFacesCount = 0;

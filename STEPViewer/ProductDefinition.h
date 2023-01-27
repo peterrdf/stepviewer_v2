@@ -53,9 +53,7 @@ private: // Members
 	// Cohorts
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
 	vector<_cohort*> m_vecLinesCohorts;
-	vector<_facesCohort*> m_vecPointsCohorts;	
-	
-	bool m_bEnable; // UI
+	vector<_facesCohort*> m_vecPointsCohorts;
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -111,8 +109,7 @@ public: // Methods
 	GLsizei& VBOOffset();
 
 private: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	void Clean();
 };
 

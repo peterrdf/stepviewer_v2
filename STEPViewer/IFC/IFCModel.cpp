@@ -203,7 +203,6 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 	* Entities
 	*/
 	int_t ifcObjectEntity = sdaiGetEntity(m_iIFCModel, "IFCOBJECT");
-	//int_t ifcProductEntity = sdaiGetEntity(m_iIFCModel, "IFCPRODUCT");
 	m_ifcProjectEntity = sdaiGetEntity(m_iIFCModel, "IFCPROJECT");
 	m_ifcSpaceEntity = sdaiGetEntity(m_iIFCModel, "IFCSPACE");
 	m_ifcOpeningElementEntity = sdaiGetEntity(m_iIFCModel, "IFCOPENINGELEMENT");
@@ -252,7 +251,7 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 	*/
 	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
 	{
-		CIFCObject* pIFCObject = m_vecIFCObjects[iIFCObject];
+		auto pIFCObject = m_vecIFCObjects[iIFCObject];
 
 		m_mapID2IFCObject[pIFCObject->ID()] = pIFCObject;
 		m_mapExpressID2IFCObject[pIFCObject->expressID()] = pIFCObject;
@@ -271,8 +270,7 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 
 	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
 	{
-		CIFCObject* pIFCObject = m_vecIFCObjects[iIFCObject];
-
+		auto pIFCObject = m_vecIFCObjects[iIFCObject];
 		if (!pIFCObject->hasGeometry())
 		{
 			// skip the objects without geometry
@@ -489,80 +487,6 @@ void CIFCModel::SetSelectMaterial(CIFCMaterial * pOnMouseOverMaterial, CIFCMater
 	m_pOnMouseOverMaterial = pOnMouseOverMaterial;
 	m_pSelectionMaterial = pOnSelectMaterial;
 	m_pBoundingBoxMaterial = pBoundingBoxMaterial;
-}
-
-void CIFCModel::SetFallbackColor(CIFCMaterial * pMaterial)
-{	
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
-	{
-		CIFCObject * pIFCObject = m_vecIFCObjects[iIFCObject];
-
-		for (size_t iMaterial = 0; iMaterial < pIFCObject->m_vecConceptualFacesMaterials.size(); iMaterial++)
-		{
-			const CIFCGeometryWithMaterial	* pConceptualFaceGeometryWithMaterial = pIFCObject->m_vecConceptualFacesMaterials[iMaterial];
-			const CIFCMaterial				* pConceptualFaceMaterial = pConceptualFaceGeometryWithMaterial->getMaterial();
-
-			const CIFCColor	* ambientColor = &pConceptualFaceMaterial->getAmbientColor();
-			const CIFCColor	* diffuseColor = &pConceptualFaceMaterial->getDiffuseColor();
-			const CIFCColor	* emissiveColor = &pConceptualFaceMaterial->getEmissiveColor();
-			const CIFCColor	* specularColor = &pConceptualFaceMaterial->getSpecularColor();
-			if (ambientColor->R() == 0 &&
-				ambientColor->G() == 0 &&
-				ambientColor->B() == 0 &&
-				diffuseColor->R() == 0 &&
-				diffuseColor->G() == 0 &&
-				diffuseColor->B() == 0 &&
-				emissiveColor->R() == 0 &&
-				emissiveColor->G() == 0 &&
-				emissiveColor->B() == 0 &&
-				specularColor->R() == 0 &&
-				specularColor->G() == 0 &&
-				specularColor->B() == 0) {
-				pIFCObject->m_vecConceptualFacesMaterials[iMaterial]->setMaterial(pMaterial);
-			}
-		}
-	} // for (size_t iIFCObject = ...		
-}
-
-void CIFCModel::SetFallbackColorPerEntity(CString entityName, CIFCMaterial * pMaterial)
-{
-	entityName.MakeUpper();
-
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
-	{
-		CIFCObject * pIFCObject = m_vecIFCObjects[iIFCObject];
-
-		wstring	myStr = pIFCObject->m_strEntity;
-
-		CString myObjectInstanceStr = myStr.c_str();
-		myObjectInstanceStr.MakeUpper();
-
-		if (entityName.Compare(myObjectInstanceStr) == 0) {
-			for (size_t iMaterial = 0; iMaterial < pIFCObject->m_vecConceptualFacesMaterials.size(); iMaterial++)
-			{
-				const CIFCMaterial * pConceptualFaceMaterial = pIFCObject->m_vecConceptualFacesMaterials[iMaterial]->getMaterial();
-
-				const CIFCColor	* ambientColor = &pConceptualFaceMaterial->getAmbientColor();
-				const CIFCColor	* diffuseColor = &pConceptualFaceMaterial->getDiffuseColor();
-				const CIFCColor	* emissiveColor = &pConceptualFaceMaterial->getEmissiveColor();
-				const CIFCColor	* specularColor = &pConceptualFaceMaterial->getSpecularColor();
-				if (ambientColor->R() == 0 &&
-					ambientColor->G() == 0 &&
-					ambientColor->B() == 0 &&
-					diffuseColor->R() == 0 &&
-					diffuseColor->G() == 0 &&
-					diffuseColor->B() == 0 &&
-					emissiveColor->R() == 0 &&
-					emissiveColor->G() == 0 &&
-					emissiveColor->B() == 0 &&
-					specularColor->R() == 0 &&
-					specularColor->G() == 0 &&
-					specularColor->B() == 0) {
-					pIFCObject->m_vecConceptualFacesMaterials[iMaterial]->setMaterial(pMaterial);
-				}
-			}
-		}
-	} // for (size_t iIFCObject = ...		
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -969,7 +893,7 @@ void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const 
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pIFCObject->visible__() = (strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT");
+		pIFCObject->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 		
 		m_vecIFCObjects.push_back(pIFCObject);
 		m_mapIFCObjects[iInstance] = pIFCObject;
@@ -1024,7 +948,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 				CString strEntity = szParentEntityNameW;
 				strEntity.MakeUpper();
 
-				pIFCObject->visible__() = (strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT");
+				pIFCObject->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 
 				m_vecIFCObjects.push_back(pIFCObject);
 				m_mapIFCObjects[ifcObjectInstance] = pIFCObject;
@@ -1067,8 +991,6 @@ bool	EQUALSUC(const wchar_t * strI, const wchar_t * strII)
 // ------------------------------------------------------------------------------------------------
 CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments)
 {
-	CIFCObject * pIFCObject = new CIFCObject(this, iInstance, szInstanceGUIDW, iEntity, szEntityNameW);
-
 	/*
 	* Set up format
 	*/
@@ -1136,373 +1058,299 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		circleSegments(iCircleSegments, 5);
 	}
 
-	int64_t iVerticesCount = 0;
-	int64_t iIndicesCount = 0;
-	CalculateInstance(iInstance, &iVerticesCount, &iIndicesCount, 0);
-	if ((iVerticesCount > 0) && (iIndicesCount > 0))
+	auto pIFCObject = new CIFCObject(this, iInstance, szInstanceGUIDW, iEntity, szEntityNameW);
+
+	ASSERT(pIFCObject->m_pVertexBuffer == nullptr);
+	pIFCObject->m_pVertexBuffer = new _vertices_f();
+
+	ASSERT(pIFCObject->m_pIndexBuffer == nullptr);
+	pIFCObject->m_pIndexBuffer = new _indices_i32();
+
+	CalculateInstance(iInstance, &pIFCObject->m_pVertexBuffer->size(), &pIFCObject->m_pIndexBuffer->size(), NULL);
+
+	if ((pIFCObject->m_pVertexBuffer->size() == 0) || (pIFCObject->m_pIndexBuffer->size() == 0))
 	{
-		if (!m_geometryStarted) 
-		{
-			float* pVertices = new float[(int_t) iVerticesCount * VERTEX_LENGTH];
-			UpdateInstanceVertexBuffer(iInstance, pVertices);
-
-			SetVertexBufferOffset(m_iIFCModel, -pVertices[0], -pVertices[1], -pVertices[2]);
-			m_offsetX = pVertices[0];
-			m_offsetY = pVertices[1];
-			m_offsetZ = pVertices[2];
-
-			delete[] pVertices;
-
-			ClearedInstanceExternalBuffers(iInstance);
-			CalculateInstance(iInstance, &iVerticesCount, &iIndicesCount, 0);
-
-			m_geometryStarted = true;
-		}
-
-		int64_t iOWLModel = 0;
-		owlGetModel(m_iIFCModel, &iOWLModel);
-
-		int64_t iOWLInstance = 0;
-		owlGetInstance(m_iIFCModel, iInstance, &iOWLInstance);		
-
-		pIFCObject->verticesCount() = (int_t)iVerticesCount;
-
-		
-		float * pVertices = new float[(int_t)iVerticesCount * VERTEX_LENGTH];
-		UpdateInstanceVertexBuffer(iOWLInstance, pVertices);
-
-		int32_t * pIndices = new int32_t[(int_t) iIndicesCount];
-		UpdateInstanceIndexBuffer(iOWLInstance, pIndices);
-		
-		// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-		map<CIFCGeometryWithMaterial, vector<CConceptualFace>, CIFCGeometryWithMaterialComparator> mapMaterial2ConceptualFaces;
-		vector<pair<int_t, int_t>> vecWireframesIndices;
-		vector<pair<int_t, int_t>> vecLinesIndices;
-		vector<pair<int_t, int_t>> vecPointsIndices;		
-
-		/*
-		* Extract the conceptual face - triangles and polygons
-		*/
-		int_t iFacesCount = getConceptualFaceCnt(iInstance);
-
-		pIFCObject->conceptualFacesCount() = iFacesCount;
-
-		for (int_t iFace = 0; iFace < iFacesCount; iFace++)
-		{
-			int_t iStartIndexTriangles = 0;
-			int_t iIndicesCountTriangles = 0;
-
-			int_t iStartIndexLines = 0;
-			int_t iIndicesCountLines = 0;
-
-			int_t iStartIndexPoints = 0;
-			int_t iIndicesCountPoints = 0;
-
-			int_t iStartIndexFacesPolygons = 0;
-			int_t iIndicesCountFacesPolygons = 0;
-
-			getConceptualFaceEx(
-				iInstance, iFace,
-				&iStartIndexTriangles, &iIndicesCountTriangles,
-				&iStartIndexLines, &iIndicesCountLines,
-				&iStartIndexPoints, &iIndicesCountPoints,
-				&iStartIndexFacesPolygons, &iIndicesCountFacesPolygons,
-				0, 0);
-
-			if (iIndicesCountTriangles > 0)
-			{
-				/*
-				* Material
-				*/
-				CIFCGeometryWithMaterial * pMaterial = NULL;
-
-				int32_t iIndexValue = *(pIndices + iStartIndexTriangles);
-				iIndexValue *= VERTEX_LENGTH;
-
-				float fColor = *(pVertices + iIndexValue + 6);
-				unsigned int iAmbientColor = *(reinterpret_cast<unsigned int *>(&fColor));
-				float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-				fColor = *(pVertices + iIndexValue + 7);
-				unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int *>(&fColor));
-
-				fColor = *(pVertices + iIndexValue + 8);
-				unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int *>(&fColor));
-
-				fColor = *(pVertices + iIndexValue + 9);
-				unsigned int iSpecularColor = *(reinterpret_cast<unsigned int *>(&fColor));
-
-				pMaterial = new CIFCGeometryWithMaterial(iAmbientColor, iDiffuseColor, iEmissiveColor, iSpecularColor, fTransparency);
-
-				map<CIFCGeometryWithMaterial, vector<CConceptualFace>, CIFCGeometryWithMaterialComparator>::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.find(*pMaterial);
-				if (itMaterial2ConceptualFaces == mapMaterial2ConceptualFaces.end())
-				{
-					vector<CConceptualFace> vecConceptualFaces;
-
-					CConceptualFace conceptualFace;
-					conceptualFace.index() = iFace;
-					conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-					conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-					vecConceptualFaces.push_back(conceptualFace);
-
-					mapMaterial2ConceptualFaces[*pMaterial] = vecConceptualFaces;
-				}
-				else
-				{
-					CConceptualFace conceptualFace;
-					conceptualFace.index() = iFace;
-					conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-					conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-					itMaterial2ConceptualFaces->second.push_back(conceptualFace);
-				}
-
-				delete pMaterial;
-			} // if (iIndicesCountTriangles > 0)
-
-			if (iIndicesCountLines > 0)
-			{
-				vecLinesIndices.push_back(pair<int_t, int_t>(iStartIndexLines, iIndicesCountLines));
-			}
-
-			if (iIndicesCountPoints > 0)
-			{
-				vecPointsIndices.push_back(pair<int_t, int_t>(iStartIndexPoints, iIndicesCountPoints));
-			}
-
-			if (iIndicesCountFacesPolygons > 0)
-			{
-				vecWireframesIndices.push_back(pair<int_t, int_t>(iStartIndexFacesPolygons, iIndicesCountFacesPolygons));
-			}
-		} // for (int_t iFace = ...
-
-		/*
-		* Group the triangles
-		*/
-		map<CIFCGeometryWithMaterial, vector<CConceptualFace>, CIFCGeometryWithMaterialComparator>::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.begin();
-		for (; itMaterial2ConceptualFaces != mapMaterial2ConceptualFaces.end(); itMaterial2ConceptualFaces++)
-		{
-			CIFCGeometryWithMaterial * pMaterial = NULL;
-
-			for (size_t iConceptualFace = 0; iConceptualFace < itMaterial2ConceptualFaces->second.size(); iConceptualFace++)
-			{
-				CConceptualFace & conceptualFace = itMaterial2ConceptualFaces->second[iConceptualFace];
-
-				int_t iStartIndexTriangles = conceptualFace.trianglesStartIndex();
-				int_t iIndicesCountTriangles = conceptualFace.trianglesIndicesCount();
-
-				/*
-				* Split the conceptual face - isolated case
-				*/
-				if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
-				{
-					while (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
-					{
-						// INDICES
-						CIFCGeometryWithMaterial * pNewMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-						for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + _oglUtils::getIndicesCountLimit(); iIndex++)
-						{							
-							pNewMaterial->addIndex(pIndices[iIndex]);
-						}
-						
-						pIFCObject->conceptualFacesMaterials().push_back(pNewMaterial);
-
-						/*
-						* Update Conceptual face start index
-						*/
-						conceptualFace.trianglesStartIndex() = 0;
-
-						// Conceptual faces
-						pNewMaterial->conceptualFaces().push_back(conceptualFace);
-
-						iIndicesCountTriangles -= _oglUtils::getIndicesCountLimit();
-						iStartIndexTriangles += _oglUtils::getIndicesCountLimit();
-					}
-
-					if (iIndicesCountTriangles > 0)
-					{
-						// INDICES
-						CIFCGeometryWithMaterial * pNewMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-						for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
-						{
-							pNewMaterial->addIndex(pIndices[iIndex]);
-						}
-
-						pIFCObject->conceptualFacesMaterials().push_back(pNewMaterial);
-
-						/*
-						* Update Conceptual face start index
-						*/
-						conceptualFace.trianglesStartIndex() = 0;
-
-						// Conceptual faces
-						pNewMaterial->conceptualFaces().push_back(conceptualFace);
-					}					
-
-					continue;
-				} // if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())	
-
-				/*
-				* Create material
-				*/
-				if (pMaterial == NULL)
-				{
-					pMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-
-					pIFCObject->conceptualFacesMaterials().push_back(pMaterial);
-				}
-				
-				/*
-				* Check the limit
-				*/
-				if (pMaterial->getIndicesCount() + iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
-				{
-					pMaterial = new CIFCGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-
-					pIFCObject->conceptualFacesMaterials().push_back(pMaterial);
-				}
-
-				/*
-				* Update Conceptual face start index
-				*/
-				conceptualFace.trianglesStartIndex() = pMaterial->getIndicesCount();
-
-				/*
-				* Add the indices
-				*/
-				for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
-				{
-					pMaterial->addIndex(pIndices[iIndex]);
-				}
-
-				// Conceptual faces
-				pMaterial->conceptualFaces().push_back(conceptualFace);
-			} // for (size_t iConceptualFace = ...				
-		} // for (; itMaterial2ConceptualFaces != ...
-
-		/*
-		* Group the polygons
-		*/
-		if (!vecWireframesIndices.empty())
-		{
-			CWireframesCohort * pWireframesCohort = NULL;
-			for (size_t iFace = 0; iFace < vecWireframesIndices.size(); iFace++)
-			{
-				int_t iStartIndexFacesPolygons = vecWireframesIndices[iFace].first;
-				int_t iIndicesFacesPolygonsCount = vecWireframesIndices[iFace].second;
-
-				/*
-				* Create the cohort
-				*/
-				if (pWireframesCohort == NULL)
-				{
-					pWireframesCohort = new CWireframesCohort();
-					pIFCObject->wireframesCohorts().push_back(pWireframesCohort);
-				}
-
-				/*
-				* Check the limit
-				*/
-				if (pWireframesCohort->getIndicesCount() + iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit())
-				{
-					pWireframesCohort = new CWireframesCohort();
-					pIFCObject->wireframesCohorts().push_back(pWireframesCohort);
-				}
-
-				int_t iPreviousIndex = -1;
-				for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
-				{
-					if (pIndices[iIndex] < 0)
-					{
-						iPreviousIndex = -1;
-
-						continue;
-					}
-
-					if (iPreviousIndex != -1)
-					{
-						pWireframesCohort->addIndex(pIndices[iPreviousIndex]);
-						pWireframesCohort->addIndex(pIndices[iIndex]);
-					} // if (iPreviousIndex != -1)
-
-					iPreviousIndex = iIndex;
-				} // for (int_t iIndex = ...
-			} // for (size_t iFace = ...
-		} // if (!vecWireframes.empty())
-
-		/*
-		* Group the lines
-		*/
-		if (!vecLinesIndices.empty())
-		{
-			CLinesCohort * pLinesCohort = NULL;
-			for (size_t iFace = 0; iFace < vecLinesIndices.size(); iFace++)
-			{
-				int_t iStartIndexLines = vecLinesIndices[iFace].first;
-				int_t iIndicesLinesCount = vecLinesIndices[iFace].second;
-
-				/*
-				* Create the cohort
-				*/
-				if (pLinesCohort == NULL)
-				{
-					pLinesCohort = new CLinesCohort();
-					pIFCObject->linesCohorts().push_back(pLinesCohort);
-				}
-
-				/*
-				* Check the limit
-				*/
-				if (pLinesCohort->getIndicesCount() + iIndicesLinesCount > _oglUtils::getIndicesCountLimit())
-				{
-					pLinesCohort = new CLinesCohort();
-					pIFCObject->linesCohorts().push_back(pLinesCohort);
-				}
-
-				int_t iPreviousIndex = -1;
-				for (int_t iIndex = iStartIndexLines; iIndex < iStartIndexLines + iIndicesLinesCount; iIndex++)
-				{
-					if (pIndices[iIndex] < 0)
-					{
-						iPreviousIndex = -1;
-
-						continue;
-					}
-
-					if (iPreviousIndex != -1)
-					{
-						pLinesCohort->addIndex(pIndices[iPreviousIndex]);
-						pLinesCohort->addIndex(pIndices[iIndex]);
-					} // if (iPreviousIndex != -1)
-
-					iPreviousIndex = iIndex;
-				} // for (int_t iIndex = ...
-			} // for (size_t iFace = ...
-		} // if (!vecLines.empty())
-
-		/*
-		* Group the points
-		*/
-		// TODO
-
-		/*
-		* Copy the vertices - <X, Y, Z, Nx, Ny, Nz>
-		*/
-		pIFCObject->vertices() = new float[(int_t) iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-		for (int_t iVertex = 0; iVertex < iVerticesCount; iVertex++)
-		{
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = pVertices[(iVertex * VERTEX_LENGTH) + 0];
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * VERTEX_LENGTH) + 1];
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * VERTEX_LENGTH) + 2];
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = pVertices[(iVertex * VERTEX_LENGTH) + 3];
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = pVertices[(iVertex * VERTEX_LENGTH) + 4];
-			pIFCObject->vertices()[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = pVertices[(iVertex * VERTEX_LENGTH) + 5];
-		} // for (int_t iVertex = ...
+		return pIFCObject;
+	}
+
+	if (!m_geometryStarted)
+	{
+		m_geometryStarted = true;
+
+		float* pVertices = new float[(int_t)pIFCObject->m_pVertexBuffer->size() * VERTEX_LENGTH];
+		UpdateInstanceVertexBuffer(iInstance, pVertices);
+
+		SetVertexBufferOffset(m_iIFCModel, -pVertices[0], -pVertices[1], -pVertices[2]);
+		m_offsetX = pVertices[0];
+		m_offsetY = pVertices[1];
+		m_offsetZ = pVertices[2];
 
 		delete[] pVertices;
-		delete[] pIndices;
-	} // if ((iVerticesCount > 0) && ...	
+
+		ClearedInstanceExternalBuffers(iInstance);
+
+		CalculateInstance(iInstance, &pIFCObject->m_pVertexBuffer->size(), &pIFCObject->m_pIndexBuffer->size(), NULL);		
+	}
+
+	int64_t iOWLModel = 0;
+	owlGetModel(m_iIFCModel, &iOWLModel);
+
+	int64_t iOWLInstance = 0;
+	owlGetInstance(m_iIFCModel, iInstance, &iOWLInstance);
+
+	/**
+	* Retrieves the vertices
+	*/
+	pIFCObject->m_pVertexBuffer->vertexLength() = SetFormat(m_iIFCModel, 0, 0) / sizeof(float);
+
+	pIFCObject->m_pVertexBuffer->data() = new float[pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength()];
+	memset(pIFCObject->m_pVertexBuffer->data(), 0, pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength() * sizeof(float));
+
+	UpdateInstanceVertexBuffer(iOWLInstance, pIFCObject->m_pVertexBuffer->data());
+
+	/**
+	* Retrieves the indices
+	*/
+	pIFCObject->m_pIndexBuffer->data() = new int32_t[pIFCObject->m_pIndexBuffer->size()];
+	memset(pIFCObject->m_pIndexBuffer->data(), 0, pIFCObject->m_pIndexBuffer->size() * sizeof(int32_t));
+
+	UpdateInstanceIndexBuffer(iOWLInstance, pIFCObject->m_pIndexBuffer->data());
+
+	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFaces;
+	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+
+	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
+	pIFCObject->m_iConceptualFacesCount = GetConceptualFaceCnt(iInstance);
+	for (int64_t iConceptualFace = 0; iConceptualFace < pIFCObject->m_iConceptualFacesCount; iConceptualFace++)
+	{
+		//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx.html
+		int64_t iStartIndexTriangles = 0;
+		int64_t iIndicesCountTriangles = 0;
+		int64_t iStartIndexLines = 0;
+		int64_t iIndicesCountLines = 0;
+		int64_t iStartIndexPoints = 0;
+		int64_t iIndicesCountPoints = 0;
+		int64_t iStartIndexConceptualFacePolygons = 0;
+		int64_t iIndicesCountConceptualFacePolygons = 0;
+		GetConceptualFaceEx(iInstance, iConceptualFace,
+			&iStartIndexTriangles, &iIndicesCountTriangles,
+			&iStartIndexLines, &iIndicesCountLines,
+			&iStartIndexPoints, &iIndicesCountPoints,
+			0, 0,
+			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
+
+		if (iIndicesCountTriangles > 0)
+		{
+			/*
+			* Material
+			*/
+			int32_t iIndexValue = *(pIFCObject->m_pIndexBuffer->data() + iStartIndexTriangles);
+			iIndexValue *= VERTEX_LENGTH;
+
+			float fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 6);
+			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
+			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 7);
+			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 8);
+			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 9);
+			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			/*
+			* Material
+			*/
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				nullptr);
+
+			auto itMaterial2ConceptualFaces = mapMaterial2ConcFaces.find(material);
+			if (itMaterial2ConceptualFaces == mapMaterial2ConcFaces.end())
+			{
+				mapMaterial2ConcFaces[material] = vector<_face>{ _face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles) };
+			}
+			else
+			{
+				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles));
+			}
+		}
+
+		if (iIndicesCountTriangles > 0)
+		{
+			pIFCObject->m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
+		}
+
+		if (iIndicesCountConceptualFacePolygons > 0)
+		{
+			pIFCObject->m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
+		}
+
+		if (iIndicesCountLines > 0)
+		{
+			pIFCObject->m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
+		}
+
+		if (iIndicesCountPoints > 0)
+		{
+			int32_t iIndexValue = *(pIFCObject->m_pIndexBuffer->data() + iStartIndexTriangles);
+			iIndexValue *= VERTEX_LENGTH;
+
+			float fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 6);
+			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
+			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 7);
+			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 8);
+			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 9);
+			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			/*
+			* Material
+			*/
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				nullptr);
+
+			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
+			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
+			{
+				mapMaterial2ConcFacePoints[material] = vector<_face>{ _face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints) };
+			}
+			else
+			{
+				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints));
+			}
+
+			pIFCObject->m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
+		} // if (iIndicesCountPoints > 0)
+	} // for (int64_t iConceptualFace = ...	
+
+	/*
+	* Group the faces
+	*/
+	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
+	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
+	{
+		_facesCohort* pCohort = nullptr;
+
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
+		{
+			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
+
+			int_t iStartIndex = concFace.startIndex();
+			int_t iIndicesCount = concFace.indicesCount();
+
+			/*
+			* Split the conceptual face - isolated case
+			*/
+			if (iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pIFCObject->concFacesCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+
+					iIndicesCount -= _oglUtils::getIndicesCountLimit();
+					iStartIndex += _oglUtils::getIndicesCountLimit();
+				}
+
+				if (iIndicesCount > 0)
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pIFCObject->concFacesCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+				}
+
+				continue;
+			} // if (iIndicesCount > _oglUtils::GetIndicesCountLimit())	
+
+			/*
+			* Create material
+			*/
+			if (pCohort == nullptr)
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+
+				pIFCObject->concFacesCohorts().push_back(pCohort);
+			}
+
+			/*
+			* Check the limit
+			*/
+			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+
+				pIFCObject->concFacesCohorts().push_back(pCohort);
+			}
+
+			/*
+			* Update Conceptual face start index
+			*/
+			concFace.startIndex() = pCohort->indices().size();
+
+			/*
+			* Add the indices
+			*/
+			for (int_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex++)
+			{
+				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+			}
+
+			// Conceptual faces
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
+	} // for (; itMaterial2ConceptualFaces != ...
+
+
+
 
 	/*
 	* Restore circleSegments()
