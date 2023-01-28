@@ -44,24 +44,8 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	, m_iFacesTextureBuffer(0)
 	, m_iFacesDepthRenderBuffer(0)
 	, m_pPickedIFCObject(NULL)
-	, m_pPickedIFCObjectModel(NULL)
-	, m_setPickedIFCObjectEdges()
-	, m_iPickedIFCObjectFace(-1)
-	, m_pickedPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX)
-	, m_selectedPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX)
-	, m_viewOriginPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX)
-	, m_XArrowVector(ARROW_SIZE_II, 0., 0.)
-	, m_YArrowVector(0., ARROW_SIZE_II, 0.)
-	, m_ZArrowVector(0., 0., ARROW_SIZE_II)
 {
 	ASSERT(m_pWnd != NULL);	
-
-	/*
-	Origin
-	*/
-	m_dOriginX = 0.;
-	m_dOriginY = 0.;
-	m_dOriginZ = 0.;
 
 	/*m_pOGLContext->MakeCurrent();
 
@@ -894,69 +878,6 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 			ASSERT(FALSE);
 			break;
 	} // switch (enEvent)
-
-	if (m_bInteractionInProgress)
-	{
-		return;
-	}
-
-	/*
-	* Picked point
-	*/
-	double dX = 0.;
-	double dY = 0.;
-	double dZ = 0.;
-	m_pickedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);	
-
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		// **************************************************************************************** //
-		// OnSelectedItemChanged() notification
-		if (m_pPickedIFCObject != NULL)
-		{
-			/*
-			* Zoom To/Origin/Select
-			*/
-			if (GetKeyState(VK_SHIFT) & 0x8000)
-			{
-				/*
-				* Zoom To
-				*/
-				double minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
-
-				bool initialized = false;
-				ZoomToCoreCalculate(m_pPickedIFCObject, &minX, &maxX, &minY, &maxY, &minZ, &maxZ, &initialized);
-
-				if (initialized) {
-					ZoomToCoreSet(minX, maxX, minY, maxY, minZ, maxZ);
-				}
-			} // if (GetKeyState(VK_SHIFT) & 0x8000)			
-		} // if (m_pPickedIFCObject != NULL)
-		else 
-		{
-			if (GetKeyState(VK_CONTROL) & 0x8000)
-			{
-				auto pController = GetController();
-				ASSERT(pController != nullptr);
-
-				auto pModel = pController->GetModel()->As<CIFCModel>();
-				ASSERT(pModel != nullptr);
-
-				const vector<CIFCObject *> & vecIFCObjects = pModel->getIFCObjects();
-				for (size_t iIFCObject = 0; iIFCObject < vecIFCObjects.size(); iIFCObject++)
-				{
-					CIFCObject * pIFCObject = vecIFCObjects[iIFCObject];
-
-					pIFCObject->setSelected(false);
-				}
-
-				m_pWnd->RedrawWindow();
-
-				GetController()->SelectInstance(this, nullptr);
-			}
-		} // else if (m_pPickedIFCObject != NULL)
-		// **************************************************************************************** //
-	} // if (enEvent == meLBtnUp)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -999,158 +920,25 @@ void COpenGLIFCView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetOrientation(LONG iOrientation)
-{
-	switch (iOrientation)
-	{
-	case 1: // front
-	{
-		m_dXAngle = 0.;
-		m_dYAngle = 0.;
-	}
-	break;
-
-	case 2: // right
-	{
-		m_dXAngle = 0.;
-		m_dYAngle = -90.;
-	}
-	break;
-
-	case 3: // top
-	{
-		m_dXAngle = 90.;
-		m_dYAngle = 0.;
-	}
-	break;
-
-	case 4: // back
-	{
-		m_dXAngle = 0.;
-		m_dYAngle = -180.;
-	}
-	break;
-
-	case 5: // left
-	{
-		m_dXAngle = 0.;
-		m_dYAngle = 90.;
-	}
-	break;
-
-	case 6: // bottom
-	{
-		m_dXAngle = -90.;
-		m_dYAngle = 0.;
-	}
-	break;
-
-	default:
-	{
-		ASSERT(FALSE);
-	}
-	break;
-	} // switch (iOrientation)
-
-	m_dOriginX = m_dOriginY = m_dOriginZ = 0.;
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ZoomToSet(double minX, double maxX, double minY, double maxY, double minZ, double maxZ)
-{
-	ZoomToCoreSet(minX, maxX, minY, maxY, minZ, maxZ);
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetQuatRotation(DOUBLE /*dW*/, DOUBLE /*dXRadians*/, DOUBLE /*dYRadians*/, DOUBLE /*dZRadians*/)
-{
-	ASSERT(FALSE); // OBSOLETE
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::GetQuatRotation(DOUBLE* /*pdW*/, DOUBLE* /*pdXRadians*/, DOUBLE* /*pdYRadians*/, DOUBLE* /*pdZRadians*/)
-{
-	ASSERT(FALSE); // OBSOLETE
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetRotation(DOUBLE dXDegrees, DOUBLE dYDegrees, DOUBLE /*dZDegrees*/)
-{
-	m_dXAngle = dXDegrees;
-	m_dYAngle = dYDegrees;
-	//dZDegrees - UNUSED
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::GetRotation(DOUBLE* pdXDegrees, DOUBLE* pdYDegrees, DOUBLE* pdZDegrees)
-{
-	*pdXDegrees = m_dXAngle;
-	*pdYDegrees = m_dYAngle;
-	*pdZDegrees = 0.; // UNUSED
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::GetTranslation(DOUBLE* pdX, DOUBLE* pdY, DOUBLE* pdZ)
-{
-	*pdX = m_dXTranslation;
-	*pdY = m_dYTranslation;
-	*pdZ = m_dZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetTranslation(DOUBLE dX, DOUBLE dY, DOUBLE dZ)
-{
-	m_dXTranslation = dX;
-	m_dYTranslation = dY;
-	m_dZTranslation = dZ;
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
 CIFCObject* COpenGLIFCView::GetPickedIFCObject() const
 {
 	return m_pPickedIFCObject;
 }
 
 // ------------------------------------------------------------------------------------------------
-CPoint3D& COpenGLIFCView::GetPickedPoint()
-{
-	return m_pickedPoint3D;
-}
-
-// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::ZoomToExtent(CIFCObject* pIFCObject)
 {
+	ASSERT(FALSE); // TODO
 	ASSERT(pIFCObject != NULL);
 
-	double minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
+	/*double minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
 
 	bool initialized = false;
 	ZoomToCoreCalculate(pIFCObject, &minX, &maxX, &minY, &maxY, &minZ, &maxZ, &initialized);
 
 	if (initialized) {
 		ZoomToCoreSet(minX, maxX, minY, maxY, minZ, maxZ);
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ZoomToPickedPoint()
-{
-	ASSERT(m_pickedPoint3D.x() != -DBL_MAX);
-
-	m_dOriginX = m_pickedPoint3D.x();
-	m_dOriginY = m_pickedPoint3D.y();
-	m_dOriginZ = m_pickedPoint3D.z();
-
-	m_dXTranslation = -m_dOriginX;
-	m_dYTranslation = -m_dOriginY;
-
-	m_pWnd->RedrawWindow();
+	}*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1922,37 +1710,37 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		if ((m_pPickedIFCObjectModel != pPickedIFCObjectModel) || (m_pPickedIFCObject != pPickedIFCObject))
-		{
-			m_pPickedIFCObjectModel = pPickedIFCObjectModel;
-			m_pPickedIFCObject = pPickedIFCObject;
-			m_setPickedIFCObjectEdges.clear();
-			m_iPickedIFCObjectFace = -1;
-			m_pickedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
-			
-			/*if ((m_pPickedIFCObject != NULL) && (m_enViewMode == vmMeasureVolume))
-			{
-				double dVolume = m_pPickedIFCObject->volume();
-				GetController()->FireOnMeasureVolumeEvent(point.x, point.y, dVolume);
+		//if ((m_pPickedIFCObjectModel != pPickedIFCObjectModel) || (m_pPickedIFCObject != pPickedIFCObject))
+		//{
+		//	m_pPickedIFCObjectModel = pPickedIFCObjectModel;
+		//	m_pPickedIFCObject = pPickedIFCObject;
+		//	m_setPickedIFCObjectEdges.clear();
+		//	m_iPickedIFCObjectFace = -1;
+		//	m_pickedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
+		//	
+		//	/*if ((m_pPickedIFCObject != NULL) && (m_enViewMode == vmMeasureVolume))
+		//	{
+		//		double dVolume = m_pPickedIFCObject->volume();
+		//		GetController()->FireOnMeasureVolumeEvent(point.x, point.y, dVolume);
 
-				CString strTooltip;
-				strTooltip.Format(_T("%.2f"), dVolume);
+		//		CString strTooltip;
+		//		strTooltip.Format(_T("%.2f"), dVolume);
 
-				CString strTitle;
-				VERIFY(strTitle.LoadStringW(IDS_VOLUME));
+		//		CString strTitle;
+		//		VERIFY(strTitle.LoadStringW(IDS_VOLUME));
 
-				const CIFCUnit * pUnit = m_pPickedIFCObjectModel->getUnit(L"VOLUMEUNIT");
-				if ((pUnit != NULL) && !pUnit->getUnit().empty())
-				{
-					strTooltip += L" ";
-					strTooltip += pUnit->getUnit().c_str();
-				}
+		//		const CIFCUnit * pUnit = m_pPickedIFCObjectModel->getUnit(L"VOLUMEUNIT");
+		//		if ((pUnit != NULL) && !pUnit->getUnit().empty())
+		//		{
+		//			strTooltip += L" ";
+		//			strTooltip += pUnit->getUnit().c_str();
+		//		}
 
-				ShowTooltip(strTitle, strTooltip);
-			}*/
+		//		ShowTooltip(strTitle, strTooltip);
+		//	}*/
 
-			m_pWnd->RedrawWindow();
-		}
+		//	m_pWnd->RedrawWindow();
+		//}
 	} // if (!m_bInteractionInProgress && ...
 
 	/*
@@ -2247,99 +2035,4 @@ void COpenGLIFCView::Zoom(double dZTranslation)
 
 	m_pWnd->RedrawWindow();
 }
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ZoomToCoreCalculate(CIFCObject * pIFCObject, double * pMinX, double * pMaxX, double * pMinY, double * pMaxY, double * pMinZ, double * pMaxZ, bool * pInitialized)
-{
-	if (pIFCObject == NULL)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (*pInitialized == false) {
-		*pMinX = pIFCObject->getXMinMax().first;
-		*pMaxX = pIFCObject->getXMinMax().second;
-
-		*pMinY = pIFCObject->getYMinMax().first;
-		*pMaxY = pIFCObject->getYMinMax().second;
-
-		*pMinZ = pIFCObject->getZMinMax().first;
-		*pMaxZ = pIFCObject->getZMinMax().second;
-
-		*pInitialized = true;
-	}
-	else {
-		if (*pMinX > pIFCObject->getXMinMax().first) {
-			*pMinX = pIFCObject->getXMinMax().first;
-		}
-		if (*pMaxX < pIFCObject->getXMinMax().second) {
-			*pMaxX = pIFCObject->getXMinMax().second;
-		}
-
-		if (*pMinY > pIFCObject->getYMinMax().first) {
-			*pMinY = pIFCObject->getYMinMax().first;
-		}
-		if (*pMaxY < pIFCObject->getYMinMax().second) {
-			*pMaxY = pIFCObject->getYMinMax().second;
-		}
-
-		if (*pMinZ > pIFCObject->getZMinMax().first) {
-			*pMinZ = pIFCObject->getZMinMax().first;
-		}
-		if (*pMaxZ < pIFCObject->getZMinMax().second) {
-			*pMaxZ = pIFCObject->getZMinMax().second;
-		}
-	}
-}
-
-void COpenGLIFCView::ZoomToCoreSet(double minX, double maxX, double minY, double maxY, double minZ, double maxZ)
-{
-	m_dOriginX = minX;
-	m_dOriginX += (maxX - minX) / 2.f;
-
-	m_dOriginY = minY;
-	m_dOriginY += (maxY - minY) / 2.f;
-
-	m_dOriginZ = minZ;
-	m_dOriginZ += (maxZ - minZ) / 2.f;
-
-	double dBoundingSphereDiameter = maxX - minX;
-	dBoundingSphereDiameter = fmax(dBoundingSphereDiameter, maxY - minY);
-	dBoundingSphereDiameter = fmax(dBoundingSphereDiameter, maxZ - minZ);
-
-	m_dXTranslation = -m_dOriginX;
-	m_dYTranslation = -m_dOriginY;
-	m_dZTranslation = -m_dOriginZ;
-	m_dZTranslation -= (dBoundingSphereDiameter * 2.f);
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::CenterToCore(CIFCObject * pIFCObject)
-{
-	if (pIFCObject == NULL)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	m_dOriginX = pIFCObject->getXMinMax().first;
-	m_dOriginX += (pIFCObject->getXMinMax().second - pIFCObject->getXMinMax().first) / 2.f;
-
-	m_dOriginY = pIFCObject->getYMinMax().first;
-	m_dOriginY += (pIFCObject->getYMinMax().second - pIFCObject->getYMinMax().first) / 2.f;
-
-	m_dOriginZ = pIFCObject->getZMinMax().first;
-	m_dOriginZ += (pIFCObject->getZMinMax().second - pIFCObject->getZMinMax().first) / 2.f;
-
-	m_dXTranslation = -m_dOriginX;
-	m_dYTranslation = -m_dOriginY;
-
-	m_pWnd->RedrawWindow();
-}
-
 

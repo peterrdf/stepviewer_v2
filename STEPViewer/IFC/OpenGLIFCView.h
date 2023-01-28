@@ -1,25 +1,10 @@
 #ifndef _OPEN_GL_IFC_VIEW_H_
 #define _OPEN_GL_IFC_VIEW_H_
 
-#include "STEPView.h"
+#include "Generic.h"
 #include "IFCObject.h"
+#include "_oglUtils.h"
 #include "OpenGLView.h"
-
-#include "vec3.hpp"
-#include "vec4.hpp"
-#include "mat4x4.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-
-#include <set>
-
-using namespace std;
-
-#include "Point3D.h"
 
 // ------------------------------------------------------------------------------------------------
 // One instance per model
@@ -71,13 +56,6 @@ public: // Methods
 
 // ------------------------------------------------------------------------------------------------
 class CIFCModel;
-
-// ------------------------------------------------------------------------------------------------
-enum class enumProjection
-{
-	Perspective = 0,
-	Isometric = 1,
-};
 
 // ------------------------------------------------------------------------------------------------
 // Open GL View
@@ -186,43 +164,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Picked IFC object
-	CIFCObject * m_pPickedIFCObject;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked IFC object - Model
-	CIFCModel * m_pPickedIFCObjectModel;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked IFC object - Edges
-	set<int_t> m_setPickedIFCObjectEdges;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked IFC object - Conceptual Face
-	int_t m_iPickedIFCObjectFace;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked IFC object - Point
-	CPoint3D m_pickedPoint3D;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked IFC object - Point
-	CPoint3D m_selectedPoint3D;
-
-	// --------------------------------------------------------------------------------------------
-	// View Origin	
-	CPoint3D m_viewOriginPoint3D;
-
-	// --------------------------------------------------------------------------------------------
-	// View Origin	
-	CPoint3D m_XArrowVector;
-
-	// --------------------------------------------------------------------------------------------
-	// View Origin	
-	CPoint3D m_YArrowVector;
-
-	// --------------------------------------------------------------------------------------------
-	// View Origin	
-	CPoint3D m_ZArrowVector;
+	CIFCObject * m_pPickedIFCObject;	
 
 public: // Methods
 
@@ -292,51 +234,13 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// CSTEPView
-	virtual void OnControllerChanged();
-
-	// --------------------------------------------------------------------------------------------
-	void SetOrientation(LONG iOrientation);
-
-	// TEMP?
-	double m_dOriginX;
-	double m_dOriginY;
-	double m_dOriginZ;
-
-	// ------------------------------------------------------------------------------------------------
-	void ZoomToSet(double minX, double maxX, double minY, double maxY, double minZ, double maxZ);
-
-	// --------------------------------------------------------------------------------------------
-	void SetQuatRotation(DOUBLE dW, DOUBLE dXRadians, DOUBLE dYRadians, DOUBLE dZRadians);
-
-	// --------------------------------------------------------------------------------------------
-	void GetQuatRotation(DOUBLE* pdW, DOUBLE* pdXRadians, DOUBLE* pdYRadians, DOUBLE* pdZRadians);
-
-	// --------------------------------------------------------------------------------------------
-	void SetRotation(DOUBLE dXDegrees, DOUBLE dYDegrees, DOUBLE dZDegrees);
-
-	// --------------------------------------------------------------------------------------------
-	void SetCoordinateSize(DOUBLE arrowLengthI, DOUBLE arrowLengthII);
-
-	// --------------------------------------------------------------------------------------------
-	void GetRotation(DOUBLE* pdXDegrees, DOUBLE* pdYDegrees, DOUBLE* pdZDegrees);
-
-	// --------------------------------------------------------------------------------------------
-	void GetTranslation(DOUBLE* pdX, DOUBLE* pdY, DOUBLE* pdZ);
-
-	// --------------------------------------------------------------------------------------------
-	void SetTranslation(DOUBLE dX, DOUBLE dY, DOUBLE dZ);
+	virtual void OnControllerChanged();	
 
 	// --------------------------------------------------------------------------------------------
 	CIFCObject* GetPickedIFCObject() const;
 
 	// --------------------------------------------------------------------------------------------
-	CPoint3D& GetPickedPoint();
-
-	// --------------------------------------------------------------------------------------------
 	void ZoomToExtent(CIFCObject* pIFCObject);
-
-	// --------------------------------------------------------------------------------------------
-	void ZoomToPickedPoint();
 
 private: // Methods
 
@@ -370,15 +274,6 @@ private: // Methods
 	// ------------------------------------------------------------------------------------------------
 	// Zoom
 	void Zoom(double dZTranslation);
-
-	// --------------------------------------------------------------------------------------------
-	void ZoomToCoreCalculate(CIFCObject * pIFCObject, double * pMinX, double * pMaxX, double * pMinY, double * pMaxY, double * pMinZ, double * pMaxZ, bool * pInitialized);
-
-	// --------------------------------------------------------------------------------------------
-	void COpenGLIFCView::ZoomToCoreSet(double minX, double maxX, double minY, double maxY, double minZ, double maxZ);
-
-	// --------------------------------------------------------------------------------------------
-	void CenterToCore(CIFCObject * pIFCObject);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_
