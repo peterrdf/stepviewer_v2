@@ -21,29 +21,17 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	: COpenGLView()
 	, m_pWnd(pWnd)
 	, m_enProjection(enumProjection::Perspective)
-	, m_vecIFCDrawMetaData()
-	, m_vecIBOs()
-	, m_bShowFaces(TRUE)
+	, m_bShowFaces(TRUE)	
+	, m_bShowConceptualFacesPolygons(TRUE)
 	, m_bShowLines(TRUE)
-	, m_bShowWireframes(TRUE)
-	, m_dXAngle(-75.)
-	, m_dYAngle(-30.)
-	, m_dXTranslation(0.0f)
-	, m_dYTranslation(0.0f)
-	, m_dZTranslation(-5.0f)
-	, m_dScaleFactor(1.)
+	, m_bShowPoints(TRUE)
+	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_bInteractionInProgress(false)
-	, m_iSelectionFrameBuffer(0)
-	, m_iSelectionTextureBuffer(0)
-	, m_iSelectionDepthRenderBuffer(0)
-	, m_iWireframesFrameBuffer(0)
-	, m_iWireframesTextureBuffer(0)
-	, m_iWireframesDepthRenderBuffer(0)
-	, m_iFacesFrameBuffer(0)
-	, m_iFacesTextureBuffer(0)
-	, m_iFacesDepthRenderBuffer(0)
-	, m_pPickedIFCObject(NULL)
+	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
+	, m_pPointedInstance(NULL)
+	, m_pSelectedInstance(NULL)
+	, m_pSelectedInstanceMaterial(NULL)
+	, m_pPointedInstanceMaterial(NULL)
 {
 	ASSERT(m_pWnd != NULL);	
 
@@ -79,7 +67,7 @@ COpenGLIFCView::~COpenGLIFCView()
 {
 	GetController()->UnRegisterView(this);	
 
-	ResetView();
+	//ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -107,14 +95,26 @@ void COpenGLIFCView::ShowFaces(BOOL bShow)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Faces 
 BOOL COpenGLIFCView::AreFacesShown()
 {
 	return m_bShowFaces;
 }
 
 // ------------------------------------------------------------------------------------------------
-// Lines
+void COpenGLIFCView::ShowConceptualFacesPolygons(BOOL bShow)
+{
+	m_bShowConceptualFacesPolygons = bShow;
+
+	m_pWnd->RedrawWindow();
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLIFCView::AreConceptualFacesPolygonsShown()
+{
+	return m_bShowConceptualFacesPolygons;
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::ShowLines(BOOL bShow)
 {
 	m_bShowLines = bShow;
@@ -123,28 +123,26 @@ void COpenGLIFCView::ShowLines(BOOL bShow)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Lines 
 BOOL COpenGLIFCView::AreLinesShown()
 {
 	return m_bShowLines;
 }
 
 // ------------------------------------------------------------------------------------------------
-// Wireframes
-void COpenGLIFCView::ShowWireframes(BOOL bShow)
+void COpenGLIFCView::ShowPoints(BOOL bShow)
 {
-	m_bShowWireframes = bShow;
+	m_bShowPoints = bShow;
 
 	m_pWnd->RedrawWindow();
 }
 
 // ------------------------------------------------------------------------------------------------
-// Wireframes 
-BOOL COpenGLIFCView::AreWireframesShown()
+BOOL COpenGLIFCView::ArePointsShown()
 {
-	return m_bShowWireframes;
+	return m_bShowPoints;
 }
 
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::Load()
 {
 	CWaitCursor waitCursor;
@@ -857,9 +855,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		case enumMouseEvent::MBtnDown:
 		case enumMouseEvent::RBtnDown:
 		{
-			m_ptPrevMousePosition = point;		
-
-			m_bInteractionInProgress = true;
+			m_ptPrevMousePosition = point;
 		}
 		break;
 
@@ -869,8 +865,6 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			m_ptPrevMousePosition.x = -1;
 			m_ptPrevMousePosition.y = -1;
-
-			m_bInteractionInProgress = false;
 		}
 		break;
 
@@ -903,138 +897,20 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
-{
-	Zoom(zDelta < 0 ? -abs(m_dZTranslation) * ZOOM_SPEED_1 : abs(m_dZTranslation) * ZOOM_SPEED_1);
-
-	TRACE(L"\nm_dZTranslation: %f", m_dZTranslation);
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnControllerChanged()
 {
 	if (GetController() != NULL)
 	{
 		GetController()->RegisterView(this);
-	}	
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject* COpenGLIFCView::GetPickedIFCObject() const
+void COpenGLIFCView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 {
-	return m_pPickedIFCObject;
-}
+	/*Zoom(zDelta < 0 ? -abs(m_dZTranslation) * ZOOM_SPEED_1 : abs(m_dZTranslation) * ZOOM_SPEED_1);
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ZoomToExtent(CIFCObject* pIFCObject)
-{
-	ASSERT(FALSE); // TODO
-	ASSERT(pIFCObject != NULL);
-
-	/*double minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
-
-	bool initialized = false;
-	ZoomToCoreCalculate(pIFCObject, &minX, &maxX, &minY, &maxY, &minZ, &maxZ, &initialized);
-
-	if (initialized) {
-		ZoomToCoreSet(minX, maxX, minY, maxY, minZ, maxZ);
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ResetView()
-{
-	//m_pOGLContext->MakeCurrent();
-
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	delete m_vecIFCDrawMetaData[iDrawMetaData];
-	//}
-
-	//m_vecIFCDrawMetaData.clear();
-
-	//if (m_iSelectionFrameBuffer != 0)
-	//{
-	//	glDeleteFramebuffers(1, &m_iSelectionFrameBuffer);
-	//	m_iSelectionFrameBuffer = 0;
-	//}
-
-	//if (m_iSelectionTextureBuffer != 0)
-	//{
-	//	glDeleteTextures(1, &m_iSelectionTextureBuffer);
-	//	m_iSelectionTextureBuffer = 0;
-	//}
-
-	//if (m_iSelectionDepthRenderBuffer != 0)
-	//{
-	//	glDeleteRenderbuffers(1, &m_iSelectionDepthRenderBuffer);
-	//	m_iSelectionDepthRenderBuffer = 0;
-	//}
-
-	//if (m_iWireframesFrameBuffer != 0)
-	//{
-	//	glDeleteFramebuffers(1, &m_iWireframesFrameBuffer);
-	//	m_iWireframesFrameBuffer = 0;
-	//}
-
-	//if (m_iWireframesTextureBuffer != 0)
-	//{
-	//	glDeleteTextures(1, &m_iWireframesTextureBuffer);
-	//	m_iWireframesTextureBuffer = 0;
-	//}
-
-	//if (m_iWireframesDepthRenderBuffer != 0)
-	//{
-	//	glDeleteRenderbuffers(1, &m_iWireframesDepthRenderBuffer);
-	//	m_iWireframesDepthRenderBuffer = 0;
-	//}
-
-	//if (m_iFacesFrameBuffer != 0)
-	//{
-	//	glDeleteFramebuffers(1, &m_iFacesFrameBuffer);
-	//	m_iFacesFrameBuffer = 0;
-	//}
-
-	//if (m_iFacesTextureBuffer != 0)
-	//{
-	//	glDeleteTextures(1, &m_iFacesTextureBuffer);
-	//	m_iFacesTextureBuffer = 0;
-	//}
-
-	//if (m_iFacesDepthRenderBuffer != 0)
-	//{
-	//	glDeleteRenderbuffers(1, &m_iFacesDepthRenderBuffer);
-	//	m_iFacesDepthRenderBuffer = 0;
-	//}
-
-	//for (size_t iIBO = 0; iIBO < m_vecIBOs.size(); iIBO++)
-	//{
-	//	glDeleteBuffers(1, &(m_vecIBOs[iIBO]));
-	//}
-	//m_vecIBOs.clear();
-
-	//m_dXAngle = -75.;
-	//m_dYAngle = -30.;
-	//m_dXTranslation = 0.0f;
-	//m_dYTranslation = 0.0f;
-	//m_dZTranslation = -5.0f;
-	//m_dScaleFactor = 1.;
-	//m_ptPrevMousePosition = CPoint(-1, -1);
-	//m_bInteractionInProgress = false;
-	//m_pPickedIFCObject = NULL;
-	//m_pPickedIFCObjectModel = NULL;
-	//m_setPickedIFCObjectEdges.clear();
-	//m_iPickedIFCObjectFace = -1;
-	//m_pickedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
-	//m_selectedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
-	//m_viewOriginPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
-
-	///*
-	//Origin
-	//*/
-	//m_dOriginX = 0.;
-	//m_dOriginY = 0.;
-	//m_dOriginZ = 0.;
+	TRACE(L"\nm_dZTranslation: %f", m_dZTranslation);*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1301,9 +1177,9 @@ void COpenGLIFCView::DrawLines()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawWireframes()
+void COpenGLIFCView::DrawConceptualFacesPolygons()
 {
-	if (!m_bShowWireframes)
+	if (!m_bShowConceptualFacesPolygons)
 	{
 		return;
 	}	
@@ -1473,91 +1349,91 @@ void COpenGLIFCView::DrawFacesFrameBuffer()
 		return;
 	}	
 
-	auto pController = GetController();
-	ASSERT(pController != NULL);
+	//auto pController = GetController();
+	//ASSERT(pController != NULL);
 
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
+	//if (pController->GetModel() == nullptr)
+	//{
+	//	ASSERT(FALSE);
 
-		return;
-	}
+	//	return;
+	//}
 
-	auto pModel = pController->GetModel()->As<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
+	//auto pModel = pController->GetModel()->As<CIFCModel>();
+	//if (pModel == nullptr)
+	//{
+	//	ASSERT(FALSE);
 
-		return;
-	}
+	//	return;
+	//}
 
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
+	//CRect rcClient;
+	//m_pWnd->GetClientRect(&rcClient);
 
-	if ((rcClient.Width() < 100) || (rcClient.Height() < 100))
-	{
-		return;
-	}
+	//if ((rcClient.Width() < 100) || (rcClient.Height() < 100))
+	//{
+	//	return;
+	//}
 
-	/*
-	* Frame buffer
-	*/
-	if (m_iSelectionFrameBuffer == 0)
-	{
-		assert(m_iSelectionTextureBuffer == 0);
-		assert(m_iSelectionDepthRenderBuffer == 0);
+	///*
+	//* Frame buffer
+	//*/
+	//if (m_iSelectionFrameBuffer == 0)
+	//{
+	//	assert(m_iSelectionTextureBuffer == 0);
+	//	assert(m_iSelectionDepthRenderBuffer == 0);
 
-		/*
-		* Frame buffer
-		*/
-		glGenFramebuffers(1, &m_iSelectionFrameBuffer);
-		assert(m_iSelectionFrameBuffer != 0);
+	//	/*
+	//	* Frame buffer
+	//	*/
+	//	glGenFramebuffers(1, &m_iSelectionFrameBuffer);
+	//	assert(m_iSelectionFrameBuffer != 0);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
 
-		/*
-		* Texture buffer
-		*/
-		glGenTextures(1, &m_iSelectionTextureBuffer);
-		assert(m_iSelectionTextureBuffer != 0);
+	//	/*
+	//	* Texture buffer
+	//	*/
+	//	glGenTextures(1, &m_iSelectionTextureBuffer);
+	//	assert(m_iSelectionTextureBuffer != 0);
 
-		glBindTexture(GL_TEXTURE_2D, m_iSelectionTextureBuffer);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//	glBindTexture(GL_TEXTURE_2D, m_iSelectionTextureBuffer);
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+	//	glBindTexture(GL_TEXTURE_2D, 0);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iSelectionTextureBuffer, 0);
+	//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iSelectionTextureBuffer, 0);
 
-		/*
-		* Depth buffer
-		*/
-		glGenRenderbuffers(1, &m_iSelectionDepthRenderBuffer);
-		assert(m_iSelectionDepthRenderBuffer != 0);
+	//	/*
+	//	* Depth buffer
+	//	*/
+	//	glGenRenderbuffers(1, &m_iSelectionDepthRenderBuffer);
+	//	assert(m_iSelectionDepthRenderBuffer != 0);
 
-		glBindRenderbuffer(GL_RENDERBUFFER, m_iSelectionDepthRenderBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
+	//	glBindRenderbuffer(GL_RENDERBUFFER, m_iSelectionDepthRenderBuffer);
+	//	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
 
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	//	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iSelectionDepthRenderBuffer);
+	//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iSelectionDepthRenderBuffer);
 
-		GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, arDrawBuffers);
+	//	GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	//	glDrawBuffers(1, arDrawBuffers);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		_oglUtils::checkForErrors();
-	} // if (m_iSelectionFrameBuffer == 0)
+	//	_oglUtils::checkForErrors();
+	//} // if (m_iSelectionFrameBuffer == 0)
 
 	/*
 	* Scene
 	*/
-	glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
 
 	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
 
@@ -1668,47 +1544,47 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	/*
 	* Selection
 	*/
-	if (!m_bInteractionInProgress && m_bShowFaces && (m_iSelectionFrameBuffer != 0))
-	{
-		//m_pOGLContext->MakeCurrent();
+	//if (m_bShowFaces && (m_iSelectionFrameBuffer != 0))
+	//{
+	//	//m_pOGLContext->MakeCurrent();
 
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
+	//	CRect rcClient;
+	//	m_pWnd->GetClientRect(&rcClient);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
-		
-		GLubyte arPixels[4];
-		memset(arPixels, 0, sizeof(GLubyte) * 4);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
+	//	
+	//	GLubyte arPixels[4];
+	//	memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-		double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)rcClient.Width());
-		double dY = ((double)rcClient.Height() - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)rcClient.Height());
+	//	double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)rcClient.Width());
+	//	double dY = ((double)rcClient.Height() - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)rcClient.Height());
 
-		CIFCModel * pPickedIFCObjectModel = NULL;
-		CIFCObject * pPickedIFCObject = NULL;
+	//	CIFCModel * pPickedIFCObjectModel = NULL;
+	//	CIFCObject * pPickedIFCObject = NULL;
 
-		glReadPixels(
-			(GLint)dX,
-			(GLint)dY,
-			1, 1,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
-			arPixels);
+	//	glReadPixels(
+	//		(GLint)dX,
+	//		(GLint)dY,
+	//		1, 1,
+	//		GL_RGBA,
+	//		GL_UNSIGNED_BYTE,
+	//		arPixels);
 
-		if (arPixels[3] != 0)
-		{
-			int_t iObjectID =
-				(arPixels[0/*R*/] * (255 * 255)) +
-				(arPixels[1/*G*/] * 255) +
-				 arPixels[2/*B*/];
+	//	if (arPixels[3] != 0)
+	//	{
+	//		int_t iObjectID =
+	//			(arPixels[0/*R*/] * (255 * 255)) +
+	//			(arPixels[1/*G*/] * 255) +
+	//			 arPixels[2/*B*/];
 
-			pPickedIFCObjectModel = pModel;
-			pPickedIFCObject = pModel->getIFCObject(iObjectID);
-			
-			ASSERT(pPickedIFCObjectModel != NULL);
-			ASSERT(pPickedIFCObject != NULL);
-		} // if (arPixels[3] != 0)
+	//		pPickedIFCObjectModel = pModel;
+	//		pPickedIFCObject = pModel->getIFCObject(iObjectID);
+	//		
+	//		ASSERT(pPickedIFCObjectModel != NULL);
+	//		ASSERT(pPickedIFCObject != NULL);
+	//	} // if (arPixels[3] != 0)
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//if ((m_pPickedIFCObjectModel != pPickedIFCObjectModel) || (m_pPickedIFCObject != pPickedIFCObject))
 		//{
@@ -1716,7 +1592,6 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		//	m_pPickedIFCObject = pPickedIFCObject;
 		//	m_setPickedIFCObjectEdges.clear();
 		//	m_iPickedIFCObjectFace = -1;
-		//	m_pickedPoint3D = CPoint3D(-DBL_MAX, -DBL_MAX, -DBL_MAX);
 		//	
 		//	/*if ((m_pPickedIFCObject != NULL) && (m_enViewMode == vmMeasureVolume))
 		//	{
@@ -1741,7 +1616,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		//	m_pWnd->RedrawWindow();
 		//}
-	} // if (!m_bInteractionInProgress && ...
+	//} // if (m_bShowFaces && ...
 
 	/*
 	* Measures - Edges (Conceptual Faces Polygons)
@@ -1929,110 +1804,110 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	//	}
 	//} // if ((m_enViewMode == vmMeasureArea) && ...
 
-	if (m_ptPrevMousePosition.x == -1)
-	{
-		return;
-	}
+	//if (m_ptPrevMousePosition.x == -1)
+	//{
+	//	return;
+	//}
 
-	/*
-	* Rotate
-	*/
-	if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
-	{
-		double dXAngle = ((double)point.y - (double)m_ptPrevMousePosition.y);
-		double dYAngle = ((double)point.x - (double)m_ptPrevMousePosition.x);
+	///*
+	//* Rotate
+	//*/
+	//if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
+	//{
+	//	double dXAngle = ((double)point.y - (double)m_ptPrevMousePosition.y);
+	//	double dYAngle = ((double)point.x - (double)m_ptPrevMousePosition.x);
 
-		const double ROTATION_SPEED = 1. / 350.;
-		const double ROTATION_SENSITIVITY = 1.1;
+	//	const double ROTATION_SPEED = 1. / 350.;
+	//	const double ROTATION_SENSITIVITY = 1.1;
 
-		if (abs(dXAngle) >= abs(dYAngle) * ROTATION_SENSITIVITY)
-		{
-			dYAngle = 0.;
-		}
-		else
-		{
-			if (abs(dYAngle) >= abs(dXAngle) * ROTATION_SENSITIVITY)
-			{
-				dXAngle = 0.;
-			}
-		}
+	//	if (abs(dXAngle) >= abs(dYAngle) * ROTATION_SENSITIVITY)
+	//	{
+	//		dYAngle = 0.;
+	//	}
+	//	else
+	//	{
+	//		if (abs(dYAngle) >= abs(dXAngle) * ROTATION_SENSITIVITY)
+	//		{
+	//			dXAngle = 0.;
+	//		}
+	//	}
 
-		Rotate(dXAngle * ROTATION_SPEED, dYAngle * ROTATION_SPEED);
+	//	Rotate(dXAngle * ROTATION_SPEED, dYAngle * ROTATION_SPEED);
 
-		m_ptPrevMousePosition = point;
+	//	m_ptPrevMousePosition = point;
 
-		return;
-	}
+	//	return;
+	//}
 
-	/*
-	* Zoom
-	*/
-	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
-	{
-		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_dZTranslation) * ZOOM_SPEED_2 : abs(m_dZTranslation) * ZOOM_SPEED_2);
+	///*
+	//* Zoom
+	//*/
+	//if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
+	//{
+	//	/*Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_dZTranslation) * ZOOM_SPEED_2 : abs(m_dZTranslation) * ZOOM_SPEED_2);
 
-		m_ptPrevMousePosition = point;
+	//	m_ptPrevMousePosition = point;*/
 
-		return;
-	}
+	//	return;
+	//}
 
-	/*
-	* Move
-	*/
-	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
-	{
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
+	///*
+	//* Move
+	//*/
+	//if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
+	//{
+	//	/*CRect rcClient;
+	//	m_pWnd->GetClientRect(&rcClient);
 
-		m_dXTranslation += 4.f * (((double)point.x - (double)m_ptPrevMousePosition.x) / rcClient.Width());
-		m_dYTranslation -= 4.f * (((double)point.y - (double)m_ptPrevMousePosition.y) / rcClient.Height());
+	//	m_dXTranslation += 4.f * (((double)point.x - (double)m_ptPrevMousePosition.x) / rcClient.Width());
+	//	m_dYTranslation -= 4.f * (((double)point.y - (double)m_ptPrevMousePosition.y) / rcClient.Height());
 
-		m_pWnd->RedrawWindow();
+	//	m_pWnd->RedrawWindow();
 
-		m_ptPrevMousePosition = point;
+	//	m_ptPrevMousePosition = point;*/
 
-		return;
-	}
+	//	return;
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::Rotate(double dXSpin, double dYSpin)
 {
-	// Rotate
-	m_dXAngle += dXSpin * (180. / M_PI);
-	if (m_dXAngle > 360.0)
-	{
-		m_dXAngle = m_dXAngle - 360.0f;
-	}
-	else
-	{
-		if (m_dXAngle < 0.0)
-		{
-			m_dXAngle = m_dXAngle + 360.0f;
-		}
-	}
+	//// Rotate
+	//m_dXAngle += dXSpin * (180. / M_PI);
+	//if (m_dXAngle > 360.0)
+	//{
+	//	m_dXAngle = m_dXAngle - 360.0f;
+	//}
+	//else
+	//{
+	//	if (m_dXAngle < 0.0)
+	//	{
+	//		m_dXAngle = m_dXAngle + 360.0f;
+	//	}
+	//}
 
-	m_dYAngle += dYSpin * (180. / M_PI);
-	if (m_dYAngle > 360.0)
-	{
-		m_dYAngle = m_dYAngle - 360.0f;
-	}
-	else
-	{
-		if (m_dYAngle < 0.0)
-		{
-			m_dYAngle = m_dYAngle + 360.0f;
-		}
-	}
+	//m_dYAngle += dYSpin * (180. / M_PI);
+	//if (m_dYAngle > 360.0)
+	//{
+	//	m_dYAngle = m_dYAngle - 360.0f;
+	//}
+	//else
+	//{
+	//	if (m_dYAngle < 0.0)
+	//	{
+	//		m_dYAngle = m_dYAngle + 360.0f;
+	//	}
+	//}
 
-	m_pWnd->RedrawWindow();
+	//m_pWnd->RedrawWindow();
 }
 
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::Zoom(double dZTranslation)
 {
-	m_dZTranslation += dZTranslation;
+	/*m_dZTranslation += dZTranslation;
 
-	m_pWnd->RedrawWindow();
+	m_pWnd->RedrawWindow();*/
 }
 
