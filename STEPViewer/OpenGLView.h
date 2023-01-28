@@ -4,15 +4,15 @@
 
 // ------------------------------------------------------------------------------------------------
 // Mouse support
-enum enumMouseEvent
+enum class enumMouseEvent
 {
-	meMove = 0,
-	meLBtnDown = 1,
-	meLBtnUp = 2,
-	meMBtnDown = 3,
-	meMBtnUp = 4,
-	meRBtnDown = 5,
-	meRBtnUp = 6,
+	Move = 0,
+	LBtnDown = 1,
+	LBtnUp = 2,
+	MBtnDown = 3,
+	MBtnUp = 4,
+	RBtnDown = 5,
+	RBtnUp = 6,
 };
 
 // ------------------------------------------------------------------------------------------------

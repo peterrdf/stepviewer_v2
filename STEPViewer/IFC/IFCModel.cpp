@@ -40,10 +40,6 @@ CIFCModel::CIFCModel()
 	, m_ifcReinforcingElementEntity(0)
 	, m_ifcTransportElementEntity(0)
 	, m_ifcVirtualElementEntity(0)
-	, m_geometryStarted(false)
-	, m_offsetX(0.f)
-	, m_offsetY(0.f)
-	, m_offsetZ(0.f)
 	, m_prXMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prYMinMax(pair<float, float>(-1.f, 1.f))
 	, m_prZMinMax(pair<float, float>(-1.f, 1.f))
@@ -288,40 +284,6 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, fYmax - fYmin);
 	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, fZmax - fZmin);
 
-	/*
-	* Build selection colors - TODO!!!
-	*/
-	//const float STEP = 1.0f / 255.0f;
-
-	//for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
-	//{
-	//	CIFCObject* pIFCObject = m_vecIFCObjects[iIFCObject];
-
-	//	if (!pIFCObject->hasGeometry())
-	//	{
-	//		// skip the objects without geometry
-	//		continue;
-	//	}
-
-	//	float fR = floor((float)pIFCObject->ID() / (255.0f * 255.0f));
-	//	if (fR >= 1.0f)
-	//	{
-	//		fR *= STEP;
-	//	}
-
-	//	float fG = floor((float)pIFCObject->ID() / 255.0f);
-	//	if (fG >= 1.0f)
-	//	{
-	//		fG *= STEP;
-	//	}
-
-	//	float fB = (float)(pIFCObject->ID() % 255);
-	//	fB *= STEP;
-
-	//	ASSERT(pIFCObject->rgbID() != NULL);
-	//	pIFCObject->rgbID()->Init(fR, fG, fB);
-	//} // for (; itIFCCobject != ...		
-
 	return true;
 }
 
@@ -359,24 +321,6 @@ const pair<float, float> & CIFCModel::getYMinMax() const
 const pair<float, float> & CIFCModel::getZMinMax() const
 {
 	return m_prZMinMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-const float CIFCModel::getXoffset() const
-{
-	return m_offsetX;
-}
-
-// ------------------------------------------------------------------------------------------------
-const float CIFCModel::getYoffset() const
-{
-	return m_offsetY;
-}
-
-// ------------------------------------------------------------------------------------------------
-const float CIFCModel::getZoffset() const
-{
-	return m_offsetZ;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1067,29 +1011,9 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	pIFCObject->m_pIndexBuffer = new _indices_i32();
 
 	CalculateInstance(iInstance, &pIFCObject->m_pVertexBuffer->size(), &pIFCObject->m_pIndexBuffer->size(), NULL);
-
 	if ((pIFCObject->m_pVertexBuffer->size() == 0) || (pIFCObject->m_pIndexBuffer->size() == 0))
 	{
 		return pIFCObject;
-	}
-
-	if (!m_geometryStarted)
-	{
-		m_geometryStarted = true;
-
-		float* pVertices = new float[(int_t)pIFCObject->m_pVertexBuffer->size() * VERTEX_LENGTH];
-		UpdateInstanceVertexBuffer(iInstance, pVertices);
-
-		SetVertexBufferOffset(m_iIFCModel, -pVertices[0], -pVertices[1], -pVertices[2]);
-		m_offsetX = pVertices[0];
-		m_offsetY = pVertices[1];
-		m_offsetZ = pVertices[2];
-
-		delete[] pVertices;
-
-		ClearedInstanceExternalBuffers(iInstance);
-
-		CalculateInstance(iInstance, &pIFCObject->m_pVertexBuffer->size(), &pIFCObject->m_pIndexBuffer->size(), NULL);		
 	}
 
 	int64_t iOWLModel = 0;

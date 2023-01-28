@@ -73,26 +73,10 @@ public: // Methods
 class CIFCModel;
 
 // ------------------------------------------------------------------------------------------------
-enum enumViewMode
+enum class enumProjection
 {
-	vmExploreModel = 0,
-	// ...
-	vmMeasureEdge = 100,
-	// ...
-	vmMeasureArea = 200,
-	// ...
-	vmMeasureVolume = 300,
-	// ...
-	vmMeasurePoint = 400,
-	// ...
-	vmMeasureDistance = 500
-};
-
-// ------------------------------------------------------------------------------------------------
-enum enumProjectionType
-{
-	ptPerspective = 0,
-	ptIsometric = 1,
+	Perspective = 0,
+	Isometric = 1,
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -109,20 +93,8 @@ private: // Members
 	glm::mat4 m_modelViewMatrix;
 
 	// --------------------------------------------------------------------------------------------
-	// Tooltip
-	CToolTipCtrl m_toolTipCtrl;
-
-	// --------------------------------------------------------------------------------------------
 	// Projection
-	enumProjectionType m_enProjectionType;
-
-	// --------------------------------------------------------------------------------------------
-	// Show the selected IFCObject-s only
-	BOOL m_bDetailsViewMode;
-
-	// --------------------------------------------------------------------------------------------
-	// View mode
-	enumViewMode m_enViewMode;
+	enumProjection m_enProjection;
 
 	// --------------------------------------------------------------------------------------------
 	// CIFCDrawMetaData-s
@@ -252,10 +224,6 @@ private: // Members
 	// View Origin	
 	CPoint3D m_ZArrowVector;
 
-	// --------------------------------------------------------------------------------------------
-	// Handle
-	HFONT m_hFont;
-
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
@@ -267,24 +235,12 @@ public: // Methods
 	virtual ~COpenGLIFCView();
 
 	// --------------------------------------------------------------------------------------------
-	// Enable Details view mode
-	void SetDetailsViewMode();
-
-	// --------------------------------------------------------------------------------------------
-	// View Mode
-	enumViewMode GetViewMode() const;
-
-	// --------------------------------------------------------------------------------------------
-	// View Mode
-	void SetViewMode(enumViewMode enViewMode);
+	// Projection
+	enumProjection GetProjection() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Projection
-	enumProjectionType GetProjectionType() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Projection
-	void SetProjectionType(enumProjectionType enProjectionType);
+	void SetProjection(enumProjection enProjection);
 
 	// --------------------------------------------------------------------------------------------
 	// Faces
@@ -333,46 +289,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Handles the events
 	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	virtual void OnInstanceLoadedEvent(CIFCModel* pModel, CIFCObject* pIFCObject);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	// #####virtual void OnActiveModelChangedEvent(const CSTEPView * pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	virtual void OnModelDeleted(CIFCModel * pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	virtual void OnAllModelsDeleted();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//  #####virtual void OnItemsVisibleStateChangedEvent(const CSTEPView * pSender, const CIFCModel * pModel, const vector<CIFCObject *> & vecItems);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	// #####virtual void OnItemsVisibleStateChangedEvent(const CSTEPView * pSender, const CIFCModel * pModel, const CString & strEntity);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//  #####virtual void OnSelectInstanceEvent(const CSTEPView * pSender, int_t iExpressID);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//  #####virtual void OnPointInstanceEvent(const CSTEPView* pSender, int_t iExpressID);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//  #####virtual void OnViewOriginEvent(const CSTEPView* pSender, int_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//  #####virtual void OnViewGeometryEvent(const CSTEPView* pSender, CIFCObject* pIFCObject);
 
 	// --------------------------------------------------------------------------------------------
 	// CSTEPView
@@ -428,32 +344,8 @@ private: // Methods
 	void ResetView();
 
 	// ------------------------------------------------------------------------------------------------
-	// Scene
-	void DrawScene(float arrowSizeI, float arrowSizeII);
-
-	// ------------------------------------------------------------------------------------------------
 	// Faces
 	void DrawFaces(bool bTransparent);
-
-	// ------------------------------------------------------------------------------------------------
-	// Faces
-	void DrawPickedFace();
-
-	// ------------------------------------------------------------------------------------------------
-	// Point
-	void DrawPickedPoint();
-
-	// ------------------------------------------------------------------------------------------------
-	// View Origin
-	void DrawInstanceOrigin();
-
-	// ------------------------------------------------------------------------------------------------
-	// Point
-	void DrawDistance();
-
-	// ------------------------------------------------------------------------------------------------
-	// Bounds
-	void DrawBoundingBoxes();
 
 	// ------------------------------------------------------------------------------------------------
 	// Lines
@@ -468,14 +360,6 @@ private: // Methods
 	void DrawFacesFrameBuffer();
 
 	// ------------------------------------------------------------------------------------------------
-	// Measures support
-	void DrawConceptualFacesFrameBuffer();
-
-	// ------------------------------------------------------------------------------------------------
-	// Measures support
-	void DrawWireframesFrameBuffer();
-
-	// ------------------------------------------------------------------------------------------------
 	// Handler
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 
@@ -488,9 +372,6 @@ private: // Methods
 	void Zoom(double dZTranslation);
 
 	// --------------------------------------------------------------------------------------------
-//	void ZoomToCore(CIFCObject * pIFCObject);
-
-	// --------------------------------------------------------------------------------------------
 	void ZoomToCoreCalculate(CIFCObject * pIFCObject, double * pMinX, double * pMaxX, double * pMinY, double * pMaxY, double * pMinZ, double * pMaxZ, bool * pInitialized);
 
 	// --------------------------------------------------------------------------------------------
@@ -498,26 +379,6 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	void CenterToCore(CIFCObject * pIFCObject);
-
-	// --------------------------------------------------------------------------------------------
-	// Screen -> Open GL coordinates
-	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble & dX, GLdouble & dY, GLdouble & dZ) const;
-
-	// --------------------------------------------------------------------------------------------
-	// GDI Text
-	bool DrawTextGDI(const wchar_t * szText, float fX, float fY, float fZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Sum
-	double GetPickedEdgesLength();
-
-	// --------------------------------------------------------------------------------------------
-	// Tooltip
-	void ShowTooltip(const CString & strTitle, const CString & strText);
-
-	// --------------------------------------------------------------------------------------------
-	// Tooltip
-	void HideTooltip();
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

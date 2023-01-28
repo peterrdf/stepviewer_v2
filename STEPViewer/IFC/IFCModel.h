@@ -56,10 +56,6 @@ private: // Members
 	int_t m_ifcReinforcingElementEntity;
 	int_t m_ifcTransportElementEntity;
 	int_t m_ifcVirtualElementEntity;
-	bool m_geometryStarted;
-	float m_offsetX;
-	float m_offsetY;
-	float m_offsetZ;
 
 	// --------------------------------------------------------------------------------------------
 	// Min/Max
@@ -184,18 +180,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	const pair<float, float> & getZMinMax() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const float getXoffset() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const float getYoffset() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const float getZoffset() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter

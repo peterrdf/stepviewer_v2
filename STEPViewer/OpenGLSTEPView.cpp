@@ -715,7 +715,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
-	if (enEvent == meLBtnUp)
+	if (enEvent == enumMouseEvent::LBtnUp)
 	{
 		/*
 		* OnSelectedItemChanged() notification
@@ -741,24 +741,24 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 
 	switch (enEvent)
 	{
-		case meMove:
+		case enumMouseEvent::Move:
 		{
 			OnMouseMoveEvent(nFlags, point);
 		}
 		break;
 
-		case meLBtnDown:
-		case meMBtnDown:
-		case meRBtnDown:
+		case enumMouseEvent::LBtnDown:
+		case enumMouseEvent::MBtnDown:
+		case enumMouseEvent::RBtnDown:
 		{
 			m_ptStartMousePosition = point;
 			m_ptPrevMousePosition = point;
 		}
 		break;
 
-		case meLBtnUp:
-		case meMBtnUp:
-		case meRBtnUp:
+		case enumMouseEvent::LBtnUp:
+		case enumMouseEvent::MBtnUp:
+		case enumMouseEvent::RBtnUp:
 		{
 			m_ptStartMousePosition.x = -1;
 			m_ptStartMousePosition.y = -1;

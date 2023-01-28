@@ -98,27 +98,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// CSTEPView
-	//virtual void OnModelLoadedEvent(CIFCModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//virtual void OnActiveModelChangedEvent(const CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//virtual void OnAllModelsDeleted();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	//virtual void OnSelectInstanceEvent(const CSTEPView* pSender, int_t iExpressID);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//virtual void OnItemsVisibleStateChangedEvent(const CSTEPView* pSender, const CIFCModel* pModel, const vector<CIFCObject*>& vecItems);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//virtual void OnItemsVisibleStateChangedEvent(const CSTEPView* pSender, const CIFCModel* pModel, const CString& strEntity);
 
 	// --------------------------------------------------------------------------------------------
 	// CItemStateProvider

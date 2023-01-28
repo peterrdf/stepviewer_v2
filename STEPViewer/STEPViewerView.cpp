@@ -239,7 +239,7 @@ void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -250,7 +250,7 @@ void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -261,7 +261,7 @@ void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -272,7 +272,7 @@ void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -283,7 +283,7 @@ void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -293,7 +293,7 @@ void CMySTEPViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -304,7 +304,7 @@ void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMove, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
