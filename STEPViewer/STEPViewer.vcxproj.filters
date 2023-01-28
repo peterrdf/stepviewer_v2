@@ -98,9 +98,6 @@
     <ClInclude Include="SimpleOGLPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCMaterial.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCModel.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -122,9 +119,6 @@
     <ClInclude Include="IFC\ObjectIFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\Point3D.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\StringIFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -140,12 +134,6 @@
     <ClInclude Include="IFC\BoolIFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\COLORS.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="ConceptualFace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="STEPModelBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -159,9 +147,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cohorts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="STEPProductsTreeView.h">
@@ -232,9 +217,6 @@
     <ClCompile Include="STEPModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCMaterial.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\IFCModel.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
@@ -256,9 +238,6 @@
     <ClCompile Include="IFC\ObjectIFCProperty.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\Point3D.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\StringIFCProperty.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
@@ -273,12 +252,6 @@
     </ClCompile>
     <ClCompile Include="IFC\BoolIFCProperty.cpp">
       <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\COLORS.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="ConceptualFace.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPModelBase.cpp">
       <Filter>Source Files</Filter>

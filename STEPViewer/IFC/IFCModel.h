@@ -108,22 +108,6 @@ private: // Members
 	set<int64_t> m_setSelectedIFCObjects;
 
 	// --------------------------------------------------------------------------------------------
-	// Selection
-	CIFCObject* m_pSubSelection;
-
-	// --------------------------------------------------------------------------------------------
-	// Picked instances
-	CIFCMaterial * m_pOnMouseOverMaterial;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected instances
-	CIFCMaterial * m_pSelectionMaterial;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box
-	CIFCMaterial * m_pBoundingBoxMaterial;
-
-	// --------------------------------------------------------------------------------------------
 	// Unique index for each object
 	static int_t s_iObjectID;
 
@@ -228,26 +212,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	const set<int64_t>& getSelectedIFCObjects() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CIFCObject* getSubSelection() const;
-
-	// --------------------------------------------------------------------------------------------
-	// User-defined materials
-	void SetSelectMaterial(CIFCMaterial * pOnMouseOverMaterial, CIFCMaterial * pOnSelectMaterial, CIFCMaterial * pBoundingBoxMaterial);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const CIFCMaterial * getOnMouseOverMaterial() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const CIFCMaterial * getSelectionMaterial() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box
-	const CIFCMaterial * getBoundingBoxMaterial() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties

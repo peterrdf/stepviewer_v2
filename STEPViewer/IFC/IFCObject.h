@@ -8,8 +8,6 @@
 #include "STEPInstance.h"
 
 #include "Generic.h"
-#include "Cohorts.h"
-#include "IFCMaterial.h"
 
 #include "engine.h"
 #include "ifcengine.h"

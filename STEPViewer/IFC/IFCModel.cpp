@@ -7,18 +7,8 @@
 #include <cfloat>
 #include <math.h>
 
-#include "ConceptualFace.h"
-#include "colors.h"
-
 // ------------------------------------------------------------------------------------------------
 /*static*/ int_t CIFCModel::s_iObjectID = 1;
-
-// ------------------------------------------------------------------------------------------------
-extern	ENTITY_COLOR	entityColors[ENTITY_COLOR_CNT];
-extern	COLOR			entityDefaultCOLOR;
-extern	COLOR			onMouseOverCOLOR;
-extern	COLOR			onSelectionCOLOR;
-extern	COLOR			boundingBoxCOLOR;
 
 // ------------------------------------------------------------------------------------------------
 CIFCModel::CIFCModel()
@@ -54,43 +44,7 @@ CIFCModel::CIFCModel()
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_setSelectedIFCObjects()
-	, m_pSubSelection(NULL)
-	, m_pOnMouseOverMaterial(NULL)
-	, m_pSelectionMaterial(NULL)
-	, m_pBoundingBoxMaterial(NULL)
 {
-	/*
-	* Default
-	*/
-	m_pOnMouseOverMaterial = new CIFCMaterial();
-	m_pOnMouseOverMaterial->Init(
-		(BYTE)onMouseOverCOLOR.R, (BYTE)onMouseOverCOLOR.G, (BYTE)onMouseOverCOLOR.B,		// ambient
-		(BYTE)onMouseOverCOLOR.R, (BYTE)onMouseOverCOLOR.G, (BYTE)onMouseOverCOLOR.B,		// diffuse
-		(BYTE)onMouseOverCOLOR.R, (BYTE)onMouseOverCOLOR.G, (BYTE)onMouseOverCOLOR.B,		// emissive
-		(BYTE)onMouseOverCOLOR.R, (BYTE)onMouseOverCOLOR.G, (BYTE)onMouseOverCOLOR.B,		// specular
-		(BYTE)onMouseOverCOLOR.A);		
-
-	/*
-	* Default
-	*/
-	m_pSelectionMaterial = new CIFCMaterial();
-	m_pSelectionMaterial->Init(
-		(BYTE)onSelectionCOLOR.R, (BYTE)onSelectionCOLOR.G, (BYTE)onSelectionCOLOR.B,		// ambient
-		(BYTE)onSelectionCOLOR.R, (BYTE)onSelectionCOLOR.G, (BYTE)onSelectionCOLOR.B,		// diffuse
-		(BYTE)onSelectionCOLOR.R, (BYTE)onSelectionCOLOR.G, (BYTE)onSelectionCOLOR.B,		// emissive
-		(BYTE)onSelectionCOLOR.R, (BYTE)onSelectionCOLOR.G, (BYTE)onSelectionCOLOR.B,		// specular
-		(BYTE)onSelectionCOLOR.A);
-
-	/*
-	* Default
-	*/
-	m_pBoundingBoxMaterial = new CIFCMaterial();
-	m_pBoundingBoxMaterial->Init(
-		(BYTE)boundingBoxCOLOR.R, (BYTE)boundingBoxCOLOR.G, (BYTE)boundingBoxCOLOR.B,		// ambient
-		(BYTE)boundingBoxCOLOR.R, (BYTE)boundingBoxCOLOR.G, (BYTE)boundingBoxCOLOR.B,		// diffuse
-		(BYTE)boundingBoxCOLOR.R, (BYTE)boundingBoxCOLOR.G, (BYTE)boundingBoxCOLOR.B,		// emissive
-		(BYTE)boundingBoxCOLOR.R, (BYTE)boundingBoxCOLOR.G, (BYTE)boundingBoxCOLOR.B,		// specular
-		(BYTE)boundingBoxCOLOR.A);	
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -135,10 +89,6 @@ CIFCModel::~CIFCModel()
 		delete itProperty->second;
 	}
 	m_mapProperties.clear();
-
-	delete m_pOnMouseOverMaterial;
-	delete m_pSelectionMaterial;
-	delete m_pBoundingBoxMaterial;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -417,38 +367,6 @@ CIFCObject * CIFCModel::getIFCObjectbyGUID(const wstring & GUID)
 const set<int64_t>& CIFCModel::getSelectedIFCObjects() const
 {
 	return m_setSelectedIFCObjects;
-}
-
-// ------------------------------------------------------------------------------------------------
-CIFCObject* CIFCModel::getSubSelection() const
-{
-	return m_pSubSelection;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::SetSelectMaterial(CIFCMaterial * pOnMouseOverMaterial, CIFCMaterial * pOnSelectMaterial, CIFCMaterial * pBoundingBoxMaterial)
-{
-	m_pOnMouseOverMaterial = pOnMouseOverMaterial;
-	m_pSelectionMaterial = pOnSelectMaterial;
-	m_pBoundingBoxMaterial = pBoundingBoxMaterial;
-}
-
-// ------------------------------------------------------------------------------------------------
-const CIFCMaterial * CIFCModel::getOnMouseOverMaterial() const
-{
-	return m_pOnMouseOverMaterial;
-}
-
-// ------------------------------------------------------------------------------------------------
-const CIFCMaterial * CIFCModel::getSelectionMaterial() const
-{
-	return m_pSelectionMaterial;
-}
-
-// ------------------------------------------------------------------------------------------------
-const CIFCMaterial * CIFCModel::getBoundingBoxMaterial() const
-{
-	return m_pBoundingBoxMaterial;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -973,7 +891,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	* Default color
 	*/
 	// ((R * 255 + G) * 255 + B) * 255 + A
-	uint32_t	R = entityDefaultCOLOR.R,
+	/*uint32_t	R = entityDefaultCOLOR.R,
 				G = entityDefaultCOLOR.G,
 				B = entityDefaultCOLOR.B,
 				A = entityDefaultCOLOR.A;
@@ -992,7 +910,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		256 * B +
 		A;
 
-	SetDefaultColor(m_iIFCModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
+	SetDefaultColor(m_iIFCModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
 
 	/*
 	* Set up circleSegments()

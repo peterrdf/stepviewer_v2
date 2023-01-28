@@ -3,9 +3,7 @@
 #include "_oglUtils.h"
 
 #include "Generic.h"
-#include "Cohorts.h"
 #include "ProductInstance.h"
-#include "ConceptualFace.h"
 #include "STEPInstance.h"
 
 #include <string>
