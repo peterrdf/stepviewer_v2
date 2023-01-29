@@ -104,10 +104,6 @@ public: // Methods
 	vector<_cohort*>& linesCohorts();
 	vector<_facesCohort*>& pointsCohorts();
 
-	const pair<float, float>& getXMinMax() const;
-	const pair<float, float>& getYMinMax() const;
-	const pair<float, float>& getZMinMax() const;
-
 	// State
 	bool& referenced();
 	bool getEnable() const;
@@ -118,10 +114,8 @@ public: // Methods
 	GLuint & VBO();
 	GLsizei & VBOOffset();
 	
-	void CalculateMinMaxValues(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
-	void CalculateMinMaxValues(float* pVertices, int_t iVerticesCount);
-	void Scale(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
-	static void Scale(float* pVertices, int_t iVerticesCount, float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);	
+	void CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
+	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
 
 private: // Methods
 

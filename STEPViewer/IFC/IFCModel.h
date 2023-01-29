@@ -34,11 +34,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Model
-	int_t m_iIFCModel;
-
-	// --------------------------------------------------------------------------------------------
-	// Model
-	LONG m_iIFCModelID;
+	int_t m_iModel;
 
 	// --------------------------------------------------------------------------------------------
 	// Entities
@@ -58,14 +54,23 @@ private: // Members
 	int_t m_ifcVirtualElementEntity;
 
 	// --------------------------------------------------------------------------------------------
-	// Min/Max
-	pair<float, float> m_prXMinMax;
-	pair<float, float> m_prYMinMax;
-	pair<float, float> m_prZMinMax;
+	// World's dimensions
+	float m_fXmin;
+	float m_fXmax;
+	float m_fYmin;
+	float m_fYmax;
+	float m_fZmin;
+	float m_fZmax;
 
 	// --------------------------------------------------------------------------------------------
-	// Bounding sphere diameter
+	// World's bounding sphere diameter
 	float m_fBoundingSphereDiameter;
+
+	// --------------------------------------------------------------------------------------------
+	// World's translations - center
+	float m_fXTranslation;
+	float m_fYTranslation;
+	float m_fZTranslation;
 
 	// --------------------------------------------------------------------------------------------
 	// CIFCObject-s
@@ -134,12 +139,20 @@ public: // Methods
 	virtual void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 
 	// --------------------------------------------------------------------------------------------
-	// Loads and IFC file
-    bool Load(const wchar_t * szIFCFile);
+	// Getter
+	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
+
+	// --------------------------------------------------------------------------------------------
+	// [-1, 1]
+	void ScaleAndCenter();
 
 	// --------------------------------------------------------------------------------------------
 	// Loads and IFC file
-	bool Load(const wchar_t* szIFCFile, int64_t iInstance);
+	void Load(const wchar_t* szIFCFile, int64_t iModel);
+
+	// --------------------------------------------------------------------------------------------
+	// Clean up
+	void Clean();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -147,27 +160,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	LONG getModelID() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	const wchar_t * getModelName() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const pair<float, float> & getXMinMax() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const pair<float, float> & getYMinMax() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const pair<float, float> & getZMinMax() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	float getBoundingSphereDiameter() const;
+	float GetBoundingSphereDiameter() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter

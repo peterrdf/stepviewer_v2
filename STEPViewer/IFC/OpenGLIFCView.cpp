@@ -199,533 +199,71 @@ BOOL COpenGLIFCView::ArePointsShown()
 {
 	CWaitCursor waitCursor;
 
-	////	CTime tmBuildOGLBuffersStart = CTime::GetCurrentTime();
-
-	//BOOL bResult = m_pOGLContext->MakeCurrent();
-	//VERIFY(bResult);
-
-	//auto pController = GetController();
-	//ASSERT(pController != NULL);
-
-	//if (pController->GetModel() == nullptr)
-	//{
-	//	ASSERT(FALSE);
-
-	//	return;
-	//}
-
-	//auto pModel = pController->GetModel()->As<CIFCModel>();
-	//if (pModel == nullptr)
-	//{
-	//	ASSERT(FALSE);
-
-	//	return;
-	//}
-
-	//float fXmin = -1.f;
-	//float fXmax = 1.f;
-	//float fYmin = -1.f;
-	//float fYmax = 1.f;
-	//float fZmin = -1.f;
-	//float fZmax = 1.f;
-	//pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	///*
-	//* Bounding sphere diameter
-	//*/
-	//float fBoundingSphereDiameter = fXmax - fXmin;
-	//fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fYmax - fYmin);
-	//fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fZmax - fZmin);
-
-	//m_dScaleFactor = fBoundingSphereDiameter;
-
-	//GLsizei VERTICES_MAX_COUNT = COpenGL::GetGeometryVerticesCountLimit();
-	//GLsizei INDICES_MAX_COUNT = COpenGL::GetIndicesCountLimit();
-
-	//const vector<CIFCObject*>& vecIFCObjects = pModel->getIFCObjects();
-
-	//// VBO
-	//GLuint iVerticesCount = 0;
-	//vector<CIFCObject*> vecIFCObjectsGroup;
-
-	//// IBO - Materials
-	//GLuint iFacesIndicesCount = 0;
-	//vector<CIFCGeometryWithMaterial*> vecIFCMaterialsGroup;
-
-	//// IBO - Lines
-	//GLuint iLinesIndicesCount = 0;
-	//vector<CLinesCohort*> vecLinesCohorts;
-
-	//// IBO - Wireframes
-	//GLuint iWireframesIndicesCount = 0;
-	//vector<CWireframesCohort*> vecWireframesCohorts;
-
-	//for (size_t iIFCObject = 0; iIFCObject < vecIFCObjects.size(); iIFCObject++)
-	//{
-	//	CIFCObject* pIFCObject = vecIFCObjects[iIFCObject];
-
-	//	if (!pIFCObject->hasGeometry())
-	//	{
-	//		// skip the objects without geometry
-	//		continue;
-	//	}
-
-	//	/*
-	//	* VBO - Conceptual faces, wireframes, etc.
-	//	*/
-	//	if (((int_t)iVerticesCount + pIFCObject->verticesCount()) > (int_t)VERTICES_MAX_COUNT)
-	//	{
-	//		assert(!vecIFCObjectsGroup.empty());
-
-	//		int_t iCohortVerticesCount = 0;
-	//		float* pVertices = pModel->GetVertices(vecIFCObjectsGroup, iCohortVerticesCount);
-	//		if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
-	//		{
-	//			ASSERT(0);
-
-	//			return;
-	//		}
-
-	//		ASSERT(iCohortVerticesCount == iVerticesCount);
-
-	//		CIFCObject::Scale(pVertices, iVerticesCount, fXmin, fXmax, fYmin, fYmax, fZmin, fZmax, fBoundingSphereDiameter);
-
-	//		GLuint iVBO = 0;
-	//		glGenBuffers(1, &iVBO);
-
-	//		ASSERT(iVBO != 0);
-
-	//		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-	//		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-	//		/*
-	//		* Store VBO/offset
-	//		*/
-	//		GLsizei iVBOOffset = 0;
-	//		for (iIFCObject = 0; iIFCObject < vecIFCObjectsGroup.size(); iIFCObject++)
-	//		{
-	//			vecIFCObjectsGroup[iIFCObject]->VBO() = iVBO;
-	//			vecIFCObjectsGroup[iIFCObject]->VBOOffset() = iVBOOffset;
-
-	//			// Update min/max
-	//			vecIFCObjectsGroup[iIFCObject]->CalculateMinMaxValues(pVertices + (iVBOOffset * GEOMETRY_VBO_VERTEX_LENGTH), vecIFCObjectsGroup[iIFCObject]->verticesCount());
-
-	//			// Update minimum bounding box
-	//			vecIFCObjectsGroup[iIFCObject]->UpdateBBox(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax, fBoundingSphereDiameter);
-
-	//			iVBOOffset += (GLsizei)vecIFCObjectsGroup[iIFCObject]->verticesCount();
-	//		} // for (size_t iIFCObject = ...
-
-	//		delete[] pVertices;
-
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	//		_oglUtils::checkForErrors();
-
-	//		CIFCDrawMetaData* pDrawMetaData = new CIFCDrawMetaData();
-	//		pDrawMetaData->AddGroup(iVBO, vecIFCObjectsGroup);
-
-	//		m_vecIFCDrawMetaData.push_back(pDrawMetaData);
-
-	//		iVerticesCount = 0;
-	//		vecIFCObjectsGroup.clear();
-	//	} // if (((int_t)iVerticesCount + pIFCObject->verticesCount()) > ...
-
-	//	/*
-	//	* IBO - Materials
-	//	*/
-	//	for (size_t iMaterial = 0; iMaterial < pIFCObject->conceptualFacesMaterials().size(); iMaterial++)
-	//	{
-	//		if ((int_t)(iFacesIndicesCount + pIFCObject->conceptualFacesMaterials()[iMaterial]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-	//		{
-	//			assert(!vecIFCMaterialsGroup.empty());
-
-	//			GLuint iIBO = 0;
-	//			glGenBuffers(1, &iIBO);
-
-	//			ASSERT(iIBO != 0);
-
-	//			m_vecIBOs.push_back(iIBO);
-
-	//			int_t iGroupIndicesCount = 0;
-	//			unsigned int* pIndices = pModel->GetMaterialsIndices(vecIFCMaterialsGroup, iGroupIndicesCount);
-	//			if ((iGroupIndicesCount == 0) || (pIndices == nullptr))
-	//			{
-	//				ASSERT(0);
-
-	//				return;
-	//			}
-
-	//			ASSERT(iFacesIndicesCount == iGroupIndicesCount);
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//			delete[] pIndices;
-
-	//			/*
-	//			* Store IBO/offset
-	//			*/
-	//			GLsizei iIBOOffset = 0;
-	//			for (size_t iMaterial2 = 0; iMaterial2 < vecIFCMaterialsGroup.size(); iMaterial2++)
-	//			{
-	//				vecIFCMaterialsGroup[iMaterial2]->IBO() = iIBO;
-	//				vecIFCMaterialsGroup[iMaterial2]->IBOOffset() = iIBOOffset;
-
-	//				iIBOOffset += (GLsizei)vecIFCMaterialsGroup[iMaterial2]->getIndicesCount();
-	//			}
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//			_oglUtils::checkForErrors();
-
-	//			iFacesIndicesCount = 0;
-	//			vecIFCMaterialsGroup.clear();
-	//		} // if ((int_t)(iFacesIndicesCount + ...	
-
-	//		iFacesIndicesCount += (GLsizei)pIFCObject->conceptualFacesMaterials()[iMaterial]->getIndicesCount();
-	//		vecIFCMaterialsGroup.push_back(pIFCObject->conceptualFacesMaterials()[iMaterial]);
-	//	} // for (size_t iMaterial = ...	
-
-	//	/*
-	//	* IBO - Lines
-	//	*/
-	//	for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
-	//	{
-	//		if ((int_t)(iLinesIndicesCount + pIFCObject->linesCohorts()[iLinesCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-	//		{
-	//			assert(!vecLinesCohorts.empty());
-
-	//			GLuint iIBO = 0;
-	//			glGenBuffers(1, &iIBO);
-
-	//			ASSERT(iIBO != 0);
-
-	//			m_vecIBOs.push_back(iIBO);
-
-	//			int_t iCohortIndicesCount = 0;
-	//			unsigned int* pIndices = pModel->GetLinesCohortsIndices(vecLinesCohorts, iCohortIndicesCount);
-	//			if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//			{
-	//				ASSERT(0);
-
-	//				return;
-	//			}
-
-	//			ASSERT(iLinesIndicesCount == iCohortIndicesCount);
-
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iLinesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//			delete[] pIndices;
-
-	//			/*
-	//			* Store IBO/offset
-	//			*/
-	//			GLsizei iIBOOffset = 0;
-	//			for (size_t iLinesCohort2 = 0; iLinesCohort2 < vecLinesCohorts.size(); iLinesCohort2++)
-	//			{
-	//				vecLinesCohorts[iLinesCohort2]->IBO() = iIBO;
-	//				vecLinesCohorts[iLinesCohort2]->IBOOffset() = iIBOOffset;
-
-	//				iIBOOffset += (GLsizei)vecLinesCohorts[iLinesCohort2]->getIndicesCount();
-	//			} // for (size_t iLinesCohort2 = ...				
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//			_oglUtils::checkForErrors();
-
-	//			iLinesIndicesCount = 0;
-	//			vecLinesCohorts.clear();
-	//		} // if ((int_t)(iLinesIndicesCount + ...	
-
-	//		iLinesIndicesCount += (GLsizei)pIFCObject->linesCohorts()[iLinesCohort]->getIndicesCount();
-	//		vecLinesCohorts.push_back(pIFCObject->linesCohorts()[iLinesCohort]);
-	//	} // for (size_t iLinesCohort = ...	
-
-	//	/*
-	//	* IBO - Wireframes
-	//	*/
-	//	for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-	//	{
-	//		if ((int_t)(iWireframesIndicesCount + pIFCObject->wireframesCohorts()[iWireframesCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
-	//		{
-	//			assert(!vecWireframesCohorts.empty());
-
-	//			GLuint iIBO = 0;
-	//			glGenBuffers(1, &iIBO);
-
-	//			ASSERT(iIBO != 0);
-
-	//			m_vecIBOs.push_back(iIBO);
-
-	//			int_t iCohortIndicesCount = 0;
-	//			unsigned int* pIndices = pModel->GetWireframesCohortsIndices(vecWireframesCohorts, iCohortIndicesCount);
-	//			if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//			{
-	//				ASSERT(0);
-
-	//				return;
-	//			}
-
-	//			ASSERT(iWireframesIndicesCount == iCohortIndicesCount);
-
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iWireframesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//			delete[] pIndices;
-
-	//			/*
-	//			* Store IBO/offset
-	//			*/
-	//			GLsizei iIBOOffset = 0;
-	//			for (size_t iWireframesCohort2 = 0; iWireframesCohort2 < vecWireframesCohorts.size(); iWireframesCohort2++)
-	//			{
-	//				vecWireframesCohorts[iWireframesCohort2]->IBO() = iIBO;
-	//				vecWireframesCohorts[iWireframesCohort2]->IBOOffset() = iIBOOffset;
-
-	//				iIBOOffset += (GLsizei)vecWireframesCohorts[iWireframesCohort2]->getIndicesCount();
-	//			} // for (size_t iWireframesCohort2 = ...				
-
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//			_oglUtils::checkForErrors();
-
-	//			iWireframesIndicesCount = 0;
-	//			vecWireframesCohorts.clear();
-	//		} // if ((int_t)(iWireframesIndicesCount + ...	
-
-	//		iWireframesIndicesCount += (GLsizei)pIFCObject->wireframesCohorts()[iWireframesCohort]->getIndicesCount();
-	//		vecWireframesCohorts.push_back(pIFCObject->wireframesCohorts()[iWireframesCohort]);
-	//	} // for (size_t iWireframesCohort = ...	
-
-	//	iVerticesCount += (GLsizei)pIFCObject->verticesCount();
-	//	vecIFCObjectsGroup.push_back(pIFCObject);
-	//} // for (size_t iIFCObject = ...
-
-	///*
-	//* VBO - Conceptual faces, wireframes, etc.
-	//*/
-	//if (iVerticesCount > 0)
-	//{
-	//	assert(!vecIFCObjectsGroup.empty());
-
-	//	int_t iCohortVerticesCount = 0;
-	//	float* pVertices = pModel->GetVertices(vecIFCObjectsGroup, iCohortVerticesCount);
-	//	if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iCohortVerticesCount == iVerticesCount);
-
-	//	CIFCObject::Scale(pVertices, iVerticesCount, fXmin, fXmax, fYmin, fYmax, fZmin, fZmax, fBoundingSphereDiameter);
-
-	//	GLuint iVBO = 0;
-	//	glGenBuffers(1, &iVBO);
-
-	//	ASSERT(iVBO != 0);
-
-	//	glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-	//	/*
-	//	* Store VBO/offset
-	//	*/
-	//	GLsizei iVBOOffset = 0;
-	//	for (size_t iIFCObject = 0; iIFCObject < vecIFCObjectsGroup.size(); iIFCObject++)
-	//	{
-	//		vecIFCObjectsGroup[iIFCObject]->VBO() = iVBO;
-	//		vecIFCObjectsGroup[iIFCObject]->VBOOffset() = iVBOOffset;
-
-	//		// Update min/max
-	//		vecIFCObjectsGroup[iIFCObject]->CalculateMinMaxValues(pVertices + (iVBOOffset * GEOMETRY_VBO_VERTEX_LENGTH), vecIFCObjectsGroup[iIFCObject]->verticesCount());
-
-	//		// Update minimum bounding box
-	//		vecIFCObjectsGroup[iIFCObject]->UpdateBBox(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax, fBoundingSphereDiameter);
-
-	//		iVBOOffset += (GLsizei)vecIFCObjectsGroup[iIFCObject]->verticesCount();
-	//	} // for (size_t iIFCObject = ...
-
-	//	delete[] pVertices;
-
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	CIFCDrawMetaData* pDrawMetaData = new CIFCDrawMetaData();
-	//	pDrawMetaData->AddGroup(iVBO, vecIFCObjectsGroup);
-
-	//	m_vecIFCDrawMetaData.push_back(pDrawMetaData);
-
-	//	iVerticesCount = 0;
-	//	vecIFCObjectsGroup.clear();
-	//} // if (iVerticesCount > 0)
-
-	///*
-	//* IBO - Materials
-	//*/
-	//if (iFacesIndicesCount > 0)
-	//{
-	//	assert(!vecIFCMaterialsGroup.empty());
-
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
-
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iGroupIndicesCount = 0;
-	//	unsigned int* pIndices = pModel->GetMaterialsIndices(vecIFCMaterialsGroup, iGroupIndicesCount);
-	//	if ((iGroupIndicesCount == 0) || (pIndices == nullptr))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iFacesIndicesCount == iGroupIndicesCount);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iMaterial2 = 0; iMaterial2 < vecIFCMaterialsGroup.size(); iMaterial2++)
-	//	{
-	//		vecIFCMaterialsGroup[iMaterial2]->IBO() = iIBO;
-	//		vecIFCMaterialsGroup[iMaterial2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecIFCMaterialsGroup[iMaterial2]->getIndicesCount();
-	//	}
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iFacesIndicesCount = 0;
-	//	vecIFCMaterialsGroup.clear();
-	//} // if (iFacesIndicesCount > 0)
-
-	///*
-	//* IBO - Lines
-	//*/
-	//if (iLinesIndicesCount > 0)
-	//{
-	//	assert(!vecLinesCohorts.empty());
-
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
-
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iCohortIndicesCount = 0;
-	//	unsigned int* pIndices = pModel->GetLinesCohortsIndices(vecLinesCohorts, iCohortIndicesCount);
-	//	if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iLinesIndicesCount == iCohortIndicesCount);
-
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iLinesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iLinesCohort2 = 0; iLinesCohort2 < vecLinesCohorts.size(); iLinesCohort2++)
-	//	{
-	//		vecLinesCohorts[iLinesCohort2]->IBO() = iIBO;
-	//		vecLinesCohorts[iLinesCohort2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecLinesCohorts[iLinesCohort2]->getIndicesCount();
-	//	} // for (size_t iLinesCohort2 = ...				
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iLinesIndicesCount = 0;
-	//	vecLinesCohorts.clear();
-	//} // if (iLinesIndicesCount > 0)		
-
-	///*
-	//* IBO - Wireframes
-	//*/
-	//if (iWireframesIndicesCount > 0)
-	//{
-	//	assert(!vecWireframesCohorts.empty());
-
-	//	GLuint iIBO = 0;
-	//	glGenBuffers(1, &iIBO);
-
-	//	ASSERT(iIBO != 0);
-
-	//	m_vecIBOs.push_back(iIBO);
-
-	//	int_t iCohortIndicesCount = 0;
-	//	unsigned int* pIndices = pModel->GetWireframesCohortsIndices(vecWireframesCohorts, iCohortIndicesCount);
-	//	if ((iCohortIndicesCount == 0) || (pIndices == NULL))
-	//	{
-	//		ASSERT(0);
-
-	//		return;
-	//	}
-
-	//	ASSERT(iWireframesIndicesCount == iCohortIndicesCount);
-
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iWireframesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-	//	delete[] pIndices;
-
-	//	/*
-	//	* Store IBO/offset
-	//	*/
-	//	GLsizei iIBOOffset = 0;
-	//	for (size_t iWireframesCohort2 = 0; iWireframesCohort2 < vecWireframesCohorts.size(); iWireframesCohort2++)
-	//	{
-	//		vecWireframesCohorts[iWireframesCohort2]->IBO() = iIBO;
-	//		vecWireframesCohorts[iWireframesCohort2]->IBOOffset() = iIBOOffset;
-
-	//		iIBOOffset += (GLsizei)vecWireframesCohorts[iWireframesCohort2]->getIndicesCount();
-	//	} // for (size_t iWireframesCohort2 = ...				
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//	_oglUtils::checkForErrors();
-
-	//	iWireframesIndicesCount = 0;
-	//	vecWireframesCohorts.clear();
-	//} // if (iWireframesIndicesCount > 0)
-
-//	CTime tmBuildOGLBuffersEnd = CTime::GetCurrentTime();
-
-	// #####pController->FireOnProgress(90, 0, 0);
-
-//	CTimeSpan tsBuildOGLBuffers = tmBuildOGLBuffersEnd - tmBuildOGLBuffersStart;
-//	AfxMessageBox(CString(_T("Building openGL buffers: ")) + tsBuildOGLBuffers.Format(_T("Total days: %D, hours: %H, mins: %M, secs: %S")));
-
-	m_pWnd->RedrawWindow();
+#ifdef _LINUX
+	m_pOGLContext->SetCurrent(*m_pWnd);
+#else
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+#endif // _LINUX
+
+	// OpenGL buffers
+	m_oglBuffers.clear();
+
+	m_pInstanceSelectionFrameBuffer->encoding().clear();
+	m_pPointedInstance = NULL;
+	m_pSelectedInstance = NULL;
+
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	/*
+	* Bounding sphere diameter
+	*/
+	float fBoundingSphereDiameter = fXmax - fXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fYmax - fYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fZmax - fZmin);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
 }
 
 // ------------------------------------------------------------------------------------------------

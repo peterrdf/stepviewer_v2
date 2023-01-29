@@ -14,8 +14,7 @@
 CIFCModel::CIFCModel()
 	: CSTEPModelBase(enumSTEPModelType::IFC)
 	, m_strIFCFile(L"")
-	, m_iIFCModel(0)
-	, m_iIFCModelID(-1)
+	, m_iModel(0)
 	, m_ifcProjectEntity(0)
 	, m_ifcSpaceEntity(0)
 	, m_ifcOpeningElementEntity(0)
@@ -30,10 +29,16 @@ CIFCModel::CIFCModel()
 	, m_ifcReinforcingElementEntity(0)
 	, m_ifcTransportElementEntity(0)
 	, m_ifcVirtualElementEntity(0)
-	, m_prXMinMax(pair<float, float>(-1.f, 1.f))
-	, m_prYMinMax(pair<float, float>(-1.f, 1.f))
-	, m_prZMinMax(pair<float, float>(-1.f, 1.f))
-	, m_fBoundingSphereDiameter(2.f)
+	, m_fXmin(-1.f)
+	, m_fXmax(1.f)
+	, m_fYmin(-1.f)
+	, m_fYmax(1.f)
+	, m_fZmin(-1.f)
+	, m_fZmax(1.f)
+	, m_fBoundingSphereDiameter(1.f)
+	, m_fXTranslation(0.f)
+	, m_fYTranslation(0.f)
+	, m_fZTranslation(0.f)
 	, m_vecIFCObjects()
 	, m_mapIFCObjects()
 	, m_mapID2IFCObject()
@@ -50,51 +55,13 @@ CIFCModel::CIFCModel()
 // ------------------------------------------------------------------------------------------------
 CIFCModel::~CIFCModel()
 {
-	if (m_iIFCModel != 0)
-	{
-		sdaiCloseModel(m_iIFCModel);
-		m_iIFCModel = 0;
-	}		
-
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
-	{
-		delete m_vecIFCObjects[iIFCObject];
-	}
-	m_vecIFCObjects.clear();
-
-	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.begin();
-	for (; itUnits != m_mapUnits.end(); itUnits++)
-	{
-		delete itUnits->second;
-	}
-	m_mapUnits.clear();
-
-	map<int_t, CIFCEntity *>::iterator itEntities = m_mapEntities.begin();
-	for (; itEntities != m_mapEntities.end(); itEntities++)
-	{
-		delete itEntities->second;
-	}
-	m_mapEntities.clear();
-
-	map<int64_t, CIFCClass *>::iterator itIFCClasses = m_mapClasses.begin();
-	for (; itIFCClasses != m_mapClasses.end(); itIFCClasses++)
-	{
-		delete itIFCClasses->second;
-	}
-	m_mapClasses.clear();
-
-	map<int64_t, CIFCProperty *>::iterator itProperty = m_mapProperties.begin();
-	for (; itProperty != m_mapProperties.end(); itProperty++)
-	{
-		delete itProperty->second;
-	}
-	m_mapProperties.clear();
+	Clean();
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ int64_t CIFCModel::GetInstance() const
 {
-	return m_iIFCModel;
+	return m_iModel;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -106,70 +73,64 @@ CIFCModel::~CIFCModel()
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
 {
-	fXmin = m_prXMinMax.first;
-	fXmax = m_prXMinMax.second;
-	fYmin = m_prYMinMax.first;
-	fYmax = m_prYMinMax.second;
-	fZmin = m_prZMinMax.first;
-	fZmax = m_prZMinMax.second;
+	fXmin = m_fXmin;
+	fXmax = m_fXmax;
+	fYmin = m_fYmin;
+	fYmax = m_fYmax;
+	fZmin = m_fZmin;
+	fZmax = m_fZmax;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCModel::Load(const wchar_t * szIFCFile)
+void CIFCModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const
 {
+	fXTranslation = m_fXTranslation;
+	fYTranslation = m_fYTranslation;
+	fZTranslation = m_fZTranslation;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
+{
+	ASSERT(szIFCFile != NULL);
+	ASSERT(iModel != 0);
+
 	/*
-	* Load
+	* Memory
 	*/
-	int64_t iModel = sdaiOpenModelBNUnicode(0, (const void*) m_strIFCFile.c_str(), (const void*) L"");
-	if (iModel == 0)
-    {
-		ATLASSERT(FALSE);
+	Clean();
 
-        return false;
-    }	
-
-	return Load(szIFCFile, iModel);
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
-{
+	/*
+	* Model
+	*/
+	iModel = iModel;
 	m_strIFCFile = szIFCFile;
-	m_iIFCModel = iInstance;	
-
-	setBRepProperties(
-		m_iIFCModel,
-		1 + 2 + 4 + 32,	// + 64,
-		0.92,
-		0.000001,
-		600
-	);
 
 	/*
 	* Entities
 	*/
-	int_t ifcObjectEntity = sdaiGetEntity(m_iIFCModel, "IFCOBJECT");
-	m_ifcProjectEntity = sdaiGetEntity(m_iIFCModel, "IFCPROJECT");
-	m_ifcSpaceEntity = sdaiGetEntity(m_iIFCModel, "IFCSPACE");
-	m_ifcOpeningElementEntity = sdaiGetEntity(m_iIFCModel, "IFCOPENINGELEMENT");
-	m_ifcDistributionElementEntity = sdaiGetEntity(m_iIFCModel, "IFCDISTRIBUTIONELEMENT");
-	m_ifcElectricalElementEntity = sdaiGetEntity(m_iIFCModel, "IFCELECTRICALELEMENT");
-	m_ifcElementAssemblyEntity = sdaiGetEntity(m_iIFCModel, "IFCELEMENTASSEMBLY");
-	m_ifcElementComponentEntity = sdaiGetEntity(m_iIFCModel, "IFCELEMENTCOMPONENT");
-	m_ifcEquipmentElementEntity = sdaiGetEntity(m_iIFCModel, "IFCEQUIPMENTELEMENT");
-	m_ifcFeatureElementEntity = sdaiGetEntity(m_iIFCModel, "IFCFEATUREELEMENT");
-	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(m_iIFCModel, "IFCFEATUREELEMENTSUBTRACTION");
-	m_ifcFurnishingElementEntity = sdaiGetEntity(m_iIFCModel, "IFCFURNISHINGELEMENT");
-	m_ifcReinforcingElementEntity = sdaiGetEntity(m_iIFCModel, "IFCREINFORCINGELEMENT");
-	m_ifcTransportElementEntity = sdaiGetEntity(m_iIFCModel, "IFCTRANSPORTELEMENT");
-	m_ifcVirtualElementEntity = sdaiGetEntity(m_iIFCModel, "IFCVIRTUALELEMENT");
+	int_t ifcObjectEntity = sdaiGetEntity(m_iModel, "IFCOBJECT");
+	m_ifcProjectEntity = sdaiGetEntity(m_iModel, "IFCPROJECT");
+	m_ifcSpaceEntity = sdaiGetEntity(m_iModel, "IFCSPACE");
+	m_ifcOpeningElementEntity = sdaiGetEntity(m_iModel, "IFCOPENINGELEMENT");
+	m_ifcDistributionElementEntity = sdaiGetEntity(m_iModel, "IFCDISTRIBUTIONELEMENT");
+	m_ifcElectricalElementEntity = sdaiGetEntity(m_iModel, "IFCELECTRICALELEMENT");
+	m_ifcElementAssemblyEntity = sdaiGetEntity(m_iModel, "IFCELEMENTASSEMBLY");
+	m_ifcElementComponentEntity = sdaiGetEntity(m_iModel, "IFCELEMENTCOMPONENT");
+	m_ifcEquipmentElementEntity = sdaiGetEntity(m_iModel, "IFCEQUIPMENTELEMENT");
+	m_ifcFeatureElementEntity = sdaiGetEntity(m_iModel, "IFCFEATUREELEMENT");
+	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(m_iModel, "IFCFEATUREELEMENTSUBTRACTION");
+	m_ifcFurnishingElementEntity = sdaiGetEntity(m_iModel, "IFCFURNISHINGELEMENT");
+	m_ifcReinforcingElementEntity = sdaiGetEntity(m_iModel, "IFCREINFORCINGELEMENT");
+	m_ifcTransportElementEntity = sdaiGetEntity(m_iModel, "IFCTRANSPORTELEMENT");
+	m_ifcVirtualElementEntity = sdaiGetEntity(m_iModel, "IFCVIRTUALELEMENT");
 
 	/*
 	* Retrieve the objects recursively
 	*/
 	RetrieveObjects__depth(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS, 0);
 
-	int_t ifcRelSpaceBoundaryEntity = sdaiGetEntity(m_iIFCModel, "IFCRELSPACEBOUNDARY");
+	int_t ifcRelSpaceBoundaryEntity = sdaiGetEntity(m_iModel, "IFCRELSPACEBOUNDARY");
 	RetrieveObjects(ifcRelSpaceBoundaryEntity, "IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 	/*
@@ -195,58 +156,177 @@ bool CIFCModel::Load(const wchar_t* szIFCFile, int64_t iInstance)
 	/*
 	* Helper data structures
 	*/
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
+	for (auto pIFCObject : m_vecIFCObjects)
 	{
-		auto pIFCObject = m_vecIFCObjects[iIFCObject];
-
 		m_mapID2IFCObject[pIFCObject->ID()] = pIFCObject;
 		m_mapExpressID2IFCObject[pIFCObject->expressID()] = pIFCObject;
 		m_mapGUID2IFCObject[pIFCObject->getGUID()] = pIFCObject;
 	}
 
-	/*
-	* Min/Max
+	/**
+	* Scale and Center
 	*/
-	float fXmin = FLT_MAX;
-	float fXmax = -FLT_MAX;
-	float fYmin = FLT_MAX;
-	float fYmax = -FLT_MAX;
-	float fZmin = FLT_MAX;
-	float fZmax = -FLT_MAX;
+
+	ScaleAndCenter();
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCModel::Clean()
+{
+	if (m_iModel != 0)
+	{
+		sdaiCloseModel(m_iModel);
+		m_iModel = 0;
+	}
 
 	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
 	{
-		auto pIFCObject = m_vecIFCObjects[iIFCObject];
-		if (!pIFCObject->hasGeometry())
-		{
-			// skip the objects without geometry
-			continue;
-		}
+		delete m_vecIFCObjects[iIFCObject];
+	}
+	m_vecIFCObjects.clear();
 
-		pIFCObject->CalculateMinMaxValues(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	map<wstring, CIFCUnit*>::iterator itUnits = m_mapUnits.begin();
+	for (; itUnits != m_mapUnits.end(); itUnits++)
+	{
+		delete itUnits->second;
+	}
+	m_mapUnits.clear();
+
+	map<int_t, CIFCEntity*>::iterator itEntities = m_mapEntities.begin();
+	for (; itEntities != m_mapEntities.end(); itEntities++)
+	{
+		delete itEntities->second;
+	}
+	m_mapEntities.clear();
+
+	map<int64_t, CIFCClass*>::iterator itIFCClasses = m_mapClasses.begin();
+	for (; itIFCClasses != m_mapClasses.end(); itIFCClasses++)
+	{
+		delete itIFCClasses->second;
+	}
+	m_mapClasses.clear();
+
+	map<int64_t, CIFCProperty*>::iterator itProperty = m_mapProperties.begin();
+	for (; itProperty != m_mapProperties.end(); itProperty++)
+	{
+		delete itProperty->second;
+	}
+	m_mapProperties.clear();
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCModel::ScaleAndCenter()
+{
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	auto itIFCObject = m_mapIFCObjects.begin();
+	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	{
+		itIFCObject->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
-	m_prXMinMax = pair<float, float>(fXmin, fXmax);
-	m_prYMinMax = pair<float, float>(fYmin, fYmax);
-	m_prZMinMax = pair<float, float>(fZmin, fZmax);
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
 
-	m_fBoundingSphereDiameter = fXmax - fXmin;
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, fYmax - fYmin);
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, fZmax - fZmin);
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	return true;
+	itIFCObject = m_mapIFCObjects.begin();
+	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	{
+		itIFCObject->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+	}
+
+	/*
+	* Min/Max
+	*/
+
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	itIFCObject = m_mapIFCObjects.begin();
+	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	{
+		if (itIFCObject->second->getEnable())
+		{
+			itIFCObject->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		}
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
+
+	/*
+	* World
+	*/
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	/*
+	* Translations
+	*/
+
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
+
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------
 int_t CIFCModel::getModel() const
 {
-	return m_iIFCModel;
-}
-
-// ------------------------------------------------------------------------------------------------
-LONG CIFCModel::getModelID() const
-{
-	return m_iIFCModelID;
+	return m_iModel;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -256,25 +336,7 @@ const wchar_t * CIFCModel::getModelName() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const pair<float, float> & CIFCModel::getXMinMax() const
-{
-	return m_prXMinMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-const pair<float, float> & CIFCModel::getYMinMax() const
-{
-	return m_prYMinMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-const pair<float, float> & CIFCModel::getZMinMax() const
-{
-	return m_prZMinMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-float CIFCModel::getBoundingSphereDiameter() const
+float CIFCModel::GetBoundingSphereDiameter() const
 {
 	return m_fBoundingSphereDiameter;
 }
@@ -733,7 +795,7 @@ void CIFCModel::LoadSchema()
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
-	int_t * iIFCObjectInstances = sdaiGetEntityExtentBN(m_iIFCModel, (char *) szEntityName);
+	int_t * iIFCObjectInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
 
 	int_t iIFCObjectInstancesCount = sdaiGetMemberCount(iIFCObjectInstances);
 	if (iIFCObjectInstancesCount == 0)
@@ -783,7 +845,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 		iCircleSegments = 6;
 	}
 
-	int_t* ifcObjectInstances = sdaiGetEntityExtent(m_iIFCModel, iParentEntity);
+	int_t* ifcObjectInstances = sdaiGetEntityExtent(m_iModel, iParentEntity);
 	int_t noIfcObjectIntances = sdaiGetMemberCount(ifcObjectInstances);
 
 	if (noIfcObjectIntances != 0)
@@ -818,10 +880,10 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 		}
 	} // if (noIfcObjectIntances != 0)
 
-	noIfcObjectIntances = engiGetEntityCount(m_iIFCModel);
+	noIfcObjectIntances = engiGetEntityCount(m_iModel);
 	for (int_t i = 0; i < noIfcObjectIntances; i++)
 	{
-		int_t ifcEntity = engiGetEntityElement(m_iIFCModel, i);
+		int_t ifcEntity = engiGetEntityElement(m_iModel, i);
 		if (engiGetEntityParent(ifcEntity) == iParentEntity)
 		{
 			RetrieveObjects__depth(ifcEntity, iCircleSegments, depth + 1);
@@ -884,8 +946,8 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	setting += flagbit25;	 //	DIFFUSE
 	setting += flagbit26;	 //	EMISSIVE
 	setting += flagbit27;	 //	SPECULAR
-	setFormat(m_iIFCModel, setting, mask);
-	setFilter(m_iIFCModel, flagbit1, flagbit1);
+	setFormat(m_iModel, setting, mask);
+	setFilter(m_iModel, flagbit1, flagbit1);
 
 	/*
 	* Default color
@@ -910,7 +972,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		256 * B +
 		A;
 
-	SetDefaultColor(m_iIFCModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
+	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
 
 	/*
 	* Set up circleSegments()
@@ -935,15 +997,15 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	}
 
 	int64_t iOWLModel = 0;
-	owlGetModel(m_iIFCModel, &iOWLModel);
+	owlGetModel(m_iModel, &iOWLModel);
 
 	int64_t iOWLInstance = 0;
-	owlGetInstance(m_iIFCModel, iInstance, &iOWLInstance);
+	owlGetInstance(m_iModel, iInstance, &iOWLInstance);
 
 	/**
 	* Retrieves the vertices
 	*/
-	pIFCObject->m_pVertexBuffer->vertexLength() = SetFormat(m_iIFCModel, 0, 0) / sizeof(float);
+	pIFCObject->m_pVertexBuffer->vertexLength() = SetFormat(m_iModel, 0, 0) / sizeof(float);
 
 	pIFCObject->m_pVertexBuffer->data() = new float[pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength()];
 	memset(pIFCObject->m_pVertexBuffer->data(), 0, pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength() * sizeof(float));
@@ -1202,7 +1264,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
-	cleanMemory(m_iIFCModel, 0);
+	cleanMemory(m_iModel, 0);
 
 	return pIFCObject;
 }
@@ -1210,7 +1272,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadUnits()
 {
-	int64_t * iIFCProjectInstances = sdaiGetEntityExtentBN(m_iIFCModel, (char *)"IFCPROJECT");
+	int64_t * iIFCProjectInstances = sdaiGetEntityExtentBN(m_iModel, (char *)"IFCPROJECT");
 
 	int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
 	if (iIFCProjectInstancesCount > 0)
@@ -1218,14 +1280,14 @@ void CIFCModel::LoadUnits()
 		int64_t	iIFCProjectInstance = 0;
 		engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
 
-		CIFCUnit::LoadUnits(m_iIFCModel, iIFCProjectInstance, m_mapUnits);
+		CIFCUnit::LoadUnits(m_iModel, iIFCProjectInstance, m_mapUnits);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadEntities()
 {
-	int_t iEntitiesCount = engiGetEntityCount(m_iIFCModel);
+	int_t iEntitiesCount = engiGetEntityCount(m_iModel);
 
 	/*
 	* Retrieve the Entities
@@ -1233,11 +1295,11 @@ void CIFCModel::LoadEntities()
 	int_t i = 0;
 	while (i < iEntitiesCount) 
 	{		
-		int_t iEntity = engiGetEntityElement(m_iIFCModel, i);
+		int_t iEntity = engiGetEntityElement(m_iModel, i);
 		int_t iAttributesCount = engiGetEntityNoArguments(iEntity);
-		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iIFCModel, iEntity));
+		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
 
-		CIFCEntity * pIFCEntity = new CIFCEntity(m_iIFCModel, iEntity, iAttributesCount, iInstancesCount);
+		CIFCEntity * pIFCEntity = new CIFCEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
 		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());
 		m_mapEntities[iEntity] = pIFCEntity;
 
@@ -1277,19 +1339,19 @@ void CIFCModel::LoadEntities()
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadClasses()
 {
-	int64_t	iClassInstance = GetClassesByIterator(m_iIFCModel, 0);
+	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
 	{
 		m_mapClasses[iClassInstance] = new CIFCClass(iClassInstance);
 
-		iClassInstance = GetClassesByIterator(m_iIFCModel, iClassInstance);
+		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
 }
 
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadProperties()
 {
-	int64_t iPropertyInstance = GetPropertiesByIterator(m_iIFCModel, 0);
+	int64_t iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
 	while (iPropertyInstance != 0)
 	{
 		int64_t iPropertyType = GetPropertyType(iPropertyInstance);
@@ -1345,7 +1407,7 @@ void CIFCModel::LoadProperties()
 			itIFCClasses->second->AddPropertyRestriction(new CIFCPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
 		} // for (; itIFCClasses != ...
 
-		iPropertyInstance = GetPropertiesByIterator(m_iIFCModel, iPropertyInstance);
+		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
 }
 
