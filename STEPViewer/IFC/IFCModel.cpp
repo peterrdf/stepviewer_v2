@@ -1253,8 +1253,297 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
 
+	/*
+	* Group the polygons
+	*/
+	if (!pIFCObject->m_vecConcFacePolygons.empty())
+	{
+		/*
+		* Use the last cohort (if any)
+		*/
+		_cohort* pCohort = pIFCObject->concFacePolygonsCohorts().empty() ? 
+			NULL : pIFCObject->concFacePolygonsCohorts()[pIFCObject->concFacePolygonsCohorts().size() - 1];
 
+		/*
+		* Create the cohort
+		*/
+		if (pCohort == NULL)
+		{
+			pCohort = new _cohort();
+			pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+		}
 
+		for (size_t iFace = 0; iFace < pIFCObject->m_vecConcFacePolygons.size(); iFace++)
+		{
+			int_t iStartIndex = pIFCObject->m_vecConcFacePolygons[iFace].startIndex();
+			int_t iIndicesCount = pIFCObject->m_vecConcFacePolygons[iFace].indicesCount();
+
+			/*
+			* Split the conceptual face - isolated case
+			*/
+			if (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
+			{
+				while (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
+				{
+					pCohort = new _cohort();
+					pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+
+					int_t iPreviousIndex = -1;
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2;
+						iIndex++)
+					{
+						if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+						{
+							iPreviousIndex = -1;
+
+							continue;
+						}
+
+						if (iPreviousIndex != -1)
+						{
+							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						} // if (iPreviousIndex != -1)
+
+						iPreviousIndex = iIndex;
+					} // for (int_t iIndex = ...
+
+					iIndicesCount -= _oglUtils::getIndicesCountLimit() / 2;
+					iStartIndex += _oglUtils::getIndicesCountLimit() / 2;
+				} // while (iIndicesCount > _oglUtils::GetIndicesCountLimit() / 2)
+
+				if (iIndicesCount > 0)
+				{
+					pCohort = new _cohort();
+					pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+
+					int_t iPreviousIndex = -1;
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex++)
+					{
+						if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+						{
+							iPreviousIndex = -1;
+
+							continue;
+						}
+
+						if (iPreviousIndex != -1)
+						{
+							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						} // if (iPreviousIndex != -1)
+
+						iPreviousIndex = iIndex;
+					} // for (int_t iIndex = ...
+				}
+
+				continue;
+			} // if (iIndicesCount > _oglUtils::GetIndicesCountLimit() / 2)
+
+			/*
+			* Check the limit
+			*/
+			if ((pCohort->indices().size() + (iIndicesCount * 2)) > _oglUtils::getIndicesCountLimit())
+			{
+				pCohort = new _cohort();
+				pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+			}
+
+			int_t iPreviousIndex = -1;
+			for (int_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex++)
+			{
+				if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+				{
+					iPreviousIndex = -1;
+
+					continue;
+				}
+
+				if (iPreviousIndex != -1)
+				{
+					pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
+					pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+				} // if (iPreviousIndex != -1)
+
+				iPreviousIndex = iIndex;
+			} // for (int_t iIndex = ...
+		} // for (size_t iFace = ...
+
+#ifdef _DEBUG
+		for (size_t iCohort = 0; iCohort < pIFCObject->concFacePolygonsCohorts().size(); iCohort++)
+		{
+			ASSERT(pIFCObject->concFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+		}
+#endif
+	} // if (!m_vecConcFacePolygons.empty())
+
+	/*
+	* Group the lines
+	*/
+	if (!pIFCObject->m_vecLines.empty())
+	{
+		/*
+		* Use the last cohort (if any)
+		*/
+		auto pCohort = pIFCObject->linesCohorts().empty() ? 
+			nullptr : pIFCObject->linesCohorts()[pIFCObject->linesCohorts().size() - 1];
+
+		/*
+		* Create the cohort
+		*/
+		if (pCohort == NULL)
+		{
+			pCohort = new _cohort();
+			pIFCObject->linesCohorts().push_back(pCohort);
+		}
+
+		for (size_t iFace = 0; iFace < pIFCObject->m_vecLines.size(); iFace++)
+		{
+			int_t iStartIndex = pIFCObject->m_vecLines[iFace].startIndex();
+			int_t iIndicesCount = pIFCObject->m_vecLines[iFace].indicesCount();
+
+			/*
+			* Check the limit
+			*/
+			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				pCohort = new _cohort();
+				pIFCObject->linesCohorts().push_back(pCohort);
+			}
+
+			for (int_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex++)
+			{
+				if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+				{
+					continue;
+				}
+
+				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+			} // for (int_t iIndex = ...
+		} // for (size_t iFace = ...
+
+#ifdef _DEBUG
+		for (size_t iCohort = 0; iCohort < pIFCObject->linesCohorts().size(); iCohort++)
+		{
+			ASSERT(pIFCObject->linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+		}
+#endif
+	} // if (!m_vecLines.empty())		
+
+	/*
+	* Group the points
+	*/
+	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
+	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
+	{
+		_facesCohort* pCohort = nullptr;
+
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFacePoints->second.size(); iConcFace++)
+		{
+			_face& concFace = itMaterial2ConcFacePoints->second[iConcFace];
+
+			int_t iStartIndex = concFace.startIndex();
+			int_t iIndicesCount = concFace.indicesCount();
+
+			/*
+			* Split the conceptual face - isolated case
+			*/
+			if (iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pIFCObject->pointsCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+
+					iIndicesCount -= _oglUtils::getIndicesCountLimit();
+					iStartIndex += _oglUtils::getIndicesCountLimit();
+				}
+
+				if (iIndicesCount > 0)
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+					}
+
+					pIFCObject->pointsCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+				}
+
+				continue;
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
+
+			/*
+			* Create material
+			*/
+			if (pCohort == nullptr)
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+
+				pIFCObject->pointsCohorts().push_back(pCohort);
+			}
+
+			/*
+			* Check the limit
+			*/
+			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+
+				pIFCObject->pointsCohorts().push_back(pCohort);
+			}
+
+			/*
+			* Update Conceptual face start index
+			*/
+			concFace.startIndex() = pCohort->indices().size();
+
+			/*
+			* Add the indices
+			*/
+			for (int_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex++)
+			{
+				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+			}
+
+			// Conceptual faces
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
+	} // for (; itMaterial2ConceptualFaces != ...
 
 	/*
 	* Restore circleSegments()

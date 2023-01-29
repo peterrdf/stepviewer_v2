@@ -6,6 +6,7 @@
 #include "resource.h"
 
 #include <assert.h>
+#include <chrono>
 
 // ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
@@ -505,6 +506,34 @@ BOOL COpenGLIFCView::ArePointsShown()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::Draw(CDC* pDC)
 {
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
+	{
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+	m_pOGLContext->enableDebug();
+#endif
+
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
@@ -516,152 +545,142 @@ BOOL COpenGLIFCView::ArePointsShown()
 		return;
 	}
 
-//	BOOL bResult = m_pOGLContext->MakeCurrent();
-//	VERIFY(bResult);
-//
-//#ifdef _ENABLE_OPENGL_DEBUG
-//	m_pOGLContext->EnableDebug();
-//#endif
-//
-//	m_pProgram->Use();
-//
-//	glViewport(0, 0, iWidth, iHeight);
-//
-//	glClearColor(1.0, 1.0, 1.0, 1.0);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	// Set up the parameters
-//	glEnable(GL_DEPTH_TEST);
-//	glDepthFunc(GL_LEQUAL);
-//
-//	glShadeModel(GL_SMOOTH);
-//
-//	/*
-//	* Light
-//	*/
-//	glProgramUniform3f(
-//		m_pProgram->GetID(),
-//		m_pProgram->getPointLightingLocation(),
-//		0.f,
-//		0.f,
-//		10000.f);
-//
-//	/*
-//	* Shininess
-//	*/
-//	glProgramUniform1f(
-//		m_pProgram->GetID(),
-//		m_pProgram->getMaterialShininess(),
-//		30.f);
-//
-//	/*
-//	* Projection Matrix
-//	*/
-//	// fovY     - Field of vision in degrees in the y direction
-//	// aspect   - Aspect ratio of the viewport
-//	// zNear    - The near clipping distance
-//	// zFar     - The far clipping distance
-//	GLdouble fovY = 45.0;
-//	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-//	GLdouble zNear = 0.001;
-//	GLdouble zFar = 1000000.0;
-//
-//	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-//	GLdouble fW = fH * aspect;
-//
-//	switch (m_enProjectionType)
-//	{
-//		case ptPerspective:
-//		{
-//			glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-//		}
-//		break;
-//
-//		case ptIsometric:
-//		{
-//			glOrtho(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-//		}
-//		break;
-//
-//		default:
-//		{
-//			ASSERT(FALSE);
-//		}
-//		break;
-//	}
-//
-//	glm::mat4 projectionMatrix = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(),
-//		m_pProgram->getPMatrix(),
-//		1,
-//		false,
-//		value_ptr(projectionMatrix));
-//
-//	/*
-//	* Model-View Matrix
-//	*/
-//	m_modelViewMatrix = glm::identity<glm::mat4>();
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(m_dXTranslation, m_dYTranslation, m_dZTranslation));
-//
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(m_dOriginX, m_dOriginY, m_dOriginZ));
-//
-//	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, (float)m_dXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-//	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, (float)m_dYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-//
-//	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(-m_dOriginX, -m_dOriginY, -m_dOriginZ));
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(),
-//		m_pProgram->getMVMatrix(),
-//		1,
-//		false,
-//		glm::value_ptr(m_modelViewMatrix));
-//
-//	/*
-//	* Normal Matrix
-//	*/
-//	glm::mat4 normalMatrix = m_modelViewMatrix;
-//	normalMatrix = glm::inverse(normalMatrix);
-//	normalMatrix = glm::transpose(normalMatrix);
-//
-//	glProgramUniformMatrix4fv(
-//		m_pProgram->GetID(),
-//		m_pProgram->getNMatrix(),
-//		1,
-//		false,
-//		value_ptr(normalMatrix));
+	m_pOGLProgram->use();
+
+	glViewport(0, 0, iWidth, iHeight);
+
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
+	m_pOGLProgram->setMaterialShininess(30.f);
 
 	/*
-	* Non-transparent faces
+	* Projection Matrix
+	*/
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = 45.0;
+	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+	GLdouble zNear = 0.0001;
+	GLdouble zFar = 1000.0;
+
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
+
+	// Projection
+	switch (m_enProjection)
+	{
+		case enumProjection::Perspective:
+		{
+			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+			m_pOGLProgram->setProjectionMatrix(matProjection);
+		}
+		break;
+
+		case enumProjection::Isometric:
+		{
+			glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
+			m_pOGLProgram->setProjectionMatrix(matProjection);
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+	}
+
+	/*
+	* Model-View Matrix
+	*/
+	m_matModelView = glm::identity<glm::mat4>();
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	float fXTranslation = fXmin;
+	fXTranslation += (fXmax - fXmin) / 2.f;
+	fXTranslation = -fXTranslation;
+
+	float fYTranslation = fYmin;
+	fYTranslation += (fYmax - fYmin) / 2.f;
+	fYTranslation = -fYTranslation;
+
+	float fZTranslation = fZmin;
+	fZTranslation += (fZmax - fZmin) / 2.f;
+	fZTranslation = -fZTranslation;
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+
+	/*
+	* Normal Matrix
+	*/
+	glm::mat4 matNormal = m_matModelView;
+	matNormal = glm::inverse(matNormal);
+	matNormal = glm::transpose(matNormal);
+	m_pOGLProgram->setNormalMatrix(matNormal);
+
+	m_pOGLProgram->enableBinnPhongModel(true);
+
+	/*
+	Non-transparent faces
 	*/
 	//DrawFaces(false);
 
 	/*
-	* Transparent faces
+	Transparent faces
 	*/
-	//DrawFaces(true);	
+	//DrawFaces(true);
 
 	/*
-	* Wireframes
+	Pointed face
 	*/
-	//DrawWireframes();
+	//DrawPointedFace();
 
 	/*
-	* Lines
+	Conceptual faces polygons
 	*/
-	//DrawLines();
+	DrawConceptualFacesPolygons();
 
 	/*
-	* Scene
+	Lines
 	*/
-	//DrawScene((float)ARROW_SIZE_I, (float)ARROW_SIZE_II);	
+	DrawLines();
 
+	/*
+	Points
+	*/
+	//DrawPoints();
+
+	/*
+	End
+	*/
+#ifdef _LINUX
+	m_pWnd->SwapBuffers();
+#else
 	SwapBuffers(*pDC);
+#endif // _LINUX
 
 	/*
-	* Selection support
+	Selection support
 	*/
 	//DrawFacesFrameBuffer();
 }
@@ -937,9 +956,14 @@ void COpenGLIFCView::DrawLines()
 	}
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
 
-	if (pController->GetModel() == nullptr)
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
 	{
 		ASSERT(FALSE);
 
@@ -954,75 +978,41 @@ void COpenGLIFCView::DrawLines()
 		return;
 	}
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	0.f);
+	auto begin = std::chrono::steady_clock::now();
 
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	0.f,
-	//	0.f,
-	//	0.f);
+	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->setTransparency(1.f);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getTransparency(),
-	//	1.f);
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
 
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+		for (auto pIFCObject : itCohort.second)
+		{
+			if (!pIFCObject->getEnable())
+			{
+				continue;
+			}
 
-	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-	//	for (; itGroups != mapGroups.end(); itGroups++)
-	//	{
-	//		GLsizei iOffset = 0;
-	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-	//		{
-	//			CIFCObject* pIFCObject = itGroups->second[iObject];
-	//			if (!pIFCObject->visible__() || !pIFCObject->AreLinesShown() ||
-	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-	//			{
-	//				iOffset += (GLsizei)pIFCObject->verticesCount();
+			for (auto pCohort : pIFCObject->linesCohorts())
+			{
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pIFCObject->VBOOffset());
+			}
+		} // for (auto itCohort ...
 
-	//				continue;
-	//			}
-
-	//			/*
-	//			* VBO
-	//			*/
-	//			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-	//			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-	//			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-
-	//			/*
-	//			* Lines
-	//			*/
-	//			for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
-	//			{
-	//				CLinesCohort* pLinesCohort = pIFCObject->linesCohorts()[iLinesCohort];
-
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
-
-	//				glDrawElementsBaseVertex(GL_LINES,
-	//					(GLsizei)pLinesCohort->getIndicesCount(),
-	//					GL_UNSIGNED_INT,
-	//					(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
-	//					iOffset);
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//			} // for (size_t iLinesCohort = ...
-
-	//			iOffset += (GLsizei)pIFCObject->verticesCount();
-	//		} // for (size_t iObject = ...
-
-	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	} // for (; itGroups != ...
-	//} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
 
 	_oglUtils::checkForErrors();
+
+	auto end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawLines() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1034,9 +1024,14 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 	}	
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
 
-	if (pController->GetModel() == nullptr)
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
 	{
 		ASSERT(FALSE);
 
@@ -1051,143 +1046,41 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 		return;
 	}
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	0.f);
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	0.f,
-	//	0.f,
-	//	0.f);
+	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->setTransparency(1.f);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getTransparency(),
-	//	1.f);
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
 
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+		for (auto pIFCObject : itCohort.second)
+		{
+			if (!pIFCObject->getEnable())
+			{
+				continue;
+			}
 
-	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-	//	for (; itGroups != mapGroups.end(); itGroups++)
-	//	{
-	//		GLsizei iOffset = 0;
-	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-	//		{
-	//			CIFCObject* pIFCObject = itGroups->second[iObject];
-	//			if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-	//			{
-	//				iOffset += (GLsizei)pIFCObject->verticesCount();
+			for (auto pCohort : pIFCObject->concFacePolygonsCohorts())
+			{
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pIFCObject->VBOOffset());
+			}
+		} // for (auto pIFCObject ...
 
-	//				continue;
-	//			}
-
-	//			/*
-	//			* VBO
-	//			*/
-	//			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-	//			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-	//			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-
-	//			/*
-	//			* Wireframes
-	//			*/
-	//			for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-	//			{
-	//				CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
-
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-	//				glDrawElementsBaseVertex(GL_LINES,
-	//					(GLsizei)pWireframesCohort->getIndicesCount(),
-	//					GL_UNSIGNED_INT,
-	//					(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-	//					iOffset);
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//			} // for (size_t iWireframesCohort = ...
-
-	//			/*
-	//			* Picked edge
-	//			*/
-	//			//if ((m_enViewMode == vmMeasureEdge) && (pIFCObject == m_pPickedIFCObject) && !m_setPickedIFCObjectEdges.empty())
-	//			//{
-	//			//	glDisable(GL_DEPTH_TEST);
-
-	//			//	for (size_t iWireframesCohort = 0; iWireframesCohort < pIFCObject->wireframesCohorts().size(); iWireframesCohort++)
-	//			//	{
-	//			//		CWireframesCohort* pWireframesCohort = pIFCObject->wireframesCohorts()[iWireframesCohort];
-
-	//			//		for (int_t iLine = 0; iLine < pWireframesCohort->getIndicesCount() / 2; iLine++)
-	//			//		{
-	//			//			set<int_t>::iterator itEdge = m_setPickedIFCObjectEdges.find(iLineID++);
-	//			//			if (itEdge != m_setPickedIFCObjectEdges.end())
-	//			//			{
-	//			//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-	//			//				glLineWidth(3.0);
-	//			//				glColor4f(1.f, 0.f, 0.f, 1.0);
-
-	//			//				/*
-	//			//				* Draw
-	//			//				*/
-	//			//				glDrawElementsBaseVertex(GL_LINES,
-	//			//					(GLsizei)2,
-	//			//					GL_UNSIGNED_INT,
-	//			//					(void*)(sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2))),
-	//			//					iOffset);
-
-	//			//				/*
-	//			//				* Read the indices
-	//			//				*/
-	//			//				/*GLuint indices[2];
-	//			//				glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-	//			//					sizeof(GLuint) * (pWireframesCohort->IBOOffset() + (iLine * 2)),
-	//			//					2 * sizeof(GLuint),
-	//			//					indices);*/
-
-	//			//					/*
-	//			//					* Read the vertices
-	//			//					*/
-	//			//					/*GLfloat vertex1[GEOMETRY_VBO_VERTEX_LENGTH];
-	//			//					glGetBufferSubData(GL_ARRAY_BUFFER,
-	//			//						sizeof(GLfloat) * ((iOffset + indices[0]) * GEOMETRY_VBO_VERTEX_LENGTH),
-	//			//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex1);
-
-	//			//					GLfloat vertex2[GEOMETRY_VBO_VERTEX_LENGTH];
-	//			//					glGetBufferSubData(GL_ARRAY_BUFFER,
-	//			//						sizeof(GLfloat) * ((iOffset + indices[1]) * GEOMETRY_VBO_VERTEX_LENGTH),
-	//			//						GEOMETRY_VBO_VERTEX_LENGTH * sizeof(GLfloat), vertex2);*/
-
-	//			//						//double dLength = sqrt(pow(vertex1[0] - vertex2[0], 2.) + pow(vertex1[1] - vertex2[1], 2.) + pow(vertex1[2] - vertex2[2], 2.));
-	//			//						//dLength = (m_dScaleFactor * dLength) / 2.;
-
-	//			//						//dSum += dLength;
-
-	//			//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//			//				glLineWidth(1.0);
-	//			//				glColor4f(0.f, 0.f, 0.f, 1.0);
-	//			//			} // if (itEdge != ...
-	//			//		} // for (int_t iLine = ...
-	//			//	} // for (size_t iWireframesCohort = ...
-
-	//			//	glEnable(GL_DEPTH_TEST);
-	//			//} // if ((m_enViewMode == vmMeasureEdge) && ...
-
-	//			iOffset += (GLsizei)pIFCObject->verticesCount();
-	//		} // for (size_t iObject = ...
-
-	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	} // for (; itGroups != ...
-	//} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto pIFCObject ...
 
 	_oglUtils::checkForErrors();
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------
