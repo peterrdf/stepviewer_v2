@@ -34,7 +34,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_bDisableSelectionBuffer(FALSE)
 	, m_pPointedInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
 	, m_pSelectedInstanceMaterial(nullptr)
@@ -764,13 +763,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 			m_ptStartMousePosition.y = -1;
 			m_ptPrevMousePosition.x = -1;
 			m_ptPrevMousePosition.y = -1;
-
-			if (m_bDisableSelectionBuffer)
-			{
-				m_bDisableSelectionBuffer = FALSE;
-
-				DrawInstancesFrameBuffer();
-			}
 		}
 		break;
 
@@ -778,6 +770,15 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 			ASSERT(FALSE);
 			break;
 	} // switch (enEvent)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	UNREFERENCED_PARAMETER(nFlags);
+	UNREFERENCED_PARAMETER(pt);
+
+	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1050,203 +1051,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	ASSERT(GetController() != NULL);
 
 	GetController()->RegisterView(this);
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawClipSpace()
-{
-	/*CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	if (pModel != NULL)
-	{
-		pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-	}
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmax, fYmax, fZmax);
-	glVertex3f(fXmin, fYmax, fZmax);
-	glVertex3f(fXmin, fYmin, fZmax);
-	glVertex3f(fXmax, fYmin, fZmax);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmin, fYmin, fZmin);
-	glVertex3f(fXmin, fYmax, fZmin);
-	glVertex3f(fXmax, fYmax, fZmin);
-	glVertex3f(fXmax, fYmin, fZmin);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmax, fYmax, fZmax);
-	glVertex3f(fXmax, fYmax, fZmin);
-	glVertex3f(fXmin, fYmax, fZmin);
-	glVertex3f(fXmin, fYmax, fZmax);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmin, fYmin, fZmin);
-	glVertex3f(fXmax, fYmin, fZmin);
-	glVertex3f(fXmax, fYmin, fZmax);
-	glVertex3f(fXmin, fYmin, fZmax);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmax, fYmax, fZmax);
-	glVertex3f(fXmax, fYmin, fZmax);
-	glVertex3f(fXmax, fYmin, fZmin);
-	glVertex3f(fXmax, fYmax, fZmin);
-	glEnd();
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(fXmin, fYmin, fZmin);
-	glVertex3f(fXmin, fYmin, fZmax);
-	glVertex3f(fXmin, fYmax, fZmax);
-	glVertex3f(fXmin, fYmax, fZmin);
-	glEnd();
-
-	glEnable(GL_LIGHTING);
-
-	_oglUtils::checkForErrors();*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawCoordinateSystem()
-{
-	//const float ARROW_SIZE = 1.5f;
-
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	0.f);
-
-	//glProgramUniformMatrix4fv(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMVMatrix(),
-	//	1, 
-	//	false, 
-	//	glm::value_ptr(m_modelViewMatrix));
-	//
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getTransparency(),
-	//	1.f);
-
-	//// X axis
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	1.f, 
-	//	0.f, 
-	//	0.f);
-
-	//glBegin(GL_LINES);
-	//glVertex3d(0., 0., 0.);
-	//glVertex3d(0. + ARROW_SIZE, 0., 0.);
-	//glEnd();
-	//DrawTextGDI(L"X", ARROW_SIZE + (ARROW_SIZE * 0.05f), 0.f, 0.f);
-
-	//// Y axis
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	0.f, 
-	//	1.f, 
-	//	0.f);
-
-	//glBegin(GL_LINES);
-	//glVertex3d(0., 0., 0.);
-	//glVertex3d(0., 0. + ARROW_SIZE, 0.);
-	//glEnd();
-	//DrawTextGDI(L"Y", 0.f, ARROW_SIZE + (ARROW_SIZE * 0.05f), 0.f);
-
-	//// Z axis
-	//glProgramUniform3f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->getMaterialAmbientColor(),
-	//	0.f, 
-	//	0.f, 
-	//	1.f);
-
-	//glBegin(GL_LINES);
-	//glVertex3d(0., 0., 0.);
-	//glVertex3d(0., 0., 0. + ARROW_SIZE);
-	//glEnd();
-	//DrawTextGDI(L"Z", 0.f, 0.f, ARROW_SIZE + (ARROW_SIZE * 0.05f));
-
-	//_oglUtils::checkForErrors();
-}
-
-// ------------------------------------------------------------------------------------------------
-// https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-wglusefontbitmapsa
-bool COpenGLSTEPView::DrawTextGDI(const wchar_t* szText, float fX, float fY, float fZ)
-{
-	if (m_hFont == NULL)
-	{
-		ASSERT(FALSE);
-
-		return false;
-	}
-
-	if ((szText == NULL) || (wcslen(szText) == 0))
-	{
-		ASSERT(FALSE);
-
-		return false;
-	}
-
-	// DC
-	CDC* pDC = m_pWnd->GetDC();
-
-	// select the font
-	HANDLE hOldFont = SelectObject(pDC->GetSafeHdc(), m_hFont);
-
-	// create the bitmap display lists  
-	// we're making images of glyphs 0 thru 254  
-	// the display list numbering starts at 1000, an arbitrary choice  
-	wglUseFontBitmaps(pDC->GetSafeHdc(), 0, 255, 1000);
-
-	glRasterPos3f(fX, fY, fZ); // set start position
-
-	// display a string:  
-	// indicate start of glyph display lists  
-	glListBase(1000);
-
-	// now draw the characters in a string  
-	glCallLists((GLsizei)wcslen(szText), GL_UNSIGNED_SHORT, szText);
-
-	// restore the font
-	SelectObject(pDC->GetSafeHdc(), hOldFont);
-
-	m_pWnd->ReleaseDC(pDC);
-
-	return true;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1748,11 +1552,6 @@ void COpenGLSTEPView::DrawPoints()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-	if (m_bDisableSelectionBuffer)
-	{
-		return;
-	}
-
 	CSTEPController * pController = GetController();
 	ASSERT(pController != NULL);
 
@@ -2125,8 +1924,6 @@ void COpenGLSTEPView::Rotate(float fXSpin, float fYSpin)
 			m_fYAngle = m_fYAngle + 360.0f;
 		}
 	}
-
-	m_bDisableSelectionBuffer = TRUE;
 
 #ifdef _LINUX
     m_pWnd->Refresh(false);

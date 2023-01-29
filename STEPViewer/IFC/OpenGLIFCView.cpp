@@ -1,20 +1,11 @@
 #include "stdafx.h"
 
-#include "_oglUtils.h"
 #include "OpenGLIFCView.h"
 #include "STEPController.h"
 #include "IFCModel.h"
 #include "resource.h"
 
 #include <assert.h>
-
-// ------------------------------------------------------------------------------------------------
-#define SELECTION_BUFFER_SIZE 512
-
-const double ZOOM_SPEED_1 = 0.01;
-const double ZOOM_SPEED_2 = 0.025;
-const double ARROW_SIZE_I = 1.;
-const double ARROW_SIZE_II = 1.;
 
 // ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
@@ -35,31 +26,31 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 {
 	ASSERT(m_pWnd != NULL);	
 
-	/*m_pOGLContext->MakeCurrent();
+	_initialize(
+		*(m_pWnd->GetDC()),
+		16,
+		IDR_TEXTFILE_VERTEX_SHADER2,
+		IDR_TEXTFILE_FRAGMENT_SHADER2,
+		TEXTFILE,
+		false);
 
-	m_pProgram = new CBinnPhongGLProgram();
-	m_pVertSh = new CGLShader(GL_VERTEX_SHADER);
-	m_pFragSh = new CGLShader(GL_FRAGMENT_SHADER);
+	m_pSelectedInstanceMaterial = new _material();
+	m_pSelectedInstanceMaterial->init(
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f,
+		nullptr);
 
-	if (!m_pVertSh->Load(IDR_TEXTFILE_VERTEX_SHADER2))
-		AfxMessageBox(_T("Vertex shader loading error!"));
-
-	if (!m_pFragSh->Load(IDR_TEXTFILE_FRAGMENT_SHADER2))
-		AfxMessageBox(_T("Fragment shader loading error!"));
-
-	if (!m_pVertSh->Compile())
-		AfxMessageBox(_T("Vertex shader compiling error!"));
-
-	if (!m_pFragSh->Compile())
-		AfxMessageBox(_T("Fragment shader compiling error!"));
-
-	m_pProgram->AttachShader(m_pVertSh);
-	m_pProgram->AttachShader(m_pFragSh);
-
-	if (!m_pProgram->Link())
-		AfxMessageBox(_T("Program linking error!"));
-
-	m_modelViewMatrix = glm::identity<glm::mat4>();*/
+	m_pPointedInstanceMaterial = new _material();
+	m_pPointedInstanceMaterial->init(
+		.33f, .33f, .33f,
+		.33f, .33f, .33f,
+		.33f, .33f, .33f,
+		.33f, .33f, .33f,
+		.66f,
+		nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -67,7 +58,13 @@ COpenGLIFCView::~COpenGLIFCView()
 {
 	GetController()->UnRegisterView(this);	
 
-	//ResetView();
+	delete m_pInstanceSelectionFrameBuffer;
+
+	delete m_pSelectedInstanceMaterial;
+	m_pSelectedInstanceMaterial = NULL;
+
+	delete m_pPointedInstanceMaterial;
+	m_pPointedInstanceMaterial = NULL;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -77,7 +74,6 @@ enumProjection COpenGLIFCView::GetProjection() const
 }
 
 // ------------------------------------------------------------------------------------------------
-// Faces
 void COpenGLIFCView::SetProjection(enumProjection enProjection)
 {
 	m_enProjection = enProjection;
@@ -86,7 +82,63 @@ void COpenGLIFCView::SetProjection(enumProjection enProjection)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Faces
+void COpenGLIFCView::SetView(enum enumView enView)
+{
+	switch (enView)
+	{
+		case enumView::Front:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		case enumView::Right:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = -90.;
+		}
+		break;
+
+		case enumView::Top:
+		{
+			m_fXAngle = 90.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		case enumView::Back:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = -180.;
+		}
+		break;
+
+		case enumView::Left:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = 90.;
+		}
+		break;
+
+		case enumView::Bottom:
+		{
+			m_fXAngle = -90.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+	} // switch (enView)
+
+	m_pWnd->RedrawWindow();
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::ShowFaces(BOOL bShow)
 {
 	m_bShowFaces = bShow;
@@ -843,9 +895,28 @@ BOOL COpenGLIFCView::ArePointsShown()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
+	if (enEvent == enumMouseEvent::LBtnUp)
+	{
+		/*
+		* OnSelectedItemChanged() notification
+		*/
+		if (point == m_ptStartMousePosition)
+		{
+			if (m_pSelectedInstance != m_pPointedInstance)
+			{
+				m_pSelectedInstance = m_pPointedInstance;
+
+				m_pWnd->RedrawWindow();
+
+				ASSERT(GetController() != NULL);
+				GetController()->SelectInstance(this, m_pSelectedInstance);
+			} // if (m_pSelectedInstance != ...
+		}
+	} // if (enEvent == meLBtnDown)
+
 	switch (enEvent)
 	{
-	case enumMouseEvent::Move:
+		case enumMouseEvent::Move:
 		{
 			OnMouseMoveEvent(nFlags, point);
 		}
@@ -855,6 +926,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		case enumMouseEvent::MBtnDown:
 		case enumMouseEvent::RBtnDown:
 		{
+			m_ptStartMousePosition = point;
 			m_ptPrevMousePosition = point;
 		}
 		break;
@@ -863,6 +935,8 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		case enumMouseEvent::MBtnUp:
 		case enumMouseEvent::RBtnUp:
 		{
+			m_ptStartMousePosition.x = -1;
+			m_ptStartMousePosition.y = -1;
 			m_ptPrevMousePosition.x = -1;
 			m_ptPrevMousePosition.y = -1;
 		}
@@ -872,6 +946,15 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 			ASSERT(FALSE);
 			break;
 	} // switch (enEvent)
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	UNREFERENCED_PARAMETER(nFlags);
+	UNREFERENCED_PARAMETER(pt);
+
+	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -903,14 +986,6 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	{
 		GetController()->RegisterView(this);
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
-{
-	/*Zoom(zDelta < 0 ? -abs(m_dZTranslation) * ZOOM_SPEED_1 : abs(m_dZTranslation) * ZOOM_SPEED_1);
-
-	TRACE(L"\nm_dZTranslation: %f", m_dZTranslation);*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1435,10 +1510,10 @@ void COpenGLIFCView::DrawFacesFrameBuffer()
 	*/
 	//glBindFramebuffer(GL_FRAMEBUFFER, m_iSelectionFrameBuffer);
 
-	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
+	//glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
 
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClearColor(0.0, 0.0, 0.0, 0.0);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the parameters
 	//glEnable(GL_DEPTH_TEST);

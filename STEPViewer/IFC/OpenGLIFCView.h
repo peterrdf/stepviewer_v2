@@ -48,9 +48,14 @@ public: // Methods
 	COpenGLIFCView(CWnd * pWnd);
 	virtual ~COpenGLIFCView();
 
-	// UI
+	// Projection
 	enumProjection GetProjection() const;
 	void SetProjection(enumProjection enProjection);
+
+	// View
+	void SetView(enumView enView);
+
+	// UI
 	void ShowFaces(BOOL bShow);
 	BOOL AreFacesShown();
 	void ShowConceptualFacesPolygons(BOOL bShow);
@@ -64,14 +69,12 @@ public: // Methods
 	virtual void Load();
 	virtual void Draw(CDC * pDC);
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	
 	// CSTEPView
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnControllerChanged();
-
-	// Mouse
-	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	virtual void OnControllerChanged();	
 
 private: // Methods
 	

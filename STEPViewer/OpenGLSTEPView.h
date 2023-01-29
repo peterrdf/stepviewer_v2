@@ -6,17 +6,6 @@
 #include "OpenGLView.h"
 #include "ProductDefinition.h"
 
-#ifdef _LINUX
-#include <wx/wx.h>
-#include <wx/glcanvas.h>
-#endif // _LINUX
-
-#ifdef _LINUX
-#define MK_LBUTTON 1
-#define MK_MBUTTON 2
-#define MK_RBUTTON 4
-#endif
-
 // ------------------------------------------------------------------------------------------------
 // Open GL View
 class COpenGLSTEPView
@@ -47,7 +36,6 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	BOOL m_bDisableSelectionBuffer;
 	CProductInstance* m_pPointedInstance;
 	CProductInstance* m_pSelectedInstance;
 
@@ -85,6 +73,7 @@ public: // Methods
 
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	// CSTEPView
@@ -103,14 +92,6 @@ protected: // Methods
 	virtual void OnControllerChanged();
 
 private: // Methods
-
-	// Scene
-	void DrawClipSpace();
-	void DrawCoordinateSystem();
-
-	// --------------------------------------------------------------------------------------------
-	// https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-wglusefontbitmapsa
-	bool DrawTextGDI(const wchar_t* szText, float fX, float fY, float fZ);
 	
 	void DrawFaces(bool bTransparent);
 	void DrawConceptualFacesPolygons();
