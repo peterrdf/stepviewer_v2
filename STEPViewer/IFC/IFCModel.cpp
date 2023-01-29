@@ -103,7 +103,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Model
 	*/
-	iModel = iModel;
+	m_iModel = iModel;
 	m_strIFCFile = szIFCFile;
 
 	/*
