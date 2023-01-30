@@ -643,12 +643,12 @@ BOOL COpenGLIFCView::ArePointsShown()
 	/*
 	Non-transparent faces
 	*/
-	//DrawFaces(false);
+	DrawFaces(false);
 
 	/*
 	Transparent faces
 	*/
-	//DrawFaces(true);
+	DrawFaces(true);
 
 	/*
 	Pointed face
@@ -668,7 +668,7 @@ BOOL COpenGLIFCView::ArePointsShown()
 	/*
 	Points
 	*/
-	//DrawPoints();
+	DrawPoints();
 
 	/*
 	End
@@ -790,9 +790,114 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 	}
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
 
-	if (pController->GetModel() == nullptr)
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}	
+
+	auto begin = std::chrono::steady_clock::now();
+
+	if (bTransparent)
+	{
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	m_pOGLProgram->enableBinnPhongModel(true);
+
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	{
+		glBindVertexArray(itCohort.first);
+
+		for (auto pInstance : itCohort.second)
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
+			{
+				const _material* pMaterial =
+					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pConcFacesCohort->getMaterial();
+
+				if (bTransparent)
+				{
+					if (pMaterial->getA() == 1.0)
+					{
+						continue;
+					}
+				}
+				else
+				{
+					if (pMaterial->getA() < 1.0)
+					{
+						continue;
+					}
+				}
+
+				m_pOGLProgram->setMaterial(pMaterial);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glDrawElementsBaseVertex(GL_TRIANGLES,
+					(GLsizei)pConcFacesCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					pInstance->VBOOffset());
+			} // for (auto pConcFacesCohort ...
+		} // for (auto pInstance ...
+
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
+
+	if (bTransparent)
+	{
+		glDisable(GL_BLEND);
+	}
+
+	_oglUtils::checkForErrors();
+
+	auto end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLIFCView::DrawConceptualFacesPolygons()
+{
+	if (!m_bShowConceptualFacesPolygons)
+	{
+		return;
+	}
+
+	auto pController = GetController();
+	if (pController->GetModel() == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pController->GetModel() == NULL)
 	{
 		ASSERT(FALSE);
 
@@ -807,144 +912,41 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 		return;
 	}
 
-	if (bTransparent)
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->setTransparency(1.f);
+
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+		glBindVertexArray(itCohort.first);
 
-	//glProgramUniform1f(
-	//	m_pProgram->GetID(),
-	//	m_pProgram->geUseBinnPhongModel(),
-	//	1.f);
+		for (auto pInstance : itCohort.second)
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
 
-	//for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecIFCDrawMetaData.size(); iDrawMetaData++)
-	//{
-	//	const map<GLuint, vector<CIFCObject*>>& mapGroups = m_vecIFCDrawMetaData[iDrawMetaData]->getGroups();
+			for (auto pCohort : pInstance->concFacePolygonsCohorts())
+			{
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pInstance->VBOOffset());
+			}
+		} // for (auto pInstance ...
 
-	//	map<GLuint, vector<CIFCObject*>>::const_iterator itGroups = mapGroups.begin();
-	//	for (; itGroups != mapGroups.end(); itGroups++)
-	//	{
-	//		GLsizei iOffset = 0;
-	//		for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-	//		{
-	//			CIFCObject* pIFCObject = itGroups->second[iObject];
-	//			if (!pIFCObject->visible__() || !pIFCObject->AreFacesShown() ||
-	//				(m_bDetailsViewMode ? pModel->getSubSelection() != NULL ? pModel->getSubSelection() != pIFCObject : !pIFCObject->selected() : false))
-	//			{
-	//				iOffset += (GLsizei)pIFCObject->verticesCount();
-
-	//				continue;
-	//			}
-
-	//			/*
-	//			* Conceptual faces
-	//			*/
-	//			for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pIFCObject->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-	//			{
-	//				CIFCGeometryWithMaterial* pGeometryWithMaterial = pIFCObject->conceptualFacesMaterials()[iGeometryWithMaterial];
-
-	//				const CIFCMaterial* pMaterial =
-	//					/*Picked?*/ (pModel == m_pPickedIFCObjectModel) && (pIFCObject == m_pPickedIFCObject) ? pModel->getOnMouseOverMaterial()
-	//					/*Selected?*/ : pIFCObject->selected() && !m_bDetailsViewMode ? pModel->getSelectionMaterial() :
-	//					/*User-defined?*/pIFCObject->getUserDefinedMaterial() != NULL ? pIFCObject->getUserDefinedMaterial() :
-	//					/*Use conceptual face material*/pGeometryWithMaterial->getMaterial();
-
-	//				if (bTransparent)
-	//				{
-	//					if (pMaterial->A() == 1.0)
-	//					{
-	//						continue;
-	//					}
-	//				}
-	//				else
-	//				{
-	//					if (pMaterial->A() < 1.0)
-	//					{
-	//						continue;
-	//					}
-	//				}
-
-	//				/*
-	//				* VBO
-	//				*/
-	//				glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-	//				glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-	//				glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-	//				glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-	//				glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-
-	//				/*
-	//				* Material - Ambient color
-	//				*/
-	//				glProgramUniform3f(m_pProgram->GetID(),
-	//					m_pProgram->getMaterialAmbientColor(),
-	//					pMaterial->getAmbientColor().R(),
-	//					pMaterial->getAmbientColor().G(),
-	//					pMaterial->getAmbientColor().B());
-
-	//				/*
-	//				* Material - Transparency
-	//				*/
-	//				glProgramUniform1f(
-	//					m_pProgram->GetID(),
-	//					m_pProgram->getTransparency(),
-	//					pMaterial->A());
-
-	//				/*
-	//				* Material - Diffuse color
-	//				*/
-	//				glProgramUniform3f(m_pProgram->GetID(),
-	//					m_pProgram->getMaterialDiffuseColor(),
-	//					pMaterial->getDiffuseColor().R() / 2.f,
-	//					pMaterial->getDiffuseColor().G() / 2.f,
-	//					pMaterial->getDiffuseColor().B() / 2.f);
-
-	//				/*
-	//				* Material - Specular color
-	//				*/
-	//				glProgramUniform3f(m_pProgram->GetID(),
-	//					m_pProgram->getMaterialSpecularColor(),
-	//					pMaterial->getSpecularColor().R() / 2.f,
-	//					pMaterial->getSpecularColor().G() / 2.f,
-	//					pMaterial->getSpecularColor().B() / 2.f);
-
-	//				/*
-	//				* Material - Emissive color
-	//				*/
-	//				glProgramUniform3f(m_pProgram->GetID(),
-	//					m_pProgram->getMaterialEmissiveColor(),
-	//					pMaterial->getEmissiveColor().R() / 3.f,
-	//					pMaterial->getEmissiveColor().G() / 3.f,
-	//					pMaterial->getEmissiveColor().B() / 3.f);
-
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-	//				
-	//				glDrawElementsBaseVertex(GL_TRIANGLES,
-	//					(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-	//					GL_UNSIGNED_INT,
-	//					(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-	//					iOffset);
-	//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//			} // for (size_t iMaterial = ...
-
-	//			iOffset += (GLsizei)pIFCObject->verticesCount();
-	//		} // for (size_t iObject = ...
-
-	//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	} // for (; itGroups != ...
-	//} // for (size_t iDrawMetaData = ...
-
-	//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
-
-	//if (bTransparent)
-	//{
-	//	glDisable(GL_BLEND);
-	//}
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
 
 	_oglUtils::checkForErrors();
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -988,23 +990,23 @@ void COpenGLIFCView::DrawLines()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto pIFCObject : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			if (!pIFCObject->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (auto pCohort : pIFCObject->linesCohorts())
+			for (auto pCohort : pInstance->linesCohorts())
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pIFCObject->VBOOffset());
+					pInstance->VBOOffset());
 			}
-		} // for (auto itCohort ...
+		} // for (auto pInstance ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
@@ -1016,12 +1018,12 @@ void COpenGLIFCView::DrawLines()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawConceptualFacesPolygons()
+void COpenGLIFCView::DrawPoints()
 {
-	if (!m_bShowConceptualFacesPolygons)
+	if (!m_bShowPoints)
 	{
 		return;
-	}	
+	}
 
 	auto pController = GetController();
 	if (pController->GetModel() == NULL)
@@ -1046,41 +1048,57 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
+
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	m_pOGLProgram->enableBinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto pIFCObject : itCohort.second)
+		for (auto itInstance : itCohort.second)
 		{
-			if (!pIFCObject->getEnable())
+			auto pRDFInstance = itInstance;
+			if (!pRDFInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (auto pCohort : pIFCObject->concFacePolygonsCohorts())
+			for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
 			{
+				auto pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+
+				const _material* pMaterial =
+					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pCohort->getMaterial();				
+
+				m_pOGLProgram->setAmbientColor(
+					pMaterial->getDiffuseColor().r(),
+					pMaterial->getDiffuseColor().g(),
+					pMaterial->getDiffuseColor().b());
+
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
-				glDrawElementsBaseVertex(GL_LINES,
+				glDrawElementsBaseVertex(GL_POINTS,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pIFCObject->VBOOffset());
-			}
-		} // for (auto pIFCObject ...
+					pRDFInstance->VBOOffset());
+			} // for (size_t iPointsCohort = ...		
+		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto pIFCObject ...
+	} // for (auto itCohort ...
+
+	glDisable(GL_PROGRAM_POINT_SIZE);
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	auto end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------

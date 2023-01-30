@@ -79,9 +79,10 @@ public: // Methods
 private: // Methods
 	
 	// UI
-	void DrawFaces(bool bTransparent);	
-	void DrawLines();
+	void DrawFaces(bool bTransparent);
 	void DrawConceptualFacesPolygons();
+	void DrawLines();
+	void DrawPoints();
 	
 	// Selection
 	void DrawFacesFrameBuffer();
