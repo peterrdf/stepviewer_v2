@@ -90,38 +90,38 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		return;
 	}
 
-	auto pSelectedItem = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : nullptr;
-	if (pSelectedItem != nullptr)
-	{
-		CIFCInstance* pInstance = pModel->GetInstanceByExpressID(pSelectedItem->expressID());
-		ASSERT(pInstance != NULL);
+	//auto pSelectedItem = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	//if (pSelectedItem != nullptr)
+	//{
+	//	CIFCInstance* pInstance = pModel->GetInstanceByExpressID(pSelectedItem->expressID());
+	//	ASSERT(pInstance != NULL);
 
-		map<CIFCInstance*, HTREEITEM>::iterator itIInstance2Item = m_mapInstance2Item.find(pInstance);
-		ASSERT(itIInstance2Item != m_mapInstance2Item.end());
+	//	map<CIFCInstance*, HTREEITEM>::iterator itIInstance2Item = m_mapInstance2Item.find(pInstance);
+	//	ASSERT(itIInstance2Item != m_mapInstance2Item.end());
 
-		if (pSelectedItem->getSelected())
-		{
-			// Select
-			ASSERT(m_mapSelectedIFCObjects.find(pInstance) == m_mapSelectedIFCObjects.end());
-			m_mapSelectedIFCObjects[pInstance] = itIInstance2Item->second;
+	//	if (pSelectedItem->getSelected())
+	//	{
+	//		// Select
+	//		ASSERT(m_mapSelectedIFCObjects.find(pInstance) == m_mapSelectedIFCObjects.end());
+	//		m_mapSelectedIFCObjects[pInstance] = itIInstance2Item->second;
 
-			(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
-			(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
-		}
-		else
-		{
-			// Unselect
-			map<CIFCInstance*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pInstance);
-			ASSERT(itSelectedIFCObject != m_mapSelectedIFCObjects.end());
-			m_mapSelectedIFCObjects.erase(itSelectedIFCObject);
+	//		(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
+	//		(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
+	//	}
+	//	else
+	//	{
+	//		// Unselect
+	//		map<CIFCInstance*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pInstance);
+	//		ASSERT(itSelectedIFCObject != m_mapSelectedIFCObjects.end());
+	//		m_mapSelectedIFCObjects.erase(itSelectedIFCObject);
 
-			(*m_pTreeView).SetItemState(itIInstance2Item->second, 0, TVIS_BOLD);
-		}
-	} // if (pSelectedItem != nullptr)
-	else
-	{
-		UnselectAllItems();
-	} // else if (pSelectedItem != nullptr)
+	//		(*m_pTreeView).SetItemState(itIInstance2Item->second, 0, TVIS_BOLD);
+	//	}
+	//} // if (pSelectedItem != nullptr)
+	//else
+	//{
+	//	UnselectAllItems();
+	//} // else if (pSelectedItem != nullptr)
 }
 
 // ------------------------------------------------------------------------------------------------

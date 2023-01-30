@@ -693,10 +693,14 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 			if (m_pSelectedInstance != m_pPointedInstance)
 			{
 				m_pSelectedInstance = m_pPointedInstance;
-
+#ifdef _LINUX
+				m_pWnd->Refresh(false);
+#else
 				m_pWnd->RedrawWindow();
+#endif // _LINUX
 
 				ASSERT(GetController() != NULL);
+
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 		}
