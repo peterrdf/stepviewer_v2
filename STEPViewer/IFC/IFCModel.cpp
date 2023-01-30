@@ -920,7 +920,7 @@ CIFCInstance * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_
 	mask += flagbit8;        // TRIANGLES
 	mask += flagbit9;        // LINES
 	mask += flagbit10;       // POINTS
-	mask += flagbit12;       // WIREFRAME
+	mask += flagbit13;       // CONCEPTUAL FACE POLYGONS
 	mask += flagbit17;       // OPENGL
 	mask += flagbit24;		 //	AMBIENT
 	mask += flagbit25;		 //	DIFFUSE
@@ -934,7 +934,7 @@ CIFCInstance * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_
 	setting += flagbit8;     // TRIANGLES ON
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
-	setting += flagbit12;    // WIREFRAME ON
+	setting += flagbit13;    // // CONCEPTUAL FACE POLYGONS ON
 	setting += 0;		     // OPENGL
 	setting += flagbit24;	 //	AMBIENT
 	setting += flagbit25;	 //	DIFFUSE
