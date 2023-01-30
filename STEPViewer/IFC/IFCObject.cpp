@@ -105,7 +105,7 @@ int_t CIFCObject::parentExpressID() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t & CIFCObject::ID()
+int_t& CIFCObject::ID()
 {
 	return m_iID;
 }

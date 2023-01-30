@@ -390,9 +390,9 @@ const vector<CIFCObject *> & CIFCModel::getIFCObjects()
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject * CIFCModel::getIFCObject(int_t iObjectID)
+CIFCObject* CIFCModel::getIFCObjectByID(int_t iID)
 {
-	map<int_t, CIFCObject *>::iterator itID2IFCObject = m_mapID2IFCObject.find(iObjectID);
+	map<int_t, CIFCObject *>::iterator itID2IFCObject = m_mapID2IFCObject.find(iID);
 	if (itID2IFCObject != m_mapID2IFCObject.end())
 	{
 		return itID2IFCObject->second;
@@ -402,9 +402,9 @@ CIFCObject * CIFCModel::getIFCObject(int_t iObjectID)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject * CIFCModel::getIFCObjectByExpressID(int64_t iExpressID)
+CIFCObject* CIFCModel::getIFCObjectByExpressID(int64_t iExpressID)
 {
-	map<int64_t, CIFCObject *>::iterator itExpressID2IFCObject = m_mapExpressID2IFCObject.find(iExpressID);
+	auto itExpressID2IFCObject = m_mapExpressID2IFCObject.find(iExpressID);
 	if (itExpressID2IFCObject != m_mapExpressID2IFCObject.end())
 	{
 		return itExpressID2IFCObject->second;
@@ -414,7 +414,7 @@ CIFCObject * CIFCModel::getIFCObjectByExpressID(int64_t iExpressID)
 }
 
 // --------------------------------------------------------------------------------------------
-CIFCObject * CIFCModel::getIFCObjectbyGUID(const wstring & GUID)
+CIFCObject* CIFCModel::getIFCObjectbyGUID(const wstring & GUID)
 {
 	map<wstring, CIFCObject *>::iterator itGUID2IFCObject = m_mapGUID2IFCObject.find(GUID);
 	if (itGUID2IFCObject != m_mapGUID2IFCObject.end())
@@ -952,27 +952,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	/*
 	* Default color
 	*/
-	// ((R * 255 + G) * 255 + B) * 255 + A
-	/*uint32_t	R = entityDefaultCOLOR.R,
-				G = entityDefaultCOLOR.G,
-				B = entityDefaultCOLOR.B,
-				A = entityDefaultCOLOR.A;
-
-	for (int i = 0; i < ENTITY_COLOR_CNT; i++) {
-		if (EQUALSUC(entityColors[i].entityName, szEntityNameW)) {
-			R = entityColors[i].R;
-			G = entityColors[i].G;
-			B = entityColors[i].B;
-			A = entityColors[i].A;
-		}
-	}
-
-	uint32_t iDefaultColor = 256 * 256 * 256 * R +
-		256 * 256 * G +
-		256 * B +
-		A;
-
-	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
+	SetDefaultColor(
+		m_iModel,
+		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
+		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
+		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
+		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255
+	);
 
 	/*
 	* Set up circleSegments()

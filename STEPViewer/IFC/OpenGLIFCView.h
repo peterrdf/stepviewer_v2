@@ -85,12 +85,12 @@ private: // Methods
 	void DrawPoints();
 	
 	// Selection
-	void DrawFacesFrameBuffer();
+	void DrawInstancesFrameBuffer();
 	
 	// Mouse
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
-	void Rotate(double fXSpin, double fYSpin);
-	void Zoom(double dZTranslation);
+	void Rotate(float fXAngle, float fYAngle);
+	void Zoom(float fZTranslation);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

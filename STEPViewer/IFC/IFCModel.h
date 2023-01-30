@@ -196,15 +196,15 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject * getIFCObject(int_t iObjectID);
+	CIFCObject* getIFCObjectByID(int_t iID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject * getIFCObjectByExpressID(int64_t iExpressID);
+	CIFCObject* getIFCObjectByExpressID(int64_t iExpressID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject * getIFCObjectbyGUID(const wstring & GUID);
+	CIFCObject* getIFCObjectbyGUID(const wstring & GUID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
