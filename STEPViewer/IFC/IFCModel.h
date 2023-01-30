@@ -2,7 +2,7 @@
 #define IFCFILEPARSER_H
 
 #include "STEPModelBase.h"
-#include "IFCObject.h"
+#include "IFCInstance.h"
 #include "Texture.h"
 #include "IFCUnit.h"
 #include "IFCEntity.h"
@@ -73,40 +73,40 @@ private: // Members
 	float m_fZTranslation;
 
 	// --------------------------------------------------------------------------------------------
-	// CIFCObject-s
-	vector<CIFCObject *> m_vecIFCObjects;
+	// CIFCInstance-s
+	vector<CIFCInstance*> m_vecInstances;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : IFCObject *
-	map<int_t, CIFCObject *> m_mapIFCObjects;
+	map<int_t, CIFCInstance*> m_mapInstances;
 
 	// --------------------------------------------------------------------------------------------
 	// ID (1-based) : IFCObject *
-	map<int_t, CIFCObject *> m_mapID2IFCObject;
+	map<int_t, CIFCInstance*> m_mapID2Instance;
 
 	// --------------------------------------------------------------------------------------------
 	// ExpressID : IFCObject *
-	map<int64_t, CIFCObject *> m_mapExpressID2IFCObject;
+	map<int64_t, CIFCInstance*> m_mapExpressID2Instance;
 
 	// --------------------------------------------------------------------------------------------
 	// GUID : IFCObject *
-	map<wstring, CIFCObject *> m_mapGUID2IFCObject;
+	map<wstring, CIFCInstance*> m_mapGUID2Instance;
 
 	// ------------------------------------------------------------------------
 	// IFC Units
-	map<wstring, CIFCUnit *> m_mapUnits;
+	map<wstring, CIFCUnit*> m_mapUnits;
 
 	// --------------------------------------------------------------------------------------------
 	// Entity : CIFCEntity *
-	map<int_t, CIFCEntity *> m_mapEntities;
+	map<int_t, CIFCEntity*> m_mapEntities;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Class
-	map<int64_t, CIFCClass *> m_mapClasses;
+	map<int64_t, CIFCClass*> m_mapClasses;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Property
-	map<int64_t, CIFCProperty *> m_mapProperties;
+	map<int64_t, CIFCProperty*> m_mapProperties;
 
 	// --------------------------------------------------------------------------------------------
 	// Selection
@@ -160,7 +160,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const wchar_t * getModelName() const;
+	const wchar_t* getModelName() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -168,47 +168,43 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CIFCObject *> & GetIFCObjects() const;
+	const map<int64_t, CIFCInstance*> & GetInstances() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<wstring, CIFCUnit *> & getUnits() const;
+	const map<wstring, CIFCUnit*>& GetUnits() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const CIFCUnit * getUnit(const wchar_t * szUnit) const;
+	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int_t, CIFCEntity *> & getEntities() const;
+	const map<int_t, CIFCEntity*>& GetEntities() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CIFCClass *> & getClasses() const;
+	const map<int64_t, CIFCClass*>& GetClasses() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CIFCProperty *> & getProperties() const;
+	const map<int64_t, CIFCProperty*>& GetProperties() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const vector<CIFCObject *> & getIFCObjects();
+	CIFCInstance* GetInstanceByID(int_t iID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject* getIFCObjectByID(int_t iID);
+	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject* getIFCObjectByExpressID(int64_t iExpressID);
+	CIFCInstance* GetInstanceByGUID(const wstring & GUID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CIFCObject* getIFCObjectbyGUID(const wstring & GUID);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const set<int64_t>& getSelectedIFCObjects() const;
+	const set<int64_t>& GetSelectedInstances() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties
@@ -254,7 +250,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Retrieves the geometry for an IFC object
-	CIFCObject * RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments);
+	CIFCInstance * RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments);
 
 	// --------------------------------------------------------------------------------------------
 	// Entities

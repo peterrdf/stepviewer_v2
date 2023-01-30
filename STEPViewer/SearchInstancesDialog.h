@@ -21,7 +21,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// IFC Tree
-	CViewTree * m_pIFCTreeCtrl;
+	CViewTree * m_pTreeCtrl;
 
 	// --------------------------------------------------------------------------------------------
 	// Filter
@@ -68,7 +68,7 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchInstancesDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
+	CSearchInstancesDialog(CViewTree* pTreeCtrl);   // standard constructor
 	virtual ~CSearchInstancesDialog();
 
 // Dialog Data

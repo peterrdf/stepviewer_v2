@@ -4,7 +4,7 @@
 #include "STEPItemData.h"
 #include "STEPModel.h"
 #include "SearchInstancesDialog.h"
-#include "IFCObject.h"
+#include "IFCInstance.h"
 
 #include <map>
 
@@ -29,16 +29,16 @@ private: // Members
 	map<HTREEITEM, CIFCModel*> m_mapModelHTREEITEM;
 
 	// --------------------------------------------------------------------------------------------
-	// CIFCObject * : HTREEITEM
-	map<CIFCObject*, HTREEITEM> m_mapIFCObject2Item;
+	// CIFCInstance * : HTREEITEM
+	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;
 
 	// --------------------------------------------------------------------------------------------
-	// CIFCObject * : HTREEITEM
-	map<CIFCObject*, HTREEITEM> m_mapSelectedIFCObjects;
+	// CIFCInstance * : HTREEITEM
+	map<CIFCInstance*, HTREEITEM> m_mapSelectedIFCObjects;
 
 	// --------------------------------------------------------------------------------------------
 	// Cache; temp variable
-	vector<CIFCObject*> m_vecCache;
+	vector<CIFCInstance*> m_vecCache;
 
 	// --------------------------------------------------------------------------------------------
 	// Search

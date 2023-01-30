@@ -18,14 +18,14 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CIFCObject : public CSTEPInstance
+class CIFCInstance : public CSTEPInstance
 {
 	// --------------------------------------------------------------------------------------------
 	friend class CIFCModel;
 
 private: // Members
 	
-	CIFCModel* m_pIFCModel;
+	CIFCModel* m_pModel;
 	int_t m_iInstance;
 	wstring m_strGUID;
 	int_t m_iEntity;
@@ -69,8 +69,8 @@ private: // Members
 
 public: // Methods
 	
-	CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * szGUID, int_t iEntity, const wchar_t * szEntity);
-	~CIFCObject();
+	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID, int_t iEntity, const wchar_t* szEntity);
+	~CIFCInstance();
 	
 	int_t getInstance() const;
 	const wchar_t* getGUID() const;

@@ -101,7 +101,7 @@
     <ClInclude Include="IFC\IFCModel.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCObject.h">
+    <ClInclude Include="IFC\IFCInstance.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFC\IFCProperty.h">
@@ -220,7 +220,7 @@
     <ClCompile Include="IFC\IFCModel.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCObject.cpp">
+    <ClCompile Include="IFC\IFCInstance.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCProperty.cpp">

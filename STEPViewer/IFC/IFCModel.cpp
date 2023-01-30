@@ -39,11 +39,11 @@ CIFCModel::CIFCModel()
 	, m_fXTranslation(0.f)
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
-	, m_vecIFCObjects()
-	, m_mapIFCObjects()
-	, m_mapID2IFCObject()
-	, m_mapExpressID2IFCObject()
-	, m_mapGUID2IFCObject()
+	, m_vecInstances()
+	, m_mapInstances()
+	, m_mapID2Instance()
+	, m_mapExpressID2Instance()
+	, m_mapGUID2Instance()
 	, m_mapUnits()
 	, m_mapEntities()
 	, m_mapClasses()
@@ -156,11 +156,11 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Helper data structures
 	*/
-	for (auto pIFCObject : m_vecIFCObjects)
+	for (auto pInstance : m_vecInstances)
 	{
-		m_mapID2IFCObject[pIFCObject->ID()] = pIFCObject;
-		m_mapExpressID2IFCObject[pIFCObject->expressID()] = pIFCObject;
-		m_mapGUID2IFCObject[pIFCObject->getGUID()] = pIFCObject;
+		m_mapID2Instance[pInstance->ID()] = pInstance;
+		m_mapExpressID2Instance[pInstance->expressID()] = pInstance;
+		m_mapGUID2Instance[pInstance->getGUID()] = pInstance;
 	}
 
 	/**
@@ -179,11 +179,11 @@ void CIFCModel::Clean()
 		m_iModel = 0;
 	}
 
-	for (size_t iIFCObject = 0; iIFCObject < m_vecIFCObjects.size(); iIFCObject++)
+	for (size_t iIFCObject = 0; iIFCObject < m_vecInstances.size(); iIFCObject++)
 	{
-		delete m_vecIFCObjects[iIFCObject];
+		delete m_vecInstances[iIFCObject];
 	}
-	m_vecIFCObjects.clear();
+	m_vecInstances.clear();
 
 	map<wstring, CIFCUnit*>::iterator itUnits = m_mapUnits.begin();
 	for (; itUnits != m_mapUnits.end(); itUnits++)
@@ -199,10 +199,10 @@ void CIFCModel::Clean()
 	}
 	m_mapEntities.clear();
 
-	map<int64_t, CIFCClass*>::iterator itIFCClasses = m_mapClasses.begin();
-	for (; itIFCClasses != m_mapClasses.end(); itIFCClasses++)
+	map<int64_t, CIFCClass*>::iterator itClass = m_mapClasses.begin();
+	for (; itClass != m_mapClasses.end(); itClass++)
 	{
-		delete itIFCClasses->second;
+		delete itClass->second;
 	}
 	m_mapClasses.clear();
 
@@ -230,10 +230,10 @@ void CIFCModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	auto itIFCObject = m_mapIFCObjects.begin();
-	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	auto itIinstance = m_mapInstances.begin();
+	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIFCObject->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itIinstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -255,10 +255,10 @@ void CIFCModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	itIFCObject = m_mapIFCObjects.begin();
-	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	itIinstance = m_mapInstances.begin();
+	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIFCObject->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		itIinstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
 	/*
@@ -272,12 +272,12 @@ void CIFCModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	itIFCObject = m_mapIFCObjects.begin();
-	for (; itIFCObject != m_mapIFCObjects.end(); itIFCObject++)
+	itIinstance = m_mapInstances.begin();
+	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		if (itIFCObject->second->getEnable())
+		if (itIinstance->second->getEnable())
 		{
-			itIFCObject->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+			itIinstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 		}
 	}
 
@@ -330,7 +330,7 @@ int_t CIFCModel::getModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t * CIFCModel::getModelName() const
+const wchar_t* CIFCModel::getModelName() const
 {
 	return m_strIFCFile.c_str();
 }
@@ -342,19 +342,19 @@ float CIFCModel::GetBoundingSphereDiameter() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCObject *> & CIFCModel::GetIFCObjects() const
+const map<int64_t, CIFCInstance *>& CIFCModel::GetInstances() const
 {
-	return m_mapIFCObjects;
+	return m_mapInstances;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<wstring, CIFCUnit *> & CIFCModel::getUnits() const
+const map<wstring, CIFCUnit *>& CIFCModel::GetUnits() const
 {
 	return m_mapUnits;
 }
 
 // ------------------------------------------------------------------------------------------------
-const CIFCUnit * CIFCModel::getUnit(const wchar_t * szUnit) const
+const CIFCUnit* CIFCModel::GetUnit(const wchar_t* szUnit) const
 {
 	map<wstring, CIFCUnit *>::const_iterator itUnit = m_mapUnits.find(szUnit);
 	if (itUnit != m_mapUnits.end())
@@ -366,34 +366,28 @@ const CIFCUnit * CIFCModel::getUnit(const wchar_t * szUnit) const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CIFCEntity *> & CIFCModel::getEntities() const
+const map<int_t, CIFCEntity *>& CIFCModel::GetEntities() const
 {
 	return m_mapEntities;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCClass *> & CIFCModel::getClasses() const
+const map<int64_t, CIFCClass *>& CIFCModel::GetClasses() const
 {
 	return m_mapClasses;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCProperty *> & CIFCModel::getProperties() const
+const map<int64_t, CIFCProperty *>& CIFCModel::GetProperties() const
 {
 	return m_mapProperties;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<CIFCObject *> & CIFCModel::getIFCObjects()
+CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 {
-	return m_vecIFCObjects;
-}
-
-// ------------------------------------------------------------------------------------------------
-CIFCObject* CIFCModel::getIFCObjectByID(int_t iID)
-{
-	map<int_t, CIFCObject *>::iterator itID2IFCObject = m_mapID2IFCObject.find(iID);
-	if (itID2IFCObject != m_mapID2IFCObject.end())
+	map<int_t, CIFCInstance *>::iterator itID2IFCObject = m_mapID2Instance.find(iID);
+	if (itID2IFCObject != m_mapID2Instance.end())
 	{
 		return itID2IFCObject->second;
 	}
@@ -402,10 +396,10 @@ CIFCObject* CIFCModel::getIFCObjectByID(int_t iID)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject* CIFCModel::getIFCObjectByExpressID(int64_t iExpressID)
+CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 {
-	auto itExpressID2IFCObject = m_mapExpressID2IFCObject.find(iExpressID);
-	if (itExpressID2IFCObject != m_mapExpressID2IFCObject.end())
+	auto itExpressID2IFCObject = m_mapExpressID2Instance.find(iExpressID);
+	if (itExpressID2IFCObject != m_mapExpressID2Instance.end())
 	{
 		return itExpressID2IFCObject->second;
 	}
@@ -414,10 +408,10 @@ CIFCObject* CIFCModel::getIFCObjectByExpressID(int64_t iExpressID)
 }
 
 // --------------------------------------------------------------------------------------------
-CIFCObject* CIFCModel::getIFCObjectbyGUID(const wstring & GUID)
+CIFCInstance* CIFCModel::GetInstanceByGUID(const wstring & GUID)
 {
-	map<wstring, CIFCObject *>::iterator itGUID2IFCObject = m_mapGUID2IFCObject.find(GUID);
-	if (itGUID2IFCObject != m_mapGUID2IFCObject.end())
+	auto itGUID2IFCObject = m_mapGUID2Instance.find(GUID);
+	if (itGUID2IFCObject != m_mapGUID2Instance.end())
 	{
 		return itGUID2IFCObject->second;
 	}
@@ -426,7 +420,7 @@ CIFCObject* CIFCModel::getIFCObjectbyGUID(const wstring & GUID)
 }
 
 // ------------------------------------------------------------------------------------------------
-const set<int64_t>& CIFCModel::getSelectedIFCObjects() const
+const set<int64_t>& CIFCModel::GetSelectedInstances() const
 {
 	return m_setSelectedIFCObjects;
 }
@@ -776,16 +770,16 @@ void CIFCModel::LoadSchema()
 	map<int_t, CIFCEntity*>::iterator itEntity = m_mapEntities.begin();
 	for (; itEntity != m_mapEntities.end(); itEntity++)
 	{
-		CIFCEntity* pIFCEntity = itEntity->second;
+		CIFCEntity* pEntity = itEntity->second;
 
-		map<wstring, vector<wstring>>::iterator itIgnoredAttributes = mapIgnoredAttributes.find(pIFCEntity->getName());
+		map<wstring, vector<wstring>>::iterator itIgnoredAttributes = mapIgnoredAttributes.find(pEntity->getName());
 		if (itIgnoredAttributes != mapIgnoredAttributes.end())
 		{
 			for (size_t iIgnoredAttribute = 0; iIgnoredAttribute < itIgnoredAttributes->second.size(); iIgnoredAttribute++)
 			{
-				if (!pIFCEntity->isAttributeIgnored(itIgnoredAttributes->second[iIgnoredAttribute]))
+				if (!pEntity->isAttributeIgnored(itIgnoredAttributes->second[iIgnoredAttribute]))
 				{
-					pIFCEntity->ignoreAttribute(itIgnoredAttributes->second[iIgnoredAttribute], true);
+					pEntity->ignoreAttribute(itIgnoredAttributes->second[iIgnoredAttribute], true);
 				}
 			}
 		}
@@ -811,16 +805,16 @@ void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const 
 		wchar_t	* szInstanceGUIDW = nullptr;
 		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-		CIFCObject * pIFCObject = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
-		pIFCObject->ID() = s_iObjectID++;
+		CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
+		pInstance->ID() = s_iObjectID++;
 
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pIFCObject->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
+		pInstance->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 		
-		m_vecIFCObjects.push_back(pIFCObject);
-		m_mapIFCObjects[iInstance] = pIFCObject;
+		m_vecInstances.push_back(pInstance);
+		m_mapInstances[iInstance] = pInstance;
 	}
 }
 
@@ -866,16 +860,16 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 				wchar_t	* szInstanceGUIDW = nullptr;
 				sdaiGetAttrBN(ifcObjectInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-				CIFCObject * pIFCObject = RetrieveGeometry(szInstanceGUIDW, iParentEntity, szParentEntityNameW, ifcObjectInstance, iCircleSegments);
-				pIFCObject->ID() = s_iObjectID++;
+				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iParentEntity, szParentEntityNameW, ifcObjectInstance, iCircleSegments);
+				pInstance->ID() = s_iObjectID++;
 
 				CString strEntity = szParentEntityNameW;
 				strEntity.MakeUpper();
 
-				pIFCObject->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
+				pInstance->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 
-				m_vecIFCObjects.push_back(pIFCObject);
-				m_mapIFCObjects[ifcObjectInstance] = pIFCObject;
+				m_vecInstances.push_back(pInstance);
+				m_mapInstances[ifcObjectInstance] = pInstance;
 			}
 		}
 	} // if (noIfcObjectIntances != 0)
@@ -913,7 +907,7 @@ bool	EQUALSUC(const wchar_t * strI, const wchar_t * strII)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments)
+CIFCInstance * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments)
 {
 	/*
 	* Set up format
@@ -968,18 +962,18 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pIFCObject = new CIFCObject(this, iInstance, szInstanceGUIDW, iEntity, szEntityNameW);
+	auto pInstance = new CIFCInstance(this, iInstance, szInstanceGUIDW, iEntity, szEntityNameW);
 
-	ASSERT(pIFCObject->m_pVertexBuffer == nullptr);
-	pIFCObject->m_pVertexBuffer = new _vertices_f();
+	ASSERT(pInstance->m_pVertexBuffer == nullptr);
+	pInstance->m_pVertexBuffer = new _vertices_f();
 
-	ASSERT(pIFCObject->m_pIndexBuffer == nullptr);
-	pIFCObject->m_pIndexBuffer = new _indices_i32();
+	ASSERT(pInstance->m_pIndexBuffer == nullptr);
+	pInstance->m_pIndexBuffer = new _indices_i32();
 
-	CalculateInstance(iInstance, &pIFCObject->m_pVertexBuffer->size(), &pIFCObject->m_pIndexBuffer->size(), NULL);
-	if ((pIFCObject->m_pVertexBuffer->size() == 0) || (pIFCObject->m_pIndexBuffer->size() == 0))
+	CalculateInstance(iInstance, &pInstance->m_pVertexBuffer->size(), &pInstance->m_pIndexBuffer->size(), NULL);
+	if ((pInstance->m_pVertexBuffer->size() == 0) || (pInstance->m_pIndexBuffer->size() == 0))
 	{
-		return pIFCObject;
+		return pInstance;
 	}
 
 	int64_t iOWLModel = 0;
@@ -991,28 +985,28 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	/**
 	* Retrieves the vertices
 	*/
-	pIFCObject->m_pVertexBuffer->vertexLength() = SetFormat(m_iModel, 0, 0) / sizeof(float);
+	pInstance->m_pVertexBuffer->vertexLength() = SetFormat(m_iModel, 0, 0) / sizeof(float);
 
-	pIFCObject->m_pVertexBuffer->data() = new float[pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength()];
-	memset(pIFCObject->m_pVertexBuffer->data(), 0, pIFCObject->m_pVertexBuffer->size() * pIFCObject->m_pVertexBuffer->vertexLength() * sizeof(float));
+	pInstance->m_pVertexBuffer->data() = new float[pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->vertexLength()];
+	memset(pInstance->m_pVertexBuffer->data(), 0, pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->vertexLength() * sizeof(float));
 
-	UpdateInstanceVertexBuffer(iOWLInstance, pIFCObject->m_pVertexBuffer->data());
+	UpdateInstanceVertexBuffer(iOWLInstance, pInstance->m_pVertexBuffer->data());
 
 	/**
 	* Retrieves the indices
 	*/
-	pIFCObject->m_pIndexBuffer->data() = new int32_t[pIFCObject->m_pIndexBuffer->size()];
-	memset(pIFCObject->m_pIndexBuffer->data(), 0, pIFCObject->m_pIndexBuffer->size() * sizeof(int32_t));
+	pInstance->m_pIndexBuffer->data() = new int32_t[pInstance->m_pIndexBuffer->size()];
+	memset(pInstance->m_pIndexBuffer->data(), 0, pInstance->m_pIndexBuffer->size() * sizeof(int32_t));
 
-	UpdateInstanceIndexBuffer(iOWLInstance, pIFCObject->m_pIndexBuffer->data());
+	UpdateInstanceIndexBuffer(iOWLInstance, pInstance->m_pIndexBuffer->data());
 
 	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 
 	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
-	pIFCObject->m_iConceptualFacesCount = GetConceptualFaceCnt(iInstance);
-	for (int64_t iConceptualFace = 0; iConceptualFace < pIFCObject->m_iConceptualFacesCount; iConceptualFace++)
+	pInstance->m_iConceptualFacesCount = GetConceptualFaceCnt(iInstance);
+	for (int64_t iConceptualFace = 0; iConceptualFace < pInstance->m_iConceptualFacesCount; iConceptualFace++)
 	{
 		//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx.html
 		int64_t iStartIndexTriangles = 0;
@@ -1035,20 +1029,20 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			/*
 			* Material
 			*/
-			int32_t iIndexValue = *(pIFCObject->m_pIndexBuffer->data() + iStartIndexTriangles);
+			int32_t iIndexValue = *(pInstance->m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 6);
+			float fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 7);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 7);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 8);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 9);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
@@ -1075,35 +1069,35 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 		if (iIndicesCountTriangles > 0)
 		{
-			pIFCObject->m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
+			pInstance->m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
 		}
 
 		if (iIndicesCountConceptualFacePolygons > 0)
 		{
-			pIFCObject->m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
+			pInstance->m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
 		}
 
 		if (iIndicesCountLines > 0)
 		{
-			pIFCObject->m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
+			pInstance->m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
 		}
 
 		if (iIndicesCountPoints > 0)
 		{
-			int32_t iIndexValue = *(pIFCObject->m_pIndexBuffer->data() + iStartIndexTriangles);
+			int32_t iIndexValue = *(pInstance->m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 6);
+			float fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 7);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 7);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 8);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(pIFCObject->m_pVertexBuffer->data() + iIndexValue + 9);
+			fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
@@ -1127,7 +1121,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints));
 			}
 
-			pIFCObject->m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
+			pInstance->m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
 		} // if (iIndicesCountPoints > 0)
 	} // for (int64_t iConceptualFace = ...	
 
@@ -1158,10 +1152,10 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pIFCObject->concFacesCohorts().push_back(pNewCohort);
+					pInstance->concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1182,10 +1176,10 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pIFCObject->concFacesCohorts().push_back(pNewCohort);
+					pInstance->concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1206,7 +1200,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				pIFCObject->concFacesCohorts().push_back(pCohort);
+				pInstance->concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1216,7 +1210,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				pIFCObject->concFacesCohorts().push_back(pCohort);
+				pInstance->concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1231,7 +1225,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+				pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 			}
 
 			// Conceptual faces
@@ -1242,13 +1236,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	/*
 	* Group the polygons
 	*/
-	if (!pIFCObject->m_vecConcFacePolygons.empty())
+	if (!pInstance->m_vecConcFacePolygons.empty())
 	{
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = pIFCObject->concFacePolygonsCohorts().empty() ? 
-			NULL : pIFCObject->concFacePolygonsCohorts()[pIFCObject->concFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = pInstance->concFacePolygonsCohorts().empty() ? 
+			NULL : pInstance->concFacePolygonsCohorts()[pInstance->concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -1256,13 +1250,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		if (pCohort == NULL)
 		{
 			pCohort = new _cohort();
-			pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+			pInstance->concFacePolygonsCohorts().push_back(pCohort);
 		}
 
-		for (size_t iFace = 0; iFace < pIFCObject->m_vecConcFacePolygons.size(); iFace++)
+		for (size_t iFace = 0; iFace < pInstance->m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndex = pIFCObject->m_vecConcFacePolygons[iFace].startIndex();
-			int_t iIndicesCount = pIFCObject->m_vecConcFacePolygons[iFace].indicesCount();
+			int_t iStartIndex = pInstance->m_vecConcFacePolygons[iFace].startIndex();
+			int_t iIndicesCount = pInstance->m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1272,14 +1266,14 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
-					pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+					pInstance->concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2;
 						iIndex++)
 					{
-						if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+						if (pInstance->m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -1288,8 +1282,8 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+							pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1302,14 +1296,14 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				if (iIndicesCount > 0)
 				{
 					pCohort = new _cohort();
-					pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+					pInstance->concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
-						if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+						if (pInstance->m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -1318,8 +1312,8 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+							pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1335,7 +1329,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			if ((pCohort->indices().size() + (iIndicesCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				pIFCObject->concFacePolygonsCohorts().push_back(pCohort);
+				pInstance->concFacePolygonsCohorts().push_back(pCohort);
 			}
 
 			int_t iPreviousIndex = -1;
@@ -1343,7 +1337,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+				if (pInstance->m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					iPreviousIndex = -1;
 
@@ -1352,8 +1346,8 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 				if (iPreviousIndex != -1)
 				{
-					pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iPreviousIndex]);
-					pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+					pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iPreviousIndex]);
+					pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1361,9 +1355,9 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pIFCObject->concFacePolygonsCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < pInstance->concFacePolygonsCohorts().size(); iCohort++)
 		{
-			ASSERT(pIFCObject->concFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+			ASSERT(pInstance->concFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConcFacePolygons.empty())
@@ -1371,13 +1365,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 	/*
 	* Group the lines
 	*/
-	if (!pIFCObject->m_vecLines.empty())
+	if (!pInstance->m_vecLines.empty())
 	{
 		/*
 		* Use the last cohort (if any)
 		*/
-		auto pCohort = pIFCObject->linesCohorts().empty() ? 
-			nullptr : pIFCObject->linesCohorts()[pIFCObject->linesCohorts().size() - 1];
+		auto pCohort = pInstance->linesCohorts().empty() ? 
+			nullptr : pInstance->linesCohorts()[pInstance->linesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -1385,13 +1379,13 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 		if (pCohort == NULL)
 		{
 			pCohort = new _cohort();
-			pIFCObject->linesCohorts().push_back(pCohort);
+			pInstance->linesCohorts().push_back(pCohort);
 		}
 
-		for (size_t iFace = 0; iFace < pIFCObject->m_vecLines.size(); iFace++)
+		for (size_t iFace = 0; iFace < pInstance->m_vecLines.size(); iFace++)
 		{
-			int_t iStartIndex = pIFCObject->m_vecLines[iFace].startIndex();
-			int_t iIndicesCount = pIFCObject->m_vecLines[iFace].indicesCount();
+			int_t iStartIndex = pInstance->m_vecLines[iFace].startIndex();
+			int_t iIndicesCount = pInstance->m_vecLines[iFace].indicesCount();
 
 			/*
 			* Check the limit
@@ -1399,26 +1393,26 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				pIFCObject->linesCohorts().push_back(pCohort);
+				pInstance->linesCohorts().push_back(pCohort);
 			}
 
 			for (int_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				if (pIFCObject->m_pIndexBuffer->data()[iIndex] < 0)
+				if (pInstance->m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					continue;
 				}
 
-				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+				pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pIFCObject->linesCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < pInstance->linesCohorts().size(); iCohort++)
 		{
-			ASSERT(pIFCObject->linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+			ASSERT(pInstance->linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -1450,10 +1444,10 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pIFCObject->pointsCohorts().push_back(pNewCohort);
+					pInstance->pointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1474,10 +1468,10 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pIFCObject->pointsCohorts().push_back(pNewCohort);
+					pInstance->pointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1498,7 +1492,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
 
-				pIFCObject->pointsCohorts().push_back(pCohort);
+				pInstance->pointsCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1508,7 +1502,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
 
-				pIFCObject->pointsCohorts().push_back(pCohort);
+				pInstance->pointsCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1523,7 +1517,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				pCohort->indices().push_back(pIFCObject->m_pIndexBuffer->data()[iIndex]);
+				pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 			}
 
 			// Conceptual faces
@@ -1541,7 +1535,7 @@ CIFCObject * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t 
 
 	cleanMemory(m_iModel, 0);
 
-	return pIFCObject;
+	return pInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1574,9 +1568,9 @@ void CIFCModel::LoadEntities()
 		int_t iAttributesCount = engiGetEntityNoArguments(iEntity);
 		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
 
-		CIFCEntity * pIFCEntity = new CIFCEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
+		CIFCEntity * pEntity = new CIFCEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
 		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());
-		m_mapEntities[iEntity] = pIFCEntity;
+		m_mapEntities[iEntity] = pEntity;
 
 		i++;
 	}
@@ -1667,20 +1661,20 @@ void CIFCModel::LoadProperties()
 			break;
 		} // switch (iPropertyType)
 
-		map<int64_t, CIFCClass *>::iterator itIFCClasses = m_mapClasses.begin();
-		for (; itIFCClasses != m_mapClasses.end(); itIFCClasses++)
+		map<int64_t, CIFCClass *>::iterator itClass = m_mapClasses.begin();
+		for (; itClass != m_mapClasses.end(); itClass++)
 		{
 			int64_t	iMinCard = 0;
 			int64_t iMaxCard = 0;
-			GetPropertyRestrictions(itIFCClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
+			GetPropertyRestrictions(itClass->first, iPropertyInstance, &iMinCard, &iMaxCard);
 
 			if ((iMinCard == -1) && (iMaxCard == -1))
 			{
 				continue;
 			}
 
-			itIFCClasses->second->AddPropertyRestriction(new CIFCPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
-		} // for (; itIFCClasses != ...
+			itClass->second->AddPropertyRestriction(new CIFCPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
+		} // for (; itClass != ...
 
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)

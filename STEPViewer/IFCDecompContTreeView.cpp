@@ -19,7 +19,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	, m_pTreeView(pTreeView)
 	, m_pImageList(nullptr)
 	, m_mapModelHTREEITEM()
-	, m_mapIFCObject2Item()
+	, m_mapInstance2Item()
 	, m_mapSelectedIFCObjects()
 	, m_vecCache()
 	//, m_pSearchDialog(NULL)
@@ -90,32 +90,32 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		return;
 	}
 
-	auto pSelectedItem = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CIFCObject*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedItem = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : nullptr;
 	if (pSelectedItem != nullptr)
 	{
-		CIFCObject* pIFCObject = pModel->getIFCObjectByExpressID(pSelectedItem->expressID());
-		ASSERT(pIFCObject != NULL);
+		CIFCInstance* pInstance = pModel->GetInstanceByExpressID(pSelectedItem->expressID());
+		ASSERT(pInstance != NULL);
 
-		map<CIFCObject*, HTREEITEM>::iterator itIFCObject2Item = m_mapIFCObject2Item.find(pIFCObject);
-		ASSERT(itIFCObject2Item != m_mapIFCObject2Item.end());
+		map<CIFCInstance*, HTREEITEM>::iterator itIInstance2Item = m_mapInstance2Item.find(pInstance);
+		ASSERT(itIInstance2Item != m_mapInstance2Item.end());
 
 		if (pSelectedItem->getSelected())
 		{
 			// Select
-			ASSERT(m_mapSelectedIFCObjects.find(pIFCObject) == m_mapSelectedIFCObjects.end());
-			m_mapSelectedIFCObjects[pIFCObject] = itIFCObject2Item->second;
+			ASSERT(m_mapSelectedIFCObjects.find(pInstance) == m_mapSelectedIFCObjects.end());
+			m_mapSelectedIFCObjects[pInstance] = itIInstance2Item->second;
 
-			(*m_pTreeView).SetItemState(itIFCObject2Item->second, TVIS_BOLD, TVIS_BOLD);
-			(*m_pTreeView).EnsureVisible(itIFCObject2Item->second);
+			(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
+			(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
 		}
 		else
 		{
 			// Unselect
-			map<CIFCObject*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pIFCObject);
+			map<CIFCInstance*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pInstance);
 			ASSERT(itSelectedIFCObject != m_mapSelectedIFCObjects.end());
 			m_mapSelectedIFCObjects.erase(itSelectedIFCObject);
 
-			(*m_pTreeView).SetItemState(itIFCObject2Item->second, 0, TVIS_BOLD);
+			(*m_pTreeView).SetItemState(itIInstance2Item->second, 0, TVIS_BOLD);
 		}
 	} // if (pSelectedItem != nullptr)
 	else
@@ -206,7 +206,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 		ASSERT(iImage == iSelectedImage);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hItem);
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hItem);
 
 		switch (iImage)
 		{
@@ -215,11 +215,11 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			{
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-				if (pIFCObject != NULL)
+				if (pInstance != NULL)
 				{
-					pIFCObject->setEnable(false);
+					pInstance->setEnable(false);
 
-					m_vecCache.push_back(pIFCObject);
+					m_vecCache.push_back(pInstance);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -232,11 +232,11 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			{
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
-				if (pIFCObject != NULL)
+				if (pInstance != NULL)
 				{
-					pIFCObject->setEnable(true);
+					pInstance->setEnable(true);
 
-					m_vecCache.push_back(pIFCObject);
+					m_vecCache.push_back(pInstance);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -264,38 +264,38 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	*/
 	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hItem);
-		if (pIFCObject != NULL)
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hItem);
+		if (pInstance != NULL)
 		{
 			/*
 			* geometry item
 			*/
-			if ((GetKeyState(VK_CONTROL) & 0x8000) && pIFCObject->hasGeometry())
+			if ((GetKeyState(VK_CONTROL) & 0x8000) && pInstance->hasGeometry())
 			{
-				pIFCObject->setSelected(!pIFCObject->getSelected());
+				pInstance->setSelected(!pInstance->getSelected());
 
-				map<CIFCObject*, HTREEITEM>::iterator itIFCObject2Item = m_mapIFCObject2Item.find(pIFCObject);
-				ASSERT(itIFCObject2Item != m_mapIFCObject2Item.end());
+				map<CIFCInstance*, HTREEITEM>::iterator itIInstance2Item = m_mapInstance2Item.find(pInstance);
+				ASSERT(itIInstance2Item != m_mapInstance2Item.end());
 
-				if (!pIFCObject->getSelected())
+				if (!pInstance->getSelected())
 				{
 					// Selected => Unselected
-					map<CIFCObject*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pIFCObject);
+					map<CIFCInstance*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.find(pInstance);
 					ASSERT(itSelectedIFCObject != m_mapSelectedIFCObjects.end());
 					m_mapSelectedIFCObjects.erase(itSelectedIFCObject);
 				}
 				else
 				{
 					// Unselected => Selected
-					ASSERT(m_mapSelectedIFCObjects.find(pIFCObject) == m_mapSelectedIFCObjects.end());
-					m_mapSelectedIFCObjects[pIFCObject] = itIFCObject2Item->second;
+					ASSERT(m_mapSelectedIFCObjects.find(pInstance) == m_mapSelectedIFCObjects.end());
+					m_mapSelectedIFCObjects[pInstance] = itIInstance2Item->second;
 				}
 
-				(*m_pTreeView).SetItemState(itIFCObject2Item->second, pIFCObject->getSelected() ? TVIS_BOLD : 0, TVIS_BOLD);
+				(*m_pTreeView).SetItemState(itIInstance2Item->second, pInstance->getSelected() ? TVIS_BOLD : 0, TVIS_BOLD);
 
 				pController->SelectInstance(this, nullptr);
 			} // if ((GetKeyState(VK_CONTROL) & 0x8000) && ...
-		} // if (pIFCObject != NULL)
+		} // if (pInstance != NULL)
 		else
 		{
 			// #####
@@ -305,13 +305,13 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			//HTREEITEM hChild = (*m_pTreeView).GetChildItem(hItem);
 			//if ((hChild != NULL) && ((*m_pTreeView).GetItemText(hChild) == ITEM_GEOMETRY))
 			//{
-			//	CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hChild);
-			//	if (pIFCObject != NULL && pIFCObject->hasGeometry() && (pIFCObject->GetModel() == pController->GetActiveModel()))
+			//	CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hChild);
+			//	if (pInstance != NULL && pInstance->hasGeometry() && (pInstance->GetModel() == pController->GetActiveModel()))
 			//	{
-			//		pController->FireOnMouseOverInstance(this, pIFCObject->expressID());
+			//		pController->FireOnMouseOverInstance(this, pInstance->expressID());
 			//	}
 			//} // if ((hChild != NULL) && ...
-		} // else if (pIFCObject != NULL)		
+		} // else if (pInstance != NULL)		
 	} // if ((hItem != NULL) && ...
 }
 
@@ -342,12 +342,12 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 		HTREEITEM hGeometry = (*m_pTreeView).GetPrevSiblingItem(pNMTreeView->itemNew.hItem);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hGeometry);
-		ASSERT(pIFCObject != NULL);
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hGeometry);
+		ASSERT(pInstance != NULL);
 
 		CIFCModel* pModel = GetModel(hGeometry);
 
-		LoadProperties(pModel, pIFCObject->getInstance(), pNMTreeView->itemNew.hItem);
+		LoadProperties(pModel, pInstance->getInstance(), pNMTreeView->itemNew.hItem);
 	} // if ((iImage == IMAGE_PROPERTY_SET) && ...
 }
 
@@ -786,12 +786,12 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	wchar_t* szDescription = NULL;
 	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);
 
-	const map<int64_t, CIFCObject*>& mapIFCObjects = pModel->GetIFCObjects();
+	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
 
-	map<int64_t, CIFCObject*>::const_iterator itIFCObjects = mapIFCObjects.find(iIFCProjectInstance);
-	if (itIFCObjects != mapIFCObjects.end())
+	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.find(iIFCProjectInstance);
+	if (itInstance != mapInstances.end())
 	{
-		wstring strItem = itIFCObjects->second->getEntityName();
+		wstring strItem = itInstance->second->getEntityName();
 		if ((szName != NULL) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -850,7 +850,7 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 		LoadContainsElements(pModel, iIFCProjectInstance, hProject);
 
 		(*m_pTreeView).Expand(hProject, TVE_EXPAND);
-	} // if (itIFCObjects != ...
+	} // if (itInstance != ...
 	else
 	{
 		ASSERT(false);
@@ -968,7 +968,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iIFCObjectIns
 {
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CIFCObject*>& mapIFCObjects = pModel->GetIFCObjects();
+	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
 
 	wchar_t* szName = NULL;
 	sdaiGetAttrBN(iIFCObjectInstance, "Name", sdaiUNICODE, &szName);
@@ -976,17 +976,17 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iIFCObjectIns
 	wchar_t* szDescription = NULL;
 	sdaiGetAttrBN(iIFCObjectInstance, "Description", sdaiUNICODE, &szDescription);
 
-	map<int64_t, CIFCObject*>::const_iterator itIFCObjects = mapIFCObjects.find(iIFCObjectInstance);
-	if (itIFCObjects != mapIFCObjects.end())
+	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.find(iIFCObjectInstance);
+	if (itInstance != mapInstances.end())
 	{
-		itIFCObjects->second->referenced() = true;
+		itInstance->second->referenced() = true;
 
 		CString strExpressID;
-		strExpressID.Format(_T("#%lld"), itIFCObjects->second->expressID());
+		strExpressID.Format(_T("#%lld"), itInstance->second->expressID());
 
 		wstring strItem = strExpressID;
 		strItem += L" ";
-		strItem += itIFCObjects->second->getEntityName();
+		strItem += itInstance->second->getEntityName();
 		if ((szName != NULL) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1009,7 +1009,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iIFCObjectIns
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = itIFCObjects->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
 
 		HTREEITEM hObject = (*m_pTreeView).InsertItem(&tvInsertStruct);
@@ -1022,19 +1022,19 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iIFCObjectIns
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			itIFCObjects->second->hasGeometry() ? (itIFCObjects->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)itIFCObjects->second;
+			itInstance->second->hasGeometry() ? (itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
 
 		HTREEITEM hGeometry = (*m_pTreeView).InsertItem(&tvInsertStruct);
-		if (itIFCObjects->second->hasGeometry())
+		if (itInstance->second->hasGeometry())
 		{
-			m_mapIFCObject2Item[itIFCObjects->second] = hGeometry;
+			m_mapInstance2Item[itInstance->second] = hGeometry;
 		}
 
 		/*
 		* Properties
 		*/
-		bool bHasProperties = HasProperties(pModel, itIFCObjects->first);
+		bool bHasProperties = HasProperties(pModel, itInstance->first);
 
 		tvInsertStruct.hParent = hObject;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1066,7 +1066,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iIFCObjectIns
 		*/
 		LoadIsDecomposedBy(pModel, iIFCObjectInstance, hObject);
 		LoadContainsElements(pModel, iIFCObjectInstance, hObject);
-	} // if (itIFCObjects != ...
+	} // if (itInstance != ...
 	else
 	{
 		ASSERT(false);
@@ -1543,34 +1543,34 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 {
 	ASSERT(pModel != NULL);
 
-	map<wstring, vector<CIFCObject*>> mapUnreferencedItems;
+	map<wstring, vector<CIFCInstance*>> mapUnreferencedItems;
 
-	const map<int64_t, CIFCObject*>& mapIFCObjects = pModel->GetIFCObjects();
+	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
 
-	map<int64_t, CIFCObject*>::const_iterator itIFCObjects = mapIFCObjects.begin();
-	for (; itIFCObjects != mapIFCObjects.end(); itIFCObjects++)
+	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.begin();
+	for (; itInstance != mapInstances.end(); itInstance++)
 	{
-		if (!itIFCObjects->second->hasGeometry())
+		if (!itInstance->second->hasGeometry())
 		{
 			continue;
 		}
 
-		if (!itIFCObjects->second->referenced())
+		if (!itInstance->second->referenced())
 		{
-			map<wstring, vector<CIFCObject*>>::iterator itUnreferencedItems = mapUnreferencedItems.find(itIFCObjects->second->getEntityName());
+			map<wstring, vector<CIFCInstance*>>::iterator itUnreferencedItems = mapUnreferencedItems.find(itInstance->second->getEntityName());
 			if (itUnreferencedItems == mapUnreferencedItems.end())
 			{
-				vector<CIFCObject*> vecIFCObjects;
-				vecIFCObjects.push_back(itIFCObjects->second);
+				vector<CIFCInstance*> veCIFCInstances;
+				veCIFCInstances.push_back(itInstance->second);
 
-				mapUnreferencedItems[itIFCObjects->second->getEntityName()] = vecIFCObjects;
+				mapUnreferencedItems[itInstance->second->getEntityName()] = veCIFCInstances;
 			}
 			else
 			{
-				itUnreferencedItems->second.push_back(itIFCObjects->second);
+				itUnreferencedItems->second.push_back(itInstance->second);
 			}
-		} // for (; itIFCObjects != ...
-	} // for (; itIFCObjects != ...
+		} // for (; itInstance != ...
+	} // for (; itInstance != ...
 
 	if (mapUnreferencedItems.empty())
 	{
@@ -1590,7 +1590,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 	HTREEITEM hUnreferenced = (*m_pTreeView).InsertItem(&tvInsertStruct);
 
-	map<wstring, vector<CIFCObject*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
+	map<wstring, vector<CIFCInstance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
 	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++)
 	{
 		/*
@@ -1607,20 +1607,20 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 		for (size_t iIFCObject = 0; iIFCObject < itUnreferencedItems->second.size(); iIFCObject++)
 		{
-			CIFCObject* pIFCObject = itUnreferencedItems->second[iIFCObject];
+			CIFCInstance* pInstance = itUnreferencedItems->second[iIFCObject];
 
 			wchar_t* szName = NULL;
-			sdaiGetAttrBN(pIFCObject->getInstance(), "Name", sdaiUNICODE, &szName);
+			sdaiGetAttrBN(pInstance->getInstance(), "Name", sdaiUNICODE, &szName);
 
 			wchar_t* szDescription = NULL;
-			sdaiGetAttrBN(pIFCObject->getInstance(), "Description", sdaiUNICODE, &szDescription);
+			sdaiGetAttrBN(pInstance->getInstance(), "Description", sdaiUNICODE, &szDescription);
 
 			CString strExpressID;
-			strExpressID.Format(_T("#%lld"), pIFCObject->expressID());
+			strExpressID.Format(_T("#%lld"), pInstance->expressID());
 
 			wstring strItem = strExpressID;
 			strItem += L" ";
-			strItem += pIFCObject->getEntityName();
+			strItem += pInstance->getEntityName();
 			if ((szName != NULL) && (wcslen(szName) > 0))
 			{
 				strItem += L" '";
@@ -1655,19 +1655,19 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-				pIFCObject->hasGeometry() ? (pIFCObject->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-			tvInsertStruct.item.lParam = pIFCObject->hasGeometry() ? (LPARAM)pIFCObject : NULL;
+				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+			tvInsertStruct.item.lParam = pInstance->hasGeometry() ? (LPARAM)pInstance : NULL;
 
 			HTREEITEM hGeometry = (*m_pTreeView).InsertItem(&tvInsertStruct);
-			if (pIFCObject->hasGeometry())
+			if (pInstance->hasGeometry())
 			{
-				m_mapIFCObject2Item[pIFCObject] = hGeometry;
+				m_mapInstance2Item[pInstance] = hGeometry;
 			}
 
 			/*
 			* Properties
 			*/
-			bool bHasProperties = HasProperties(pModel, pIFCObject->getInstance());
+			bool bHasProperties = HasProperties(pModel, pInstance->getInstance());
 
 			tvInsertStruct.hParent = hObject;
 			tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1860,12 +1860,12 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 
 		(*m_pTreeView).SetItemImage(hChild, iParentImage, iParentImage);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hChild);
-		if (pIFCObject != NULL)
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hChild);
+		if (pInstance != NULL)
 		{
-			pIFCObject->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
+			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
 
-			m_vecCache.push_back(pIFCObject);
+			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateChildren(hChild);
@@ -1941,12 +1941,12 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	{
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hParent);
-		if (pIFCObject != NULL)
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
+		if (pInstance != NULL)
 		{
-			pIFCObject->setEnable(true);
+			pInstance->setEnable(true);
 
-			m_vecCache.push_back(pIFCObject);
+			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -1958,12 +1958,12 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	{
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hParent);
-		if (pIFCObject != NULL)
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
+		if (pInstance != NULL)
 		{
-			pIFCObject->setEnable(false);
+			pInstance->setEnable(false);
 
-			m_vecCache.push_back(pIFCObject);
+			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -1975,12 +1975,12 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	{
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
-		CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hParent);
-		if (pIFCObject != NULL)
+		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
+		if (pInstance != NULL)
 		{
-			pIFCObject->setEnable(true);
+			pInstance->setEnable(true);
 
-			m_vecCache.push_back(pIFCObject);
+			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -1990,12 +1990,12 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 
 	(*m_pTreeView).SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-	CIFCObject* pIFCObject = (CIFCObject*)(*m_pTreeView).GetItemData(hParent);
-	if (pIFCObject != NULL)
+	CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
+	if (pInstance != NULL)
 	{
-		pIFCObject->setEnable(true);
+		pInstance->setEnable(true);
 
-		m_vecCache.push_back(pIFCObject);
+		m_vecCache.push_back(pInstance);
 	}
 
 	ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -2004,7 +2004,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 // ----------------------------------------------------------------------------
 void CIFCDecompContTreeView::UnselectAllItems()
 {
-	map<CIFCObject*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.begin();
+	map<CIFCInstance*, HTREEITEM>::iterator itSelectedIFCObject = m_mapSelectedIFCObjects.begin();
 	for (; itSelectedIFCObject != m_mapSelectedIFCObjects.end(); itSelectedIFCObject++)
 	{
 		(*m_pTreeView).SetItemState(itSelectedIFCObject->second, 0, TVIS_BOLD);
@@ -2017,7 +2017,7 @@ void CIFCDecompContTreeView::UnselectAllItems()
 void CIFCDecompContTreeView::ResetView()
 {
 	m_mapModelHTREEITEM.clear();
-	m_mapIFCObject2Item.clear();
+	m_mapInstance2Item.clear();
 	m_mapSelectedIFCObjects.clear();
 	m_vecCache.clear();
 

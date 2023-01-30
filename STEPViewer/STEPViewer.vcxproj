@@ -207,7 +207,7 @@
     <ClInclude Include="IFC\IFCClass.h" />
     <ClInclude Include="IFC\IFCEntity.h" />
     <ClInclude Include="IFC\IFCModel.h" />
-    <ClInclude Include="IFC\IFCObject.h" />
+    <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="IFC\IFCPropertyRestriction.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
@@ -255,7 +255,7 @@
     <ClCompile Include="IFC\IFCClass.cpp" />
     <ClCompile Include="IFC\IFCEntity.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
-    <ClCompile Include="IFC\IFCObject.cpp" />
+    <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCPropertyRestriction.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />

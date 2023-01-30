@@ -91,8 +91,8 @@ wstring CIFCUnit::getUnit() const
 					wchar_t	* szName = NULL;
 					sdaiGetAttrBN(iIFCSIUnitInstance, "Name", sdaiUNICODE, &szName);
 
-					CIFCUnit * pIFCUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-					mapUnits[pIFCUnit->m_strType] = pIFCUnit;
+					CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
+					mapUnits[pUnit->m_strType] = pUnit;
 				}
 				else 
 				{
@@ -117,8 +117,8 @@ wstring CIFCUnit::getUnit() const
 				wchar_t	* szName = NULL;
 				sdaiGetAttrBN(iIFCUnitInstance, "Name", sdaiUNICODE, &szName);
 
-				CIFCUnit * pIFCUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-				mapUnits[pIFCUnit->m_strType] = pIFCUnit;
+				CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
+				mapUnits[pUnit->m_strType] = pUnit;
 			} // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
 		} // else if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)				
 	} // for (int_t iUnitSet = 

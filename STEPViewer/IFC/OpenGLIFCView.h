@@ -2,7 +2,7 @@
 #define _OPEN_GL_IFC_VIEW_H_
 
 #include "Generic.h"
-#include "IFCObject.h"
+#include "IFCInstance.h"
 #include "_oglUtils.h"
 #include "OpenGLView.h"
 
@@ -12,7 +12,7 @@ class CIFCModel;
 // ------------------------------------------------------------------------------------------------
 // Open GL View
 class COpenGLIFCView 
-	: public _oglRenderer<CIFCObject>
+	: public _oglRenderer<CIFCInstance>
 	, public COpenGLView
 {
 
@@ -36,8 +36,8 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CIFCObject* m_pPointedInstance;
-	CIFCObject* m_pSelectedInstance;
+	CIFCInstance* m_pPointedInstance;
+	CIFCInstance* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;

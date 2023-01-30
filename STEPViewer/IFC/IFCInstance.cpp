@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "IFCObject.h"
+#include "IFCInstance.h"
 #include "IFCModel.h"
 
 #include <math.h>
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * szGUID, int_t iEntity, const wchar_t * szEntity)
+CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * szGUID, int_t iEntity, const wchar_t * szEntity)
 	: CSTEPInstance()
-	, m_pIFCModel(pIFCModel)
+	, m_pModel(pModel)
 	, m_iInstance(iInstance)
 	, m_strGUID(szGUID)
 	, m_iEntity(iEntity)
@@ -63,66 +63,66 @@ CIFCObject::CIFCObject(CIFCModel * pIFCModel, int_t iInstance, const wchar_t * s
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCObject::~CIFCObject()
+CIFCInstance::~CIFCInstance()
 {
 	Clean();
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCObject::getInstance() const
+int_t CIFCInstance::getInstance() const
 {
 	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CIFCObject::getGUID() const
+const wchar_t* CIFCInstance::getGUID() const
 {
 	return m_strGUID.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCObject::getEntity() const
+int_t CIFCInstance::getEntity() const
 {
 	return m_iEntity;
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CIFCObject::getEntityName() const
+const wchar_t* CIFCInstance::getEntityName() const
 {
 	return m_strEntity.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCObject::expressID() const
+int_t CIFCInstance::expressID() const
 {
 	return m_iExpressID;
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCObject::parentExpressID() const
+int_t CIFCInstance::parentExpressID() const
 {
 	return m_iParentExpressID;
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t& CIFCObject::ID()
+int_t& CIFCInstance::ID()
 {
 	return m_iID;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCObject::hasGeometry() const
+bool CIFCInstance::hasGeometry() const
 {
 	return (m_pVertexBuffer != NULL) && (m_pVertexBuffer->size() > 0);
 }
 
-CIFCModel * CIFCObject::GetModel() const
+CIFCModel * CIFCInstance::GetModel() const
 {
-	return m_pIFCModel;
+	return m_pModel;
 }
 
 // ------------------------------------------------------------------------------------------------
-float* CIFCObject::getVertices()
+float* CIFCInstance::getVertices()
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -133,7 +133,7 @@ float* CIFCObject::getVertices()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCObject::getVerticesCount()
+int_t CIFCInstance::getVerticesCount()
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -144,13 +144,13 @@ int_t CIFCObject::getVerticesCount()
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CIFCObject::getVertexLength() const
+int64_t CIFCInstance::getVertexLength() const
 {
 	return VERTEX_LENGTH;
 }
 
 // ------------------------------------------------------------------------------------------------
-int32_t* CIFCObject::getIndices() const
+int32_t* CIFCInstance::getIndices() const
 {
 	if (m_pIndexBuffer != nullptr)
 	{
@@ -161,7 +161,7 @@ int32_t* CIFCObject::getIndices() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CIFCObject::getIndicesCount() const
+int64_t CIFCInstance::getIndicesCount() const
 {
 	if (m_pIndexBuffer != nullptr)
 	{
@@ -172,102 +172,102 @@ int64_t CIFCObject::getIndicesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t & CIFCObject::conceptualFacesCount()
+int_t & CIFCInstance::conceptualFacesCount()
 {
 	return m_iConceptualFacesCount;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCObject::getTriangles() const
+const vector<_primitives >& CIFCInstance::getTriangles() const
 {
 	return m_vecTriangles;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCObject::getLines() const
+const vector<_primitives >& CIFCInstance::getLines() const
 {
 	return m_vecLines;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCObject::getPoints() const
+const vector<_primitives >& CIFCInstance::getPoints() const
 {
 	return m_vecPoints;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCObject::getConcFacesPolygons() const
+const vector<_primitives >& CIFCInstance::getConcFacesPolygons() const
 {
 	return m_vecConcFacePolygons;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CIFCObject::concFacesCohorts()
+vector<_facesCohort*>& CIFCInstance::concFacesCohorts()
 {
 	return m_vecConcFacesCohorts;
 }
 
-vector<_cohort*>& CIFCObject::concFacePolygonsCohorts()
+vector<_cohort*>& CIFCInstance::concFacePolygonsCohorts()
 {
 	return m_vecConcFacePolygonsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CIFCObject::linesCohorts()
+vector<_cohort*>& CIFCInstance::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CIFCObject::pointsCohorts()
+vector<_facesCohort*>& CIFCInstance::pointsCohorts()
 {
 	return m_vecPointsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool&  CIFCObject::referenced()
+bool&  CIFCInstance::referenced()
 {
 	return m_bReferenced;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCObject::getEnable() const
+bool CIFCInstance::getEnable() const
 {
 	return m_bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::setEnable(bool bEnable)
+void CIFCInstance::setEnable(bool bEnable)
 {
 	m_bEnable = bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::setSelected(bool bSelected)
+void CIFCInstance::setSelected(bool bSelected)
 {
 	m_bSelected = bSelected;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCObject::getSelected() const
+bool CIFCInstance::getSelected() const
 {
 	return m_bSelected;
 }
 
 // ------------------------------------------------------------------------------------------------
-GLuint & CIFCObject::VBO()
+GLuint & CIFCInstance::VBO()
 {
 	return m_iVBO;
 }
 
 // ------------------------------------------------------------------------------------------------
-GLsizei & CIFCObject::VBOOffset()
+GLsizei & CIFCInstance::VBOOffset()
 {
 	return m_iVBOOffset;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
+void CIFCInstance::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
 {
 	
 	if (!hasGeometry())
@@ -371,7 +371,7 @@ void CIFCObject::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
+void CIFCInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
 {
 	if (!hasGeometry())
 	{
@@ -401,7 +401,7 @@ void CIFCObject::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYm
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCObject::Clean()
+void CIFCInstance::Clean()
 {
 	delete m_pVertexBuffer;
 	m_pVertexBuffer = NULL;

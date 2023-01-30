@@ -270,11 +270,11 @@ BOOL COpenGLIFCView::ArePointsShown()
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
-	auto& mapIFCObjects = pModel->GetIFCObjects();
+	auto& mapInstances = pModel->GetInstances();
 
 	// VBO
 	GLuint iVerticesCount = 0;
-	vector<CIFCObject*> vecInstancesCohort;
+	vector<CIFCInstance*> vecInstancesCohort;
 
 	// IBO - Conceptual faces
 	GLuint iConcFacesIndicesCount = 0;
@@ -292,10 +292,10 @@ BOOL COpenGLIFCView::ArePointsShown()
 	GLuint iPointsIndicesCount = 0;
 	vector<_cohort*> vecPointsCohorts;
 
-	for (auto itIFCObject = mapIFCObjects.begin(); itIFCObject != mapIFCObjects.end(); itIFCObject++)
+	for (auto itIinstance = mapInstances.begin(); itIinstance != mapInstances.end(); itIinstance++)
 	{
-		auto pIFCObject = itIFCObject->second;
-		if (pIFCObject->getVerticesCount() == 0)
+		auto pInstance = itIinstance->second;
+		if (pInstance->getVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -307,7 +307,7 @@ BOOL COpenGLIFCView::ArePointsShown()
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pIFCObject->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -323,9 +323,9 @@ BOOL COpenGLIFCView::ArePointsShown()
 		/*
 		* IBO - Conceptual faces
 		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pIFCObject->concFacesCohorts().size(); iFacesCohort++)
+		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pIFCObject->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -338,16 +338,16 @@ BOOL COpenGLIFCView::ArePointsShown()
 				vecConcFacesCohorts.clear();
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pIFCObject->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pIFCObject->concFacesCohorts()[iFacesCohort]);
+			iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
 		}
 
 		/*
 		* IBO - Conceptual face polygons
 		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pIFCObject->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pIFCObject->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -360,16 +360,16 @@ BOOL COpenGLIFCView::ArePointsShown()
 				vecConcFacePolygonsCohorts.clear();
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pIFCObject->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pIFCObject->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
 		}
 
 		/*
 		* IBO - Lines
 		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pIFCObject->linesCohorts().size(); iLinesCohort++)
+		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pIFCObject->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -382,16 +382,16 @@ BOOL COpenGLIFCView::ArePointsShown()
 				vecLinesCohorts.clear();
 			}
 
-			iLinesIndicesCount += (GLsizei)pIFCObject->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pIFCObject->linesCohorts()[iLinesCohort]);
+			iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
 		}
 
 		/*
 		* IBO - Points
 		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pIFCObject->pointsCohorts().size(); iPointsCohort++)
+		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pIFCObject->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
@@ -404,13 +404,13 @@ BOOL COpenGLIFCView::ArePointsShown()
 				vecPointsCohorts.clear();
 			}
 
-			iPointsIndicesCount += (GLsizei)pIFCObject->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pIFCObject->pointsCohorts()[iPointsCohort]);
+			iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pIFCObject->getVerticesCount();
-		vecInstancesCohort.push_back(pIFCObject);
-	} // for (; itIFCObjects != ...
+		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
+		vecInstancesCohort.push_back(pInstance);
+	} // for (; itIinstances != ...
 
 	/******************************************************************************************
 	* Geometry
@@ -1136,7 +1136,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		auto& mapInstances = pModel->GetIFCObjects();
+		auto& mapInstances = pModel->GetInstances();
 		for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
 		{
 			auto pInstance = itInstance->second;
@@ -1293,11 +1293,11 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			m_pInstanceSelectionFrameBuffer->unbind();
 
-			CIFCObject* pPointedInstance = NULL;
+			CIFCInstance* pPointedInstance = NULL;
 			if (arPixels[3] != 0)
 			{
 				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				pPointedInstance = pModel->getIFCObjectByID(iObjectID);
+				pPointedInstance = pModel->GetInstanceByID(iObjectID);
 				ASSERT(pPointedInstance != NULL);
 			}
 

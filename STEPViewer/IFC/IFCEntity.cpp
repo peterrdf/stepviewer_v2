@@ -145,9 +145,9 @@ int_t CIFCEntity::getInstancesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCEntity::addSubType(CIFCEntity * pIFCEntity)
+void CIFCEntity::addSubType(CIFCEntity * pEntity)
 {
-	m_vecSubTypes.push_back(pIFCEntity);
+	m_vecSubTypes.push_back(pEntity);
 }
 
 // ------------------------------------------------------------------------------------------------

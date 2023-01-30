@@ -75,14 +75,14 @@ const vector<int64_t> & CIFCClass::getAncestorClasses()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCClass::AddPropertyRestriction(CIFCPropertyRestriction * pIFCPropertyRestriction)
+void CIFCClass::AddPropertyRestriction(CIFCPropertyRestriction * pPropertyRestriction)
 {
-	assert(pIFCPropertyRestriction != NULL);
+	assert(pPropertyRestriction != NULL);
 
 	char * szPropertyName = NULL;
-	GetNameOfProperty(pIFCPropertyRestriction->getPropertyInstance(), &szPropertyName);
+	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
 
-	m_vecPropertyRestrictions.push_back(pIFCPropertyRestriction);
+	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
 // ------------------------------------------------------------------------------------------------
