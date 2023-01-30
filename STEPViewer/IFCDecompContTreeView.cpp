@@ -295,23 +295,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 				pController->SelectInstance(this, nullptr);
 			} // if ((GetKeyState(VK_CONTROL) & 0x8000) && ...
-		} // if (pInstance != NULL)
-		else
-		{
-			// #####
-			/*
-			* IFC Object item
-			*/
-			//HTREEITEM hChild = (*m_pTreeView).GetChildItem(hItem);
-			//if ((hChild != NULL) && ((*m_pTreeView).GetItemText(hChild) == ITEM_GEOMETRY))
-			//{
-			//	CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hChild);
-			//	if (pInstance != NULL && pInstance->hasGeometry() && (pInstance->GetModel() == pController->GetActiveModel()))
-			//	{
-			//		pController->FireOnMouseOverInstance(this, pInstance->expressID());
-			//	}
-			//} // if ((hChild != NULL) && ...
-		} // else if (pInstance != NULL)		
+		} // if (pInstance != NULL)		
 	} // if ((hItem != NULL) && ...
 }
 
