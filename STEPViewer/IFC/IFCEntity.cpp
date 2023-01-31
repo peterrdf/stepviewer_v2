@@ -17,8 +17,8 @@ CIFCEntity::CIFCEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_
 	, m_vecInstances()
 {
 	// Name ***************************************************************************************
-	wchar_t	* szName = NULL;
-	engiGetEntityName(m_iEntity, sdaiUNICODE, (char **)&szName);
+	wchar_t* szName = NULL;
+	engiGetEntityName(m_iEntity, sdaiUNICODE, (char**)&szName);
 	// ********************************************************************************************
 
 	m_strName = szName;
@@ -34,15 +34,15 @@ CIFCEntity::CIFCEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_
 	// ********************************************************************************************
 
 	// Instances **********************************************************************************
-	int_t * ifcObjects = sdaiGetEntityExtent(iModel, m_iEntity);
-	int_t ifcObjectsCount = sdaiGetMemberCount(ifcObjects);
+	int_t* piInstances = sdaiGetEntityExtent(iModel, m_iEntity);
+	iInstancesCount = sdaiGetMemberCount(piInstances);
 
 	int_t iIndex = 0;
-	while (iIndex < ifcObjectsCount) {
-		int_t ifcObject = 0;
-		engiGetAggrElement(ifcObjects, iIndex++, sdaiINSTANCE, &ifcObject);
+	while (iIndex < iInstancesCount) {
+		int_t iInstance = 0;
+		engiGetAggrElement(piInstances, iIndex++, sdaiINSTANCE, &iInstance);
 
-		m_vecInstances.push_back(ifcObject);
+		m_vecInstances.push_back(iInstance);
 	}
 	// ********************************************************************************************
 }

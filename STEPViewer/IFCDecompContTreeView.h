@@ -29,12 +29,12 @@ private: // Members
 	map<HTREEITEM, CIFCModel*> m_mapModelHTREEITEM;
 
 	// --------------------------------------------------------------------------------------------
-	// CIFCInstance * : HTREEITEM
+	// CIFCInstance* : HTREEITEM
 	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;
 
 	// --------------------------------------------------------------------------------------------
-	// CIFCInstance * : HTREEITEM
-	map<CIFCInstance*, HTREEITEM> m_mapSelectedIFCObjects;
+	// CIFCInstance* : HTREEITEM
+	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 
 	// --------------------------------------------------------------------------------------------
 	// Cache; temp variable
@@ -127,23 +127,23 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// IsDecomposedBy
-	void LoadIsDecomposedBy(CIFCModel* pModel, int64_t iIFCObjectInstance, HTREEITEM hParent);
+	void LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
 	// ContainsElements
-	void LoadContainsElements(CIFCModel* pModel, int64_t iIFCObjectInstance, HTREEITEM hParent);
+	void LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
 	// Loads an IFC object
-	void LoadObject(CIFCModel* pModel, int64_t iIFCObjectInstance, HTREEITEM hParent);
+	void LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
 	// Check for properties
-	bool HasProperties(CIFCModel* pModel, int64_t iIFCObjectInstance);
+	bool HasProperties(CIFCModel* pModel, int64_t iInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties
-	void LoadProperties(CIFCModel* pModel, int64_t iIFCObjectInstance, HTREEITEM hParent);
+	void LoadProperties(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties
@@ -198,15 +198,15 @@ private: // Methods
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
-	// Updates the state of the tree items and IFCObject-s 
+	// Updates the state of the tree items
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
-	// Updates the state of the tree items and IFCObject-s
+	// Updates the state of the tree items
 	void ClickItem_UpdateParent(HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
-	// All IFCObject-s have been deselected
+	// All instances have been deselected
 	void UnselectAllItems();
 
 	// --------------------------------------------------------------------------------------------

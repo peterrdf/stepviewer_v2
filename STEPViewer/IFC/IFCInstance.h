@@ -1,5 +1,5 @@
-#ifndef IFCOBJECT_H
-#define IFCOBJECT_H
+#ifndef IFCINSTANCE_H
+#define IFCINSTANCE_H
 
 #include "_oglUtils.h"
 
@@ -122,4 +122,4 @@ private: // Methods
 	void Clean();
 };
 
-#endif // IFCOBJECT_H
+#endif // IFCINSTANCE_H

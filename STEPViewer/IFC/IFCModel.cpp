@@ -8,7 +8,7 @@
 #include <math.h>
 
 // ------------------------------------------------------------------------------------------------
-/*static*/ int_t CIFCModel::s_iObjectID = 1;
+/*static*/ int_t CIFCModel::s_iInstanceID = 1;
 
 // ------------------------------------------------------------------------------------------------
 CIFCModel::CIFCModel()
@@ -178,34 +178,34 @@ void CIFCModel::Clean()
 		m_iModel = 0;
 	}
 
-	for (size_t iIFCObject = 0; iIFCObject < m_vecInstances.size(); iIFCObject++)
+	for (auto pInstance : m_vecInstances)
 	{
-		delete m_vecInstances[iIFCObject];
+		delete pInstance;
 	}
 	m_vecInstances.clear();
 
-	map<wstring, CIFCUnit*>::iterator itUnits = m_mapUnits.begin();
+	auto itUnits = m_mapUnits.begin();
 	for (; itUnits != m_mapUnits.end(); itUnits++)
 	{
 		delete itUnits->second;
 	}
 	m_mapUnits.clear();
 
-	map<int_t, CIFCEntity*>::iterator itEntities = m_mapEntities.begin();
+	auto itEntities = m_mapEntities.begin();
 	for (; itEntities != m_mapEntities.end(); itEntities++)
 	{
 		delete itEntities->second;
 	}
 	m_mapEntities.clear();
 
-	map<int64_t, CIFCClass*>::iterator itClass = m_mapClasses.begin();
+	auto itClass = m_mapClasses.begin();
 	for (; itClass != m_mapClasses.end(); itClass++)
 	{
 		delete itClass->second;
 	}
 	m_mapClasses.clear();
 
-	map<int64_t, CIFCProperty*>::iterator itProperty = m_mapProperties.begin();
+	auto itProperty = m_mapProperties.begin();
 	for (; itProperty != m_mapProperties.end(); itProperty++)
 	{
 		delete itProperty->second;
@@ -385,10 +385,10 @@ const map<int64_t, CIFCProperty *>& CIFCModel::GetProperties() const
 // ------------------------------------------------------------------------------------------------
 CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 {
-	map<int_t, CIFCInstance *>::iterator itID2IFCObject = m_mapID2Instance.find(iID);
-	if (itID2IFCObject != m_mapID2Instance.end())
+	auto itID2Instance = m_mapID2Instance.find(iID);
+	if (itID2Instance != m_mapID2Instance.end())
 	{
-		return itID2IFCObject->second;
+		return itID2Instance->second;
 	}
 
 	return NULL;
@@ -397,10 +397,10 @@ CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 // ------------------------------------------------------------------------------------------------
 CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 {
-	auto itExpressID2IFCObject = m_mapExpressID2Instance.find(iExpressID);
-	if (itExpressID2IFCObject != m_mapExpressID2Instance.end())
+	auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
+	if (itExpressID2Instance != m_mapExpressID2Instance.end())
 	{
-		return itExpressID2IFCObject->second;
+		return itExpressID2Instance->second;
 	}
 
 	return NULL;
@@ -409,10 +409,10 @@ CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 // --------------------------------------------------------------------------------------------
 CIFCInstance* CIFCModel::GetInstanceByGUID(const wstring & GUID)
 {
-	auto itGUID2IFCObject = m_mapGUID2Instance.find(GUID);
-	if (itGUID2IFCObject != m_mapGUID2Instance.end())
+	auto itGUID2Instance = m_mapGUID2Instance.find(GUID);
+	if (itGUID2Instance != m_mapGUID2Instance.end())
 	{
-		return itGUID2IFCObject->second;
+		return itGUID2Instance->second;
 	}
 
 	return NULL;
@@ -782,24 +782,24 @@ void CIFCModel::LoadSchema()
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
-	int_t * iIFCObjectInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
+	int_t * iIFCInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
 
-	int_t iIFCObjectInstancesCount = sdaiGetMemberCount(iIFCObjectInstances);
-	if (iIFCObjectInstancesCount == 0)
+	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
+	if (iIFCInstancesCount == 0)
     {
         return;
     }	
 
-	for (int_t i = 0; i < iIFCObjectInstancesCount; ++i)
+	for (int_t i = 0; i < iIFCInstancesCount; ++i)
 	{
 		int_t iInstance = 0;
-		engiGetAggrElement(iIFCObjectInstances, i, sdaiINSTANCE, &iInstance);
+		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
 		wchar_t	* szInstanceGUIDW = nullptr;
 		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
 		CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
-		pInstance->ID() = s_iObjectID++;
+		pInstance->ID() = s_iInstanceID++;
 
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
@@ -832,29 +832,29 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 		iCircleSegments = 6;
 	}
 
-	int_t* ifcObjectInstances = sdaiGetEntityExtent(m_iModel, iParentEntity);
-	int_t noIfcObjectIntances = sdaiGetMemberCount(ifcObjectInstances);
+	int_t* piInstances = sdaiGetEntityExtent(m_iModel, iParentEntity);
+	int_t iIntancesCount = sdaiGetMemberCount(piInstances);
 
-	if (noIfcObjectIntances != 0)
+	if (iIntancesCount != 0)
 	{
-		char * szParenEntityName = NULL;
+		char* szParenEntityName = NULL;
 		engiGetEntityName(iParentEntity, sdaiSTRING, &szParenEntityName);
 
-		wchar_t	* szParentEntityNameW = NULL;
+		wchar_t* szParentEntityNameW = NULL;
 		engiGetEntityName(iParentEntity, sdaiUNICODE, (char **)&szParentEntityNameW);
 
 		RetrieveObjects(iParentEntity, szParenEntityName, szParentEntityNameW, iCircleSegments);
 
 		if (iParentEntity == m_ifcProjectEntity) {
-			for (int_t i = 0; i < noIfcObjectIntances; i++) {
-				int_t ifcObjectInstance = 0;
-				engiGetAggrElement(ifcObjectInstances, i, sdaiINSTANCE, &ifcObjectInstance);
+			for (int_t i = 0; i < iIntancesCount; i++) {
+				int_t iInstance = 0;
+				engiGetAggrElement(piInstances, i, sdaiINSTANCE, &iInstance);
 
-				wchar_t	* szInstanceGUIDW = nullptr;
-				sdaiGetAttrBN(ifcObjectInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
+				wchar_t* szInstanceGUIDW = nullptr;
+				sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iParentEntity, szParentEntityNameW, ifcObjectInstance, iCircleSegments);
-				pInstance->ID() = s_iObjectID++;
+				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iParentEntity, szParentEntityNameW, iInstance, iCircleSegments);
+				pInstance->ID() = s_iInstanceID++;
 
 				CString strEntity = szParentEntityNameW;
 				strEntity.MakeUpper();
@@ -862,13 +862,13 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 				pInstance->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 
 				m_vecInstances.push_back(pInstance);
-				m_mapInstances[ifcObjectInstance] = pInstance;
+				m_mapInstances[iInstance] = pInstance;
 			}
 		}
-	} // if (noIfcObjectIntances != 0)
+	} // if (iIntancesCount != 0)
 
-	noIfcObjectIntances = engiGetEntityCount(m_iModel);
-	for (int_t i = 0; i < noIfcObjectIntances; i++)
+	iIntancesCount = engiGetEntityCount(m_iModel);
+	for (int_t i = 0; i < iIntancesCount; i++)
 	{
 		int_t ifcEntity = engiGetEntityElement(m_iModel, i);
 		if (engiGetEntityParent(ifcEntity) == iParentEntity)
@@ -878,29 +878,8 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 	}
 }
 
-bool	EQUALSUC(const wchar_t * strI, const wchar_t * strII)
-{
-	if (strI && strII) {
-		int i = 0;
-		while (strI[i]) {
-			wchar_t	strI_UC = (strI[i] >= 'a' && strI[i] <= 'z') ? strI[i] + 'A' - 'a' : strI[i],
-					strII_UC = (strII[i] >= 'a' && strII[i] <= 'z') ? strII[i] + 'A' - 'a' : strII[i];
-			if (strI_UC != strII_UC) {
-				return	false;
-			}
-			i++;
-		}
-
-		if (strII[i] == 0) {
-			return	true;
-		}
-	}
-
-	return	false;
-}
-
 // ------------------------------------------------------------------------------------------------
-CIFCInstance * CIFCModel::RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments)
+CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments)
 {
 	/*
 	* Set up format

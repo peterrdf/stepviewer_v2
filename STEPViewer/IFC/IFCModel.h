@@ -77,19 +77,19 @@ private: // Members
 	vector<CIFCInstance*> m_vecInstances;
 
 	// --------------------------------------------------------------------------------------------
-	// Instance : IFCObject *
+	// Handle : CIFCInstance*
 	map<int_t, CIFCInstance*> m_mapInstances;
 
 	// --------------------------------------------------------------------------------------------
-	// ID (1-based) : IFCObject *
+	// ID (1-based) : CIFCInstance*
 	map<int_t, CIFCInstance*> m_mapID2Instance;
 
 	// --------------------------------------------------------------------------------------------
-	// ExpressID : IFCObject *
+	// ExpressID : CIFCInstance*
 	map<int64_t, CIFCInstance*> m_mapExpressID2Instance;
 
 	// --------------------------------------------------------------------------------------------
-	// GUID : IFCObject *
+	// GUID : CIFCInstance*
 	map<wstring, CIFCInstance*> m_mapGUID2Instance;
 
 	// ------------------------------------------------------------------------
@@ -110,7 +110,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Unique index for each object
-	static int_t s_iObjectID;
+	static int_t s_iInstanceID;
 
 public: // Methods
 
