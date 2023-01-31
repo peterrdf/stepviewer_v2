@@ -48,7 +48,6 @@ CIFCModel::CIFCModel()
 	, m_mapEntities()
 	, m_mapClasses()
 	, m_mapProperties()
-	, m_setSelectedIFCObjects()
 {
 }
 
@@ -417,12 +416,6 @@ CIFCInstance* CIFCModel::GetInstanceByGUID(const wstring & GUID)
 	}
 
 	return NULL;
-}
-
-// ------------------------------------------------------------------------------------------------
-const set<int64_t>& CIFCModel::GetSelectedInstances() const
-{
-	return m_setSelectedIFCObjects;
 }
 
 // ------------------------------------------------------------------------------------------------

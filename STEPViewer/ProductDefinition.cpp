@@ -61,7 +61,7 @@ void CProductDefinition::Calculate()
 	mask += flagbit8;        // TRIANGLES
 	mask += flagbit9;        // LINES
 	mask += flagbit10;       // POINTS
-	mask += flagbit12;       // WIREFRAMES
+	mask += flagbit12;       // FACE POLYGON
 	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
 	mask += flagbit24;		 //	AMBIENT
 	mask += flagbit25;		 //	DIFFUSE
@@ -75,7 +75,7 @@ void CProductDefinition::Calculate()
 	setting += flagbit8;     // TRIANGLES ON
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
-	setting += 0;			 // WIREFRAMES OFF
+	setting += 0;			 // FACE POLYGON OFF
 	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
 	setting += flagbit24;	 //	AMBIENT
 	setting += flagbit25;	 //	DIFFUSE

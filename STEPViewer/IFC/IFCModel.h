@@ -109,10 +109,6 @@ private: // Members
 	map<int64_t, CIFCProperty*> m_mapProperties;
 
 	// --------------------------------------------------------------------------------------------
-	// Selection
-	set<int64_t> m_setSelectedIFCObjects;
-
-	// --------------------------------------------------------------------------------------------
 	// Unique index for each object
 	static int_t s_iObjectID;
 
@@ -201,10 +197,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	CIFCInstance* GetInstanceByGUID(const wstring & GUID);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const set<int64_t>& GetSelectedInstances() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties
