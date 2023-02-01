@@ -95,9 +95,13 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		return;
 	}
 
+	// Single instance selection
 	UnselectAllItems();
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? 
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : 
+		nullptr;
+
 	if (pSelectedInstance != nullptr)
 	{
 		auto itIInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
@@ -108,7 +112,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 		(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
 		(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
-	} // if (pSelectedInstance != nullptr)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -178,7 +182,12 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	HTREEITEM hItem = (*m_pTreeView).HitTest(point, &uFlags);
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	if(pController == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	/*
 	* TVHT_ONITEMICON
@@ -251,38 +260,26 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	*/
 	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
-		auto pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hItem);
-		if (pInstance != NULL)
+		// Single instance selection
+		UnselectAllItems();
+
+		auto pSelectedInstance = (*m_pTreeView).GetItemData(hItem) != NULL ?
+			(CIFCInstance*)(*m_pTreeView).GetItemData(hItem) :
+			nullptr;
+
+		pController->SelectInstance(this, pSelectedInstance);
+
+		if (pSelectedInstance != nullptr)
 		{
-			/*
-			* geometry item
-			*/
-			if ((GetKeyState(VK_CONTROL) & 0x8000) && pInstance->hasGeometry())
-			{
-				pInstance->setSelected(!pInstance->getSelected());
+			auto itIInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
+			ASSERT(itIInstance2Item != m_mapInstance2Item.end());
 
-				auto itIInstance2Item = m_mapInstance2Item.find(pInstance);
-				ASSERT(itIInstance2Item != m_mapInstance2Item.end());
+			ASSERT(m_mapSelectedInstances.find(pSelectedInstance) == m_mapSelectedInstances.end());
+			m_mapSelectedInstances[pSelectedInstance] = itIInstance2Item->second;
 
-				if (!pInstance->getSelected())
-				{
-					// Selected => Unselected
-					auto itSelectedIInstance = m_mapSelectedInstances.find(pInstance);
-					ASSERT(itSelectedIInstance != m_mapSelectedInstances.end());
-					m_mapSelectedInstances.erase(itSelectedIInstance);
-				}
-				else
-				{
-					// Unselected => Selected
-					ASSERT(m_mapSelectedInstances.find(pInstance) == m_mapSelectedInstances.end());
-					m_mapSelectedInstances[pInstance] = itIInstance2Item->second;
-				}
-
-				(*m_pTreeView).SetItemState(itIInstance2Item->second, pInstance->getSelected() ? TVIS_BOLD : 0, TVIS_BOLD);
-
-				pController->SelectInstance(this, nullptr);
-			} // if ((GetKeyState(VK_CONTROL) & 0x8000) && ...
-		} // if (pInstance != NULL)		
+			(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
+			(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
+		}
 	} // if ((hItem != NULL) && ...
 }
 

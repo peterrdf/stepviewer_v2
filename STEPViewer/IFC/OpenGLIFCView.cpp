@@ -768,7 +768,27 @@ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		return;
 	}
 
-	m_pWnd->RedrawWindow();
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
+		nullptr;
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_pSelectedInstance = pSelectedInstance;
+
+#ifdef _LINUX
+		m_pWnd->Refresh(false);
+#else
+		m_pWnd->RedrawWindow();
+#endif // _LINUX
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

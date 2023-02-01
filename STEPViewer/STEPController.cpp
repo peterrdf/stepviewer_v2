@@ -36,7 +36,7 @@ void CSTEPController::SetModel(CSTEPModelBase* pModel)
 
 	m_bUpdatingModel = true;
 
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnModelChanged();
@@ -76,7 +76,7 @@ void CSTEPController::ZoomToInstance(int64_t iInstanceID)
 
 	m_pModel->ZoomToInstance(iInstanceID);
 
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnWorldDimensionsChanged();
@@ -89,7 +89,7 @@ void CSTEPController::ScaleAndCenter()
 	ASSERT(FALSE); // OBSOLETE
 	/*m_pModel->ScaleAndCenter();
 
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnWorldDimensionsChanged();
@@ -112,7 +112,7 @@ void CSTEPController::SelectInstance(CSTEPView* pSender, CSTEPInstance* pInstanc
 
 	m_pSelectedInstance = pInstance;
 
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstanceSelected(pSender);
@@ -136,7 +136,7 @@ void CSTEPController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
 
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnVisibleValuesCountLimitChanged();
@@ -158,7 +158,7 @@ void CSTEPController::SetScaleAndCenter(BOOL bScaleAndCenter)
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 {
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstancesEnabledStateChanged(pSender);
@@ -168,7 +168,7 @@ void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance)
 {
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstanceEnabledStateChanged(pSender, pProductInstance);
@@ -178,7 +178,7 @@ void CSTEPController::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProduct
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance)
 {
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnDisableAllButThis(pSender, pProductInstance);
@@ -188,7 +188,7 @@ void CSTEPController::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* 
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::OnEnableAllInstances(CSTEPView* pSender)
 {
-	set<CSTEPView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnEnableAllInstances(pSender);

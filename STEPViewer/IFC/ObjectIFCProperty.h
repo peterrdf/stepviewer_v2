@@ -15,7 +15,6 @@ private: // Members
 	// Restrictions
 	vector<int64_t> m_vecRestrictions;
 
-
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
@@ -28,6 +27,6 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const vector<int64_t> & getRestrictions();
+	const vector<int64_t>& getRestrictions();
 };
 

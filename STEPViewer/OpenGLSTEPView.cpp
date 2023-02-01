@@ -979,16 +979,24 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CSTEPView * pSender)
+/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CSTEPView* pSender)
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	ASSERT(GetController() != NULL);
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? 
+		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : 
+		nullptr;
+
 	if (m_pSelectedInstance != pSelectedInstance)
 	{
 		m_pSelectedInstance = pSelectedInstance;
