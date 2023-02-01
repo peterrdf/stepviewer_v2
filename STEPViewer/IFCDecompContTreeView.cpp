@@ -87,14 +87,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		return;
 	}
 
-	auto pModel = pController->GetModel()->As<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
 	// Single instance selection
 	UnselectAllItems();
 
