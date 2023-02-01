@@ -1983,8 +1983,13 @@ void CIFCDecompContTreeView::ResetView()
 
 	(*m_pTreeView).DeleteAllItems();
 
-	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	if (pController->GetModel() == nullptr)
 	{

@@ -741,12 +741,57 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+/*virtual*/ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	UNREFERENCED_PARAMETER(nFlags);
 	UNREFERENCED_PARAMETER(pt);
 
 	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	UNREFERENCED_PARAMETER(nRepCnt);
+	UNREFERENCED_PARAMETER(nFlags);
+
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	switch (nChar)
+	{
+		case VK_UP:
+		{
+			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_DOWN:
+		{
+			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_LEFT:
+		{
+			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_RIGHT:
+		{
+			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+	} // switch (nChar)
 }
 
 // ------------------------------------------------------------------------------------------------

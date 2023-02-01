@@ -93,6 +93,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_DROPFILES()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
@@ -337,4 +339,22 @@ void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 
 	// Free the memory block containing the dropped-file information 
 	DragFinish(hDropInfo);
+}
+
+BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
+	}
+
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+void CMySTEPViewerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
+	}
 }

@@ -68,8 +68,9 @@ public: // Methods
 	// COpenGLView
 	virtual void Load();
 	virtual void Draw(CDC * pDC);
-	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	
 	// CSTEPView
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);

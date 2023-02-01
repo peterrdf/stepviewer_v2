@@ -782,6 +782,51 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	UNREFERENCED_PARAMETER(nRepCnt);
+	UNREFERENCED_PARAMETER(nFlags);
+
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	switch (nChar)
+	{
+		case VK_UP:
+		{
+			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_DOWN:
+		{
+			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_LEFT:
+		{
+			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_RIGHT:
+		{
+			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+	} // switch (nChar)
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	CSTEPController* pController = GetController();

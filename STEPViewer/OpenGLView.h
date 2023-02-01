@@ -71,6 +71,9 @@ public: // Methods
 	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) PURE;
 
 	// --------------------------------------------------------------------------------------------
+	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) PURE;
+
+	// --------------------------------------------------------------------------------------------
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 };
 
