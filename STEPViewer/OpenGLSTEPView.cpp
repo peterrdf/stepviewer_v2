@@ -23,7 +23,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 #endif // _LINUX
 	: _oglRenderer()
 	, COpenGLView()
-	, m_pWnd(pWnd)
 	, m_bShowFaces(TRUE)
 	, m_bShowFacesPolygons(FALSE)
 	, m_bShowConceptualFacesPolygons(TRUE)
@@ -43,7 +42,7 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 	ASSERT(m_pWnd != nullptr);
 
 	_initialize(
-		*(m_pWnd->GetDC()),
+		pWnd,
 		16,
 		IDR_TEXTFILE_VERTEX_SHADER2,
 		IDR_TEXTFILE_FRAGMENT_SHADER2,
@@ -91,7 +90,7 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 		ANTIALIASED_QUALITY,            // Output Quality
 		FF_DONTCARE | VARIABLE_PITCH,   // Family And Pitch
 		(LPCWSTR)L"Arial");             // Font Name
-	ASSERT(m_hFont != NULL);
+	ASSERT(m_hFont != nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -115,7 +114,7 @@ void COpenGLSTEPView::ShowFaces(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -133,7 +132,7 @@ void COpenGLSTEPView::ShowFacesPolygons(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -151,7 +150,7 @@ void COpenGLSTEPView::ShowConceptualFacesPolygons(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -169,7 +168,7 @@ void COpenGLSTEPView::ShowLines(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -187,7 +186,7 @@ void COpenGLSTEPView::SetLineWidth(GLfloat fWidth)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -205,7 +204,7 @@ void COpenGLSTEPView::ShowPoints(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -223,7 +222,7 @@ void COpenGLSTEPView::SetPointSize(GLfloat fSize)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -247,11 +246,11 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 	m_oglBuffers.clear();
 
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
-	m_pPointedInstance = NULL;
-	m_pSelectedInstance = NULL;
+	m_pPointedInstance = nullptr;
+	m_pSelectedInstance = nullptr;
 
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -531,7 +530,7 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -542,10 +541,10 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 /*virtual*/ void COpenGLSTEPView::Draw(CDC * pDC)
 #endif // _LINUX
 {
-	VERIFY(pDC != NULL);
+	VERIFY(pDC != nullptr);
 
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -728,10 +727,10 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
 #else
-                m_pWnd->RedrawWindow();
+                _redraw();
 #endif // _LINUX
 
-				ASSERT(GetController() != NULL);
+				ASSERT(GetController() != nullptr);
 
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
@@ -796,7 +795,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		{
 			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -804,7 +803,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		{
 			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -812,7 +811,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		{
 			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -820,7 +819,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		{
 			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 	} // switch (nChar)
@@ -830,7 +829,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 /*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -959,7 +958,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 /*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()
 {
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1001,7 +1000,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -1019,7 +1018,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -1049,7 +1048,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #ifdef _LINUX
         m_pWnd->Refresh(false);
 #else
-        m_pWnd->RedrawWindow();
+        _redraw();
 #endif // _LINUX
 	}
 }
@@ -1071,12 +1070,12 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -1101,7 +1100,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnControllerChanged()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
 }
@@ -1115,7 +1114,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 	}
 
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1250,7 +1249,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 	}
 
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1353,7 +1352,7 @@ void COpenGLSTEPView::DrawLines()
 	}
 
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1457,7 +1456,7 @@ void COpenGLSTEPView::DrawPoints()
 	//}
 
 	//CSTEPController* pController = GetController();
-	//ASSERT(pController != NULL);
+	//ASSERT(pController != nullptr);
 
 	//if (pController->GetModel() == nullptr)
 	//{
@@ -1606,7 +1605,7 @@ void COpenGLSTEPView::DrawPoints()
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
 	CSTEPController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1785,7 +1784,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	CSTEPController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1851,7 +1850,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			m_pInstanceSelectionFrameBuffer->unbind();
 
-			CProductInstance * pPointedInstance = NULL;
+			CProductInstance * pPointedInstance = nullptr;
 
 			if (arPixels[3] != 0)
 			{
@@ -1861,7 +1860,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 					arPixels[2/*B*/];
 
 				pPointedInstance = pModel->getProductInstanceByID(iObjectID);
-				ASSERT(pPointedInstance != NULL);
+				ASSERT(pPointedInstance != nullptr);
 			} // if (arPixels[3] != 0)
 
 			if (m_pPointedInstance != pPointedInstance)
@@ -1871,7 +1870,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
 #else
-                m_pWnd->RedrawWindow();
+                _redraw();
 #endif // _LINUX
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
@@ -1940,7 +1939,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
         m_pWnd->Refresh(false);
 #else
-        m_pWnd->RedrawWindow();
+        _redraw();
 #endif // _LINUX
 
 		m_ptPrevMousePosition = point;
@@ -1981,7 +1980,7 @@ void COpenGLSTEPView::Rotate(float fXSpin, float fYSpin)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX	
 }
 
@@ -1993,7 +1992,7 @@ void COpenGLSTEPView::Zoom(float fZTranslation)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 

@@ -24,7 +24,7 @@ public: // Methods
 	// CSTEPView
 	virtual void OnControllerChanged()
 	{
-		ASSERT(GetController() != NULL);
+		ASSERT(GetController() != nullptr);
 
 		GetController()->RegisterView(this);
 	}

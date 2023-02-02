@@ -16,12 +16,7 @@ class COpenGLIFCView
 	, public COpenGLView
 {
 
-private: // Members	
-	
-	CWnd* m_pWnd;
-
-	// Projection
-	enumProjection  m_enProjection;
+private: // Members
 		
 	// UI
 	BOOL m_bShowFaces;	
@@ -47,13 +42,6 @@ public: // Methods
 	
 	COpenGLIFCView(CWnd * pWnd);
 	virtual ~COpenGLIFCView();
-
-	// Projection
-	enumProjection GetProjection() const;
-	void SetProjection(enumProjection enProjection);
-
-	// View
-	void SetView(enumView enView);
 
 	// UI
 	void ShowFaces(BOOL bShow);

@@ -17,12 +17,12 @@ using namespace std;
 CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	: CSTEPTreeViewBase()
 	, m_pTreeView(pTreeView)
-	, m_pImageList(NULL)
+	, m_pImageList(nullptr)
 	, m_vecItemData()
 	, m_mapInstance2Item()
-	, m_hSelectedItem(NULL)
+	, m_hSelectedItem(nullptr)
 	, m_bInitInProgress(false)
-	, m_pSearchDialog(NULL)
+	, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
 	m_pImageList->Create(16, 16, ILC_COLOR4, 6, 6);
@@ -85,22 +85,22 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		return;
 	}
 
-	if (m_hSelectedItem != NULL)
+	if (m_hSelectedItem != nullptr)
 	{
 		(*m_pTreeView).SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-		m_hSelectedItem = NULL;
+		m_hSelectedItem = nullptr;
 	}
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
-	if (pSelectedInstance == NULL)
+	if (pSelectedInstance == nullptr)
 	{
 		/*
 		* Select the Model by default
 		*/
-		HTREEITEM hModel = (*m_pTreeView).GetChildItem(NULL);
-		ASSERT(hModel != NULL);
+		HTREEITEM hModel = (*m_pTreeView).GetChildItem(nullptr);
+		ASSERT(hModel != nullptr);
 
 		(*m_pTreeView).SelectItem(hModel);
 
@@ -228,7 +228,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	}
 	m_vecItemData.clear();
 
-	m_hSelectedItem = NULL;
+	m_hSelectedItem = nullptr;
 
 	m_mapInstance2Item.clear();
 
@@ -280,15 +280,15 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	UINT uFlags = 0;
 	HTREEITEM hItem = (*m_pTreeView).HitTest(point, &uFlags);
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	/*
 	* TVHT_ONITEMICON
 	*/
-	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
+	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
 		auto pController = GetController();
-		ASSERT(pController != NULL);
+		ASSERT(pController != nullptr);
 
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -383,14 +383,14 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		} // switch (iImage)
 
 		return;
-	} // if ((hItem != NULL) && ...
+	} // if ((hItem != nullptr) && ...
 
 	/*
 	* TVHT_ONITEMLABEL
 	*/
-	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
+	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
-		if ((*m_pTreeView).GetParentItem(m_hSelectedItem) != NULL)
+		if ((*m_pTreeView).GetParentItem(m_hSelectedItem) != nullptr)
 		{
 			// keep the roots always bold
 			(*m_pTreeView).SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
@@ -402,16 +402,16 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::dtProductInstance))
 		{
-			GetController()->SelectInstance(this, NULL);
+			GetController()->SelectInstance(this, nullptr);
 
 			return;
 		}
 
 		CProductInstance* pProductInstance = pItemData->getInstance<CProductInstance>();
-		ASSERT(pProductInstance != NULL);
+		ASSERT(pProductInstance != nullptr);
 
 		GetController()->SelectInstance(this, pProductInstance);
-	} // if ((hItem != NULL) && ...
+	} // if ((hItem != nullptr) && ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	if (pNMTreeView->itemNew.cChildren == 1)
 	{
 		HTREEITEM hChild = (*m_pTreeView).GetChildItem(pNMTreeView->itemNew.hItem);
-		if (hChild == NULL)
+		if (hChild == nullptr)
 		{
 			ASSERT(FALSE); // Internal error
 
@@ -445,7 +445,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		(*m_pTreeView).DeleteItem(hChild);
 
 		CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(pNMTreeView->itemNew.hItem);
-		if (pItemData == NULL)
+		if (pItemData == nullptr)
 		{
 			ASSERT(FALSE); // Internal error
 
@@ -475,7 +475,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 	UINT flags = 0;
 	HTREEITEM hItem = (*m_pTreeView).HitTest(ptTree, &flags);
-	if (hItem == NULL)
+	if (hItem == nullptr)
 	{
 		return;
 	}
@@ -508,7 +508,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		ASSERT(GetController() != NULL);
+		ASSERT(GetController() != nullptr);
 
 		if (GetController()->GetModel() == nullptr)
 		{
@@ -708,7 +708,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 {
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -725,7 +725,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 		return;
 	}
 
-	wchar_t* szText = NULL;
+	wchar_t* szText = nullptr;
 	TV_INSERTSTRUCT tvInsertStruct;
 
 	/*
@@ -769,7 +769,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"ImplementationLevel";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -790,7 +790,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"Name";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -811,7 +811,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"TimeStamp";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -898,7 +898,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"PreprocessorVersion";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -919,7 +919,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"OriginatingSystem";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -940,7 +940,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 
 		wstring strItem = L"Authorization";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hParent;
@@ -994,7 +994,7 @@ void CSTEPProductsTreeView::LoadModel()
 
 	m_bInitInProgress = true;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	if (GetController()->GetModel() == nullptr)
 	{
@@ -1032,7 +1032,7 @@ void CSTEPProductsTreeView::LoadModel()
 	m_vecItemData.push_back(pModelItemData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = NULL;
+	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = _T("Model");
@@ -1304,7 +1304,7 @@ void CSTEPProductsTreeView::LoadItemChildren(CSTEPItemData* pItemData)
 	{
 		auto pChild = pItemData->children()[iChild];
 
-		ASSERT(pChild->treeItem() == NULL);
+		ASSERT(pChild->treeItem() == nullptr);
 
 		CString strName;
 		int iGeometryImage = IMAGE_NO_GEOMETRY;
@@ -1415,7 +1415,7 @@ void CSTEPProductsTreeView::LoadInstanceAncestors(CProductInstance* pInstance)
 void CSTEPProductsTreeView::ResetTree(bool bEnable)
 {
 	HTREEITEM hRoot = (*m_pTreeView).GetRootItem();
-	while (hRoot != NULL)
+	while (hRoot != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1440,7 +1440,7 @@ void CSTEPProductsTreeView::ResetTree(bool bEnable)
 // ------------------------------------------------------------------------------------------------
 void CSTEPProductsTreeView::ResetTree(HTREEITEM hParent, bool bEnable)
 {
-	if (hParent == NULL)
+	if (hParent == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1448,12 +1448,12 @@ void CSTEPProductsTreeView::ResetTree(HTREEITEM hParent, bool bEnable)
 	}
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		ResetTree(hChild, bEnable);
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	int iParentImage = -1;
 	int iParentSelectedImage = -1;
@@ -1471,7 +1471,7 @@ void CSTEPProductsTreeView::ResetTree(HTREEITEM hParent, bool bEnable)
 // ------------------------------------------------------------------------------------------------
 void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 {
-	if (hParent == NULL)
+	if (hParent == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1490,7 +1490,7 @@ void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 	ASSERT(iParentImage == iParentSelectedImage);
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1526,7 +1526,7 @@ void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 		UpdateChildren(hChild);
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1554,7 +1554,7 @@ void CSTEPProductsTreeView::UpdateChildrenInMemory(CSTEPItemData* pParent, bool 
 // ------------------------------------------------------------------------------------------------
 void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 {
-	if (hParent == NULL)
+	if (hParent == nullptr)
 	{
 		return;
 	}
@@ -1566,7 +1566,7 @@ void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 	int iSemiSelectedChidlrenCount = 0;
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1612,7 +1612,7 @@ void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 		} // switch (iImage)
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	if (iSemiSelectedChidlrenCount > 0)
 	{

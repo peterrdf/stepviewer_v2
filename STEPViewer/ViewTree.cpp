@@ -30,9 +30,9 @@ BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	BOOL bRes = CTreeCtrl::OnNotify(wParam, lParam, pResult);
 
 	NMHDR* pNMHDR = (NMHDR*)lParam;
-	ASSERT(pNMHDR != NULL);
+	ASSERT(pNMHDR != nullptr);
 
-	if (pNMHDR && pNMHDR->code == TTN_SHOW && GetToolTips() != NULL)
+	if (pNMHDR && pNMHDR->code == TTN_SHOW && GetToolTips() != nullptr)
 	{
 		GetToolTips()->SetWindowPos(&wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOSIZE);
 	}

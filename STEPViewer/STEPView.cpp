@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------------------------------
 CSTEPView::CSTEPView()
-	: m_pController(NULL)
+	: m_pController(nullptr)
 {
 }
 
@@ -16,7 +16,7 @@ CSTEPView::~CSTEPView()
 // ------------------------------------------------------------------------------------------------
 void CSTEPView::SetController(CSTEPController* pController)
 {
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	m_pController = pController;
 

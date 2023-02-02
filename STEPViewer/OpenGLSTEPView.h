@@ -14,12 +14,6 @@ class COpenGLSTEPView
 {
 
 private: // Members
-	
-#ifdef _LINUX
-    wxGLCanvas * m_pWnd;
-#else
-	CWnd * m_pWnd;
-#endif // _LINUX
 
 	// UI
 	BOOL m_bShowFaces;

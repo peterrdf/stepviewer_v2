@@ -57,7 +57,7 @@ public: // Methods
 #ifdef _LINUX
 				wxLogError(wxT("OpenGL error state couldn't be reset."));
 #else
-				MessageBox(NULL, L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 #endif // _LINUX
@@ -70,7 +70,7 @@ public: // Methods
 #ifdef _LINUX
 			wxLogError(wxT("OpenGL error %d"), err);
 #else
-			MessageBox(NULL, (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 #endif // _LINUX
@@ -117,7 +117,7 @@ public: // Methods
 
 	static char* getResource(int iResource, int iType)
 	{
-		HMODULE hModule = ::GetModuleHandleW(NULL);
+		HMODULE hModule = ::GetModuleHandleW(nullptr);
 		HRSRC hResource = ::FindResourceW(hModule, MAKEINTRESOURCEW(iResource), MAKEINTRESOURCEW(iType));
 		HGLOBAL rcData = ::LoadResource(hModule, hResource);
 
@@ -876,19 +876,19 @@ public: // Methods
 
 	_oglContext(HDC hDC, int iSamples)
 		: m_hDC(hDC)
-		, m_hGLContext(NULL)
+		, m_hGLContext(nullptr)
 		, m_iSamples(iSamples)
 	{
-		assert(m_hDC != NULL);
+		assert(m_hDC != nullptr);
 
 		create();
 	}
 
 	virtual ~_oglContext()
 	{
-		if (m_hGLContext != NULL)
+		if (m_hGLContext != nullptr)
 		{
-			BOOL bResult = wglMakeCurrent(m_hDC, NULL);
+			BOOL bResult = wglMakeCurrent(m_hDC, nullptr);
 			assert(bResult);
 
 			bResult = wglDeleteContext(m_hGLContext);
@@ -898,8 +898,8 @@ public: // Methods
 
 	BOOL makeCurrent()
 	{
-		assert(m_hDC != NULL);
-		assert(m_hGLContext != NULL);
+		assert(m_hDC != nullptr);
+		assert(m_hGLContext != nullptr);
 
 		return wglMakeCurrent(m_hDC, m_hGLContext);
 	}
@@ -937,22 +937,22 @@ public: // Methods
 		WndClassEx.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 		WndClassEx.lpfnWndProc = WndProc;
 		WndClassEx.hInstance = ::AfxGetInstanceHandle();
-		WndClassEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-		WndClassEx.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-		WndClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
+		WndClassEx.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+		WndClassEx.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
+		WndClassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		WndClassEx.lpszClassName = L"_OpenGL_Renderer_Window_";
 
 		if (!GetClassInfoEx(::AfxGetInstanceHandle(), WndClassEx.lpszClassName, &WndClassEx))
 		{
 			if (RegisterClassEx(&WndClassEx) == 0)
 			{
-				MessageBox(NULL, L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
 		}
 
-		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, NULL, NULL, ::AfxGetInstanceHandle(), NULL);
+		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, nullptr, nullptr, ::AfxGetInstanceHandle(), nullptr);
 
 		HDC hDCTemp = ::GetDC(hWndTemp);
 
@@ -1018,7 +1018,7 @@ public: // Methods
 				CString strErrorMessage;
 				strErrorMessage.Format(L"OpenGL version %d.%d or higher is required.", MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
 
-				MessageBox(NULL, strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
@@ -1044,12 +1044,12 @@ public: // Methods
 		} // if (glewInit() == GLEW_OK) 
 		else
 		{
-			MessageBox(NULL, L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
-		bResult = wglMakeCurrent(NULL, NULL);
+		bResult = wglMakeCurrent(nullptr, nullptr);
 		assert(bResult);
 
 		bResult = wglDeleteContext(hTempGLContext);
@@ -1099,7 +1099,7 @@ public: // Methods
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
-		glDebugMessageCallbackARB(&_oglContext::debugCallback, NULL);
+		glDebugMessageCallbackARB(&_oglContext::debugCallback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 
@@ -1224,7 +1224,7 @@ public: // Methods
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1698,16 +1698,34 @@ public: // Methods
 	}
 };
 
+enum class enumProjection
+{
+	Perspective = 0,
+	Isometric,
+};
+
+enum class enumView
+{
+	Top = 0,
+	Left,
+	Right,
+	Bottom,
+	Front,
+	Back,
+};
+
 template <class Instance>
 class _oglRenderer
 {
 
 protected: // Members
 
+	CWnd* m_pWnd;
 	_oglContext* m_pOGLContext;
 	_oglBinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
-	_oglShader* m_pFragmentShader;	
+	_oglShader* m_pFragmentShader;
+	enumProjection m_enProjection;
 	glm::mat4 m_matModelView;	
 
 	_oglBuffers<Instance> m_oglBuffers;
@@ -1721,10 +1739,12 @@ protected: // Members
 public: // Methods
 
 	_oglRenderer()
-		: m_pOGLContext(nullptr)
+		: m_pWnd(nullptr)
+		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
 		, m_pFragmentShader(nullptr)
+		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
 		, m_fXAngle(30.0f)
@@ -1735,14 +1755,17 @@ public: // Methods
 	{
 	}
 
-	void _initialize(HDC hDC, 
+	void _initialize(CWnd* pWnd,
 		int iSamples, 
 		int iVertexShader, 
 		int iFragmentShader, 
 		int iResourceType,
 		bool bSupportsTexture)
 	{
-		m_pOGLContext = new _oglContext(hDC, iSamples);
+		m_pWnd = pWnd;
+		ASSERT(m_pWnd != nullptr);
+
+		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
 		m_pOGLProgram = new _oglBinnPhongProgram(bSupportsTexture);
@@ -1825,5 +1848,147 @@ public: // Methods
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
 		m_fZTranslation = -5.0f;
+	}
+
+	void _prepare(int iWidth, int iHeight)
+	{
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+		m_pOGLContext->enableDebug();
+#endif
+
+		m_pOGLProgram->use();
+
+		glViewport(0, 0, iWidth, iHeight);
+
+		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Set up the parameters
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
+		m_pOGLProgram->setMaterialShininess(30.f);
+
+		/*
+		* Projection Matrix
+		*/
+		// fovY     - Field of vision in degrees in the y direction
+		// aspect   - Aspect ratio of the viewport
+		// zNear    - The near clipping distance
+		// zFar     - The far clipping distance
+		GLdouble fovY = 45.0;
+		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+		GLdouble zNear = 0.0001;
+		GLdouble zFar = 1000.0;
+
+		GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+		GLdouble fW = fH * aspect;
+
+		// Projection
+		switch (m_enProjection)
+		{
+			case enumProjection::Perspective:
+			{
+				glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+				m_pOGLProgram->setProjectionMatrix(matProjection);
+			}
+			break;
+
+			case enumProjection::Isometric:
+			{
+				glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
+				m_pOGLProgram->setProjectionMatrix(matProjection);
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		}
+
+		/*
+		* Model-View Matrix
+		*/
+		m_matModelView = glm::identity<glm::mat4>();
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	}
+
+	void _redraw()
+	{
+		m_pWnd->RedrawWindow();
+	}
+
+	void _setProjection(enumProjection enProjection)
+	{
+		m_enProjection = enProjection;
+
+		_redraw();
+	}
+
+	enumProjection _getProjection() const
+	{
+		return m_enProjection;
+	}
+
+	void _setView(enum enumView enView)
+	{
+		switch (enView)
+		{
+			case enumView::Front:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			case enumView::Right:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = -90.;
+			}
+			break;
+
+			case enumView::Top:
+			{
+				m_fXAngle = 90.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			case enumView::Back:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = -180.;
+			}
+			break;
+
+			case enumView::Left:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = 90.;
+			}
+			break;
+
+			case enumView::Bottom:
+			{
+				m_fXAngle = -90.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (enView)
+
+		_redraw();
 	}
 };

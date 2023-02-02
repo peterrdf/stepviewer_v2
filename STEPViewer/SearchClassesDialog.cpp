@@ -13,7 +13,7 @@
 // ------------------------------------------------------------------------------------------------
 BOOL CSearchClassesDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	CString strItemText = m_pTreeCtrl->GetItemText(hItem);
 	strItemText.MakeLower();
@@ -45,7 +45,7 @@ BOOL CSearchClassesDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 // ------------------------------------------------------------------------------------------------
 void CSearchClassesDialog::SelectItem(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	// Unselect
 	if (m_hSearchResult != nullptr)
@@ -62,7 +62,7 @@ void CSearchClassesDialog::SelectItem(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CSearchClassesDialog::UnselectItem(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	m_pTreeCtrl->SetItemState(hItem, 0, TVIS_SELECTED);
 }
@@ -70,7 +70,7 @@ void CSearchClassesDialog::UnselectItem(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchClassesDialog::SearchChildren(HTREEITEM hParent)
 {
-	ASSERT(hParent != NULL);
+	ASSERT(hParent != nullptr);
 
 	// Load the Properties
 	int iImage = -1;
@@ -81,14 +81,14 @@ HTREEITEM CSearchClassesDialog::SearchChildren(HTREEITEM hParent)
 
 	if (iImage == IMAGE_CLASS)
 	{
-		if (m_pTreeCtrl->ItemHasChildren(hParent) && (m_pTreeCtrl->GetChildItem(hParent) == NULL))
+		if (m_pTreeCtrl->ItemHasChildren(hParent) && (m_pTreeCtrl->GetChildItem(hParent) == nullptr))
 		{
 			m_pTreeCtrl->Expand(hParent, TVE_EXPAND);
 		}
 	}
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		if (ContainsText(hChild, m_strSearchText))
 		{
@@ -102,7 +102,7 @@ HTREEITEM CSearchClassesDialog::SearchChildren(HTREEITEM hParent)
 		}
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	return nullptr;
 }
@@ -110,10 +110,10 @@ HTREEITEM CSearchClassesDialog::SearchChildren(HTREEITEM hParent)
 // ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchClassesDialog::SearchSiblings(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	HTREEITEM hSibling = m_pTreeCtrl->GetNextSiblingItem(hItem);
-	while (hSibling != NULL)
+	while (hSibling != nullptr)
 	{
 		if (ContainsText(hSibling, m_strSearchText))
 		{
@@ -127,7 +127,7 @@ HTREEITEM CSearchClassesDialog::SearchSiblings(HTREEITEM hItem)
 		}
 
 		hSibling = m_pTreeCtrl->GetNextSiblingItem(hSibling);
-	} // while (hSibling != NULL)
+	} // while (hSibling != nullptr)
 
 	return nullptr;
 }
@@ -135,7 +135,7 @@ HTREEITEM CSearchClassesDialog::SearchSiblings(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchClassesDialog::SearchParents(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 	if (hParent == nullptr)
@@ -169,7 +169,7 @@ HTREEITEM CSearchClassesDialog::SearchParents(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CSearchClassesDialog::Reset()
 {
-	m_hSearchResult = NULL;
+	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 }
 
@@ -179,7 +179,7 @@ CSearchClassesDialog::CSearchClassesDialog(CViewTree* pTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH_CLASSES, nullptr)
 	, m_pTreeCtrl(pTreeCtrl)
 	, m_enSearchWhere(swAll)
-	, m_hSearchResult(NULL)
+	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
 {
@@ -224,19 +224,19 @@ void CSearchClassesDialog::OnBnClickedButtonSearch()
 	// Reset
 	if (m_bEndOfSearch)
 	{
-		ASSERT(m_hSearchResult != NULL);
+		ASSERT(m_hSearchResult != nullptr);
 
 		UnselectItem(m_hSearchResult);
 
-		m_hSearchResult = NULL;
+		m_hSearchResult = nullptr;
 		m_bEndOfSearch = FALSE;
 	}
 
 	// Initialize - take the first root
-	if (m_hSearchResult == NULL)
+	if (m_hSearchResult == nullptr)
 	{
 		m_hSearchResult = m_pTreeCtrl->GetRootItem();
-		if (m_hSearchResult == NULL)
+		if (m_hSearchResult == nullptr)
 		{
 			// No items
 			return;
@@ -248,7 +248,7 @@ void CSearchClassesDialog::OnBnClickedButtonSearch()
 
 			return;
 		}
-	} // if (m_hSearchResult == NULL)
+	} // if (m_hSearchResult == nullptr)
 
 	// Children
 	HTREEITEM hSearchResult = SearchChildren(m_hSearchResult);

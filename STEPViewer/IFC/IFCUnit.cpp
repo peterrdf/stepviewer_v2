@@ -61,7 +61,7 @@ wstring CIFCUnit::getUnit() const
 	int_t ifcConversianBasedUnit_TYPE = sdaiGetEntity(iIFCModel, "IFCCONVERSIONBASEDUNIT");
 	int_t ifcSIUnit_TYPE = sdaiGetEntity(iIFCModel, "IFCSIUNIT");
 
-	int_t * pUnitSet = NULL;
+	int_t * pUnitSet = nullptr;
 	sdaiGetAttrBN(iIFCUnitAssignmentInstance, "Units", sdaiAGGR, &pUnitSet);
 
 	int_t iUnitSetCount = sdaiGetMemberCount(pUnitSet);
@@ -82,13 +82,13 @@ wstring CIFCUnit::getUnit() const
 
 				if (sdaiGetInstanceType(iIFCSIUnitInstance) == ifcSIUnit_TYPE)
 				{
-					wchar_t	* szUnitType = NULL;
+					wchar_t	* szUnitType = nullptr;
 					sdaiGetAttrBN(iIFCSIUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
 
-					wchar_t	* szPrefix = NULL;
+					wchar_t	* szPrefix = nullptr;
 					sdaiGetAttrBN(iIFCSIUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
 
-					wchar_t	* szName = NULL;
+					wchar_t	* szName = nullptr;
 					sdaiGetAttrBN(iIFCSIUnitInstance, "Name", sdaiUNICODE, &szName);
 
 					CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
@@ -108,13 +108,13 @@ wstring CIFCUnit::getUnit() const
 		{
 			if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
 			{
-				wchar_t	* szUnitType = NULL;
+				wchar_t	* szUnitType = nullptr;
 				sdaiGetAttrBN(iIFCUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
 
-				wchar_t	* szPrefix = NULL;
+				wchar_t	* szPrefix = nullptr;
 				sdaiGetAttrBN(iIFCUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
 
-				wchar_t	* szName = NULL;
+				wchar_t	* szName = nullptr;
 				sdaiGetAttrBN(iIFCUnitInstance, "Name", sdaiUNICODE, &szName);
 
 				CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
@@ -127,19 +127,19 @@ wstring CIFCUnit::getUnit() const
 // ------------------------------------------------------------------------------------------------
 /*static*/ wstring CIFCUnit::GetPropertyValue(int64_t iIFCPropertySingleValue)
 {
-	wchar_t * szNominalValueADB = NULL;
+	wchar_t * szNominalValueADB = nullptr;
 	sdaiGetAttrBN(iIFCPropertySingleValue, "NominalValue", sdaiUNICODE, &szNominalValueADB);
 
-	if (szNominalValueADB == NULL)
+	if (szNominalValueADB == nullptr)
 	{
 		return L"";
 	}
 
-	wchar_t * szUnitADB = NULL;
+	wchar_t * szUnitADB = nullptr;
 	sdaiGetAttrBN(iIFCPropertySingleValue, "Unit", sdaiUNICODE, &szUnitADB);
 
 	wchar_t * szTypePath = (wchar_t *)sdaiGetADBTypePath(szNominalValueADB, 0);
-	if (szTypePath == NULL)
+	if (szTypePath == nullptr)
 	{
 		return szNominalValueADB;
 	}
@@ -195,7 +195,7 @@ wstring CIFCUnit::getUnit() const
 // ----------------------------------------------------------------------------
 void CIFCUnit::ConvertType(const wchar_t * szUnitType)
 {
-    assert(szUnitType != NULL);
+    assert(szUnitType != nullptr);
 
     if (wcscmp(szUnitType, L".ABSORBEDDOSEUNIT.") == 0)
     {
@@ -407,7 +407,7 @@ void CIFCUnit::ConvertType(const wchar_t * szUnitType)
 // ----------------------------------------------------------------------------
 void CIFCUnit::ConvertPrefix(const wchar_t * szPrefix)
 {
-    if (szPrefix == NULL)
+    if (szPrefix == nullptr)
     {
         return;
     }
@@ -512,7 +512,7 @@ void CIFCUnit::ConvertPrefix(const wchar_t * szPrefix)
 // ----------------------------------------------------------------------------
 void CIFCUnit::ConvertName(const wchar_t * szName)
 {
-    assert(szName != NULL);
+    assert(szName != nullptr);
 
     if (wcscmp(szName, L".AMPERE.") == 0)
     {

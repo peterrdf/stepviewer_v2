@@ -22,7 +22,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	, m_mapInstance2Item()
 	, m_mapSelectedInstances()
 	, m_vecCache()
-	//, m_pSearchDialog(NULL)
+	//, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
 	m_pImageList->Create(16, 16, ILC_COLOR4, 6, 6);
@@ -174,7 +174,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	HTREEITEM hItem = (*m_pTreeView).HitTest(point, &uFlags);
 
 	auto pController = GetController();
-	if(pController == NULL)
+	if(pController == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -184,7 +184,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	/*
 	* TVHT_ONITEMICON
 	*/
-	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
+	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
 		m_vecCache.clear();
 
@@ -203,7 +203,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			{
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-				if (pInstance != NULL)
+				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(false);
 
@@ -220,7 +220,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			{
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
-				if (pInstance != NULL)
+				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(true);
 
@@ -245,12 +245,12 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		m_vecCache.clear();
 
 		return;
-	} // if ((hItem != NULL) && ...
+	} // if ((hItem != nullptr) && ...
 
 	/*
 	* TVHT_ONITEMLABEL
 	*/
-	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
+	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
 		// Single instance selection
 		UnselectAllItems();
@@ -272,7 +272,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			(*m_pTreeView).SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
 			(*m_pTreeView).EnsureVisible(itIInstance2Item->second);
 		}
-	} // if ((hItem != NULL) && ...
+	} // if ((hItem != nullptr) && ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	if ((iImage == IMAGE_PROPERTY_SET) && (pNMTreeView->itemNew.cChildren == 1))
 	{
 		HTREEITEM hChild = (*m_pTreeView).GetChildItem(pNMTreeView->itemNew.hItem);
-		ASSERT(hChild != NULL);
+		ASSERT(hChild != nullptr);
 
 		if ((*m_pTreeView).GetItemText(hChild) != ITEM_PROPERTIES_PENDING)
 		{
@@ -303,7 +303,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		HTREEITEM hGeometry = (*m_pTreeView).GetPrevSiblingItem(pNMTreeView->itemNew.hItem);
 
 		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hGeometry);
-		ASSERT(pInstance != NULL);
+		ASSERT(pInstance != nullptr);
 
 		CIFCModel* pModel = GetModel(hGeometry);
 
@@ -325,14 +325,14 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 // ------------------------------------------------------------------------------------------------
 CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
-	HTREEITEM hModel = NULL;
+	HTREEITEM hModel = nullptr;
 	HTREEITEM hParent = (*m_pTreeView).GetParentItem(hItem);
-	if (hParent != NULL)
+	if (hParent != nullptr)
 	{
 		// Item
-		while (hParent != NULL)
+		while (hParent != nullptr)
 		{
 			hModel = hParent;
 
@@ -353,14 +353,14 @@ CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 HTREEITEM CIFCDecompContTreeView::GetModelHTREEITEM(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
-	HTREEITEM hModel = NULL;
+	HTREEITEM hModel = nullptr;
 	HTREEITEM hParent = (*m_pTreeView).GetParentItem(hItem);
-	if (hParent != NULL)
+	if (hParent != nullptr)
 	{
 		// Item
-		while (hParent != NULL)
+		while (hParent != nullptr)
 		{
 			hModel = hParent;
 
@@ -373,7 +373,7 @@ HTREEITEM CIFCDecompContTreeView::GetModelHTREEITEM(HTREEITEM hItem)
 		hModel = hItem;
 	}
 
-	ASSERT(hModel != NULL);
+	ASSERT(hModel != nullptr);
 
 	return hModel;
 }
@@ -382,7 +382,7 @@ HTREEITEM CIFCDecompContTreeView::GetModelHTREEITEM(HTREEITEM hItem)
 HTREEITEM CIFCDecompContTreeView::GetActiveModelHTREEITEM()
 {
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	map<HTREEITEM, CIFCModel*>::iterator itModelHTREEITEM = m_mapModelHTREEITEM.begin();
 	for (; itModelHTREEITEM != m_mapModelHTREEITEM.end(); itModelHTREEITEM++)
@@ -393,20 +393,20 @@ HTREEITEM CIFCDecompContTreeView::GetActiveModelHTREEITEM()
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 {
 	CSTEPController* pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	/**********************************************************************************************
 	* Model
 	*/
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = NULL;
+	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
@@ -473,7 +473,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	HTREEITEM hHeader = (*m_pTreeView).InsertItem(&tvInsertStruct);
 	//*********************************************************************************************	
 
-	wchar_t* szText = NULL;
+	wchar_t* szText = nullptr;
 
 	/*
 	* Descriptions
@@ -516,7 +516,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"ImplementationLevel";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -537,7 +537,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"Name";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -558,7 +558,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"TimeStamp";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -645,7 +645,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"PreprocessorVersion";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -666,7 +666,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"OriginatingSystem";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -687,7 +687,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 
 		wstring strItem = L"Authorization";
 		strItem += L" = '";
-		strItem += szText != NULL ? szText : L"";
+		strItem += szText != nullptr ? szText : L"";
 		strItem += L"'";
 
 		tvInsertStruct.hParent = hHeader;
@@ -738,12 +738,12 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance)
 {
 	CSTEPController* pController = GetController();
-	VERIFY(pController != NULL);
+	VERIFY(pController != nullptr);
 
-	wchar_t* szName = NULL;
+	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iIFCProjectInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t* szDescription = NULL;
+	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);
 
 	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
@@ -752,14 +752,14 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	if (itInstance != mapInstances.end())
 	{
 		wstring strItem = itInstance->second->getEntityName();
-		if ((szName != NULL) && (wcslen(szName) > 0))
+		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
 			strItem += szName;
 			strItem += L"'";
 		}
 
-		if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 		{
 			strItem += L" (";
 			strItem += szDescription;
@@ -820,12 +820,12 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
-	int64_t* piIsDecomposedByInstances = NULL;
+	int64_t* piIsDecomposedByInstances = nullptr;
 	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &piIsDecomposedByInstances);
 
-	if (piIsDecomposedByInstances == NULL)
+	if (piIsDecomposedByInstances == nullptr)
 	{
 		return;
 	}
@@ -873,12 +873,12 @@ void CIFCDecompContTreeView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
-	int64_t* piContainsElementsInstances = NULL;
+	int64_t* piContainsElementsInstances = nullptr;
 	sdaiGetAttrBN(iInstance, "ContainsElements", sdaiAGGR, &piContainsElementsInstances);
 
-	if (piContainsElementsInstances == NULL)
+	if (piContainsElementsInstances == nullptr)
 	{
 		return;
 	}
@@ -926,14 +926,14 @@ void CIFCDecompContTreeView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
 
-	wchar_t* szName = NULL;
+	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t* szDescription = NULL;
+	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
 
 	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.find(iInstance);
@@ -947,14 +947,14 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 		wstring strItem = strExpressID;
 		strItem += L" ";
 		strItem += itInstance->second->getEntityName();
-		if ((szName != NULL) && (wcslen(szName) > 0))
+		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
 			strItem += szName;
 			strItem += L"'";
 		}
 
-		if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 		{
 			strItem += L" (";
 			strItem += szDescription;
@@ -1036,12 +1036,12 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 // ------------------------------------------------------------------------------------------------
 bool CIFCDecompContTreeView::HasProperties(CIFCModel* pModel, int64_t iInstance)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	int64_t* piIFCIsDefinedByInstances = 0;
 	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
 
-	if (piIFCIsDefinedByInstances == NULL)
+	if (piIFCIsDefinedByInstances == nullptr)
 	{
 		return false;
 	}
@@ -1069,12 +1069,12 @@ bool CIFCDecompContTreeView::HasProperties(CIFCModel* pModel, int64_t iInstance)
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadProperties(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	int64_t* piIFCIsDefinedByInstances = 0;
 	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
 
-	if (piIFCIsDefinedByInstances == NULL)
+	if (piIFCIsDefinedByInstances == nullptr)
 	{
 		return;
 	}
@@ -1105,7 +1105,7 @@ void CIFCDecompContTreeView::LoadProperties(CIFCModel* pModel, int64_t iInstance
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadRelDefinesByProperties(CIFCModel* pModel, int64_t iIFCIsDefinedByInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 	ASSERT(iIFCIsDefinedByInstance != 0);
 
 	const int64_t iIFCElementQuantityEntity = sdaiGetEntity(pModel->getModel(), "IFCELEMENTQUANTITY");
@@ -1130,7 +1130,7 @@ void CIFCDecompContTreeView::LoadRelDefinesByProperties(CIFCModel* pModel, int64
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadRelDefinesByType(CIFCModel* pModel, int64_t iIFCIsDefinedByInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 	ASSERT(iIFCIsDefinedByInstance != 0);
 
 	int64_t iIFCRelatingType = 0;
@@ -1144,7 +1144,7 @@ void CIFCDecompContTreeView::LoadRelDefinesByType(CIFCModel* pModel, int64_t iIF
 	const int64_t iIFCElementQuantityEntity = sdaiGetEntity(pModel->getModel(), "IFCELEMENTQUANTITY");
 	const int64_t iIFCPropertySetEntity = sdaiGetEntity(pModel->getModel(), "IFCPROPERTYSET");
 
-	int64_t* piIFCHasPropertySets = NULL;
+	int64_t* piIFCHasPropertySets = nullptr;
 	sdaiGetAttrBN(iIFCRelatingType, "HasPropertySets", sdaiAGGR, &piIFCHasPropertySets);
 
 	int64_t iIFCHasPropertySetsCount = sdaiGetMemberCount(piIFCHasPropertySets);
@@ -1171,17 +1171,17 @@ void CIFCDecompContTreeView::LoadRelDefinesByType(CIFCModel* pModel, int64_t iIF
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCPropertySetInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 	ASSERT(iIFCPropertySetInstance != 0);
 
-	wchar_t* szName = NULL;
+	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t* szDescription = NULL;
+	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Description", sdaiUNICODE, &szDescription);
 
 	wstring strItem;
-	if ((szName != NULL) && (wcslen(szName) > 0))
+	if ((szName != nullptr) && (wcslen(szName) > 0))
 	{
 		strItem = szName;
 	}
@@ -1190,7 +1190,7 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 		strItem = L"<empty>";
 	}
 
-	if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 	{
 		strItem += L" (";
 		strItem += szDescription;
@@ -1210,10 +1210,10 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 
 	HTREEITEM hPropertySet = (*m_pTreeView).InsertItem(&tvInsertStruct);
 
-	int64_t* piIFCHasPropertiesInstances = NULL;
+	int64_t* piIFCHasPropertiesInstances = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "HasProperties", sdaiAGGR, &piIFCHasPropertiesInstances);
 
-	if (piIFCHasPropertiesInstances == NULL)
+	if (piIFCHasPropertiesInstances == nullptr)
 	{
 		return;
 	}
@@ -1226,14 +1226,14 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 		int64_t iIFCHasPropertiesInstance = 0;
 		engiGetAggrElement(piIFCHasPropertiesInstances, i, sdaiINSTANCE, &iIFCHasPropertiesInstance);
 
-		szName = NULL;
+		szName = nullptr;
 		sdaiGetAttrBN(iIFCHasPropertiesInstance, "Name", sdaiUNICODE, &szName);
 
-		szDescription = NULL;
+		szDescription = nullptr;
 		sdaiGetAttrBN(iIFCHasPropertiesInstance, "Description", sdaiUNICODE, &szDescription);
 
 		strItem = L"";
-		if ((szName != NULL) && (wcslen(szName) > 0))
+		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem = szName;
 		}
@@ -1242,7 +1242,7 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 			strItem = L"<empty>";
 		}
 
-		if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 		{
 			strItem += L" ('";
 			strItem += szDescription;
@@ -1275,17 +1275,17 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadQuantites(CIFCModel* pModel, int64_t iIFCPropertySetInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 	ASSERT(iIFCPropertySetInstance != 0);
 
-	wchar_t* szName = NULL;
+	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t* szDescription = NULL;
+	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Description", sdaiUNICODE, &szDescription);
 
 	wstring strItem;
-	if ((szName != NULL) && (wcslen(szName) > 0))
+	if ((szName != nullptr) && (wcslen(szName) > 0))
 	{
 		strItem = szName;
 	}
@@ -1294,7 +1294,7 @@ void CIFCDecompContTreeView::LoadQuantites(CIFCModel* pModel, int64_t iIFCProper
 		strItem = L"<empty>";
 	}
 
-	if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 	{
 		strItem += L" (";
 		strItem += szDescription;
@@ -1321,7 +1321,7 @@ void CIFCDecompContTreeView::LoadQuantites(CIFCModel* pModel, int64_t iIFCProper
 	int64_t iIFCQuantityWeigth_TYPE = sdaiGetEntity(pModel->getModel(), "IFCQUANTITYWEIGHT");
 	int64_t iIFCQuantityTime_TYPE = sdaiGetEntity(pModel->getModel(), "IFCQUANTITYTIME");
 
-	int64_t* piIFCQuantities = NULL;
+	int64_t* piIFCQuantities = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Quantities", sdaiAGGR, &piIFCQuantities);
 
 	int64_t iIFCQuantitiesCount = sdaiGetMemberCount(piIFCQuantities);
@@ -1369,7 +1369,7 @@ void CIFCDecompContTreeView::LoadQuantites(CIFCModel* pModel, int64_t iIFCProper
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityLength(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityLength(iIFCQuantity, strQuantity);
@@ -1391,7 +1391,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityLength(CIFCModel* pModel, int_t iIFC
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityArea(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityArea(iIFCQuantity, strQuantity);
@@ -1413,7 +1413,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityArea(CIFCModel* pModel, int_t iIFCQu
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityVolume(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityVolume(iIFCQuantity, strQuantity);
@@ -1435,7 +1435,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityVolume(CIFCModel* pModel, int_t iIFC
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityCount(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityCount(iIFCQuantity, strQuantity);
@@ -1457,7 +1457,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityCount(CIFCModel* pModel, int_t iIFCQ
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityWeight(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityWeight(iIFCQuantity, strQuantity);
@@ -1479,7 +1479,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityWeight(CIFCModel* pModel, int_t iIFC
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadIFCQuantityTime(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	wstring strQuantity;
 	pModel->LoadIFCQuantityTime(iIFCQuantity, strQuantity);
@@ -1501,7 +1501,7 @@ void CIFCDecompContTreeView::LoadIFCQuantityTime(CIFCModel* pModel, int_t iIFCQu
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	map<wstring, vector<CIFCInstance*>> mapUnreferencedItems;
 
@@ -1569,10 +1569,10 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wchar_t* szName = NULL;
+			wchar_t* szName = nullptr;
 			sdaiGetAttrBN(pInstance->getInstance(), "Name", sdaiUNICODE, &szName);
 
-			wchar_t* szDescription = NULL;
+			wchar_t* szDescription = nullptr;
 			sdaiGetAttrBN(pInstance->getInstance(), "Description", sdaiUNICODE, &szDescription);
 
 			CString strExpressID;
@@ -1581,14 +1581,14 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			wstring strItem = strExpressID;
 			strItem += L" ";
 			strItem += pInstance->getEntityName();
-			if ((szName != NULL) && (wcslen(szName) > 0))
+			if ((szName != nullptr) && (wcslen(szName) > 0))
 			{
 				strItem += L" '";
 				strItem += szName;
 				strItem += L"'";
 			}
 
-			if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+			if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 			{
 				strItem += L" (";
 				strItem += szDescription;
@@ -1661,7 +1661,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 void CIFCDecompContTreeView::LoadTree_UpdateItems(HTREEITEM hModel)
 {
 	HTREEITEM hModelChild = (*m_pTreeView).GetNextItem(hModel, TVGN_CHILD);
-	while (hModelChild != NULL)
+	while (hModelChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1686,7 +1686,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItems(HTREEITEM hModel)
 // ----------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 {
-	ASSERT(hParent != NULL);
+	ASSERT(hParent != nullptr);
 
 	if (!(*m_pTreeView).ItemHasChildren(hParent))
 	{
@@ -1699,7 +1699,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 	int iSemiSelectedChidlrenCount = 0;
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1753,7 +1753,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 		} // switch (iImage)
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	if (iChidlrenCount == 0)
 	{
@@ -1788,7 +1788,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 // ----------------------------------------------------------------------------
 void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 {
-	ASSERT(hParent != NULL);
+	ASSERT(hParent != nullptr);
 
 	if (!(*m_pTreeView).ItemHasChildren(hParent))
 	{
@@ -1802,7 +1802,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 	ASSERT(iParentImage == iParentSelectedImage);
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1821,7 +1821,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		(*m_pTreeView).SetItemImage(hChild, iParentImage, iParentImage);
 
 		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hChild);
-		if (pInstance != NULL)
+		if (pInstance != nullptr)
 		{
 			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
 
@@ -1831,13 +1831,13 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		ClickItem_UpdateChildren(hChild);
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 }
 
 // ----------------------------------------------------------------------------
 void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 {
-	if (hParent == NULL)
+	if (hParent == nullptr)
 	{
 		return;
 	}
@@ -1849,7 +1849,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	int iSemiSelectedChidlrenCount = 0;
 
 	HTREEITEM hChild = (*m_pTreeView).GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -1895,14 +1895,14 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		} // switch (iImage)
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	if (iSemiSelectedChidlrenCount > 0)
 	{
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
-		if (pInstance != NULL)
+		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(true);
 
@@ -1919,7 +1919,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
 		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
-		if (pInstance != NULL)
+		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(false);
 
@@ -1936,7 +1936,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		(*m_pTreeView).SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
-		if (pInstance != NULL)
+		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(true);
 
@@ -1951,7 +1951,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	(*m_pTreeView).SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 	CIFCInstance* pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hParent);
-	if (pInstance != NULL)
+	if (pInstance != nullptr)
 	{
 		pInstance->setEnable(true);
 

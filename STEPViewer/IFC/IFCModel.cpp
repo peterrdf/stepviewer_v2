@@ -91,7 +91,7 @@ void CIFCModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 {
-	ASSERT(szIFCFile != NULL);
+	ASSERT(szIFCFile != nullptr);
 	ASSERT(iModel != 0);
 
 	/*
@@ -361,7 +361,7 @@ const CIFCUnit* CIFCModel::GetUnit(const wchar_t* szUnit) const
 		return itUnit->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -391,7 +391,7 @@ CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 		return itID2Instance->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -403,7 +403,7 @@ CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 		return itExpressID2Instance->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // --------------------------------------------------------------------------------------------
@@ -415,33 +415,33 @@ CIFCInstance* CIFCModel::GetInstanceByGUID(const wstring & GUID)
 		return itGUID2Instance->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "LengthValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)
+	} // if (szUnit != nullptr)
 	else
 	{
 		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"LENGTHUNIT");
@@ -450,9 +450,9 @@ void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity)
 			strQuantity += L" ";
 			strQuantity += itUnits->second->getName();
 		}
-	} // else if (szUnit != NULL)	
+	} // else if (szUnit != nullptr)	
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -463,27 +463,27 @@ void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityArea(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "AreaValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)
+	} // if (szUnit != nullptr)
 	else
 	{
 		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"AREAUNIT");
@@ -492,9 +492,9 @@ void CIFCModel::LoadIFCQuantityArea(int_t iIFCQuantity, wstring & strQuantity)
 			strQuantity += L" ";
 			strQuantity += itUnits->second->getName();
 		}
-	} // else if (szUnit != NULL)	
+	} // else if (szUnit != nullptr)	
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -505,27 +505,27 @@ void CIFCModel::LoadIFCQuantityArea(int_t iIFCQuantity, wstring & strQuantity)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityVolume(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "VolumeValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)
+	} // if (szUnit != nullptr)
 	else
 	{
 		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"VOLUMEUNIT");
@@ -534,9 +534,9 @@ void CIFCModel::LoadIFCQuantityVolume(int_t iIFCQuantity, wstring & strQuantity)
 			strQuantity += L" ";
 			strQuantity += itUnits->second->getName();
 		}
-	} // else if (szUnit != NULL)	
+	} // else if (szUnit != nullptr)	
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -547,29 +547,29 @@ void CIFCModel::LoadIFCQuantityVolume(int_t iIFCQuantity, wstring & strQuantity)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityCount(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "CountValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)		
+	} // if (szUnit != nullptr)		
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -580,27 +580,27 @@ void CIFCModel::LoadIFCQuantityCount(int_t iIFCQuantity, wstring & strQuantity)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityWeight(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "WeigthValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)
+	} // if (szUnit != nullptr)
 	else
 	{
 		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"MASSUNIT");
@@ -609,9 +609,9 @@ void CIFCModel::LoadIFCQuantityWeight(int_t iIFCQuantity, wstring & strQuantity)
 			strQuantity += L" ";
 			strQuantity += itUnits->second->getName();
 		}
-	} // else if (szUnit != NULL)	
+	} // else if (szUnit != nullptr)	
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -622,27 +622,27 @@ void CIFCModel::LoadIFCQuantityWeight(int_t iIFCQuantity, wstring & strQuantity)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::LoadIFCQuantityTime(int_t iIFCQuantity, wstring & strQuantity)
 {
-	wchar_t	* szQuantityName = NULL;
+	wchar_t	* szQuantityName = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szQuantityDescription = NULL;
+	wchar_t	* szQuantityDescription = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szValue = NULL;
+	wchar_t	* szValue = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "TimeValue", sdaiUNICODE, &szValue);
 
-	wchar_t	* szUnit = NULL;
+	wchar_t	* szUnit = nullptr;
 	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
 	strQuantity = szQuantityName;
 	strQuantity += L" = ";
 	strQuantity += szValue;
 
-	if (szUnit != NULL)
+	if (szUnit != nullptr)
 	{
 		strQuantity += L" ";
 		strQuantity += szUnit;
-	} // if (szUnit != NULL)
+	} // if (szUnit != nullptr)
 	else
 	{
 		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"TIMEUNIT");
@@ -651,9 +651,9 @@ void CIFCModel::LoadIFCQuantityTime(int_t iIFCQuantity, wstring & strQuantity)
 			strQuantity += L" ";
 			strQuantity += itUnits->second->getName();
 		}
-	} // else if (szUnit != NULL)	
+	} // else if (szUnit != nullptr)	
 
-	if ((szQuantityDescription != NULL) && (wcslen(szQuantityDescription) > 0))
+	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
 	{
 		strQuantity += L" ('";
 		strQuantity += szQuantityDescription;
@@ -837,10 +837,10 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 
 	if (iIntancesCount != 0)
 	{
-		char* szParenEntityName = NULL;
+		char* szParenEntityName = nullptr;
 		engiGetEntityName(iParentEntity, sdaiSTRING, &szParenEntityName);
 
-		wchar_t* szParentEntityNameW = NULL;
+		wchar_t* szParentEntityNameW = nullptr;
 		engiGetEntityName(iParentEntity, sdaiUNICODE, (char **)&szParentEntityNameW);
 
 		RetrieveObjects(iParentEntity, szParenEntityName, szParentEntityNameW, iCircleSegments);
@@ -906,7 +906,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 	setting += flagbit8;     // TRIANGLES ON
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
-	setting += flagbit13;    // // CONCEPTUAL FACE POLYGONS ON
+	setting += flagbit13;    // CONCEPTUAL FACE POLYGONS ON
 	setting += 0;		     // OPENGL
 	setting += flagbit24;	 //	AMBIENT
 	setting += flagbit25;	 //	DIFFUSE
@@ -942,7 +942,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 	ASSERT(pInstance->m_pIndexBuffer == nullptr);
 	pInstance->m_pIndexBuffer = new _indices_i32();
 
-	CalculateInstance(iInstance, &pInstance->m_pVertexBuffer->size(), &pInstance->m_pIndexBuffer->size(), NULL);
+	CalculateInstance(iInstance, &pInstance->m_pVertexBuffer->size(), &pInstance->m_pIndexBuffer->size(), nullptr);
 	if ((pInstance->m_pVertexBuffer->size() == 0) || (pInstance->m_pIndexBuffer->size() == 0))
 	{
 		return pInstance;
@@ -1214,12 +1214,12 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		* Use the last cohort (if any)
 		*/
 		_cohort* pCohort = pInstance->concFacePolygonsCohorts().empty() ? 
-			NULL : pInstance->concFacePolygonsCohorts()[pInstance->concFacePolygonsCohorts().size() - 1];
+			nullptr : pInstance->concFacePolygonsCohorts()[pInstance->concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			pInstance->concFacePolygonsCohorts().push_back(pCohort);
@@ -1348,7 +1348,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			pInstance->linesCohorts().push_back(pCohort);

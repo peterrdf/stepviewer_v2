@@ -100,7 +100,7 @@ END_MESSAGE_MAP()
 // CMySTEPViewerView construction/destruction
 
 CMySTEPViewerView::CMySTEPViewerView()
-	: m_pOpenGLView(NULL)
+	: m_pOpenGLView(nullptr)
 {
 }
 
@@ -121,7 +121,7 @@ BOOL CMySTEPViewerView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CMySTEPViewerView::OnDraw(CDC* pDC)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->Draw(pDC);
 	}
@@ -225,7 +225,7 @@ void CMySTEPViewerView::OnDestroy()
 	pDoc->UnRegisterView(this);
 
 	delete m_pOpenGLView;
-	m_pOpenGLView = NULL;
+	m_pOpenGLView = nullptr;
 
 	CView::OnDestroy();
 }
@@ -239,7 +239,7 @@ BOOL CMySTEPViewerView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
@@ -250,7 +250,7 @@ void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
@@ -261,7 +261,7 @@ void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
@@ -272,7 +272,7 @@ void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
@@ -283,7 +283,7 @@ void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
@@ -293,7 +293,7 @@ void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
@@ -304,7 +304,7 @@ void CMySTEPViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
@@ -316,14 +316,14 @@ void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 {
 	// Get the number of files dropped 
-	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
 	if (iFilesDropped != 1)
 	{
 		return;
 	}
 
 	// Get the buffer size of the file.
-	DWORD dwBuffer = DragQueryFile(hDropInfo, 0, NULL, 0);
+	DWORD dwBuffer = DragQueryFile(hDropInfo, 0, nullptr, 0);
 
 	// Get path and name of the file 
 	CString strFile;
@@ -343,7 +343,7 @@ void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 
 BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
 	}
@@ -353,7 +353,7 @@ BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CMySTEPViewerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
 	}

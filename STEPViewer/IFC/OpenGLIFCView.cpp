@@ -11,8 +11,6 @@
 // ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	: COpenGLView()
-	, m_pWnd(pWnd)
-	, m_enProjection(enumProjection::Perspective)
 	, m_bShowFaces(TRUE)	
 	, m_bShowConceptualFacesPolygons(TRUE)
 	, m_bShowLines(TRUE)
@@ -20,15 +18,15 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pPointedInstance(NULL)
-	, m_pSelectedInstance(NULL)
-	, m_pSelectedInstanceMaterial(NULL)
-	, m_pPointedInstanceMaterial(NULL)
+	, m_pPointedInstance(nullptr)
+	, m_pSelectedInstance(nullptr)
+	, m_pSelectedInstanceMaterial(nullptr)
+	, m_pPointedInstanceMaterial(nullptr)
 {
-	ASSERT(m_pWnd != NULL);	
+	ASSERT(m_pWnd != nullptr);	
 
 	_initialize(
-		*(m_pWnd->GetDC()),
+		pWnd,
 		16,
 		IDR_TEXTFILE_VERTEX_SHADER2,
 		IDR_TEXTFILE_FRAGMENT_SHADER2,
@@ -62,81 +60,10 @@ COpenGLIFCView::~COpenGLIFCView()
 	delete m_pInstanceSelectionFrameBuffer;
 
 	delete m_pSelectedInstanceMaterial;
-	m_pSelectedInstanceMaterial = NULL;
+	m_pSelectedInstanceMaterial = nullptr;
 
 	delete m_pPointedInstanceMaterial;
-	m_pPointedInstanceMaterial = NULL;
-}
-
-// ------------------------------------------------------------------------------------------------
-enumProjection COpenGLIFCView::GetProjection() const
-{
-	return m_enProjection;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetProjection(enumProjection enProjection)
-{
-	m_enProjection = enProjection;
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::SetView(enum enumView enView)
-{
-	switch (enView)
-	{
-		case enumView::Front:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		case enumView::Right:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = -90.;
-		}
-		break;
-
-		case enumView::Top:
-		{
-			m_fXAngle = 90.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		case enumView::Back:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = -180.;
-		}
-		break;
-
-		case enumView::Left:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = 90.;
-		}
-		break;
-
-		case enumView::Bottom:
-		{
-			m_fXAngle = -90.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	} // switch (enView)
-
-	m_pWnd->RedrawWindow();
+	m_pPointedInstanceMaterial = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -144,7 +71,7 @@ void COpenGLIFCView::ShowFaces(BOOL bShow)
 {
 	m_bShowFaces = bShow;
 
-	m_pWnd->RedrawWindow();
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -158,7 +85,7 @@ void COpenGLIFCView::ShowConceptualFacesPolygons(BOOL bShow)
 {
 	m_bShowConceptualFacesPolygons = bShow;
 
-	m_pWnd->RedrawWindow();
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -172,7 +99,7 @@ void COpenGLIFCView::ShowLines(BOOL bShow)
 {
 	m_bShowLines = bShow;
 
-	m_pWnd->RedrawWindow();
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -186,7 +113,7 @@ void COpenGLIFCView::ShowPoints(BOOL bShow)
 {
 	m_bShowPoints = bShow;
 
-	m_pWnd->RedrawWindow();
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -211,18 +138,18 @@ BOOL COpenGLIFCView::ArePointsShown()
 	m_oglBuffers.clear();
 
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
-	m_pPointedInstance = NULL;
-	m_pSelectedInstance = NULL;
+	m_pPointedInstance = nullptr;
+	m_pSelectedInstance = nullptr;
 
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -230,7 +157,7 @@ BOOL COpenGLIFCView::ArePointsShown()
 	}
 
 	auto pModel = pController->GetModel()->As<CIFCModel>();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -499,7 +426,7 @@ BOOL COpenGLIFCView::ArePointsShown()
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -507,14 +434,14 @@ BOOL COpenGLIFCView::ArePointsShown()
 /*virtual*/ void COpenGLIFCView::Draw(CDC* pDC)
 {
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		return;
 	}
@@ -696,10 +623,10 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #ifdef _LINUX
 				m_pWnd->Refresh(false);
 #else
-				m_pWnd->RedrawWindow();
+				_redraw();
 #endif // _LINUX
 
-				ASSERT(GetController() != NULL);
+				ASSERT(GetController() != nullptr);
 
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
@@ -764,7 +691,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -772,7 +699,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -780,7 +707,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -788,7 +715,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 	} // switch (nChar)
@@ -802,7 +729,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		return;
 	}
 		
-	m_pWnd->RedrawWindow();
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -831,7 +758,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #ifdef _LINUX
 		m_pWnd->Refresh(false);
 #else
-		m_pWnd->RedrawWindow();
+		_redraw();
 #endif // _LINUX
 	}
 }
@@ -839,7 +766,7 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnControllerChanged()
 {
-	if (GetController() != NULL)
+	if (GetController() != nullptr)
 	{
 		GetController()->RegisterView(this);
 	}
@@ -854,14 +781,14 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 	}
 
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -954,14 +881,14 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 	}
 
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1022,14 +949,14 @@ void COpenGLIFCView::DrawLines()
 	}
 
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1090,14 +1017,14 @@ void COpenGLIFCView::DrawPoints()
 	}
 
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1169,14 +1096,14 @@ void COpenGLIFCView::DrawPoints()
 void COpenGLIFCView::DrawInstancesFrameBuffer()
 {
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1291,14 +1218,14 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pController = GetController();
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (pController->GetModel() == NULL)
+	if (pController->GetModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1362,12 +1289,12 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			m_pInstanceSelectionFrameBuffer->unbind();
 
-			CIFCInstance* pPointedInstance = NULL;
+			CIFCInstance* pPointedInstance = nullptr;
 			if (arPixels[3] != 0)
 			{
 				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetInstanceByID(iObjectID);
-				ASSERT(pPointedInstance != NULL);
+				ASSERT(pPointedInstance != nullptr);
 			}
 
 			if (m_pPointedInstance != pPointedInstance)
@@ -1377,7 +1304,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
 				m_pWnd->Refresh(false);
 #else
-				m_pWnd->RedrawWindow();
+				_redraw();
 #endif // _LINUX
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
@@ -1441,7 +1368,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
 		m_pWnd->Refresh(false);
 #else
-		m_pWnd->RedrawWindow();
+		_redraw();
 #endif // _LINUX
 
 		m_ptPrevMousePosition = point;
@@ -1476,7 +1403,7 @@ void COpenGLIFCView::Rotate(float fXAngle, float fYAngle)
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -1488,7 +1415,7 @@ void COpenGLIFCView::Zoom(float fZTranslation)
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 

@@ -128,7 +128,7 @@ CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 	{
 		ASSERT(FALSE);
 
-		return NULL;
+		return nullptr;
 	}
 
 	return itProductInstance->second;
@@ -225,7 +225,7 @@ void CSTEPModel::Load(const wchar_t * szPath)
 	int64_t iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 	if (iModel == 0)
 	{
-		MessageBox(NULL, L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+		MessageBox(nullptr, L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -277,15 +277,15 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionIn
 
 	char* szId = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "id", sdaiSTRING, &szId);
-	pProductDefinition->m_strId = szId != NULL ? CA2W(szId) : L"";
+	pProductDefinition->m_strId = szId != nullptr ? CA2W(szId) : L"";
 
 	char* szName = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "name", sdaiSTRING, &szName);
-	pProductDefinition->m_strName = szName != NULL ? CA2W(szName) : L"";
+	pProductDefinition->m_strName = szName != nullptr ? CA2W(szName) : L"";
 
 	char* szDescription = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "description", sdaiSTRING, &szDescription);
-	pProductDefinition->m_strDescription = szDescription != NULL ? CA2W(szDescription) : L"";
+	pProductDefinition->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
 
 	int_t iProductDefinitionFormationInstance = 0;
 	sdaiGetAttrBN(iProductDefinitionInstance, "formation", sdaiINSTANCE, &iProductDefinitionFormationInstance);
@@ -295,11 +295,11 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionIn
 
 	char* szProductId = nullptr;
 	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
-	pProductDefinition->m_strProductId = szProductId != NULL ? CA2W(szProductId) : L"";
+	pProductDefinition->m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
 
 	char* szProductName = nullptr;
 	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
-	pProductDefinition->m_strProductName = szProductName != NULL ? CA2W(szProductName) : L"";
+	pProductDefinition->m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
 
 	return pProductDefinition;
 }
@@ -360,15 +360,15 @@ void CSTEPModel::LoadAssemblies()
 
 		char* szId = nullptr;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "id", sdaiSTRING, &szId);
-		pAssembly->m_strId = szId != NULL ? CA2W(szId) : L"";
+		pAssembly->m_strId = szId != nullptr ? CA2W(szId) : L"";
 
 		char* szName = nullptr;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "name", sdaiSTRING, &szName);
-		pAssembly->m_strName = szName != NULL ? CA2W(szName) : L"";
+		pAssembly->m_strName = szName != nullptr ? CA2W(szName) : L"";
 
 		char* szDescription = nullptr;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "description", sdaiSTRING, &szDescription);
-		pAssembly->m_strDescription = szDescription != NULL ? CA2W(szDescription) : L"";
+		pAssembly->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
 
 		int_t iRelatingProductDefinition = 0;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "relating_product_definition", sdaiINSTANCE, &iRelatingProductDefinition);
@@ -407,7 +407,7 @@ void CSTEPModel::LoadGeometry()
 	{
 		if (itProductDefinition->second->getRelatedProductRefs() == 0)
 		{
-			WalkAssemblyTreeRecursively("", "", itProductDefinition->second, NULL);
+			WalkAssemblyTreeRecursively("", "", itProductDefinition->second, nullptr);
 		}
 	}
 }

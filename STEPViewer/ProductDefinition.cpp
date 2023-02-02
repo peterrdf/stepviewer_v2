@@ -16,8 +16,8 @@ CProductDefinition::CProductDefinition()
 	, m_vecProductInstances()
 	, m_iNextProductInstance(-1)
 	, m_bCalculated(false)
-	, m_pVertexBuffer(NULL)
-	, m_pIndexBuffer(NULL)
+	, m_pVertexBuffer(nullptr)
+	, m_pIndexBuffer(nullptr)
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
 	, m_vecConcFacePolygons()
@@ -91,7 +91,7 @@ void CProductDefinition::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	CalculateInstance(m_iInstance, &m_pVertexBuffer->size(), &m_pIndexBuffer->size(), NULL);
+	CalculateInstance(m_iInstance, &m_pVertexBuffer->size(), &m_pIndexBuffer->size(), nullptr);
 	if ((m_pVertexBuffer->size() == 0) || (m_pIndexBuffer->size() == 0))
 	{
 		return;
@@ -356,12 +356,12 @@ void CProductDefinition::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = concFacePolygonsCohorts().empty() ? NULL : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = concFacePolygonsCohorts().empty() ? nullptr : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			concFacePolygonsCohorts().push_back(pCohort);
@@ -489,7 +489,7 @@ void CProductDefinition::Calculate()
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			linesCohorts().push_back(pCohort);
@@ -1142,10 +1142,10 @@ GLsizei& CProductDefinition::VBOOffset()
 void CProductDefinition::Clean()
 {
 	delete m_pVertexBuffer;
-	m_pVertexBuffer = NULL;
+	m_pVertexBuffer = nullptr;
 
 	delete m_pIndexBuffer;
-	m_pIndexBuffer = NULL;
+	m_pIndexBuffer = nullptr;
 
 	m_iConceptualFacesCount = 0;
 

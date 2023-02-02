@@ -8,7 +8,7 @@
 CIFCEntity::CIFCEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iInstancesCount)
 	: m_iEntity(iEntity)
 	, m_strName(L"")
-	, m_pParent(NULL)
+	, m_pParent(nullptr)
 	, m_iAttributesCount(iAttributesCount)
 	, m_vecAttributes()
 	, m_setIgnoredAttributes()
@@ -17,7 +17,7 @@ CIFCEntity::CIFCEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_
 	, m_vecInstances()
 {
 	// Name ***************************************************************************************
-	wchar_t* szName = NULL;
+	wchar_t* szName = nullptr;
 	engiGetEntityName(m_iEntity, sdaiUNICODE, (char**)&szName);
 	// ********************************************************************************************
 
@@ -79,7 +79,7 @@ void CIFCEntity::setParent(CIFCEntity * pParent)
 // ------------------------------------------------------------------------------------------------
 bool CIFCEntity::hasParent() const
 {
-	return m_pParent != NULL;
+	return m_pParent != nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ bool CIFCEntity::isAttributeIgnored(const wstring& strAttribute) const
 // ------------------------------------------------------------------------------------------------
 bool CIFCEntity::isAttributeInherited(const wstring & strAttribute) const
 {
-	if (m_pParent != NULL)
+	if (m_pParent != nullptr)
 	{
 		const vector<wstring> & vecParentAttributes = m_pParent->getAttributes();
 

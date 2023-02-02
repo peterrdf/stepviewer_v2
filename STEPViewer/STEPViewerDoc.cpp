@@ -38,7 +38,7 @@ END_MESSAGE_MAP()
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
-	: m_pModel(NULL)
+	: m_pModel(nullptr)
 {
 }
 
@@ -52,10 +52,10 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	if (m_pModel != NULL)
+	if (m_pModel != nullptr)
 	{
 		delete m_pModel;
-		m_pModel = NULL;
+		m_pModel = nullptr;
 	}
 
 	m_pModel = new CSTEPModel();
@@ -121,9 +121,9 @@ void CMySTEPViewerDoc::SetSearchContent(const CString& value)
 	}
 	else
 	{
-		CMFCFilterChunkValueImpl *pChunk = NULL;
+		CMFCFilterChunkValueImpl *pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != NULL)
+		if (pChunk != nullptr)
 		{
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
@@ -156,10 +156,10 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != NULL)
+	if (m_pModel != nullptr)
 	{
 		delete m_pModel;
-		m_pModel = NULL;
+		m_pModel = nullptr;
 	}
 
 	m_pModel = CSTEPModelFactory::Load(lpszPathName);

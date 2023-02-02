@@ -7,7 +7,7 @@ CProductInstance::CProductInstance(int_t iID, CProductDefinition* pProductDefini
 	: CSTEPInstance()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)
-	, m_pTransformationMatrix(NULL)
+	, m_pTransformationMatrix(nullptr)
 	, m_bEnable(true)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -17,12 +17,12 @@ CProductInstance::CProductInstance(int_t iID, CProductDefinition* pProductDefini
 	, m_fZmax(1.f)
 {
 	ASSERT(m_iID != 0);
-	ASSERT(pProductDefinition != NULL);
+	ASSERT(pProductDefinition != nullptr);
 
 	m_pTransformationMatrix = new OGLMATRIX();
 	OGLMatrixIdentity(m_pTransformationMatrix);
 
-	if (pTransformationMatrix != NULL) 
+	if (pTransformationMatrix != nullptr) 
 	{
 		m_pTransformationMatrix->_11 = pTransformationMatrix->_11;
 		m_pTransformationMatrix->_12 = pTransformationMatrix->_12;

@@ -15,8 +15,8 @@ CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * 
 	, m_iExpressID(0)
 	, m_iParentExpressID(0)
 	, m_iID(0)
-	, m_pVertexBuffer(NULL)
-	, m_pIndexBuffer(NULL)
+	, m_pVertexBuffer(nullptr)
+	, m_pIndexBuffer(nullptr)
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
 	, m_vecConcFacePolygons()
@@ -113,7 +113,7 @@ int_t& CIFCInstance::ID()
 // ------------------------------------------------------------------------------------------------
 bool CIFCInstance::hasGeometry() const
 {
-	return (m_pVertexBuffer != NULL) && (m_pVertexBuffer->size() > 0);
+	return (m_pVertexBuffer != nullptr) && (m_pVertexBuffer->size() > 0);
 }
 
 CIFCModel * CIFCInstance::GetModel() const
@@ -404,10 +404,10 @@ void CIFCInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 void CIFCInstance::Clean()
 {
 	delete m_pVertexBuffer;
-	m_pVertexBuffer = NULL;
+	m_pVertexBuffer = nullptr;
 
 	delete m_pIndexBuffer;
-	m_pIndexBuffer = NULL;
+	m_pIndexBuffer = nullptr;
 
 	m_iConceptualFacesCount = 0;
 

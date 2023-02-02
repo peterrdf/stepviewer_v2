@@ -8,8 +8,8 @@ CAssembly::CAssembly()
 	, m_strId(L"")
 	, m_strName(L"")
 	, m_strDescription(L"")
-	, m_pRelatingProductDefinition(NULL)
-	, m_pRelatedProductDefinition(NULL)
+	, m_pRelatingProductDefinition(nullptr)
+	, m_pRelatedProductDefinition(nullptr)
 {
 }
 

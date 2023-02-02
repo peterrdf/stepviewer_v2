@@ -25,7 +25,7 @@ class CFileViewMenuButton : public CMFCToolBarMenuButton
 	DECLARE_SERIAL(CFileViewMenuButton)
 
 public:
-	CFileViewMenuButton(HMENU hMenu = NULL) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CFileViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -51,7 +51,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CFileView::OnModelChanged()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	if (GetController()->GetModel() == nullptr)
 	{
@@ -134,7 +134,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -170,7 +170,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->m_bText = FALSE;
 		pButton->m_bImage = TRUE;
@@ -199,7 +199,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CFileView::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 	{
 		return;
 	}
@@ -209,8 +209,8 @@ void CFileView::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFileView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndFileView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFileView::OnSort(UINT id)
@@ -224,7 +224,7 @@ void CFileView::OnSort(UINT id)
 
 	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
 		m_wndToolBar.Invalidate();
@@ -285,7 +285,7 @@ void CFileView::OnChangeVisualStyle()
 
 void CFileView::OnDestroy()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
 
 	__super::OnDestroy();

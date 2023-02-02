@@ -5,10 +5,10 @@
 
 // ------------------------------------------------------------------------------------------------
 CSTEPController::CSTEPController()
-	: m_pModel(NULL)
+	: m_pModel(nullptr)
 	, m_bUpdatingModel(false)
 	, m_setViews()
-	, m_pSelectedInstance(NULL)
+	, m_pSelectedInstance(nullptr)
 	, m_iVisibleValuesCountLimit(100)
 	, m_bScaleAndCenter(FALSE)
 {
@@ -28,11 +28,11 @@ CSTEPModelBase* CSTEPController::GetModel() const
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::SetModel(CSTEPModelBase* pModel)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	m_pModel = pModel;
 
-	m_pSelectedInstance = NULL;
+	m_pSelectedInstance = nullptr;
 
 	m_bUpdatingModel = true;
 
@@ -48,7 +48,7 @@ void CSTEPController::SetModel(CSTEPModelBase* pModel)
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::RegisterView(CSTEPView* pView)
 {
-	ASSERT(pView != NULL);
+	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) == m_setViews.end());
 
 	m_setViews.insert(pView);
@@ -57,7 +57,7 @@ void CSTEPController::RegisterView(CSTEPView* pView)
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::UnRegisterView(CSTEPView* pView)
 {
-	ASSERT(pView != NULL);
+	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) != m_setViews.end());
 
 	m_setViews.erase(pView);
@@ -72,7 +72,7 @@ const set<CSTEPView*> & CSTEPController::GetViews()
 // ------------------------------------------------------------------------------------------------
 void CSTEPController::ZoomToInstance(int64_t iInstanceID)
 {
-	ASSERT(m_pModel != NULL);
+	ASSERT(m_pModel != nullptr);
 
 	m_pModel->ZoomToInstance(iInstanceID);
 

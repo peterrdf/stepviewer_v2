@@ -13,7 +13,7 @@ CIFCProperty::CIFCProperty(int64_t iInstance)
 	/*
 	* Name
 	*/
-	char * szPropertyName = NULL;
+	char * szPropertyName = nullptr;
 	GetNameOfProperty(m_iInstance, &szPropertyName);
 
 	m_strName = CA2W(szPropertyName);
@@ -24,7 +24,7 @@ CIFCProperty::CIFCProperty(int64_t iInstance)
 	int64_t iParentClassInstance = GetParentsByIterator(m_iInstance, 0);
 	while (iParentClassInstance != 0)
 	{
-		char * szParentClassName = NULL;
+		char * szParentClassName = nullptr;
 		GetNameOfClass(iParentClassInstance, &szParentClassName);
 
 		iParentClassInstance = GetParentsByIterator(m_iInstance, iParentClassInstance);
@@ -163,35 +163,35 @@ wstring CIFCProperty::getCardinality(int64_t iInstance) const
 	{
 		case TYPE_OBJECTTYPE:
 		{
-			int64_t * piInstances = NULL;
+			int64_t * piInstances = nullptr;
 			GetObjectTypeProperty(iInstance, getInstance(), &piInstances, &iCard);
 		}
 		break;
 
 		case TYPE_BOOL_DATATYPE:
 		{
-			bool ** bValue = NULL;
+			bool ** bValue = nullptr;
 			GetDataTypeProperty(iInstance, getInstance(), (void **)&bValue, &iCard);
 		}
 		break;
 
 		case TYPE_CHAR_DATATYPE:
 		{
-			char ** szValue = NULL;
+			char ** szValue = nullptr;
 			GetDataTypeProperty(iInstance, getInstance(), (void **)&szValue, &iCard);
 		}
 		break;
 
 		case TYPE_DOUBLE_DATATYPE:
 		{
-			double * pdValue = NULL;
+			double * pdValue = nullptr;
 			GetDataTypeProperty(iInstance, getInstance(), (void **)&pdValue, &iCard);
 		}
 		break;
 
 		case TYPE_INT_DATATYPE:
 		{
-			int64_t * piValue = NULL;
+			int64_t * piValue = nullptr;
 			GetDataTypeProperty(iInstance, getInstance(), (void **)&piValue, &iCard);
 		}
 		break;

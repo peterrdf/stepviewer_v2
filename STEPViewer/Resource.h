@@ -138,13 +138,25 @@
 #define ID_3DVIEW_DISABLEALLBUTTHIS     32801
 #define ID_3DVIEW_ENABLEALL             32802
 #define ID_3DVIEW_SAVE                  32803
+#define ID_VIEW_CENTER_ALL_GEOMETRY     32805
+#define ID_VIEW_ZOOM_OUT                32807
+#define ID_VIEW_PROJECTION              32808
+#define ID_PROJECTION_PERSPECTIVE       32809
+#define ID_PROJECTION_ISOMETRIC         32810
+#define ID_VIEW_VIEW                    32811
+#define ID_VIEW_FRONT                   32812
+#define ID_VIEW_TOP                     32813
+#define ID_VIEW_RIGHT                   32814
+#define ID_VIEW_BACK                    32815
+#define ID_VIEW_LEFT                    32816
+#define ID_VIEW_BOTTOM                  32817
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        334
-#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_COMMAND_VALUE         32818
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
