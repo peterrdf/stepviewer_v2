@@ -1,6 +1,7 @@
 #pragma once
 
 #include "STEPView.h"
+#include "_oglUtils.h"
 
 const double ZOOM_SPEED_1 = 0.01;
 const double ZOOM_SPEED_2 = 0.025;
@@ -54,6 +55,12 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) PURE;
+
+	// --------------------------------------------------------------------------------------------
+	virtual void SetProjection(enumProjection enProjection) PURE;
+
+	// --------------------------------------------------------------------------------------------
+	virtual enumProjection GetProjection() const PURE;
 
 	// --------------------------------------------------------------------------------------------
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);

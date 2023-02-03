@@ -9,7 +9,7 @@
 #include <chrono>
 
 // ------------------------------------------------------------------------------------------------
-COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
+COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 	: COpenGLView()
 	, m_bShowFaces(TRUE)	
 	, m_bShowConceptualFacesPolygons(TRUE)
@@ -23,8 +23,6 @@ COpenGLIFCView::COpenGLIFCView(CWnd * pWnd)
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
 {
-	ASSERT(m_pWnd != nullptr);	
-
 	_initialize(
 		pWnd,
 		16,
@@ -719,6 +717,18 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		}
 		break;
 	} // switch (nChar)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::SetProjection(enumProjection enProjection)
+{
+	_setProjection(enProjection);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ enumProjection COpenGLIFCView::GetProjection() const
+{
+	return _getProjection();
 }
 
 // ------------------------------------------------------------------------------------------------

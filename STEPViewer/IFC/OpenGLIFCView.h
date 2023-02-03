@@ -58,7 +58,9 @@ public: // Methods
 	virtual void Draw(CDC * pDC);
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
 	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
+	virtual void SetProjection(enumProjection enProjection);
+	virtual enumProjection GetProjection() const;
 	
 	// CSTEPView
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);

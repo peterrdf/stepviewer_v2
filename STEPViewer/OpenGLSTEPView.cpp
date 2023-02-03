@@ -19,7 +19,7 @@
 #ifdef _LINUX
 COpenGLSTEPView::COpenGLSTEPView(wxGLCanvas * pWnd)
 #else
-COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
+COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 #endif // _LINUX
 	: _oglRenderer()
 	, COpenGLView()
@@ -39,8 +39,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd * pWnd)
 	, m_pPointedInstanceMaterial(nullptr)
 	, m_hFont(nullptr)
 {
-	ASSERT(m_pWnd != nullptr);
-
 	_initialize(
 		pWnd,
 		16,
@@ -823,6 +821,18 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		}
 		break;
 	} // switch (nChar)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::SetProjection(enumProjection enProjection)
+{
+	_setProjection(enProjection);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ enumProjection COpenGLSTEPView::GetProjection() const
+{
+	return _getProjection();
 }
 
 // ------------------------------------------------------------------------------------------------

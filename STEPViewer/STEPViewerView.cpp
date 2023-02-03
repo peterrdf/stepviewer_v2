@@ -95,6 +95,10 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_WM_DROPFILES()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYUP()
+	ON_COMMAND(ID_PROJECTION_ISOMETRIC, &CMySTEPViewerView::OnProjectionIsometric)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_ISOMETRIC, &CMySTEPViewerView::OnUpdateProjectionIsometric)
+	ON_COMMAND(ID_PROJECTION_PERSPECTIVE, &CMySTEPViewerView::OnProjectionPerspective)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CMySTEPViewerView::OnUpdateProjectionPerspective)
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
@@ -357,4 +361,30 @@ void CMySTEPViewerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
 	}
+}
+
+void CMySTEPViewerView::OnProjectionIsometric()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->SetProjection(enumProjection::Isometric);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->GetProjection() == enumProjection::Isometric));
+}
+
+void CMySTEPViewerView::OnProjectionPerspective()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->SetProjection(enumProjection::Perspective);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->GetProjection() == enumProjection::Perspective));
 }
