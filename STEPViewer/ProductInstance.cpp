@@ -46,6 +46,20 @@ CProductInstance::~CProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CProductInstance::_hasGeometry() const
+{
+	return m_pProductDefinition != nullptr ?
+		m_pProductDefinition->hasGeometry() :
+		false;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CProductInstance::_isEnabled() const
+{
+	return getEnable();
+}
+
+// ------------------------------------------------------------------------------------------------
 int_t CProductInstance::getID() const
 {
 	return m_iID;

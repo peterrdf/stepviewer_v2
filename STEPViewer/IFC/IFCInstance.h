@@ -71,6 +71,10 @@ public: // Methods
 	
 	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID, int_t iEntity, const wchar_t* szEntity);
 	~CIFCInstance();
+
+	// CSTEPInstance
+	virtual bool _hasGeometry() const;
+	virtual bool _isEnabled() const;
 	
 	int_t getInstance() const;
 	const wchar_t* getGUID() const;

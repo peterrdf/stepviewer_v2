@@ -50,7 +50,7 @@ CSTEPModel::~CSTEPModel()
 }
 
 // --------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomToInstance(int64_t /*iInstance*/)
+/*virtual*/ void CSTEPModel::ZoomToInstance(CSTEPInstance* /*pSTEPInstance*/)
 {
 	ASSERT(FALSE);//TODO
 //	ASSERT(iInstanceID != 0);

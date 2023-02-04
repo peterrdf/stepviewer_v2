@@ -38,7 +38,7 @@ public: // Methods
 	virtual int64_t GetInstance() const PURE;	
 
 	// --------------------------------------------------------------------------------------------
-	virtual void ZoomToInstance(int64_t iInstanceID) PURE;
+	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) PURE;
 
 	// --------------------------------------------------------------------------------------------
 	virtual void ZoomOut() PURE;

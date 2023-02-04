@@ -13,7 +13,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CProductDefinition : public CSTEPInstance
+class CProductDefinition
 {
 	friend class CSTEPModel;
 
@@ -81,6 +81,8 @@ public: // Methods
 	int_t getRelatedProductRefs() const;
 	const vector<CProductInstance*>& getProductInstances() const;
 	int getNextProductInstance();
+
+	bool hasGeometry() const;
 	
 	int32_t * getIndices() const;
 	int64_t getIndicesCount() const;

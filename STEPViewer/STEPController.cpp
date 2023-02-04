@@ -70,11 +70,12 @@ const set<CSTEPView*> & CSTEPController::GetViews()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ZoomToInstance(int64_t iInstance)
+void CSTEPController::ZoomToInstance()
 {
 	ASSERT(m_pModel != nullptr);
+	ASSERT(m_pSelectedInstance != nullptr);
 
-	m_pModel->ZoomToInstance(iInstance);
+	m_pModel->ZoomToInstance(m_pSelectedInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

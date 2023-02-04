@@ -64,16 +64,25 @@ CIFCModel::~CIFCModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModel::ZoomToInstance(int64_t iInstance)
+/*virtual*/ void CIFCModel::ZoomToInstance(CSTEPInstance* pSTEPInstance)
 {
+	ASSERT(pSTEPInstance != nullptr);
+
+	auto pInstance = dynamic_cast<CIFCInstance*>(pSTEPInstance);
+	if (pInstance == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	ASSERT(m_mapInstances.find(pInstance->getInstance()) != m_mapInstances.end());
+
 	m_fBoundingSphereDiameter = 0.f;
 
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
-
-	ASSERT(iInstance != 0);
-	ASSERT(m_mapInstances.find(iInstance) != m_mapInstances.end());
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -82,7 +91,7 @@ CIFCModel::~CIFCModel()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	m_mapInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||

@@ -92,7 +92,7 @@ public: // Methods
 	}
 		
 	// Zoom
-	void ZoomToInstance(int64_t iInstance);
+	void ZoomToInstance();
 	void ZoomOut();
 
 	// --------------------------------------------------------------------------------------------

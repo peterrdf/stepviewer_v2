@@ -496,48 +496,39 @@ void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 	if ((pDocument != nullptr) && 
 		(pDocument->GetModel() != nullptr) &&
-		(pDocument->GetSelectedInstance() != nullptr))
+		(pDocument->GetSelectedInstance() != nullptr) &&
+		pDocument->GetSelectedInstance()->_hasGeometry() &&
+		pDocument->GetSelectedInstance()->_isEnabled())
 	{
-		auto pModel = pDocument->GetModel();
-		switch (pModel->GetType())
-		{
-			case enumSTEPModelType::STEP:
-			{
-				auto pSelectedInstance = dynamic_cast<CProductInstance*>(pDocument->GetSelectedInstance());
-				ASSERT(pSelectedInstance != nullptr);
-
-				ASSERT(FALSE);
-				/*if (pSelectedInstance->getProductDefinition()->ha)
-				bEnable = pSelectedInstance->hasGeometry() && pSelectedInstance->getEnable();*/
-			}
-			break;
-
-			case enumSTEPModelType::IFC:
-			{
-				auto pSelectedInstance = dynamic_cast<CIFCInstance*>(pDocument->GetSelectedInstance());
-				ASSERT(pSelectedInstance != nullptr);
-
-				bEnable = pSelectedInstance->hasGeometry() && pSelectedInstance->getEnable();
-			}
-			break;
-
-			default:
-			{
-				ASSERT(FALSE); // Unknown
-			}
-			break;
-		}
-	} // if ((pDocument != nullptr) && ...
+		bEnable = TRUE;
+	}
 
 	pCmdUI->Enable(bEnable);
 }
 
 void CMySTEPViewerView::OnInstancesZoomTo()
 {
-	// TODO: Add your command handler code here
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	pDocument->ZoomToInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
+	BOOL bEnable = FALSE;
+
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	if ((pDocument != nullptr) &&
+		(pDocument->GetModel() != nullptr) &&
+		(pDocument->GetSelectedInstance() != nullptr) &&
+		pDocument->GetSelectedInstance()->_hasGeometry() &&
+		pDocument->GetSelectedInstance()->_isEnabled())
+	{
+		bEnable = TRUE;
+	}
+
+	pCmdUI->Enable(bEnable);
 }

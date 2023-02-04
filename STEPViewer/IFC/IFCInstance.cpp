@@ -69,6 +69,18 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CIFCInstance::_hasGeometry() const
+{
+	return hasGeometry();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CIFCInstance::CIFCInstance::_isEnabled() const
+{
+	return getEnable();
+}
+
+// ------------------------------------------------------------------------------------------------
 int_t CIFCInstance::getInstance() const
 {
 	return m_iInstance;

@@ -531,7 +531,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(pProductInstance->getID());
+				GetController()->ZoomToInstance();
 			}
 			break;
 

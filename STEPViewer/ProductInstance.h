@@ -37,12 +37,13 @@ private: // Members
 	bool m_bEnable;	
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	CProductInstance(int_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix);
-
-	// --------------------------------------------------------------------------------------------
 	virtual ~CProductInstance();
+
+	// CSTEPInstance
+	virtual bool _hasGeometry() const;
+	virtual bool _isEnabled() const;
 
 	// --------------------------------------------------------------------------------------------
 	int_t getID() const;

@@ -1025,6 +1025,12 @@ int CProductDefinition::getNextProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
+bool CProductDefinition::hasGeometry() const
+{
+	return (m_pVertexBuffer != nullptr) && (m_pVertexBuffer->size() > 0);
+}
+
+// ------------------------------------------------------------------------------------------------
 int32_t* CProductDefinition::getIndices() const
 {
 	if (m_pIndexBuffer != nullptr)

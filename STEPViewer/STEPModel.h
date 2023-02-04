@@ -76,7 +76,7 @@ public: // Methods
 
 	// CSTEPModelBase
 	virtual int64_t GetInstance() const;
-	virtual void ZoomToInstance(int64_t iInstance);
+	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance);
 	virtual void ZoomOut() override;
 
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;

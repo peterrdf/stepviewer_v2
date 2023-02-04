@@ -124,8 +124,8 @@ public: // Methods
 
 	// CSTEPModelBase
 	virtual int64_t GetInstance() const;
-	virtual void ZoomToInstance(int64_t iInstance);
-	virtual void CIFCModel::ZoomOut();
+	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance);
+	virtual void ZoomOut();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
