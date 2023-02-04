@@ -90,10 +90,10 @@ public: // Methods
 
 		return nullptr;
 	}
-
-	// --------------------------------------------------------------------------------------------
-	// Zoom to an instance
-	void ZoomToInstance(int64_t iInstanceID);
+		
+	// Zoom
+	void ZoomToInstance(int64_t iInstance);
+	void ZoomOut();
 
 	// --------------------------------------------------------------------------------------------
 	// [-1, 1]

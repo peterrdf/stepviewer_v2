@@ -63,10 +63,11 @@ public: // Methods
 	virtual enumProjection GetProjection() const;
 	virtual void SetView(enumView enView);
 	
-	// CSTEPView
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
+	// CSTEPView	
+	virtual void OnWorldDimensionsChanged();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnControllerChanged();	
+	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);	
+	virtual void OnControllerChanged();		
 
 private: // Methods
 	

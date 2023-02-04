@@ -32,6 +32,7 @@ IMPLEMENT_DYNCREATE(CMySTEPViewerDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_FILE_OPEN, &CMySTEPViewerDoc::OnFileOpen)
+	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 END_MESSAGE_MAP()
 
 
@@ -189,4 +190,9 @@ void CMySTEPViewerDoc::OnFileOpen()
 	}
 
 	OnOpenDocument(dlgFile.GetPathName());
+}
+
+void CMySTEPViewerDoc::OnViewZoomOut()
+{
+	ZoomOut();
 }

@@ -739,14 +739,61 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CSTEPView* pSender)
+/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged()
 {
-	if (pSender == this)
+	auto pController = GetController();
+	if (pController->GetModel() == nullptr)
 	{
+		ASSERT(FALSE);
+
 		return;
 	}
-		
+
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	/*
+	* Center
+	*/
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f); 
+
+#ifdef _LINUX
+		m_pWnd->Refresh(false);
+#else
 	_redraw();
+#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -778,6 +825,17 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		_redraw();
 #endif // _LINUX
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CSTEPView* pSender)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -122,13 +122,10 @@ public: // Methods
 	// dtor
 	virtual ~CIFCModel();
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPModelBase
 	virtual int64_t GetInstance() const;
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPModelBase
-	virtual void ZoomToInstance(int64_t iInstanceID);
+	virtual void ZoomToInstance(int64_t iInstance);
+	virtual void CIFCModel::ZoomOut();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter

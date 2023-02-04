@@ -64,9 +64,124 @@ CIFCModel::~CIFCModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModel::ZoomToInstance(int64_t /*iInstanceID*/)
+/*virtual*/ void CIFCModel::ZoomToInstance(int64_t iInstance)
 {
-	ASSERT(FALSE); // TODO
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
+	ASSERT(iInstance != 0);
+	ASSERT(m_mapInstances.find(iInstance) != m_mapInstances.end());
+
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	m_mapInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
+
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCModel::ZoomOut()
+{
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
+	{
+		if (!itInstance->second->getEnable())
+		{
+			continue;
+		}
+
+		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
+
+	/*
+	* World
+	*/
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
+
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------

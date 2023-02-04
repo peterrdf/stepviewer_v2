@@ -74,15 +74,11 @@ public: // Methods
 	// dtor
 	virtual ~CSTEPModel();
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPModelBase
 	virtual int64_t GetInstance() const;
+	virtual void ZoomToInstance(int64_t iInstance);
+	virtual void ZoomOut() override;
 
-	// --------------------------------------------------------------------------------------------
-	virtual void ZoomToInstance(int64_t iInstanceID);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 
 	// --------------------------------------------------------------------------------------------

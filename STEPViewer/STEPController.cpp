@@ -70,11 +70,25 @@ const set<CSTEPView*> & CSTEPController::GetViews()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ZoomToInstance(int64_t iInstanceID)
+void CSTEPController::ZoomToInstance(int64_t iInstance)
 {
 	ASSERT(m_pModel != nullptr);
 
-	m_pModel->ZoomToInstance(iInstanceID);
+	m_pModel->ZoomToInstance(iInstance);
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnWorldDimensionsChanged();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CSTEPController::ZoomOut()
+{
+	ASSERT(m_pModel != nullptr);
+
+	m_pModel->ZoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

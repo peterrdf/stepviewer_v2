@@ -52,29 +52,36 @@ CSTEPModel::~CSTEPModel()
 // --------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPModel::ZoomToInstance(int64_t iInstanceID)
 {
-	ASSERT(iInstanceID != 0);
-	ASSERT(m_mapProductInstances.find(iInstanceID) != m_mapProductInstances.end());
+	ASSERT(FALSE);//TODO
+//	ASSERT(iInstanceID != 0);
+//	ASSERT(m_mapProductInstances.find(iInstanceID) != m_mapProductInstances.end());
+//
+//	m_fXmin = FLT_MAX;
+//	m_fXmax = -FLT_MAX;
+//	m_fYmin = FLT_MAX;
+//	m_fYmax = -FLT_MAX;
+//	m_fZmin = FLT_MAX;
+//	m_fZmax = -FLT_MAX;
+//
+//	auto pProductInstance = m_mapProductInstances[iInstanceID];
+//
+//	pProductInstance->GetDimensions(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+//
+//	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+//	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+//	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+//
+//#ifndef _LINUX
+//	LOG_DEBUG("X/Y/Z min: " << m_fXmin << ", " << m_fYmin << ", " << m_fZmin);
+//	LOG_DEBUG("X/Y/Z max: " << m_fXmax << ", " << m_fYmax << ", " << m_fZmax);
+//	LOG_DEBUG("World's bounding sphere diameter: " << m_fBoundingSphereDiameter);
+//#endif // _LINUX
+}
 
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
-	auto pProductInstance = m_mapProductInstances[iInstanceID];
-
-	pProductInstance->GetDimensions(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-#ifndef _LINUX
-	LOG_DEBUG("X/Y/Z min: " << m_fXmin << ", " << m_fYmin << ", " << m_fZmin);
-	LOG_DEBUG("X/Y/Z max: " << m_fXmax << ", " << m_fYmax << ", " << m_fZmax);
-	LOG_DEBUG("World's bounding sphere diameter: " << m_fBoundingSphereDiameter);
-#endif // _LINUX
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSTEPModel::ZoomOut() /*override*/
+{
+	ASSERT(FALSE);//TODO
 }
 
 // ------------------------------------------------------------------------------------------------

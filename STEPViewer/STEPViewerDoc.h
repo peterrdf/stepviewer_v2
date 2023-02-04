@@ -61,4 +61,5 @@ public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	afx_msg void OnFileOpen();
+	afx_msg void OnViewZoomOut();
 };
