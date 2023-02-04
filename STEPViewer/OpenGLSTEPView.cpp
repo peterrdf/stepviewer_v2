@@ -842,9 +842,9 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+/*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
-	CSTEPController* pController = GetController();
+	/*CSTEPController* pController = GetController();
 	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
@@ -860,114 +860,112 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		ASSERT(FALSE);
 
 		return;
-	}
+	}*/
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	ASSERT(FALSE); // TODO
 
-	CMenu menu;
-	VERIFY(menu.LoadMenuW(IDR_MENU_3D_VIEW));
+	//auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
 
-	CMenu* pPopup = menu.GetSubMenu(0);
+	//CMenu menu;
+	//VERIFY(menu.LoadMenuW(IDR_MENU_3D_VIEW));
 
-	pPopup->EnableMenuItem(ID_3DVIEW_ZOOMTO, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
+	//CMenu* pPopup = menu.GetSubMenu(0);
 
-	pPopup->EnableMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-	pPopup->CheckMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | ((pSelectedInstance != nullptr) && (pSelectedInstance->getEnable()) ? MF_CHECKED : MF_UNCHECKED));
+	////pPopup->EnableMenuItem(ID_3DVIEW_ZOOMTO, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
 
-	pPopup->EnableMenuItem(ID_3DVIEW_DISABLEALLBUTTHIS, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
+	//pPopup->EnableMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
+	//pPopup->CheckMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | ((pSelectedInstance != nullptr) && (pSelectedInstance->getEnable()) ? MF_CHECKED : MF_UNCHECKED));
 
-	pPopup->EnableMenuItem(ID_3DVIEW_ENABLEALL, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
+	//pPopup->EnableMenuItem(ID_INSTANCES_DISABLE_ALL_BUT_THIS, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
 
-	pPopup->EnableMenuItem(ID_3DVIEW_SAVE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
+	//pPopup->EnableMenuItem(ID_INSTANCES_ENABLE_ALL MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
 
-	UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pWnd);
-	if (uiCommand == 0)
-	{
-		return;
-	}
+	//pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
 
-	switch (uiCommand)
-	{
-		case ID_VIEW_RESET:
-		{
-			Reset();
-		}
-		break;
+	//UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pWnd);
+	//if (uiCommand == 0)
+	//{
+	//	return;
+	//}
 
-		case ID_3DVIEW_ZOOMTO:
-		{
-			pController->ZoomToInstance(pSelectedInstance->getID());
-		}
-		break;
+	
 
-		case ID_3DVIEW_ENABLE:
-		{
-			pSelectedInstance->setEnable(!pSelectedInstance->getEnable());
+	//switch (uiCommand)
+	//{
+	//	case ID_3DVIEW_ZOOMTO:
+	//	{
+	//		pController->ZoomToInstance(pSelectedInstance->getID());
+	//	}
+	//	break;
 
-			pController->OnInstanceEnabledStateChanged(nullptr, pSelectedInstance);
-		}
-		break;
+	//	case ID_3DVIEW_ENABLE:
+	//	{
+	//		pSelectedInstance->setEnable(!pSelectedInstance->getEnable());
 
-		case ID_3DVIEW_DISABLEALLBUTTHIS:
-		{
-			const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
+	//		pController->OnInstanceEnabledStateChanged(nullptr, pSelectedInstance);
+	//	}
+	//	break;
 
-			CProductInstance* pProductInstance = nullptr;
-			map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
-			for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
-			{
-				if (itProductInstance->second == pSelectedInstance)
-				{
-					itProductInstance->second->setEnable(true);
+	//	case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+	//	{
+	//		const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
 
-					pProductInstance = itProductInstance->second;
+	//		CProductInstance* pProductInstance = nullptr;
+	//		map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
+	//		for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
+	//		{
+	//			if (itProductInstance->second == pSelectedInstance)
+	//			{
+	//				itProductInstance->second->setEnable(true);
 
-					continue;
-				}
+	//				pProductInstance = itProductInstance->second;
 
-				itProductInstance->second->setEnable(false);
-			}
+	//				continue;
+	//			}
 
-			pController->OnDisableAllButThis(nullptr, pProductInstance);
-		}
-		break;
+	//			itProductInstance->second->setEnable(false);
+	//		}
 
-		case ID_3DVIEW_ENABLEALL:
-		{
-			const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
+	//		pController->OnDisableAllButThis(nullptr, pProductInstance);
+	//	}
+	//	break;
 
-			map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
-			for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
-			{
-				itProductInstance->second->setEnable(true);
-			}
+	//	case ID_3DVIEW_ENABLEALL:
+	//	{
+	//		const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
 
-			pController->OnEnableAllInstances(nullptr);
-		}
-		break;
+	//		map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
+	//		for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
+	//		{
+	//			itProductInstance->second->setEnable(true);
+	//		}
 
-		case ID_3DVIEW_SAVE:
-		{
-			TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+	//		pController->OnEnableAllInstances(nullptr);
+	//	}
+	//	break;
 
-			CFileDialog dlgFile(FALSE, _T("bin"), pSelectedInstance->getProductDefinition()->getId(),
-				OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+	//	case ID_INSTANCES_SAVE:
+	//	{
+	//		TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 
-			if (dlgFile.DoModal() != IDOK)
-			{
-				return;
-			}
+	//		CFileDialog dlgFile(FALSE, _T("bin"), pSelectedInstance->getProductDefinition()->getId(),
+	//			OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
-			SaveInstanceTreeW(pSelectedInstance->getProductDefinition()->getInstance(), dlgFile.GetPathName());
-		}
-		break;
+	//		if (dlgFile.DoModal() != IDOK)
+	//		{
+	//			return;
+	//		}
 
-		default:
-		{
-			ASSERT(FALSE); // Unknown
-		}
-		break;
-	} // switch (uiCommand)
+	//		SaveInstanceTreeW(pSelectedInstance->getProductDefinition()->getInstance(), dlgFile.GetPathName());
+	//	}
+	//	break;
+
+	//	default:
+	//	{
+	//		ASSERT(FALSE); // Unknown
+	//	}
+	//	break;
+	//} // switch (uiCommand)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -130,13 +130,6 @@
 #define ID_INSTANCES_SAVE               32791
 #define ID_INSTANCES_SEARCH             32792
 #define ID_Menu                         32796
-#define ID_3DVIEW_VIEW                  32797
-#define ID_VIEW_RESET                   32798
-#define ID_3DVIEW_ZOOMTO                32799
-#define ID_3DVIEW_ENABLE                32800
-#define ID_3DVIEW_DISABLEALLBUTTHIS     32801
-#define ID_3DVIEW_ENABLEALL             32802
-#define ID_3DVIEW_SAVE                  32803
 #define ID_VIEW_CENTER_ALL_GEOMETRY     32805
 #define ID_VIEW_ZOOM_OUT                32807
 #define ID_VIEW_PROJECTION              32808

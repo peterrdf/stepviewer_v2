@@ -11,8 +11,3 @@ COpenGLView::COpenGLView()
 /*virtual*/ COpenGLView::~COpenGLView()
 {
 }
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
-{
-}

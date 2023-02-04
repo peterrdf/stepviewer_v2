@@ -461,7 +461,6 @@ BEGIN
             END
         END
         MENUITEM SEPARATOR
-        MENUITEM "Center all Geometry",         ID_VIEW_CENTER_ALL_GEOMETRY
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
         POPUP "Projection"
@@ -574,16 +573,24 @@ IDR_MENU_3D_VIEW MENU
 BEGIN
     POPUP "3DVIEW"
     BEGIN
-        MENUITEM "Zoom to",                     ID_3DVIEW_ZOOMTO
-        MENUITEM "Save",                        ID_3DVIEW_SAVE
+        MENUITEM "Zoom to",                     ID_INSTANCES_ZOOM_TO
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
-        MENUITEM "Enable",                      ID_3DVIEW_ENABLE
-        MENUITEM "Disable All But This",        ID_3DVIEW_DISABLEALLBUTTHIS
-        MENUITEM "Enable All",                  ID_3DVIEW_ENABLEALL
-        MENUITEM SEPARATOR
-        POPUP "View"
+        MENUITEM "Save",                        ID_INSTANCES_SAVE
+        MENUITEM SEPARATOR        
+    POPUP "Projection"
         BEGIN
-            MENUITEM "Reset",                       ID_VIEW_RESET
+            MENUITEM "Perspective", ID_PROJECTION_PERSPECTIVE
+            MENUITEM "Isometric", ID_PROJECTION_ISOMETRIC
+        END
+    POPUP "View"
+        BEGIN
+            MENUITEM "Front", ID_VIEW_FRONT
+            MENUITEM "Top", ID_VIEW_TOP
+            MENUITEM "Right", ID_VIEW_RIGHT
+            MENUITEM "Back", ID_VIEW_BACK
+            MENUITEM "Left", ID_VIEW_LEFT
+            MENUITEM "Bottom", ID_VIEW_BOTTOM
         END
     END
 END

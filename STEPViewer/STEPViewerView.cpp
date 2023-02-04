@@ -164,22 +164,17 @@ void CMySTEPViewerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	// TODO: add cleanup after printing
 }
 
-void CMySTEPViewerView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CMySTEPViewerView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnContextMenu(pWnd, point);
-	}
-
-	/*CMenu menu;
+	CMenu menu;
 	VERIFY(menu.LoadMenuW(IDR_MENU_3D_VIEW));
 
-	CMenu* pPopup = menu.GetSubMenu(0);
+	auto pPopup = menu.GetSubMenu(0);
 
 #ifndef SHARED_HANDLERS
 	CMFCPopupMenu* settingsMenu = theApp.GetContextMenuManager()->ShowPopupMenu(pPopup->GetSafeHmenu(), point.x, point.y, this, TRUE);
 	settingsMenu->AlwaysShowEmptyToolsEntry(1);
-#endif*/
+#endif
 }
 
 
