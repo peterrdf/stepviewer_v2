@@ -63,6 +63,9 @@ public: // Methods
 	virtual enumProjection GetProjection() const PURE;
 
 	// --------------------------------------------------------------------------------------------
+	virtual void SetView(enumView enView) PURE;
+
+	// --------------------------------------------------------------------------------------------
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 };
 

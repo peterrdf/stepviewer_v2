@@ -836,6 +836,12 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::SetView(enumView enView)
+{
+	_setView(enView);
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	CSTEPController* pController = GetController();

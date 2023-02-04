@@ -129,7 +129,6 @@
 #define ID_INSTANCES_REMOVE_TREE        32790
 #define ID_INSTANCES_SAVE               32791
 #define ID_INSTANCES_SEARCH             32792
-#define ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY 32795
 #define ID_Menu                         32796
 #define ID_3DVIEW_VIEW                  32797
 #define ID_VIEW_RESET                   32798

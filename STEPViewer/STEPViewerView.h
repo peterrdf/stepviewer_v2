@@ -76,6 +76,12 @@ public:
 	afx_msg void OnUpdateProjectionIsometric(CCmdUI* pCmdUI);
 	afx_msg void OnProjectionPerspective();
 	afx_msg void OnUpdateProjectionPerspective(CCmdUI* pCmdUI);
+	afx_msg void OnViewFront();
+	afx_msg void OnViewTop();
+	afx_msg void OnViewRight();
+	afx_msg void OnViewBack();
+	afx_msg void OnViewLeft();
+	afx_msg void OnViewBottom();
 };
 
 #ifndef _DEBUG  // debug version in STEPViewerView.cpp

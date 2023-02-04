@@ -61,6 +61,7 @@ public: // Methods
 	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
 	virtual void SetProjection(enumProjection enProjection);
 	virtual enumProjection GetProjection() const;
+	virtual void SetView(enumView enView);
 	
 	// CSTEPView
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);

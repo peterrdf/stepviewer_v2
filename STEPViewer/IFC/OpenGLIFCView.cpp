@@ -10,7 +10,8 @@
 
 // ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
-	: COpenGLView()
+	: _oglRenderer()
+	, COpenGLView()
 	, m_bShowFaces(TRUE)	
 	, m_bShowConceptualFacesPolygons(TRUE)
 	, m_bShowLines(TRUE)
@@ -729,6 +730,12 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 /*virtual*/ enumProjection COpenGLIFCView::GetProjection() const
 {
 	return _getProjection();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::SetView(enumView enView)
+{
+	_setView(enView);
 }
 
 // ------------------------------------------------------------------------------------------------

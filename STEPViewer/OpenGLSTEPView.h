@@ -70,7 +70,8 @@ public: // Methods
 	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	virtual void SetProjection(enumProjection enProjection);
-	virtual enumProjection GetProjection() const;
+	virtual enumProjection GetProjection() const;	
+	virtual void SetView(enumView enView);
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	// CSTEPView
