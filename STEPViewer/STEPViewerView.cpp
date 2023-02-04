@@ -105,6 +105,10 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_COMMAND(ID_VIEW_BACK, &CMySTEPViewerView::OnViewBack)
 	ON_COMMAND(ID_VIEW_LEFT, &CMySTEPViewerView::OnViewLeft)
 	ON_COMMAND(ID_VIEW_BOTTOM, &CMySTEPViewerView::OnViewBottom)
+	ON_COMMAND(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnInstancesSave)
+	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnUpdateInstancesSave)
+	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
+	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnUpdateInstancesZoomTo)
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
@@ -436,4 +440,104 @@ void CMySTEPViewerView::OnViewBottom()
 	{
 		m_pOpenGLView->SetView(enumView::Bottom);
 	}
+}
+
+void CMySTEPViewerView::OnInstancesSave()
+{
+	//if (m_pOpenGLView != nullptr)
+	//{
+	//	if (dynamic_cast<COpenGLSTEPView*>(m_pOpenGLView))
+	//	{
+
+	//	}
+	//	else if (dynamic_cast<COpenGLIFCView*>(m_pOpenGLView))
+	//	{
+
+	//	}
+	//	else
+	//	{
+	//		ASSERT(FALSE); // TODO
+	//	}
+
+	//	switch (pModel->GetType())
+	//	{
+	//	case enumSTEPModelType::STEP:
+	//	{
+	//		m_pOpenGLView = new COpenGLSTEPView(this);
+	//		m_pOpenGLView->SetController(pDoc);
+	//		m_pOpenGLView->Load();
+	//	}
+	//	break;
+
+	//	case enumSTEPModelType::IFC:
+	//	{
+	//		m_pOpenGLView = new COpenGLIFCView(this);
+	//		m_pOpenGLView->SetController(pDoc);
+	//		m_pOpenGLView->Load();
+	//	}
+	//	break;
+
+
+	//	default:
+	//	{
+	//		ASSERT(FALSE); // Unknown
+	//	}
+	//	break;
+	//	}
+	//}
+}
+
+void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
+{
+	BOOL bEnable = FALSE;
+
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	if ((pDocument != nullptr) && 
+		(pDocument->GetModel() != nullptr) &&
+		(pDocument->GetSelectedInstance() != nullptr))
+	{
+		auto pModel = pDocument->GetModel();
+		switch (pModel->GetType())
+		{
+			case enumSTEPModelType::STEP:
+			{
+				auto pSelectedInstance = dynamic_cast<CProductInstance*>(pDocument->GetSelectedInstance());
+				ASSERT(pSelectedInstance != nullptr);
+
+				ASSERT(FALSE);
+				/*if (pSelectedInstance->getProductDefinition()->ha)
+				bEnable = pSelectedInstance->hasGeometry() && pSelectedInstance->getEnable();*/
+			}
+			break;
+
+			case enumSTEPModelType::IFC:
+			{
+				auto pSelectedInstance = dynamic_cast<CIFCInstance*>(pDocument->GetSelectedInstance());
+				ASSERT(pSelectedInstance != nullptr);
+
+				bEnable = pSelectedInstance->hasGeometry() && pSelectedInstance->getEnable();
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE); // Unknown
+			}
+			break;
+		}
+	} // if ((pDocument != nullptr) && ...
+
+	pCmdUI->Enable(bEnable);
+}
+
+void CMySTEPViewerView::OnInstancesZoomTo()
+{
+	// TODO: Add your command handler code here
+}
+
+void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
 }
