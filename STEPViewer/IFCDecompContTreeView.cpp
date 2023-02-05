@@ -1128,7 +1128,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 			itInstance->second->hasGeometry() ? (itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
+		tvInsertStruct.item.lParam = itInstance->second->hasGeometry() ? (LPARAM)itInstance->second : NULL;
 
 		HTREEITEM hGeometry = (*m_pTreeView).InsertItem(&tvInsertStruct);
 		if (itInstance->second->hasGeometry())
