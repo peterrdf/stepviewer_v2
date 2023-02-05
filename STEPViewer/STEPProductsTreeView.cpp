@@ -462,7 +462,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CSTEPProductsTreeView::IsSelected(HTREEITEM hItem)
+/*virtual*/ bool CSTEPProductsTreeView::IsSelected(HTREEITEM /*hItem*/)
 {
 	ASSERT(FALSE); // TODO
 
@@ -1075,11 +1075,6 @@ void CSTEPProductsTreeView::LoadModel()
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** CSTEPProductsTreeView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-	/*CString strDuration;
-	strDuration.Format(L"\n*** CSTEPProductsTreeView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-	AfxMessageBox(strDuration);*/
 }
 
 // ------------------------------------------------------------------------------------------------

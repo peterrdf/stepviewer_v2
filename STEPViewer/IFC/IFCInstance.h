@@ -52,11 +52,6 @@ private: // Members
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
 	vector<_cohort*> m_vecLinesCohorts;
 	vector<_facesCohort*> m_vecPointsCohorts;
-
-	// Model
-	pair<float, float> m_prXMinMax;
-	pair<float, float> m_prYMinMax;
-	pair<float, float> m_prZMinMax;	
 	
 	// UI
 	bool m_bReferenced;

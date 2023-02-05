@@ -232,7 +232,7 @@ void CSTEPModel::Load(const wchar_t * szPath)
 	int64_t iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 	if (iModel == 0)
 	{
-		MessageBox(nullptr, L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+		MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}

@@ -17,7 +17,7 @@ public: // Methods
 		auto iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (iModel == 0)
 		{
-			MessageBox(nullptr, L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
 			return nullptr;
 		}
@@ -27,7 +27,7 @@ public: // Methods
 
 		if (fileSchema == nullptr)
 		{
-			MessageBox(nullptr, L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
 
 			return nullptr;
 		}
