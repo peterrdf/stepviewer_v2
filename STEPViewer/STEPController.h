@@ -95,6 +95,9 @@ public: // Methods
 	void ZoomToInstance();
 	void ZoomOut();
 
+	// Save
+	void SaveInstance();
+
 	// --------------------------------------------------------------------------------------------
 	// [-1, 1]
 	void ScaleAndCenter();

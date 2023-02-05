@@ -73,8 +73,10 @@ public: // Methods
 	~CIFCInstance();
 
 	// CSTEPInstance
+	virtual int64_t _getInstance() const;
 	virtual bool _hasGeometry() const;
 	virtual bool _isEnabled() const;
+	virtual wstring _getName() const;
 	
 	int_t getInstance() const;
 	const wchar_t* getGUID() const;

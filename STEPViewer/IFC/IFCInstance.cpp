@@ -69,15 +69,53 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ int64_t CIFCInstance::_getInstance() const
+{
+	return m_iInstance;
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCInstance::_hasGeometry() const
 {
 	return hasGeometry();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCInstance::CIFCInstance::_isEnabled() const
+/*virtual*/ bool CIFCInstance::_isEnabled() const
 {
 	return getEnable();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ wstring CIFCInstance::_getName() const
+{
+	wchar_t* szName = nullptr;
+	sdaiGetAttrBN(m_iInstance, "Name", sdaiUNICODE, &szName);
+
+	wchar_t* szDescription = nullptr;
+	sdaiGetAttrBN(m_iInstance, "Description", sdaiUNICODE, &szDescription);
+
+	CString strInstanceID;
+	strInstanceID.Format(_T("#%lld"), m_iInstance);		
+
+	wstring strItem = strInstanceID;
+	strItem += L" ";
+	strItem += getEntityName();
+	if ((szName != nullptr) && (wcslen(szName) > 0))
+	{
+		strItem += L" '";
+		strItem += szName;
+		strItem += L"'";
+	}
+
+	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
+	{
+		strItem += L" (";
+		strItem += szDescription;
+		strItem += L")";
+	}
+
+	return strItem.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------

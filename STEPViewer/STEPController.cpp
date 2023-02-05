@@ -99,6 +99,24 @@ void CSTEPController::ZoomOut()
 }
 
 // ------------------------------------------------------------------------------------------------
+void CSTEPController::SaveInstance()
+{
+	ASSERT(m_pModel != nullptr);
+	ASSERT(m_pSelectedInstance != nullptr);
+
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("bin"), m_pSelectedInstance->_getName().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	SaveInstanceTreeW(m_pSelectedInstance->_getInstance(), dlgFile.GetPathName());
+}
+
+// ------------------------------------------------------------------------------------------------
 void CSTEPController::ScaleAndCenter()
 {
 	ASSERT(FALSE); // OBSOLETE

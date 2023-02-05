@@ -444,47 +444,10 @@ void CMySTEPViewerView::OnViewBottom()
 
 void CMySTEPViewerView::OnInstancesSave()
 {
-	//if (m_pOpenGLView != nullptr)
-	//{
-	//	if (dynamic_cast<COpenGLSTEPView*>(m_pOpenGLView))
-	//	{
-
-	//	}
-	//	else if (dynamic_cast<COpenGLIFCView*>(m_pOpenGLView))
-	//	{
-
-	//	}
-	//	else
-	//	{
-	//		ASSERT(FALSE); // TODO
-	//	}
-
-	//	switch (pModel->GetType())
-	//	{
-	//	case enumSTEPModelType::STEP:
-	//	{
-	//		m_pOpenGLView = new COpenGLSTEPView(this);
-	//		m_pOpenGLView->SetController(pDoc);
-	//		m_pOpenGLView->Load();
-	//	}
-	//	break;
-
-	//	case enumSTEPModelType::IFC:
-	//	{
-	//		m_pOpenGLView = new COpenGLIFCView(this);
-	//		m_pOpenGLView->SetController(pDoc);
-	//		m_pOpenGLView->Load();
-	//	}
-	//	break;
-
-
-	//	default:
-	//	{
-	//		ASSERT(FALSE); // Unknown
-	//	}
-	//	break;
-	//	}
-	//}
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument); 
+	
+	pDocument->SaveInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
