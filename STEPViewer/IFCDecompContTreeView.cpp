@@ -54,6 +54,9 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 	(*m_pTreeView).SetImageList(m_pImageList, TVSIL_NORMAL);
 
+	// State provider
+	(*m_pTreeView).SetItemStateProvider(this);
+
 	//  Search
 	//m_pSearchDialog = new CSearchInstancesDialog(m_pTreeView);
 	//m_pSearchDialog->Create(IDD_DIALOG_SEARCH_INSTANCES, m_pTreeView);
@@ -66,6 +69,8 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;	
+
+	(*m_pTreeView).SetItemStateProvider(nullptr);
 
 	//delete m_pSearchDialog;
 }
@@ -298,6 +303,26 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 		LoadProperties(pModel, pInstance->getInstance(), pNMTreeView->itemNew.hItem);
 	} // if ((iImage == IMAGE_PROPERTY_SET) && ...
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CIFCDecompContTreeView::IsSelected(HTREEITEM hItem)
+{
+	auto pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hItem);
+	if (pInstance == nullptr)
+	{
+		return false;
+	}
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return false;
+	}
+
+	return pInstance == pController->GetSelectedInstance();
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -6,7 +6,9 @@
 #include "SearchInstancesDialog.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPProductsTreeView : public CSTEPTreeViewBase
+class CSTEPProductsTreeView 
+	: public CSTEPTreeViewBase
+	, public CItemStateProvider
 {
 
 private: // Members
@@ -40,53 +42,25 @@ private: // Members
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CSTEPProductsTreeView(CViewTree* pTreeView);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CSTEPProductsTreeView();	
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnEnableAllInstances(CSTEPView* pSender);
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPTreeViewBase
 	virtual void Load();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual CImageList* GetImageList() const;
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
+
+	// CItemStateProvider
+	virtual bool IsSelected(HTREEITEM hItem);
 
 private: // Methods	
 

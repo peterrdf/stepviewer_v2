@@ -11,7 +11,9 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CIFCDecompContTreeView : public CSTEPTreeViewBase
+class CIFCDecompContTreeView 
+	: public CSTEPTreeViewBase
+	, public CItemStateProvider
 {
 
 private: // Members
@@ -45,63 +47,27 @@ private: // Members
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CIFCDecompContTreeView(CViewTree* pTreeView);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CIFCDecompContTreeView();
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
 	virtual void OnEnableAllInstances(CSTEPView* pSender);
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPTreeViewBase
 	virtual void Load();
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual CImageList* GetImageList() const;
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPTreeViewBase
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
 
-private: // Methods	
-
-	// --------------------------------------------------------------------------------------------
-	// CSTEPView
-	//virtual void OnSelectInstanceEvent(const CSTEPView* pSender, int_t iExpressID);
-
-	// --------------------------------------------------------------------------------------------
 	// CItemStateProvider
-	//virtual bool IsSelected(HTREEITEM hItem);
+	virtual bool IsSelected(HTREEITEM hItem);
+
+private: // Methods		
 
 	// --------------------------------------------------------------------------------------------
 	CIFCModel* GetModel(HTREEITEM hItem);

@@ -462,6 +462,14 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CSTEPProductsTreeView::IsSelected(HTREEITEM hItem)
+{
+	ASSERT(FALSE); // TODO
+
+	return false;
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPProductsTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	if (point == CPoint(-1, -1))
