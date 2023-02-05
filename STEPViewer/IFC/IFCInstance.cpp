@@ -89,33 +89,13 @@ CIFCInstance::~CIFCInstance()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ wstring CIFCInstance::_getName() const
 {
-	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(m_iInstance, "Name", sdaiUNICODE, &szName);
+	CString strName;
 
-	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(m_iInstance, "Description", sdaiUNICODE, &szDescription);
+	strName.Format(_T("#%lld"), m_iInstance);
+	strName += L" ";
+	strName += getEntityName();
 
-	CString strInstanceID;
-	strInstanceID.Format(_T("#%lld"), m_iInstance);		
-
-	wstring strItem = strInstanceID;
-	strItem += L" ";
-	strItem += getEntityName();
-	if ((szName != nullptr) && (wcslen(szName) > 0))
-	{
-		strItem += L" '";
-		strItem += szName;
-		strItem += L"'";
-	}
-
-	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-	{
-		strItem += L" (";
-		strItem += szDescription;
-		strItem += L")";
-	}
-
-	return strItem.c_str();
+	return (LPCTSTR)strName;
 }
 
 // ------------------------------------------------------------------------------------------------

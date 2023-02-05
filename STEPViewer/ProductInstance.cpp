@@ -69,10 +69,21 @@ CProductInstance::~CProductInstance()
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ wstring CProductInstance::_getName() const
-{
-	ASSERT(FALSE); // TODO
+{	
+	CString strName;
 
-	return L"instance";
+	if (m_pProductDefinition != nullptr)
+	{	
+		strName.Format(_T("#%lld"), m_pProductDefinition->getInstance());
+		strName += L" ";
+		strName += m_pProductDefinition->getName();
+	}
+	else
+	{
+		strName.Format(_T("#%lld"), m_iID);
+	}
+
+	return (LPCTSTR)strName;
 }
 
 // ------------------------------------------------------------------------------------------------
