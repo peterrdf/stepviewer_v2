@@ -61,7 +61,6 @@ private: // Members
 	// UI
 	bool m_bReferenced;
 	bool m_bEnable;
-	bool m_bSelected;
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -114,11 +113,9 @@ public: // Methods
 	bool& referenced();
 	bool getEnable() const;
 	void setEnable(bool bEnable);
-	void setSelected(bool bSelected);
-	bool getSelected() const;
 	
-	GLuint & VBO();
-	GLsizei & VBOOffset();
+	GLuint& VBO();
+	GLsizei& VBOOffset();
 	
 	void CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);

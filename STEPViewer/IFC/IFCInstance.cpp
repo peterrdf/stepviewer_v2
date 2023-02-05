@@ -31,7 +31,6 @@ CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * 
 	, m_prZMinMax(pair<float, float>(-1.f, 1.f))
 	, m_bReferenced(false)
 	, m_bEnable(true)
-	, m_bSelected(false)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
@@ -273,25 +272,13 @@ void CIFCInstance::setEnable(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCInstance::setSelected(bool bSelected)
-{
-	m_bSelected = bSelected;
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CIFCInstance::getSelected() const
-{
-	return m_bSelected;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLuint & CIFCInstance::VBO()
+GLuint& CIFCInstance::VBO()
 {
 	return m_iVBO;
 }
 
 // ------------------------------------------------------------------------------------------------
-GLsizei & CIFCInstance::VBOOffset()
+GLsizei& CIFCInstance::VBOOffset()
 {
 	return m_iVBOOffset;
 }
