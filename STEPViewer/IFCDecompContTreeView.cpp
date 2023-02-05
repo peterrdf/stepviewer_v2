@@ -211,7 +211,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				}
 
 				ClickItem_UpdateChildren(hItem);
-
 				ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hItem));
 			}
 			break;
@@ -228,7 +227,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				}
 
 				ClickItem_UpdateChildren(hItem);
-
 				ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hItem));
 			}
 			break;
@@ -312,14 +310,170 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+/*virtual*/ void CIFCDecompContTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
+	ASSERT_VALID(m_pTreeView);
+	if (pWnd != m_pTreeView)
+	{
+		return;
+	}
+
 	if (point == CPoint(-1, -1))
 	{
 		return;
 	}
 
-	ASSERT(FALSE); // TODO
+	// Select clicked item:
+	CPoint ptTree = point;
+	m_pTreeView->ScreenToClient(&ptTree);
+
+	UINT flags = 0;
+	HTREEITEM hItem = m_pTreeView->HitTest(ptTree, &flags);
+	if (hItem == nullptr)
+	{
+		return;
+	}
+
+	m_pTreeView->SelectItem(hItem);
+	m_pTreeView->SetFocus();
+
+	auto pInstance = (CIFCInstance*)(*m_pTreeView).GetItemData(hItem);
+	if (pInstance == nullptr)
+	{
+		return;
+	}
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto& mapInstances = pModel->GetInstances();	
+
+	if (pInstance->hasGeometry())
+	{
+		CMenu menu;
+		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
+
+		auto pPopup = menu.GetSubMenu(0);		
+
+		// Zoom to
+		if (!pInstance->getEnable())
+		{
+			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
+		}
+
+		// Save
+		if (!pInstance->getEnable())
+		{
+			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
+		}
+
+		// Enable
+		if (pInstance->getEnable())
+		{
+			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
+		}
+
+		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeView);
+		if (uiCommand == 0)
+		{
+			return;
+		}
+
+		switch (uiCommand)
+		{
+			case ID_INSTANCES_ZOOM_TO:
+			{
+				pController->ZoomToInstance();
+			}
+			break;
+
+			case ID_VIEW_ZOOM_OUT:
+			{
+				pController->ZoomOut();
+			}
+			break;
+
+			case ID_INSTANCES_SAVE:
+			{
+				pController->SaveInstance();
+			}
+			break;
+
+			case ID_INSTANCES_ENABLE:
+			{
+				pInstance->setEnable(!pInstance->getEnable());
+
+				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeView->SetItemImage(hItem, iImage, iImage);
+
+				ClickItem_UpdateChildren(hItem);
+				ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hItem));
+
+				GetController()->OnInstancesEnabledStateChanged(this);
+			}
+			break;
+
+			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+			{
+				pInstance->setEnable(true);
+
+				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeView->SetItemImage(hItem, iImage, iImage);
+
+				auto itInstance = mapInstances.begin();
+				for (; itInstance != mapInstances.end(); itInstance++)
+				{
+					if (itInstance->second != pInstance)
+					{
+						itInstance->second->setEnable(false);
+					}					
+				}
+
+				ResetView();
+				OnInstanceSelected(nullptr);
+
+				GetController()->OnInstancesEnabledStateChanged(this);
+			}
+			break;
+
+			case ID_INSTANCES_ENABLE_ALL:
+			{
+				auto itInstance = mapInstances.begin();
+				for (; itInstance != mapInstances.end(); itInstance++)
+				{
+					itInstance->second->setEnable(true);
+				}
+
+				ResetView();
+				OnInstanceSelected(nullptr);
+
+				GetController()->OnInstancesEnabledStateChanged(this);
+			}
+			break;
+		} // switch (uiCommand)
+
+		return;
+	} // if (pInstance->hasGeometry())
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -746,9 +900,9 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);
 
-	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
+	auto& mapInstances = pModel->GetInstances();
 
-	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.find(iIFCProjectInstance);
+	auto itInstance = mapInstances.find(iIFCProjectInstance);
 	if (itInstance != mapInstances.end())
 	{
 		wstring strItem = itInstance->second->getEntityName();
@@ -1505,9 +1659,9 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 	map<wstring, vector<CIFCInstance*>> mapUnreferencedItems;
 
-	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
+	auto& mapInstances = pModel->GetInstances();
 
-	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.begin();
+	auto itInstance = mapInstances.begin();
 	for (; itInstance != mapInstances.end(); itInstance++)
 	{
 		if (!itInstance->second->hasGeometry())
@@ -1517,7 +1671,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 		if (!itInstance->second->referenced())
 		{
-			map<wstring, vector<CIFCInstance*>>::iterator itUnreferencedItems = mapUnreferencedItems.find(itInstance->second->getEntityName());
+			auto itUnreferencedItems = mapUnreferencedItems.find(itInstance->second->getEntityName());
 			if (itUnreferencedItems == mapUnreferencedItems.end())
 			{
 				vector<CIFCInstance*> veCIFCInstances;
@@ -1869,29 +2023,29 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 
 		switch (iImage)
 		{
-		case IMAGE_SELECTED:
-		{
-			iSelectedChidlrenCount++;
-		}
-		break;
+			case IMAGE_SELECTED:
+			{
+				iSelectedChidlrenCount++;
+			}
+			break;
 
-		case IMAGE_SEMI_SELECTED:
-		{
-			iSemiSelectedChidlrenCount++;
-		}
-		break;
+			case IMAGE_SEMI_SELECTED:
+			{
+				iSemiSelectedChidlrenCount++;
+			}
+			break;
 
-		case IMAGE_NOT_SELECTED:
-		{
-			// NA
-		}
-		break;
+			case IMAGE_NOT_SELECTED:
+			{
+				// NA
+			}
+			break;
 
-		default:
-		{
-			ASSERT(false); // unexpected
-		}
-		break;
+			default:
+			{
+				ASSERT(false); // unexpected
+			}
+			break;
 		} // switch (iImage)
 
 		hChild = (*m_pTreeView).GetNextSiblingItem(hChild);
