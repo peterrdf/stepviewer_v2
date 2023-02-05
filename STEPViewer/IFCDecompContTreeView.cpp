@@ -21,7 +21,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	, m_mapModelHTREEITEM()
 	, m_mapInstance2Item()
 	, m_mapSelectedInstances()
-	, m_vecCache()
 	//, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
@@ -186,8 +185,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
-		m_vecCache.clear();
-
 		int iImage = -1;
 		int iSelectedImage = -1;
 		(*m_pTreeView).GetItemImage(hItem, iImage, iSelectedImage);
@@ -206,8 +203,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(false);
-
-					m_vecCache.push_back(pInstance);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -222,8 +217,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(true);
-
-					m_vecCache.push_back(pInstance);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -239,8 +232,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 		} // switch (iImage)		
 
 		pController->OnInstancesEnabledStateChanged(this);
-
-		m_vecCache.clear();
 
 		return;
 	} // if ((hItem != nullptr) && ...
@@ -1978,8 +1969,6 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		if (pInstance != nullptr)
 		{
 			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
-
-			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateChildren(hChild);
@@ -2059,8 +2048,6 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(true);
-
-			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -2076,8 +2063,6 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(false);
-
-			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -2093,8 +2078,6 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 		if (pInstance != nullptr)
 		{
 			pInstance->setEnable(true);
-
-			m_vecCache.push_back(pInstance);
 		}
 
 		ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -2108,8 +2091,6 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	if (pInstance != nullptr)
 	{
 		pInstance->setEnable(true);
-
-		m_vecCache.push_back(pInstance);
 	}
 
 	ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hParent));
@@ -2133,7 +2114,6 @@ void CIFCDecompContTreeView::ResetView()
 	m_mapModelHTREEITEM.clear();
 	m_mapInstance2Item.clear();
 	m_mapSelectedInstances.clear();
-	m_vecCache.clear();
 
 	(*m_pTreeView).DeleteAllItems();
 
