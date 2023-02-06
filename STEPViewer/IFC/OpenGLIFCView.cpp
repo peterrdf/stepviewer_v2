@@ -453,13 +453,6 @@ BOOL COpenGLIFCView::ArePointsShown()
 		return;
 	}
 
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-#ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->enableDebug();
-#endif
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
@@ -471,65 +464,6 @@ BOOL COpenGLIFCView::ArePointsShown()
 		return;
 	}
 
-	m_pOGLProgram->use();
-
-	glViewport(0, 0, iWidth, iHeight);
-
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
-	m_pOGLProgram->setMaterialShininess(30.f);
-
-	/*
-	* Projection Matrix
-	*/
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.0001;
-	GLdouble zFar = 1000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	// Projection
-	switch (m_enProjection)
-	{
-		case enumProjection::Perspective:
-		{
-			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-			m_pOGLProgram->setProjectionMatrix(matProjection);
-		}
-		break;
-
-		case enumProjection::Isometric:
-		{
-			glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-			m_pOGLProgram->setProjectionMatrix(matProjection);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	}
-
-	/*
-	* Model-View Matrix
-	*/
-	m_matModelView = glm::identity<glm::mat4>();
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
-
 	float fXmin = -1.f;
 	float fXmax = 1.f;
 	float fYmin = -1.f;
@@ -538,33 +472,11 @@ BOOL COpenGLIFCView::ArePointsShown()
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
-
-	/*
-	* Normal Matrix
-	*/
-	glm::mat4 matNormal = m_matModelView;
-	matNormal = glm::inverse(matNormal);
-	matNormal = glm::transpose(matNormal);
-	m_pOGLProgram->setNormalMatrix(matNormal);
-
-	m_pOGLProgram->enableBinnPhongModel(true);
+	_prepare(
+		iWidth, iHeight,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
 
 	/*
 	Non-transparent faces

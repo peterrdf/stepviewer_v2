@@ -536,13 +536,18 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 #ifdef _LINUX
 void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #else
-/*virtual*/ void COpenGLSTEPView::Draw(CDC * pDC)
+/*virtual*/ void COpenGLSTEPView::Draw(CDC* pDC)
 #endif // _LINUX
 {
 	VERIFY(pDC != nullptr);
 
-	CSTEPController* pController = GetController();
-	ASSERT(pController != nullptr);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -559,73 +564,16 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		return;
 	}
 
-	int iWidth = 0;
-	int iHeight = 0;
-
-#ifdef _LINUX
-    m_pOGLContext->SetCurrent(*m_pWnd);
-
-    const wxSize szClient = m_pWnd->GetClientSize();
-
-    iWidth = szClient.GetWidth();
-    iHeight = szClient.GetHeight();
-#else    
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-#ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->enableDebug();
-#endif
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
-	iWidth = rcClient.Width();
-	iHeight = rcClient.Height();
-#endif // _LINUX
+	int iWidth = rcClient.Width();
+	int iHeight = rcClient.Height();
 
 	if ((iWidth < 20) || (iHeight < 20))
 	{
 		return;
-	}	
-
-	m_pOGLProgram->use();
-
-	glViewport(0, 0, iWidth, iHeight);
-
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
-	m_pOGLProgram->setMaterialShininess(30.f);
-
-	/*
-	* Projection Matrix
-	*/
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-	m_pOGLProgram->setProjectionMatrix(matProjection);
-
-	/*
-	* Model-View Matrix
-	*/
-	m_matModelView = glm::identity<glm::mat4>();
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	}
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -635,33 +583,11 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
-
-	/*
-	* Normal Matrix
-	*/
-	glm::mat4 matNormal = m_matModelView;
-	matNormal = glm::inverse(matNormal);
-	matNormal = glm::transpose(matNormal);
-	m_pOGLProgram->setNormalMatrix(matNormal);
-
-	m_pOGLProgram->enableBinnPhongModel(true);
+	_prepare(
+		iWidth, iHeight,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
 
 	/*
 	* Non-transparent faces
