@@ -99,7 +99,7 @@ private: // Methods
 
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 
-	void Rotate(float fXSpin, float fYSpin);
+	void Rotate(float fXAngle, float fYAngle);
 	void Zoom(float fZTranslation);
 };
 

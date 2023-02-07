@@ -655,7 +655,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 #endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
-
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 		}
@@ -1723,7 +1722,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	CSTEPController * pController = GetController();
+	auto pController = GetController();
 	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
@@ -1744,84 +1743,74 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	/*
 	* Selection
 	*/
-	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ((nFlags & MK_MBUTTON) != MK_MBUTTON) && ((nFlags & MK_RBUTTON) != MK_RBUTTON))
+	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
+		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
+		((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
+		m_pInstanceSelectionFrameBuffer->isInitialized())
 	{
-		/*
-		* Select an instance
-		*/
-		if (m_pInstanceSelectionFrameBuffer->isInitialized())
+		int iWidth = 0;
+		int iHeight = 0;
+
+#ifdef _LINUX
+		m_pOGLContext->SetCurrent(*m_pWnd);
+
+		const wxSize szClient = m_pWnd->GetClientSize();
+
+		iWidth = szClient.GetWidth();
+		iHeight = szClient.GetHeight();
+#else
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		iWidth = rcClient.Width();
+		iHeight = rcClient.Height();
+#endif // _LINUX
+
+		GLubyte arPixels[4];
+		memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+
+		m_pInstanceSelectionFrameBuffer->bind();
+
+		glReadPixels(
+			(GLint)dX,
+			(GLint)dY,
+			1, 1,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			arPixels);
+
+		m_pInstanceSelectionFrameBuffer->unbind();
+
+		CProductInstance* pPointedInstance = nullptr;
+		if (arPixels[3] != 0)
 		{
-			int iWidth = 0;
-			int iHeight = 0;
+			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+			pPointedInstance = pModel->getProductInstanceByID(iInstanceID);
+			ASSERT(pPointedInstance != nullptr);
+		}
+
+		if (m_pPointedInstance != pPointedInstance)
+		{
+			m_pPointedInstance = pPointedInstance;
 
 #ifdef _LINUX
-			m_pOGLContext->SetCurrent(*m_pWnd);
-
-			const wxSize szClient = m_pWnd->GetClientSize();
-
-			iWidth = szClient.GetWidth();
-			iHeight = szClient.GetHeight();
+			m_pWnd->Refresh(false);
 #else
-			BOOL bResult = m_pOGLContext->makeCurrent();
-			VERIFY(bResult);
-
-			CRect rcClient;
-			m_pWnd->GetClientRect(&rcClient);
-
-			iWidth = rcClient.Width();
-			iHeight = rcClient.Height();
+			_redraw();
 #endif // _LINUX
-
-			GLubyte arPixels[4];
-			memset(arPixels, 0, sizeof(GLubyte) * 4);
-
-			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-
-			m_pInstanceSelectionFrameBuffer->bind();
-
-			glReadPixels(
-				(GLint)dX,
-				(GLint)dY,
-				1, 1,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				arPixels);
-
-			m_pInstanceSelectionFrameBuffer->unbind();
-
-			CProductInstance * pPointedInstance = nullptr;
-
-			if (arPixels[3] != 0)
-			{
-				int64_t iObjectID =
-					(arPixels[0/*R*/] * (255 * 255)) +
-					(arPixels[1/*G*/] * 255) +
-					arPixels[2/*B*/];
-
-				pPointedInstance = pModel->getProductInstanceByID(iObjectID);
-				ASSERT(pPointedInstance != nullptr);
-			} // if (arPixels[3] != 0)
-
-			if (m_pPointedInstance != pPointedInstance)
-			{
-				m_pPointedInstance = pPointedInstance;
-
-#ifdef _LINUX
-                m_pWnd->Refresh(false);
-#else
-                _redraw();
-#endif // _LINUX
-			}
-		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
+		}
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
 	if (m_ptPrevMousePosition.x == -1)
 	{
 		return;
 	}
-
-	float fBoundingSphereDiameter = pModel->GetBoundingSphereDiameter();
 
 	/*
 	* Rotate
@@ -1831,9 +1820,19 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
 		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
 
-		const float ROTATE_SPEED = 0.075f;
+		if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+		{
+			fYAngle = 0.;
+		}
+		else
+		{
+			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+			{
+				fXAngle = 0.;
+			}
+		}
 
-		Rotate(fXAngle * ROTATE_SPEED, fYAngle * ROTATE_SPEED);
+		Rotate(fXAngle * ROTATION_SPEED, fYAngle * ROTATION_SPEED);
 
 		m_ptPrevMousePosition = point;
 
@@ -1845,7 +1844,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
 	{
-		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -(fBoundingSphereDiameter * 0.05f) : (fBoundingSphereDiameter * 0.05f));
+		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
 
 		m_ptPrevMousePosition = point;
 
@@ -1857,29 +1856,16 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
 	{
-		int iWidth = 0;
-		int iHeight = 0;
-
-#ifdef _LINUX
-		const wxSize szClient = m_pWnd->GetClientSize();
-
-		iWidth = szClient.GetWidth();
-		iHeight = szClient.GetHeight();
-#else
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
 
-		iWidth = rcClient.Width();
-		iHeight = rcClient.Height();
-#endif // _LINUX
-
-		m_fXTranslation += (((float)point.x - (float)m_ptPrevMousePosition.x) / iWidth) * (2.f * fBoundingSphereDiameter);
-		m_fYTranslation -= (((float)point.y - (float)m_ptPrevMousePosition.y) / iHeight) * (2.f * fBoundingSphereDiameter);
+		m_fXTranslation += PAN_SPEED_MOUSE * (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width());
+		m_fYTranslation -= PAN_SPEED_MOUSE * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
 
 #ifdef _LINUX
-        m_pWnd->Refresh(false);
+		m_pWnd->Refresh(false);
 #else
-        _redraw();
+		_redraw();
 #endif // _LINUX
 
 		m_ptPrevMousePosition = point;
@@ -1889,39 +1875,33 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::Rotate(float fXSpin, float fYSpin)
+void COpenGLSTEPView::Rotate(float fXAngle, float fYAngle)
 {
-	m_fXAngle += fXSpin;
-	if (m_fXAngle > 360.0)
+	m_fXAngle += fXAngle * (180.f / (float)M_PI);
+	if (m_fXAngle > 360.f)
 	{
-		m_fXAngle = m_fXAngle - 360.0f;
+		m_fXAngle -= 360.f;
 	}
-	else
+	else if (m_fXAngle < -360.f)
 	{
-		if (m_fXAngle < 0.0)
-		{
-			m_fXAngle = m_fXAngle + 360.0f;
-		}
+		m_fXAngle += 360.f;
 	}
 
-	m_fYAngle += fYSpin;
-	if (m_fYAngle > 360.0)
+	m_fYAngle += fYAngle * (180.f / (float)M_PI);
+	if (m_fYAngle > 360.f)
 	{
-		m_fYAngle = m_fYAngle - 360.0f;
+		m_fYAngle = m_fYAngle - 360.f;
 	}
-	else
+	else if (m_fYAngle < -360.f)
 	{
-		if (m_fYAngle < 0.0)
-		{
-			m_fYAngle = m_fYAngle + 360.0f;
-		}
+		m_fYAngle += 360.f;
 	}
 
 #ifdef _LINUX
-    m_pWnd->Refresh(false);
+	m_pWnd->Refresh(false);
 #else
-    _redraw();
-#endif // _LINUX	
+	_redraw();
+#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------

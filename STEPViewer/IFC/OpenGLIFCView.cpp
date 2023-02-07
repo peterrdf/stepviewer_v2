@@ -538,7 +538,6 @@ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
-
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 		}
@@ -1230,71 +1229,68 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	/*
 	* Selection
 	*/
-	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ((nFlags & MK_MBUTTON) != MK_MBUTTON) && ((nFlags & MK_RBUTTON) != MK_RBUTTON))
+	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && 
+		((nFlags & MK_MBUTTON) != MK_MBUTTON) && 
+		((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
+		m_pInstanceSelectionFrameBuffer->isInitialized())
 	{
-		/*
-		* Select an instance
-		*/
-		if (m_pInstanceSelectionFrameBuffer->isInitialized())
+		int iWidth = 0;
+		int iHeight = 0;
+
+#ifdef _LINUX
+		m_pOGLContext->SetCurrent(*m_pWnd);
+
+		const wxSize szClient = m_pWnd->GetClientSize();
+
+		iWidth = szClient.GetWidth();
+		iHeight = szClient.GetHeight();
+#else
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		iWidth = rcClient.Width();
+		iHeight = rcClient.Height();
+#endif // _LINUX
+
+		GLubyte arPixels[4];
+		memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+
+		m_pInstanceSelectionFrameBuffer->bind();
+
+		glReadPixels(
+			(GLint)dX,
+			(GLint)dY,
+			1, 1,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			arPixels);
+
+		m_pInstanceSelectionFrameBuffer->unbind();
+
+		CIFCInstance* pPointedInstance = nullptr;
+		if (arPixels[3] != 0)
 		{
-			int iWidth = 0;
-			int iHeight = 0;
+			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+			pPointedInstance = pModel->GetInstanceByID(iInstanceID);
+			ASSERT(pPointedInstance != nullptr);
+		}
+
+		if (m_pPointedInstance != pPointedInstance)
+		{
+			m_pPointedInstance = pPointedInstance;
 
 #ifdef _LINUX
-			m_pOGLContext->SetCurrent(*m_pWnd);
-
-			const wxSize szClient = m_pWnd->GetClientSize();
-
-			iWidth = szClient.GetWidth();
-			iHeight = szClient.GetHeight();
+			m_pWnd->Refresh(false);
 #else
-			BOOL bResult = m_pOGLContext->makeCurrent();
-			VERIFY(bResult);
-
-			CRect rcClient;
-			m_pWnd->GetClientRect(&rcClient);
-
-			iWidth = rcClient.Width();
-			iHeight = rcClient.Height();
+			_redraw();
 #endif // _LINUX
-
-			GLubyte arPixels[4];
-			memset(arPixels, 0, sizeof(GLubyte) * 4);
-
-			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-
-			m_pInstanceSelectionFrameBuffer->bind();
-
-			glReadPixels(
-				(GLint)dX,
-				(GLint)dY,
-				1, 1,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				arPixels);
-
-			m_pInstanceSelectionFrameBuffer->unbind();
-
-			CIFCInstance* pPointedInstance = nullptr;
-			if (arPixels[3] != 0)
-			{
-				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				pPointedInstance = pModel->GetInstanceByID(iObjectID);
-				ASSERT(pPointedInstance != nullptr);
-			}
-
-			if (m_pPointedInstance != pPointedInstance)
-			{
-				m_pPointedInstance = pPointedInstance;
-
-#ifdef _LINUX
-				m_pWnd->Refresh(false);
-#else
-				_redraw();
-#endif // _LINUX
-			}
-		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
+		}
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
 	if (m_ptPrevMousePosition.x == -1)
