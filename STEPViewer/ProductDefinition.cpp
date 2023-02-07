@@ -750,30 +750,28 @@ void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, fl
 		return;
 	}
 
-	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
+	for (auto pInstance : m_vecProductInstances)
 	{
-		auto pProductInstance = m_vecProductInstances[iInstance];	
-
-		pProductInstance->m_fXmin = FLT_MAX;
-		pProductInstance->m_fXmax = -FLT_MAX;
-		pProductInstance->m_fYmin = FLT_MAX;
-		pProductInstance->m_fYmax = -FLT_MAX;
-		pProductInstance->m_fZmin = FLT_MAX;
-		pProductInstance->m_fZmax = -FLT_MAX;
+		pInstance->m_fXmin = FLT_MAX;
+		pInstance->m_fXmax = -FLT_MAX;
+		pInstance->m_fYmin = FLT_MAX;
+		pInstance->m_fYmax = -FLT_MAX;
+		pInstance->m_fZmin = FLT_MAX;
+		pInstance->m_fZmax = -FLT_MAX;
 
 		CalculateMinMaxTransform(
-			pProductInstance, 
-			pProductInstance->m_fXmin, pProductInstance->m_fXmax, 
-			pProductInstance->m_fYmin, pProductInstance->m_fYmax, 
-			pProductInstance->m_fZmin, pProductInstance->m_fZmax);
+			pInstance,
+			pInstance->m_fXmin, pInstance->m_fXmax,
+			pInstance->m_fYmin, pInstance->m_fYmax,
+			pInstance->m_fZmin, pInstance->m_fZmax);
 
-		fXmin = (float)fmin(fXmin, pProductInstance->m_fXmin);
-		fXmax = (float)fmax(fXmax, pProductInstance->m_fXmax);
-		fYmin = (float)fmin(fYmin, pProductInstance->m_fYmin);
-		fYmax = (float)fmax(fYmax, pProductInstance->m_fYmax);
-		fZmin = (float)fmin(fZmin, pProductInstance->m_fZmin);
-		fZmax = (float)fmax(fZmax, pProductInstance->m_fZmax);
-	} // for (size_t iInstance = ...
+		fXmin = (float)fmin(fXmin, pInstance->m_fXmin);
+		fXmax = (float)fmax(fXmax, pInstance->m_fXmax);
+		fYmin = (float)fmin(fYmin, pInstance->m_fYmin);
+		fYmax = (float)fmax(fYmax, pInstance->m_fYmax);
+		fZmin = (float)fmin(fZmin, pInstance->m_fZmin);
+		fZmax = (float)fmax(fZmax, pInstance->m_fZmax);
+	} // for (auto pInstance ...
 }
 
 // ------------------------------------------------------------------------------------------------

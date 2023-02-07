@@ -156,11 +156,8 @@ void CSTEPModel::ScaleAndCenter()
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
-
-	/*
-	* Calculate
-	*/
-	map<int_t, CProductDefinition*>::iterator itProductDefinitions = m_mapProductDefinitions.begin();
+	
+	auto itProductDefinitions = m_mapProductDefinitions.begin();
 	for (; itProductDefinitions != m_mapProductDefinitions.end(); itProductDefinitions++)
 	{
 		itProductDefinitions->second->CalculateMinMaxTransform(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
@@ -396,6 +393,7 @@ void CSTEPModel::LoadAssemblies()
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadGeometry()
 {
+	// Defaults
 	SetDefaultColor(
 			m_iModel,
 			50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
@@ -406,10 +404,8 @@ void CSTEPModel::LoadGeometry()
 
 	setSegmentation(m_iModel, 20, 0.);
 
-	/*
-	* Load
-	*/
-	map<int_t, CProductDefinition*>::iterator itProductDefinition = m_mapProductDefinitions.begin();
+	// Load
+	auto itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
 		if (itProductDefinition->second->getRelatedProductRefs() == 0)
@@ -425,7 +421,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	map<int_t, CAssembly*>::iterator itAssembly = m_mapAssemblies.begin();
 	for (; itAssembly != m_mapAssemblies.end(); itAssembly++)
 	{
-		CAssembly* pAssembly = itAssembly->second;
+		auto pAssembly = itAssembly->second;
 
 		if (pAssembly->m_pRelatingProductDefinition == pProductDefinition)
 		{
@@ -440,7 +436,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 			ASSERT(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(GetModel(owlInstanceMatrix), "Matrix") || 
 				GetInstanceClass(owlInstanceMatrix) == GetClassByName(GetModel(owlInstanceMatrix), "MatrixMultiplication"));
 
-			MATRIX	matrix;
+			MATRIX matrix;
 			MatrixIdentity(&matrix);
 			if (owlInstanceMatrix) 
 			{
@@ -468,22 +464,19 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-    //if (pProductDefinition->getRelatingProductRefs() == 0)
-	{
-		int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pProductDefinition->getExpressID());
+	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pProductDefinition->getExpressID());
 
-		int64_t	owlInstanceProductDefinition = 0;
-		owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
+	int64_t	owlInstanceProductDefinition = 0;
+	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
 
-		pProductDefinition->Calculate();
+	pProductDefinition->Calculate();
 
-		cleanMemory(m_iModel, 0);
+	cleanMemory(m_iModel, 0);
 
-		auto pProductInstance = new CProductInstance(m_iID++, pProductDefinition, pParentMatrix);
-		m_mapProductInstances[pProductInstance->getID()] = pProductInstance;
+	auto pProductInstance = new CProductInstance(m_iID++, pProductDefinition, pParentMatrix);
+	m_mapProductInstances[pProductInstance->getID()] = pProductInstance;
 
-		pProductDefinition->m_vecProductInstances.push_back(pProductInstance);
-	} // if (pProductDefinition->getRelatingProductRefs() == 0)
+	pProductDefinition->m_vecProductInstances.push_back(pProductInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -495,21 +488,21 @@ void CSTEPModel::Clean()
 		m_iModel = 0;
 	}
 
-	map<int_t, CProductDefinition*>::iterator itProductDefinition = m_mapProductDefinitions.begin();
+	auto itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
 		delete itProductDefinition->second;
 	}
 	m_mapProductDefinitions.clear();
 
-	map<int_t, CProductInstance*>::iterator itProductInstance = m_mapProductInstances.begin();
+	auto itProductInstance = m_mapProductInstances.begin();
 	for (; itProductInstance != m_mapProductInstances.end(); itProductInstance++)
 	{
 		delete itProductInstance->second;
 	}
 	m_mapProductInstances.clear();
 
-	map<int_t, CAssembly*>::iterator itAssembly = m_mapAssemblies.begin();
+	auto itAssembly = m_mapAssemblies.begin();
 	for (; itAssembly != m_mapAssemblies.end(); itAssembly++)
 	{
 		delete itAssembly->second;
