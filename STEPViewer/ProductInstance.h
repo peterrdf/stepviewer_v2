@@ -22,15 +22,6 @@ private: // Members
 	CProductDefinition* m_pProductDefinition;
 
 	// --------------------------------------------------------------------------------------------
-	// Dimensions
-	float m_fXmin;
-	float m_fXmax;
-	float m_fYmin;
-	float m_fYmax;
-	float m_fZmin;
-	float m_fZmax;
-
-	// --------------------------------------------------------------------------------------------
 	OGLMATRIX* m_pTransformationMatrix;
 
 	// --------------------------------------------------------------------------------------------
@@ -54,10 +45,6 @@ public: // Methods
 	CProductDefinition* getProductDefinition() const;
 
 	// --------------------------------------------------------------------------------------------
-	// Getter
-	void GetDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-
-	// --------------------------------------------------------------------------------------------
 	OGLMATRIX* getTransformationMatrix() const;
 
 	// --------------------------------------------------------------------------------------------
@@ -67,6 +54,6 @@ public: // Methods
 	void setEnable(bool bEnable);
 
 	// --------------------------------------------------------------------------------------------
-	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
+	void ScaleAndCenter(float fResoltuion);
 };
 

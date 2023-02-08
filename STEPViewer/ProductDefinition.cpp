@@ -752,26 +752,12 @@ void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, fl
 
 	for (auto pInstance : m_vecProductInstances)
 	{
-		pInstance->m_fXmin = FLT_MAX;
-		pInstance->m_fXmax = -FLT_MAX;
-		pInstance->m_fYmin = FLT_MAX;
-		pInstance->m_fYmax = -FLT_MAX;
-		pInstance->m_fZmin = FLT_MAX;
-		pInstance->m_fZmax = -FLT_MAX;
-
 		CalculateMinMaxTransform(
 			pInstance,
-			pInstance->m_fXmin, pInstance->m_fXmax,
-			pInstance->m_fYmin, pInstance->m_fYmax,
-			pInstance->m_fZmin, pInstance->m_fZmax);
-
-		fXmin = (float)fmin(fXmin, pInstance->m_fXmin);
-		fXmax = (float)fmax(fXmax, pInstance->m_fXmax);
-		fYmin = (float)fmin(fYmin, pInstance->m_fYmin);
-		fYmax = (float)fmax(fYmax, pInstance->m_fYmax);
-		fZmin = (float)fmin(fZmin, pInstance->m_fZmin);
-		fZmax = (float)fmax(fZmax, pInstance->m_fZmax);
-	} // for (auto pInstance ...
+			fXmin, fXmax,
+			fYmin, fYmax,
+			fZmin, fZmax);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -783,8 +769,8 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 	}
 
 	/*
-		* Triangles
-		*/
+	* Triangles
+	*/
 	if (!m_vecTriangles.empty())
 	{
 		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
@@ -947,7 +933,7 @@ void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, f
 	*/
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
 	{
-		m_vecProductInstances[iInstance]->ScaleAndCenter(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax, fResoltuion);
+		m_vecProductInstances[iInstance]->ScaleAndCenter(fResoltuion);
 	}
 }
 

@@ -9,12 +9,6 @@ CProductInstance::CProductInstance(int_t iID, CProductDefinition* pProductDefini
 	, m_pProductDefinition(pProductDefinition)
 	, m_pTransformationMatrix(nullptr)
 	, m_bEnable(true)
-	, m_fXmin(-1.f)
-	, m_fXmax(1.f)
-	, m_fYmin(-1.f)
-	, m_fYmax(1.f)
-	, m_fZmin(-1.f)
-	, m_fZmax(1.f)
 {
 	ASSERT(m_iID != 0);
 	ASSERT(pProductDefinition != nullptr);
@@ -99,17 +93,6 @@ CProductDefinition* CProductInstance::getProductDefinition() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductInstance::GetDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-{
-	fXmin = m_fXmin;
-	fXmax = m_fXmax;
-	fYmin = m_fYmin;
-	fYmax = m_fYmax;
-	fZmin = m_fZmin;
-	fZmax = m_fZmax;
-}
-
-// ------------------------------------------------------------------------------------------------
 OGLMATRIX* CProductInstance::getTransformationMatrix() const
 {
 	return m_pTransformationMatrix;
@@ -128,36 +111,8 @@ void CProductInstance::setEnable(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
+void CProductInstance::ScaleAndCenter(float fResoltuion)
 {
-	/*
-	* Dimensions
-	*/
-
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXmin -= fXmin;
-	m_fYmin -= fYmin;
-	m_fZmin -= fZmin;
-	m_fXmax -= fXmin;
-	m_fYmax -= fYmin;
-	m_fZmax -= fZmin;
-
-	// center
-	m_fXmin -= ((fXmax - fXmin) / 2.0f);
-	m_fYmin -= ((fYmax - fYmin) / 2.0f);
-	m_fZmin -= ((fZmax - fZmin) / 2.0f);
-	m_fXmax -= ((fXmax - fXmin) / 2.0f);
-	m_fYmax -= ((fYmax - fYmin) / 2.0f);
-	m_fZmax -= ((fZmax - fZmin) / 2.0f);
-
-	// [-1.0 -> 1.0]
-	m_fXmin /= (fResoltuion / 2.0f);
-	m_fYmin /= (fResoltuion / 2.0f);
-	m_fZmin /= (fResoltuion / 2.0f);
-	m_fXmax /= (fResoltuion / 2.0f);
-	m_fYmax /= (fResoltuion / 2.0f);
-	m_fZmax /= (fResoltuion / 2.0f);
-
 	/*
 	* Transformation
 	*/
