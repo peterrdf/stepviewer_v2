@@ -62,12 +62,30 @@ public: // Methods
 	CProductDefinition();
 	virtual ~CProductDefinition();
 	
-	void Calculate();
+	void Calculate();	
 	
-	void CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
-	void CalculateMinMaxTransform(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
-	void CalculateMinMaxTransform(CProductInstance* pProductInstance, float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
-	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
+	void CalculateMinMaxTransform(
+		float & fXmin, float & fXmax, 
+		float & fYmin, float & fYmax, 
+		float & fZmin, float & fZmax);
+
+	void CalculateMinMaxTransform(
+		float fXTranslation, float fYTranslation, float fZTranslation,
+		float& fXmin, float& fXmax, 
+		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax);
+
+	void CalculateMinMaxTransform(
+		CProductInstance* pProductInstance, 
+		float& fXmin, float& fXmax, 
+		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax);
+
+	void ScaleAndCenter(
+		float fXmin, float fXmax, 
+		float fYmin, float fYmax, 
+		float fZmin, float fZmax, 
+		float fResoltuion);
 	
 	int_t getExpressID() const;
 	int_t getInstance() const;	

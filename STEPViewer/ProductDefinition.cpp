@@ -640,110 +640,10 @@ void CProductDefinition::Calculate()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductDefinition::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	/*
-	* Triangles
-	*/
-	if (!m_vecTriangles.empty())
-	{
-		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
-		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex(); 
-				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iTriangle = ...
-	} // if (!m_vecTriangles.empty())	
-
-	/*
-	* Conceptual faces polygons
-	*/
-	if (!m_vecConcFacePolygons.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex(); 
-				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecConcFacePolygons.empty())
-
-	/*
-	* Lines
-	*/
-	if (!m_vecLines.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecLines[iPolygon].startIndex(); 
-				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if (getIndices()[iIndex] == -1)
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecLines.empty())
-
-	/*
-	* Points
-	*/
-	if (!m_vecPoints.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex(); 
-				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount(); 
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecPoints.empty())
-}
-
-// ------------------------------------------------------------------------------------------------
-void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
+void CProductDefinition::CalculateMinMaxTransform(
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -761,7 +661,45 @@ void CProductDefinition::CalculateMinMaxTransform(float& fXmin, float& fXmax, fl
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInstance, float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
+void CProductDefinition::CalculateMinMaxTransform(
+	float fXTranslation, float fYTranslation, float fZTranslation,
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
+{
+	if (getVerticesCount() == 0)
+	{
+		return;
+	}
+
+	for (auto pInstance : m_vecProductInstances)
+	{
+		double d_41 = pInstance->getTransformationMatrix()->_41;
+		double d_42 = pInstance->getTransformationMatrix()->_42;
+		double d_43 = pInstance->getTransformationMatrix()->_43;
+
+		pInstance->getTransformationMatrix()->_41 += fXTranslation;
+		pInstance->getTransformationMatrix()->_42 += fYTranslation;
+		pInstance->getTransformationMatrix()->_43 += fZTranslation;
+
+		CalculateMinMaxTransform(
+			pInstance,
+			fXmin, fXmax,
+			fYmin, fYmax,
+			fZmin, fZmax);
+
+		pInstance->getTransformationMatrix()->_41 = d_41;
+		pInstance->getTransformationMatrix()->_42 = d_42;
+		pInstance->getTransformationMatrix()->_43 = d_43;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CProductDefinition::CalculateMinMaxTransform(
+	CProductInstance* pProductInstance, 
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -900,7 +838,12 @@ void CProductDefinition::CalculateMinMaxTransform(CProductInstance* pProductInst
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductDefinition::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
+void CProductDefinition::ScaleAndCenter(
+	float fXmin, float 
+	fXmax, float fYmin, 
+	float fYmax, float fZmin, 
+	float fZmax, 
+	float fResoltuion)
 {
 	if (getVerticesCount() == 0)
 	{
