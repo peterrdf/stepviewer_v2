@@ -914,8 +914,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		return;
 	}
 
-	ASSERT(FALSE);
-
 	float fXmin = -1.f;
 	float fXmax = 1.f;
 	float fYmin = -1.f;

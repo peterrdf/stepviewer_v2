@@ -76,9 +76,16 @@ public: // Methods
 		float& fZmin, float& fZmax);
 
 	void CalculateMinMaxTransform(
-		CProductInstance* pProductInstance, 
+		CProductInstance* pInstance, 
 		float& fXmin, float& fXmax, 
 		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax);
+
+	void CalculateMinMaxTransform(
+		CProductInstance* pInstance,
+		float fXTranslation, float fYTranslation, float fZTranslation,
+		float& fXmin, float& fXmax,
+		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax);
 
 	void ScaleAndCenter(
