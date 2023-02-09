@@ -149,7 +149,7 @@ static void OGLMatrixIdentity(OGLMATRIX* pOut)
 
 	pOut->_11 = pOut->_22 = pOut->_33 = pOut->_44 = 1.;
 }
-
+ 
 // ------------------------------------------------------------------------------------------------
 static void	OGLTransform(const VECTOR3* pV, const OGLMATRIX* pM, VECTOR3* pOut)
 {

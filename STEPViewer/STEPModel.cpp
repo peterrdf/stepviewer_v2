@@ -97,7 +97,53 @@ CSTEPModel::~CSTEPModel()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPModel::ZoomOut() /*override*/
 {
-	ASSERT(FALSE);//TODO
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	m_fBoundingSphereDiameter = 0.f;
+
+	auto itProductDefinition = m_mapProductDefinitions.begin();
+	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	{
+		auto itInstance = itProductDefinition->second->getProductInstances();
+		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			itProductDefinition->second->CalculateMinMaxTransform(
+				pInstance,
+				m_fXTranslation, m_fYTranslation, m_fZTranslation,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,7 +192,7 @@ const map<int_t, CAssembly*>& CSTEPModel::getAssemblies()
 // ------------------------------------------------------------------------------------------------
 CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 {
-	map<int_t, CProductInstance*>::const_iterator itProductInstance = m_mapProductInstances.find(iID);
+	auto itProductInstance = m_mapProductInstances.find(iID);
 	if (itProductInstance == m_mapProductInstances.end())
 	{
 		ASSERT(FALSE);
@@ -172,6 +218,10 @@ void CSTEPModel::ScaleAndCenter()
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
+
+	/*
+	* Min/max
+	*/
 	
 	auto itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
@@ -234,14 +284,55 @@ void CSTEPModel::ScaleAndCenter()
 			m_fBoundingSphereDiameter);
 	}
 
-	m_fXmin = -1.f;
-	m_fXmax = 1.f;
-	m_fYmin = -1.f;
-	m_fYmax = 1.f;
-	m_fZmin = -1.f;
-	m_fZmax = 1.f;
+	/*
+	* Min/max
+	*/
 
-	m_fBoundingSphereDiameter = 2.f;
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	itProductDefinition = m_mapProductDefinitions.begin();
+	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	{
+		auto itInstance = itProductDefinition->second->getProductInstances();
+		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			itProductDefinition->second->CalculateMinMaxTransform(
+				pInstance,
+				m_fXTranslation, m_fYTranslation, m_fZTranslation,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
 // ------------------------------------------------------------------------------------------------
