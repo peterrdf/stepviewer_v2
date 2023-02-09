@@ -489,13 +489,12 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	}
 
 	(*m_pTreeView).SelectItem(hItem);
-
 	(*m_pTreeView).SetFocus();
 
 	/*
 	* Instances
 	*/
-	CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
+	auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
 	{
 		auto pProductInstance = pItemData->getInstance<CProductInstance>();
@@ -503,7 +502,19 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
-		CMenu* pPopup = menu.GetSubMenu(0);
+		auto pPopup = menu.GetSubMenu(0);
+
+		// Zoom to
+		if (!pProductInstance->getEnable())
+		{
+			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
+		}
+
+		// Save
+		if (!pProductInstance->getEnable())
+		{
+			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
+		}
 
 		if (pProductInstance->getEnable())
 		{
@@ -533,7 +544,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
+		auto& mapProductInstances = pModel->getProductInstances();
 
 		switch (uiCommand)
 		{
@@ -545,17 +556,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 			case ID_INSTANCES_SAVE:
 			{
-				TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-
-				CFileDialog dlgFile(FALSE, _T("bin"), pProductInstance->getProductDefinition()->getId(),
-					OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-				if (dlgFile.DoModal() != IDOK)
-				{
-					return;
-				}
-
-				SaveInstanceTreeW(pProductInstance->getProductDefinition()->getInstance(), dlgFile.GetPathName());
+				GetController()->SaveInstance();
 			}
 			break;
 
@@ -565,7 +566,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				* State
 				*/
 				CProductInstance* pInstance = nullptr;
-				map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
+				auto itProductInstance = mapProductInstances.begin();
 				for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
 				{
 					if (itProductInstance->second == pProductInstance)
@@ -681,7 +682,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	CMenu menu;
 	VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 
-	CMenu* pPopup = menu.GetSubMenu(0);
+	auto pPopup = menu.GetSubMenu(0);
 
 	UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeView);
 	if (uiCommand == 0)
