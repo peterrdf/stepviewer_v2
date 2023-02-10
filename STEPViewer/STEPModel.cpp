@@ -109,8 +109,8 @@ CSTEPModel::~CSTEPModel()
 	auto itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
-		auto itInstance = itProductDefinition->second->getProductInstances();
-		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		auto& vecProductInstances = itProductDefinition->second->getProductInstances();
+		for (auto pInstance : vecProductInstances)
 		{
 			if (!pInstance->getEnable())
 			{

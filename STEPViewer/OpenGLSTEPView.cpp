@@ -299,7 +299,7 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();	
 
 	// Data
-	const map<int_t, CProductDefinition*>& mapProductDefinitions = pModel->getProductDefinitions();
+	auto& mapProductDefinitions = pModel->getProductDefinitions();
 
 	// VBO
 	GLuint iVerticesCount = 0;
@@ -1107,7 +1107,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 				continue;
 			}
 
-			auto vecProductInstances = pDefinition->getProductInstances();
+			auto& vecProductInstances = pDefinition->getProductInstances();
 			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
 			{
 				auto pInstance = vecProductInstances[iInstance];
@@ -1242,7 +1242,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				continue;
 			}
 
-			auto vecProductInstances = pDefinition->getProductInstances();
+			auto& vecProductInstances = pDefinition->getProductInstances();
 			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
 			{
 				auto pInstance = vecProductInstances[iInstance];
@@ -1350,7 +1350,7 @@ void COpenGLSTEPView::DrawLines()
 				continue;
 			}
 
-			auto vecProductInstances = pDefinition->getProductInstances();
+			auto& vecProductInstances = pDefinition->getProductInstances();
 			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
 			{
 				auto pInstance = vecProductInstances[iInstance];
@@ -1577,7 +1577,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		auto mapProductDefinitions = pModel->getProductDefinitions();
+		auto& mapProductDefinitions = pModel->getProductDefinitions();
 		for (auto itProductDefinition = mapProductDefinitions.begin(); 
 			itProductDefinition != mapProductDefinitions.end(); 
 			itProductDefinition++)
@@ -1587,7 +1587,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto vecProductInstances = itProductDefinition->second->getProductInstances();
+			auto& vecProductInstances = itProductDefinition->second->getProductInstances();
 			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
 			{
 				auto pInstance = vecProductInstances[iInstance];
@@ -1638,7 +1638,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto vecProductInstances = pDefinition->getProductInstances();
+			auto& vecProductInstances = pDefinition->getProductInstances();
 			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
 			{
 				auto pInstance = vecProductInstances[iInstance];
