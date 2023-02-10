@@ -34,7 +34,6 @@ private: // Members
 	int m_iNextProductInstance;
 	
 	// Geometry
-	bool m_bCalculated;	
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
 	_indices_i32* m_pIndexBuffer;
 	int64_t m_iConceptualFacesCount;

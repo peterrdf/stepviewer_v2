@@ -15,7 +15,6 @@ CProductDefinition::CProductDefinition()
 	, m_iRelatedProductRefs(0)
 	, m_vecProductInstances()
 	, m_iNextProductInstance(-1)
-	, m_bCalculated(false)
 	, m_pVertexBuffer(nullptr)
 	, m_pIndexBuffer(nullptr)
 	, m_iConceptualFacesCount(0)
@@ -41,13 +40,6 @@ CProductDefinition::CProductDefinition()
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::Calculate()
 {
-	if (m_bCalculated)
-	{
-		return;
-	}
-
-	m_bCalculated = true;
-
 	int64_t iModel = GetModel(m_iInstance);
 
 	/*
