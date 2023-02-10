@@ -139,27 +139,27 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance)
+/*virtual*/ void CSTEPProductsTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance)
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (pProductInstance == nullptr)
+	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pProductInstance);
+	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance);
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
-		LoadInstanceAncestors(pProductInstance);
+		LoadInstanceAncestors(pInstance);
 	}
 
-	itInstance2Item = m_mapInstance2Item.find(pProductInstance);
+	itInstance2Item = m_mapInstance2Item.find(pInstance);
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
 		ASSERT(FALSE);
@@ -178,14 +178,14 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance)
+/*virtual*/ void CSTEPProductsTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance)
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (pProductInstance == nullptr)
+	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -194,15 +194,15 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 	ResetTree(false);
 
-	ASSERT(pProductInstance->getEnable());
+	ASSERT(pInstance->getEnable());
 
-	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pProductInstance);
+	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance);
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
-		LoadInstanceAncestors(pProductInstance);
+		LoadInstanceAncestors(pInstance);
 	}
 
-	itInstance2Item = m_mapInstance2Item.find(pProductInstance);
+	itInstance2Item = m_mapInstance2Item.find(pInstance);
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
 		ASSERT(FALSE);
@@ -407,10 +407,10 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		CProductInstance* pProductInstance = pItemData->getInstance<CProductInstance>();
-		ASSERT(pProductInstance != nullptr);
+		CProductInstance* pInstance = pItemData->getInstance<CProductInstance>();
+		ASSERT(pInstance != nullptr);
 
-		GetController()->SelectInstance(this, pProductInstance);
+		GetController()->SelectInstance(this, pInstance);
 	} // if ((hItem != nullptr) && ...
 }
 
@@ -497,7 +497,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
 	{
-		auto pProductInstance = pItemData->getInstance<CProductInstance>();
+		auto pInstance = pItemData->getInstance<CProductInstance>();
 
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -505,18 +505,18 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		auto pPopup = menu.GetSubMenu(0);
 
 		// Zoom to
-		if (!pProductInstance->getEnable())
+		if (!pInstance->getEnable())
 		{
 			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		// Save
-		if (!pProductInstance->getEnable())
+		if (!pInstance->getEnable())
 		{
 			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 		}
 
-		if (pProductInstance->getEnable())
+		if (pInstance->getEnable())
 		{
 			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 		}
@@ -565,20 +565,10 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				/*
 				* State
 				*/
-				CProductInstance* pInstance = nullptr;
 				auto itProductInstance = mapProductInstances.begin();
 				for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
 				{
-					if (itProductInstance->second == pProductInstance)
-					{
-						itProductInstance->second->setEnable(true);
-
-						pInstance = itProductInstance->second;
-
-						continue;
-					}
-
-					itProductInstance->second->setEnable(false);
+					itProductInstance->second->setEnable(itProductInstance->second == pInstance);
 				}
 
 				/*
@@ -611,7 +601,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				/*
 				* State
 				*/
-				pProductInstance->setEnable(!pProductInstance->getEnable());
+				pInstance->setEnable(!pInstance->getEnable());
 
 				/*
 				* UI
@@ -622,7 +612,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 				ASSERT(iImage == iSelectedImage);
 
-				if (pProductInstance->getEnable())
+				if (pInstance->getEnable())
 				{
 					ASSERT((iImage == IMAGE_NOT_SELECTED) || (iImage == IMAGE_SEMI_SELECTED));
 
@@ -638,7 +628,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				/*
 				* Memory
 				*/
-				UpdateChildrenInMemory(pItemData, pProductInstance->getEnable());
+				UpdateChildrenInMemory(pItemData, pInstance->getEnable());
 
 				/*
 				* UI
@@ -649,7 +639,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				/*
 				* Notify
 				*/
-				GetController()->OnInstanceEnabledStateChanged(this, pProductInstance);
+				GetController()->OnInstanceEnabledStateChanged(this, pInstance);
 			}
 			break;
 
@@ -1058,15 +1048,15 @@ void CSTEPProductsTreeView::LoadModel()
 	map<int_t, CProductDefinition*>::const_iterator itProductDefinition = mapProductDefinitions.begin();
 	for (; itProductDefinition != mapProductDefinitions.end(); itProductDefinition++)
 	{
-		CProductDefinition* pProductDefinition = itProductDefinition->second;
+		CProductDefinition* pDefinition = itProductDefinition->second;
 
-		if (pProductDefinition->getRelatedProductRefs() == 0)
+		if (pDefinition->getRelatedProductRefs() == 0)
 		{
 			// Load all items in the memory
-			LoadProductDefinitionInMemory(pModel, pProductDefinition, pModelItemData);
+			LoadProductDefinitionInMemory(pModel, pDefinition, pModelItemData);
 
 			// Load all items and populate the tree
-			//LoadProductDefinition(pModel, pProductDefinition, hModel);
+			//LoadProductDefinition(pModel, pDefinition, hModel);
 		}
 	}
 
@@ -1079,32 +1069,32 @@ void CSTEPProductsTreeView::LoadModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pProductDefinition, HTREEITEM hParent)
+void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
-	CString strName = pProductDefinition->getId();
+	CString strName = pDefinition->getId();
 	strName += ITEM_PRODUCT_DEFINION;
 
 	/*
 	* Instance
 	*/
-	if (pProductDefinition->getRelatingProductRefs() > 0)
+	if (pDefinition->getRelatingProductRefs() > 0)
 	{
 		HTREEITEM hProductDefinition = (*m_pTreeView).InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 		(*m_pTreeView).InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
 
-		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pProductDefinition, enumSTEPItemDataType::dtProductDefinition);
+		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
 		m_vecItemData.push_back(pItemData);
 
 		(*m_pTreeView).SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
 
-		WalkAssemblyTreeRecursively(pModel, pProductDefinition, hProductDefinition);
-	} // if (pProductDefinition->getRelatingProductRefs() > 0)
+		WalkAssemblyTreeRecursively(pModel, pDefinition, hProductDefinition);
+	} // if (pDefinition->getRelatingProductRefs() > 0)
 	else
 	{
-		const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-		int iInstance = pProductDefinition->getNextProductInstance();
+		const vector<CProductInstance*>& vecProductInstances = pDefinition->getProductInstances();
+		int iInstance = pDefinition->getNextProductInstance();
 
-		strName = pProductDefinition->getId();
+		strName = pDefinition->getId();
 		strName += ITEM_PRODUCT_INSTANCE;
 
 		HTREEITEM hInstance = (*m_pTreeView).InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
@@ -1120,11 +1110,11 @@ void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDe
 
 		ASSERT(m_mapInstance2Item.find(vecProductInstances[iInstance]) == m_mapInstance2Item.end());
 		m_mapInstance2Item[vecProductInstances[iInstance]] = hInstance;
-	} // else if (pProductDefinition->getRelatingProductRefs() > 0)
+	} // else if (pDefinition->getRelatingProductRefs() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pProductDefinition, HTREEITEM hParent)
+void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
 	const map<int_t, CAssembly*>& mapAssemblies = pModel->getAssemblies();
 
@@ -1133,7 +1123,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CPro
 	{
 		CAssembly* pAssembly = itAssembly->second;
 
-		if (pAssembly->getRelatingProductDefinition() == pProductDefinition)
+		if (pAssembly->getRelatingProductDefinition() == pDefinition)
 		{
 			/*
 			* Assembly
@@ -1179,13 +1169,13 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CPro
 				/*
 				* Product
 				*/
-				strName = pProductDefinition->getId();
+				strName = pDefinition->getId();
 				strName += ITEM_PRODUCT_DEFINION;
 
 				HTREEITEM hProductDefinition = (*m_pTreeView).InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hAssembly);
 				(*m_pTreeView).InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
 
-				pItemData = new CSTEPItemData(nullptr, (int64_t*)pProductDefinition, enumSTEPItemDataType::dtProductDefinition);
+				pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
 				m_vecItemData.push_back(pItemData);
 
 				(*m_pTreeView).SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
@@ -1197,34 +1187,34 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CPro
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pProductDefinition, CSTEPItemData* pParent)
+void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	/*
 	* Instance
 	*/
-	if (pProductDefinition->getRelatingProductRefs() > 0)
+	if (pDefinition->getRelatingProductRefs() > 0)
 	{
-		auto pProductItemData = new CSTEPItemData(pParent, (int64_t*)pProductDefinition, enumSTEPItemDataType::dtProductDefinition);
+		auto pProductItemData = new CSTEPItemData(pParent, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
 		pParent->children().push_back(pProductItemData);
 
 		m_vecItemData.push_back(pProductItemData);
 
-		WalkAssemblyTreeRecursivelyInMemory(pModel, pProductDefinition, pProductItemData);
-	} // if (pProductDefinition->getRelatingProductRefs() > 0)	
+		WalkAssemblyTreeRecursivelyInMemory(pModel, pDefinition, pProductItemData);
+	} // if (pDefinition->getRelatingProductRefs() > 0)	
 	else
 	{
-		const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-		int iInstance = pProductDefinition->getNextProductInstance();
+		const vector<CProductInstance*>& vecProductInstances = pDefinition->getProductInstances();
+		int iInstance = pDefinition->getNextProductInstance();
 
 		auto pProductInstanceData = new CSTEPItemData(pParent, (int64_t*)vecProductInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
 		pParent->children().push_back(pProductInstanceData);
 
 		m_vecItemData.push_back(pProductInstanceData);
-	} // else if (pProductDefinition->getRelatingProductRefs() > 0)
+	} // else if (pDefinition->getRelatingProductRefs() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pProductDefinition, CSTEPItemData* pParent)
+void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	const map<int_t, CAssembly*>& mapAssemblies = pModel->getAssemblies();
 
@@ -1233,7 +1223,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 	{
 		CAssembly* pAssembly = itAssembly->second;
 
-		if (pAssembly->getRelatingProductDefinition() == pProductDefinition)
+		if (pAssembly->getRelatingProductDefinition() == pDefinition)
 		{
 			/*
 			* Assembly
@@ -1261,7 +1251,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 				/*
 				* Product
 				*/
-				auto pProductItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)pProductDefinition, enumSTEPItemDataType::dtProductDefinition);
+				auto pProductItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
 				pAssemblyItemData->children().push_back(pProductItemData);
 
 				m_vecItemData.push_back(pProductItemData);
@@ -1271,8 +1261,8 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...	
 
-	const vector<CProductInstance*>& vecProductInstances = pProductDefinition->getProductInstances();
-	int iInstance = pProductDefinition->getNextProductInstance();
+	const vector<CProductInstance*>& vecProductInstances = pDefinition->getProductInstances();
+	int iInstance = pDefinition->getNextProductInstance();
 
 	auto pInstanceItemData = new CSTEPItemData(pParent, (int64_t*)vecProductInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
 	pParent->children().push_back(pInstanceItemData);
@@ -1316,9 +1306,9 @@ void CSTEPProductsTreeView::LoadItemChildren(CSTEPItemData* pItemData)
 		{
 		case enumSTEPItemDataType::dtProductDefinition:
 		{
-			auto pProductDefinition = pChild->getInstance<CProductDefinition>();
+			auto pDefinition = pChild->getInstance<CProductDefinition>();
 
-			strName = pProductDefinition->getId();
+			strName = pDefinition->getId();
 			strName += ITEM_PRODUCT_DEFINION;
 		}
 		break;
@@ -1334,9 +1324,9 @@ void CSTEPProductsTreeView::LoadItemChildren(CSTEPItemData* pItemData)
 
 		case enumSTEPItemDataType::dtProductInstance:
 		{
-			auto pProductInstance = pChild->getInstance<CProductInstance>();
+			auto pInstance = pChild->getInstance<CProductInstance>();
 
-			strName = pProductInstance->getProductDefinition()->getId();
+			strName = pInstance->getProductDefinition()->getId();
 			strName += ITEM_PRODUCT_INSTANCE;
 
 			iGeometryImage = IMAGE_SELECTED;

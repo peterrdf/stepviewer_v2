@@ -139,7 +139,7 @@ private: // Methods
 	void LoadGeometry();
 
 	// ------------------------------------------------------------------------------------------------
-	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pProductDefinition, MATRIX* pParentMatrix);
+	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix);
 
 	// --------------------------------------------------------------------------------------------
 	// Clean up

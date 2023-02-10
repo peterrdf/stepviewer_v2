@@ -29,7 +29,7 @@ private: // Members
 
 public: // Methods
 	
-	CProductInstance(int_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix);
+	CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix);
 	virtual ~CProductInstance();
 
 	// CSTEPInstance

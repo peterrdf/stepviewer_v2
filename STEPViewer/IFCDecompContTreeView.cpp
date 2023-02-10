@@ -112,7 +112,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* /*pProductInstance*/)
+/*virtual*/ void CIFCDecompContTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* /*pInstance*/)
 {	
 	if (pSender == this)
 	{
@@ -123,7 +123,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* /*pProductInstance*/)
+/*virtual*/ void CIFCDecompContTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* /*pInstance*/)
 {
 	if (pSender == this)
 	{

@@ -136,11 +136,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
-	void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
+	void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
-	void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
+	void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support

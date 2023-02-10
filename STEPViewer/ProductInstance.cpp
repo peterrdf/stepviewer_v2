@@ -3,15 +3,15 @@
 #include "ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance::CProductInstance(int_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix)
+CProductInstance::CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix)
 	: CSTEPInstance()
 	, m_iID(iID)
-	, m_pProductDefinition(pProductDefinition)
+	, m_pProductDefinition(pDefinition)
 	, m_pTransformationMatrix(nullptr)
 	, m_bEnable(true)
 {
 	ASSERT(m_iID != 0);
-	ASSERT(pProductDefinition != nullptr);
+	ASSERT(pDefinition != nullptr);
 
 	m_pTransformationMatrix = new OGLMATRIX();
 	OGLMatrixIdentity(m_pTransformationMatrix);

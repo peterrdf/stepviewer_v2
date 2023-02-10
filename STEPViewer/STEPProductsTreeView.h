@@ -47,8 +47,8 @@ public: // Methods
 
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
-	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
+	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
+	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
 	virtual void OnEnableAllInstances(CSTEPView* pSender);
 
 	// CSTEPTreeViewBase
@@ -71,16 +71,16 @@ private: // Methods
 	void LoadModel();
 
 	// --------------------------------------------------------------------------------------------
-	void LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pProductDefinition, HTREEITEM hParent);
+	void LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
-	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pProductDefinition, HTREEITEM hParent);
+	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
 
 	// --------------------------------------------------------------------------------------------
-	void LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pProductDefinition, CSTEPItemData* pParent);
+	void LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
 
 	// --------------------------------------------------------------------------------------------
-	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pProductDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
 
 	// --------------------------------------------------------------------------------------------
 	CSTEPItemData* FindItemData(CProductInstance* pInstance);

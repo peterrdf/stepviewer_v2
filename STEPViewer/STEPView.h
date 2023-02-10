@@ -56,11 +56,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
-	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pProductInstance);
+	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
-	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pProductInstance);
+	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support

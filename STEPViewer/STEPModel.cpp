@@ -54,9 +54,9 @@ CSTEPModel::~CSTEPModel()
 {	
 	ASSERT(pSTEPInstance != nullptr);
 
-	auto pProductInstance = dynamic_cast<CProductInstance*>(pSTEPInstance);
-	ASSERT(pProductInstance != nullptr);
-	ASSERT(pProductInstance->getProductDefinition() != nullptr);	
+	auto pInstance = dynamic_cast<CProductInstance*>(pSTEPInstance);
+	ASSERT(pInstance != nullptr);
+	ASSERT(pInstance->getProductDefinition() != nullptr);	
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -67,8 +67,8 @@ CSTEPModel::~CSTEPModel()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	pProductInstance->getProductDefinition()->CalculateMinMaxTransform(
-		pProductInstance,
+	pInstance->getProductDefinition()->CalculateMinMaxTransform(
+		pInstance,
 		m_fXTranslation, m_fYTranslation, m_fZTranslation,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,
@@ -383,32 +383,32 @@ void CSTEPModel::LoadProductDefinitions()
 		int_t iProductDefinitionInstance = 0;
 		engiGetAggrElement(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 
-		auto pProductDefinition = LoadProductDefinition(iProductDefinitionInstance);
-		ASSERT(m_mapProductDefinitions.find(pProductDefinition->getExpressID()) == m_mapProductDefinitions.end());
+		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
+		ASSERT(m_mapProductDefinitions.find(pDefinition->getExpressID()) == m_mapProductDefinitions.end());
 
-		m_mapProductDefinitions[pProductDefinition->getExpressID()] = pProductDefinition;
+		m_mapProductDefinitions[pDefinition->getExpressID()] = pDefinition;
 	}	
 }
 
 // ------------------------------------------------------------------------------------------------
 CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionInstance)
 {
-	auto pProductDefinition = new CProductDefinition();
+	auto pDefinition = new CProductDefinition();
 
-	pProductDefinition->m_iExpressID = internalGetP21Line(iProductDefinitionInstance);
-	pProductDefinition->m_iInstance = iProductDefinitionInstance;
+	pDefinition->m_iExpressID = internalGetP21Line(iProductDefinitionInstance);
+	pDefinition->m_iInstance = iProductDefinitionInstance;
 
 	char* szId = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "id", sdaiSTRING, &szId);
-	pProductDefinition->m_strId = szId != nullptr ? CA2W(szId) : L"";
+	pDefinition->m_strId = szId != nullptr ? CA2W(szId) : L"";
 
 	char* szName = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "name", sdaiSTRING, &szName);
-	pProductDefinition->m_strName = szName != nullptr ? CA2W(szName) : L"";
+	pDefinition->m_strName = szName != nullptr ? CA2W(szName) : L"";
 
 	char* szDescription = nullptr;
 	sdaiGetAttrBN(iProductDefinitionInstance, "description", sdaiSTRING, &szDescription);
-	pProductDefinition->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
+	pDefinition->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
 
 	int_t iProductDefinitionFormationInstance = 0;
 	sdaiGetAttrBN(iProductDefinitionInstance, "formation", sdaiINSTANCE, &iProductDefinitionFormationInstance);
@@ -418,13 +418,13 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionIn
 
 	char* szProductId = nullptr;
 	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
-	pProductDefinition->m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
+	pDefinition->m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
 
 	char* szProductName = nullptr;
 	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
-	pProductDefinition->m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
+	pDefinition->m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
 
-	return pProductDefinition;
+	return pDefinition;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -448,22 +448,22 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 		return itProductDefinition->second;
 	}
 
-	auto pProductDefinition = LoadProductDefinition(iProductDefinitionInstance);
-	ASSERT(m_mapProductDefinitions.find(pProductDefinition->getExpressID()) == m_mapProductDefinitions.end());
+	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
+	ASSERT(m_mapProductDefinitions.find(pDefinition->getExpressID()) == m_mapProductDefinitions.end());
 
 	if (bRelatingProduct)
 	{
-		pProductDefinition->m_iRelatingProductRefs++;
+		pDefinition->m_iRelatingProductRefs++;
 	}
 
 	if (bRelatedProduct)
 	{
-		pProductDefinition->m_iRelatedProductRefs++;
+		pDefinition->m_iRelatedProductRefs++;
 	}
 
-	m_mapProductDefinitions[pProductDefinition->getExpressID()] = pProductDefinition;
+	m_mapProductDefinitions[pDefinition->getExpressID()] = pDefinition;
 
-	return pProductDefinition;
+	return pDefinition;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -535,14 +535,14 @@ void CSTEPModel::LoadGeometry()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pProductDefinition, MATRIX* pParentMatrix)
+void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix)
 {
 	map<int_t, CAssembly*>::iterator itAssembly = m_mapAssemblies.begin();
 	for (; itAssembly != m_mapAssemblies.end(); itAssembly++)
 	{
 		auto pAssembly = itAssembly->second;
 
-		if (pAssembly->m_pRelatingProductDefinition == pProductDefinition)
+		if (pAssembly->m_pRelatingProductDefinition == pDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
 			owlBuildInstance(m_iModel, internalGetInstanceFromP21Line(m_iModel, pAssembly->getExpressID()), &owlInstanceMatrix);
@@ -583,19 +583,19 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pProductDefinition->getExpressID());
+	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pDefinition->getExpressID());
 
 	int64_t	owlInstanceProductDefinition = 0;
 	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
 
-	pProductDefinition->Calculate();
+	pDefinition->Calculate();
 
 	cleanMemory(m_iModel, 0);
 
-	auto pProductInstance = new CProductInstance(m_iID++, pProductDefinition, pParentMatrix);
-	m_mapProductInstances[pProductInstance->getID()] = pProductInstance;
+	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
+	m_mapProductInstances[pInstance->getID()] = pInstance;
 
-	pProductDefinition->m_vecProductInstances.push_back(pProductInstance);
+	pDefinition->m_vecProductInstances.push_back(pInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
