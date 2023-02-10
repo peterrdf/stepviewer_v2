@@ -299,7 +299,7 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();	
 
 	// Data
-	auto& mapProductDefinitions = pModel->getProductDefinitions();
+	auto& mapDefinitions = pModel->getProductDefinitions();
 
 	// VBO
 	GLuint iVerticesCount = 0;
@@ -321,7 +321,7 @@ GLfloat COpenGLSTEPView::GetPointSize() const
 	GLuint iPointsIndicesCount = 0;
 	vector<_cohort*> vecPointsCohorts;
 
-	for (auto itProductDefinitions = mapProductDefinitions.begin(); itProductDefinitions != mapProductDefinitions.end(); itProductDefinitions++)
+	for (auto itProductDefinitions = mapDefinitions.begin(); itProductDefinitions != mapDefinitions.end(); itProductDefinitions++)
 	{
 		auto pDefinition = itProductDefinitions->second;
 		if (pDefinition->getVerticesCount() == 0)
@@ -828,22 +828,22 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 
 	//	case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 	//	{
-	//		const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
+	//		const map<int_t, CProductInstance*>& mapInstances = pModel->getProductInstances();
 
 	//		CProductInstance* pInstance = nullptr;
-	//		map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
-	//		for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
+	//		map<int_t, CProductInstance*>::const_iterator itInstance = mapInstances.begin();
+	//		for (; itInstance != mapInstances.end(); itInstance++)
 	//		{
-	//			if (itProductInstance->second == pSelectedInstance)
+	//			if (itInstance->second == pSelectedInstance)
 	//			{
-	//				itProductInstance->second->setEnable(true);
+	//				itInstance->second->setEnable(true);
 
-	//				pInstance = itProductInstance->second;
+	//				pInstance = itInstance->second;
 
 	//				continue;
 	//			}
 
-	//			itProductInstance->second->setEnable(false);
+	//			itInstance->second->setEnable(false);
 	//		}
 
 	//		pController->OnDisableAllButThis(nullptr, pInstance);
@@ -852,12 +852,12 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 
 	//	case ID_3DVIEW_ENABLEALL:
 	//	{
-	//		const map<int_t, CProductInstance*>& mapProductInstances = pModel->getProductInstances();
+	//		const map<int_t, CProductInstance*>& mapInstances = pModel->getProductInstances();
 
-	//		map<int_t, CProductInstance*>::const_iterator itProductInstance = mapProductInstances.begin();
-	//		for (; itProductInstance != mapProductInstances.end(); itProductInstance++)
+	//		map<int_t, CProductInstance*>::const_iterator itInstance = mapInstances.begin();
+	//		for (; itInstance != mapInstances.end(); itInstance++)
 	//		{
-	//			itProductInstance->second->setEnable(true);
+	//			itInstance->second->setEnable(true);
 	//		}
 
 	//		pController->OnEnableAllInstances(nullptr);
@@ -1107,10 +1107,10 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 				continue;
 			}
 
-			auto& vecProductInstances = pDefinition->getProductInstances();
-			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			auto& vecInstances = pDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
-				auto pInstance = vecProductInstances[iInstance];
+				auto pInstance = vecInstances[iInstance];
 				if (!pInstance->getEnable())
 				{
 					continue;
@@ -1242,10 +1242,10 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				continue;
 			}
 
-			auto& vecProductInstances = pDefinition->getProductInstances();
-			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			auto& vecInstances = pDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
-				auto pInstance = vecProductInstances[iInstance];
+				auto pInstance = vecInstances[iInstance];
 				if (!pInstance->getEnable())
 				{
 					continue;
@@ -1350,10 +1350,10 @@ void COpenGLSTEPView::DrawLines()
 				continue;
 			}
 
-			auto& vecProductInstances = pDefinition->getProductInstances();
-			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			auto& vecInstances = pDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
-				auto pInstance = vecProductInstances[iInstance];
+				auto pInstance = vecInstances[iInstance];
 				if (!pInstance->getEnable())
 				{
 					continue;
@@ -1459,8 +1459,8 @@ void COpenGLSTEPView::DrawPoints()
 				continue;
 			}
 
-			auto& vecProductInstances = pDefinition->getProductInstances();
-			for (auto pInstance : vecProductInstances)
+			auto& vecInstances = pDefinition->getProductInstances();
+			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->getEnable())
 				{
@@ -1577,20 +1577,20 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		auto& mapProductDefinitions = pModel->getProductDefinitions();
-		for (auto itProductDefinition = mapProductDefinitions.begin(); 
-			itProductDefinition != mapProductDefinitions.end(); 
-			itProductDefinition++)
+		auto& mapDefinitions = pModel->getProductDefinitions();
+		for (auto itDefinition = mapDefinitions.begin(); 
+			itDefinition != mapDefinitions.end(); 
+			itDefinition++)
 		{
-			if (itProductDefinition->second->getTriangles().empty())
+			if (itDefinition->second->getTriangles().empty())
 			{
 				continue;
 			}
 
-			auto& vecProductInstances = itProductDefinition->second->getProductInstances();
-			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			auto& vecInstances = itDefinition->second->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
-				auto pInstance = vecProductInstances[iInstance];
+				auto pInstance = vecInstances[iInstance];
 				if (!pInstance->getEnable())
 				{
 					continue;
@@ -1638,10 +1638,10 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecProductInstances = pDefinition->getProductInstances();
-			for (size_t iInstance = 0; iInstance < vecProductInstances.size(); iInstance++)
+			auto& vecInstances = pDefinition->getProductInstances();
+			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
-				auto pInstance = vecProductInstances[iInstance];
+				auto pInstance = vecInstances[iInstance];
 				if (!pInstance->getEnable())
 				{
 					continue;

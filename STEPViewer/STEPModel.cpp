@@ -106,18 +106,18 @@ CSTEPModel::~CSTEPModel()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	auto itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	auto itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		auto& vecProductInstances = itProductDefinition->second->getProductInstances();
-		for (auto pInstance : vecProductInstances)
+		auto& vecInstances = itDefinition->second->getProductInstances();
+		for (auto pInstance : vecInstances)
 		{
 			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			itProductDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->CalculateMinMaxTransform(
 				pInstance,
 				m_fXTranslation, m_fYTranslation, m_fZTranslation,
 				m_fXmin, m_fXmax,
@@ -192,15 +192,15 @@ const map<int_t, CAssembly*>& CSTEPModel::getAssemblies()
 // ------------------------------------------------------------------------------------------------
 CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 {
-	auto itProductInstance = m_mapProductInstances.find(iID);
-	if (itProductInstance == m_mapProductInstances.end())
+	auto itInstance = m_mapProductInstances.find(iID);
+	if (itInstance == m_mapProductInstances.end())
 	{
 		ASSERT(FALSE);
 
 		return nullptr;
 	}
 
-	return itProductInstance->second;
+	return itInstance->second;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -223,18 +223,18 @@ void CSTEPModel::ScaleAndCenter()
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
 	
-	auto itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	auto itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		if (!itProductDefinition->second->hasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
 
-		auto itInstance = itProductDefinition->second->getProductInstances();
-		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		auto itInstance = itDefinition->second->getProductInstances();
+		for (auto pInstance : itDefinition->second->getProductInstances())
 		{
-			itProductDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->CalculateMinMaxTransform(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -265,15 +265,15 @@ void CSTEPModel::ScaleAndCenter()
 	* Scale
 	*/
 
-	itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		if (!itProductDefinition->second->hasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
 
-		itProductDefinition->second->Scale(m_fBoundingSphereDiameter);
+		itDefinition->second->Scale(m_fBoundingSphereDiameter);
 	}
 
 	/*
@@ -287,23 +287,23 @@ void CSTEPModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		if (!itProductDefinition->second->hasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
 
-		auto itInstance = itProductDefinition->second->getProductInstances();
-		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		auto itInstance = itDefinition->second->getProductInstances();
+		for (auto pInstance : itDefinition->second->getProductInstances())
 		{
 			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			itProductDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->CalculateMinMaxTransform(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -432,20 +432,20 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 {
 	int_t expressID = internalGetP21Line(iProductDefinitionInstance);
 
-	map<int_t, CProductDefinition*>::iterator itProductDefinition = m_mapProductDefinitions.find(expressID);
-	if (itProductDefinition != m_mapProductDefinitions.end())
+	map<int_t, CProductDefinition*>::iterator itDefinition = m_mapProductDefinitions.find(expressID);
+	if (itDefinition != m_mapProductDefinitions.end())
 	{
 		if (bRelatingProduct)
 		{
-			itProductDefinition->second->m_iRelatingProductRefs++;
+			itDefinition->second->m_iRelatingProductRefs++;
 		}
 
 		if (bRelatedProduct)
 		{
-			itProductDefinition->second->m_iRelatedProductRefs++;
+			itDefinition->second->m_iRelatedProductRefs++;
 		}
 
-		return itProductDefinition->second;
+		return itDefinition->second;
 	}
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
@@ -524,12 +524,12 @@ void CSTEPModel::LoadGeometry()
 	setSegmentation(m_iModel, 20, 0.);
 
 	// Load
-	auto itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	auto itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		if (itProductDefinition->second->getRelatedProductRefs() == 0)
+		if (itDefinition->second->getRelatedProductRefs() == 0)
 		{
-			WalkAssemblyTreeRecursively("", "", itProductDefinition->second, nullptr);
+			WalkAssemblyTreeRecursively("", "", itDefinition->second, nullptr);
 		}
 	}
 }
@@ -607,17 +607,17 @@ void CSTEPModel::Clean()
 		m_iModel = 0;
 	}
 
-	auto itProductDefinition = m_mapProductDefinitions.begin();
-	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
+	auto itDefinition = m_mapProductDefinitions.begin();
+	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
-		delete itProductDefinition->second;
+		delete itDefinition->second;
 	}
 	m_mapProductDefinitions.clear();
 
-	auto itProductInstance = m_mapProductInstances.begin();
-	for (; itProductInstance != m_mapProductInstances.end(); itProductInstance++)
+	auto itInstance = m_mapProductInstances.begin();
+	for (; itInstance != m_mapProductInstances.end(); itInstance++)
 	{
-		delete itProductInstance->second;
+		delete itInstance->second;
 	}
 	m_mapProductInstances.clear();
 
