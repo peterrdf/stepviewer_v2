@@ -206,6 +206,10 @@ CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::ScaleAndCenter()
 {
+	/*
+	* Min/Max
+	*/
+
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -218,18 +222,24 @@ void CSTEPModel::ScaleAndCenter()
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
-
-	/*
-	* Min/max
-	*/
 	
 	auto itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
-		itProductDefinition->second->CalculateMinMaxTransform(
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax);
+		if (!itProductDefinition->second->hasGeometry())
+		{
+			continue;
+		}
+
+		auto itInstance = itProductDefinition->second->getProductInstances();
+		for (auto pInstance : itProductDefinition->second->getProductInstances())
+		{
+			itProductDefinition->second->CalculateMinMaxTransform(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -252,36 +262,18 @@ void CSTEPModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
 	/*
-	* Translations
-	*/
-
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXTranslation -= m_fXmin;
-	m_fYTranslation -= m_fYmin;
-	m_fZTranslation -= m_fZmin;
-
-	// center
-	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
-
-	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-
-	/*
-	* Scale and Center
+	* Scale
 	*/
 
 	itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
-		itProductDefinition->second->ScaleAndCenter(
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter);
+		if (!itProductDefinition->second->hasGeometry())
+		{
+			continue;
+		}
+
+		itProductDefinition->second->Scale(m_fBoundingSphereDiameter);
 	}
 
 	/*
@@ -298,6 +290,11 @@ void CSTEPModel::ScaleAndCenter()
 	itProductDefinition = m_mapProductDefinitions.begin();
 	for (; itProductDefinition != m_mapProductDefinitions.end(); itProductDefinition++)
 	{
+		if (!itProductDefinition->second->hasGeometry())
+		{
+			continue;
+		}
+
 		auto itInstance = itProductDefinition->second->getProductInstances();
 		for (auto pInstance : itProductDefinition->second->getProductInstances())
 		{
@@ -308,7 +305,6 @@ void CSTEPModel::ScaleAndCenter()
 
 			itProductDefinition->second->CalculateMinMaxTransform(
 				pInstance,
-				m_fXTranslation, m_fYTranslation, m_fZTranslation,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
 				m_fZmin, m_fZmax);

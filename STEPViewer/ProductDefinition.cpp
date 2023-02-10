@@ -740,7 +740,10 @@ void CProductDefinition::CalculateMinMaxTransform(
 					getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				if (pInstance != nullptr)
+				{
+					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
 				fXmax = (float)fmax(fXmax, vecPoint.x);
@@ -775,7 +778,10 @@ void CProductDefinition::CalculateMinMaxTransform(
 					getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				if (pInstance != nullptr)
+				{
+					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
 				fXmax = (float)fmax(fXmax, vecPoint.x);
@@ -810,7 +816,10 @@ void CProductDefinition::CalculateMinMaxTransform(
 					getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				if (pInstance != nullptr)
+				{
+					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
 				fXmax = (float)fmax(fXmax, vecPoint.x);
@@ -840,7 +849,10 @@ void CProductDefinition::CalculateMinMaxTransform(
 					getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				if (pInstance != nullptr)
+				{
+					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
 				fXmax = (float)fmax(fXmax, vecPoint.x);
@@ -855,10 +867,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::ScaleAndCenter(
-	float fXmin, float 
-	fXmax, float fYmin, 
-	float fYmax, float fZmin, 
-	float fZmax, 
+	float fXmin, float fXmax, 
+	float fYmin, float fYmax, 
+	float fZmin, float fZmax, 
 	float fResoltuion)
 {
 	if (getVerticesCount() == 0)
@@ -886,6 +897,34 @@ void CProductDefinition::ScaleAndCenter(
 		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
 		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
 	}	
+
+	/**
+	* Instances
+	*/
+	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
+	{
+		m_vecProductInstances[iInstance]->ScaleAndCenter(fResoltuion);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CProductDefinition::Scale(float fResoltuion)
+{
+	if (getVerticesCount() == 0)
+	{
+		return;
+	}
+
+	/**
+	* Vertices
+	*/
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
+	{
+		// [-1.0 -> 1.0]
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
+	}
 
 	/**
 	* Instances

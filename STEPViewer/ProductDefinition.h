@@ -93,6 +93,8 @@ public: // Methods
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax, 
 		float fResoltuion);
+
+	void Scale(float fResoltuion);
 	
 	int_t getExpressID() const;
 	int_t getInstance() const;	
