@@ -1036,21 +1036,20 @@ void COpenGLIFCView::DrawPoints()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			auto pRDFInstance = itInstance;
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
+			for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 			{
-				auto pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+				auto pCohort = pInstance->pointsCohorts()[iPointsCohort];
 
 				const _material* pMaterial =
-					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 					pCohort->getMaterial();				
 
 				m_pOGLProgram->setAmbientColor(
@@ -1063,7 +1062,7 @@ void COpenGLIFCView::DrawPoints()
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 			} // for (size_t iPointsCohort = ...		
 		} // for (auto itInstance ...
 
