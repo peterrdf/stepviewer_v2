@@ -80,8 +80,6 @@ private: // Methods
 	
 	// Mouse
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
-	void Rotate(float fXAngle, float fYAngle);
-	void Zoom(float fZTranslation);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

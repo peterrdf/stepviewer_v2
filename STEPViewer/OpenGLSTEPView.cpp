@@ -570,7 +570,10 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	UNREFERENCED_PARAMETER(nFlags);
 	UNREFERENCED_PARAMETER(pt);
 
-	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+	_zoom(
+		(float)zDelta < 0.f ? 
+		-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : 
+		abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -586,33 +589,33 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	{
 		case VK_UP:
 		{
-			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
-
-			_redraw();
+			_move(
+				0.f,
+				PAN_SPEED_KEYS * (1.f / rcClient.Height()));
 		}
 		break;
 
 		case VK_DOWN:
 		{
-			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
-
-			_redraw();
+			_move(
+				0.f,
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
 		}
 		break;
 
 		case VK_LEFT:
 		{
-			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
-
-			_redraw();
+			_move(
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+				0.f);
 		}
 		break;
 
 		case VK_RIGHT:
 		{
-			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
-
-			_redraw();
+			_move(
+				PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+				0.f);
 		}
 		break;
 	} // switch (nChar)
@@ -1530,7 +1533,9 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			}
 		}
 
-		Rotate(fXAngle * ROTATION_SPEED, fYAngle * ROTATION_SPEED);
+		_rotate(
+			fXAngle * ROTATION_SPEED, 
+			fYAngle * ROTATION_SPEED);
 
 		m_ptPrevMousePosition = point;
 
@@ -1542,7 +1547,10 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
 	{
-		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+		_zoom(
+			point.y - m_ptPrevMousePosition.y > 0 ? 
+			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE : 
+			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
 
 		m_ptPrevMousePosition = point;
 
@@ -1557,65 +1565,13 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
 
-		m_fXTranslation += PAN_SPEED_MOUSE * (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width());
-		m_fYTranslation -= PAN_SPEED_MOUSE * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
-
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
-		_redraw();
-#endif // _LINUX
+		_move(
+			PAN_SPEED_MOUSE* (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width()),
+			-(PAN_SPEED_MOUSE * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height())));
 
 		m_ptPrevMousePosition = point;
 
 		return;
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::Rotate(float fXAngle, float fYAngle)
-{
-	m_fXAngle += fXAngle * (180.f / (float)M_PI);
-	if (m_fXAngle > 360.f)
-	{
-		m_fXAngle -= 360.f;
-	}
-	else if (m_fXAngle < -360.f)
-	{
-		m_fXAngle += 360.f;
-	}
-
-	m_fYAngle += fYAngle * (180.f / (float)M_PI);
-	if (m_fYAngle > 360.f)
-	{
-		m_fYAngle = m_fYAngle - 360.f;
-	}
-	else if (m_fYAngle < -360.f)
-	{
-		m_fYAngle += 360.f;
-	}
-
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
-	_redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::Zoom(float fZTranslation)
-{
-	if (m_enProjection == enumProjection::Isometric)
-	{
-		return;
-	}
-
-	m_fZTranslation += fZTranslation;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
 }
 
