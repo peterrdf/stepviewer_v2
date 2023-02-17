@@ -480,8 +480,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 					itInstance->second->setEnable(true);
 				}
 
-				ResetView();
-				OnInstanceSelected(nullptr);
+				ResetTree(true);
 
 				pController->OnInstancesEnabledStateChanged(this);
 			}
