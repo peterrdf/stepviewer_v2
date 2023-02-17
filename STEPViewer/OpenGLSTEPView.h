@@ -36,42 +36,39 @@ public: // Methods
 
 	// ctor/dtor
 	COpenGLSTEPView(CWnd* pWnd);
-	virtual ~COpenGLSTEPView();
-
-	// CSTEPView	
-	virtual void Redraw() override { _redraw(); }
+	virtual ~COpenGLSTEPView();	
 
 	// CSTEPView
-	virtual void OnWorldDimensionsChanged();
-	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstancePropertySelected();
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
-	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
-	virtual void OnEnableAllInstances(CSTEPView* pSender);
+	virtual void OnWorldDimensionsChanged() override;
+	virtual void OnInstanceSelected(CSTEPView* pSender) override;
+	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender) override;
+	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance) override;
+	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance) override;
+	virtual void OnEnableAllInstances(CSTEPView* pSender) override;
 
 protected: // Methods
 
 	// CSTEPView
-	virtual void OnControllerChanged();
+	virtual void OnControllerChanged() override;
 
 public: // Methods
 
 	// COpenGLView
-	virtual void Load();	
+	virtual void Load() override;
 
 	// COpenGLView
-	virtual void SetProjection(enumProjection enProjection);
-	virtual enumProjection GetProjection() const;
-	virtual void SetView(enumView enView);
+	virtual void SetProjection(enumProjection enProjection) override;
+	virtual enumProjection GetProjection() const override;
+	virtual void SetView(enumView enView) override;
 
 	// COpenGLView
-	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
+	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
+	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) override;
+	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) override;
 
 	// COpenGLView
-	virtual void Draw(CDC* pDC);
+	virtual void Draw(CDC* pDC) override;
+	virtual void Redraw() override { _redraw(); }
 
 private: // Methods
 	

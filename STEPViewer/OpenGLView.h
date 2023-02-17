@@ -34,11 +34,38 @@ class COpenGLView
 	: public CSTEPView
 {
 
+protected: // Members
+
+	// UI
+	BOOL m_bShowFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+
 public: // Methods
 	
 	// ctor/dtor
 	COpenGLView();
 	virtual ~COpenGLView();	
+
+	// UI
+	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; Redraw(); }
+	BOOL AreFacesShown() const { return m_bShowFaces; }
+	void ShowFacesPolygons(BOOL bShow) { m_bShowFacesPolygons = bShow; Redraw(); }
+	BOOL AreFacesPolygonsShown() const { return m_bShowFacesPolygons; };
+	void ShowConceptualFacesPolygons(BOOL bShow) { m_bShowConceptualFacesPolygons = bShow; Redraw(); }
+	BOOL AreConceptualFacesPolygonsShown() const { return m_bShowConceptualFacesPolygons; }
+	void ShowLines(BOOL bShow) { m_bShowLines = bShow; Redraw(); }
+	BOOL AreLinesShown() const { return m_bShowLines; }
+	void SetLineWidth(GLfloat fWidth) { m_fLineWidth = fWidth; Redraw(); }
+	GLfloat GetLineWidth() const { return m_fLineWidth; }
+	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; Redraw(); }
+	BOOL ArePointsShown() const { return m_bShowPoints; }
+	void SetPointSize(GLfloat fSize) { m_fPointSize = fSize; Redraw(); }
+	GLfloat GetPointSize() const { return m_fPointSize; }	
 
 	// Load
 	virtual void Load() PURE;
@@ -55,5 +82,6 @@ public: // Methods
 
 	// Draw
 	virtual void Draw(CDC* pDC) PURE;
+	virtual void Redraw() PURE;
 };
 

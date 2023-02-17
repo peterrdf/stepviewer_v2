@@ -5,13 +5,6 @@
 // ------------------------------------------------------------------------------------------------
 CSTEPView::CSTEPView()
 	: m_pController(nullptr)
-	, m_bShowFaces(TRUE)
-	, m_bShowFacesPolygons(FALSE)
-	, m_bShowConceptualFacesPolygons(TRUE)
-	, m_bShowLines(TRUE)
-	, m_fLineWidth(1.f)
-	, m_bShowPoints(TRUE)
-	, m_fPointSize(1.f)
 {
 }
 

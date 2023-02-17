@@ -62,7 +62,116 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::Load()
+/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
+{
+	auto pController = GetController();
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel()->As<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	/*
+	* Center
+	*/
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+#ifdef _LINUX
+	m_pWnd->Refresh(false);
+#else
+	_redraw();
+#endif // _LINUX
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
+		nullptr;
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_pSelectedInstance = pSelectedInstance;
+
+#ifdef _LINUX
+		m_pWnd->Refresh(false);
+#else
+		_redraw();
+#endif // _LINUX
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CSTEPView* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	_redraw();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
+{
+	if (GetController() != nullptr)
+	{
+		GetController()->RegisterView(this);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::Load() /*override*/
 {
 	CWaitCursor waitCursor;
 
@@ -370,7 +479,141 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::Draw(CDC* pDC)
+/*virtual*/ void COpenGLIFCView::SetProjection(enumProjection enProjection) /*override*/
+{
+	_setProjection(enProjection);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ enumProjection COpenGLIFCView::GetProjection() const /*override*/
+{
+	return _getProjection();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::SetView(enumView enView) /*override*/
+{
+	_setView(enView);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+{
+	if (enEvent == enumMouseEvent::LBtnUp)
+	{
+		/*
+		* OnSelectedItemChanged() notification
+		*/
+		if (point == m_ptStartMousePosition)
+		{
+			if (m_pSelectedInstance != m_pPointedInstance)
+			{
+				m_pSelectedInstance = m_pPointedInstance;
+#ifdef _LINUX
+				m_pWnd->Refresh(false);
+#else
+				_redraw();
+#endif // _LINUX
+
+				ASSERT(GetController() != nullptr);
+				GetController()->SelectInstance(this, m_pSelectedInstance);
+			} // if (m_pSelectedInstance != ...
+		}
+	} // if (enEvent == meLBtnDown)
+
+	switch (enEvent)
+	{
+	case enumMouseEvent::Move:
+	{
+		OnMouseMoveEvent(nFlags, point);
+	}
+	break;
+
+	case enumMouseEvent::LBtnDown:
+	case enumMouseEvent::MBtnDown:
+	case enumMouseEvent::RBtnDown:
+	{
+		m_ptStartMousePosition = point;
+		m_ptPrevMousePosition = point;
+	}
+	break;
+
+	case enumMouseEvent::LBtnUp:
+	case enumMouseEvent::MBtnUp:
+	case enumMouseEvent::RBtnUp:
+	{
+		m_ptStartMousePosition.x = -1;
+		m_ptStartMousePosition.y = -1;
+		m_ptPrevMousePosition.x = -1;
+		m_ptPrevMousePosition.y = -1;
+	}
+	break;
+
+	default:
+		ASSERT(FALSE);
+		break;
+	} // switch (enEvent)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) /*override*/
+{
+	UNREFERENCED_PARAMETER(nFlags);
+	UNREFERENCED_PARAMETER(pt);
+
+	_zoom(
+		(float)zDelta < 0.f ?
+		-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
+		abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
+{
+	UNREFERENCED_PARAMETER(nRepCnt);
+	UNREFERENCED_PARAMETER(nFlags);
+
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	switch (nChar)
+	{
+	case VK_UP:
+	{
+		_move(
+			0.f,
+			PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+	}
+	break;
+
+	case VK_DOWN:
+	{
+		_move(
+			0.f,
+			-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+	}
+	break;
+
+	case VK_LEFT:
+	{
+		_move(
+			-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+			0.f);
+	}
+	break;
+
+	case VK_RIGHT:
+	{
+		_move(
+			PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+			0.f);
+	}
+	break;
+	} // switch (nChar)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::Draw(CDC* pDC) /*override*/
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -456,249 +699,6 @@ COpenGLIFCView::~COpenGLIFCView()
 	Selection support
 	*/
 	DrawInstancesFrameBuffer();
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
-#ifdef _LINUX
-				m_pWnd->Refresh(false);
-#else
-				_redraw();
-#endif // _LINUX
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-		case enumMouseEvent::Move:
-		{
-			OnMouseMoveEvent(nFlags, point);
-		}
-		break;
-
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
-
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (enEvent)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
-{
-	UNREFERENCED_PARAMETER(nFlags);
-	UNREFERENCED_PARAMETER(pt);
-
-	_zoom(
-		(float)zDelta < 0.f ? 
-		-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : 
-		abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	UNREFERENCED_PARAMETER(nRepCnt);
-	UNREFERENCED_PARAMETER(nFlags);
-
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	switch (nChar)
-	{
-		case VK_UP:
-		{
-			_move(
-				0.f,
-				PAN_SPEED_KEYS * (1.f / rcClient.Height()));
-		}
-		break;
-
-		case VK_DOWN:
-		{
-			_move(
-				0.f,
-				-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
-		}
-		break;
-
-		case VK_LEFT:
-		{
-			_move(
-				-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
-				0.f);
-		}
-		break;
-
-		case VK_RIGHT:
-		{
-			_move(
-				PAN_SPEED_KEYS * (1.f / rcClient.Width()),
-				0.f);
-		}
-		break;
-	} // switch (nChar)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::SetProjection(enumProjection enProjection)
-{
-	_setProjection(enProjection);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ enumProjection COpenGLIFCView::GetProjection() const
-{
-	return _getProjection();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::SetView(enumView enView)
-{
-	_setView(enView);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged()
-{
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	/*
-	* Center
-	*/
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f); 
-
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
-	_redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CSTEPView* pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (GetController() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
-		nullptr;
-
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_pSelectedInstance = pSelectedInstance;
-
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
-		_redraw();
-#endif // _LINUX
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CSTEPView* pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnControllerChanged()
-{
-	if (GetController() != nullptr)
-	{
-		GetController()->RegisterView(this);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
