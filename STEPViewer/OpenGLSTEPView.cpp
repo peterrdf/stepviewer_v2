@@ -204,24 +204,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* /*pInstance*/)  /*override*/
-{
-	OnInstancesEnabledStateChanged(pSender);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* /*pInstance*/)  /*override*/
-{
-	OnInstancesEnabledStateChanged(pSender);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnEnableAllInstances(CSTEPView* pSender)  /*override*/
-{
-	OnInstancesEnabledStateChanged(pSender);
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);

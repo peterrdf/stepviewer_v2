@@ -47,9 +47,6 @@ public: // Methods
 
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
-	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
-	virtual void OnEnableAllInstances(CSTEPView* pSender);
 
 	// CSTEPTreeViewBase
 	virtual void Load();
@@ -105,5 +102,9 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	void UpdateParent(HTREEITEM hParent);
+
+	// --------------------------------------------------------------------------------------------
+	// Cleanup
+	void ResetView();
 };
 

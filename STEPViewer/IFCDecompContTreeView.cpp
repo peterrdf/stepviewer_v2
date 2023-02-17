@@ -112,28 +112,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* /*pInstance*/)
-{	
-	if (pSender == this)
-	{
-		return;
-	}
-
-	ASSERT(FALSE); // TODO
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* /*pInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	ASSERT(FALSE); // TODO
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCDecompContTreeView::Load()
 {
 	ResetView();
@@ -152,17 +130,6 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	{
 		//m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnEnableAllInstances(CSTEPView* pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	ASSERT(FALSE); // TODO
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -445,30 +412,25 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				ClickItem_UpdateChildren(hItem);
 				ClickItem_UpdateParent((*m_pTreeView).GetParentItem(hItem));
 
-				GetController()->OnInstancesEnabledStateChanged(this);
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				pInstance->setEnable(true);
-
-				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeView->SetItemImage(hItem, iImage, iImage);
-
 				auto itInstance = mapInstances.begin();
 				for (; itInstance != mapInstances.end(); itInstance++)
 				{
-					if (itInstance->second != pInstance)
-					{
-						itInstance->second->setEnable(false);
-					}					
+					itInstance->second->setEnable(itInstance->second == pInstance);
 				}
+
+				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeView->SetItemImage(hItem, iImage, iImage);				
 
 				ResetView();
 				OnInstanceSelected(nullptr);
 
-				GetController()->OnInstancesEnabledStateChanged(this);
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -483,7 +445,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				ResetView();
 				OnInstanceSelected(nullptr);
 
-				GetController()->OnInstancesEnabledStateChanged(this);
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 		} // switch (uiCommand)

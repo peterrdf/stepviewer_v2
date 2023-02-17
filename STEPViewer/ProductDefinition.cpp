@@ -18,6 +18,7 @@ CProductDefinition::CProductDefinition()
 	, m_pVertexBuffer(nullptr)
 	, m_pIndexBuffer(nullptr)
 	, m_iConceptualFacesCount(0)
+	, m_bCalculated(false)
 	, m_vecTriangles()
 	, m_vecConcFacePolygons()
 	, m_vecLines()
@@ -40,6 +41,13 @@ CProductDefinition::CProductDefinition()
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::Calculate()
 {
+	if (m_bCalculated)
+	{
+		return;
+	}
+
+	m_bCalculated = true;
+
 	int64_t iModel = GetModel(m_iInstance);
 
 	/*

@@ -37,6 +37,7 @@ private: // Members
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
 	_indices_i32* m_pIndexBuffer;
 	int64_t m_iConceptualFacesCount;
+	bool m_bCalculated;
 
 	// Primitives
 	vector<_primitives> m_vecTriangles;
@@ -58,6 +59,7 @@ private: // Members
 
 public: // Methods
 
+	// ctor/dtor
 	CProductDefinition();
 	virtual ~CProductDefinition();
 	

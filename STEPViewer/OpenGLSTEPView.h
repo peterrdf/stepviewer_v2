@@ -42,9 +42,6 @@ public: // Methods
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender) override;
-	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance) override;
-	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance) override;
-	virtual void OnEnableAllInstances(CSTEPView* pSender) override;
 
 protected: // Methods
 

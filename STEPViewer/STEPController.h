@@ -133,18 +133,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
-	void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
-	void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
-	void OnEnableAllInstances(CSTEPView* pSender);
 };
 
 

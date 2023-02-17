@@ -191,33 +191,3 @@ void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 		(*itView)->OnInstancesEnabledStateChanged(pSender);
 	}
 }
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPController::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnInstanceEnabledStateChanged(pSender, pInstance);
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPController::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnDisableAllButThis(pSender, pInstance);
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPController::OnEnableAllInstances(CSTEPView* pSender)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnEnableAllInstances(pSender);
-	}
-}

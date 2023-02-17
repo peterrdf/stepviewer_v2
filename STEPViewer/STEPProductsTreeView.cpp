@@ -91,9 +91,15 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		m_hSelectedItem = nullptr;
 	}
 
-	ASSERT(GetController() != nullptr);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+		return;
+	}
+
+	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
 	if (pSelectedInstance == nullptr)
 	{
 		/*
@@ -107,7 +113,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		return;
 	}
 
-	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
+	auto itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
 		LoadInstanceAncestors(pSelectedInstance);
@@ -139,102 +145,9 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (pInstance == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance);
-	if (itInstance2Item == m_mapInstance2Item.end())
-	{
-		LoadInstanceAncestors(pInstance);
-	}
-
-	itInstance2Item = m_mapInstance2Item.find(pInstance);
-	if (itInstance2Item == m_mapInstance2Item.end())
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	/*
-	* UI
-	*/
-	int iImage = itInstance2Item->first->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-	(*m_pTreeView).SetItemImage(itInstance2Item->second, iImage, iImage);
-
-	UpdateChildren(itInstance2Item->second);
-	UpdateParent((*m_pTreeView).GetParentItem(itInstance2Item->second));
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (pInstance == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	ResetTree(false);
-
-	ASSERT(pInstance->getEnable());
-
-	map<CProductInstance*, HTREEITEM>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance);
-	if (itInstance2Item == m_mapInstance2Item.end())
-	{
-		LoadInstanceAncestors(pInstance);
-	}
-
-	itInstance2Item = m_mapInstance2Item.find(pInstance);
-	if (itInstance2Item == m_mapInstance2Item.end())
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	(*m_pTreeView).SetItemImage(itInstance2Item->second, IMAGE_SELECTED, IMAGE_SELECTED);
-
-	/*
-	* UI
-	*/
-	UpdateChildren(itInstance2Item->second);
-	UpdateParent((*m_pTreeView).GetParentItem(itInstance2Item->second));
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPProductsTreeView::Load()
 {
-	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
-	{
-		delete m_vecItemData[iItemData];
-	}
-	m_vecItemData.clear();
-
-	m_hSelectedItem = nullptr;
-
-	m_mapInstance2Item.clear();
-
-	m_pSearchDialog->Reset();
-
-	LoadModel();
+	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -250,17 +163,6 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	{
 		m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnEnableAllInstances(CSTEPView* pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	ResetTree(true);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -288,7 +190,12 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
 		auto pController = GetController();
-		ASSERT(pController != nullptr);
+		if (pController == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
 
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -301,77 +208,39 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
 			{
-				/*
-				* State
-				*/
-				CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
+				auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
 				{
 					pItemData->getInstance<CProductInstance>()->setEnable(false);
 				}
-
-				/*
-				* Memory
-				*/
+				
 				UpdateChildrenInMemory(pItemData, false);
-
-				/*
-				* UI
-				*/
+				
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
 				UpdateChildren(hItem);
 				UpdateParent((*m_pTreeView).GetParentItem(hItem));
 
-				/*
-				* Notify
-				*/
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
-				{
-					pController->OnInstanceEnabledStateChanged(this, pItemData->getInstance<CProductInstance>());
-				}
-				else
-				{
-					pController->OnInstancesEnabledStateChanged(this);
-				}
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case IMAGE_NOT_SELECTED:
 			{
-				/*
-				* State
-				*/
-				CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
+				auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
 				{
 					pItemData->getInstance<CProductInstance>()->setEnable(true);
 				}
 
-				/*
-				* Memory
-				*/
 				UpdateChildrenInMemory(pItemData, true);
 
-				/*
-				* UI
-				*/
 				(*m_pTreeView).SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
 				UpdateChildren(hItem);
 				UpdateParent((*m_pTreeView).GetParentItem(hItem));
 
-				/*
-				* Notify
-				*/
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
-				{
-					pController->OnInstanceEnabledStateChanged(this, pItemData->getInstance<CProductInstance>());
-				}
-				else
-				{
-					pController->OnInstancesEnabledStateChanged(this);
-				}
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -399,7 +268,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		(*m_pTreeView).SetItemState(hItem, TVIS_BOLD, TVIS_BOLD);
 		m_hSelectedItem = hItem;
 
-		CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
+		auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hItem);
 		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::dtProductInstance))
 		{
 			GetController()->SelectInstance(this, nullptr);
@@ -407,7 +276,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		CProductInstance* pInstance = pItemData->getInstance<CProductInstance>();
+		auto pInstance = pItemData->getInstance<CProductInstance>();
 		ASSERT(pInstance != nullptr);
 
 		GetController()->SelectInstance(this, pInstance);
@@ -527,16 +396,22 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		ASSERT(GetController() != nullptr);
-
-		if (GetController()->GetModel() == nullptr)
+		auto pController = GetController();
+		if (pController == nullptr)
 		{
 			ASSERT(FALSE);
 
 			return;
 		}
 
-		auto pModel = GetController()->GetModel()->As<CSTEPModel>();
+		if (pController->GetModel() == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		auto pModel = pController->GetModel()->As<CSTEPModel>();
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);
@@ -550,96 +425,65 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance();
+				pController->ZoomToInstance();
+			}
+			break;
+
+			case ID_VIEW_ZOOM_OUT:
+			{
+				pController->ZoomOut();
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
-				GetController()->SaveInstance();
+				pController->SaveInstance();
+			}
+			break;
+
+			case ID_INSTANCES_ENABLE:
+			{				
+				pInstance->setEnable(!pInstance->getEnable());
+
+				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeView->SetItemImage(hItem, iImage, iImage);
+				
+				UpdateChildrenInMemory(pItemData, pInstance->getEnable());
+				
+				UpdateChildren(hItem);
+				UpdateParent((*m_pTreeView).GetParentItem(hItem));
+								
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				/*
-				* State
-				*/
 				auto itInstance = mapInstances.begin();
 				for (; itInstance != mapInstances.end(); itInstance++)
 				{
 					itInstance->second->setEnable(itInstance->second == pInstance);
 				}
+				
+				ResetView();
+				OnInstanceSelected(nullptr);
 
-				/*
-				* Notify
-				*/
-				GetController()->OnDisableAllButThis(nullptr/*update this view too*/, pInstance);
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				/*
-				* State
-				*/
 				auto itInstance = mapInstances.begin();
 				for (; itInstance != mapInstances.end(); itInstance++)
 				{
 					itInstance->second->setEnable(true);
 				}
 
-				/*
-				* Notify
-				*/
-				GetController()->OnEnableAllInstances(nullptr/*update this view too*/);
-			}
-			break;
+				ResetView();
+				OnInstanceSelected(nullptr);
 
-			case ID_INSTANCES_ENABLE:
-			{
-				/*
-				* State
-				*/
-				pInstance->setEnable(!pInstance->getEnable());
-
-				/*
-				* UI
-				*/
-				int iImage = -1;
-				int iSelectedImage = -1;
-				(*m_pTreeView).GetItemImage(hItem, iImage, iSelectedImage);
-
-				ASSERT(iImage == iSelectedImage);
-
-				if (pInstance->getEnable())
-				{
-					ASSERT((iImage == IMAGE_NOT_SELECTED) || (iImage == IMAGE_SEMI_SELECTED));
-
-					(*m_pTreeView).SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
-				}
-				else
-				{
-					ASSERT((iImage == IMAGE_SELECTED) || (iImage == IMAGE_SEMI_SELECTED));
-
-					(*m_pTreeView).SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-				}
-
-				/*
-				* Memory
-				*/
-				UpdateChildrenInMemory(pItemData, pInstance->getEnable());
-
-				/*
-				* UI
-				*/
-				UpdateChildren(hItem);
-				UpdateParent((*m_pTreeView).GetParentItem(hItem));
-
-				/*
-				* Notify
-				*/
-				GetController()->OnInstanceEnabledStateChanged(this, pInstance);
+				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -993,7 +837,13 @@ void CSTEPProductsTreeView::LoadModel()
 
 	m_bInitInProgress = true;
 
-	ASSERT(GetController() != nullptr);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	if (GetController()->GetModel() == nullptr)
 	{
@@ -1008,11 +858,9 @@ void CSTEPProductsTreeView::LoadModel()
 		ASSERT(FALSE);
 
 		return;
-	}
+	}	
 
-	(*m_pTreeView).DeleteAllItems();
-
-	const map<int_t, CProductDefinition*>& mapDefinitions = pModel->getProductDefinitions();
+	auto& mapDefinitions = pModel->getProductDefinitions();
 	if (mapDefinitions.empty())
 	{
 		return;
@@ -1045,7 +893,7 @@ void CSTEPProductsTreeView::LoadModel()
 	/*
 	* Roots
 	*/
-	map<int_t, CProductDefinition*>::const_iterator itDefinition = mapDefinitions.begin();
+	auto itDefinition = mapDefinitions.begin();
 	for (; itDefinition != mapDefinitions.end(); itDefinition++)
 	{
 		CProductDefinition* pDefinition = itDefinition->second;
@@ -1503,7 +1351,7 @@ void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 		(*m_pTreeView).SetItemImage(hChild, iParentImage, iParentImage);
 
 #ifdef _DEBUG
-		CSTEPItemData* pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hChild);
+		auto pItemData = (CSTEPItemData*)(*m_pTreeView).GetItemData(hChild);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
 		{
 			if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED))
@@ -1662,4 +1510,24 @@ void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 	}
 
 	UpdateParent((*m_pTreeView).GetParentItem(hParent));
+}
+
+// ------------------------------------------------------------------------------------------------
+void CSTEPProductsTreeView::ResetView()
+{
+	(*m_pTreeView).DeleteAllItems();
+
+	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
+	{
+		delete m_vecItemData[iItemData];
+	}
+	m_vecItemData.clear();
+
+	m_hSelectedItem = nullptr;
+
+	m_mapInstance2Item.clear();
+
+	m_pSearchDialog->Reset();
+
+	LoadModel();
 }

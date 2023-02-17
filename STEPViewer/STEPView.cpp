@@ -54,22 +54,6 @@ void CSTEPView::SetController(CSTEPController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnInstanceEnabledStateChanged(CSTEPView* /*pSender*/, CProductInstance* /*pInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnDisableAllButThis(CSTEPView* /*pSender*/, CProductInstance* /*pInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnEnableAllInstances(CSTEPView* /*pSender*/)
-{
-}
-
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPView::OnControllerChanged()
 {
 }
