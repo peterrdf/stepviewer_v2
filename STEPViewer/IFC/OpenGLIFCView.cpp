@@ -10,12 +10,8 @@
 
 // ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
-	: _oglRenderer()
-	, COpenGLView()
-	, m_bShowFaces(TRUE)	
-	, m_bShowConceptualFacesPolygons(TRUE)
-	, m_bShowLines(TRUE)
-	, m_bShowPoints(TRUE)
+	:  COpenGLView()
+	, _oglRenderer()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -63,62 +59,6 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	delete m_pPointedInstanceMaterial;
 	m_pPointedInstanceMaterial = nullptr;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ShowFaces(BOOL bShow)
-{
-	m_bShowFaces = bShow;
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLIFCView::AreFacesShown()
-{
-	return m_bShowFaces;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ShowConceptualFacesPolygons(BOOL bShow)
-{
-	m_bShowConceptualFacesPolygons = bShow;
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLIFCView::AreConceptualFacesPolygonsShown()
-{
-	return m_bShowConceptualFacesPolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ShowLines(BOOL bShow)
-{
-	m_bShowLines = bShow;
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLIFCView::AreLinesShown()
-{
-	return m_bShowLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::ShowPoints(BOOL bShow)
-{
-	m_bShowPoints = bShow;
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLIFCView::ArePointsShown()
-{
-	return m_bShowPoints;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1392,6 +1332,11 @@ void COpenGLIFCView::Rotate(float fXAngle, float fYAngle)
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::Zoom(float fZTranslation)
 {
+	if (m_enProjection == enumProjection::Isometric)
+	{
+		return;
+	}
+
 	m_fZTranslation += fZTranslation;
 
 #ifdef _LINUX

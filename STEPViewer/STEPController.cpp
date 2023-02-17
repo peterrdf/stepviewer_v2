@@ -168,12 +168,6 @@ int CSTEPController::GetVisibleValuesCountLimit() const
 void CSTEPController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnVisibleValuesCountLimitChanged();
-	}
 }
 
 // ------------------------------------------------------------------------------------------------

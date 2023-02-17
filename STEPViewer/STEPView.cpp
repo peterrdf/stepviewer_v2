@@ -5,6 +5,13 @@
 // ------------------------------------------------------------------------------------------------
 CSTEPView::CSTEPView()
 	: m_pController(nullptr)
+	, m_bShowFaces(TRUE)
+	, m_bShowFacesPolygons(FALSE)
+	, m_bShowConceptualFacesPolygons(TRUE)
+	, m_bShowLines(TRUE)
+	, m_fLineWidth(1.f)
+	, m_bShowPoints(TRUE)
+	, m_fPointSize(1.f)
 {
 }
 
@@ -68,8 +75,9 @@ void CSTEPView::SetController(CSTEPController* pController)
 {
 }
 
+
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnVisibleValuesCountLimitChanged()
+/*virtual*/ void CSTEPView::OnControllerChanged()
 {
 }
 
@@ -78,9 +86,3 @@ CSTEPController* CSTEPView::GetController() const
 {
 	return m_pController;
 }
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnControllerChanged()
-{
-}
-

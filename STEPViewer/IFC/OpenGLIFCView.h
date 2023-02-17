@@ -12,17 +12,11 @@ class CIFCModel;
 // ------------------------------------------------------------------------------------------------
 // Open GL View
 class COpenGLIFCView 
-	: public _oglRenderer<CIFCInstance>
-	, public COpenGLView
+	: public COpenGLView
+	, public _oglRenderer<CIFCInstance>
 {
 
 private: // Members
-		
-	// UI
-	BOOL m_bShowFaces;	
-	BOOL m_bShowConceptualFacesPolygons;
-	BOOL m_bShowLines;
-	BOOL m_bShowPoints;
 
 	// --------------------------------------------------------------------------------------------
 	// Mouse
@@ -40,34 +34,38 @@ private: // Members
 
 public: // Methods
 	
+	// ctor/dtor
 	COpenGLIFCView(CWnd * pWnd);
 	virtual ~COpenGLIFCView();
 
-	// UI
-	void ShowFaces(BOOL bShow);
-	BOOL AreFacesShown();
-	void ShowConceptualFacesPolygons(BOOL bShow);
-	BOOL AreConceptualFacesPolygonsShown();
-	void ShowLines(BOOL bShow);
-	BOOL AreLinesShown();	
-	void ShowPoints(BOOL bShow);
-	BOOL ArePointsShown();
-	
-	// COpenGLView
-	virtual void Load();
-	virtual void Draw(CDC* pDC);
-	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
-	virtual void SetProjection(enumProjection enProjection);
-	virtual enumProjection GetProjection() const;
-	virtual void SetView(enumView enView);
-	
+	// CSTEPView	
+	virtual void Redraw() override { _redraw();  }
+
 	// CSTEPView	
 	virtual void OnWorldDimensionsChanged();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);	
-	virtual void OnControllerChanged();		
+	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
+
+protected: // Methods
+
+	virtual void OnControllerChanged();
+
+public: // Methods
+		
+	// COpenGLView
+	virtual void Load();
+
+	// COpenGLView
+	virtual void SetProjection(enumProjection enProjection);
+	virtual enumProjection GetProjection() const;
+	virtual void SetView(enumView enView);
+
+	// COpenGLView
+	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
+
+	virtual void Draw(CDC* pDC);	
 
 private: // Methods
 	

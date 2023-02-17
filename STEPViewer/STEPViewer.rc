@@ -477,6 +477,13 @@ BEGIN
             MENUITEM "Left",                        ID_VIEW_LEFT
             MENUITEM "Bottom",                      ID_VIEW_BOTTOM
         END
+        POPUP "Show"
+        BEGIN
+            MENUITEM "Faces",                       ID_SHOW_FACES
+            MENUITEM "Conceptual faces wireframes", ID_SHOW_CONC_FACES_WIREFRAMES
+            MENUITEM "Lines",                       ID_SHOW_LINES
+            MENUITEM "Points",                      ID_SHOW_POINTS
+        END
     END
     POPUP "&Help"
     BEGIN
@@ -593,6 +600,13 @@ BEGIN
             MENUITEM "Back",                        ID_VIEW_BACK
             MENUITEM "Left",                        ID_VIEW_LEFT
             MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+        END
+        POPUP "Show"
+        BEGIN
+            MENUITEM "Faces", ID_SHOW_FACES
+            MENUITEM "Conceptual faces wireframes", ID_SHOW_CONC_FACES_WIREFRAMES
+            MENUITEM "Lines", ID_SHOW_LINES
+            MENUITEM "Points", ID_SHOW_POINTS
         END
     END
 END

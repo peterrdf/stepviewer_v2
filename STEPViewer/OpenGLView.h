@@ -30,39 +30,30 @@ enum class enumMouseEvent
 };
 
 // ------------------------------------------------------------------------------------------------
-class COpenGLView : public CSTEPView
+class COpenGLView 
+	: public CSTEPView
 {
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
+	// ctor/dtor
 	COpenGLView();
+	virtual ~COpenGLView();	
 
-	// --------------------------------------------------------------------------------------------
-	virtual ~COpenGLView();
-
-	// --------------------------------------------------------------------------------------------
+	// Load
 	virtual void Load() PURE;
 
-	// --------------------------------------------------------------------------------------------
-	virtual void Draw(CDC* pDC) PURE;
-
-	// --------------------------------------------------------------------------------------------
+	// Projection/View
+	virtual void SetProjection(enumProjection enProjection) PURE;
+	virtual enumProjection GetProjection() const PURE;
+	virtual void SetView(enumView enView) PURE;
+	
+	// Events
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) PURE;
-
-	// --------------------------------------------------------------------------------------------
 	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) PURE;
-
-	// --------------------------------------------------------------------------------------------
 	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) PURE;
 
-	// --------------------------------------------------------------------------------------------
-	virtual void SetProjection(enumProjection enProjection) PURE;
-
-	// --------------------------------------------------------------------------------------------
-	virtual enumProjection GetProjection() const PURE;
-
-	// --------------------------------------------------------------------------------------------
-	virtual void SetView(enumView enView) PURE;
+	// Draw
+	virtual void Draw(CDC* pDC) PURE;
 };
 

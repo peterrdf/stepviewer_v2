@@ -21,15 +21,8 @@ COpenGLSTEPView::COpenGLSTEPView(wxGLCanvas * pWnd)
 #else
 COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 #endif // _LINUX
-	: _oglRenderer()
-	, COpenGLView()
-	, m_bShowFaces(TRUE)
-	, m_bShowFacesPolygons(FALSE)
-	, m_bShowConceptualFacesPolygons(TRUE)
-	, m_bShowLines(TRUE)
-	, m_fLineWidth(1.f)
-	, m_bShowPoints(TRUE)
-	, m_fPointSize(1.f)
+	: COpenGLView()	
+	, _oglRenderer()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -105,129 +98,11 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::ShowFaces(BOOL bShow)
+/*virtual*/ void COpenGLSTEPView::OnControllerChanged()
 {
-	m_bShowFaces = bShow;
+	ASSERT(GetController() != nullptr);
 
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLSTEPView::AreFacesShown() const
-{
-	return m_bShowFaces;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::ShowFacesPolygons(BOOL bShow)
-{
-	m_bShowFacesPolygons = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLSTEPView::AreFacesPolygonsShown() const
-{
-	return m_bShowFacesPolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::ShowConceptualFacesPolygons(BOOL bShow)
-{
-	m_bShowConceptualFacesPolygons = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLSTEPView::AreConceptualFacesPolygonsShown() const
-{
-	return m_bShowConceptualFacesPolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::ShowLines(BOOL bShow)
-{
-	m_bShowLines = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLSTEPView::AreLinesShown() const
-{
-	return m_bShowLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::SetLineWidth(GLfloat fWidth)
-{
-	m_fLineWidth = fWidth;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat COpenGLSTEPView::GetLineWidth() const
-{
-	return m_fLineWidth;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::ShowPoints(BOOL bShow)
-{
-	m_bShowPoints = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLSTEPView::ArePointsShown() const
-{
-	return m_bShowPoints;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::SetPointSize(GLfloat fSize)
-{
-	m_fPointSize = fSize;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat COpenGLSTEPView::GetPointSize() const
-{
-	return m_fPointSize;
+	GetController()->RegisterView(this);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -762,133 +637,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
-{
-	/*CSTEPController* pController = GetController();
-	ASSERT(pController != nullptr);
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}*/
-
-	ASSERT(FALSE); // TODO
-
-	//auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
-
-	//CMenu menu;
-	//VERIFY(menu.LoadMenuW(IDR_MENU_3D_VIEW));
-
-	//CMenu* pPopup = menu.GetSubMenu(0);
-
-	////pPopup->EnableMenuItem(ID_3DVIEW_ZOOMTO, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-
-	//pPopup->EnableMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-	//pPopup->CheckMenuItem(ID_3DVIEW_ENABLE, MF_BYCOMMAND | ((pSelectedInstance != nullptr) && (pSelectedInstance->getEnable()) ? MF_CHECKED : MF_UNCHECKED));
-
-	//pPopup->EnableMenuItem(ID_INSTANCES_DISABLE_ALL_BUT_THIS, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-
-	//pPopup->EnableMenuItem(ID_INSTANCES_ENABLE_ALL MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-
-	//pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | (pSelectedInstance != nullptr ? MF_ENABLED : MF_DISABLED));
-
-	//UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pWnd);
-	//if (uiCommand == 0)
-	//{
-	//	return;
-	//}
-
-	
-
-	//switch (uiCommand)
-	//{
-	//	case ID_3DVIEW_ZOOMTO:
-	//	{
-	//		pController->ZoomToInstance(pSelectedInstance->getID());
-	//	}
-	//	break;
-
-	//	case ID_3DVIEW_ENABLE:
-	//	{
-	//		pSelectedInstance->setEnable(!pSelectedInstance->getEnable());
-
-	//		pController->OnInstanceEnabledStateChanged(nullptr, pSelectedInstance);
-	//	}
-	//	break;
-
-	//	case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
-	//	{
-	//		const map<int_t, CProductInstance*>& mapInstances = pModel->getProductInstances();
-
-	//		CProductInstance* pInstance = nullptr;
-	//		map<int_t, CProductInstance*>::const_iterator itInstance = mapInstances.begin();
-	//		for (; itInstance != mapInstances.end(); itInstance++)
-	//		{
-	//			if (itInstance->second == pSelectedInstance)
-	//			{
-	//				itInstance->second->setEnable(true);
-
-	//				pInstance = itInstance->second;
-
-	//				continue;
-	//			}
-
-	//			itInstance->second->setEnable(false);
-	//		}
-
-	//		pController->OnDisableAllButThis(nullptr, pInstance);
-	//	}
-	//	break;
-
-	//	case ID_3DVIEW_ENABLEALL:
-	//	{
-	//		const map<int_t, CProductInstance*>& mapInstances = pModel->getProductInstances();
-
-	//		map<int_t, CProductInstance*>::const_iterator itInstance = mapInstances.begin();
-	//		for (; itInstance != mapInstances.end(); itInstance++)
-	//		{
-	//			itInstance->second->setEnable(true);
-	//		}
-
-	//		pController->OnEnableAllInstances(nullptr);
-	//	}
-	//	break;
-
-	//	case ID_INSTANCES_SAVE:
-	//	{
-	//		TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-
-	//		CFileDialog dlgFile(FALSE, _T("bin"), pSelectedInstance->getProductDefinition()->getId(),
-	//			OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	//		if (dlgFile.DoModal() != IDOK)
-	//		{
-	//			return;
-	//		}
-
-	//		SaveInstanceTreeW(pSelectedInstance->getProductDefinition()->getInstance(), dlgFile.GetPathName());
-	//	}
-	//	break;
-
-	//	default:
-	//	{
-	//		ASSERT(FALSE); // Unknown
-	//	}
-	//	break;
-	//} // switch (uiCommand)
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()
 {
 	auto pController = GetController();
@@ -940,24 +688,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	m_pWnd->Refresh(false);
 #else
 	_redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::Reset()
-{
-	_reset();
-
-	m_bShowFaces = TRUE;
-	m_bShowFacesPolygons = FALSE;
-	m_bShowConceptualFacesPolygons = TRUE;
-	m_bShowLines = TRUE;
-	m_bShowPoints = TRUE;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
 #endif // _LINUX
 }
 
@@ -1034,14 +764,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 /*virtual*/ void COpenGLSTEPView::OnEnableAllInstances(CSTEPView* pSender)
 {
 	OnInstancesEnabledStateChanged(pSender);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnControllerChanged()
-{
-	ASSERT(GetController() != nullptr);
-
-	GetController()->RegisterView(this);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1883,6 +1605,11 @@ void COpenGLSTEPView::Rotate(float fXAngle, float fYAngle)
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::Zoom(float fZTranslation)
 {
+	if (m_enProjection == enumProjection::Isometric)
+	{
+		return;
+	}
+
 	m_fZTranslation += fZTranslation;
 
 #ifdef _LINUX

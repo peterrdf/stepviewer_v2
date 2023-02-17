@@ -141,13 +141,18 @@
 #define ID_VIEW_BACK                    32815
 #define ID_VIEW_LEFT                    32816
 #define ID_VIEW_BOTTOM                  32817
+#define ID_VIEW_SHOW                    32819
+#define ID_SHOW_FACES                   32820
+#define ID_SHOW_CONC_FACES_WIREFRAMES   32822
+#define ID_SHOW_LINES                   32823
+#define ID_SHOW_POINTS                  32824
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        334
-#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_COMMAND_VALUE         32825
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

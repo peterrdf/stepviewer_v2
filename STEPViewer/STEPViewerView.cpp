@@ -109,6 +109,14 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnUpdateInstancesSave)
 	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnUpdateInstancesZoomTo)
+	ON_COMMAND(ID_SHOW_FACES, &CMySTEPViewerView::OnShowFaces)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_FACES, &CMySTEPViewerView::OnUpdateShowFaces)
+	ON_COMMAND(ID_SHOW_CONC_FACES_WIREFRAMES, &CMySTEPViewerView::OnShowConcFacesWireframes)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_CONC_FACES_WIREFRAMES, &CMySTEPViewerView::OnUpdateShowConcFacesWireframes)
+	ON_COMMAND(ID_SHOW_LINES, &CMySTEPViewerView::OnShowLines)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_LINES, &CMySTEPViewerView::OnUpdateShowLines)
+	ON_COMMAND(ID_SHOW_POINTS, &CMySTEPViewerView::OnShowPoints)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_POINTS, &CMySTEPViewerView::OnUpdateShowPoints)
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
@@ -494,4 +502,73 @@ void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(bEnable);
+}
+
+
+void CMySTEPViewerView::OnShowFaces()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
+
+		// TODO?
+		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowFaces);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateShowFaces(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreFacesShown());
+}
+
+void CMySTEPViewerView::OnShowConcFacesWireframes()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
+
+		// TODO?
+		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowConceptualFacesWireframes);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreConceptualFacesPolygonsShown());
+}
+
+void CMySTEPViewerView::OnShowLines()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
+
+		// TODO?
+		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowLines);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateShowLines(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreLinesShown());
+}
+
+void CMySTEPViewerView::OnShowPoints()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
+
+		// TODO?
+		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowPoints);
+	}
+}
+
+void CMySTEPViewerView::OnUpdateShowPoints(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->ArePointsShown());
 }

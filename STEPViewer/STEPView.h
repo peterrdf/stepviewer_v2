@@ -11,73 +11,66 @@ class CSTEPView
 {
 
 private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Controller - MVC
+	
+	// Controller
 	CSTEPController* m_pController;
 
+protected: // Members
+
+	// UI
+	BOOL m_bShowFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
+	
+	// ctor/dtor
 	CSTEPView();
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CSTEPView();
-
-	// --------------------------------------------------------------------------------------------
-	// Sets up Controller
+	
+	// Controller
 	void SetController(CSTEPController* pController);
 
-	// --------------------------------------------------------------------------------------------
-	// A Model has been loaded
+	// UI
+	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; Redraw(); }
+	BOOL AreFacesShown() const { return m_bShowFaces; }
+	void ShowFacesPolygons(BOOL bShow) { m_bShowFacesPolygons = bShow; Redraw(); }
+	BOOL AreFacesPolygonsShown() const { return m_bShowFacesPolygons; };
+	void ShowConceptualFacesPolygons(BOOL bShow) { m_bShowConceptualFacesPolygons = bShow; Redraw(); }
+	BOOL AreConceptualFacesPolygonsShown() const { return m_bShowConceptualFacesPolygons; }
+	void ShowLines(BOOL bShow) { m_bShowLines = bShow; Redraw(); }
+	BOOL AreLinesShown() const { return m_bShowLines; }
+	void SetLineWidth(GLfloat fWidth) { m_fLineWidth = fWidth; Redraw(); }
+	GLfloat GetLineWidth() const { return m_fLineWidth; }
+	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; Redraw(); }
+	BOOL ArePointsShown() const { return m_bShowPoints; }
+	void SetPointSize(GLfloat fSize) { m_fPointSize = fSize; Redraw(); }
+	GLfloat GetPointSize() const { return m_fPointSize; }
+
+	// UI
+	virtual void Redraw() { ASSERT(FALSE); /*TODO*/ }
+
+	// Events
 	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// The Model has been recalculated
-	virtual void OnWorldDimensionsChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// Meta information support
+	virtual void OnWorldDimensionsChanged();	
 	virtual void OnShowMetaInformation();
-
-	// --------------------------------------------------------------------------------------------
-	// An Instance has been selected
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// A Property has been selected
 	virtual void OnInstancePropertySelected();
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
 	virtual void OnInstanceEnabledStateChanged(CSTEPView* pSender, CProductInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
 	virtual void OnDisableAllButThis(CSTEPView* pSender, CProductInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
 	virtual void OnEnableAllInstances(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties support
-	virtual void OnVisibleValuesCountLimitChanged();
 
 protected: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CSTEPController* GetController() const;
-
-	// --------------------------------------------------------------------------------------------
-	// The controller has been changed
+	// Events
 	virtual void OnControllerChanged();
+	
+	// Controller
+	CSTEPController* GetController() const;	
 };
 
