@@ -9,7 +9,7 @@ CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * 
 	: CSTEPInstance()
 	, m_pModel(pModel)
 	, m_iInstance(iInstance)
-	, m_strGUID(szGUID)
+	, m_strGUID(szGUID != nullptr ? szGUID : L"")
 	, m_iEntity(iEntity)
 	, m_strEntity(szEntity)
 	, m_iExpressID(0)

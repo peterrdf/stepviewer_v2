@@ -919,10 +919,10 @@ void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const 
 		int_t iInstance = 0;
 		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
-		wchar_t	* szInstanceGUIDW = nullptr;
+		wchar_t* szInstanceGUIDW = nullptr;
 		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-		CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
+		auto pInstance = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
 		pInstance->ID() = s_iInstanceID++;
 
 		CString strEntity = szEntityNameW;

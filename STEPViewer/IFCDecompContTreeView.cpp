@@ -869,8 +869,13 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance)
 {
-	CSTEPController* pController = GetController();
-	VERIFY(pController != nullptr);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iIFCProjectInstance, "Name", sdaiUNICODE, &szName);
