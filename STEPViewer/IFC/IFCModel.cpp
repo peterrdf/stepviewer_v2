@@ -43,7 +43,6 @@ CIFCModel::CIFCModel()
 	, m_mapInstances()
 	, m_mapID2Instance()
 	, m_mapExpressID2Instance()
-	, m_mapGUID2Instance()
 	, m_mapUnits()
 	, m_mapEntities()
 	, m_mapClasses()
@@ -283,7 +282,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	{
 		m_mapID2Instance[pInstance->ID()] = pInstance;
 		m_mapExpressID2Instance[pInstance->expressID()] = pInstance;
-		m_mapGUID2Instance[pInstance->getGUID()] = pInstance;
 	}
 
 	/**
@@ -525,18 +523,6 @@ CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 	if (itExpressID2Instance != m_mapExpressID2Instance.end())
 	{
 		return itExpressID2Instance->second;
-	}
-
-	return nullptr;
-}
-
-// --------------------------------------------------------------------------------------------
-CIFCInstance* CIFCModel::GetInstanceByGUID(const wstring & GUID)
-{
-	auto itGUID2Instance = m_mapGUID2Instance.find(GUID);
-	if (itGUID2Instance != m_mapGUID2Instance.end())
-	{
-		return itGUID2Instance->second;
 	}
 
 	return nullptr;

@@ -88,10 +88,6 @@ private: // Members
 	// ExpressID : CIFCInstance*
 	map<int64_t, CIFCInstance*> m_mapExpressID2Instance;
 
-	// --------------------------------------------------------------------------------------------
-	// GUID : CIFCInstance*
-	map<wstring, CIFCInstance*> m_mapGUID2Instance;
-
 	// ------------------------------------------------------------------------
 	// IFC Units
 	map<wstring, CIFCUnit*> m_mapUnits;
@@ -190,10 +186,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CIFCInstance* GetInstanceByGUID(const wstring & GUID);
 
 	// --------------------------------------------------------------------------------------------
 	// Support for properties
