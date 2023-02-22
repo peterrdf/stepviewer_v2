@@ -25,886 +25,36 @@ static char THIS_FILE[]=__FILE__;
 #define REMOVE_OBJECT_PROPERTY_COMMAND L"---<REMOVE>---"
 #define SELECT_OBJECT_PROPERTY_COMMAND L"---<SELECT>---"
 
-// Moved in CSelectInstanceDialog
-//#define USED_SUFFIX L" [used]"
 
 // ------------------------------------------------------------------------------------------------
-//CApplicationPropertyData::CApplicationPropertyData(enumPropertyType enPropertyType)
-//{
-//	m_enPropertyType = enPropertyType;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//enumPropertyType CApplicationPropertyData::GetType() const
-//{
-//	return m_enPropertyType;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CLightPropertyData::CLightPropertyData(enumPropertyType enPropertyType, int iLightIndex)
-//	: CApplicationPropertyData(enPropertyType)
-//	, m_iLightIndex(iLightIndex)
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//int CLightPropertyData::GetLightIndex() const
-//{
-//	return m_iLightIndex;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CApplicationProperty::CApplicationProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CApplicationProperty::CApplicationProperty(const CString & strGroupName, DWORD_PTR dwData, BOOL bIsValueList)
-//	: CMFCPropertyGridProperty(strGroupName, dwData, bIsValueList)
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CApplicationProperty::~CApplicationProperty()
-//{
-//	delete (CApplicationPropertyData *)GetData();
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CColorApplicationProperty::CColorApplicationProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridColorProperty(strName, color, pPalette, szDescription, dwData)
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CColorApplicationProperty::~CColorApplicationProperty()
-//{
-//	delete (CApplicationPropertyData *)GetData();
-//}
+CApplicationPropertyData::CApplicationPropertyData(enumPropertyType enPropertyType)
+{
+	m_enPropertyType = enPropertyType;
+}
 
 // ------------------------------------------------------------------------------------------------
-//CRDFInstanceData::CRDFInstanceData(CRDFController * pController, CRDFInstance * pInstance)
-//	: m_pController(pController)
-//	, m_pInstance(pInstance)
-//{
-//	ASSERT(m_pController != nullptr);
-//	ASSERT(m_pInstance != nullptr);
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CRDFController * CRDFInstanceData::GetController() const
-//{
-//	return m_pController;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CRDFInstance * CRDFInstanceData::GetInstance() const
-//{
-//	return m_pInstance;
-//}
+enumPropertyType CApplicationPropertyData::GetType() const
+{
+	return m_enPropertyType;
+}
 
 // ------------------------------------------------------------------------------------------------
-//CRDFInstancePropertyData::CRDFInstancePropertyData(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, int64_t iCard)
-//	: CRDFInstanceData(pController, pInstance)
-//	, m_pProperty(pProperty)
-//	, m_iCard(iCard)
-//{
-//	ASSERT(m_pProperty != nullptr);
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CRDFProperty * CRDFInstancePropertyData::GetProperty() const
-//{
-//	return m_pProperty;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//int64_t CRDFInstancePropertyData::GetCard() const
-//{
-//	return m_iCard;
-//}
-//
-//void CRDFInstancePropertyData::SetCard(int64_t iCard)
-//{
-//	ASSERT(iCard >= 0);
-//
-//	m_iCard = iCard;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
-//{
-//}
+CApplicationProperty::CApplicationProperty(const CString& strName, const COleVariant& vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
+	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
+{
+}
 
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CRDFInstanceProperty::~CRDFInstanceProperty()
-//{
-//	delete (CRDFInstancePropertyData *)GetData();
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ BOOL CRDFInstanceProperty::HasButton() const
-//{
-//	ASSERT(GetData() != nullptr);
-//
-//	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-//	ASSERT(pData != nullptr);
-//
-//	BOOL bHasButton = FALSE;
-//
-//	/*
-//	* Read the restrictions
-//	*/
-//	int64_t	iMinCard = 0;
-//	int64_t iMaxCard = 0;
-//	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
-//
-//	if ((iMinCard == -1) && (iMaxCard == -1))
-//	{
-//		iMinCard = 0;
-//	}
-//
-//	switch (pData->GetProperty()->getType())
-//	{
-//	case TYPE_BOOL_DATATYPE:
-//	{
-//		bHasButton = FALSE;
-//	} // case TYPE_BOOL_DATATYPE:
-//	break;
-//
-//	case TYPE_CHAR_DATATYPE:
-//	{
-//		int64_t iCard = 0;
-//		char ** szValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&szValue, &iCard);
-//
-//		bHasButton = iCard > iMinCard ? TRUE : FALSE;
-//	} // case TYPE_CHAR_DATATYPE:
-//	break;
-//
-//	case TYPE_DOUBLE_DATATYPE:
-//	{
-//		/*
-//		* Read the values
-//		*/
-//		int64_t iCard = 0;
-//		double * pdValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);
-//
-//		bHasButton = iCard > iMinCard ? TRUE : FALSE;
-//	} // case TYPE_DOUBLE_DATATYPE:
-//	break;
-//
-//	case TYPE_INT_DATATYPE:
-//	{
-//		/*
-//		* Read the values
-//		*/
-//		int64_t iCard = 0;
-//		int64_t * piValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
-//
-//		ASSERT(iCard > 0);
-//
-//		bHasButton = iCard > iMinCard ? TRUE : FALSE;
-//	} // case TYPE_INT_DATATYPE:
-//	break;
-//
-//	default:
-//	{
-//		ASSERT(false); // unexpected
-//	}
-//	break;
-//	} // switch (pData->GetProperty()->getType())
-//
-//	return bHasButton;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFInstanceProperty::OnClickButton(CPoint /*point*/)
-//{
-//	ASSERT(GetData() != nullptr);	
-//
-//	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-//	ASSERT(pData != nullptr);
-//
-//	/*
-//	* Read the restrictions
-//	*/
-//	int64_t	iMinCard = 0;
-//	int64_t iMaxCard = 0;
-//	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
-//
-//	switch (pData->GetProperty()->getType())
-//	{
-//	case TYPE_BOOL_DATATYPE:
-//	{
-//		// NA
-//	} // case TYPE_BOOL_DATATYPE:
-//	break;
-//
-//	case TYPE_CHAR_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		char ** szValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&szValue, &iCard);
-//
-//		ASSERT(iCard > 0);
-//		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
-//
-//		/*
-//		* Remove a value
-//		*/
-//		char ** szNewValues = (char **)new size_t[iCard - 1];
-//
-//		int iCurrentValue = 0;
-//		for (int iValue = 0; iValue < iCard; iValue++)
-//		{
-//			if (iValue == pData->GetCard())
-//			{
-//				continue;
-//			}
-//
-//			szNewValues[iCurrentValue] = new char[strlen(szValue[iCurrentValue]) + 1];
-//			strcpy(szNewValues[iCurrentValue], szValue[iCurrentValue]);
-//
-//			iCurrentValue++;
-//		}
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)szNewValues, iCard - 1);		
-//
-//		for (int iValue = 0; iValue < iCard - 1; iValue++)
-//		{
-//			delete[] szNewValues[iValue];
-//		}
-//		delete [] szNewValues;
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		CMFCPropertyGridProperty * pProperty = GetParent();
-//		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
-//
-//		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
-//	} // case TYPE_CHAR_DATATYPE:
-//	break;
-//
-//	case TYPE_DOUBLE_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		double * pdValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);		
-//
-//		ASSERT(iCard > 0);
-//		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
-//
-//		/*
-//		* Remove a value
-//		*/
-//		vector<double> vecValues;
-//		vecValues.assign(pdValue, pdValue + iCard);
-//
-//		vecValues.erase(vecValues.begin() + pData->GetCard());
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());		
-//
-//		/*
-//		* Update the values
-//		*/
-//		CMFCPropertyGridProperty * pProperty = GetParent();
-//		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
-//
-//		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
-//	} // case TYPE_DOUBLE_DATATYPE:
-//	break;
-//
-//	case TYPE_INT_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		int64_t * piValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
-//
-//		ASSERT(iCard > 0);
-//		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
-//
-//		/*
-//		* Remove a value
-//		*/
-//		vector<int64_t> vecValues;
-//		vecValues.assign(piValue, piValue + iCard);
-//
-//		vecValues.erase(vecValues.begin() + pData->GetCard());
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());		
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		CMFCPropertyGridProperty * pProperty = GetParent();
-//		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
-//
-//		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
-//	} // case TYPE_INT_DATATYPE:
-//	break;
-//
-//	default:
-//	{
-//		ASSERT(false); // unexpected
-//	}
-//	break;
-//	} // switch (pData->GetProperty()->getType())
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CString CRDFInstanceProperty::FormatProperty()
-//{
-//	if (m_varValue.vt != VT_I8)
-//	{
-//		return __super::FormatProperty();
-//	}
-//
-//	CString strValue;
-//	strValue.Format(L"%lld", m_varValue.llVal);
-//
-//	return strValue;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ BOOL CRDFInstanceProperty::TextToVar(const CString & strText)
-//{
-//	/*
-//	* Support for int64_t
-//	*/
-//	if (m_varValue.vt != VT_I8)
-//	{
-//		return __super::TextToVar(strText);
-//	}
-//
-//	m_varValue.llVal = _ttoi64(strText);
-//
-//	return TRUE;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CWnd * CRDFInstanceProperty::CreateInPlaceEdit(CRect rectEdit, BOOL& bDefaultFormat)
-//{
-//	/*
-//	* Support for int64_t
-//	*/
-//	bool bInt64 = false;
-//	if (m_varValue.vt == VT_I8)
-//	{
-//		// Cheat the base class
-//		m_varValue.vt = VT_I4;
-//		bInt64 = true;
-//	}
-//
-//	CWnd * pWnd = __super::CreateInPlaceEdit(rectEdit, bDefaultFormat);
-//
-//	if (bInt64)
-//	{
-//		// Restore type
-//		m_varValue.vt = VT_I8;
-//	}
-//
-//	return pWnd;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFInstanceProperty::EnableSpinControlInt64()
-//{
-//	ASSERT(m_varValue.vt == VT_I8);
-//
-//	// Cheat the base class
-//	m_varValue.vt = VT_I4;
-//
-//	EnableSpinControl(TRUE, 0, INT_MAX);
-//
-//	m_varValue.vt = VT_I8;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CRDFInstanceObjectProperty::CRDFInstanceObjectProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
-//	, m_mapValues()
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CRDFInstanceObjectProperty::~CRDFInstanceObjectProperty()
-//{
-//	delete (CRDFInstancePropertyData *)GetData();
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//void CRDFInstanceObjectProperty::AddValue(const wstring & strValue, int64_t iInstance)
-//{
-//	ASSERT(m_mapValues.find(strValue) == m_mapValues.end());
-//
-//	m_mapValues[strValue] = iInstance;
-//}
-//
-//// --------------------------------------------------------------------------------------------
-//// Gets an instance by value
-//int64_t CRDFInstanceObjectProperty::GetInstance(const wstring & strValue) const
-//{
-//	map<wstring, int64_t>::const_iterator itValues = m_mapValues.find(strValue);
-//	ASSERT(itValues != m_mapValues.end());
-//
-//	return itValues->second;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CSTEPColorSelectorProperty::CSTEPColorSelectorProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridColorProperty(strName, color, pPalette, szDescription, dwData)
-//{
-//
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CSTEPColorSelectorProperty::~CSTEPColorSelectorProperty()
-//{
-//	delete (CRDFInstancePropertyData *)GetData();
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
-//	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
-//{
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ CAddRDFInstanceProperty::~CAddRDFInstanceProperty()
-//{
-//	delete (CRDFInstancePropertyData *)GetData();
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//void CAddRDFInstanceProperty::SetModified(BOOL bModified)
-//{
-//	m_bIsModified = bModified;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ BOOL CAddRDFInstanceProperty::HasButton() const
-//{
-//	ASSERT(GetData() != nullptr);
-//
-//	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-//	ASSERT(pData != nullptr);
-//
-//	BOOL bHasButton = FALSE;
-//
-//	int64_t	iMinCard = 0;
-//	int64_t iMaxCard = 0;
-//	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
-//
-//	switch (pData->GetProperty()->getType())
-//	{
-//	case TYPE_OBJECTTYPE:
-//	{
-//		/*
-//		* Read the card
-//		*/
-//		int64_t * piObjectInstances = nullptr;
-//		int64_t iCard = 0;
-//		GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), &piObjectInstances, &iCard);
-//
-//		if (iMaxCard == -1)
-//		{
-//			bHasButton = TRUE;
-//		}
-//		else
-//		{
-//			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
-//		}
-//	} // case TYPE_OBJECTTYPE:
-//	break;
-//
-//	case TYPE_BOOL_DATATYPE:
-//	{
-//		/*
-//		* Read the card
-//		*/
-//		int64_t iCard = 0;
-//		bool* pbValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)&pbValue, &iCard);
-//
-//		if (iMaxCard == -1)
-//		{
-//			bHasButton = TRUE;
-//		}
-//		else
-//		{
-//			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
-//		}
-//	} // case TYPE_CHAR_DATATYPE
-//	break;
-//
-//	case TYPE_CHAR_DATATYPE:
-//	{
-//		int64_t iCard = 0;
-//		char ** szValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&szValue, &iCard);
-//
-//		if (iMaxCard == -1)
-//		{
-//			bHasButton = TRUE;
-//		}
-//		else
-//		{
-//			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
-//		}
-//	} // case TYPE_CHAR_DATATYPE
-//	break;
-//
-//	case TYPE_DOUBLE_DATATYPE:
-//	{
-//		/*
-//		* Read the card
-//		*/
-//		int64_t iCard = 0;
-//		double * pdValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);
-//		
-//		if (iMaxCard == -1)
-//		{
-//			bHasButton = TRUE;
-//		}
-//		else
-//		{
-//			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
-//		}
-//	} // case TYPE_DOUBLE_DATATYPE:
-//	break;
-//
-//	case TYPE_INT_DATATYPE:
-//	{
-//		/*
-//		* Read the card
-//		*/
-//		int64_t iCard = 0;
-//		double * piValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
-//
-//		if (iMaxCard == -1)
-//		{
-//			bHasButton = TRUE;
-//		}
-//		else
-//		{
-//			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
-//		}
-//	} // case TYPE_INT_DATATYPE:
-//	break;
-//
-//	default:
-//	{
-//		ASSERT(false); // unexpected
-//	}
-//	break;
-//	} // switch (pData->GetProperty()->getType())
-//
-//	return bHasButton;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CAddRDFInstanceProperty::OnClickButton(CPoint /*point*/)
-//{
-//	ASSERT(GetData() != nullptr);
-//
-//	/*
-//	* Select the property
-//	*/
-//	CMFCPropertyGridProperty * pPropertyGroup = GetParent();
-//	m_pWndList->SetCurSel(pPropertyGroup);
-//
-//	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-//	ASSERT(pData != nullptr);
-//
-//	int64_t	iMinCard = 0;
-//	int64_t iMaxCard = 0;
-//	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
-//
-//	switch (pData->GetProperty()->getType())
-//	{
-//	case TYPE_OBJECTTYPE:
-//	{
-//		CEditObjectPropertyDialog dlgEditObjectProperty(pData->GetController(), pData->GetInstance(), pData->GetProperty(), ::AfxGetMainWnd());
-//		if (dlgEditObjectProperty.DoModal() != IDOK)
-//		{
-//			return;
-//		}
-//
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t * piInstances = nullptr;
-//		int64_t iCard = 0;
-//		GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), &piInstances, &iCard);
-//
-//		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-//
-//		/*
-//		* Add a value
-//		*/
-//		vector<int64_t> vecValues;
-//		if (iCard > 0)
-//		{
-//			vecValues.assign(piInstances, piInstances + iCard);
-//		}
-//
-//		switch (dlgEditObjectProperty.m_iMode)
-//		{
-//		case 0: // Existing instance
-//		{
-//			ASSERT(dlgEditObjectProperty.m_pExisitngRDFInstance != nullptr);
-//
-//			vecValues.push_back(dlgEditObjectProperty.m_pExisitngRDFInstance->getInstance());
-//		}
-//		break;
-//
-//		case 1: // New instance
-//		{
-//			ASSERT(dlgEditObjectProperty.m_iNewInstanceRDFClass != nullptr);
-//
-//			CRDFInstance * pNewRDFInstance = pData->GetController()->CreateNewInstance((CPropertiesWnd *)m_pWndList->GetParent(), dlgEditObjectProperty.m_iNewInstanceRDFClass);
-//			ASSERT(pNewRDFInstance != nullptr);
-//
-//			vecValues.push_back(pNewRDFInstance->getInstance());
-//		}
-//		break;
-//
-//		default:
-//		{
-//			ASSERT(false);
-//		}
-//		break;
-//		} // switch (dlgEditObjectProperty.m_iMode)
-//
-//		SetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), vecValues.data(), vecValues.size());		
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update UI
-//		*/
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
-//	} // case TYPE_OBJECTTYPE:
-//	break;
-//
-//	case TYPE_BOOL_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		bool* pbValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)&pbValue, &iCard);
-//
-//		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-//
-//		/*
-//		* Add a value
-//		*/
-//		vector<bool> vecValues;
-//		if (iCard > 0)
-//		{
-//			vecValues.assign(pbValue, pbValue + iCard);
-//		}
-//
-//		vecValues.push_back(false);
-//
-//		bool* pbNewValues = new bool[vecValues.size()];
-//		for (size_t iValue = 0; iValue < vecValues.size(); iValue++)
-//		{
-//			pbNewValues[iValue] = vecValues[iValue];
-//		}
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)pbNewValues, vecValues.size());
-//
-//		delete[] pbNewValues;
-//		pbNewValues = nullptr;
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-//	} // case TYPE_DOUBLE_DATATYPE:
-//	break;
-//
-//	case TYPE_CHAR_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		char ** szValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void **)&szValue, &iCard);
-//
-//		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-//		ASSERT(iMaxCard == 1);
-//
-//		char ** szNewValues = (char **)new size_t[iCard + 1];
-//		if (iCard > 0)
-//		{
-//			for (int iValue = 0; iValue < iCard; iValue++)
-//			{
-//				szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
-//				strcpy(szNewValues[iValue], szValue[iValue]);
-//			}
-//		}
-//
-//		szNewValues[iCard] = new char[1];
-//		szNewValues[iCard][0] = '\0';
-//
-//		/*
-//		* Add a value
-//		*/
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)szNewValues, iCard + 1);
-//
-//		for (int iValue = 0; iValue < iCard + 1; iValue++)
-//		{
-//			delete [] szNewValues[iValue];
-//		}
-//		delete [] szNewValues;
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-//	} // case TYPE_CHAR_DATATYPE
-//	break;
-//
-//	case TYPE_DOUBLE_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		double * pdValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);		
-//
-//		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-//
-//		/*
-//		* Add a value
-//		*/
-//		vector<double> vecValues;
-//		if (iCard > 0)
-//		{
-//			vecValues.assign(pdValue, pdValue + iCard);
-//		}
-//
-//		vecValues.push_back(0.);
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-//	} // case TYPE_DOUBLE_DATATYPE:
-//	break;
-//
-//	case TYPE_INT_DATATYPE:
-//	{
-//		/*
-//		* Read the original values
-//		*/
-//		int64_t iCard = 0;
-//		int64_t * piValue = nullptr;
-//		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
-//
-//		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-//
-//		/*
-//		* Add a value
-//		*/
-//		vector<int64_t> vecValues;
-//		if (iCard > 0)
-//		{
-//			vecValues.assign(piValue, piValue + iCard);
-//		}
-//
-//		vecValues.push_back(0);
-//
-//		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
-//
-//		/*
-//		* Notify
-//		*/
-//		ASSERT(pData->GetController() != nullptr);
-//		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-//
-//		/*
-//		* Update the values
-//		*/
-//		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-//	} // case TYPE_INT_DATATYPE:
-//	break;
-//
-//	default:
-//	{
-//		ASSERT(false); // unexpected
-//	}
-//	break;
-//	} // switch (pData->GetProperty()->getType())
-//}
+// ------------------------------------------------------------------------------------------------
+CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PTR dwData, BOOL bIsValueList)
+	: CMFCPropertyGridProperty(strGroupName, dwData, bIsValueList)
+{
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CApplicationProperty::~CApplicationProperty()
+{
+	delete (CApplicationPropertyData *)GetData();
+}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CPropertiesWnd::OnModelChanged()
@@ -1701,374 +851,299 @@ void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadApplicationProperties()
 {
-	//ASSERT(0); // todo
+	m_wndPropList.RemoveAll();
+	m_wndPropList.AdjustLayout();
 
-	//ASSERT(GetController() != nullptr);
+	SetPropListFont();
 
-	//COpenGLSTEPView * pOpenGLView = GetController()->GetView<COpenGLSTEPView>();
-	//ASSERT(pOpenGLView != nullptr);
+	m_wndPropList.EnableHeaderCtrl(FALSE);
+	m_wndPropList.EnableDescriptionArea();
+	m_wndPropList.SetVSDotNetLook();
+	m_wndPropList.MarkModifiedProperties();
 
-	//m_wndPropList.RemoveAll();
-	//m_wndPropList.AdjustLayout();
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
 
-	//SetPropListFont();
+		return;
+	}
 
-	//m_wndPropList.EnableHeaderCtrl(FALSE);
-	//m_wndPropList.EnableDescriptionArea();
-	//m_wndPropList.SetVSDotNetLook();
-	//m_wndPropList.MarkModifiedProperties();
+	auto pOpenGLView = GetController()->GetView<COpenGLView>();
+	if (pOpenGLView == nullptr)
+	{
+		return;
+	}
 
-	//CMFCPropertyGridProperty * pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
+	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
 
-	///*
-	//* Faces
-	//*/
+	/*
+	* Faces
+	*/
+	{
+		auto pProperty = new CApplicationProperty(_T("Faces"),
+			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowFaces));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+
+	/*
+	* Conceptual faces wireframes
+	*/
+	{
+		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"),
+			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			_T("Conceptual faces wireframes"),
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowConceptualFacesWireframes));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Lines
+	*/
+	{
+		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			_T("Lines"),
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowLines));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Points
+	*/
+	{
+		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			_T("Points"),
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowPoints));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* OpenGL
+	*/
 	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Faces"), pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), (DWORD_PTR)new CApplicationPropertyData(ptShowFaces));
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
+	//	auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
+	//	pViewGroup->AddSubItem(pOpenGL);
 
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Faces wireframes
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Faces wireframes"), pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(ptShowFacesWireframes));
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Conceptual faces wireframes
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Conceptual faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(ptShowConceptualFacesWireframes));
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Lines
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Lines"), (DWORD_PTR)new CApplicationPropertyData(ptShowLines));
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Line width
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Line thickness"), (_variant_t)(int)pOpenGLView->GetLineWidth(), _T("Line thickness"), (DWORD_PTR)new CApplicationPropertyData(ptLineWidth));
-	//	pProperty->EnableSpinControl(TRUE, 1, 1000);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Points
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Points"), (DWORD_PTR)new CApplicationPropertyData(ptShowPoints));
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Point size
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Point thickness"), (_variant_t)(int)pOpenGLView->GetPointSize(), _T("Point thickness"), (DWORD_PTR)new CApplicationPropertyData(ptPointSize));
-	//	pProperty->EnableSpinControl(TRUE, 1, 1000);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Vectors
-	//*/
-	//{
-	//	CMFCPropertyGridProperty * pVectors = new CMFCPropertyGridProperty(_T("Vectors"));
-	//	pViewGroup->AddSubItem(pVectors);
-
-	//	/*
-	//	* Normal vectors
-	//	*/
+	//	// Point light position
 	//	{
-	//		CApplicationProperty * pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->AreNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Normal vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowNormalVectors));
-	//		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//		pProperty->AllowEdit(FALSE);
+	//		auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
+	//		pPointLightingLocation->AllowEdit(FALSE);
 
-	//		pVectors->AddSubItem(pProperty);
-	//	}
-
-	//	/*
-	//	* Tangent vectors
-	//	*/
-	//	{
-	//		CApplicationProperty * pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Tangent vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowTangenVectors));
-	//		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//		pProperty->AllowEdit(FALSE);
-
-	//		pVectors->AddSubItem(pProperty);
-	//	}
-
-	//	/*
-	//	* Bi-normal vectors
-	//	*/
-	//	{
-	//		CApplicationProperty * pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Bi-normal vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowBiNormalVectors));
-	//		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//		pProperty->AllowEdit(FALSE);
-
-	//		pVectors->AddSubItem(pProperty);
-	//	}
-
-	//	/*
-	//	* Scale
-	//	*/
-	//	{
-	//		CApplicationProperty * pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Scale"), (DWORD_PTR)new CApplicationPropertyData(ptScaleVectors));
-	//		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//		pProperty->AllowEdit(FALSE);
-
-	//		pVectors->AddSubItem(pProperty);
-	//	}
-	//}	
-
-	///*
-	//* Bounding boxes
-	//*/
-	//{
-	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Bounding boxes"), pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Bounding boxes"), 
-	//		(DWORD_PTR)new CApplicationPropertyData(ptShowBoundingBoxes));
-	//	pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//	pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//	pProperty->AllowEdit(FALSE);
-
-	//	pViewGroup->AddSubItem(pProperty);
-	//}
-
-	///*
-	//* Lights
-	//*/
-	//{
-	//	CMFCPropertyGridProperty * pLights = new CMFCPropertyGridProperty(_T("Lights"));
-	//	pViewGroup->AddSubItem(pLights);
-
-	//	/*
-	//	* Light model
-	//	*/
-	//	{
-	//		CMFCPropertyGridProperty * pLightModel = new CMFCPropertyGridProperty(_T("Light model"));
-	//		pLights->AddSubItem(pLightModel);
-
-	//		/*
-	//		* Ambient
-	//		*/
-	//		CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), 
-	//			RGB((BYTE)(pOpenGLView->GetLightModelAmbient()[0] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[1] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[2] * 255.)),
-	//			nullptr, _T("Light model - ambient"),
-	//			(DWORD_PTR)new CApplicationPropertyData(ptLightModelAmbient));
-	//		pProperty->EnableOtherButton(_T("Other..."));
-	//		pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
-
-	//		pLightModel->AddSubItem(pProperty);
-
-	//		/*
-	//		* Local viewer
-	//		*/
+	//		// X
 	//		{
-	//			CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Local viewer"), pOpenGLView->GetLightModelLocalViewer() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-	//				_T("Light model - local viewer"), (DWORD_PTR)new CApplicationPropertyData(ptLightModelLocalViewer));
-	//			pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//			pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//			pApplicationProperty->AllowEdit(FALSE);
-
-	//			pLightModel->AddSubItem(pApplicationProperty);
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("X"),
+	//				(_variant_t)pOpenGLView->_getPointLightingLocation().x,
+	//				_T("X"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+	//			pPointLightingLocation->AddSubItem(pProperty);
 	//		}
 
-	//		/*
-	//		* Two-sided lighting
-	//		*/
+	//		// Y
 	//		{
-	//			CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Two-sided lighting"), pOpenGLView->GetLightModel2Sided() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Light model - two-sided lighting"),
-	//				(DWORD_PTR)new CApplicationPropertyData(ptLightModel2Sided));
-	//			pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//			pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//			pApplicationProperty->AllowEdit(FALSE);
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Y"),
+	//				(_variant_t)pOpenGLView->_getPointLightingLocation().y,
+	//				_T("Y"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+	//			pPointLightingLocation->AddSubItem(pProperty);
+	//		}
 
-	//			pLightModel->AddSubItem(pApplicationProperty);
-	//		}			
+	//		// Z
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Z"),
+	//				(_variant_t)pOpenGLView->_getPointLightingLocation().z,
+	//				_T("Z"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+	//			pPointLightingLocation->AddSubItem(pProperty);
+	//		}
+
+	//		pOpenGL->AddSubItem(pPointLightingLocation);
 	//	}
 
-	//	/*
-	//	* Lights
-	//	*/
-	//	const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
-	//	for (size_t iLight = 0; iLight < vecOGLLights.size(); iLight++)
+	//	// Ambient light weighting
 	//	{
-	//		/*
-	//		* Light 0-7
-	//		*/
+	//		auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
+	//		pAmbientLightWeighting->AllowEdit(FALSE);
+
+	//		// X
 	//		{
-	//			wchar_t szLightName[100];
-	//			swprintf(szLightName, 100, L"Light %d", (int)iLight);
-
-	//			CMFCPropertyGridProperty * pLight = new CMFCPropertyGridProperty(szLightName);
-	//			pLights->AddSubItem(pLight);
-
-	//			/*
-	//			* Enabled
-	//			*/
-	//			{
-	//				CApplicationProperty * pProperty = new CApplicationProperty(_T("Enabled"), vecOGLLights[iLight].isEnabled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-	//					_T("Enabled"), (DWORD_PTR)new CLightPropertyData(ptLightIsEnabled, (int)iLight));
-	//				pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//				pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//				pProperty->AllowEdit(FALSE);
-
-	//				pLight->AddSubItem(pProperty);
-	//			}
-
-	//			/*
-	//			* Ambient
-	//			*/
-	//			{
-	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), RGB((BYTE)(vecOGLLights[iLight].getAmbient()[0] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[1] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[2] * 255.)), nullptr, _T("Ambient"),
-	//					(DWORD_PTR)new CLightPropertyData(ptAmbientLight, (int)iLight));
-	//				pProperty->EnableOtherButton(_T("Other..."));
-	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
-
-	//				pLight->AddSubItem(pProperty);
-	//			}
-
-	//			/*
-	//			* Diffuse
-	//			*/
-	//			{
-	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Diffuse"), RGB((BYTE)(vecOGLLights[iLight].getDiffuse()[0] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[1] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[2] * 255.)), nullptr, _T("Diffuse"),
-	//					(DWORD_PTR)new CLightPropertyData(ptDiffuseLight, (int)iLight));
-	//				pProperty->EnableOtherButton(_T("Other..."));
-	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
-
-	//				pLight->AddSubItem(pProperty);
-	//			}
-
-	//			/*
-	//			* Specular
-	//			*/
-	//			{
-	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Specular"), RGB((BYTE)(vecOGLLights[iLight].getSpecular()[0] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[1] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[2] * 255.)), nullptr, _T("Specular"),
-	//					(DWORD_PTR)new CLightPropertyData(ptSpecularLight, (int)iLight));
-	//				pProperty->EnableOtherButton(_T("Other..."));
-	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
-
-	//				pLight->AddSubItem(pProperty);
-	//			}
-
-	//			/*
-	//			* Position
-	//			*/
-	//			{
-	//				CApplicationProperty * pPosition = new CApplicationProperty(_T("Position"), (DWORD_PTR)new CLightPropertyData(ptLightPosition, (int)iLight), TRUE);
-	//				pPosition->AllowEdit(FALSE);
-
-	//				/*
-	//				* X
-	//				*/
-	//				{
-	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("X"), (_variant_t)vecOGLLights[iLight].getPosition()[0],
-	//						_T("X"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-	//					pPosition->AddSubItem(pProperty);
-	//				}				
-
-	//				/*
-	//				* Y
-	//				*/
-	//				{
-	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("Y"), (_variant_t)vecOGLLights[iLight].getPosition()[1],
-	//						_T("Y"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-	//					pPosition->AddSubItem(pProperty);
-	//				}
-
-	//				/*
-	//				* Z
-	//				*/
-	//				{
-	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("Z"), (_variant_t)vecOGLLights[iLight].getPosition()[2],
-	//						_T("Z"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-	//					pPosition->AddSubItem(pProperty);
-	//				}
-
-	//				/*
-	//				* W
-	//				*/
-	//				{
-	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("W"), (_variant_t)vecOGLLights[iLight].getPosition()[3],
-	//						_T("W"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-	//					pPosition->AddSubItem(pProperty);
-	//				}
-
-	//				pLight->AddSubItem(pPosition);
-	//			}
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("X"),
+	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().x,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+	//			pAmbientLightWeighting->AddSubItem(pProperty);
 	//		}
-	//	} // for (size_t iLight = ...
+
+	//		// Y
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Y"),
+	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().y,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+	//			pAmbientLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		// Z
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Z"),
+	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().z,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+	//			pAmbientLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		pOpenGL->AddSubItem(pAmbientLightWeighting);
+	//	}
+
+	//	// Diffuse light weighting
+	//	{
+	//		auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
+	//		pDiffuseLightWeighting->AllowEdit(FALSE);
+
+	//		// X
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("X"),
+	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().x,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+	//			pDiffuseLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		// X
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Y"),
+	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().y,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+	//			pDiffuseLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		// Z
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Z"),
+	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().z,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+	//			pDiffuseLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		pOpenGL->AddSubItem(pDiffuseLightWeighting);
+	//	}
+
+	//	// Specular light weighting
+	//	{
+	//		auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
+	//		pSpecularLightWeighting->AllowEdit(FALSE);
+
+	//		// X
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("X"),
+	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().x,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+	//			pSpecularLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		// X
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Y"),
+	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().y,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+	//			pSpecularLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		// Z
+	//		{
+	//			auto pProperty = new CApplicationProperty(
+	//				_T("Z"),
+	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().z,
+	//				_T("[0.0 - 1.0]"),
+	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+	//			pSpecularLightWeighting->AddSubItem(pProperty);
+	//		}
+
+	//		pOpenGL->AddSubItem(pSpecularLightWeighting);
+	//	}
+
+	//	// Material shininess
+	//	{
+	//		auto pMaterialShininess = new CApplicationProperty(
+	//			_T("Material shininess"),
+	//			(_variant_t)pOpenGLView->_getMaterialShininess(),
+	//			_T("[0.0 - 1.0]"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
+
+	//		pOpenGL->AddSubItem(pMaterialShininess);
+	//	}
+
+	//	// Contrast
+	//	{
+	//		auto pContrast = new CApplicationProperty(
+	//			_T("Contrast"),
+	//			(_variant_t)pOpenGLView->_getContrast(),
+	//			_T("Contrast"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
+
+	//		pOpenGL->AddSubItem(pContrast);
+	//	}
+
+	//	// Brightness
+	//	{
+	//		auto pBrightness = new CApplicationProperty(
+	//			_T("Brightness"),
+	//			(_variant_t)pOpenGLView->_getBrightness(),
+	//			_T("Brightness"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
+
+	//		pOpenGL->AddSubItem(pBrightness);
+	//	}
+
+	//	// Gamma
+	//	{
+	//		auto pGamma = new CApplicationProperty(
+	//			_T("Gamma"),
+	//			(_variant_t)pOpenGLView->_getGamma(),
+	//			_T("Gamma"),
+	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
+
+	//		pOpenGL->AddSubItem(pGamma);
+	//	}
 	//}
 
-	///*
-	//* UI
-	//*/
-	//{
-	//	CMFCPropertyGridProperty * pUI = new CMFCPropertyGridProperty(_T("UI"));
-	//	pViewGroup->AddSubItem(pUI);
-
-	//	/*
-	//	* Visible values count limit
-	//	*/
-	//	{
-	//		CApplicationProperty * pProperty = new CApplicationProperty(_T("Visible values count limit"), (_variant_t)GetController()->GetVisibleValuesCountLimit(), _T("Visible values count limit"),
-	//			(DWORD_PTR)new CApplicationPropertyData(ptVisibleValuesCountLimit));
-	//		pProperty->EnableSpinControl(TRUE, 1, INT_MAX);
-
-	//		pUI->AddSubItem(pProperty);
-	//	}
-
-	//	/*
-	//	* Scale and Center
-	//	*/
-	//	{
-	//		CApplicationProperty* pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-	//			_T("Scale and Center all Geometry"), (DWORD_PTR)new CApplicationPropertyData(ptScalelAndCenter));
-	//		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-	//		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-	//		pProperty->AllowEdit(FALSE);
-
-	//		pUI->AddSubItem(pProperty);
-	//	}
-	//}	
-
-	//m_wndPropList.AddProperty(pViewGroup);		
+	m_wndPropList.AddProperty(pViewGroup);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3138,24 +2213,24 @@ void CPropertiesWnd::OnViewModeChanged()
 {
 	switch (m_wndObjectCombo.GetCurSel())
 	{
-	case 0: // Application Properties
-	{
-		LoadApplicationProperties();
-	}
-	break;
+		case 0: // Application Properties
+		{
+			LoadApplicationProperties();
+		}
+		break;
 
-	case 1: // Instance Properties
-	{
-		LoadInstanceProperties();
-	}
-	break;
+		case 1: // Instance Properties
+		{
+			LoadInstanceProperties();
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false); // unknown mode
+		default:
+		{
+			ASSERT(false); // unknown mode
+		}
+		break;
 	}
-	break;
-	} // switch (m_wndObjectCombo.GetCurSel())
 }
 
 LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM /*wParam*/, LPARAM /*lParam*/)

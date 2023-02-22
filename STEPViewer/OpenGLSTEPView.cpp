@@ -790,7 +790,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	m_pOGLProgram->enableBinnPhongModel(true);
+	m_pOGLProgram->enableBlinnPhongModel(true);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -923,7 +923,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1031,7 +1031,7 @@ void COpenGLSTEPView::DrawLines()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1141,7 +1141,7 @@ void COpenGLSTEPView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 
 	float fXTranslation = 0.f;
@@ -1320,7 +1320,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setTransparency(1.f);
 
 	float fXTranslation = 0.f;

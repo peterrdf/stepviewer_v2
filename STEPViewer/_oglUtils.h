@@ -491,42 +491,62 @@ public: // Methods
 	}
 };
 
-class _oglBinnPhongProgram : public _oglProgram
+class _oglBlinnPhongProgram : public _oglProgram
 {
 
 private: // Members
 
 	bool m_bSupportsTexture;
-	GLint m_iUseBinnPhongModel;
+
+	GLint m_iUseBlinnPhongModel;
+
 	GLint m_iUseTexture;
 	GLint m_iSampler;
+
 	GLint m_iMVMatrix;
 	GLint m_iPMatrix;
 	GLint m_iNMatrix;
+
 	GLint m_iPointLightingLocation;
+	GLint m_iAmbientLightWeighting;
+	GLint m_iSpecularLightWeighting;
+	GLint m_iDiffuseLightWeighting;
+
 	GLint m_iMaterialShininess;
+
+	GLint m_iContrast;
+	GLint m_iBrightness;
+	GLint m_iGamma;
+
 	GLint m_iMaterialAmbientColor;
 	GLint m_iTransparency;
 	GLint m_iMaterialDiffuseColor;
 	GLint m_iMaterialSpecularColor;
 	GLint m_iMaterialEmissiveColor;
+
 	GLint m_iVertexPosition;
 	GLint m_iVertexNormal;
 	GLint m_iTextureCoord;
 
 public: // Methods
 
-	_oglBinnPhongProgram(bool bSupportsTexture)
+	_oglBlinnPhongProgram(bool bSupportsTexture)
 		: _oglProgram()
 		, m_bSupportsTexture(bSupportsTexture)
-		, m_iUseBinnPhongModel(-1)
+		, m_iUseBlinnPhongModel(-1)
 		, m_iUseTexture(-1)
 		, m_iSampler(-1)
 		, m_iMVMatrix(-1)
 		, m_iPMatrix(-1)
 		, m_iNMatrix(-1)
 		, m_iPointLightingLocation(-1)
+		, m_iAmbientLightWeighting(-1)
+		, m_iSpecularLightWeighting(-1)
+		, m_iDiffuseLightWeighting(-1)
 		, m_iMaterialShininess(-1)
+		, m_iContrast(-1)
+		, m_iBrightness(-1)
+		, m_iGamma(-1)
 		, m_iMaterialAmbientColor(-1)
 		, m_iTransparency(-1)
 		, m_iMaterialDiffuseColor(-1)
@@ -538,7 +558,7 @@ public: // Methods
 	{
 	}
 
-	virtual ~_oglBinnPhongProgram(void)
+	virtual ~_oglBlinnPhongProgram(void)
 	{
 	}
 
@@ -546,8 +566,8 @@ public: // Methods
 	{
 		if (_oglProgram::link())
 		{
-			m_iUseBinnPhongModel = glGetUniformLocation(m_iID, "uUseBinnPhongModel");
-			ASSERT(m_iUseBinnPhongModel >= 0);
+			m_iUseBlinnPhongModel = glGetUniformLocation(m_iID, "uUseBlinnPhongModel");
+			ASSERT(m_iUseBlinnPhongModel >= 0);
 
 			if (m_bSupportsTexture)
 			{
@@ -570,8 +590,26 @@ public: // Methods
 			m_iPointLightingLocation = glGetUniformLocation(m_iID, "uPointLightingLocation");
 			ASSERT(m_iPointLightingLocation >= 0);
 
+			m_iAmbientLightWeighting = glGetUniformLocation(m_iID, "uAmbientLightWeighting");
+			ASSERT(m_iAmbientLightWeighting >= 0);
+
+			m_iSpecularLightWeighting = glGetUniformLocation(m_iID, "uSpecularLightWeighting");
+			ASSERT(m_iSpecularLightWeighting >= 0);
+
+			m_iDiffuseLightWeighting = glGetUniformLocation(m_iID, "uDiffuseLightWeighting");
+			ASSERT(m_iDiffuseLightWeighting >= 0);
+
 			m_iMaterialShininess = glGetUniformLocation(m_iID, "uMaterialShininess");
 			ASSERT(m_iMaterialShininess >= 0);
+
+			m_iContrast = glGetUniformLocation(m_iID, "uContrast");
+			ASSERT(m_iContrast >= 0);
+
+			m_iBrightness = glGetUniformLocation(m_iID, "uBrightness");
+			ASSERT(m_iBrightness >= 0);
+
+			m_iGamma = glGetUniformLocation(m_iID, "uGamma");
+			ASSERT(m_iGamma >= 0);
 
 			m_iMaterialAmbientColor = glGetUniformLocation(m_iID, "uMaterialAmbientColor");
 			ASSERT(m_iMaterialAmbientColor >= 0);
@@ -611,9 +649,9 @@ public: // Methods
 		return m_bSupportsTexture;
 	}
 
-	GLint getUseBinnPhongModel() const
+	GLint getUseBlinnPhongModel() const
 	{
-		return m_iUseBinnPhongModel;
+		return m_iUseBlinnPhongModel;
 	}	
 
 	GLint getUseTexture() const
@@ -650,9 +688,39 @@ public: // Methods
 		return m_iPointLightingLocation;
 	}
 
+	GLint getAmbientLightWeighting() const
+	{
+		return m_iAmbientLightWeighting;
+	}
+
+	GLint getSpecularLightWeighting() const
+	{
+		return m_iSpecularLightWeighting;
+	}
+
+	GLint getDiffuseLightWeighting() const
+	{
+		return m_iDiffuseLightWeighting;
+	}
+
 	GLint getMaterialShininess() const
 	{
 		return m_iMaterialShininess;
+	}
+
+	GLint getContrast() const
+	{
+		return m_iContrast;
+	}
+
+	GLint getBrightness() const
+	{
+		return m_iBrightness;
+	}
+
+	GLint getGamma() const
+	{
+		return m_iGamma;
 	}
 
 	GLint getMaterialAmbientColor() const
@@ -664,7 +732,6 @@ public: // Methods
 	{
 		return m_iTransparency;
 	}
-
 
 	GLint getMaterialDiffuseColor() const
 	{
@@ -728,11 +795,11 @@ public: // Methods
 			value_ptr(matNormal));
 	}
 
-	void enableBinnPhongModel(bool bEnable)
+	void enableBlinnPhongModel(bool bEnable)
 	{
 		glProgramUniform1f(
 			getID(),
-			getUseBinnPhongModel(),
+			getUseBlinnPhongModel(),
 			bEnable ? 1.f : 0.f);
 	}
 
@@ -761,6 +828,68 @@ public: // Methods
 			fY,
 			fZ);
 	}	
+
+	void setAmbientLightWeighting(float fX, float fY, float fZ)
+	{
+		glProgramUniform3f(
+			getID(),
+			getAmbientLightWeighting(),
+			fX,
+			fY,
+			fZ);
+	}
+
+	void setSpecularLightWeighting(float fX, float fY, float fZ)
+	{
+		glProgramUniform3f(
+			getID(),
+			getSpecularLightWeighting(),
+			fX,
+			fY,
+			fZ);
+	}
+
+	void setDiffuseLightWeighting(float fX, float fY, float fZ)
+	{
+		glProgramUniform3f(
+			getID(),
+			getDiffuseLightWeighting(),
+			fX,
+			fY,
+			fZ);
+	}
+
+	void setMaterialShininess(float fValue)
+	{
+		glProgramUniform1f(
+			getID(),
+			getMaterialShininess(),
+			fValue);
+	}
+
+	void setContrast(float fValue)
+	{
+		glProgramUniform1f(
+			getID(),
+			getContrast(),
+			fValue);
+	}
+
+	void setBrightness(float fValue)
+	{
+		glProgramUniform1f(
+			getID(),
+			getBrightness(),
+			fValue);
+	}
+
+	void setGamma(float fValue)
+	{
+		glProgramUniform1f(
+			getID(),
+			getGamma(),
+			fValue);
+	}
 
 	void setAmbientColor(float fR, float fG, float fB)
 	{
@@ -831,14 +960,6 @@ public: // Methods
 		setDiffuseColor(pMaterial);
 		setSpecularColor(pMaterial);
 		setEmissiveColor(pMaterial);
-	}
-
-	void setMaterialShininess(float fValue)
-	{
-		glProgramUniform1f(
-			getID(),
-			getMaterialShininess(),
-			fValue);
 	}
 };
 
@@ -1525,7 +1646,7 @@ public: // Methods
 		return iIndicesCount;
 	}
 
-	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBinnPhongProgram* pProgram)
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBlinnPhongProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -1596,7 +1717,7 @@ public: // Methods
 		return iVerticesCount;
 	}
 
-	void setVBOAttributes(_oglBinnPhongProgram* pProgram) const
+	void setVBOAttributes(_oglBlinnPhongProgram* pProgram) const
 	{
 		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
 
@@ -1718,11 +1839,23 @@ template <class Instance>
 class _oglRenderer
 {
 
+private: // Members
+
+	glm::vec3 m_vecPointLightingLocation;
+	glm::vec3 m_vecAmbientLightWeighting;
+	glm::vec3 m_vecSpecularLightWeighting;
+	glm::vec3 m_vecDiffuseLightWeighting;
+	float m_fMaterialShininess;
+	float m_fContrast;
+	float m_fBrightness;
+	float m_fGamma;
+
+
 protected: // Members
 
 	CWnd* m_pWnd;
 	_oglContext* m_pOGLContext;
-	_oglBinnPhongProgram* m_pOGLProgram;
+	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
 	_oglShader* m_pFragmentShader;
 	enumProjection m_enProjection;
@@ -1739,7 +1872,15 @@ protected: // Members
 public: // Methods
 
 	_oglRenderer()
-		: m_pWnd(nullptr)
+		: m_vecPointLightingLocation(0.f, 0.f, 10000.f)
+		, m_vecAmbientLightWeighting(0.001f, 0.001f, 0.001f)
+		, m_vecSpecularLightWeighting(0.8, 0.8, 0.8)
+		, m_vecDiffuseLightWeighting(0.8, 0.8, 0.8)
+		, m_fMaterialShininess(30.f)
+		, m_fContrast(1.5f)
+		, m_fBrightness(0.175f)
+		, m_fGamma(1.25f)
+		, m_pWnd(nullptr)
 		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
@@ -1755,6 +1896,30 @@ public: // Methods
 	{
 	}
 
+	const glm::vec3& _getPointLightingLocation() const { return m_vecPointLightingLocation; }
+	void _setPointLightingLocation(const glm::vec3& value) { m_vecPointLightingLocation = value; _redraw(); }
+
+	const glm::vec3& _getAmbientLightWeighting() const { return m_vecAmbientLightWeighting; }
+	void _setAmbientLightWeighting(const glm::vec3& value) { m_vecAmbientLightWeighting = value; _redraw(); }
+
+	const glm::vec3& _getSpecularLightWeighting() const { return m_vecSpecularLightWeighting; }
+	void _setSpecularLightWeighting(const glm::vec3& value) { m_vecSpecularLightWeighting = value; _redraw(); }
+
+	const glm::vec3& _getDiffuseLightWeighting() const { return m_vecDiffuseLightWeighting; }
+	void _setDiffuseLightWeighting(const glm::vec3& value) { m_vecDiffuseLightWeighting = value; _redraw(); }
+
+	float _getMaterialShininess() const { return m_fMaterialShininess; }
+	void _setMaterialShininess(float value) { m_fMaterialShininess = value; _redraw(); }
+
+	float _getContrast() const { return m_fContrast; }
+	void _setContrast(float value) { m_fContrast = value; _redraw(); }
+
+	float _getBrightness() const { return m_fBrightness; }
+	void _setBrightness(float value) { m_fBrightness = value; _redraw(); }
+
+	float _getGamma() const { return m_fGamma; }
+	void _setGamma(float value) { m_fGamma = value; _redraw(); }
+
 	void _initialize(CWnd* pWnd,
 		int iSamples, 
 		int iVertexShader, 
@@ -1768,7 +1933,7 @@ public: // Methods
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
-		m_pOGLProgram = new _oglBinnPhongProgram(bSupportsTexture);
+		m_pOGLProgram = new _oglBlinnPhongProgram(bSupportsTexture);
 		m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
 		m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
 
@@ -1874,8 +2039,31 @@ public: // Methods
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 
-		m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
-		m_pOGLProgram->setMaterialShininess(30.f);
+		m_pOGLProgram->setPointLightLocation(
+			m_vecPointLightingLocation.x, 
+			m_vecPointLightingLocation.y, 
+			m_vecPointLightingLocation.z);
+
+		m_pOGLProgram->setAmbientLightWeighting(
+			m_vecAmbientLightWeighting.x,
+			m_vecAmbientLightWeighting.y,
+			m_vecAmbientLightWeighting.z);
+
+		m_pOGLProgram->setSpecularLightWeighting(
+			m_vecSpecularLightWeighting.x,
+			m_vecSpecularLightWeighting.y,
+			m_vecSpecularLightWeighting.z);
+
+		m_pOGLProgram->setDiffuseLightWeighting(
+			m_vecDiffuseLightWeighting.x,
+			m_vecDiffuseLightWeighting.y,
+			m_vecDiffuseLightWeighting.z);
+
+		m_pOGLProgram->setMaterialShininess(m_fMaterialShininess);
+
+		m_pOGLProgram->setContrast(m_fContrast);
+		m_pOGLProgram->setBrightness(m_fBrightness);
+		m_pOGLProgram->setGamma(m_fGamma);
 
 		// Projection Matrix
 		// fovY     - Field of vision in degrees in the y direction
@@ -1943,7 +2131,7 @@ public: // Methods
 		m_pOGLProgram->setNormalMatrix(matNormal);
 
 		// Model
-		m_pOGLProgram->enableBinnPhongModel(true);
+		m_pOGLProgram->enableBlinnPhongModel(true);
 	}
 
 	void _redraw()
