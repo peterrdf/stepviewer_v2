@@ -651,7 +651,7 @@ public: // Methods
 			value);
 	}
 
-	glm::vec3 _geAmbientLightWeighting() const
+	glm::vec3 _getAmbientLightWeighting() const
 	{
 		return _getUniform3f(m_iAmbientLightWeighting);
 	}
@@ -667,7 +667,7 @@ public: // Methods
 			fZ);
 	}
 
-	glm::vec3 _geSpecularLightWeighting() const
+	glm::vec3 _getSpecularLightWeighting() const
 	{
 		return _getUniform3f(m_iSpecularLightWeighting);
 	}
@@ -681,7 +681,7 @@ public: // Methods
 			fZ);
 	}
 
-	glm::vec3 _geDiffuseLightWeighting() const
+	glm::vec3 _getDiffuseLightWeighting() const
 	{
 		return _getUniform3f(m_iDiffuseLightWeighting);
 	}
@@ -1834,7 +1834,7 @@ struct _ioglRenderer
 	template<class Program>
 	Program* _getOGLProgramAs() const
 	{
-		return dynamic_case<Program*>(_getOGLProgram());
+		return dynamic_cast<Program*>(_getOGLProgram());
 	}
 
 	virtual void _redraw() PURE;

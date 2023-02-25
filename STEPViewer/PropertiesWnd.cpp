@@ -875,11 +875,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
+#pragma region View
 	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
 
-	/*
-	* Faces
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"),
 			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
@@ -891,10 +889,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-
-	/*
-	* Conceptual faces wireframes
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"),
 			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
@@ -907,9 +901,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Lines
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"),
@@ -921,9 +912,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Points
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"),
@@ -934,214 +922,227 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pProperty);
 	}
+#pragma endregion
+	
+#pragma region OpenGL
+	auto ioglRender = dynamic_cast<_ioglRenderer*>(pOpenGLView);
+	ASSERT(ioglRender != nullptr);
 
-	/*
-	* OpenGL
-	*/
-	//{
-	//	auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
-	//	pViewGroup->AddSubItem(pOpenGL);
+	auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
+	if (pBlinnPhongProgram != nullptr)
+	{
+		auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
+		pViewGroup->AddSubItem(pOpenGL);
 
-	//	// Point light position
-	//	{
-	//		auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
-	//		pPointLightingLocation->AllowEdit(FALSE);
+#pragma region Point light position
+		{
+			auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
+			pPointLightingLocation->AllowEdit(FALSE);
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("X"),
-	//				(_variant_t)pOpenGLView->_getPointLightingLocation().x,
-	//				_T("X"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
-	//			pPointLightingLocation->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().x,
+					_T("X"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
 
-	//		// Y
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Y"),
-	//				(_variant_t)pOpenGLView->_getPointLightingLocation().y,
-	//				_T("Y"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
-	//			pPointLightingLocation->AddSubItem(pProperty);
-	//		}
+			// Y
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().y,
+					_T("Y"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
 
-	//		// Z
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Z"),
-	//				(_variant_t)pOpenGLView->_getPointLightingLocation().z,
-	//				_T("Z"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
-	//			pPointLightingLocation->AddSubItem(pProperty);
-	//		}
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().z,
+					_T("Z"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
 
-	//		pOpenGL->AddSubItem(pPointLightingLocation);
-	//	}
+			pOpenGL->AddSubItem(pPointLightingLocation);
+		}
+#pragma endregion
 
-	//	// Ambient light weighting
-	//	{
-	//		auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
-	//		pAmbientLightWeighting->AllowEdit(FALSE);
+#pragma region Ambient light weighting
+		{
+			auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
+			pAmbientLightWeighting->AllowEdit(FALSE);
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("X"),
-	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().x,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
-	//			pAmbientLightWeighting->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().x,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// Y
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Y"),
-	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().y,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
-	//			pAmbientLightWeighting->AddSubItem(pProperty);
-	//		}
+			// Y
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().y,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// Z
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Z"),
-	//				(_variant_t)pOpenGLView->_getAmbientLightWeighting().z,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
-	//			pAmbientLightWeighting->AddSubItem(pProperty);
-	//		}
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().z,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		pOpenGL->AddSubItem(pAmbientLightWeighting);
-	//	}
+			pOpenGL->AddSubItem(pAmbientLightWeighting);
+		}
+#pragma endregion
 
-	//	// Diffuse light weighting
-	//	{
-	//		auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
-	//		pDiffuseLightWeighting->AllowEdit(FALSE);
+#pragma region Diffuse light weighting
+		{
+			auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
+			pDiffuseLightWeighting->AllowEdit(FALSE);
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("X"),
-	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().x,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
-	//			pDiffuseLightWeighting->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().x,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Y"),
-	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().y,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
-	//			pDiffuseLightWeighting->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().y,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// Z
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Z"),
-	//				(_variant_t)pOpenGLView->_getDiffuseLightWeighting().z,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
-	//			pDiffuseLightWeighting->AddSubItem(pProperty);
-	//		}
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().z,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		pOpenGL->AddSubItem(pDiffuseLightWeighting);
-	//	}
+			pOpenGL->AddSubItem(pDiffuseLightWeighting);
+		}
+#pragma endregion
 
-	//	// Specular light weighting
-	//	{
-	//		auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
-	//		pSpecularLightWeighting->AllowEdit(FALSE);
+#pragma region Specular light weighting
+		{
+			auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
+			pSpecularLightWeighting->AllowEdit(FALSE);
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("X"),
-	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().x,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
-	//			pSpecularLightWeighting->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().x,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// X
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Y"),
-	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().y,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
-	//			pSpecularLightWeighting->AddSubItem(pProperty);
-	//		}
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().y,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		// Z
-	//		{
-	//			auto pProperty = new CApplicationProperty(
-	//				_T("Z"),
-	//				(_variant_t)pOpenGLView->_getSpecularLightWeighting().z,
-	//				_T("[0.0 - 1.0]"),
-	//				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
-	//			pSpecularLightWeighting->AddSubItem(pProperty);
-	//		}
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().z,
+					_T("[0.0 - 1.0]"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
 
-	//		pOpenGL->AddSubItem(pSpecularLightWeighting);
-	//	}
+			pOpenGL->AddSubItem(pSpecularLightWeighting);
+		}
+#pragma endregion
 
-	//	// Material shininess
-	//	{
-	//		auto pMaterialShininess = new CApplicationProperty(
-	//			_T("Material shininess"),
-	//			(_variant_t)pOpenGLView->_getMaterialShininess(),
-	//			_T("[0.0 - 1.0]"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
+#pragma region Material shininess
+		{
+			auto pMaterialShininess = new CApplicationProperty(
+				_T("Material shininess"),
+				(_variant_t)pBlinnPhongProgram->_getMaterialShininess(),
+				_T("[0.0 - 1.0]"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
 
-	//		pOpenGL->AddSubItem(pMaterialShininess);
-	//	}
+			pOpenGL->AddSubItem(pMaterialShininess);
+		}
+#pragma endregion
 
-	//	// Contrast
-	//	{
-	//		auto pContrast = new CApplicationProperty(
-	//			_T("Contrast"),
-	//			(_variant_t)pOpenGLView->_getContrast(),
-	//			_T("Contrast"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
+#pragma region Contrast
+		{
+			auto pContrast = new CApplicationProperty(
+				_T("Contrast"),
+				(_variant_t)pBlinnPhongProgram->_getContrast(),
+				_T("Contrast"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
 
-	//		pOpenGL->AddSubItem(pContrast);
-	//	}
+			pOpenGL->AddSubItem(pContrast);
+		}
+#pragma endregion
 
-	//	// Brightness
-	//	{
-	//		auto pBrightness = new CApplicationProperty(
-	//			_T("Brightness"),
-	//			(_variant_t)pOpenGLView->_getBrightness(),
-	//			_T("Brightness"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
+#pragma region Brightness
+		{
+			auto pBrightness = new CApplicationProperty(
+				_T("Brightness"),
+				(_variant_t)pBlinnPhongProgram->_getBrightness(),
+				_T("Brightness"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
 
-	//		pOpenGL->AddSubItem(pBrightness);
-	//	}
+			pOpenGL->AddSubItem(pBrightness);
+		}
+#pragma endregion
 
-	//	// Gamma
-	//	{
-	//		auto pGamma = new CApplicationProperty(
-	//			_T("Gamma"),
-	//			(_variant_t)pOpenGLView->_getGamma(),
-	//			_T("Gamma"),
-	//			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
+#pragma region Gamma
+		{
+			auto pGamma = new CApplicationProperty(
+				_T("Gamma"),
+				(_variant_t)pBlinnPhongProgram->_getGamma(),
+				_T("Gamma"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
 
-	//		pOpenGL->AddSubItem(pGamma);
-	//	}
-	//}
+			pOpenGL->AddSubItem(pGamma);
+		}
+#pragma endregion
+	} // if (pBlinnPhongProgram != nullptr)
+#pragma endregion
 
 	m_wndPropList.AddProperty(pViewGroup);
 }
