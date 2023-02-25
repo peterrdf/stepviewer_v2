@@ -521,6 +521,17 @@ protected: // Methods
 			fZ);
 	}
 
+	float _getUniform1f(GLint iUniform) const
+	{
+		float fValue = 0.f;
+
+		glGetUniformfv(_getID(),
+			iUniform,
+			&fValue);
+
+		return fValue;
+	}
+
 	void _setUniform1f(GLint iUniform, float fValue) const
 	{
 		glProgramUniform1f(
@@ -638,6 +649,98 @@ public: // Methods
 		_setUniform3f(
 			m_iPointLightingLocation, 
 			value);
+	}
+
+	glm::vec3 _geAmbientLightWeighting() const
+	{
+		return _getUniform3f(m_iAmbientLightWeighting);
+	}
+
+	void _setAmbientLightWeighting(float fX, float fY, float fZ) const
+	{
+		assert(m_iAmbientLightWeighting >= 0);
+
+		_setUniform3f(
+			m_iAmbientLightWeighting,
+			fX,
+			fY,
+			fZ);
+	}
+
+	glm::vec3 _geSpecularLightWeighting() const
+	{
+		return _getUniform3f(m_iSpecularLightWeighting);
+	}
+
+	void _setSpecularLightWeighting(float fX, float fY, float fZ) const
+	{
+		_setUniform3f(
+			m_iSpecularLightWeighting,
+			fX,
+			fY,
+			fZ);
+	}
+
+	glm::vec3 _geDiffuseLightWeighting() const
+	{
+		return _getUniform3f(m_iDiffuseLightWeighting);
+	}
+
+	void _setDiffuseLightWeighting(float fX, float fY, float fZ) const
+	{
+		_setUniform3f(
+			m_iDiffuseLightWeighting,
+			fX,
+			fY,
+			fZ);
+	}
+
+	float _getMaterialShininess() const
+	{
+		return _getUniform1f(m_iMaterialShininess);
+	}
+
+	void setMaterialShininess(float fValue) const
+	{
+		_setUniform1f(
+			m_iMaterialShininess,
+			fValue);
+	}
+
+	float _getContrast() const
+	{
+		return _getUniform1f(m_iContrast);
+	}
+
+	void setContrast(float fValue) const
+	{
+		_setUniform1f(
+			m_iContrast,
+			fValue);
+	}
+
+	float _getBrightness() const
+	{
+		return _getUniform1f(m_iBrightness);
+	}
+
+	void setBrightness(float fValue)
+	{
+		_setUniform1f(
+			m_iBrightness,
+			fValue);
+	}
+
+	float _getGamma() const
+	{
+		return _getUniform1f(m_iGamma);
+	}
+
+	void setGamma(float fValue)
+	{
+		_setUniform1f(
+			m_iGamma,
+			fValue);
 	}
 
 	void _setAmbientColor(float fR, float fG, float fB)
@@ -849,63 +952,6 @@ public: // Methods
 			_getID(),
 			m_iSampler,
 			iSampler);
-	}
-
-	void setAmbientLightWeighting(float fX, float fY, float fZ) const
-	{
-		assert(m_iAmbientLightWeighting >= 0);
-
-		_setUniform3f(
-			m_iAmbientLightWeighting,
-			fX,
-			fY,
-			fZ);
-	}
-
-	void setSpecularLightWeighting(float fX, float fY, float fZ) const
-	{
-		_setUniform3f(
-			m_iSpecularLightWeighting,
-			fX,
-			fY,
-			fZ);
-	}
-
-	void setDiffuseLightWeighting(float fX, float fY, float fZ) const
-	{
-		_setUniform3f(
-			m_iDiffuseLightWeighting,
-			fX,
-			fY,
-			fZ);
-	}
-
-	void setMaterialShininess(float fValue) const
-	{
-		_setUniform1f(
-			m_iMaterialShininess,
-			fValue);
-	}
-
-	void setContrast(float fValue) const
-	{
-		_setUniform1f(
-			m_iContrast,
-			fValue);
-	}
-
-	void setBrightness(float fValue)
-	{
-		_setUniform1f(
-			m_iBrightness,
-			fValue);
-	}
-
-	void setGamma(float fValue)
-	{
-		_setUniform1f(
-			m_iGamma,
-			fValue);
 	}
 };
 
