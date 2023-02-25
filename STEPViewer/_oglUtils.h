@@ -491,10 +491,49 @@ protected: // Methods
 
 		AfxMessageBox(stInfoLog);
 	}
+
+	glm::vec3 _getUniform3f(GLint iUniform) const
+	{
+		float arValue[3] = { 0.f, 0.f, 0.f };
+		glGetUniformfv(_getID(),
+			iUniform,
+			arValue);
+
+		return glm::vec3(arValue[0], arValue[1], arValue[2]);
+	}	
+
+	void _setUniform3f(GLint iUniform, const glm::vec3& value) const
+	{
+		_setUniform3f(
+			iUniform,
+			value.x,
+			value.y,
+			value.z);
+	}
+
+	void _setUniform3f(GLint iUniform, float fX, float fY, float fZ) const
+	{
+		glProgramUniform3f(
+			_getID(),
+			iUniform,
+			fX,
+			fY,
+			fZ);
+	}
+
+	void _setUniform1f(GLint iUniform, float fValue) const
+	{
+		glProgramUniform1f(
+			_getID(),
+			iUniform,
+			fValue);
+	}
 };
 
 class _oglBlinnPhongProgram : public _oglProgram
 {
+
+#pragma region Members
 
 private: // Members
 
@@ -531,6 +570,8 @@ private: // Members
 	GLint m_iVertexPosition;
 	GLint m_iVertexNormal;
 	GLint m_iTextureCoord;
+
+#pragma endregion 
 
 public: // Methods
 
@@ -573,8 +614,7 @@ public: // Methods
 
 	void _enableBlinnPhongModel(bool bEnable)
 	{
-		glProgramUniform1f(
-			_getID(),
+		_setUniform1f(
 			m_iUseBlinnPhongModel,
 			bEnable ? 1.f : 0.f);
 	}
@@ -583,34 +623,26 @@ public: // Methods
 	{
 		assert(m_bSupportsTexture);
 
-		glProgramUniform1f(
-			_getID(),
+		_setUniform1f(
 			m_iUseTexture,
 			bEnable ? 1.f : 0.f);
 	}
 
 	glm::vec3 _getPointLightingLocation() const 
 	{ 
-		float arValue[3] = { 0.f, 0.f, 0.f };
-		glGetUniformfv(_getID(),
-			m_iPointLightingLocation,
-			arValue);
-
-		return glm::vec3(arValue[0], arValue[1], arValue[2]);
+		return _getUniform3f(m_iPointLightingLocation);
 	}
+
 	void _setPointLightingLocation(const glm::vec3& value) 
 	{ 
-		glProgramUniform3f(
-			_getID(),
-			m_iPointLightingLocation,
-			value.x,
-			value.y,
-			value.z);
+		_setUniform3f(
+			m_iPointLightingLocation, 
+			value);
 	}
 
 	void _setAmbientColor(float fR, float fG, float fB)
 	{
-		glProgramUniform3f(_getID(),
+		_setUniform3f(
 			m_iMaterialAmbientColor,
 			fR,
 			fG,
@@ -629,8 +661,7 @@ public: // Methods
 
 	void _setTransparency(float fA)
 	{
-		glProgramUniform1f(
-			_getID(),
+		_setUniform1f(
 			m_iTransparency,
 			fA);
 	}
@@ -639,7 +670,7 @@ public: // Methods
 	{
 		assert(pMaterial != nullptr);
 
-		glProgramUniform3f(_getID(),
+		_setUniform3f(
 			m_iMaterialDiffuseColor,
 			pMaterial->getDiffuseColor().r() / 2.f,
 			pMaterial->getDiffuseColor().g() / 2.f,
@@ -650,7 +681,7 @@ public: // Methods
 	{
 		assert(pMaterial != nullptr);
 
-		glProgramUniform3f(_getID(),
+		_setUniform3f(
 			m_iMaterialSpecularColor,
 			pMaterial->getSpecularColor().r() / 2.f,
 			pMaterial->getSpecularColor().g() / 2.f,
@@ -661,7 +692,7 @@ public: // Methods
 	{
 		assert(pMaterial != nullptr);
 
-		glProgramUniform3f(_getID(),
+		_setUniform3f(
 			m_iMaterialEmissiveColor,
 			pMaterial->getEmissiveColor().r() / 3.f,
 			pMaterial->getEmissiveColor().g() / 3.f,
@@ -763,41 +794,6 @@ public: // Methods
 		return true;
 	}
 
-	GLint _getMVMatrix() const
-	{
-		return m_iMVMatrix;
-	}
-
-	GLint _getNMatrix() const
-	{
-		return m_iNMatrix;
-	}
-
-	GLint _getSpecularLightWeighting() const
-	{
-		return m_iSpecularLightWeighting;
-	}
-
-	GLint _getDiffuseLightWeighting() const
-	{
-		return m_iDiffuseLightWeighting;
-	}
-
-	GLint _getMaterialShininess() const
-	{
-		return m_iMaterialShininess;
-	}
-
-	GLint _getContrast() const
-	{
-		return m_iContrast;
-	}
-
-	GLint _getBrightness() const
-	{
-		return m_iBrightness;
-	}
-
 	GLint _getVertexPosition() const
 	{
 		return m_iVertexPosition;
@@ -815,7 +811,7 @@ public: // Methods
 		return m_iTextureCoord;
 	}
 
-	void setProjectionMatrix(glm::mat4& matProjection)
+	void setProjectionMatrix(glm::mat4& matProjection) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -825,7 +821,7 @@ public: // Methods
 			value_ptr(matProjection));
 	}
 
-	void setModelViewMatrix(glm::mat4& matModelView)
+	void setModelViewMatrix(glm::mat4& matModelView) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -835,7 +831,7 @@ public: // Methods
 			value_ptr(matModelView));
 	}
 
-	void setNormalMatrix(glm::mat4& matNormal)
+	void setNormalMatrix(glm::mat4& matNormal) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -845,7 +841,7 @@ public: // Methods
 			value_ptr(matNormal));
 	}	
 
-	void setSampler(int iSampler)
+	void setSampler(int iSampler) const
 	{
 		assert(m_bSupportsTexture);
 
@@ -855,66 +851,59 @@ public: // Methods
 			iSampler);
 	}
 
-	void setAmbientLightWeighting(float fX, float fY, float fZ)
+	void setAmbientLightWeighting(float fX, float fY, float fZ) const
 	{
 		assert(m_iAmbientLightWeighting >= 0);
 
-		glProgramUniform3f(
-			_getID(),
+		_setUniform3f(
 			m_iAmbientLightWeighting,
 			fX,
 			fY,
 			fZ);
 	}
 
-	void setSpecularLightWeighting(float fX, float fY, float fZ)
+	void setSpecularLightWeighting(float fX, float fY, float fZ) const
 	{
-		glProgramUniform3f(
-			_getID(),
-			_getSpecularLightWeighting(),
+		_setUniform3f(
+			m_iSpecularLightWeighting,
 			fX,
 			fY,
 			fZ);
 	}
 
-	void setDiffuseLightWeighting(float fX, float fY, float fZ)
+	void setDiffuseLightWeighting(float fX, float fY, float fZ) const
 	{
-		glProgramUniform3f(
-			_getID(),
-			_getDiffuseLightWeighting(),
+		_setUniform3f(
+			m_iDiffuseLightWeighting,
 			fX,
 			fY,
 			fZ);
 	}
 
-	void setMaterialShininess(float fValue)
+	void setMaterialShininess(float fValue) const
 	{
-		glProgramUniform1f(
-			_getID(),
-			_getMaterialShininess(),
+		_setUniform1f(
+			m_iMaterialShininess,
 			fValue);
 	}
 
-	void setContrast(float fValue)
+	void setContrast(float fValue) const
 	{
-		glProgramUniform1f(
-			_getID(),
-			_getContrast(),
+		_setUniform1f(
+			m_iContrast,
 			fValue);
 	}
 
 	void setBrightness(float fValue)
 	{
-		glProgramUniform1f(
-			_getID(),
-			_getBrightness(),
+		_setUniform1f(
+			m_iBrightness,
 			fValue);
 	}
 
 	void setGamma(float fValue)
 	{
-		glProgramUniform1f(
-			_getID(),
+		_setUniform1f(
 			m_iGamma,
 			fValue);
 	}
@@ -1841,6 +1830,12 @@ public: // Methods
 	_oglProgram* getOGLProgram() const
 	{
 		return m_pOGLProgram;
+	}
+
+	template<class Program>
+	Program* getOGLProgramAs() const
+	{
+		return dynamic_case<Program*>(m_pOGLProgram);
 	}
 
 	void _initialize(CWnd* pWnd,
