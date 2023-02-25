@@ -161,6 +161,15 @@
     <ClInclude Include="IFCDecompContTreeView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="_geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_oglUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">

@@ -741,7 +741,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	m_pOGLProgram->enableBlinnPhongModel(true);
+	m_pOGLProgram->_enableBlinnPhongModel(true);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -776,7 +776,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 					}
 				}
 
-				m_pOGLProgram->setMaterial(pMaterial);
+				m_pOGLProgram->_setMaterial(pMaterial);
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
@@ -834,9 +834,9 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -902,9 +902,9 @@ void COpenGLIFCView::DrawLines()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -972,8 +972,8 @@ void COpenGLIFCView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -995,7 +995,7 @@ void COpenGLIFCView::DrawPoints()
 					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 					pCohort->getMaterial();				
 
-				m_pOGLProgram->setAmbientColor(
+				m_pOGLProgram->_setAmbientColor(
 					pMaterial->getDiffuseColor().r(),
 					pMaterial->getDiffuseColor().g(),
 					pMaterial->getDiffuseColor().b());
@@ -1093,8 +1093,8 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1116,7 +1116,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
-			m_pOGLProgram->setAmbientColor(
+			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
 				itSelectionColor->second.g(),
 				itSelectionColor->second.b());

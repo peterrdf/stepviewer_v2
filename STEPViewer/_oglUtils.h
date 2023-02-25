@@ -110,7 +110,7 @@ public: // Methods
 		}		
 	}
 
-	GLuint getID() const 
+	GLuint _getID() const 
 	{ 
 		return m_iID; 
 	}
@@ -192,7 +192,7 @@ public: // Methods
 class _oglProgram
 {
 
-protected: // Members
+private: // Members
 
 	GLuint m_iID;
 
@@ -201,7 +201,7 @@ public: // Methods
 	_oglProgram(void)
 	{
 		m_iID = glCreateProgram();
-		assert(m_iID != 0);
+		assert(m_iID > 0);
 	}
 
 	virtual ~_oglProgram()
@@ -212,17 +212,22 @@ public: // Methods
 		}		
 	}
 
-	void attachShader(_oglShader* pShader)
+	GLuint _getID() const
 	{
-		glAttachShader(m_iID, pShader->getID());
+		return m_iID;
 	}
 
-	void detachShader(_oglShader* pShader)
+	void _attachShader(_oglShader* pShader) const
 	{
-		glDetachShader(m_iID, pShader->getID());
+		glAttachShader(m_iID, pShader->_getID());
 	}
 
-	virtual bool link()
+	void _detachShader(_oglShader* pShader) const
+	{
+		glDetachShader(m_iID, pShader->_getID());
+	}
+
+	virtual bool _link()
 	{
 		glLinkProgram(m_iID);
 
@@ -232,33 +237,30 @@ public: // Methods
 		return param == GL_TRUE;
 	}
 
-	void use() 
+	void _use() const
 	{ 
 		glUseProgram(m_iID); 
 	}
-	
-	GLuint getID() 
-	{ 
-		return m_iID; 
-	}
 
-	GLint getUniformLocation(char* szName)
+protected: // Methods
+
+	GLint _getUniformLocation(char* szName) const
 	{
 		return glGetUniformLocation(m_iID, szName);
 	}
 
-	void setUniform(char* szName, int iVal)
+	void _setUniform(char* szName, int iVal) const
 	{
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		glUniform1i(iLocation, iVal);
 	}
 
-	void setUniform(GLint iLocation, int iVal)
+	void _setUniform(GLint iLocation, int iVal) const
 	{
 		glUniform1i(iLocation, iVal);
 	}
 
-	void setUniform(char* szName, int* val, int varDim, int count)
+	void _setUniform(char* szName, int* val, int varDim, int count) const
 	{
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
@@ -278,7 +280,7 @@ public: // Methods
 			glUniform1iv(iLocation, count, val);
 	}
 
-	void setUniform(GLint iLocation, int* val, int varDim, int count)
+	void _setUniform(GLint iLocation, int* val, int varDim, int count) const
 	{
 		if (iLocation == -1)
 		{
@@ -297,7 +299,7 @@ public: // Methods
 			glUniform1iv(iLocation, count, val);
 	}
 
-	void setUniform(char* szName, float val)
+	void _setUniform(char* szName, float val) const
 	{
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
@@ -310,7 +312,7 @@ public: // Methods
 		glUniform1f(iLocation, val);
 	}
 
-	void setUniform(GLint iLocation, float val)
+	void _setUniform(GLint iLocation, float val) const
 	{
 		if (iLocation == -1)
 		{
@@ -322,7 +324,7 @@ public: // Methods
 		glUniform1f(iLocation, val);
 	}
 
-	void setUniform(char* szName, float* val, int varDim, int count)
+	void _setUniform(char* szName, float* val, int varDim, int count) const
 	{
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
@@ -342,7 +344,7 @@ public: // Methods
 			glUniform1fv(iLocation, count, val);
 	}
 
-	void setUniformMatrix(char* szName, float* mat, int dimX, int dimY, bool bTranspose)
+	void _setUniformMatrix(char* szName, float* mat, int dimX, int dimY, bool bTranspose) const
 	{
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
@@ -362,7 +364,7 @@ public: // Methods
 		}			
 	}
 
-	void setUniformMatrix(GLint iLocation, float* mat, int dimX, int dimY, bool bTranspose)
+	void _setUniformMatrix(GLint iLocation, float* mat, int dimX, int dimY, bool bTranspose) const
 	{
 		if (iLocation == -1)
 		{
@@ -381,7 +383,7 @@ public: // Methods
 		}
 	}
 
-	void setUniform(GLint iLocation, float* val, int varDim, int count)
+	void _setUniform(GLint iLocation, float* val, int varDim, int count) const
 	{
 		if (iLocation == -1)
 		{
@@ -400,12 +402,12 @@ public: // Methods
 			glUniform1fv(iLocation, count, val);
 	}
 
-	GLint getAttribLocation(char* szName)
+	GLint _getAttribLocation(char* szName) const
 	{ 
 		return glGetAttribLocation(m_iID, szName);
 	}
 
-	void setAttrib(GLint iLocation, float val)
+	void _setAttrib(GLint iLocation, float val) const
 	{ 
 		if (iLocation == -1)
 		{
@@ -417,7 +419,7 @@ public: // Methods
 		glVertexAttrib1f(iLocation, val);
 	}
 
-	void setAttrib(GLint iLocation, float* val, int varDim)
+	void _setAttrib(GLint iLocation, float* val, int varDim) const
 	{
 		if (iLocation == -1)
 		{
@@ -436,7 +438,7 @@ public: // Methods
 			glVertexAttrib1fv(iLocation, val);
 	}
 
-	void bindAttribLocation(unsigned int iIndex, char* szName)
+	void _bindAttribLocation(unsigned int iIndex, char* szName) const
 	{
 		glBindAttribLocation(m_iID, iIndex, szName);
 
@@ -447,7 +449,7 @@ public: // Methods
 		VERIFY(dwError == 0);
 	}
 
-	GLint enableVertexAttribArray(char* szName)
+	GLint _enableVertexAttribArray(char* szName) const
 	{
 		GLint iLocation = glGetAttribLocation(m_iID, szName);
 		if (iLocation != -1)
@@ -458,12 +460,12 @@ public: // Methods
 		return iLocation;
 	}
 
-	void disableVertexAttribArray(GLint iLocation)
+	void _disableVertexAttribArray(GLint iLocation) const
 	{
 		glDisableVertexAttribArray(iLocation);
 	}
 
-	void getInfoLog(CString& stInfoLog)
+	void _getInfoLog(CString& stInfoLog) const
 	{
 		stInfoLog = L"NA";
 
@@ -482,10 +484,10 @@ public: // Methods
 		}
 	}
 
-	void printInfoLog()
+	void _printInfoLog() const
 	{
 		CString stInfoLog;
-		getInfoLog(stInfoLog);
+		_getInfoLog(stInfoLog);
 
 		AfxMessageBox(stInfoLog);
 	}
@@ -495,6 +497,8 @@ class _oglBlinnPhongProgram : public _oglProgram
 {
 
 private: // Members
+
+	// OpenGL
 
 	bool m_bSupportsTexture;
 
@@ -562,205 +566,251 @@ public: // Methods
 	{
 	}
 
-	virtual bool link()
-	{
-		if (_oglProgram::link())
-		{
-			m_iUseBlinnPhongModel = glGetUniformLocation(m_iID, "uUseBlinnPhongModel");
-			ASSERT(m_iUseBlinnPhongModel >= 0);
-
-			if (m_bSupportsTexture)
-			{
-				m_iUseTexture = glGetUniformLocation(m_iID, "uUseTexture");
-				ASSERT(m_iUseTexture >= 0);
-
-				m_iSampler = glGetUniformLocation(m_iID, "uSampler");
-				ASSERT(m_iSampler >= 0);
-			}
-
-			m_iMVMatrix = glGetUniformLocation(m_iID, "uMVMatrix");
-			ASSERT(m_iMVMatrix >= 0);
-
-			m_iPMatrix = glGetUniformLocation(m_iID, "uPMatrix");
-			ASSERT(m_iPMatrix >= 0);
-
-			m_iNMatrix = glGetUniformLocation(m_iID, "uNMatrix");
-			ASSERT(m_iNMatrix >= 0);
-
-			m_iPointLightingLocation = glGetUniformLocation(m_iID, "uPointLightingLocation");
-			ASSERT(m_iPointLightingLocation >= 0);
-
-			m_iAmbientLightWeighting = glGetUniformLocation(m_iID, "uAmbientLightWeighting");
-			ASSERT(m_iAmbientLightWeighting >= 0);
-
-			m_iSpecularLightWeighting = glGetUniformLocation(m_iID, "uSpecularLightWeighting");
-			ASSERT(m_iSpecularLightWeighting >= 0);
-
-			m_iDiffuseLightWeighting = glGetUniformLocation(m_iID, "uDiffuseLightWeighting");
-			ASSERT(m_iDiffuseLightWeighting >= 0);
-
-			m_iMaterialShininess = glGetUniformLocation(m_iID, "uMaterialShininess");
-			ASSERT(m_iMaterialShininess >= 0);
-
-			m_iContrast = glGetUniformLocation(m_iID, "uContrast");
-			ASSERT(m_iContrast >= 0);
-
-			m_iBrightness = glGetUniformLocation(m_iID, "uBrightness");
-			ASSERT(m_iBrightness >= 0);
-
-			m_iGamma = glGetUniformLocation(m_iID, "uGamma");
-			ASSERT(m_iGamma >= 0);
-
-			m_iMaterialAmbientColor = glGetUniformLocation(m_iID, "uMaterialAmbientColor");
-			ASSERT(m_iMaterialAmbientColor >= 0);
-
-			m_iTransparency = glGetUniformLocation(m_iID, "uTransparency");
-			ASSERT(m_iTransparency >= 0);
-
-			m_iMaterialDiffuseColor = glGetUniformLocation(m_iID, "uMaterialDiffuseColor");
-			ASSERT(m_iMaterialDiffuseColor >= 0);
-
-			m_iMaterialSpecularColor = glGetUniformLocation(m_iID, "uMaterialSpecularColor");
-			ASSERT(m_iMaterialSpecularColor >= 0);
-
-			m_iMaterialEmissiveColor = glGetUniformLocation(m_iID, "uMaterialEmissiveColor");
-			ASSERT(m_iMaterialEmissiveColor >= 0);
-
-			m_iVertexPosition = glGetAttribLocation(m_iID, "aVertexPosition");
-			ASSERT(m_iVertexPosition >= 0);
-
-			m_iVertexNormal = glGetAttribLocation(m_iID, "aVertexNormal");
-			ASSERT(m_iVertexNormal >= 0);
-
-			if (m_bSupportsTexture)
-			{
-				m_iTextureCoord = glGetAttribLocation(m_iID, "aTextureCoord");
-				ASSERT(m_iTextureCoord >= 0);
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	bool getSupportsTexture() const
+	bool _getSupportsTexture() const
 	{
 		return m_bSupportsTexture;
 	}
 
-	GLint getUseBlinnPhongModel() const
+	void _enableBlinnPhongModel(bool bEnable)
 	{
-		return m_iUseBlinnPhongModel;
-	}	
-
-	GLint getUseTexture() const
-	{
-		ASSERT(m_bSupportsTexture);
-
-		return m_iUseTexture;
-	}	
-
-	GLint getSampler() const
-	{
-		ASSERT(m_bSupportsTexture);
-
-		return m_iSampler;
+		glProgramUniform1f(
+			_getID(),
+			m_iUseBlinnPhongModel,
+			bEnable ? 1.f : 0.f);
 	}
 
-	GLint getMVMatrix() const
+	void _enableTexture(bool bEnable)
+	{
+		assert(m_bSupportsTexture);
+
+		glProgramUniform1f(
+			_getID(),
+			m_iUseTexture,
+			bEnable ? 1.f : 0.f);
+	}
+
+	glm::vec3 _getPointLightingLocation() const 
+	{ 
+		float arValue[3] = { 0.f, 0.f, 0.f };
+		glGetUniformfv(_getID(),
+			m_iPointLightingLocation,
+			arValue);
+
+		return glm::vec3(arValue[0], arValue[1], arValue[2]);
+	}
+	void _setPointLightingLocation(const glm::vec3& value) 
+	{ 
+		glProgramUniform3f(
+			_getID(),
+			m_iPointLightingLocation,
+			value.x,
+			value.y,
+			value.z);
+	}
+
+	void _setAmbientColor(float fR, float fG, float fB)
+	{
+		glProgramUniform3f(_getID(),
+			m_iMaterialAmbientColor,
+			fR,
+			fG,
+			fB);
+	}
+
+	void _setAmbientColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setAmbientColor(
+			pMaterial->getAmbientColor().r(),
+			pMaterial->getAmbientColor().g(),
+			pMaterial->getAmbientColor().b());
+	}
+
+	void _setTransparency(float fA)
+	{
+		glProgramUniform1f(
+			_getID(),
+			m_iTransparency,
+			fA);
+	}
+
+	void _setDiffuseColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(_getID(),
+			m_iMaterialDiffuseColor,
+			pMaterial->getDiffuseColor().r() / 2.f,
+			pMaterial->getDiffuseColor().g() / 2.f,
+			pMaterial->getDiffuseColor().b() / 2.f);
+	}
+
+	void _setSpecularColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(_getID(),
+			m_iMaterialSpecularColor,
+			pMaterial->getSpecularColor().r() / 2.f,
+			pMaterial->getSpecularColor().g() / 2.f,
+			pMaterial->getSpecularColor().b() / 2.f);
+	}
+
+	void _setEmissiveColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(_getID(),
+			m_iMaterialEmissiveColor,
+			pMaterial->getEmissiveColor().r() / 3.f,
+			pMaterial->getEmissiveColor().g() / 3.f,
+			pMaterial->getEmissiveColor().b() / 3.f);
+	}
+
+	void _setMaterial(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setAmbientColor(pMaterial);
+		_setTransparency(pMaterial->getA());
+		_setDiffuseColor(pMaterial);
+		_setSpecularColor(pMaterial);
+		_setEmissiveColor(pMaterial);
+	}
+
+	virtual bool _link() override
+	{
+		if (!_oglProgram::_link())
+		{
+			assert(false);
+
+			return false;
+		}
+
+		m_iUseBlinnPhongModel = glGetUniformLocation(_getID(), "uUseBlinnPhongModel");
+		assert(m_iUseBlinnPhongModel >= 0);
+
+		if (m_bSupportsTexture)
+		{
+			m_iUseTexture = glGetUniformLocation(_getID(), "uUseTexture");
+			assert(m_iUseTexture >= 0);
+
+			m_iSampler = glGetUniformLocation(_getID(), "uSampler");
+			assert(m_iSampler >= 0);
+		}
+
+		m_iMVMatrix = glGetUniformLocation(_getID(), "uMVMatrix");
+		assert(m_iMVMatrix >= 0);
+
+		m_iPMatrix = glGetUniformLocation(_getID(), "uPMatrix");
+		assert(m_iPMatrix >= 0);
+
+		m_iNMatrix = glGetUniformLocation(_getID(), "uNMatrix");
+		assert(m_iNMatrix >= 0);
+
+		m_iPointLightingLocation = glGetUniformLocation(_getID(), "uPointLightingLocation");
+		assert(m_iPointLightingLocation >= 0);
+
+		m_iAmbientLightWeighting = glGetUniformLocation(_getID(), "uAmbientLightWeighting");
+		assert(m_iAmbientLightWeighting >= 0);
+
+		m_iSpecularLightWeighting = glGetUniformLocation(_getID(), "uSpecularLightWeighting");
+		assert(m_iSpecularLightWeighting >= 0);
+
+		m_iDiffuseLightWeighting = glGetUniformLocation(_getID(), "uDiffuseLightWeighting");
+		assert(m_iDiffuseLightWeighting >= 0);
+
+		m_iMaterialShininess = glGetUniformLocation(_getID(), "uMaterialShininess");
+		assert(m_iMaterialShininess >= 0);
+
+		m_iContrast = glGetUniformLocation(_getID(), "uContrast");
+		assert(m_iContrast >= 0);
+
+		m_iBrightness = glGetUniformLocation(_getID(), "uBrightness");
+		assert(m_iBrightness >= 0);
+
+		m_iGamma = glGetUniformLocation(_getID(), "uGamma");
+		assert(m_iGamma >= 0);
+
+		m_iMaterialAmbientColor = glGetUniformLocation(_getID(), "uMaterialAmbientColor");
+		assert(m_iMaterialAmbientColor >= 0);
+
+		m_iTransparency = glGetUniformLocation(_getID(), "uTransparency");
+		assert(m_iTransparency >= 0);
+
+		m_iMaterialDiffuseColor = glGetUniformLocation(_getID(), "uMaterialDiffuseColor");
+		assert(m_iMaterialDiffuseColor >= 0);
+
+		m_iMaterialSpecularColor = glGetUniformLocation(_getID(), "uMaterialSpecularColor");
+		assert(m_iMaterialSpecularColor >= 0);
+
+		m_iMaterialEmissiveColor = glGetUniformLocation(_getID(), "uMaterialEmissiveColor");
+		assert(m_iMaterialEmissiveColor >= 0);
+
+		m_iVertexPosition = glGetAttribLocation(_getID(), "aVertexPosition");
+		assert(m_iVertexPosition >= 0);
+
+		m_iVertexNormal = glGetAttribLocation(_getID(), "aVertexNormal");
+		assert(m_iVertexNormal >= 0);
+
+		if (m_bSupportsTexture)
+		{
+			m_iTextureCoord = glGetAttribLocation(_getID(), "aTextureCoord");
+			assert(m_iTextureCoord >= 0);
+		}
+
+		return true;
+	}
+
+	GLint _getMVMatrix() const
 	{
 		return m_iMVMatrix;
 	}
 
-	GLint getPMatrix() const
-	{
-		return m_iPMatrix;
-	}
-
-	GLint getNMatrix() const
+	GLint _getNMatrix() const
 	{
 		return m_iNMatrix;
 	}
 
-	GLint getPointLightingLocation() const
-	{
-		return m_iPointLightingLocation;
-	}
-
-	GLint getAmbientLightWeighting() const
-	{
-		return m_iAmbientLightWeighting;
-	}
-
-	GLint getSpecularLightWeighting() const
+	GLint _getSpecularLightWeighting() const
 	{
 		return m_iSpecularLightWeighting;
 	}
 
-	GLint getDiffuseLightWeighting() const
+	GLint _getDiffuseLightWeighting() const
 	{
 		return m_iDiffuseLightWeighting;
 	}
 
-	GLint getMaterialShininess() const
+	GLint _getMaterialShininess() const
 	{
 		return m_iMaterialShininess;
 	}
 
-	GLint getContrast() const
+	GLint _getContrast() const
 	{
 		return m_iContrast;
 	}
 
-	GLint getBrightness() const
+	GLint _getBrightness() const
 	{
 		return m_iBrightness;
 	}
 
-	GLint getGamma() const
-	{
-		return m_iGamma;
-	}
-
-	GLint getMaterialAmbientColor() const
-	{
-		return m_iMaterialAmbientColor;
-	}
-
-	GLint getTransparency() const
-	{
-		return m_iTransparency;
-	}
-
-	GLint getMaterialDiffuseColor() const
-	{
-		return m_iMaterialDiffuseColor;
-	}
-
-	GLint getMaterialSpecularColor() const
-	{
-		return m_iMaterialSpecularColor;
-	}
-
-	GLint getMaterialEmissiveColor() const
-	{
-		return m_iMaterialEmissiveColor;
-	}
-
-	GLint getVertexPosition() const
+	GLint _getVertexPosition() const
 	{
 		return m_iVertexPosition;
 	}
 
-	GLint getVertexNormal() const
+	GLint _getVertexNormal() const
 	{
 		return m_iVertexNormal;
 	}
 
-	GLint getTextureCoord() const
+	GLint _getTextureCoord() const
 	{
-		ASSERT(m_bSupportsTexture);
+		assert(m_bSupportsTexture);
 
 		return m_iTextureCoord;
 	}
@@ -768,8 +818,8 @@ public: // Methods
 	void setProjectionMatrix(glm::mat4& matProjection)
 	{
 		glProgramUniformMatrix4fv(
-			getID(),
-			getPMatrix(),
+			_getID(),
+			m_iPMatrix,
 			1,
 			false,
 			value_ptr(matProjection));
@@ -778,8 +828,8 @@ public: // Methods
 	void setModelViewMatrix(glm::mat4& matModelView)
 	{
 		glProgramUniformMatrix4fv(
-			getID(),
-			getMVMatrix(),
+			_getID(),
+			m_iMVMatrix,
 			1,
 			false,
 			value_ptr(matModelView));
@@ -788,52 +838,30 @@ public: // Methods
 	void setNormalMatrix(glm::mat4& matNormal)
 	{
 		glProgramUniformMatrix4fv(
-			getID(),
-			getNMatrix(),
+			_getID(),
+			m_iNMatrix,
 			1,
 			false,
 			value_ptr(matNormal));
-	}
-
-	void enableBlinnPhongModel(bool bEnable)
-	{
-		glProgramUniform1f(
-			getID(),
-			getUseBlinnPhongModel(),
-			bEnable ? 1.f : 0.f);
-	}
-
-	void enableTexture(bool bEnable)
-	{
-		glProgramUniform1f(
-			getID(),
-			getUseTexture(),
-			bEnable ? 1.f : 0.f);
 	}	
 
 	void setSampler(int iSampler)
 	{
+		assert(m_bSupportsTexture);
+
 		glProgramUniform1i(
-			getID(),
-			getSampler(),
+			_getID(),
+			m_iSampler,
 			iSampler);
 	}
 
-	void setPointLightLocation(float fX, float fY, float fZ)
-	{
-		glProgramUniform3f(
-			getID(),
-			getPointLightingLocation(),
-			fX,
-			fY,
-			fZ);
-	}	
-
 	void setAmbientLightWeighting(float fX, float fY, float fZ)
 	{
+		assert(m_iAmbientLightWeighting >= 0);
+
 		glProgramUniform3f(
-			getID(),
-			getAmbientLightWeighting(),
+			_getID(),
+			m_iAmbientLightWeighting,
 			fX,
 			fY,
 			fZ);
@@ -842,8 +870,8 @@ public: // Methods
 	void setSpecularLightWeighting(float fX, float fY, float fZ)
 	{
 		glProgramUniform3f(
-			getID(),
-			getSpecularLightWeighting(),
+			_getID(),
+			_getSpecularLightWeighting(),
 			fX,
 			fY,
 			fZ);
@@ -852,8 +880,8 @@ public: // Methods
 	void setDiffuseLightWeighting(float fX, float fY, float fZ)
 	{
 		glProgramUniform3f(
-			getID(),
-			getDiffuseLightWeighting(),
+			_getID(),
+			_getDiffuseLightWeighting(),
 			fX,
 			fY,
 			fZ);
@@ -862,104 +890,33 @@ public: // Methods
 	void setMaterialShininess(float fValue)
 	{
 		glProgramUniform1f(
-			getID(),
-			getMaterialShininess(),
+			_getID(),
+			_getMaterialShininess(),
 			fValue);
 	}
 
 	void setContrast(float fValue)
 	{
 		glProgramUniform1f(
-			getID(),
-			getContrast(),
+			_getID(),
+			_getContrast(),
 			fValue);
 	}
 
 	void setBrightness(float fValue)
 	{
 		glProgramUniform1f(
-			getID(),
-			getBrightness(),
+			_getID(),
+			_getBrightness(),
 			fValue);
 	}
 
 	void setGamma(float fValue)
 	{
 		glProgramUniform1f(
-			getID(),
-			getGamma(),
+			_getID(),
+			m_iGamma,
 			fValue);
-	}
-
-	void setAmbientColor(float fR, float fG, float fB)
-	{
-		glProgramUniform3f(getID(),
-			getMaterialAmbientColor(),
-			fR,
-			fG,
-			fB);
-	}
-
-	void setAmbientColor(const _material* pMaterial)
-	{
-		assert(pMaterial != nullptr);
-
-		setAmbientColor(
-			pMaterial->getAmbientColor().r(),
-			pMaterial->getAmbientColor().g(),
-			pMaterial->getAmbientColor().b());
-	}
-
-	void setTransparency(float fA)
-	{
-		glProgramUniform1f(
-			getID(),
-			getTransparency(),
-			fA);
-	}
-
-	void setDiffuseColor(const _material* pMaterial)
-	{
-		assert(pMaterial != nullptr);
-
-		glProgramUniform3f(getID(),
-			getMaterialDiffuseColor(),
-			pMaterial->getDiffuseColor().r() / 2.f,
-			pMaterial->getDiffuseColor().g() / 2.f,
-			pMaterial->getDiffuseColor().b() / 2.f);
-	}
-
-	void setSpecularColor(const _material* pMaterial)
-	{
-		assert(pMaterial != nullptr);
-
-		glProgramUniform3f(getID(),
-			getMaterialSpecularColor(),
-			pMaterial->getSpecularColor().r() / 2.f,
-			pMaterial->getSpecularColor().g() / 2.f,
-			pMaterial->getSpecularColor().b() / 2.f);
-	}
-
-	void setEmissiveColor(const _material* pMaterial)
-	{
-		assert(pMaterial != nullptr);
-
-		glProgramUniform3f(getID(),
-			getMaterialEmissiveColor(),
-			pMaterial->getEmissiveColor().r() / 3.f,
-			pMaterial->getEmissiveColor().g() / 3.f,
-			pMaterial->getEmissiveColor().b() / 3.f);
-	}
-
-	void setMaterial(const _material* pMaterial)
-	{
-		assert(pMaterial != nullptr);
-
-		setAmbientColor(pMaterial);
-		setTransparency(pMaterial->getA());
-		setDiffuseColor(pMaterial);
-		setSpecularColor(pMaterial);
-		setEmissiveColor(pMaterial);
 	}
 };
 
@@ -1097,7 +1054,7 @@ public: // Methods
 		* MSAA support
 		*/
 
-		BOOL bMSAASupport = FALSE;
+		BOOL bMSAASupport = false;
 
 		int arAttributes[] = {
 			WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
@@ -1656,7 +1613,7 @@ public: // Methods
 		}
 
 		int_t iVerticesCount = 0;
-		float* pVertices = getVertices(vecInstances, pProgram->getSupportsTexture(), iVerticesCount);
+		float* pVertices = getVertices(vecInstances, pProgram->_getSupportsTexture(), iVerticesCount);
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
 		{
@@ -1691,7 +1648,7 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * _VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
@@ -1719,20 +1676,20 @@ public: // Methods
 
 	void setVBOAttributes(_oglBlinnPhongProgram* pProgram) const
 	{
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
-		glVertexAttribPointer(pProgram->getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
-		glVertexAttribPointer(pProgram->getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
-		if (pProgram->getSupportsTexture())
+		glVertexAttribPointer(pProgram->_getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
+		glVertexAttribPointer(pProgram->_getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
+		if (pProgram->_getSupportsTexture())
 		{
-			glVertexAttribPointer(pProgram->getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
+			glVertexAttribPointer(pProgram->_getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
 		}
 
-		glEnableVertexAttribArray(pProgram->getVertexPosition());
-		glEnableVertexAttribArray(pProgram->getVertexNormal());
-		if (pProgram->getSupportsTexture())
+		glEnableVertexAttribArray(pProgram->_getVertexPosition());
+		glEnableVertexAttribArray(pProgram->_getVertexNormal());
+		if (pProgram->_getSupportsTexture())
 		{
-			glEnableVertexAttribArray(pProgram->getTextureCoord());
+			glEnableVertexAttribArray(pProgram->_getTextureCoord());
 		}
 
 		_oglUtils::checkForErrors();
@@ -1835,21 +1792,14 @@ enum class enumView
 	Back,
 };
 
-template <class Instance>
-class _oglRenderer
+struct _ioglRenderer
 {
+	virtual void _redraw() PURE;
+};
 
-private: // Members
-
-	glm::vec3 m_vecPointLightingLocation;
-	glm::vec3 m_vecAmbientLightWeighting;
-	glm::vec3 m_vecSpecularLightWeighting;
-	glm::vec3 m_vecDiffuseLightWeighting;
-	float m_fMaterialShininess;
-	float m_fContrast;
-	float m_fBrightness;
-	float m_fGamma;
-
+template <class Instance>
+class _oglRenderer : public _ioglRenderer
+{
 
 protected: // Members
 
@@ -1872,15 +1822,7 @@ protected: // Members
 public: // Methods
 
 	_oglRenderer()
-		: m_vecPointLightingLocation(0.f, 0.f, 10000.f)
-		, m_vecAmbientLightWeighting(0.001f, 0.001f, 0.001f)
-		, m_vecSpecularLightWeighting(0.8, 0.8, 0.8)
-		, m_vecDiffuseLightWeighting(0.8, 0.8, 0.8)
-		, m_fMaterialShininess(30.f)
-		, m_fContrast(1.5f)
-		, m_fBrightness(0.175f)
-		, m_fGamma(1.25f)
-		, m_pWnd(nullptr)
+		: m_pWnd(nullptr)
 		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
@@ -1896,29 +1838,10 @@ public: // Methods
 	{
 	}
 
-	const glm::vec3& _getPointLightingLocation() const { return m_vecPointLightingLocation; }
-	void _setPointLightingLocation(const glm::vec3& value) { m_vecPointLightingLocation = value; _redraw(); }
-
-	const glm::vec3& _getAmbientLightWeighting() const { return m_vecAmbientLightWeighting; }
-	void _setAmbientLightWeighting(const glm::vec3& value) { m_vecAmbientLightWeighting = value; _redraw(); }
-
-	const glm::vec3& _getSpecularLightWeighting() const { return m_vecSpecularLightWeighting; }
-	void _setSpecularLightWeighting(const glm::vec3& value) { m_vecSpecularLightWeighting = value; _redraw(); }
-
-	const glm::vec3& _getDiffuseLightWeighting() const { return m_vecDiffuseLightWeighting; }
-	void _setDiffuseLightWeighting(const glm::vec3& value) { m_vecDiffuseLightWeighting = value; _redraw(); }
-
-	float _getMaterialShininess() const { return m_fMaterialShininess; }
-	void _setMaterialShininess(float value) { m_fMaterialShininess = value; _redraw(); }
-
-	float _getContrast() const { return m_fContrast; }
-	void _setContrast(float value) { m_fContrast = value; _redraw(); }
-
-	float _getBrightness() const { return m_fBrightness; }
-	void _setBrightness(float value) { m_fBrightness = value; _redraw(); }
-
-	float _getGamma() const { return m_fGamma; }
-	void _setGamma(float value) { m_fGamma = value; _redraw(); }
+	_oglProgram* getOGLProgram() const
+	{
+		return m_pOGLProgram;
+	}
 
 	void _initialize(CWnd* pWnd,
 		int iSamples, 
@@ -1928,7 +1851,7 @@ public: // Methods
 		bool bSupportsTexture)
 	{
 		m_pWnd = pWnd;
-		ASSERT(m_pWnd != nullptr);
+		assert(m_pWnd != nullptr);
 
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
@@ -1965,12 +1888,12 @@ public: // Methods
 			PostQuitMessage(0);
 		}
 
-		m_pOGLProgram->attachShader(m_pVertexShader);
-		m_pOGLProgram->attachShader(m_pFragmentShader);
+		m_pOGLProgram->_attachShader(m_pVertexShader);
+		m_pOGLProgram->_attachShader(m_pFragmentShader);
 
-		glBindFragDataLocation(m_pOGLProgram->getID(), 0, "FragColor");
+		glBindFragDataLocation(m_pOGLProgram->_getID(), 0, "FragColor");
 
-		if (!m_pOGLProgram->link())
+		if (!m_pOGLProgram->_link())
 		{
 			AfxMessageBox(_T("Program linking error!"));
 		}
@@ -1989,8 +1912,8 @@ public: // Methods
 
 		if (m_pOGLProgram != nullptr)
 		{
-			m_pOGLProgram->detachShader(m_pVertexShader);
-			m_pOGLProgram->detachShader(m_pFragmentShader);
+			m_pOGLProgram->_detachShader(m_pVertexShader);
+			m_pOGLProgram->_detachShader(m_pFragmentShader);
 
 			delete m_pOGLProgram;
 			m_pOGLProgram = nullptr;
@@ -2028,7 +1951,7 @@ public: // Methods
 		m_pOGLContext->enableDebug();
 #endif
 
-		m_pOGLProgram->use();
+		m_pOGLProgram->_use();
 
 		glViewport(0, 0, iWidth, iHeight);
 
@@ -2037,33 +1960,7 @@ public: // Methods
 
 		// Set up the parameters
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-
-		m_pOGLProgram->setPointLightLocation(
-			m_vecPointLightingLocation.x, 
-			m_vecPointLightingLocation.y, 
-			m_vecPointLightingLocation.z);
-
-		m_pOGLProgram->setAmbientLightWeighting(
-			m_vecAmbientLightWeighting.x,
-			m_vecAmbientLightWeighting.y,
-			m_vecAmbientLightWeighting.z);
-
-		m_pOGLProgram->setSpecularLightWeighting(
-			m_vecSpecularLightWeighting.x,
-			m_vecSpecularLightWeighting.y,
-			m_vecSpecularLightWeighting.z);
-
-		m_pOGLProgram->setDiffuseLightWeighting(
-			m_vecDiffuseLightWeighting.x,
-			m_vecDiffuseLightWeighting.y,
-			m_vecDiffuseLightWeighting.z);
-
-		m_pOGLProgram->setMaterialShininess(m_fMaterialShininess);
-
-		m_pOGLProgram->setContrast(m_fContrast);
-		m_pOGLProgram->setBrightness(m_fBrightness);
-		m_pOGLProgram->setGamma(m_fGamma);
+		glDepthFunc(GL_LEQUAL);		
 
 		// Projection Matrix
 		// fovY     - Field of vision in degrees in the y direction
@@ -2097,7 +1994,7 @@ public: // Methods
 
 			default:
 			{
-				ASSERT(FALSE);
+				assert(false);
 			}
 			break;
 		}
@@ -2131,10 +2028,10 @@ public: // Methods
 		m_pOGLProgram->setNormalMatrix(matNormal);
 
 		// Model
-		m_pOGLProgram->enableBlinnPhongModel(true);
+		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
-	void _redraw()
+	virtual void _redraw() override
 	{
 		m_pWnd->RedrawWindow();
 	}
@@ -2199,7 +2096,7 @@ public: // Methods
 
 			default:
 			{
-				ASSERT(FALSE);
+				assert(false);
 			}
 			break;
 		} // switch (enView)

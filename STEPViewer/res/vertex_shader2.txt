@@ -3,7 +3,7 @@
 in vec3 aVertexPosition;
 in vec3 aVertexNormal;
 
-uniform float uUseBlinnPhongModel;
+uniform float uUseBlinnPhongModel = 1.0;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;

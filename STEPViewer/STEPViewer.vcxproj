@@ -245,6 +245,9 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ViewTree.h" />
+    <ClInclude Include="_geometry.h" />
+    <ClInclude Include="_material.h" />
+    <ClInclude Include="_oglUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />

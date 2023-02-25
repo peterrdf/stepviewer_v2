@@ -614,37 +614,37 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	switch (nChar)
 	{
-	case VK_UP:
-	{
-		_move(
-			0.f,
-			PAN_SPEED_KEYS * (1.f / rcClient.Height()));
-	}
-	break;
+		case VK_UP:
+		{
+			_move(
+				0.f,
+				PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+		}
+		break;
 
-	case VK_DOWN:
-	{
-		_move(
-			0.f,
-			-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
-	}
-	break;
+		case VK_DOWN:
+		{
+			_move(
+				0.f,
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+		}
+		break;
 
-	case VK_LEFT:
-	{
-		_move(
-			-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
-			0.f);
-	}
-	break;
+		case VK_LEFT:
+		{
+			_move(
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+				0.f);
+		}
+		break;
 
-	case VK_RIGHT:
-	{
-		_move(
-			PAN_SPEED_KEYS * (1.f / rcClient.Width()),
-			0.f);
-	}
-	break;
+		case VK_RIGHT:
+		{
+			_move(
+				PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+				0.f);
+		}
+		break;
 	} // switch (nChar)
 }
 
@@ -790,7 +790,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	m_pOGLProgram->enableBlinnPhongModel(true);
+	m_pOGLProgram->_enableBlinnPhongModel(true);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -856,7 +856,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 						}
 					}
 
-					m_pOGLProgram->setMaterial(pMaterial);
+					m_pOGLProgram->_setMaterial(pMaterial);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 					glDrawElementsBaseVertex(GL_TRIANGLES,
@@ -923,9 +923,9 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -1031,9 +1031,9 @@ void COpenGLSTEPView::DrawLines()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -1141,8 +1141,8 @@ void COpenGLSTEPView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -1190,7 +1190,7 @@ void COpenGLSTEPView::DrawPoints()
 						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
-					m_pOGLProgram->setAmbientColor(
+					m_pOGLProgram->_setAmbientColor(
 						pMaterial->getDiffuseColor().r(),
 						pMaterial->getDiffuseColor().g(),
 						pMaterial->getDiffuseColor().b());
@@ -1320,8 +1320,8 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -1370,7 +1370,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
 					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
-					m_pOGLProgram->setAmbientColor(
+					m_pOGLProgram->_setAmbientColor(
 						itSelectionColor->second.r(),
 						itSelectionColor->second.g(),
 						itSelectionColor->second.b());
