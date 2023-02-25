@@ -1829,6 +1829,14 @@ enum class enumView
 
 struct _ioglRenderer
 {
+	virtual _oglProgram* _getOGLProgram() const PURE;
+
+	template<class Program>
+	Program* _getOGLProgramAs() const
+	{
+		return dynamic_case<Program*>(_getOGLProgram());
+	}
+
 	virtual void _redraw() PURE;
 };
 
@@ -1873,15 +1881,18 @@ public: // Methods
 	{
 	}
 
-	_oglProgram* getOGLProgram() const
+	
+
+	// _ioglRenderer
+	virtual _oglProgram* _getOGLProgram() const override
 	{
 		return m_pOGLProgram;
 	}
-
-	template<class Program>
-	Program* getOGLProgramAs() const
+	
+	// _ioglRenderer
+	virtual void _redraw() override
 	{
-		return dynamic_case<Program*>(m_pOGLProgram);
+		m_pWnd->RedrawWindow();
 	}
 
 	void _initialize(CWnd* pWnd,
@@ -2070,11 +2081,6 @@ public: // Methods
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
-	}
-
-	virtual void _redraw() override
-	{
-		m_pWnd->RedrawWindow();
 	}
 
 	void _setProjection(enumProjection enProjection)
