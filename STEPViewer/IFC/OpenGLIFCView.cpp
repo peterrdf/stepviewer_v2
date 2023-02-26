@@ -171,6 +171,8 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	switch (enApplicationProperty)
 	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
@@ -202,7 +204,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	auto pController = GetController();
 	if (pController != nullptr)
 	{
-		GetController()->RegisterView(this);
+		pController->RegisterView(this);
 
 		// OpenGL
 		m_pOGLProgram->_setAmbientLightWeighting(

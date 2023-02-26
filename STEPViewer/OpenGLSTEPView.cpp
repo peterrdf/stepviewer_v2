@@ -213,6 +213,8 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	switch (enApplicationProperty)
 	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:

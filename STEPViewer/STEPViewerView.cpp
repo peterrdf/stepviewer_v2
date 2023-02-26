@@ -393,6 +393,8 @@ void CMySTEPViewerView::OnProjectionIsometric()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetProjection(enumProjection::Isometric);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -406,6 +408,8 @@ void CMySTEPViewerView::OnProjectionPerspective()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetProjection(enumProjection::Perspective);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -419,6 +423,8 @@ void CMySTEPViewerView::OnViewFront()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Front);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -427,6 +433,8 @@ void CMySTEPViewerView::OnViewTop()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Top);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -435,6 +443,8 @@ void CMySTEPViewerView::OnViewRight()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Right);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -443,6 +453,8 @@ void CMySTEPViewerView::OnViewBack()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Back);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -451,6 +463,8 @@ void CMySTEPViewerView::OnViewLeft()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Left);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -459,6 +473,8 @@ void CMySTEPViewerView::OnViewBottom()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Bottom);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -523,7 +539,7 @@ void CMySTEPViewerView::OnShowFaces()
 	{
 		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowFaces);
+		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 	}
 }
 
@@ -539,7 +555,7 @@ void CMySTEPViewerView::OnShowConcFacesWireframes()
 	{
 		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowConceptualFacesWireframes);
+		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -555,7 +571,7 @@ void CMySTEPViewerView::OnShowLines()
 	{
 		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowLines);
+		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 	}
 }
 
@@ -571,7 +587,7 @@ void CMySTEPViewerView::OnShowPoints()
 	{
 		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowPoints);
+		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 	}
 }
 

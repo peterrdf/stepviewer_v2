@@ -8,6 +8,8 @@ class CSTEPController;
 // ------------------------------------------------------------------------------------------------
 enum class enumApplicationProperty
 {
+	Projection,
+	View,
 	ShowFaces,
 	ShowConceptualFacesWireframes,
 	ShowLines,
