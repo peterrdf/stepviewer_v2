@@ -54,6 +54,11 @@ void CSTEPView::SetController(CSTEPController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSTEPView::OnApplicationPropertyChanged(CSTEPView* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/)
+{
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPView::OnControllerChanged()
 {
 }

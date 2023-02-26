@@ -13,13 +13,14 @@ class CMySTEPViewerView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// OpenGL View
 	COpenGLView* m_pOpenGLView;
+
+private: // Methods
+
+	CSTEPController* GetController();
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPView
 	virtual void OnModelChanged();
 

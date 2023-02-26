@@ -162,11 +162,55 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enApplicationProperty)
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
 {
-	if (GetController() != nullptr)
+	auto pController = GetController();
+	if (pController != nullptr)
 	{
 		GetController()->RegisterView(this);
+
+		// OpenGL
+		m_pOGLProgram->_setAmbientLightWeighting(
+			0.4f,
+			0.4f,
+			0.4f);
+
+		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 	}
 }
 

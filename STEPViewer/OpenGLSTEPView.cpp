@@ -204,6 +204,41 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enApplicationProperty)
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);
@@ -830,7 +865,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-				m_pOGLProgram->setModelViewMatrix(matModelView);
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
@@ -877,7 +912,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 	}
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -965,7 +1000,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-				m_pOGLProgram->setModelViewMatrix(matModelView);
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacePolygonsCohorts().size(); iCohort++)
 				{
@@ -985,7 +1020,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -1073,7 +1108,7 @@ void COpenGLSTEPView::DrawLines()
 				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-				m_pOGLProgram->setModelViewMatrix(matModelView);
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->linesCohorts().size(); iCohort++)
 				{
@@ -1093,7 +1128,7 @@ void COpenGLSTEPView::DrawLines()
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -1181,7 +1216,7 @@ void COpenGLSTEPView::DrawPoints()
 				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-				m_pOGLProgram->setModelViewMatrix(matModelView);
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 				for (auto pCohort : pDefinition->pointsCohorts())
 				{
@@ -1209,7 +1244,7 @@ void COpenGLSTEPView::DrawPoints()
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -1361,7 +1396,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				matModelView = matModelView * matTransformation;
 				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-				m_pOGLProgram->setModelViewMatrix(matModelView);
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
@@ -1389,7 +1424,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	m_pInstanceSelectionFrameBuffer->unbind();
 

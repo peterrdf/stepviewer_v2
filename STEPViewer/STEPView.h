@@ -6,6 +6,23 @@
 class CSTEPController;
 
 // ------------------------------------------------------------------------------------------------
+enum class enumApplicationProperty
+{
+	ShowFaces,
+	ShowConceptualFacesWireframes,
+	ShowLines,
+	ShowPoints,
+	PointLightingLocation,
+	AmbientLightWeighting,
+	SpecularLightWeighting,
+	DiffuseLightWeighting,
+	MaterialShininess,
+	Contrast,
+	Brightness,
+	Gamma,
+};
+
+// ------------------------------------------------------------------------------------------------
 // View - MVC
 class CSTEPView
 {
@@ -31,6 +48,7 @@ public: // Methods
 	virtual void OnInstanceSelected(CSTEPView* pSender);
 	virtual void OnInstancePropertySelected();
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
+	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 

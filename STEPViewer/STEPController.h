@@ -11,6 +11,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 class CSTEPModelBase;
 class CSTEPView;
+enum class enumApplicationProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
@@ -133,6 +134,10 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
+
+	// --------------------------------------------------------------------------------------------
+	// Edit properties support
+	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
 };
 
 

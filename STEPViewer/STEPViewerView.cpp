@@ -19,24 +19,36 @@
 #endif
 
 // ------------------------------------------------------------------------------------------------
+CSTEPController* CMySTEPViewerView::GetController()
+{
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	return pDoc;
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CMySTEPViewerView::OnModelChanged()
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
 
-	CMySTEPViewerDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;	
-
-	if (pDoc->GetModel() == nullptr)
+	auto pController = GetController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = pDoc->GetModel();
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -49,7 +61,7 @@
 		case enumSTEPModelType::STEP:
 		{
 			m_pOpenGLView = new COpenGLSTEPView(this);
-			m_pOpenGLView->SetController(pDoc);
+			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->Load();
 		}
 		break;
@@ -57,7 +69,7 @@
 		case enumSTEPModelType::IFC:
 		{
 			m_pOpenGLView = new COpenGLIFCView(this);
-			m_pOpenGLView->SetController(pDoc);
+			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->Load();
 		}
 		break;
@@ -224,7 +236,7 @@ int CMySTEPViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMySTEPViewerDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
-		return -1;	
+		return -1;
 
 	pDoc->RegisterView(this);
 
@@ -511,8 +523,7 @@ void CMySTEPViewerView::OnShowFaces()
 	{
 		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
 
-		// TODO?
-		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowFaces);
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowFaces);
 	}
 }
 
@@ -528,8 +539,7 @@ void CMySTEPViewerView::OnShowConcFacesWireframes()
 	{
 		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
 
-		// TODO?
-		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowConceptualFacesWireframes);
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -545,8 +555,7 @@ void CMySTEPViewerView::OnShowLines()
 	{
 		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
 
-		// TODO?
-		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowLines);
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowLines);
 	}
 }
 
@@ -562,8 +571,7 @@ void CMySTEPViewerView::OnShowPoints()
 	{
 		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
 
-		// TODO?
-		//GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowPoints);
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowPoints);
 	}
 }
 

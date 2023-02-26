@@ -42,6 +42,7 @@ public: // Methods
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender) override;
+	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 

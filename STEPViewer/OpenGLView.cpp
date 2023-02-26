@@ -6,7 +6,6 @@
 COpenGLView::COpenGLView()
 	: CSTEPView()
 	, m_bShowFaces(TRUE)
-	, m_bShowFacesPolygons(FALSE)
 	, m_bShowConceptualFacesPolygons(TRUE)
 	, m_bShowLines(TRUE)
 	, m_fLineWidth(1.f)

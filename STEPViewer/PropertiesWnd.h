@@ -20,34 +20,6 @@ public:
 };
 
 // ------------------------------------------------------------------------------------------------
-enum class enumPropertyType
-{
-	ShowFaces,
-	CullFaces,
-	ShowFacesWireframes,
-	ShowConceptualFacesWireframes,
-	ShowLines,
-	LineWidth,
-	ShowPoints,
-	PointSize,
-	ShowNormalVectors,
-	ShowTangenVectors,
-	ShowBiNormalVectors,
-	ScaleVectors,
-	ShowBoundingBoxes,
-	PointLightingLocation,
-	AmbientLightWeighting,
-	SpecularLightWeighting,
-	DiffuseLightWeighting,
-	MaterialShininess,
-	Contrast,
-	Brightness,
-	Gamma,
-	VisibleValuesCountLimit,
-	ScalelAndCenter,
-};
-
-// ------------------------------------------------------------------------------------------------
 class CApplicationPropertyData
 {
 
@@ -55,17 +27,17 @@ private:  // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Type
-	enumPropertyType m_enPropertyType;
+	enumApplicationProperty m_enApplicationProperty;
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CApplicationPropertyData(enumPropertyType enPropertyType);
+	CApplicationPropertyData(enumApplicationProperty enApplicationProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	enumPropertyType GetType() const;
+	enumApplicationProperty GetType() const;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -100,6 +72,7 @@ public: // Methods
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
 	virtual void OnInstancePropertySelected();
+	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 

@@ -191,3 +191,13 @@ void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 		(*itView)->OnInstancesEnabledStateChanged(pSender);
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
+void CSTEPController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
+	}
+}

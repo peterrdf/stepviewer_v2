@@ -38,7 +38,6 @@ protected: // Members
 
 	// UI
 	BOOL m_bShowFaces;
-	BOOL m_bShowFacesPolygons;
 	BOOL m_bShowConceptualFacesPolygons;
 	BOOL m_bShowLines;
 	GLfloat m_fLineWidth;
@@ -52,20 +51,14 @@ public: // Methods
 	virtual ~COpenGLView();	
 
 	// UI
-	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; Redraw(); }
+	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; }
 	BOOL AreFacesShown() const { return m_bShowFaces; }
-	void ShowFacesPolygons(BOOL bShow) { m_bShowFacesPolygons = bShow; Redraw(); }
-	BOOL AreFacesPolygonsShown() const { return m_bShowFacesPolygons; };
-	void ShowConceptualFacesPolygons(BOOL bShow) { m_bShowConceptualFacesPolygons = bShow; Redraw(); }
+	void ShowConceptualFacesPolygons(BOOL bShow) { m_bShowConceptualFacesPolygons = bShow; }
 	BOOL AreConceptualFacesPolygonsShown() const { return m_bShowConceptualFacesPolygons; }
-	void ShowLines(BOOL bShow) { m_bShowLines = bShow; Redraw(); }
+	void ShowLines(BOOL bShow) { m_bShowLines = bShow; }
 	BOOL AreLinesShown() const { return m_bShowLines; }
-	void SetLineWidth(GLfloat fWidth) { m_fLineWidth = fWidth; Redraw(); }
-	GLfloat GetLineWidth() const { return m_fLineWidth; }
-	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; Redraw(); }
-	BOOL ArePointsShown() const { return m_bShowPoints; }
-	void SetPointSize(GLfloat fSize) { m_fPointSize = fSize; Redraw(); }
-	GLfloat GetPointSize() const { return m_fPointSize; }	
+	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; }
+	BOOL ArePointsShown() const { return m_bShowPoints; }	
 
 	// Load
 	virtual void Load() PURE;

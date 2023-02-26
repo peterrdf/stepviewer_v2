@@ -700,7 +700,7 @@ public: // Methods
 		return _getUniform1f(m_iMaterialShininess);
 	}
 
-	void setMaterialShininess(float fValue) const
+	void _setMaterialShininess(float fValue) const
 	{
 		_setUniform1f(
 			m_iMaterialShininess,
@@ -712,7 +712,7 @@ public: // Methods
 		return _getUniform1f(m_iContrast);
 	}
 
-	void setContrast(float fValue) const
+	void _setContrast(float fValue) const
 	{
 		_setUniform1f(
 			m_iContrast,
@@ -724,7 +724,7 @@ public: // Methods
 		return _getUniform1f(m_iBrightness);
 	}
 
-	void setBrightness(float fValue)
+	void _setBrightness(float fValue)
 	{
 		_setUniform1f(
 			m_iBrightness,
@@ -736,7 +736,7 @@ public: // Methods
 		return _getUniform1f(m_iGamma);
 	}
 
-	void setGamma(float fValue)
+	void _setGamma(float fValue)
 	{
 		_setUniform1f(
 			m_iGamma,
@@ -914,7 +914,7 @@ public: // Methods
 		return m_iTextureCoord;
 	}
 
-	void setProjectionMatrix(glm::mat4& matProjection) const
+	void _setProjectionMatrix(glm::mat4& matProjection) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -924,7 +924,7 @@ public: // Methods
 			value_ptr(matProjection));
 	}
 
-	void setModelViewMatrix(glm::mat4& matModelView) const
+	void _setModelViewMatrix(glm::mat4& matModelView) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -934,7 +934,7 @@ public: // Methods
 			value_ptr(matModelView));
 	}
 
-	void setNormalMatrix(glm::mat4& matNormal) const
+	void _setNormalMatrix(glm::mat4& matNormal) const
 	{
 		glProgramUniformMatrix4fv(
 			_getID(),
@@ -944,7 +944,7 @@ public: // Methods
 			value_ptr(matNormal));
 	}	
 
-	void setSampler(int iSampler) const
+	void _setSampler(int iSampler) const
 	{
 		assert(m_bSupportsTexture);
 
@@ -1879,9 +1879,7 @@ public: // Methods
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
 	{
-	}
-
-	
+	}	
 
 	// _ioglRenderer
 	virtual _oglProgram* _getOGLProgram() const override
@@ -1892,7 +1890,11 @@ public: // Methods
 	// _ioglRenderer
 	virtual void _redraw() override
 	{
+#ifdef _LINUX
+		m_pWnd->Refresh(false);
+#else
 		m_pWnd->RedrawWindow();
+#endif // _LINUX		
 	}
 
 	void _initialize(CWnd* pWnd,
@@ -2033,14 +2035,14 @@ public: // Methods
 			case enumProjection::Perspective:
 			{
 				glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-				m_pOGLProgram->setProjectionMatrix(matProjection);
+				m_pOGLProgram->_setProjectionMatrix(matProjection);
 			}
 			break;
 
 			case enumProjection::Isometric:
 			{
 				glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-				m_pOGLProgram->setProjectionMatrix(matProjection);
+				m_pOGLProgram->_setProjectionMatrix(matProjection);
 			}
 			break;
 
@@ -2071,13 +2073,13 @@ public: // Methods
 		m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
 		m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-		m_pOGLProgram->setModelViewMatrix(m_matModelView);
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 		// Normal Matrix
 		glm::mat4 matNormal = m_matModelView;
 		matNormal = glm::inverse(matNormal);
 		matNormal = glm::transpose(matNormal);
-		m_pOGLProgram->setNormalMatrix(matNormal);
+		m_pOGLProgram->_setNormalMatrix(matNormal);
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
