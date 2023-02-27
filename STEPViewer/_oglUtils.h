@@ -161,9 +161,9 @@ public: // Methods
 		return false;
 	}	
 
-	void getInfoLog(CString& stInfoLog)
+	void getInfoLog(CString& strInfoLog)
 	{
-		stInfoLog = L"NA";
+		strInfoLog = L"NA";
 
 		int iLength = 0;
 		glGetShaderiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -175,17 +175,17 @@ public: // Methods
 
 			glGetShaderInfoLog(m_iID, iLength, &iCharsWritten, szInfoLog);
 
-			stInfoLog = szInfoLog;
+			strInfoLog = szInfoLog;
 			delete[] szInfoLog;
 		}
 	}
 
 	void printInfoLog()
 	{
-		CString stInfoLog;
-		getInfoLog(stInfoLog);
+		CString strInfoLog;
+		getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"TODO.", stInfoLog, MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
 	}
 };
 
@@ -465,9 +465,9 @@ protected: // Methods
 		glDisableVertexAttribArray(iLocation);
 	}
 
-	void _getInfoLog(CString& stInfoLog) const
+	void _getInfoLog(CString& strInfoLog) const
 	{
-		stInfoLog = L"NA";
+		strInfoLog = L"NA";
 
 		int iLength = 0;
 		glGetProgramiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -479,17 +479,17 @@ protected: // Methods
 
 			glGetProgramInfoLog(m_iID, iLength, &iCharsWritten, szInfoLog);
 
-			stInfoLog = szInfoLog;
+			strInfoLog = szInfoLog;
 			delete[] szInfoLog;
 		}
 	}
 
 	void _printInfoLog() const
 	{
-		CString stInfoLog;
-		_getInfoLog(stInfoLog);
+		CString strInfoLog;
+		_getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), stInfoLog, stInfoLog, MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
 	}
 
 	glm::vec3 _getUniform3f(GLint iUniform) const
@@ -1916,28 +1916,28 @@ public: // Methods
 
 		if (!m_pVertexShader->load(iVertexShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader loading error!", stInfoLog, MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader loading error!", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader loading error!", stInfoLog, MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader loading error!", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pVertexShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader compiling error!", stInfoLog, MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader compiling error!", stInfoLog, MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -1949,7 +1949,7 @@ public: // Methods
 
 		if (!m_pOGLProgram->_link())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Program linking error!", stInfoLog, MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Program linking error!", L"Error", MB_ICONERROR | MB_OK);
 		}
 
 		m_matModelView = glm::identity<glm::mat4>();
