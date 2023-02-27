@@ -396,15 +396,15 @@ void CIFCModel::ScaleAndCenter()
 		m_fBoundingSphereDiameter);
 
 	bool bScale = true;
-	if (((m_fXmax - m_fXmin) != 0.f) && (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.001))
+	if (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.0001)
 	{
 		bScale = false;
 	}
-	else if (((m_fYmax - m_fYmin) != 0.f) && (((m_fYmax - m_fYmin) / m_fBoundingSphereDiameter) <= 0.001))
+	else if (((m_fYmax - m_fYmin) / m_fBoundingSphereDiameter) <= 0.0001)
 	{
 		bScale = false;
 	}
-	else if (((m_fZmax - m_fZmin) != 0.f) && (((m_fZmax - m_fZmin) / m_fBoundingSphereDiameter) <= 0.001))
+	else if (((m_fZmax - m_fZmin) / m_fBoundingSphereDiameter) <= 0.0001)
 	{
 		bScale = false;
 	}
