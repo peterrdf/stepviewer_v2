@@ -209,7 +209,6 @@ void CSTEPModel::ScaleAndCenter()
 	/*
 	* Min/Max
 	*/
-
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -257,14 +256,26 @@ void CSTEPModel::ScaleAndCenter()
 		m_fZmax = 1.;
 	}
 
+	/*
+	* World
+	*/
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+	TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f",
+		m_fBoundingSphereDiameter);
+
 	/*
 	* Scale
 	*/
-
 	itDefinition = m_mapProductDefinitions.begin();
 	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
 	{
@@ -279,7 +290,6 @@ void CSTEPModel::ScaleAndCenter()
 	/*
 	* Min/max
 	*/
-
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -326,9 +336,22 @@ void CSTEPModel::ScaleAndCenter()
 		m_fZmax = 1.;
 	}
 
+	/*
+	* World
+	*/
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	TRACE(L"\n*** Scale and Center II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f",
+		m_fBoundingSphereDiameter);
 }
 
 // ------------------------------------------------------------------------------------------------
