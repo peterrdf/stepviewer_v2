@@ -185,7 +185,7 @@ public: // Methods
 		CString stInfoLog;
 		getInfoLog(stInfoLog);
 
-		AfxMessageBox(stInfoLog);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"TODO.", stInfoLog, MB_ICONERROR | MB_OK);
 	}
 };
 
@@ -489,7 +489,7 @@ protected: // Methods
 		CString stInfoLog;
 		_getInfoLog(stInfoLog);
 
-		AfxMessageBox(stInfoLog);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), stInfoLog, stInfoLog, MB_ICONERROR | MB_OK);
 	}
 
 	glm::vec3 _getUniform3f(GLint iUniform) const
@@ -1916,28 +1916,28 @@ public: // Methods
 
 		if (!m_pVertexShader->load(iVertexShader, iResourceType))
 		{
-			AfxMessageBox(_T("Vertex shader loading error!"));
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader loading error!", stInfoLog, MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
 		{
-			AfxMessageBox(_T("Fragment shader loading error!"));
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader loading error!", stInfoLog, MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pVertexShader->compile())
 		{
-			AfxMessageBox(_T("Vertex shader compiling error!"));
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader compiling error!", stInfoLog, MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->compile())
 		{
-			AfxMessageBox(_T("Fragment shader compiling error!"));
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader compiling error!", stInfoLog, MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -1949,7 +1949,7 @@ public: // Methods
 
 		if (!m_pOGLProgram->_link())
 		{
-			AfxMessageBox(_T("Program linking error!"));
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Program linking error!", stInfoLog, MB_ICONERROR | MB_OK);
 		}
 
 		m_matModelView = glm::identity<glm::mat4>();
