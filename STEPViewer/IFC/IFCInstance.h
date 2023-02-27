@@ -112,8 +112,17 @@ public: // Methods
 	GLuint& VBO();
 	GLsizei& VBOOffset();
 	
-	void CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax);
-	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
+	void CalculateMinMax(
+		float& fXmin, float& fXmax, 
+		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax);
+
+	void ScaleAndCenter(
+		float fXmin, float fXmax, 
+		float fYmin, float fYmax, 
+		float fZmin, float fZmax, 
+		float fResoltuion,
+		bool bScale);
 
 private: // Methods
 

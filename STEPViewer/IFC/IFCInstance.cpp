@@ -281,7 +281,10 @@ GLsizei& CIFCInstance::VBOOffset()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCInstance::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax)
+void CIFCInstance::CalculateMinMax(
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
 {
 	
 	if (!hasGeometry())
@@ -385,7 +388,12 @@ void CIFCInstance::CalculateMinMax(float& fXmin, float& fXmax, float& fYmin, flo
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
+void CIFCInstance::ScaleAndCenter(
+	float fXmin, float fXmax, 
+	float fYmin, float fYmax, 
+	float fZmin, float fZmax, 
+	float fResoltuion,
+	bool bScale)
 {
 	if (!hasGeometry())
 	{
@@ -408,9 +416,12 @@ void CIFCInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 		getVertices()[(iVertex * VERTEX_LENGTH) + 2] = getVertices()[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		getVertices()[(iVertex * VERTEX_LENGTH)] = getVertices()[(iVertex * VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-		getVertices()[(iVertex * VERTEX_LENGTH) + 1] = getVertices()[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-		getVertices()[(iVertex * VERTEX_LENGTH) + 2] = getVertices()[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		if (bScale)
+		{
+			getVertices()[(iVertex * VERTEX_LENGTH)] = getVertices()[(iVertex * VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+			getVertices()[(iVertex * VERTEX_LENGTH) + 1] = getVertices()[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+			getVertices()[(iVertex * VERTEX_LENGTH) + 2] = getVertices()[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		}
 	}
 }
 

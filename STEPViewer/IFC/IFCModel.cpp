@@ -294,45 +294,45 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::Clean()
 {
-	if (m_iModel != 0)
-	{
-		sdaiCloseModel(m_iModel);
-		m_iModel = 0;
-	}
+if (m_iModel != 0)
+{
+	sdaiCloseModel(m_iModel);
+	m_iModel = 0;
+}
 
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
+for (auto pInstance : m_vecInstances)
+{
+	delete pInstance;
+}
+m_vecInstances.clear();
 
-	auto itUnits = m_mapUnits.begin();
-	for (; itUnits != m_mapUnits.end(); itUnits++)
-	{
-		delete itUnits->second;
-	}
-	m_mapUnits.clear();
+auto itUnits = m_mapUnits.begin();
+for (; itUnits != m_mapUnits.end(); itUnits++)
+{
+	delete itUnits->second;
+}
+m_mapUnits.clear();
 
-	auto itEntities = m_mapEntities.begin();
-	for (; itEntities != m_mapEntities.end(); itEntities++)
-	{
-		delete itEntities->second;
-	}
-	m_mapEntities.clear();
+auto itEntities = m_mapEntities.begin();
+for (; itEntities != m_mapEntities.end(); itEntities++)
+{
+	delete itEntities->second;
+}
+m_mapEntities.clear();
 
-	auto itClass = m_mapClasses.begin();
-	for (; itClass != m_mapClasses.end(); itClass++)
-	{
-		delete itClass->second;
-	}
-	m_mapClasses.clear();
+auto itClass = m_mapClasses.begin();
+for (; itClass != m_mapClasses.end(); itClass++)
+{
+	delete itClass->second;
+}
+m_mapClasses.clear();
 
-	auto itProperty = m_mapProperties.begin();
-	for (; itProperty != m_mapProperties.end(); itProperty++)
-	{
-		delete itProperty->second;
-	}
-	m_mapProperties.clear();
+auto itProperty = m_mapProperties.begin();
+for (; itProperty != m_mapProperties.end(); itProperty++)
+{
+	delete itProperty->second;
+}
+m_mapProperties.clear();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -357,7 +357,10 @@ void CIFCModel::ScaleAndCenter()
 	auto itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itIinstance->second->CalculateMinMax(
+			m_fXmin, m_fXmax, 
+			m_fYmin, m_fYmax, 
+			m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -392,6 +395,28 @@ void CIFCModel::ScaleAndCenter()
 	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f",
 		m_fBoundingSphereDiameter);
 
+	bool bScale = true;
+	if (((m_fXmax - m_fXmin) != 0.f) && (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.001))
+	{
+		bScale = false;
+	}
+	else if (((m_fYmax - m_fYmin) != 0.f) && (((m_fYmax - m_fYmin) / m_fBoundingSphereDiameter) <= 0.001))
+	{
+		bScale = false;
+	}
+	else if (((m_fZmax - m_fZmin) != 0.f) && (((m_fZmax - m_fZmin) / m_fBoundingSphereDiameter) <= 0.001))
+	{
+		bScale = false;
+	}
+
+	if (!bScale)
+	{
+		CString strWarning = L"'Scale' algorithm cannot be used.\n";
+		strWarning += L"Please, use 'Zoom to' to explore the model.";
+
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strWarning, L"Warning", MB_ICONWARNING | MB_OK);
+	}
+
 	/*
 	* Scale and Center
 	*/
@@ -402,7 +427,8 @@ void CIFCModel::ScaleAndCenter()
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter);
+			m_fBoundingSphereDiameter,
+			bScale);
 	}
 
 	/*
@@ -420,7 +446,10 @@ void CIFCModel::ScaleAndCenter()
 	{
 		if (itIinstance->second->getEnable())
 		{
-			itIinstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+			itIinstance->second->CalculateMinMax(
+				m_fXmin, m_fXmax, 
+				m_fYmin, m_fYmax, 
+				m_fZmin, m_fZmax);
 		}
 	}
 
@@ -470,9 +499,12 @@ void CIFCModel::ScaleAndCenter()
 	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	if (bScale)
+	{
+		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
