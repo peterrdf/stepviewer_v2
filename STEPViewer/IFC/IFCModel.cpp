@@ -396,14 +396,14 @@ void CIFCModel::ScaleAndCenter()
 	* Scale and Center
 	*/
 	itIinstance = m_mapInstances.begin();
-	for (; itIinstance != m_mapInstances.end(); itIinstance++)
+	/*for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
 		itIinstance->second->ScaleAndCenter(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
 			m_fBoundingSphereDiameter);
-	}
+	}*/
 
 	/*
 	* Min/Max

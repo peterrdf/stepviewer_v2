@@ -75,6 +75,5 @@ public: // Methods
 
 	// Draw
 	virtual void Draw(CDC* pDC) PURE;
-	virtual void Redraw() PURE;
 };
 

@@ -65,7 +65,6 @@ public: // Methods
 
 	// COpenGLView
 	virtual void Draw(CDC* pDC) override;
-	virtual void Redraw() override { _redraw(); }
 
 private: // Methods
 	
