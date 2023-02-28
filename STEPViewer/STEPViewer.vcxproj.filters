@@ -170,6 +170,15 @@
     <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IFC\IFCSchemaView.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SearchSchemaDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\IFCSchemaViewConsts.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -282,6 +291,12 @@
     </ClCompile>
     <ClCompile Include="IFCDecompContTreeView.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCSchemaView.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
