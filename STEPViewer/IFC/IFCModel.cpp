@@ -412,7 +412,7 @@ void CIFCModel::ScaleAndCenter()
 	if (!bScale)
 	{
 		CString strWarning = L"'Scale' algorithm cannot be used.\n";
-		strWarning += L"Please, use 'Zoom to' to explore the model.";
+		strWarning += L"Please, use 'Zoom to/extent' to explore the model.";
 
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strWarning, L"Warning", MB_ICONWARNING | MB_OK);
 	}
