@@ -170,6 +170,9 @@
     <ClInclude Include="IFC\IFCSchemaViewConsts.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="IFC\IFCRelationsView.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -282,6 +285,9 @@
     </ClCompile>
     <ClCompile Include="IFC\SearchSchemaDialog.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCRelationsView.cpp">
+      <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

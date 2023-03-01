@@ -114,6 +114,7 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 		tvInsertStruct.item.lParam = (LPARAM)pIFCEntity;
 
 		HTREEITEM hAttribute = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
+		VERIFY(hAttribute != NULL);
 	} // for (size_t iAttribute = ...
 }
 
@@ -183,13 +184,13 @@ pair<int, int> CIFCSchemaView::GetInstancesCount(CIFCEntity* pEntity) const
 }
 
 // ----------------------------------------------------------------------------
-void CIFCSchemaView::OnNMClickTreeIFC(NMHDR * pNMHDR, LRESULT * pResult)
+void CIFCSchemaView::OnNMClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT * pResult)
 {
 	*pResult = 0;
 }
 
 // ----------------------------------------------------------------------------
-void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
+void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 1;
 
@@ -318,10 +319,8 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 // ----------------------------------------------------------------------------
-void CIFCSchemaView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
+void CIFCSchemaView::OnTvnItemexpandingTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
-
 	*pResult = 0;
 }
 
@@ -440,15 +439,15 @@ void CIFCSchemaView::ResetView()
 
 		case enumSTEPModelType::IFC:
 		{
-			auto pModel = pController->GetModel()->As<CIFCModel>();
-			if (pModel == nullptr)
+			auto pIFCModel = pController->GetModel()->As<CIFCModel>();
+			if (pIFCModel == nullptr)
 			{
 				ASSERT(FALSE);
 
 				return;
 			}
 
-			LoadModel(pModel);
+			LoadModel(pIFCModel);
 		}
 		break;
 
@@ -460,7 +459,7 @@ void CIFCSchemaView::ResetView()
 	} // switch (pModel ->GetType())
 }
 
-void CIFCSchemaView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CIFCSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
 	//CTreeCtrl* pWndTree = (CTreeCtrl*) &m_ifcTreeCtrl;
 	//ASSERT_VALID(pWndTree);

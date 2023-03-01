@@ -146,11 +146,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndIFCSchema.EnableDocking(CBRS_ALIGN_ANY);
+	m_wndIFCRelations.EnableDocking(CBRS_ALIGN_ANY);
 
 	DockPane(&m_wndFileView);
 
 	CDockablePane* pTabbedBar = nullptr;
 	m_wndIFCSchema.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
+	m_wndIFCRelations.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndProperties);
@@ -253,7 +255,13 @@ BOOL CMainFrame::CreateDockingWindows()
 	CString strCaption;
 	bNameValid = strCaption.LoadString(IDS_FILE_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndFileView.Create(strCaption, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
+	if (!m_wndFileView.Create(
+		strCaption, 
+		this, 
+		CRect(0, 0, 200, 200), 
+		TRUE, 
+		ID_VIEW_FILEVIEW, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create File View window\n");
 		return FALSE; // failed to create
@@ -264,12 +272,37 @@ BOOL CMainFrame::CreateDockingWindows()
 	// Create IFC Schema View
 	m_wndIFCSchema.SetController(pController);
 
-	CString strIFCSchema;
-	bNameValid = strIFCSchema.LoadString(IDS_IFC_SCHEMA_VIEW);
+	bNameValid = strCaption.LoadString(IDS_IFC_SCHEMA_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndIFCSchema.Create(strIFCSchema, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_IFC_SCHEMA, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	if (!m_wndIFCSchema.Create(
+		strCaption, 
+		this, 
+		CRect(0, 0, 200, 200), 
+		TRUE, 
+		ID_VIEW_IFC_SCHEMA, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create IFC Schema window\n");
+		return FALSE; // failed to create
+	}
+	// ********************************************************************************************
+
+	// ********************************************************************************************
+	// Create IFC Relations/Attributes View
+	m_wndIFCRelations.SetController(pController);
+
+	bNameValid = strCaption.LoadString(IDS_IFC_RELATIONS_VIEW);
+	ASSERT(bNameValid);
+
+	if (!m_wndIFCRelations.Create(
+		strCaption, 
+		this, 
+		CRect(0, 0, 200, 200), 
+		TRUE, 
+		ID_VIEW_RELATIONS,
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	{
+		TRACE0("Failed to create IFC Relations/Attributes window\n");
 		return FALSE; // failed to create
 	}
 	// ********************************************************************************************
@@ -278,10 +311,16 @@ BOOL CMainFrame::CreateDockingWindows()
 	// Create IFC Instance Properties View
 	m_wndProperties.SetController(pController);
 	
-	CString strPropertiesWnd;
-	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
+	bNameValid = strCaption.LoadString(IDS_PROPERTIES_WND);
 	ASSERT(bNameValid);
-	if (!m_wndProperties.Create(strPropertiesWnd, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+
+	if (!m_wndProperties.Create(
+		strCaption, 
+		this, 
+		CRect(0, 0, 200, 200), 
+		TRUE, 
+		ID_VIEW_PROPERTIESWND, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create Properties window\n");
 		return FALSE; // failed to create
@@ -294,15 +333,41 @@ BOOL CMainFrame::CreateDockingWindows()
 
 void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 {
-	HICON hFileViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
+	HICON hFileViewIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(), 
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), 
+		IMAGE_ICON, 
+		::GetSystemMetrics(SM_CXSMICON), 
+		::GetSystemMetrics(SM_CYSMICON), 
+		0);
 	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
 
-	HICON hIFCSchemaIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
+	HICON hIFCSchemaIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(), 
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
+		IMAGE_ICON, 
+		::GetSystemMetrics(SM_CXSMICON), 
+		::GetSystemMetrics(SM_CYSMICON), 
+		0);
 	m_wndIFCSchema.SetIcon(hIFCSchemaIcon, FALSE);
 
-	HICON hPropertiesBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndProperties.SetIcon(hPropertiesBarIcon, FALSE);
+	HICON hIFCRelationsIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(), 
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
+		IMAGE_ICON, 
+		::GetSystemMetrics(SM_CXSMICON), 
+		::GetSystemMetrics(SM_CYSMICON), 
+		0);
+	m_wndIFCRelations.SetIcon(hIFCRelationsIcon, FALSE);
 
+	HICON hPropertiesBarIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(), 
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), 
+		IMAGE_ICON, 
+		::GetSystemMetrics(SM_CXSMICON), 
+		::GetSystemMetrics(SM_CYSMICON), 
+		0);
+	m_wndProperties.SetIcon(hPropertiesBarIcon, FALSE);
 }
 
 // CMainFrame diagnostics

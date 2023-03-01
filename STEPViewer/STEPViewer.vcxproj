@@ -210,6 +210,7 @@
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="IFC\IFCPropertyRestriction.h" />
+    <ClInclude Include="IFC\IFCRelationsView.h" />
     <ClInclude Include="IFC\IFCSchemaView.h" />
     <ClInclude Include="IFC\IFCSchemaViewConsts.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCPropertyRestriction.cpp" />
+    <ClCompile Include="IFC\IFCRelationsView.cpp" />
     <ClCompile Include="IFC\IFCSchemaView.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\IntIFCProperty.cpp" />
