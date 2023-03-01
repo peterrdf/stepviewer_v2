@@ -395,7 +395,6 @@ int CIFCSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// All commands will be routed via this control , not via the parent frame:
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
-	ResetView();
 	AdjustLayout();
 
 	//  Search

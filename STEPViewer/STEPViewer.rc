@@ -796,6 +796,7 @@ BEGIN
     IDS_TOOLBAR_STANDARD         "Standard"
     IDS_TOOLBAR_CUSTOMIZE        "Customize..."
     IDS_VIEW_INSTANCE_PROPERTIES "View Geometric Properties"
+    IDS_IFC_SCHEMA_VIEW          "Schema"
 END
 
 STRINGTABLE

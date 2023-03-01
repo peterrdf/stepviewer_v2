@@ -44,9 +44,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClassView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ViewTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,12 +57,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SearchClassesDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileView.h">
@@ -196,16 +187,10 @@
     <ClCompile Include="STEPViewerView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClassView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ViewTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropertiesWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SearchClassesDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Assembly.cpp">

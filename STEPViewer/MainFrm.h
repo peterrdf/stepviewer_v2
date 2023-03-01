@@ -6,8 +6,8 @@
 
 #include "STEPController.h"
 #include "FileView.h"
-#include "ClassView.h"
 #include "PropertiesWnd.h"
+#include "IFCSchemaView.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -43,13 +43,14 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBar       m_wndToolBar;
-	CMFCStatusBar     m_wndStatusBar;
-	CMFCToolBarImages m_UserImages;
-	CFileView         m_wndFileView;
-	CClassView        m_wndClassView;
-	CPropertiesWnd    m_wndProperties;
+	CMFCMenuBar         m_wndMenuBar;
+	CMFCToolBar         m_wndToolBar;
+	CMFCStatusBar       m_wndStatusBar;
+	CMFCToolBarImages   m_UserImages;
+	CFileView           m_wndFileView;
+	CIFCSchemaView		m_wndIFCSchema;
+	//CIFCRelationsView	m_wndIFCRelations;
+	CPropertiesWnd      m_wndProperties;
 
 // Generated message map functions
 protected:
@@ -60,8 +61,6 @@ protected:
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	afx_msg void OnViewFileView();
 	afx_msg void OnUpdateViewFileView(CCmdUI* pCmdUI);
-	afx_msg void OnViewClassView();
-	afx_msg void OnUpdateViewClassView(CCmdUI* pCmdUI);
 	afx_msg void OnViewPropertiesWindow();
 	afx_msg void OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()

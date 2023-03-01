@@ -221,7 +221,6 @@
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
-    <ClInclude Include="SearchClassesDialog.h" />
     <ClInclude Include="SearchInstancesDialog.h" />
     <ClInclude Include="SimpleOGLPipeline.h" />
     <ClInclude Include="STEPInstance.h" />
@@ -233,8 +232,6 @@
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
     <ClInclude Include="STEPViewerView.h" />
-    <ClInclude Include="ClassView.h" />
-    <ClInclude Include="ClassViewConsts.h" />
     <ClInclude Include="FileViewConsts.h" />
     <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
@@ -274,7 +271,6 @@
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />
-    <ClCompile Include="SearchClassesDialog.cpp" />
     <ClCompile Include="SearchInstancesDialog.cpp" />
     <ClCompile Include="STEPInstance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
@@ -283,7 +279,6 @@
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />
     <ClCompile Include="STEPViewerView.cpp" />
-    <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OpenGLSTEPView.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
