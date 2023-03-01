@@ -30,8 +30,36 @@ static char THIS_FILE[]=__FILE__;
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCRelationsView::OnModelChanged() /*override*/
 {
-	vector<int_t> vecInstances;
-	LoadProperties(0, NULL, vecInstances);
+	LoadProperties(0, NULL, vector<int_t>());
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCRelationsView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
+		nullptr;
+
+	vector<CIFCInstance*> vecInstances;
+	if (pSelectedInstance != nullptr)
+	{
+		vecInstances.push_back(pSelectedInstance);
+	}
+	
+	LoadInstances(vecInstances);
 }
 
 // ------------------------------------------------------------------------------------------------
