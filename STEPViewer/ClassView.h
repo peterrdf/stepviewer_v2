@@ -22,19 +22,17 @@ class CClassView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Search
 	CSearchClassesDialog* m_pSearchDialog;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Overridden
-	virtual void OnModelChanged();
+	// CSTEPView
+	virtual void OnModelChanged() override;
 
 private: // Methods
 
-public:
+public: // Methods
+
 	CClassView();
 	virtual ~CClassView();
 

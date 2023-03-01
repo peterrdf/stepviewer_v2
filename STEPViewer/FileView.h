@@ -36,13 +36,10 @@ class CFileView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
 	CSTEPTreeViewBase* m_pSTEPTreeView;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// CSTEPView
 	virtual void OnModelChanged();	
 

@@ -37,7 +37,7 @@ public:
 IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CClassView::OnModelChanged()
+/*virtual*/ void CClassView::OnModelChanged() /*override*/
 {
 }
 
@@ -126,7 +126,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//  Search
 	m_pSearchDialog = new CSearchClassesDialog(&m_wndClassView);
-	m_pSearchDialog->Create(IDD_DIALOG_SEARCH_CLASSES, this);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }

@@ -182,7 +182,7 @@ void CSearchSchemaDialog::Reset()
 IMPLEMENT_DYNAMIC(CSearchSchemaDialog, CDialogEx)
 
 CSearchSchemaDialog::CSearchSchemaDialog(CViewTree* pIFCTreeCtrl)
-	: CDialogEx(IDD_DIALOG_SEARCH_DECOMP_CONT, nullptr)
+	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
 	, m_enSearchWhere(swAll)
 	, m_hSearchResult(NULL)

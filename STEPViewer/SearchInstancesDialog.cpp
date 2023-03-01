@@ -193,7 +193,7 @@ void CSearchInstancesDialog::Reset()
 IMPLEMENT_DYNAMIC(CSearchInstancesDialog, CDialogEx)
 
 CSearchInstancesDialog::CSearchInstancesDialog(CViewTree* pTreeCtrl)
-	: CDialogEx(IDD_DIALOG_SEARCH_INSTANCES, nullptr)
+	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pTreeCtrl(pTreeCtrl)
 	, m_enSearchWhere(swAll)
 	, m_hSearchResult(nullptr)

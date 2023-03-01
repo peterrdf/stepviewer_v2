@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "IFCView.h"
-#include "IFCController.h"
+// ------------------------------------------------------------------------------------------------
+#include "ViewTree.h"
+#include "STEPView.h"
 #include "ViewTree.h"
 #include "IFCUnit.h"
 #include "IFCEntity.h"
@@ -11,6 +12,10 @@
 #include <map>
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
+class CIFCModel;
+
+// ------------------------------------------------------------------------------------------------
 class CIFCSchemaViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -28,44 +33,24 @@ class CIFCSchemaViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CIFCSchemaView 
 	: public CDockablePane
-	, public CIFCView
+	, public CSTEPView
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Search
 	CSearchSchemaDialog* m_pSearchDialog;
 
-private: // Methods
+protected:
 
-	// --------------------------------------------------------------------------------------------
-	// CIFCView
-	virtual void OnModelLoadedEvent(CIFCModel* pModel);
+	// CSTEPView
+	virtual void OnModelChanged() override;
 
-	// --------------------------------------------------------------------------------------------
-	// CIFCView
-	virtual void OnActiveModelChangedEvent(const CIFCView * pSender);	
+private: // Methods	
 
-	// --------------------------------------------------------------------------------------------
-	// CIFCView
-	virtual void OnAllModelsDeleted();
-
-	// --------------------------------------------------------------------------------------------
-	// Load an IFC model
-	void LoadModel(CIFCModel * pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Attributes
-	void LoadAttributes(CIFCEntity * pIFCEntity, HTREEITEM hParent);
-
-	// --------------------------------------------------------------------------------------------
-	// Loads an IFC Entity
-	void LoadEntity(CIFCEntity * pIFCEntity, HTREEITEM hParent);
-
-	// --------------------------------------------------------------------------------------------
-	// Count the Instances for this Entity and all Sub-types
-	pair<int, int> GetInstancesCount(CIFCEntity * pEntity) const;
+	void LoadModel(CIFCModel* pModel);
+	void LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent);
+	void LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREEITEM hParent);
+	pair<int, int> GetInstancesCount(CIFCEntity* pEntity) const;
 
 // Construction
 public:

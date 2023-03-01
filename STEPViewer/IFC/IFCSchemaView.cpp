@@ -3,7 +3,7 @@
 #include "mainfrm.h"
 #include "IFCSchemaView.h"
 #include "Resource.h"
-#include "IFCVisualExplorer.h"
+#include "STEPViewer.h"
 #include "IFCModel.h"
 #include "IFCSchemaViewConsts.h"
 
@@ -13,34 +13,21 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// CIFCSchemaView
-
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCSchemaView::OnModelLoadedEvent(CIFCModel* pModel)
+/*virtual*/ void CIFCSchemaView::OnModelChanged() /*override*/
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCSchemaView::OnActiveModelChangedEvent(const CIFCView * pSender)
+void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 {
-	ResetView();
-}
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCSchemaView::OnAllModelsDeleted()
-{
-	ResetView();
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadModel(CIFCModel * pModel)
-{
-	ASSERT(pModel != NULL);
-
-	CIFCController * pController = GetController();
-	ASSERT(pController != NULL);
+		return;
+	}
 
 	/**********************************************************************************************
 	* Model
@@ -54,15 +41,11 @@ void CIFCSchemaView::LoadModel(CIFCModel * pModel)
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
-
-	if (pController->GetActiveModel() == pModel)
-	{
-		m_ifcTreeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
-	}
+	m_ifcTreeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	//*********************************************************************************************
 
 	// Roots **************************************************************************************
-	const map<int_t, CIFCEntity *> & mapEntities = pModel->getEntities();
+	auto& mapEntities = pModel->GetEntities();
 	if (mapEntities.empty())
 	{
 		return;
@@ -84,7 +67,7 @@ void CIFCSchemaView::LoadModel(CIFCModel * pModel)
 	map<wstring, CIFCEntity *>::iterator itRoot = mapRoots.begin();
 	for (; itRoot != mapRoots.end(); itRoot++)
 	{
-		LoadEntity(itRoot->second, hModel);
+		LoadEntity(pModel, itRoot->second, hModel);
 	}
 	// ********************************************************************************************	
 
@@ -92,7 +75,7 @@ void CIFCSchemaView::LoadModel(CIFCModel * pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadAttributes(CIFCEntity * pIFCEntity, HTREEITEM hParent)
+void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 {
 	ASSERT(pIFCEntity != NULL);
 
@@ -135,12 +118,10 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity * pIFCEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadEntity(CIFCEntity * pIFCEntity, HTREEITEM hParent)
+void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREEITEM hParent)
 {
-	CIFCController * pController = GetController();
-	ASSERT(pController != NULL);
-
-	CIFCModel * pModel = pController->GetActiveModel();
+	ASSERT(pModel != nullptr);
+	ASSERT(pIFCEntity != nullptr);
 
 	/*
 	* Entity
@@ -178,13 +159,13 @@ void CIFCSchemaView::LoadEntity(CIFCEntity * pIFCEntity, HTREEITEM hParent)
 
 		for (size_t iSubType = 0; iSubType < pIFCEntity->getSubTypes().size(); iSubType++)
 		{
-			LoadEntity(pIFCEntity->getSubTypes()[iSubType], hSubType);
+			LoadEntity(pModel, pIFCEntity->getSubTypes()[iSubType], hSubType);
 		}
 	} // if (pIFCEntity->getSubTypes().size() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
-pair<int, int> CIFCSchemaView::GetInstancesCount(CIFCEntity * pEntity) const
+pair<int, int> CIFCSchemaView::GetInstancesCount(CIFCEntity* pEntity) const
 {
 	ASSERT(pEntity != NULL);
 
@@ -211,9 +192,6 @@ void CIFCSchemaView::OnNMClickTreeIFC(NMHDR * pNMHDR, LRESULT * pResult)
 void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	*pResult = 1;
-
-	CIFCController * pController = GetController();
-	ASSERT(pController != NULL);
 
 	DWORD dwPosition = GetMessagePos();
 	CPoint point(LOWORD(dwPosition), HIWORD(dwPosition));
@@ -304,31 +282,32 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
 
 		case IDS_VIEW_IFC_RELATIONS:
 		{
-			pController->FireOnViewRelations(this, pIFCEntity);
+			ASSERT(0); // TODO
+			//pController->FireOnViewRelations(this, pIFCEntity);
 		}
 		break;
 
 		case IDS_VIEW_INSTANCE_PROPERTIES:
 		{
-			pController->FireOnViewInstanceProperties(this, pIFCEntity);
+			ASSERT(0); // TODO
+			//pController->FireOnViewInstanceProperties(this, pIFCEntity);
 		}
 		break;
 
 		case IDS_SAVE_SCHEMA:
 		{
-			CIFCModel* pModel = pController->GetActiveModel();
-			ASSERT(pModel != NULL);
+			ASSERT(0); // TODO
+			//CIFCModel* pModel = pController->GetActiveModel();
+			//ASSERT(pModel != NULL);
 
-			pModel->SaveSchema();
+			//pModel->SaveSchema();
 		}
 		break;
 
 		case IDS_LOAD_SCHEMA:
 		{
-			CIFCModel* pModel = pController->GetActiveModel();
-			ASSERT(pModel != NULL);
-
-			pModel->LoadSchema();
+			ASSERT(0); // TODO
+			//pModel->LoadSchema();
 
 			ResetView();
 		}
@@ -421,7 +400,7 @@ int CIFCSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//  Search
 	m_pSearchDialog = new CSearchSchemaDialog(&m_ifcTreeCtrl);
-	m_pSearchDialog->Create(IDD_DIALOG_SEARCH_SCHEMA, this);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }
@@ -436,44 +415,79 @@ void CIFCSchemaView::ResetView()
 {
 	m_ifcTreeCtrl.DeleteAllItems();	
 
-	CIFCController * pController = GetController();
-	ASSERT(pController != NULL);
-
-	CIFCModel * pModel = pController->GetActiveModel();
-
-	if (pModel != NULL)
+	auto pController = GetController();
+	if (pController == nullptr)
 	{
-		LoadModel(pModel);
-	}	
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	switch (pModel->GetType())
+	{
+		case enumSTEPModelType::STEP:
+		{
+			// NA
+		}
+		break;
+
+		case enumSTEPModelType::IFC:
+		{
+			auto pModel = pController->GetModel()->As<CIFCModel>();
+			if (pModel == nullptr)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			LoadModel(pModel);
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Unknown
+		}
+		break;
+	} // switch (pModel ->GetType())
 }
 
 void CIFCSchemaView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_ifcTreeCtrl;
-	ASSERT_VALID(pWndTree);
+	//CTreeCtrl* pWndTree = (CTreeCtrl*) &m_ifcTreeCtrl;
+	//ASSERT_VALID(pWndTree);
 
-	if (pWnd != pWndTree)
-	{
-		CDockablePane::OnContextMenu(pWnd, point);
-		return;
-	}
+	//if (pWnd != pWndTree)
+	//{
+	//	CDockablePane::OnContextMenu(pWnd, point);
+	//	return;
+	//}
 
-	if (point != CPoint(-1, -1))
-	{
-		// Select clicked item:
-		CPoint ptTree = point;
-		pWndTree->ScreenToClient(&ptTree);
+	//if (point != CPoint(-1, -1))
+	//{
+	//	// Select clicked item:
+	//	CPoint ptTree = point;
+	//	pWndTree->ScreenToClient(&ptTree);
 
-		UINT flags = 0;
-		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-		if (hTreeItem != NULL)
-		{
-			pWndTree->SelectItem(hTreeItem);
-		}
-	}
+	//	UINT flags = 0;
+	//	HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
+	//	if (hTreeItem != NULL)
+	//	{
+	//		pWndTree->SelectItem(hTreeItem);
+	//	}
+	//}
 
-	pWndTree->SetFocus();
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
+	//pWndTree->SetFocus();
+	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
 void CIFCSchemaView::AdjustLayout()

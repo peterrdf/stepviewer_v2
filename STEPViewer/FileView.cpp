@@ -51,22 +51,21 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CFileView::OnModelChanged()
 {
-	ASSERT(GetController() != nullptr);
-
-	if (GetController()->GetModel() == nullptr)
+	auto pController = GetController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = GetController()->GetModel();
+	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
-	}
+	}	
 
 	delete m_pSTEPTreeView;
 	m_pSTEPTreeView = nullptr;
@@ -76,7 +75,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		case enumSTEPModelType::STEP:
 		{
 			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_wndFileView);
-			m_pSTEPTreeView->SetController(GetController());
+			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
 		break;
@@ -84,7 +83,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		case enumSTEPModelType::IFC:
 		{
 			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_wndFileView);
-			m_pSTEPTreeView->SetController(GetController());
+			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
 		break;
@@ -135,8 +134,15 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return -1;
+	}
+
+	pController->RegisterView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -286,8 +292,15 @@ void CFileView::OnChangeVisualStyle()
 
 void CFileView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	pController->UnRegisterView(this);
 
 	__super::OnDestroy();
 }

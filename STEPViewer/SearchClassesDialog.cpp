@@ -176,7 +176,7 @@ void CSearchClassesDialog::Reset()
 IMPLEMENT_DYNAMIC(CSearchClassesDialog, CDialogEx)
 
 CSearchClassesDialog::CSearchClassesDialog(CViewTree* pTreeCtrl)
-	: CDialogEx(IDD_DIALOG_SEARCH_CLASSES, nullptr)
+	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pTreeCtrl(pTreeCtrl)
 	, m_enSearchWhere(swAll)
 	, m_hSearchResult(nullptr)

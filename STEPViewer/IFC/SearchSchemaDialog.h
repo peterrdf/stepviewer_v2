@@ -72,7 +72,8 @@ public:
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_SEARCH_SCHEMA };
+	enum { IDD = IDD_DIALOG_SEARCH
+	};
 #endif
 
 protected:
