@@ -224,7 +224,6 @@
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
     <ClInclude Include="SearchInstancesDialog.h" />
-    <ClInclude Include="SimpleOGLPipeline.h" />
     <ClInclude Include="STEPInstance.h" />
     <ClInclude Include="STEPItemData.h" />
     <ClInclude Include="STEPModelBase.h" />

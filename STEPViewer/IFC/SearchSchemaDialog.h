@@ -10,59 +10,31 @@ class CSearchSchemaDialog : public CDialogEx
 
 private: // Declarations
 
-	enum enumSearchWhere {
-		swAll = 0,
-		swEntities = 1,
-		swAttributes = 2
+	enum class enumSearchFilter {
+		All = 0,
+		Entities = 1,
+		Attributes = 2
 	};
 
 private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// IFC Tree
-	CViewTree * m_pIFCTreeCtrl;
-
-	// --------------------------------------------------------------------------------------------
-	// Filter
-	enumSearchWhere m_enSearchWhere;
-
-	// --------------------------------------------------------------------------------------------
-	// Last found HTREEITEM
+	
+	CViewTree* m_pIFCTreeCtrl;	
+	enumSearchFilter m_enSearchFilter;
 	HTREEITEM m_hSearchResult;
-
-	// --------------------------------------------------------------------------------------------
-	// No more results
 	BOOL m_bEndOfSearch;
 
 private: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Search
 	BOOL ContainsText(HTREEITEM hItem, const CString& strText);
-
-	// --------------------------------------------------------------------------------------------
-	// Select
 	void SelectItem(HTREEITEM hItem);
-
-	// --------------------------------------------------------------------------------------------
-	// Select
 	void UnselectItem(HTREEITEM hItem);
-
-	// --------------------------------------------------------------------------------------------
-	// Search the item's children
 	HTREEITEM SearchChildren(HTREEITEM hParent);
-
-	// --------------------------------------------------------------------------------------------
-	// Search the item's siblings
 	HTREEITEM SearchSiblings(HTREEITEM hItem);
-
-	// --------------------------------------------------------------------------------------------
-	// Search the item's parents
 	HTREEITEM SearchParents(HTREEITEM hItem);
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Resets internal state
 	void Reset();
 
@@ -85,7 +57,7 @@ public:
 	afx_msg void OnEnChangeEditSearchText();
 	CButton m_btnSearch;
 	afx_msg void OnBnClickedButtonSearch();
-	CComboBox m_cmbSearchWhere;
+	CComboBox m_cmbSearchFilter;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeComboSearchFilter();
 };

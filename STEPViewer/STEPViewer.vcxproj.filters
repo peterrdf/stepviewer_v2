@@ -86,9 +86,6 @@
     <ClInclude Include="STEPModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleOGLPipeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCModel.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -149,9 +146,6 @@
     <ClInclude Include="ProductDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFCDecompContTreeView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="_geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,9 +158,6 @@
     <ClInclude Include="IFC\IFCSchemaView.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchSchemaDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCSchemaViewConsts.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -174,6 +165,12 @@
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFC\SearchDecompContDialog.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SearchSchemaDialog.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="IFCDecompContTreeView.h">
       <Filter>IFC</Filter>
     </ClInclude>
   </ItemGroup>
@@ -280,19 +277,19 @@
     <ClCompile Include="ProductDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFCDecompContTreeView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\IFCSchemaView.cpp">
       <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCRelationsView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\SearchDecompContDialog.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFCDecompContTreeView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>

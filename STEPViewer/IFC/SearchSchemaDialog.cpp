@@ -22,7 +22,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	strTextLower.MakeLower();
 
 	// Entities
-	if (m_enSearchWhere == swEntities)
+	if (m_enSearchFilter == enumSearchFilter::Entities)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -41,7 +41,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	}
 
 	// Attributes
-	if (m_enSearchWhere == swAttributes)
+	if (m_enSearchFilter == enumSearchFilter::Attributes)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -184,7 +184,7 @@ IMPLEMENT_DYNAMIC(CSearchSchemaDialog, CDialogEx)
 CSearchSchemaDialog::CSearchSchemaDialog(CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
-	, m_enSearchWhere(swAll)
+	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(NULL)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
@@ -201,7 +201,7 @@ void CSearchSchemaDialog::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_btnSearch);
-	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchWhere);
+	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchFilter);
 }
 
 
@@ -299,11 +299,11 @@ BOOL CSearchSchemaDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_cmbSearchWhere.AddString(_T("(All)"));
-	m_cmbSearchWhere.AddString(_T("Entities"));
-	m_cmbSearchWhere.AddString(_T("Attributes"));
+	m_cmbSearchFilter.AddString(_T("(All)"));
+	m_cmbSearchFilter.AddString(_T("Entities"));
+	m_cmbSearchFilter.AddString(_T("Attributes"));
 
-	m_cmbSearchWhere.SetCurSel(m_enSearchWhere);
+	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -312,5 +312,5 @@ BOOL CSearchSchemaDialog::OnInitDialog()
 // ------------------------------------------------------------------------------------------------
 void CSearchSchemaDialog::OnCbnSelchangeComboSearchFilter()
 {
-	m_enSearchWhere = (enumSearchWhere)m_cmbSearchWhere.GetCurSel();
+	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }
