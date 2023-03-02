@@ -21,7 +21,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	, m_mapModelHTREEITEM()
 	, m_mapInstance2Item()
 	, m_mapSelectedInstances()
-	//, m_pSearchDialog(nullptr)
+	, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
 	m_pImageList->Create(16, 16, ILC_COLOR4, 6, 6);
@@ -58,8 +58,8 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	m_pTreeView->SetItemStateProvider(this);
 
 	//  Search
-	//m_pSearchDialog = new CSearchInstancesDialog(m_pTreeView);
-	//m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeView);
+	m_pSearchDialog = new CSearchDecompContDialog(m_pTreeView);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeView);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 	m_pTreeView->SetItemStateProvider(nullptr);
 
-	//delete m_pSearchDialog;
+	delete m_pSearchDialog;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 {
 	if (!bShow)
 	{
-		//m_pSearchDialog->ShowWindow(SW_HIDE);
+		m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
 }
 
@@ -448,6 +448,18 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 				pController->OnInstancesEnabledStateChanged(this);
 			}
 			break;
+
+			case ID_INSTANCES_SEARCH:
+			{
+				if (!m_pSearchDialog->IsWindowVisible())
+				{
+					m_pSearchDialog->ShowWindow(SW_SHOW);
+				}
+				else
+				{
+					m_pSearchDialog->ShowWindow(SW_HIDE);
+				}
+			}
 		} // switch (uiCommand)
 
 		return;

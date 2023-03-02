@@ -217,6 +217,7 @@
     <ClInclude Include="IFC\IntIFCProperty.h" />
     <ClInclude Include="IFC\ObjectIFCProperty.h" />
     <ClInclude Include="IFC\OpenGLIFCView.h" />
+    <ClInclude Include="IFC\SearchDecompContDialog.h" />
     <ClInclude Include="IFC\SearchSchemaDialog.h" />
     <ClInclude Include="IFC\StringIFCProperty.h" />
     <ClInclude Include="OpenGLView.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="IFC\IntIFCProperty.cpp" />
     <ClCompile Include="IFC\ObjectIFCProperty.cpp" />
     <ClCompile Include="IFC\OpenGLIFCView.cpp" />
+    <ClCompile Include="IFC\SearchDecompContDialog.cpp" />
     <ClCompile Include="IFC\SearchSchemaDialog.cpp" />
     <ClCompile Include="IFC\StringIFCProperty.cpp" />
     <ClCompile Include="OpenGLView.cpp" />

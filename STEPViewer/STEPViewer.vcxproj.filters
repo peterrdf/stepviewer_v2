@@ -173,6 +173,9 @@
     <ClInclude Include="IFC\IFCRelationsView.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="IFC\SearchDecompContDialog.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -287,6 +290,9 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCRelationsView.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchDecompContDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,10 +5,14 @@
 #include "STEPModel.h"
 #include "SearchInstancesDialog.h"
 #include "IFCInstance.h"
-
+#include "SearchDecompContDialog.h"
 #include <map>
 
 using namespace std;
+
+// ************************************************************************************************
+// IFC Model Structure
+// ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
 class CIFCDecompContTreeView 
@@ -16,34 +20,18 @@ class CIFCDecompContTreeView
 	, public CItemStateProvider
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Tree View
+private: // Members	
+	
 	CViewTree* m_pTreeView;
-
-	// --------------------------------------------------------------------------------------------
-	// Images
 	CImageList* m_pImageList;
 
-	// --------------------------------------------------------------------------------------------
-	//  ROOT (HTREEITEM) : CIFCModel *
+	// Cache
 	map<HTREEITEM, CIFCModel*> m_mapModelHTREEITEM;
-
-	// --------------------------------------------------------------------------------------------
-	// CIFCInstance* : HTREEITEM
-	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;
-
-	// --------------------------------------------------------------------------------------------
-	// CIFCInstance* : HTREEITEM
+	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;	
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// Cache; temp variable
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Search
-	//CSearchDecompContDialog* m_pSearchDialog;
+	CSearchDecompContDialog* m_pSearchDialog;
 
 public: // Methods
 
