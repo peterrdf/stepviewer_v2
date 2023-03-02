@@ -419,7 +419,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			} // if (ADB != 0) 
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
@@ -457,7 +457,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			} // if (pValue != NULL) 
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -475,7 +475,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -500,7 +500,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -530,7 +530,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -574,7 +574,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
@@ -606,7 +606,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -624,7 +624,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			}
 			else
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -649,7 +649,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -679,7 +679,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			}
 			else
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -726,7 +726,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
@@ -764,7 +764,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -782,7 +782,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -807,7 +807,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -837,7 +837,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			}
 			else 
 			{
-				strText += L"Ø";
+				strText += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
