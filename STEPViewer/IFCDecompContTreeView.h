@@ -48,6 +48,7 @@ public: // Methods
 	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
+	virtual void OnSearch();
 
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem);

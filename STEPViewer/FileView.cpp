@@ -102,7 +102,6 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 CFileView::CFileView()
 	: m_pSTEPTreeView(nullptr)
 {
-	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
 }
 
 CFileView::~CFileView()
@@ -113,9 +112,8 @@ CFileView::~CFileView()
 BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_WM_CONTEXTMENU()
-	//ON_COMMAND_RANGE(ID_SORTING_INSTANCES_SORTALPHABETIC, ID_SORTING_INSTANCES_NOT_REFERENCED, OnSort)
-	//ON_UPDATE_COMMAND_UI_RANGE(ID_SORTING_INSTANCES_SORTALPHABETIC, ID_SORTING_INSTANCES_NOT_REFERENCED, OnUpdateSort)
+	ON_COMMAND(ID_PROPERTIES, OnProperties)
+	ON_WM_CONTEXTMENU()	
 	ON_NOTIFY(NM_CLICK, IDC_TREE_INSTANCE_VIEW, OnNMClickTree)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_INSTANCE_VIEW, OnNMClickTree)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_INSTANCE_VIEW, OnItemExpanding)
@@ -123,7 +121,7 @@ BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_COMMAND(ID_NEW_INSTANCE, OnNewInstance)
-	ON_WM_SHOWWINDOW()
+	ON_WM_SHOWWINDOW()	
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -156,34 +154,21 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}	
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT_INSTANCES);
-	m_wndToolBar.LoadToolBar(IDR_SORT_INSTANCES, 0, 0, TRUE /* Is locked */);
+	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
+	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() 
+		| CBRS_TOOLTIPS | CBRS_FLYBY);
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & 
+		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
 	m_wndToolBar.SetOwner(this);
 
 	// All commands will be routed via this control , not via the parent frame:
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
-
-	CMenu menuSort;
-	menuSort.LoadMenu(IDR_POPUP_SORT_INSTANCES);
-
-	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CFileViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
-
-	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
-
-	if (pButton != nullptr)
-	{
-		pButton->m_bText = FALSE;
-		pButton->m_bImage = TRUE;
-		pButton->SetImage(GetCmdMgr()->GetCmdImage(m_nCurrSort));
-		pButton->SetMessageWnd(this);
-	}
+	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);	
 
 	AdjustLayout();
 
@@ -194,6 +179,14 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CFileView::OnProperties()
+{
+	if (m_pSTEPTreeView != nullptr)
+	{
+		m_pSTEPTreeView->OnSearch();
+	}	
 }
 
 void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -216,32 +209,20 @@ void CFileView::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFileView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
-}
+	m_wndToolBar.SetWindowPos(
+		NULL,
+		rectClient.left,
+		rectClient.top,
+		rectClient.Width(),
+		cyTlb,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 
-void CFileView::OnSort(UINT id)
-{
-	if (m_nCurrSort == id)
-	{
-		return;
-	}
-
-	m_nCurrSort = id;
-
-	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
-
-	if (pButton != nullptr)
-	{
-		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
-		m_wndToolBar.Invalidate();
-		m_wndToolBar.UpdateWindow();
-	}
-}
-
-void CFileView::OnUpdateSort(CCmdUI* pCmdUI)
-{
-	pCmdUI->SetCheck(pCmdUI->m_nID == m_nCurrSort);
+	m_wndFileView.SetWindowPos(
+		NULL, rectClient.left + 1,
+		rectClient.top + cyTlb + 1,
+		rectClient.Width() - 2,
+		rectClient.Height() - cyTlb - 2,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFileView::OnPaint()
@@ -287,7 +268,7 @@ void CFileView::OnChangeVisualStyle()
 	}
 
 	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_INSTANCES_24 : IDR_SORT_INSTANCES, 0, 0, TRUE /* Locked */);
+	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
 void CFileView::OnDestroy()
@@ -339,3 +320,6 @@ void CFileView::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_pSTEPTreeView->OnShowWindow(bShow, nStatus);
 	}
 }
+
+
+

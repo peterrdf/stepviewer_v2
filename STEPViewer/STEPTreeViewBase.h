@@ -56,5 +56,10 @@ public: // Methods
 	virtual void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 	{
 	}
+
+	// --------------------------------------------------------------------------------------------
+	virtual void OnSearch()
+	{
+	}
 };
 

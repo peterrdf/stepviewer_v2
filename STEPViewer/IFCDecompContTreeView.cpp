@@ -461,6 +461,19 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCDecompContTreeView::OnSearch()
+{
+	if (!m_pSearchDialog->IsWindowVisible())
+	{
+		m_pSearchDialog->ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		m_pSearchDialog->ShowWindow(SW_HIDE);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);

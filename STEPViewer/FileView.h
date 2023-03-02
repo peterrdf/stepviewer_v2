@@ -55,7 +55,6 @@ protected:
 
 	CViewTree m_wndFileView;
 	CFileViewToolBar m_wndToolBar;
-	UINT m_nCurrSort;
 
 protected:
 
@@ -66,11 +65,10 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnProperties();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);	
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnSort(UINT id);
-	afx_msg void OnUpdateSort(CCmdUI* pCmdUI);
 	afx_msg void OnNMClickTree(NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void OnNewInstance();
@@ -78,6 +76,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);	
 };
 

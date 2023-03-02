@@ -259,14 +259,8 @@ CIFCSchemaView::~CIFCSchemaView()
 BEGIN_MESSAGE_MAP(CIFCSchemaView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	//ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
-	ON_COMMAND(ID_OPEN, OnFileOpen)
-	ON_COMMAND(ID_OPEN_WITH, OnFileOpenWith)
-	ON_COMMAND(ID_DUMMY_COMPILE, OnDummyCompile)
-	ON_COMMAND(ID_EDIT_CUT, OnEditCut)
-	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
-	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
+	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CIFCSchemaView::OnNMClickTreeIFC)
@@ -308,9 +302,10 @@ int CIFCSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	OnChangeVisualStyle();
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() 
+		| CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & 
+		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
 	m_wndToolBar.SetOwner(this);
 
@@ -394,8 +389,21 @@ void CIFCSchemaView::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_ifcTreeCtrl.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(
+		NULL, 
+		rectClient.left, 
+		rectClient.top, 
+		rectClient.Width(), 
+		cyTlb, 
+		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_ifcTreeCtrl.SetWindowPos(
+		NULL,
+		rectClient.left + 1, 
+		rectClient.top + cyTlb + 1, 
+		rectClient.Width() - 2, 
+		rectClient.Height() - cyTlb - 2, 
+		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CIFCSchemaView::OnProperties()
@@ -410,34 +418,8 @@ void CIFCSchemaView::OnProperties()
 	}
 }
 
-void CIFCSchemaView::OnFileOpen()
+void CIFCSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
-	// TODO: Add your command handler code here
-}
-
-void CIFCSchemaView::OnFileOpenWith()
-{
-	// TODO: Add your command handler code here
-}
-
-void CIFCSchemaView::OnDummyCompile()
-{
-	// TODO: Add your command handler code here
-}
-
-void CIFCSchemaView::OnEditCut()
-{
-	// TODO: Add your command handler code here
-}
-
-void CIFCSchemaView::OnEditCopy()
-{
-	// TODO: Add your command handler code here
-}
-
-void CIFCSchemaView::OnEditClear()
-{
-	// TODO: Add your command handler code here
 }
 
 void CIFCSchemaView::OnPaint()

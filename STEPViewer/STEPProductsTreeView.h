@@ -12,31 +12,19 @@ class CSTEPProductsTreeView
 {
 
 private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Tree View
+	
 	CViewTree* m_pTreeView;
-
-	// --------------------------------------------------------------------------------------------
-	// Images
 	CImageList* m_pImageList;
 
-	// --------------------------------------------------------------------------------------------
+	// Cache
 	vector<CSTEPItemData*> m_vecItemData;
-
-	// --------------------------------------------------------------------------------------------
-	// CProductInstance* : HTREEITEM
 	map<CProductInstance*, HTREEITEM> m_mapInstance2Item;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected HTREEITEM
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
 	// Don't send notifications while updating the view
 	bool m_bInitInProgress;
 
-	// --------------------------------------------------------------------------------------------
 	// Search
 	CSearchInstancesDialog* m_pSearchDialog;
 
@@ -55,6 +43,7 @@ public: // Methods
 	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
+	virtual void OnSearch();
 
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem);
