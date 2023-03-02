@@ -63,56 +63,52 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-//virtual void CIFCRelationsView::OnSelectInstanceEvent(const CIFCView * pSender, int_t iExpressID)
-//{
-//	if (this == pSender)
-//	{
-//		return;
-//	}
-//
-//	CIFCController * pController = GetController();
-//	ASSERT(pController != NULL);
-//
-//	CIFCModel * pModel = pController->GetActiveModel();
-//
-//	const set<int64_t> & setSelectedIFCObjects = pModel->getSelectedIFCObjects();
-//
-//	vector<CIFCObject *> vecInstances;
-//
-//	set<int64_t>::const_iterator itIFCObject = setSelectedIFCObjects.begin();
-//	for (; itIFCObject != setSelectedIFCObjects.end(); itIFCObject++)
-//	{
-//		CIFCObject * pIFCObject = pModel->getIFCObjectByExpressID(*itIFCObject);
-//		ASSERT(pIFCObject != NULL);
-//
-//		vecInstances.push_back(pIFCObject);
-//	}
-//
-//	LoadInstances(vecInstances);
-//}
+/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	auto pIFCInstance = dynamic_cast<CIFCInstance*>(pInstance);
+	if (pIFCInstance == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	vector<int_t> vecInstances;
+	vecInstances.push_back(pIFCInstance->getInstance());
+
+	LoadProperties(pIFCInstance->getEntity(), pIFCInstance->getEntityName(), vecInstances);
+
+	ShowPane(TRUE, TRUE, TRUE);
+}
 
 // ------------------------------------------------------------------------------------------------
-//virtual void CIFCRelationsView::OnViewRelationsEvent(const CIFCView * pSender, CIFCObject * pIFCObject)
-//{
-//	vector<int_t> vecInstances;
-//	vecInstances.push_back(pIFCObject->getInstance());
-//
-//	LoadProperties(pIFCObject->getEntity(), pIFCObject->getEntityName(), vecInstances);
-//
-//	ShowPane(TRUE, TRUE, TRUE);
-//}
+/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
 
-// ------------------------------------------------------------------------------------------------
-//virtual void CIFCRelationsView::OnViewRelationsEvent(const CIFCView * pSender, CIFCEntity * pIFCEntity)
-//{
-//	ASSERT(pIFCEntity != NULL);	
-//
-//	const vector<int_t> & vecInstances = pIFCEntity->getInstances();
-//
-//	LoadProperties(pIFCEntity->getEntity(), pIFCEntity->getName(), vecInstances);
-//
-//	ShowPane(TRUE, TRUE, TRUE);
-//}
+	auto pIFCEntity = dynamic_cast<CIFCEntity*>(pEntity);
+	if (pIFCEntity == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+	
+	LoadProperties(
+		pIFCEntity->getEntity(), 
+		pIFCEntity->getName(), 
+		pIFCEntity->getInstances());
+	
+	ShowPane(TRUE, TRUE, TRUE);
+}
 
 // ------------------------------------------------------------------------------------------------
 CIFCModel* CIFCRelationsView::GetModel() const

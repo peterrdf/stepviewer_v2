@@ -208,7 +208,7 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 	m_ifcTreeCtrl.SelectItem(hItem);
 
-	CIFCEntity * pIFCEntity = (CIFCEntity *)m_ifcTreeCtrl.GetItemData(hItem);
+	auto pIFCEntity = (CIFCEntity *)m_ifcTreeCtrl.GetItemData(hItem);
 
 	CMenu menu;
 	VERIFY(menu.CreatePopupMenu());
@@ -219,98 +219,21 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 	ASSERT(iImage == iSelectedImage);
 
-	if ((iImage == IMAGE_ATTRIBUTE) || (iImage == IMAGE_IGNORED_ATTRIBUTE))
-	{
-		// ********************************************************************************************
-		// Ignore Attribute
-		CString strIgnoreAttribute;
-		VERIFY(strIgnoreAttribute.LoadStringW(IDS_IGNORE_ATTRIBUTE));
-
-		menu.AppendMenu(MF_STRING | (iImage == IMAGE_IGNORED_ATTRIBUTE ? MF_CHECKED : MF_UNCHECKED), IDS_IGNORE_ATTRIBUTE, strIgnoreAttribute);
-		// ********************************************************************************************
-	} // if ((iImage == IMAGE_ATTRIBUTE) || ...
-	else
-	{
-		// ********************************************************************************************
-		// View IFC Relations & Properties
-		CString strViewIFCRelations;
-		VERIFY(strViewIFCRelations.LoadStringW(IDS_VIEW_IFC_RELATIONS));
-
-		CString strViewInstanceProperties;
-		VERIFY(strViewInstanceProperties.LoadStringW(IDS_VIEW_INSTANCE_PROPERTIES));
-
-		menu.AppendMenu(MF_STRING, IDS_VIEW_IFC_RELATIONS, strViewIFCRelations);
-		menu.AppendMenu(MF_STRING, IDS_VIEW_INSTANCE_PROPERTIES, strViewInstanceProperties);
-		// ********************************************************************************************
-	} // else if ((iImage == IMAGE_ATTRIBUTE) || ...
-
 	// ********************************************************************************************
-	menu.AppendMenu(MF_SEPARATOR, 0, _T(""));
+	// View IFC Relations/Attributes
+	CString strViewIFCRelations;
+	VERIFY(strViewIFCRelations.LoadStringW(IDS_VIEW_IFC_RELATIONS));
 
-	// Save/Load Schema
-	CString strSaveSchema;
-	VERIFY(strSaveSchema.LoadStringW(IDS_SAVE_SCHEMA));
-
-	CString strLoadSchema;
-	VERIFY(strLoadSchema.LoadStringW(IDS_LOAD_SCHEMA));
-
-	menu.AppendMenu(MF_STRING, IDS_SAVE_SCHEMA, strSaveSchema);
-	menu.AppendMenu(MF_STRING, IDS_LOAD_SCHEMA, strLoadSchema);
+	menu.AppendMenu(MF_STRING, IDS_VIEW_IFC_RELATIONS, strViewIFCRelations);
 	// ********************************************************************************************
 
 	CPoint pointScreen(LOWORD(dwPosition), HIWORD(dwPosition));
 	int iResult = menu.TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN, pointScreen.x, pointScreen.y, &m_ifcTreeCtrl);
 	switch (iResult)
 	{
-		case IDS_IGNORE_ATTRIBUTE:
-		{
-			CString strAttribute = m_ifcTreeCtrl.GetItemText(hItem);
-
-			if (iImage == IMAGE_ATTRIBUTE)
-			{
-				pIFCEntity->ignoreAttribute((LPCTSTR)strAttribute, true);
-
-				m_ifcTreeCtrl.SetItemImage(hItem, IMAGE_IGNORED_ATTRIBUTE, IMAGE_IGNORED_ATTRIBUTE);
-			}
-			else
-			{
-				pIFCEntity->ignoreAttribute((LPCTSTR)strAttribute, false);
-
-				m_ifcTreeCtrl.SetItemImage(hItem, IMAGE_ATTRIBUTE, IMAGE_ATTRIBUTE);
-			}
-		}
-		break;
-
 		case IDS_VIEW_IFC_RELATIONS:
-		{
-			ASSERT(0); // TODO
-			//pController->FireOnViewRelations(this, pIFCEntity);
-		}
-		break;
-
-		case IDS_VIEW_INSTANCE_PROPERTIES:
-		{
-			ASSERT(0); // TODO
-			//pController->FireOnViewInstanceProperties(this, pIFCEntity);
-		}
-		break;
-
-		case IDS_SAVE_SCHEMA:
-		{
-			ASSERT(0); // TODO
-			//CIFCModel* pModel = pController->GetActiveModel();
-			//ASSERT(pModel != NULL);
-
-			//pModel->SaveSchema();
-		}
-		break;
-
-		case IDS_LOAD_SCHEMA:
-		{
-			ASSERT(0); // TODO
-			//pModel->LoadSchema();
-
-			ResetView();
+		{			
+			GetController()->OnViewRelations(this, pIFCEntity);
 		}
 		break;
 	} // switch (iResult)

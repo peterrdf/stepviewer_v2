@@ -18,64 +18,33 @@ enum class enumApplicationProperty;
 class CSTEPController
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Model - MVC
-	CSTEPModelBase* m_pModel;
-
-	// --------------------------------------------------------------------------------------------
-	// Updating model - disable all notifications
-	bool m_bUpdatingModel;
-
-	// --------------------------------------------------------------------------------------------
-	// Views - MVC
-	set<CSTEPView*> m_setViews;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected instance
+private: // Members	
+	
+	CSTEPModelBase* m_pModel; // Model - MVC
+	bool m_bUpdatingModel; // Updating model - disable all notifications	
+	
+	set<CSTEPView*> m_setViews; // Views - MVC	
+	
+	// Selection
 	CSTEPInstance* m_pSelectedInstance;
-
-	// --------------------------------------------------------------------------------------------
+	
 	// UI properties
 	int m_iVisibleValuesCountLimit;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
 	BOOL m_bScaleAndCenter;
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CSTEPController();
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
+	
+	CSTEPController();	
 	virtual ~CSTEPController();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	
 	CSTEPModelBase* GetModel() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void SetModel(CSTEPModelBase* pModel);
 
-	// --------------------------------------------------------------------------------------------
-	// Support for notifications
+	// Events
 	void RegisterView(CSTEPView* pView);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for notifications
 	void UnRegisterView(CSTEPView* pView);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	
 	const set<CSTEPView*> & GetViews();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	template <class T>
 	T * GetView()
 	{
@@ -98,46 +67,26 @@ public: // Methods
 
 	// Save
 	void SaveInstance();
-
-	// --------------------------------------------------------------------------------------------
+	
 	// [-1, 1]
 	void ScaleAndCenter();
-
-	// --------------------------------------------------------------------------------------------
-	// Meta information support
+	
+	// Events
 	void ShowMetaInformation(CProductInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
 	void SelectInstance(CSTEPView* pSender, CSTEPInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
 	CSTEPInstance* GetSelectedInstance() const;
 
-	// --------------------------------------------------------------------------------------------
-	// UI properties
+	// UI 
 	int GetVisibleValuesCountLimit() const;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
 	void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
 	BOOL GetScaleAndCenter() const;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	void SetScaleAndCenter(BOOL bScaleAndCenter);	
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// Edit properties support
+	void SetScaleAndCenter(BOOL bScaleAndCenter);
+	
+	// Events
+	void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
+	void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance);
+	void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity);
 };
 
 

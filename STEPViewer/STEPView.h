@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ProductInstance.h"
+#include "IFCInstance.h"
+#include "IFCEntity.h"
 
 // ------------------------------------------------------------------------------------------------
 class CSTEPController;
@@ -50,6 +52,8 @@ public: // Methods
 	virtual void OnInstanceSelected(CSTEPView* pSender);
 	virtual void OnInstancePropertySelected();
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
+	virtual void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance);
+	virtual void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity);
 	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods

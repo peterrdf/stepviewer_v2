@@ -201,3 +201,23 @@ void CSTEPController::OnApplicationPropertyChanged(CSTEPView* pSender, enumAppli
 		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
+void CSTEPController::OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnViewRelations(pSender, pInstance);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CSTEPController::OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnViewRelations(pSender, pEntity);
+	}
+}

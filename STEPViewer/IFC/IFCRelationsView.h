@@ -139,11 +139,9 @@ public: // Methods
 	// CSTEPView
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
-
-	// CSTEPView
-	//virtual void OnSelectInstanceEvent(const CIFCView * pSender, int_t iExpressID);
-	//virtual void OnViewRelationsEvent(const CIFCView * pSender, CIFCObject * pIFCObject);
-	//virtual void OnViewRelationsEvent(const CIFCView * pSender, CIFCEntity * pIFCEntity);
+	virtual void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance) override;
+	virtual void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity) override;
+	
 
 private: // Methods
 

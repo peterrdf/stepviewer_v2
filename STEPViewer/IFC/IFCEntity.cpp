@@ -6,7 +6,8 @@
 
 // ------------------------------------------------------------------------------------------------
 CIFCEntity::CIFCEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iInstancesCount)
-	: m_iEntity(iEntity)
+	: CSTEPEntity()
+	, m_iEntity(iEntity)
 	, m_strName(L"")
 	, m_pParent(nullptr)
 	, m_iAttributesCount(iAttributesCount)
