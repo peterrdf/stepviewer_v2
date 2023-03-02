@@ -167,6 +167,16 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	SetModel(m_pModel);
 
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += lpszPathName;
+
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(lpszPathName);
+
 	return TRUE;
 }
 
