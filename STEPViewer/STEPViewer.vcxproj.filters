@@ -173,6 +173,9 @@
     <ClInclude Include="IFCDecompContTreeView.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="IFC\SearchAttributeDialog.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -290,6 +293,9 @@
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFCDecompContTreeView.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchAttributeDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,30 +2,30 @@
 
 #include "ViewTree.h"
 
-// CSearchDecompContDialog dialog
+// CSearchAttributeDialog dialog
 
-class CSearchDecompContDialog : public CDialogEx
+class CSearchAttributeDialog : public CDialogEx
 {
-	DECLARE_DYNAMIC(CSearchDecompContDialog)
+	DECLARE_DYNAMIC(CSearchAttributeDialog)
 
 private: // Declarations
 
 	enum class enumSearchFilter {
 		All = 0,
-		ExpressLineNumber = 1,
-		Properties = 2
+		Entities = 1,
+		Attributes = 2
 	};
 
 private: // Members
 	
-	CViewTree* m_pIFCTreeCtrl;
+	CViewTree* m_pIFCTreeCtrl;	
 	enumSearchFilter m_enSearchFilter;
 	HTREEITEM m_hSearchResult;
 	BOOL m_bEndOfSearch;
 
 private: // Methods
 	
-	// Search/Select
+	// Search
 	BOOL ContainsText(HTREEITEM hItem, const CString& strText);
 	void SelectItem(HTREEITEM hItem);
 	void UnselectItem(HTREEITEM hItem);
@@ -39,12 +39,13 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchDecompContDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
-	virtual ~CSearchDecompContDialog();
+	CSearchAttributeDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
+	virtual ~CSearchAttributeDialog();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_SEARCH_DECOMP_CONT };
+	enum { IDD = IDD_DIALOG_SEARCH
+	};
 #endif
 
 protected:

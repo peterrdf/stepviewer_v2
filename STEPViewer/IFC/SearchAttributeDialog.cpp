@@ -1,17 +1,17 @@
-// SearchDecompContDialog.cpp : implementation file
+// SearchAttributeDialog.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "SearchDecompContDialog.h"
+#include "SearchAttributeDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "FileViewConsts.h"
+#include "IFCSchemaViewConsts.h"
 
 
-// CSearchDecompContDialog dialog
+// CSearchAttributeDialog dialog
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strText)
+BOOL CSearchAttributeDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 {
 	ASSERT(hItem != NULL);
 
@@ -21,17 +21,8 @@ BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strTe
 	CString strTextLower = strText;
 	strTextLower.MakeLower();
 
-	// Express line number
-	if (m_enSearchFilter == enumSearchFilter::ExpressLineNumber)
-	{
-		CString strExpressionLine = L"#";
-		strExpressionLine += strText;
-
-		return strItemText.Find(strExpressionLine, 0) == 0;
-	}
-
-	// Properties
-	if (m_enSearchFilter == enumSearchFilter::Properties)
+	// Entities
+	if (m_enSearchFilter == enumSearchFilter::Entities)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -39,7 +30,26 @@ BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strTe
 
 		ASSERT(iImage == iSelectedImage);
 
-		if ((iImage == IMAGE_PROPERTY_SET) || (iImage == IMAGE_PROPERTY))
+		if (iImage == IMAGE_ENTITY)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Attributes
+	if (m_enSearchFilter == enumSearchFilter::Attributes)
+	{
+		int iImage = -1;
+		int iSelectedImage = -1;
+		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if ((iImage == IMAGE_ATTRIBUTE) || (iImage == IMAGE_IGNORED_ATTRIBUTE))
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -54,7 +64,7 @@ BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strTe
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::SelectItem(HTREEITEM hItem)
+void CSearchAttributeDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != NULL);
 
@@ -71,7 +81,7 @@ void CSearchDecompContDialog::SelectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::UnselectItem(HTREEITEM hItem)
+void CSearchAttributeDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != NULL);
 
@@ -79,29 +89,9 @@ void CSearchDecompContDialog::UnselectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchChildren(HTREEITEM hParent)
+HTREEITEM CSearchAttributeDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != NULL);
-
-	// Load the Properties
-	if (m_enSearchFilter == enumSearchFilter::Properties)
-	{
-		int iImage = -1;
-		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hParent, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if (iImage == IMAGE_PROPERTY_SET)
-		{
-			HTREEITEM hChild = m_pIFCTreeCtrl->GetChildItem(hParent);
-
-			if ((hChild != NULL) && (m_pIFCTreeCtrl->GetItemText(hChild) == ITEM_PROPERTIES_PENDING))
-			{
-				m_pIFCTreeCtrl->Expand(hParent, TVE_EXPAND);
-			}
-		}
-	} // if (m_enSearchFilter == swProperties)
 
 	HTREEITEM hChild = m_pIFCTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != NULL)
@@ -124,7 +114,7 @@ HTREEITEM CSearchDecompContDialog::SearchChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchSiblings(HTREEITEM hItem)
+HTREEITEM CSearchAttributeDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != NULL);
 
@@ -149,7 +139,7 @@ HTREEITEM CSearchDecompContDialog::SearchSiblings(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchParents(HTREEITEM hItem)
+HTREEITEM CSearchAttributeDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != NULL);
 
@@ -183,15 +173,15 @@ HTREEITEM CSearchDecompContDialog::SearchParents(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::Reset()
+void CSearchAttributeDialog::Reset()
 {
 	m_hSearchResult = NULL;
 	m_bEndOfSearch = FALSE;
 }
 
-IMPLEMENT_DYNAMIC(CSearchDecompContDialog, CDialogEx)
+IMPLEMENT_DYNAMIC(CSearchAttributeDialog, CDialogEx)
 
-CSearchDecompContDialog::CSearchDecompContDialog(CViewTree* pIFCTreeCtrl)
+CSearchAttributeDialog::CSearchAttributeDialog(CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
 	, m_enSearchFilter(enumSearchFilter::All)
@@ -202,11 +192,11 @@ CSearchDecompContDialog::CSearchDecompContDialog(CViewTree* pIFCTreeCtrl)
 	ASSERT(m_pIFCTreeCtrl != nullptr);
 }
 
-CSearchDecompContDialog::~CSearchDecompContDialog()
+CSearchAttributeDialog::~CSearchAttributeDialog()
 {
 }
 
-void CSearchDecompContDialog::DoDataExchange(CDataExchange* pDX)
+void CSearchAttributeDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
@@ -215,17 +205,17 @@ void CSearchDecompContDialog::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSearchDecompContDialog, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchDecompContDialog::OnEnChangeEditSearchText)
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchDecompContDialog::OnBnClickedButtonSearch)
-	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchDecompContDialog::OnCbnSelchangeComboSearchFilter)
+BEGIN_MESSAGE_MAP(CSearchAttributeDialog, CDialogEx)
+	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchAttributeDialog::OnEnChangeEditSearchText)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchAttributeDialog::OnBnClickedButtonSearch)
+	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchAttributeDialog::OnCbnSelchangeComboSearchFilter)
 END_MESSAGE_MAP()
 
 
-// CSearchDecompContDialog message handlers
+// CSearchAttributeDialog message handlers
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnEnChangeEditSearchText()
+void CSearchAttributeDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
 
@@ -233,7 +223,7 @@ void CSearchDecompContDialog::OnEnChangeEditSearchText()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnBnClickedButtonSearch()
+void CSearchAttributeDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
 
@@ -305,13 +295,13 @@ void CSearchDecompContDialog::OnBnClickedButtonSearch()
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchDecompContDialog::OnInitDialog()
+BOOL CSearchAttributeDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
 	m_cmbSearchFilter.AddString(_T("(All)"));
-	m_cmbSearchFilter.AddString(_T("Express line number"));
-	m_cmbSearchFilter.AddString(_T("Properties"));
+	m_cmbSearchFilter.AddString(_T("Entities"));
+	m_cmbSearchFilter.AddString(_T("Attributes"));
 
 	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
@@ -320,7 +310,7 @@ BOOL CSearchDecompContDialog::OnInitDialog()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnCbnSelchangeComboSearchFilter()
+void CSearchAttributeDialog::OnCbnSelchangeComboSearchFilter()
 {
 	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }
