@@ -90,7 +90,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Search"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,7,73,50,14
+    DEFPUSHBUTTON   "Close",IDOK,7,73,50,14
     PUSHBUTTON      "Search",IDC_BUTTON_SEARCH,126,73,50,14
     LTEXT           "Text:",IDC_STATIC,7,7,18,8
     EDITTEXT        IDC_EDIT_SEARCH_TEXT,7,17,169,14,ES_AUTOHSCROLL
@@ -132,6 +132,7 @@ BEGIN
     GROUPBOX        "Classes",IDC_STATIC,7,7,216,33
     COMBOBOX        IDC_COMBO_CLASSES,13,18,204,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -529,7 +530,7 @@ BEGIN
         MENUITEM "Disable All But This",        ID_INSTANCES_DISABLE_ALL_BUT_THIS
         MENUITEM "Enable All",                  ID_INSTANCES_ENABLE_ALL
         MENUITEM SEPARATOR
-        MENUITEM "Search",                      ID_INSTANCES_SEARCH
+        MENUITEM "View Attributes",             IDS_VIEW_IFC_RELATIONS
     END
 END
 
@@ -576,10 +577,10 @@ BEGIN
         END
         POPUP "Show"
         BEGIN
-            MENUITEM "Faces", ID_SHOW_FACES
+            MENUITEM "Faces",                       ID_SHOW_FACES
             MENUITEM "Conceptual faces wireframes", ID_SHOW_CONC_FACES_WIREFRAMES
-            MENUITEM "Lines", ID_SHOW_LINES
-            MENUITEM "Points", ID_SHOW_POINTS
+            MENUITEM "Lines",                       ID_SHOW_LINES
+            MENUITEM "Points",                      ID_SHOW_POINTS
         END
     END
 END
@@ -783,20 +784,28 @@ BEGIN
 END
 
 STRINGTABLE
-BEGIN    
-    IDS_IFC_RELATIONS_VIEW       "Attributes"
-    IDS_VIEW_IFC_RELATIONS       "View Attributes"
-    IDS_VIEW_ORIGIN              "View Origin"
-    IDS_IGNORE_ATTRIBUTE         "Ignore"
-    IDS_SAVE_SCHEMA              "Save Schema"
-    IDS_LOAD_SCHEMA              "Load Schema"
-    IDS_VIEW_GEOMETRY            "View Geometry"
-    IDS_STATUS_PANE1             "Pane 1"
-    IDS_STATUS_PANE2             "Pane 2"
-    IDS_TOOLBAR_STANDARD         "Standard"
-    IDS_TOOLBAR_CUSTOMIZE        "Customize..."
+BEGIN
+    IDS_IFC_RELATIONS_VIEW  "Attributes"
+    IDS_VIEW_IFC_RELATIONS  "View Attributes"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_VIEW_ORIGIN         "View Origin"
+    IDS_IGNORE_ATTRIBUTE    "Ignore"
+    IDS_SAVE_SCHEMA         "Save Schema"
+    IDS_LOAD_SCHEMA         "Load Schema"
+    IDS_VIEW_GEOMETRY       "View Geometry"
     IDS_VIEW_INSTANCE_PROPERTIES "View Geometric Properties"
-    IDS_IFC_SCHEMA_VIEW          "Schema"
+    IDS_IFC_SCHEMA_VIEW     "Schema"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STATUS_PANE1        "Pane 1"
+    IDS_STATUS_PANE2        "Pane 2"
+    IDS_TOOLBAR_STANDARD    "Standard"
+    IDS_TOOLBAR_CUSTOMIZE   "Customize..."
 END
 
 STRINGTABLE

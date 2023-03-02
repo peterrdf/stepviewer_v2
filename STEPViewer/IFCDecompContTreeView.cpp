@@ -449,17 +449,11 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 			}
 			break;
 
-			case ID_INSTANCES_SEARCH:
+			case IDS_VIEW_IFC_RELATIONS:
 			{
-				if (!m_pSearchDialog->IsWindowVisible())
-				{
-					m_pSearchDialog->ShowWindow(SW_SHOW);
-				}
-				else
-				{
-					m_pSearchDialog->ShowWindow(SW_HIDE);
-				}
+				pController->OnViewRelations(this, pInstance);
 			}
+			break;
 		} // switch (uiCommand)
 
 		return;
