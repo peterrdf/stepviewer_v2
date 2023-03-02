@@ -1107,53 +1107,7 @@ void CIFCRelationsView::OnNMClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 // ----------------------------------------------------------------------------
 void CIFCRelationsView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
-	*pResult = 1;
-
-	//CIFCController* pController = GetController();
-	//ASSERT(pController != NULL);
-
-	//CIFCModel* pModel = pController->GetActiveModel();
-	//ASSERT(pModel != NULL);
-
-	//DWORD dwPosition = GetMessagePos();
-	//CPoint point(LOWORD(dwPosition), HIWORD(dwPosition));
-	//m_ifcTreeCtrl.ScreenToClient(&point);
-
-	//UINT uFlags = 0;
-	//HTREEITEM hItem = m_ifcTreeCtrl.HitTest(point, &uFlags);
-
-	//if ((hItem == NULL) || (m_ifcTreeCtrl.GetItemData(hItem) == NULL))
-	//{
-	//	return;
-	//}
-
-	//m_ifcTreeCtrl.SelectItem(hItem);
-
-	//CMenu menu;
-	//VERIFY(menu.CreatePopupMenu());
-
-	//// ********************************************************************************************
-	//// View Geometry
-	//CString strViewGeometry;
-	//VERIFY(strViewGeometry.LoadStringW(IDS_VIEW_GEOMETRY));
-
-	//menu.AppendMenu(MF_STRING, IDS_VIEW_GEOMETRY, strViewGeometry);
-	//// ********************************************************************************************
-
-	//CPoint pointScreen(LOWORD(dwPosition), HIWORD(dwPosition));
-	//int iResult = menu.TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN, pointScreen.x, pointScreen.y, &m_ifcTreeCtrl);
-	//switch (iResult)
-	//{
-	//	case IDS_VIEW_GEOMETRY:
-	//	{
-	//		CIFCInstanceData* pIFCInstanceData = (CIFCInstanceData*)m_ifcTreeCtrl.GetItemData(hItem);
-
-	//		CIFCObject* pIFCObject = pController->LoadInstance(pModel, pIFCInstanceData->getInstance(), pIFCInstanceData->getEntity(), pIFCInstanceData->getEntityName());
-
-	//		pController->FireOnViewGeometry(this, pIFCObject);
-	//	}
-	//	break;
-	//}
+	*pResult = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -1172,7 +1126,12 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 	if ((iImage == IMAGE_INSTANCE) && (pNMTreeView->itemNew.cChildren == 1))
 	{
 		HTREEITEM hChild = m_ifcTreeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);
-		ASSERT(hChild != NULL);
+		if (hChild == NULL)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
 
 		if (m_ifcTreeCtrl.GetItemText(hChild) != ITEM_PENDING_LOAD)
 		{
@@ -1275,35 +1234,6 @@ void CIFCRelationsView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
-}
-
-void CIFCRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
-{
-	//CTreeCtrl* pWndTree = (CTreeCtrl*) &m_ifcTreeCtrl;
-	//ASSERT_VALID(pWndTree);
-
-	//if (pWnd != pWndTree)
-	//{
-	//	CDockablePane::OnContextMenu(pWnd, point);
-	//	return;
-	//}
-
-	//if (point != CPoint(-1, -1))
-	//{
-	//	// Select clicked item:
-	//	CPoint ptTree = point;
-	//	pWndTree->ScreenToClient(&ptTree);
-
-	//	UINT flags = 0;
-	//	HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-	//	if (hTreeItem != NULL)
-	//	{
-	//		pWndTree->SelectItem(hTreeItem);
-	//	}
-	//}
-
-	//pWndTree->SetFocus();
-	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
 void CIFCRelationsView::AdjustLayout()

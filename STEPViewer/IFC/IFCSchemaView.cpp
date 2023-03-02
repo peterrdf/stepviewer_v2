@@ -459,35 +459,6 @@ void CIFCSchemaView::ResetView()
 	} // switch (pModel ->GetType())
 }
 
-void CIFCSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
-{
-	//CTreeCtrl* pWndTree = (CTreeCtrl*) &m_ifcTreeCtrl;
-	//ASSERT_VALID(pWndTree);
-
-	//if (pWnd != pWndTree)
-	//{
-	//	CDockablePane::OnContextMenu(pWnd, point);
-	//	return;
-	//}
-
-	//if (point != CPoint(-1, -1))
-	//{
-	//	// Select clicked item:
-	//	CPoint ptTree = point;
-	//	pWndTree->ScreenToClient(&ptTree);
-
-	//	UINT flags = 0;
-	//	HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-	//	if (hTreeItem != NULL)
-	//	{
-	//		pWndTree->SelectItem(hTreeItem);
-	//	}
-	//}
-
-	//pWndTree->SetFocus();
-	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
-}
-
 void CIFCSchemaView::AdjustLayout()
 {
 	if (GetSafeHwnd() == NULL)

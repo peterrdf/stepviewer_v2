@@ -185,7 +185,6 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnProperties();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileOpenWith();
