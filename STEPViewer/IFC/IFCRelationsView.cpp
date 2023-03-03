@@ -1223,7 +1223,7 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchAttributeDialog(&m_ifcTreeCtrl);
+	m_pSearchDialog = new CSearchAttributeDialog(GetController(), &m_ifcTreeCtrl);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ViewTree.h"
+#include "STEPController.h"
 
 // CSearchAttributeDialog dialog
 
@@ -12,12 +13,12 @@ private: // Declarations
 
 	enum class enumSearchFilter {
 		All = 0,
-		Entities = 1,
-		Attributes = 2
+		ExpressID,
 	};
 
 private: // Members
 	
+	CSTEPController* m_pController;
 	CViewTree* m_pIFCTreeCtrl;	
 	enumSearchFilter m_enSearchFilter;
 	HTREEITEM m_hSearchResult;
@@ -39,7 +40,7 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchAttributeDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
+	CSearchAttributeDialog(CSTEPController* pController, CViewTree* pIFCTreeCtrl);   // standard constructor
 	virtual ~CSearchAttributeDialog();
 
 // Dialog Data

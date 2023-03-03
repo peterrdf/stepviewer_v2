@@ -6,6 +6,7 @@
 #include "afxdialogex.h"
 #include "resource.h"
 #include "IFCSchemaViewConsts.h"
+#include "IFCModel.h"
 
 
 // CSearchAttributeDialog dialog
@@ -20,44 +21,6 @@ BOOL CSearchAttributeDialog::ContainsText(HTREEITEM hItem, const CString& strTex
 
 	CString strTextLower = strText;
 	strTextLower.MakeLower();
-
-	// Entities
-	if (m_enSearchFilter == enumSearchFilter::Entities)
-	{
-		int iImage = -1;
-		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if (iImage == IMAGE_ENTITY)
-		{
-			return strItemText.Find(strTextLower, 0) != -1;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	// Attributes
-	if (m_enSearchFilter == enumSearchFilter::Attributes)
-	{
-		int iImage = -1;
-		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage == IMAGE_ATTRIBUTE) || (iImage == IMAGE_IGNORED_ATTRIBUTE))
-		{
-			return strItemText.Find(strTextLower, 0) != -1;
-		}
-		else
-		{
-			return false;
-		}
-	}
 
 	// All
 	return strItemText.Find(strTextLower, 0) != -1;
@@ -181,8 +144,9 @@ void CSearchAttributeDialog::Reset()
 
 IMPLEMENT_DYNAMIC(CSearchAttributeDialog, CDialogEx)
 
-CSearchAttributeDialog::CSearchAttributeDialog(CViewTree* pIFCTreeCtrl)
+CSearchAttributeDialog::CSearchAttributeDialog(CSTEPController* pController, CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
+	, m_pController(pController)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
 	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(NULL)
@@ -226,6 +190,52 @@ void CSearchAttributeDialog::OnEnChangeEditSearchText()
 void CSearchAttributeDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
+
+	// ExpressID
+	if (m_enSearchFilter == enumSearchFilter::ExpressID)
+	{
+		auto pModel = m_pController->GetModel();
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		switch (pModel->GetType())
+		{
+			case enumSTEPModelType::STEP:
+			{
+				ASSERT(FALSE); // TODO
+			}
+			break;
+
+			case enumSTEPModelType::IFC:
+			{
+				 auto pIFCmodel = m_pController->GetModel()->As<CIFCModel>();
+				 int64_t iExpressID = _wtoi64((LPCTSTR)m_strSearchText);
+
+				 auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);
+				 if (pInstance != nullptr)
+				 {
+					 m_pController->SelectInstance(nullptr, pInstance);
+				 }
+				 else
+				 {
+					 ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
+				 }
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE); // Unknown
+			}
+			break;
+		} // switch (pModel ->GetType())
+
+		return;
+	} // if (m_enSearchFilter == enumSearchFilter::ExpressID)
 
 	// Reset
 	if (m_bEndOfSearch)
@@ -300,8 +310,7 @@ BOOL CSearchAttributeDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	m_cmbSearchFilter.AddString(_T("(All)"));
-	m_cmbSearchFilter.AddString(_T("Entities"));
-	m_cmbSearchFilter.AddString(_T("Attributes"));
+	m_cmbSearchFilter.AddString(_T("Express ID"));
 
 	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
