@@ -751,9 +751,9 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
 void CIFCUnitProvider::Clean()
 {
     auto itUnit = m_mapUnits.begin();
-    for (; itUnit != m_mapUnits.end(); itUnit++)
+    for (auto itUnit : m_mapUnits)
     {
-        delete itUnit->second;
+        delete itUnit.second;
     }
     m_mapUnits.clear();
 }
