@@ -38,6 +38,7 @@ class CIFCSchemaView
 
 private: // Members
 
+	// Search
 	CSearchSchemaDialog* m_pSearchDialog;
 
 protected:

@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "SearchAttributeDialog.h"
 #include "STEPView.h"
 #include "ViewTree.h"
 #include "IFCUnit.h"
@@ -134,6 +135,9 @@ private: // Members
 	vector<CIFCInstanceData*> m_vecIFCInstancesCache;
 	vector<CIFCAttributeData*> m_vecIFCAttributesCache;
 
+	// Search
+	CSearchAttributeDialog* m_pSearchDialog;
+
 public: // Methods
 	
 	// CSTEPView
@@ -192,5 +196,8 @@ protected:
 	afx_msg void OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnDestroy();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
 

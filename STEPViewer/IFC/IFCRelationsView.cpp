@@ -1146,6 +1146,7 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 CIFCRelationsView::CIFCRelationsView()
 	: m_vecIFCInstancesCache()
 	, m_vecIFCAttributesCache()
+	, m_pSearchDialog(NULL)
 {
 }
 
@@ -1172,6 +1173,8 @@ BEGIN_MESSAGE_MAP(CIFCRelationsView, CDockablePane)
 	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CIFCRelationsView::OnNMClickTreeIFC)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CIFCRelationsView::OnNMRClickTreeIFC)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CIFCRelationsView::OnTvnItemexpandingTreeIFC)
+	ON_WM_DESTROY()
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1219,6 +1222,10 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	AdjustLayout();
 
+	//  Search
+	m_pSearchDialog = new CSearchAttributeDialog(&m_ifcTreeCtrl);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
+
 	return 0;
 }
 
@@ -1258,7 +1265,14 @@ void CIFCRelationsView::AdjustLayout()
 
 void CIFCRelationsView::OnProperties()
 {
-	AfxMessageBox(_T("Properties...."));
+	if (!m_pSearchDialog->IsWindowVisible())
+	{
+		m_pSearchDialog->ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		m_pSearchDialog->ShowWindow(SW_HIDE);
+	}
 }
 
 void CIFCRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
@@ -1314,4 +1328,19 @@ void CIFCRelationsView::OnChangeVisualStyle()
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
+void CIFCRelationsView::OnDestroy()
+{
+	__super::OnDestroy();
 
+	delete m_pSearchDialog;
+}
+
+void CIFCRelationsView::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	__super::OnShowWindow(bShow, nStatus);
+
+	if (!bShow)
+	{
+		m_pSearchDialog->ShowWindow(SW_HIDE);
+	}
+}
