@@ -127,7 +127,6 @@ protected:
 
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
-	void LoadMetaInformation();
 	void SetPropListFont();
 
 	int m_nComboHeight;

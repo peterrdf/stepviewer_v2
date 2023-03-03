@@ -9,7 +9,6 @@ CIFCClass::CIFCClass(int64_t iInstance)
 	, m_strName(L"")
 	, m_vecParentClasses()
 	, m_vecAncestorClasses()
-	, m_vecPropertyRestrictions()
 {
 	assert(m_iInstance != 0);
 
@@ -42,10 +41,6 @@ CIFCClass::CIFCClass(int64_t iInstance)
 // ------------------------------------------------------------------------------------------------
 CIFCClass::~CIFCClass()
 {
-	for (size_t iProperty = 0; iProperty < m_vecPropertyRestrictions.size(); iProperty++)
-	{
-		delete m_vecPropertyRestrictions[iProperty];
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -72,23 +67,6 @@ const vector<int64_t> & CIFCClass::getParentClasses()
 const vector<int64_t> & CIFCClass::getAncestorClasses()
 {
 	return m_vecAncestorClasses;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCClass::AddPropertyRestriction(CIFCPropertyRestriction * pPropertyRestriction)
-{
-	assert(pPropertyRestriction != nullptr);
-
-	char * szPropertyName = nullptr;
-	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
-
-	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<CIFCPropertyRestriction *> & CIFCClass::getPropertyRestrictions()
-{
-	return m_vecPropertyRestrictions;
 }
 
 // ------------------------------------------------------------------------------------------------

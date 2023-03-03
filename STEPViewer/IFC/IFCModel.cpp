@@ -46,7 +46,6 @@ CIFCModel::CIFCModel()
 	, m_mapUnits()
 	, m_mapEntities()
 	, m_mapClasses()
-	, m_mapProperties()
 {
 }
 
@@ -271,11 +270,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	LoadClasses();
 
 	/*
-	* Properties
-	*/
-	LoadProperties();
-
-	/*
 	* Helper data structures
 	*/
 	for (auto pInstance : m_vecInstances)
@@ -294,45 +288,38 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::Clean()
 {
-if (m_iModel != 0)
-{
-	sdaiCloseModel(m_iModel);
-	m_iModel = 0;
-}
+	if (m_iModel != 0)
+	{
+		sdaiCloseModel(m_iModel);
+		m_iModel = 0;
+	}
 
-for (auto pInstance : m_vecInstances)
-{
-	delete pInstance;
-}
-m_vecInstances.clear();
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
 
-auto itUnits = m_mapUnits.begin();
-for (; itUnits != m_mapUnits.end(); itUnits++)
-{
-	delete itUnits->second;
-}
-m_mapUnits.clear();
+	auto itUnits = m_mapUnits.begin();
+	for (; itUnits != m_mapUnits.end(); itUnits++)
+	{
+		delete itUnits->second;
+	}
+	m_mapUnits.clear();
 
-auto itEntities = m_mapEntities.begin();
-for (; itEntities != m_mapEntities.end(); itEntities++)
-{
-	delete itEntities->second;
-}
-m_mapEntities.clear();
+	auto itEntities = m_mapEntities.begin();
+	for (; itEntities != m_mapEntities.end(); itEntities++)
+	{
+		delete itEntities->second;
+	}
+	m_mapEntities.clear();
 
-auto itClass = m_mapClasses.begin();
-for (; itClass != m_mapClasses.end(); itClass++)
-{
-	delete itClass->second;
-}
-m_mapClasses.clear();
-
-auto itProperty = m_mapProperties.begin();
-for (; itProperty != m_mapProperties.end(); itProperty++)
-{
-	delete itProperty->second;
-}
-m_mapProperties.clear();
+	auto itClass = m_mapClasses.begin();
+	for (; itClass != m_mapClasses.end(); itClass++)
+	{
+		delete itClass->second;
+	}
+	m_mapClasses.clear();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -559,12 +546,6 @@ const map<int_t, CIFCEntity *>& CIFCModel::GetEntities() const
 const map<int64_t, CIFCClass *>& CIFCModel::GetClasses() const
 {
 	return m_mapClasses;
-}
-
-// ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCProperty *>& CIFCModel::GetProperties() const
-{
-	return m_mapProperties;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1761,67 +1742,3 @@ void CIFCModel::LoadClasses()
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
 }
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadProperties()
-{
-	int64_t iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
-	while (iPropertyInstance != 0)
-	{
-		int64_t iPropertyType = GetPropertyType(iPropertyInstance);
-		switch (iPropertyType)
-		{
-		case TYPE_OBJECTTYPE:
-		{
-			m_mapProperties[iPropertyInstance] = new CObjectIFCProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_BOOL_DATATYPE:
-		{
-			m_mapProperties[iPropertyInstance] = new CBoolIFCProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_CHAR_DATATYPE:
-		{
-			m_mapProperties[iPropertyInstance] = new CStringIFCProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_INT_DATATYPE:
-		{
-			m_mapProperties[iPropertyInstance] = new CIntIFCProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_DOUBLE_DATATYPE:
-		{
-			m_mapProperties[iPropertyInstance] = new CDoubleIFCProperty(iPropertyInstance);
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-		} // switch (iPropertyType)
-
-		map<int64_t, CIFCClass *>::iterator itClass = m_mapClasses.begin();
-		for (; itClass != m_mapClasses.end(); itClass++)
-		{
-			int64_t	iMinCard = 0;
-			int64_t iMaxCard = 0;
-			GetPropertyRestrictions(itClass->first, iPropertyInstance, &iMinCard, &iMaxCard);
-
-			if ((iMinCard == -1) && (iMaxCard == -1))
-			{
-				continue;
-			}
-
-			itClass->second->AddPropertyRestriction(new CIFCPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
-		} // for (; itClass != ...
-
-		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
-	} // while (iPropertyInstance != 0)
-}
-

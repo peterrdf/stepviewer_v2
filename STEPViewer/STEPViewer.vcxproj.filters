@@ -92,34 +92,13 @@
     <ClInclude Include="IFC\IFCInstance.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCProperty.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\IFCPropertyRestriction.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCUnit.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\IntIFCProperty.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\ObjectIFCProperty.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\StringIFCProperty.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\DoubleIFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFC\IFCClass.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFC\IFCEntity.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\BoolIFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="STEPModelBase.h">
@@ -232,34 +211,13 @@
     <ClCompile Include="IFC\IFCInstance.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCProperty.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCPropertyRestriction.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\IFCUnit.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IntIFCProperty.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\ObjectIFCProperty.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\StringIFCProperty.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\DoubleIFCProperty.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCClass.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCEntity.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\BoolIFCProperty.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="STEPModelBase.cpp">

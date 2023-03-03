@@ -1,7 +1,5 @@
 #pragma once
 
-#include "IFCPropertyRestriction.h"
-
 #include <string>
 #include <vector>
 
@@ -30,10 +28,6 @@ private: // Members
 	// Parents
 	vector<int64_t> m_vecAncestorClasses;
 
-	// --------------------------------------------------------------------------------------------
-	// Parents
-	vector<CIFCPropertyRestriction *> m_vecPropertyRestrictions;
-
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
@@ -59,14 +53,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	const vector<int64_t> & getAncestorClasses();
-
-	// --------------------------------------------------------------------------------------------
-	// Adds an RDF Property
-	void AddPropertyRestriction(CIFCPropertyRestriction * pRDFPropertyRestriction);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<CIFCPropertyRestriction *> & getPropertyRestrictions();
 
 public: // Methods
 

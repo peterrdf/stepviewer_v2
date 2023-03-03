@@ -6,11 +6,6 @@
 #include "Texture.h"
 #include "IFCUnit.h"
 #include "IFCEntity.h"
-#include "ObjectIFCProperty.h"
-#include "BoolIFCProperty.h"
-#include "StringIFCProperty.h"
-#include "IntIFCProperty.h"
-#include "DoubleIFCProperty.h"
 #include "IFCClass.h"
 
 #include <string>
@@ -101,10 +96,6 @@ private: // Members
 	map<int64_t, CIFCClass*> m_mapClasses;
 
 	// --------------------------------------------------------------------------------------------
-	// Instance : Property
-	map<int64_t, CIFCProperty*> m_mapProperties;
-
-	// --------------------------------------------------------------------------------------------
 	// Unique index for each object
 	static int_t s_iInstanceID;
 
@@ -177,10 +168,6 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CIFCProperty*>& GetProperties() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	CIFCInstance* GetInstanceByID(int_t iID);
 
 	// --------------------------------------------------------------------------------------------
@@ -244,10 +231,6 @@ private: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Classes
 	void LoadClasses();
-
-	// --------------------------------------------------------------------------------------------
-	// Properties
-	void LoadProperties();
 };
 
 #endif // IFCFILEPARSER_H
