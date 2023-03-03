@@ -43,7 +43,7 @@ CIFCModel::CIFCModel()
 	, m_mapInstances()
 	, m_mapID2Instance()
 	, m_mapExpressID2Instance()
-	, m_mapUnits()
+	, m_pUnitProvider(nullptr)
 	, m_mapEntities()
 	, m_mapClasses()
 {
@@ -257,7 +257,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Units
 	*/
-	LoadUnits();
+	m_pUnitProvider = new CIFCUnitProvider(m_iModel);
 
 	/*
 	* Entities
@@ -300,12 +300,8 @@ void CIFCModel::Clean()
 	}
 	m_vecInstances.clear();
 
-	auto itUnits = m_mapUnits.begin();
-	for (; itUnits != m_mapUnits.end(); itUnits++)
-	{
-		delete itUnits->second;
-	}
-	m_mapUnits.clear();
+	delete m_pUnitProvider;
+	m_pUnitProvider = nullptr;
 
 	auto itEntities = m_mapEntities.begin();
 	for (; itEntities != m_mapEntities.end(); itEntities++)
@@ -519,21 +515,9 @@ const map<int64_t, CIFCInstance *>& CIFCModel::GetInstances() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<wstring, CIFCUnit *>& CIFCModel::GetUnits() const
+CIFCUnitProvider* CIFCModel::GetUnitProvider() const
 {
-	return m_mapUnits;
-}
-
-// ------------------------------------------------------------------------------------------------
-const CIFCUnit* CIFCModel::GetUnit(const wchar_t* szUnit) const
-{
-	map<wstring, CIFCUnit *>::const_iterator itUnit = m_mapUnits.find(szUnit);
-	if (itUnit != m_mapUnits.end())
-	{
-		return itUnit->second;
-	}
-
-	return nullptr;
+	return m_pUnitProvider;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -573,246 +557,264 @@ CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityLength(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "LengthValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "LengthValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)
-	else
-	{
-		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"LENGTHUNIT");
-		if (itUnits != m_mapUnits.end())
-		{
-			strQuantity += L" ";
-			strQuantity += itUnits->second->getName();
-		}
-	} // else if (szUnit != nullptr)	
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)
+	//else
+	//{
+	//	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"LENGTHUNIT");
+	//	if (itUnits != m_mapUnits.end())
+	//	{
+	//		strQuantity += L" ";
+	//		strQuantity += itUnits->second->GetName();
+	//	}
+	//} // else if (szUnit != nullptr)	
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityArea(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityArea(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "AreaValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "AreaValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)
-	else
-	{
-		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"AREAUNIT");
-		if (itUnits != m_mapUnits.end())
-		{
-			strQuantity += L" ";
-			strQuantity += itUnits->second->getName();
-		}
-	} // else if (szUnit != nullptr)	
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)
+	//else
+	//{
+	//	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"AREAUNIT");
+	//	if (itUnits != m_mapUnits.end())
+	//	{
+	//		strQuantity += L" ";
+	//		strQuantity += itUnits->second->GetName();
+	//	}
+	//} // else if (szUnit != nullptr)	
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityVolume(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityVolume(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "VolumeValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "VolumeValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)
-	else
-	{
-		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"VOLUMEUNIT");
-		if (itUnits != m_mapUnits.end())
-		{
-			strQuantity += L" ";
-			strQuantity += itUnits->second->getName();
-		}
-	} // else if (szUnit != nullptr)	
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)
+	//else
+	//{
+	//	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"VOLUMEUNIT");
+	//	if (itUnits != m_mapUnits.end())
+	//	{
+	//		strQuantity += L" ";
+	//		strQuantity += itUnits->second->GetName();
+	//	}
+	//} // else if (szUnit != nullptr)	
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityCount(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityCount(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "CountValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "CountValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)		
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)		
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityWeight(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityWeight(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "WeigthValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "WeigthValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)
-	else
-	{
-		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"MASSUNIT");
-		if (itUnits != m_mapUnits.end())
-		{
-			strQuantity += L" ";
-			strQuantity += itUnits->second->getName();
-		}
-	} // else if (szUnit != nullptr)	
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)
+	//else
+	//{
+	//	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"MASSUNIT");
+	//	if (itUnits != m_mapUnits.end())
+	//	{
+	//		strQuantity += L" ";
+	//		strQuantity += itUnits->second->GetName();
+	//	}
+	//} // else if (szUnit != nullptr)	
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadIFCQuantityTime(int_t iIFCQuantity, wstring & strQuantity)
+void CIFCModel::LoadIFCQuantityTime(int_t iIFCQuantity, wstring& strQuantity)
 {
-	wchar_t	* szQuantityName = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+	strQuantity = L"TODO";
+	ASSERT(FALSE);
 
-	wchar_t	* szQuantityDescription = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+	//wchar_t* szQuantityName = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
 
-	wchar_t	* szValue = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "TimeValue", sdaiUNICODE, &szValue);
+	//wchar_t* szQuantityDescription = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
 
-	wchar_t	* szUnit = nullptr;
-	sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+	//wchar_t* szValue = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "TimeValue", sdaiUNICODE, &szValue);
 
-	strQuantity = szQuantityName;
-	strQuantity += L" = ";
-	strQuantity += szValue;
+	//wchar_t* szUnit = nullptr;
+	//sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
-	if (szUnit != nullptr)
-	{
-		strQuantity += L" ";
-		strQuantity += szUnit;
-	} // if (szUnit != nullptr)
-	else
-	{
-		map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"TIMEUNIT");
-		if (itUnits != m_mapUnits.end())
-		{
-			strQuantity += L" ";
-			strQuantity += itUnits->second->getName();
-		}
-	} // else if (szUnit != nullptr)	
+	//strQuantity = szQuantityName;
+	//strQuantity += L" = ";
+	//strQuantity += szValue;
 
-	if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
-	{
-		strQuantity += L" ('";
-		strQuantity += szQuantityDescription;
-		strQuantity += L"')";
-	}
+	//if (szUnit != nullptr)
+	//{
+	//	strQuantity += L" ";
+	//	strQuantity += szUnit;
+	//} // if (szUnit != nullptr)
+	//else
+	//{
+	//	map<wstring, CIFCUnit *>::iterator itUnits = m_mapUnits.find(L"TIMEUNIT");
+	//	if (itUnits != m_mapUnits.end())
+	//	{
+	//		strQuantity += L" ";
+	//		strQuantity += itUnits->second->GetName();
+	//	}
+	//} // else if (szUnit != nullptr)	
+
+	//if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+	//{
+	//	strQuantity += L" ('";
+	//	strQuantity += szQuantityDescription;
+	//	strQuantity += L"')";
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1662,21 +1664,6 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 	cleanMemory(m_iModel, 0);
 
 	return pInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadUnits()
-{
-	int64_t * iIFCProjectInstances = sdaiGetEntityExtentBN(m_iModel, (char *)"IFCPROJECT");
-
-	int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
-	if (iIFCProjectInstancesCount > 0)
-	{
-		int64_t	iIFCProjectInstance = 0;
-		engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
-
-		CIFCUnit::LoadUnits(m_iModel, iIFCProjectInstance, m_mapUnits);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------

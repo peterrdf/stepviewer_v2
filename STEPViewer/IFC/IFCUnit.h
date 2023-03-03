@@ -40,71 +40,57 @@ using namespace std;
 #define	VOLUMEUNIT	128
 #define	USERDEFINED	129
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CIFCUnit
 {
 
+private: // Members	
+
+	int m_iType;
+	wstring m_strType;
+	wstring m_strPrefix;
+	wstring m_strName;
+
 public: // Methods
-
-	// ------------------------------------------------------------------------
-	// ctor
-	CIFCUnit(const wchar_t * szType, const wchar_t * szPrefix, const wchar_t * szName);
-
-	// ------------------------------------------------------------------------
-	// dtor
+	
+	CIFCUnit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName);
     virtual ~CIFCUnit();
 
-	// ------------------------------------------------------------------------
-    // Getter
-    wstring getPrefix() const;
+	wstring GetType() const;
+    wstring GetPrefix() const;
+    wstring GetName() const;
+    wstring GetUnit() const; // PREFIX + SPACE + NAME
 
-	// ------------------------------------------------------------------------
-    // Getter
-    wstring getName() const;
-
-	// ------------------------------------------------------------------------
-    // PREFIX + SPACE + NAME
-    wstring getUnit() const;
-
-	// ------------------------------------------------------------------------
-    // Helper
-	static void LoadUnits(int_t iIFCModel, int_t iIFCProjectInstance, map<wstring, CIFCUnit *> & mapUnits);
-
-	// ------------------------------------------------------------------------
-	// Helper
 	static wstring GetPropertyValue(int64_t iIFCPropertySingleValue);
 
 protected: // Methods
-
-	// ------------------------------------------------------------------------
-    // Helper
-    void ConvertType(const wchar_t * szUnitType);
-
-	// ------------------------------------------------------------------------
-    // Helper
-	void ConvertPrefix(const wchar_t * szPrefix);
-
-	// ------------------------------------------------------------------------
-    // Helper
+	
+    void ConvertType(const wchar_t* szUnitType);
+	void ConvertPrefix(const wchar_t* szPrefix);
 	void ConvertName(const wchar_t * szName);
+};
 
-private: // Members	
+// ------------------------------------------------------------------------------------------------
+class CIFCUnitProvider
+{
 
-	// ------------------------------------------------------------------------
-	// Type
-    int m_iType;
+private: // Members
 
-	// ------------------------------------------------------------------------
-	// Prefix
-	wstring m_strType;
+	int64_t m_iModel;
+	map<wstring, CIFCUnit*> m_mapUnits;
 
-	// ------------------------------------------------------------------------
-	// Prefix
-    wstring m_strPrefix;
+public: // Methods
 
-	// ------------------------------------------------------------------------
-	// Name
-    wstring m_strName;
+	CIFCUnitProvider(int64_t iModel);
+	virtual ~CIFCUnitProvider();
+
+	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
+
+protected: // Methods
+
+	virtual void Load();
+	void LoadUnits(int_t iIFCProjectInstance);
+	void Clean();
 };
 
 #endif // IFCUNIT_H

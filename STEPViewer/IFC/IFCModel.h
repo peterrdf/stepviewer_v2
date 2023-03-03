@@ -85,7 +85,7 @@ private: // Members
 
 	// ------------------------------------------------------------------------
 	// IFC Units
-	map<wstring, CIFCUnit*> m_mapUnits;
+	CIFCUnitProvider* m_pUnitProvider;
 
 	// --------------------------------------------------------------------------------------------
 	// Entity : CIFCEntity *
@@ -152,11 +152,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<wstring, CIFCUnit*>& GetUnits() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
+	CIFCUnitProvider* GetUnitProvider() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -214,15 +210,11 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Retrieves IFC objects by Entity
-	void RetrieveObjects(int_t iEntity, const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements);
+	void RetrieveObjects(int_t iEntity, const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 
 	// --------------------------------------------------------------------------------------------
 	// Retrieves the geometry for an IFC object
-	CIFCInstance * RetrieveGeometry(const wchar_t * szInstanceGUIDW, int_t iEntity, const wchar_t * szEntityNameW, int_t iInstance, int_t iCircleSegments);
-
-	// --------------------------------------------------------------------------------------------
-	// Entities
-	void LoadUnits();
+	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments);
 
 	// --------------------------------------------------------------------------------------------
 	// Entities

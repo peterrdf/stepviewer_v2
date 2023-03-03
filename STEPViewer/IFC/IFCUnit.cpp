@@ -3,8 +3,8 @@
 
 #include <assert.h>
 
-// ----------------------------------------------------------------------------
-CIFCUnit::CIFCUnit(const wchar_t * szType, const wchar_t * szPrefix, const wchar_t * szName)
+// ------------------------------------------------------------------------------------------------
+CIFCUnit::CIFCUnit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
 	: m_iType(UNKNOWN)
 	, m_strType(L"")
     , m_strPrefix(L"")
@@ -15,26 +15,31 @@ CIFCUnit::CIFCUnit(const wchar_t * szType, const wchar_t * szPrefix, const wchar
 	ConvertName(szName);
 }
 
-// ----------------------------------------------------------------------------
-CIFCUnit::~CIFCUnit()
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CIFCUnit::~CIFCUnit()
 {
-    //dtor
 }
 
-// ----------------------------------------------------------------------------
-wstring CIFCUnit::getPrefix() const
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnit::GetType() const
+{
+    return m_strType;
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnit::GetPrefix() const
 {
     return m_strPrefix;
 }
 
-// ----------------------------------------------------------------------------
-wstring CIFCUnit::getName() const
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnit::GetName() const
 {
     return m_strName;
 }
 
-// ----------------------------------------------------------------------------
-wstring CIFCUnit::getUnit() const
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnit::GetUnit() const
 {
     wstring strUnit = m_strPrefix;
     if (!strUnit.empty())
@@ -48,86 +53,9 @@ wstring CIFCUnit::getUnit() const
 }
 
 // ------------------------------------------------------------------------------------------------
-/*static*/ void CIFCUnit::LoadUnits(int_t iIFCModel, int_t iIFCProjectInstance, map<wstring, CIFCUnit *> & mapUnits)
-{
-	assert(iIFCModel != 0);
-	assert(iIFCProjectInstance != 0);
-
-    mapUnits.clear();
-
-	int_t iIFCUnitAssignmentInstance = 0;
-	sdaiGetAttrBN(iIFCProjectInstance, "UnitsInContext", sdaiINSTANCE, &iIFCUnitAssignmentInstance);
-
-	int_t ifcConversianBasedUnit_TYPE = sdaiGetEntity(iIFCModel, "IFCCONVERSIONBASEDUNIT");
-	int_t ifcSIUnit_TYPE = sdaiGetEntity(iIFCModel, "IFCSIUNIT");
-
-	int_t * pUnitSet = nullptr;
-	sdaiGetAttrBN(iIFCUnitAssignmentInstance, "Units", sdaiAGGR, &pUnitSet);
-
-	int_t iUnitSetCount = sdaiGetMemberCount(pUnitSet);
-	for (int_t iUnitSet = 0; iUnitSet < iUnitSetCount; ++iUnitSet)
-	{
-		int_t iIFCUnitInstance = 0;
-		engiGetAggrElement(pUnitSet, iUnitSet, sdaiINSTANCE, &iIFCUnitInstance);
-
-		if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)
-		{
-			int_t iIFCMeasureWithUnitInstance = 0;
-			sdaiGetAttrBN(iIFCUnitInstance, "ConversionFactor", sdaiINSTANCE, &iIFCMeasureWithUnitInstance);
-
-			if (iIFCMeasureWithUnitInstance != 0) 
-			{
-				int_t iIFCSIUnitInstance = 0;
-				sdaiGetAttrBN(iIFCMeasureWithUnitInstance, "UnitComponent", sdaiINSTANCE, &iIFCSIUnitInstance);
-
-				if (sdaiGetInstanceType(iIFCSIUnitInstance) == ifcSIUnit_TYPE)
-				{
-					wchar_t	* szUnitType = nullptr;
-					sdaiGetAttrBN(iIFCSIUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
-
-					wchar_t	* szPrefix = nullptr;
-					sdaiGetAttrBN(iIFCSIUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
-
-					wchar_t	* szName = nullptr;
-					sdaiGetAttrBN(iIFCSIUnitInstance, "Name", sdaiUNICODE, &szName);
-
-					CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-					mapUnits[pUnit->m_strType] = pUnit;
-				}
-				else 
-				{
-					assert(false);
-				}
-			} // if (iIFCMeasureWithUnitInstance != 0) 
-			else 
-			{
-				assert(false);
-			}
-		} // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)
-		else
-		{
-			if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
-			{
-				wchar_t	* szUnitType = nullptr;
-				sdaiGetAttrBN(iIFCUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
-
-				wchar_t	* szPrefix = nullptr;
-				sdaiGetAttrBN(iIFCUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
-
-				wchar_t	* szName = nullptr;
-				sdaiGetAttrBN(iIFCUnitInstance, "Name", sdaiUNICODE, &szName);
-
-				CIFCUnit * pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-				mapUnits[pUnit->m_strType] = pUnit;
-			} // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
-		} // else if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)				
-	} // for (int_t iUnitSet = 
-}
-
-// ------------------------------------------------------------------------------------------------
 /*static*/ wstring CIFCUnit::GetPropertyValue(int64_t iIFCPropertySingleValue)
 {
-	wchar_t * szNominalValueADB = nullptr;
+	wchar_t* szNominalValueADB = nullptr;
 	sdaiGetAttrBN(iIFCPropertySingleValue, "NominalValue", sdaiUNICODE, &szNominalValueADB);
 
 	if (szNominalValueADB == nullptr)
@@ -135,10 +63,10 @@ wstring CIFCUnit::getUnit() const
 		return L"";
 	}
 
-	wchar_t * szUnitADB = nullptr;
+	wchar_t* szUnitADB = nullptr;
 	sdaiGetAttrBN(iIFCPropertySingleValue, "Unit", sdaiUNICODE, &szUnitADB);
 
-	wchar_t * szTypePath = (wchar_t *)sdaiGetADBTypePath(szNominalValueADB, 0);
+	wchar_t* szTypePath = (wchar_t *)sdaiGetADBTypePath(szNominalValueADB, 0);
 	if (szTypePath == nullptr)
 	{
 		return szNominalValueADB;
@@ -192,8 +120,8 @@ wstring CIFCUnit::getUnit() const
 	return L"";
 }
 
-// ----------------------------------------------------------------------------
-void CIFCUnit::ConvertType(const wchar_t * szUnitType)
+// ------------------------------------------------------------------------------------------------
+void CIFCUnit::ConvertType(const wchar_t* szUnitType)
 {
     assert(szUnitType != nullptr);
 
@@ -404,8 +332,8 @@ void CIFCUnit::ConvertType(const wchar_t * szUnitType)
 	m_strType = L"UNKNOWN";
 }
 
-// ----------------------------------------------------------------------------
-void CIFCUnit::ConvertPrefix(const wchar_t * szPrefix)
+// ------------------------------------------------------------------------------------------------
+void CIFCUnit::ConvertPrefix(const wchar_t* szPrefix)
 {
     if (szPrefix == nullptr)
     {
@@ -509,8 +437,8 @@ void CIFCUnit::ConvertPrefix(const wchar_t * szPrefix)
     }
 }
 
-// ----------------------------------------------------------------------------
-void CIFCUnit::ConvertName(const wchar_t * szName)
+// ------------------------------------------------------------------------------------------------
+void CIFCUnit::ConvertName(const wchar_t* szName)
 {
     assert(szName != nullptr);
 
@@ -695,4 +623,137 @@ void CIFCUnit::ConvertName(const wchar_t * szName)
     }
 
     m_strName = szName;
+}
+
+// ------------------------------------------------------------------------------------------------
+CIFCUnitProvider::CIFCUnitProvider(int64_t iModel)
+    : m_iModel(iModel)
+    , m_mapUnits()
+{
+    ASSERT(m_iModel != 0);
+
+    Load();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CIFCUnitProvider::~CIFCUnitProvider()
+{
+    Clean();
+}
+
+// ------------------------------------------------------------------------------------------------
+const CIFCUnit* CIFCUnitProvider::GetUnit(const wchar_t* szUnit) const
+{
+    auto itUnit = m_mapUnits.find(szUnit);
+    if (itUnit != m_mapUnits.end())
+    {
+        return itUnit->second;
+    }
+
+    return nullptr;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCUnitProvider::Load()
+{
+    Clean();
+
+    int64_t* iIFCProjectInstances = sdaiGetEntityExtentBN(m_iModel, (char*)"IFCPROJECT");
+
+    int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
+    if (iIFCProjectInstancesCount > 0)
+    {
+        int64_t	iIFCProjectInstance = 0;
+        if (iIFCProjectInstance != 0)
+        {
+            engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
+
+            LoadUnits(iIFCProjectInstance);
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
+{
+    assert(iIFCProjectInstance != 0);
+
+    int_t iIFCUnitAssignmentInstance = 0;
+    sdaiGetAttrBN(iIFCProjectInstance, "UnitsInContext", sdaiINSTANCE, &iIFCUnitAssignmentInstance);
+
+    const int_t ifcConversianBasedUnit_TYPE = sdaiGetEntity(m_iModel, "IFCCONVERSIONBASEDUNIT");
+    const int_t ifcSIUnit_TYPE = sdaiGetEntity(m_iModel, "IFCSIUNIT");
+
+    int_t* pUnitSet = nullptr;
+    sdaiGetAttrBN(iIFCUnitAssignmentInstance, "Units", sdaiAGGR, &pUnitSet);
+
+    int_t iUnitSetCount = sdaiGetMemberCount(pUnitSet);
+    for (int_t iUnitSet = 0; iUnitSet < iUnitSetCount; ++iUnitSet)
+    {
+        int_t iIFCUnitInstance = 0;
+        engiGetAggrElement(pUnitSet, iUnitSet, sdaiINSTANCE, &iIFCUnitInstance);
+
+        if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)
+        {
+            int_t iIFCMeasureWithUnitInstance = 0;
+            sdaiGetAttrBN(iIFCUnitInstance, "ConversionFactor", sdaiINSTANCE, &iIFCMeasureWithUnitInstance);
+
+            if (iIFCMeasureWithUnitInstance != 0)
+            {
+                int_t iIFCSIUnitInstance = 0;
+                sdaiGetAttrBN(iIFCMeasureWithUnitInstance, "UnitComponent", sdaiINSTANCE, &iIFCSIUnitInstance);
+
+                if (sdaiGetInstanceType(iIFCSIUnitInstance) == ifcSIUnit_TYPE)
+                {
+                    wchar_t* szUnitType = nullptr;
+                    sdaiGetAttrBN(iIFCSIUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
+
+                    wchar_t* szPrefix = nullptr;
+                    sdaiGetAttrBN(iIFCSIUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
+
+                    wchar_t* szName = nullptr;
+                    sdaiGetAttrBN(iIFCSIUnitInstance, "Name", sdaiUNICODE, &szName);
+
+                    CIFCUnit* pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
+                    m_mapUnits[pUnit->GetType()] = pUnit;
+                }
+                else
+                {
+                    assert(false);
+                }
+            } // if (iIFCMeasureWithUnitInstance != 0) 
+            else
+            {
+                assert(false);
+            }
+        } // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)
+        else
+        {
+            if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
+            {
+                wchar_t* szUnitType = nullptr;
+                sdaiGetAttrBN(iIFCUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
+
+                wchar_t* szPrefix = nullptr;
+                sdaiGetAttrBN(iIFCUnitInstance, "Prefix", sdaiUNICODE, &szPrefix);
+
+                wchar_t* szName = nullptr;
+                sdaiGetAttrBN(iIFCUnitInstance, "Name", sdaiUNICODE, &szName);
+
+                CIFCUnit* pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
+                m_mapUnits[pUnit->GetType()] = pUnit;
+            } // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
+        } // else if (sdaiGetInstanceType(iIFCUnitInstance) == ifcConversianBasedUnit_TYPE)				
+    } // for (int_t iUnitSet = 
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCUnitProvider::Clean()
+{
+    auto itUnit = m_mapUnits.begin();
+    for (; itUnit != m_mapUnits.end(); itUnit++)
+    {
+        delete itUnit->second;
+    }
+    m_mapUnits.clear();
 }
