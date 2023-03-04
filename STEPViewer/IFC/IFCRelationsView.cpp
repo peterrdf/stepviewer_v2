@@ -1140,7 +1140,7 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 		m_ifcTreeCtrl.DeleteItem(hChild);
 
 		GetAttributeReferences(pIFCAttributeData->getInstance(), pIFCAttributeData->getName(), pIFCAttributeData->getType(), pNMTreeView->itemNew.hItem);
-	} // if ((iImage == IMAGE_PROPERTY_SET) && ...
+	} // if ((iImage == IMAGE_INSTANCE) && ...
 }
 
 CIFCRelationsView::CIFCRelationsView()

@@ -872,18 +872,6 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 		m_pTreeView->InsertItem(&tvInsertStruct);
 
 		/*
-		* Properties
-		*/
-		tvInsertStruct.hParent = hProject;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_PROPERTIES;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
-		tvInsertStruct.item.lParam = NULL;
-
-		m_pTreeView->InsertItem(&tvInsertStruct);
-
-		/*
 		* decomposition/contains
 		*/
 		LoadIsDecomposedBy(pModel, iIFCProjectInstance, hProject);
