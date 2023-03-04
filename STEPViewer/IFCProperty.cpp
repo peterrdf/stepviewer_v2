@@ -3,15 +3,38 @@
 #include "IFCUnit.h"
 
 // ------------------------------------------------------------------------------------------------
-CIFCProperty::CIFCProperty()
-	: m_strName(L"")
-	, m_strValue(L"")
+CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
+	: m_strName(strName)
+	, m_strValue(strValue)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCProperty::~CIFCProperty()
 {
+}
+
+// ------------------------------------------------------------------------------------------------
+/*static*/ wstring CIFCProperty::GetPropertySingleValue(int64_t iIFCPropertySingleValue)
+{
+	wchar_t* szNominalValueADB = nullptr;
+	sdaiGetAttrBN(iIFCPropertySingleValue, "NominalValue", sdaiUNICODE, &szNominalValueADB);
+
+	if (szNominalValueADB == nullptr)
+	{
+		return L"";
+	}
+
+	wchar_t* szUnitADB = nullptr;
+	sdaiGetAttrBN(iIFCPropertySingleValue, "Unit", sdaiUNICODE, &szUnitADB);
+
+	wchar_t* szTypePath = (wchar_t*)sdaiGetADBTypePath(szNominalValueADB, 0);
+	if (szTypePath == nullptr)
+	{
+		return szNominalValueADB;
+	}
+
+	return L"";
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -27,9 +50,11 @@ wstring CIFCProperty::GetValue() const
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCPropertySet::CIFCPropertySet()
-	: m_vecProperties()
+CIFCPropertySet::CIFCPropertySet(const wstring& strName)
+	: m_strName(strName)
+	, m_vecProperties()
 {
+	ASSERT(!m_strName.empty());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -42,7 +67,13 @@ CIFCPropertySet::CIFCPropertySet()
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<CIFCProperty*>& CIFCPropertySet::GetProperties() const
+wstring CIFCPropertySet::getName() const
+{
+	return m_strName;
+}
+
+// ------------------------------------------------------------------------------------------------
+vector<CIFCProperty*>& CIFCPropertySet::Properties()
 {
 	return m_vecProperties;
 }
@@ -63,7 +94,7 @@ CIFCPropertySetCollection::CIFCPropertySetCollection()
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<CIFCPropertySet*> CIFCPropertySetCollection::GetPropertySets() const
+vector<CIFCPropertySet*>& CIFCPropertySetCollection::PropertySets()
 {
 	return m_vecPropertySets;
 }
@@ -113,12 +144,13 @@ CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(int64_
 CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertPropertyCollection(int64_t iInstance)
 {
 	auto pPropertySetCollection = new CIFCPropertySetCollection();
+	LoadProperties(iInstance, pPropertySetCollection);
 
 	return pPropertySetCollection;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadProperties(int64_t iInstance)
+void CIFCPropertyProvider::LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
 	int64_t* piIFCIsDefinedByInstances = 0;
 	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
@@ -139,20 +171,20 @@ void CIFCPropertyProvider::LoadProperties(int64_t iInstance)
 
 		if (sdaiGetInstanceType(iIFCIsDefinedByInstance) == iIFCRelDefinesByPropertiesEntity)
 		{
-			LoadRelDefinesByProperties(iIFCIsDefinedByInstance);
+			LoadRelDefinesByProperties(iIFCIsDefinedByInstance, pPropertySetCollection);
 		}
 		else
 		{
 			if (sdaiGetInstanceType(iIFCIsDefinedByInstance) == iIFCRelDefinesByTypeEntity)
 			{
-				LoadRelDefinesByType(iIFCIsDefinedByInstance);
+				LoadRelDefinesByType(iIFCIsDefinedByInstance, pPropertySetCollection);
 			}
 		}
 	} // for (int64_t i = ...
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance)
+void CIFCPropertyProvider::LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
 	ASSERT(iIFCIsDefinedByInstance != 0);
 
@@ -164,58 +196,25 @@ void CIFCPropertyProvider::LoadRelDefinesByProperties(int64_t iIFCIsDefinedByIns
 
 	if (sdaiGetInstanceType(iIFCPropertyDefinitionInstance) == iIFCElementQuantityEntity)
 	{
-		LoadQuantites(iIFCPropertyDefinitionInstance);
+		LoadQuantites(iIFCPropertyDefinitionInstance, pPropertySetCollection);
 	}
 	else
 	{
 		if (sdaiGetInstanceType(iIFCPropertyDefinitionInstance) == iIFCPropertySetEntity)
 		{
-			LoadPropertySet(iIFCPropertyDefinitionInstance);
+			LoadPropertySet(iIFCPropertyDefinitionInstance, pPropertySetCollection);
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance)
+void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
 	ASSERT(iIFCPropertySetInstance != 0);
-
-	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "Name", sdaiUNICODE, &szName);
-
-	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "Description", sdaiUNICODE, &szDescription);
-
-	wstring strItem;
-	if ((szName != nullptr) && (wcslen(szName) > 0))
-	{
-		strItem = szName;
-	}
-	else
-	{
-		strItem = L"<empty>";
-	}
-
-	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-	{
-		strItem += L" (";
-		strItem += szDescription;
-		strItem += L")";
-	}
 
 	/*
 	* Property set
 	*/
-	/*TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
-	tvInsertStruct.item.lParam = NULL;
-
-	HTREEITEM hPropertySet = m_pTreeView->InsertItem(&tvInsertStruct);*/
-
 	int64_t* piIFCHasPropertiesInstances = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "HasProperties", sdaiAGGR, &piIFCHasPropertiesInstances);
 
@@ -223,6 +222,10 @@ void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance)
 	{
 		return;
 	}
+
+	wstring strItem = GetPropertyName(iIFCPropertySetInstance);
+
+	auto pPropertySet = new CIFCPropertySet(strItem);
 
 	const int64_t iIFCPropertySingleValueEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSINGLEVALUE");
 
@@ -232,54 +235,27 @@ void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance)
 		int64_t iIFCHasPropertiesInstance = 0;
 		engiGetAggrElement(piIFCHasPropertiesInstances, i, sdaiINSTANCE, &iIFCHasPropertiesInstance);
 
-		szName = nullptr;
-		sdaiGetAttrBN(iIFCHasPropertiesInstance, "Name", sdaiUNICODE, &szName);
+		strItem = GetPropertyName(iIFCHasPropertiesInstance);
 
-		szDescription = nullptr;
-		sdaiGetAttrBN(iIFCHasPropertiesInstance, "Description", sdaiUNICODE, &szDescription);
-
-		strItem = L"";
-		if ((szName != nullptr) && (wcslen(szName) > 0))
-		{
-			strItem = szName;
-		}
-		else
-		{
-			strItem = L"<empty>";
-		}
-
-		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-		{
-			strItem += L" ('";
-			strItem += szDescription;
-			strItem += L"')";
-		}
-
+		wstring strValue;
 		if (sdaiGetInstanceType(iIFCHasPropertiesInstance) == iIFCPropertySingleValueEntity)
 		{
-			wstring strValue = CIFCUnit::GetPropertyValue(iIFCHasPropertiesInstance);
+			strValue = CIFCProperty::GetPropertySingleValue(iIFCHasPropertiesInstance);
 			if (strValue.empty())
 			{
 				strValue = L"<empty>";
 			}
-
-			strItem += L" = ";
-			strItem += strValue;
 		}
 
-		/*tvInsertStruct.hParent = hPropertySet;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-		tvInsertStruct.item.lParam = NULL;
-
-		m_pTreeView->InsertItem(&tvInsertStruct);*/
+		auto pProperty = new CIFCProperty(strItem, strValue);
+		pPropertySet->Properties().push_back(pProperty);
 	} // for  (int64_t i = ...
+
+	pPropertySetCollection->PropertySets().push_back(pPropertySet);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance)
+void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
 	ASSERT(iIFCIsDefinedByInstance != 0);
 
@@ -304,12 +280,12 @@ void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance)
 		engiGetAggrElement(piIFCHasPropertySets, i, sdaiINSTANCE, &iIFCHasPropertySetInstance);
 		if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCElementQuantityEntity)
 		{
-			LoadQuantites(iIFCHasPropertySetInstance);
+			LoadQuantites(iIFCHasPropertySetInstance, pPropertySetCollection);
 		}
 		else
 			if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCPropertySetEntity)
 			{
-				LoadPropertySet(iIFCHasPropertySetInstance);
+				LoadPropertySet(iIFCHasPropertySetInstance, pPropertySetCollection);
 			}
 			else
 			{
@@ -319,52 +295,16 @@ void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadQuantites(int64_t iIFCPropertySetInstance)
+void CIFCPropertyProvider::LoadQuantites(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
 	ASSERT(iIFCPropertySetInstance != 0);
 
-	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "Name", sdaiUNICODE, &szName);
-
-	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "Description", sdaiUNICODE, &szDescription);
-
-	wstring strItem;
-	if ((szName != nullptr) && (wcslen(szName) > 0))
-	{
-		strItem = szName;
-	}
-	else
-	{
-		strItem = L"<empty>";
-	}
-
-	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-	{
-		strItem += L" (";
-		strItem += szDescription;
-		strItem += L")";
-	}
+	wstring strItem = GetPropertyName(iIFCPropertySetInstance);
 
 	/*
 	* Property set
 	*/
-	/*TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
-	tvInsertStruct.item.lParam = NULL;
-
-	HTREEITEM hPropertySet = m_pTreeView->InsertItem(&tvInsertStruct);*/
-
-	const int64_t iIFCQuantityLength_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYLENGTH");
-	const int64_t iIFCQuantityArea_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYAREA");
-	const int64_t iIFCQuantityVolume_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYVOLUME");
-	const int64_t iIFCQuantityCount_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYCOUNT");
-	const int64_t iIFCQuantityWeigth_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYWEIGHT");
-	const int64_t iIFCQuantityTime_TYPE = sdaiGetEntity(m_iModel, "IFCQUANTITYTIME");
+	auto pPropertySet = new CIFCPropertySet(strItem);
 
 	int64_t* piIFCQuantities = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Quantities", sdaiAGGR, &piIFCQuantities);
@@ -375,88 +315,114 @@ void CIFCPropertyProvider::LoadQuantites(int64_t iIFCPropertySetInstance)
 		int64_t iIFCQuantityInstance = 0;
 		engiGetAggrElement(piIFCQuantities, i, sdaiINSTANCE, &iIFCQuantityInstance);
 
-		if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityLength_TYPE)
+		if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYLENGTH"))
 		{
-			LoadIFCQuantityLength(iIFCQuantityInstance);
+			LoadIFCQuantityLength(iIFCQuantityInstance, pPropertySet);
+		}
+		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYAREA"))
+		{
+			LoadIFCQuantityArea(iIFCQuantityInstance, pPropertySet);
+		}
+		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYVOLUME"))
+		{
+			LoadIFCQuantityVolume(iIFCQuantityInstance, pPropertySet);
+		}
+		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYCOUNT"))
+		{
+			LoadIFCQuantityCount(iIFCQuantityInstance, pPropertySet);
+		} 
+		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYWEIGHT"))
+		{
+			LoadIFCQuantityWeight(iIFCQuantityInstance, pPropertySet);
+		}
+		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYTIME"))
+		{
+			LoadIFCQuantityTime(iIFCQuantityInstance, pPropertySet);
 		}
 		else
-			if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityArea_TYPE)
-			{
-				LoadIFCQuantityArea(iIFCQuantityInstance);
-			}
-			else
-				if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityVolume_TYPE)
-				{
-					LoadIFCQuantityVolume(iIFCQuantityInstance);
-				}
-				else
-					if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityCount_TYPE)
-					{
-						LoadIFCQuantityCount(iIFCQuantityInstance);
-					}
-					else
-						if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityWeigth_TYPE)
-						{
-							LoadIFCQuantityWeight(iIFCQuantityInstance);
-						}
-						else
-							if (sdaiGetInstanceType(iIFCQuantityInstance) == iIFCQuantityTime_TYPE)
-							{
-								LoadIFCQuantityTime(iIFCQuantityInstance);
-							}
-							else
-							{
-								ASSERT(FALSE); // TODO
-							}
+		{
+			ASSERT(FALSE); // TODO
+		}
 	} // for (int64_t i = ...
+
+	pPropertySetCollection->PropertySets().push_back(pPropertySet);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityLength(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityLength(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityLength(iIFCQuantity);
-	//pModel->LoadIFCQuantityLength(iIFCQuantity, strQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityLength(iIFCQuantity);
 
-	/*
-	* Quantity
-	*/
-	/*TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);*/
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityArea(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityArea(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityArea(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityArea(iIFCQuantity);
+
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityVolume(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityVolume(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityVolume(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityVolume(iIFCQuantity);
+
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityCount(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityCount(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityCount(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityCount(iIFCQuantity);
+
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityWeight(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityWeight(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityWeight(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityWeight(iIFCQuantity);
+
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityTime(int_t iIFCQuantity)
+void CIFCPropertyProvider::LoadIFCQuantityTime(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
 {
-	wstring strQuantity = m_pUnitProvider->GetQuantityTime(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityTime(iIFCQuantity);
+
+	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCPropertyProvider::GetPropertyName(int64_t iInstance) const
+{
+	ASSERT(iInstance != 0);
+
+	wchar_t* szName = nullptr;
+	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
+
+	wchar_t* szDescription = nullptr;
+	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
+
+	wstring strName;
+	if ((szName != nullptr) && (wcslen(szName) > 0))
+	{
+		strName = szName;
+	}
+	else
+	{
+		strName = L"<empty>";
+	}
+
+	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
+	{
+		strName += L" (";
+		strName += szDescription;
+		strName += L")";
+	}
+
+	return strName;
 }

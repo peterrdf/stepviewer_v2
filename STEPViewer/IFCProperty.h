@@ -19,8 +19,10 @@ private: // Members
 
 public: // Methods
 
-	CIFCProperty();
+	CIFCProperty(const wstring& strName, const wstring& strValue);
 	virtual ~CIFCProperty();
+
+	static wstring GetPropertySingleValue(int64_t iIFCPropertySingleValue);
 
 	wstring GetName() const;
 	wstring GetValue() const;
@@ -35,13 +37,13 @@ private: // Members
 	wstring m_strName;
 	vector<CIFCProperty*> m_vecProperties;
 
-
 public: // Methods
 
-	CIFCPropertySet();
+	CIFCPropertySet(const wstring& strName);
 	virtual ~CIFCPropertySet();
 
-	const vector<CIFCProperty*>& GetProperties() const;
+	wstring getName() const;
+	vector<CIFCProperty*>& Properties();
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -52,13 +54,12 @@ private: // Members
 
 	vector<CIFCPropertySet*> m_vecPropertySets;
 
-
 public: // Methods
 
 	CIFCPropertySetCollection();
 	virtual ~CIFCPropertySetCollection();
 
-	const vector<CIFCPropertySet*> GetPropertySets() const;
+	vector<CIFCPropertySet*>& PropertySets();
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -78,19 +79,21 @@ public: // Methods
 
 	CIFCPropertySetCollection* GetPropertySetCollection(int64_t iInstance);
 
-protected: // Methods
+private: // Methods
 
-	CIFCPropertySetCollection* LoadPropertPropertyCollection(int64_t iInstance);	
+	CIFCPropertySetCollection* LoadPropertPropertyCollection(int64_t iInstance);
 
-	void LoadProperties(int64_t iInstance);
-	void LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance);
-	void LoadQuantites(int64_t iIFCPropertySetInstance);
-	void LoadIFCQuantityLength(int_t iIFCQuantity);
-	void LoadIFCQuantityArea(int_t iIFCQuantity);
-	void LoadIFCQuantityVolume(int_t iIFCQuantity);
-	void LoadIFCQuantityCount(int_t iIFCQuantity);
-	void LoadIFCQuantityWeight(int_t iIFCQuantity);
-	void LoadIFCQuantityTime(int_t iIFCQuantity);
-	void LoadPropertySet(int64_t iIFCPropertySetInstance);
-	void LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance);
+	void LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadPropertySet(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadQuantites(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadIFCQuantityLength(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityArea(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityVolume(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityCount(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityWeight(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityTime(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);	
+
+	wstring GetPropertyName(int64_t iInstance) const;
 };

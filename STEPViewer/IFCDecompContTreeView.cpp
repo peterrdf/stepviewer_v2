@@ -1407,7 +1407,7 @@ void CIFCDecompContTreeView::LoadPropertySet(CIFCModel* pModel, int64_t iIFCProp
 
 		if (sdaiGetInstanceType(iIFCHasPropertiesInstance) == iIFCPropertySingleValueEntity)
 		{
-			wstring strValue = CIFCUnit::GetPropertyValue(iIFCHasPropertiesInstance);
+			wstring strValue = CIFCProperty::GetPropertySingleValue(iIFCHasPropertiesInstance);
 			if (strValue.empty())
 			{
 				strValue = L"<empty>";
@@ -1520,138 +1520,6 @@ void CIFCDecompContTreeView::LoadQuantites(CIFCModel* pModel, int64_t iIFCProper
 								ASSERT(FALSE); // TODO
 							}
 	} // for (int64_t i = ...
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityLength(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityLength(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityArea(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityArea(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityVolume(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityVolume(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityCount(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityCount(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityWeight(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityWeight(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIFCQuantityTime(CIFCModel* pModel, int_t iIFCQuantity, HTREEITEM hParent)
-{
-	ASSERT(pModel != nullptr);
-
-	wstring strQuantity;
-	pModel->LoadIFCQuantityTime(iIFCQuantity, strQuantity);
-
-	/*
-	* Quantity
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strQuantity.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
-	tvInsertStruct.item.lParam = NULL;
-
-	m_pTreeView->InsertItem(&tvInsertStruct);
 }
 
 // ------------------------------------------------------------------------------------------------

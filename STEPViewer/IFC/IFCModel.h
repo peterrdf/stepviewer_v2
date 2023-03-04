@@ -105,43 +105,23 @@ private: // Members
 	static int_t s_iInstanceID;
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
+	
 	CIFCModel();
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CIFCModel();
 
 	// CSTEPModelBase
 	virtual int64_t GetInstance() const;
 	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance);
-	virtual void ZoomOut();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	virtual void ZoomOut();	
 	virtual void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;		
+	void ScaleAndCenter(); // [-1, 1]
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
-
-	// --------------------------------------------------------------------------------------------
-	// [-1, 1]
-	void ScaleAndCenter();
-
-	// --------------------------------------------------------------------------------------------
-	// Loads and IFC file
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Clean up
 	void Clean();
 	
 	int_t getModel() const;
 	const wchar_t* getModelName() const;
-
 	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
@@ -150,57 +130,18 @@ public: // Methods
 	const map<int64_t, CIFCClass*>& GetClasses() const;
 	CIFCInstance* GetInstanceByID(int_t iID);
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
-
-	void LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
-	// Units
-	void LoadIFCQuantityArea(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for properties
-	void LoadIFCQuantityVolume(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for properties
-	void LoadIFCQuantityCount(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for properties
-	void LoadIFCQuantityWeight(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for properties
-	void LoadIFCQuantityTime(int_t iIFCQuantity, wstring & strQuantity);
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Schema
 	void SaveSchema();
-
-	// --------------------------------------------------------------------------------------------
-	// Schema
 	void LoadSchema();
 
-private: // Methods		
-
-	// --------------------------------------------------------------------------------------------
-	// Retrieves IFC objects by Entity
+private: // Methods
+	
 	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
-
-	// --------------------------------------------------------------------------------------------
-	// Retrieves IFC objects by Entity
 	void RetrieveObjects(int_t iEntity, const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
-
-	// --------------------------------------------------------------------------------------------
-	// Retrieves the geometry for an IFC object
 	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments);
-
-	// --------------------------------------------------------------------------------------------
-	// Entities
+	
 	void LoadEntities();
-
-	// --------------------------------------------------------------------------------------------
-	// Classes
 	void LoadClasses();
 };
 

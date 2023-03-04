@@ -61,8 +61,6 @@ public: // Methods
     wstring GetName() const;
     wstring GetUnit() const; // [PREFIX][SPACE][NAME]
 
-	static wstring GetPropertyValue(int64_t iIFCPropertySingleValue);
-
 protected: // Methods
 	
     void ConvertType(const wchar_t* szUnitType);
@@ -86,13 +84,13 @@ public: // Methods
 
 	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
 	
-	wstring GetQuantity(int_t iIFCQuantity, const char* szValueName, const wchar_t* szUnitName) const;
-	wstring GetQuantityLength(int_t iIFCQuantity) const;
-	wstring GetQuantityArea(int_t iIFCQuantity) const;
-	wstring GetQuantityVolume(int_t iIFCQuantity) const;
-	wstring GetQuantityCount(int_t iIFCQuantity) const;
-	wstring GetQuantityWeight(int_t iIFCQuantity) const;
-	wstring GetQuantityTime(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantity(int_t iIFCQuantity, const char* szValueName, const wchar_t* szUnitName) const;
+	pair<wstring, wstring> GetQuantityLength(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantityArea(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantityVolume(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantityCount(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantityWeight(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantityTime(int_t iIFCQuantity) const;
 
 protected: // Methods
 
