@@ -1,5 +1,7 @@
 #pragma once
 
+#include "IFCUnit.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -66,11 +68,12 @@ class CIFCPropertyProvider
 private: // Members
 
 	int64_t m_iModel;
+	CIFCUnitProvider* m_pUnitProvider;
 	map<int64_t, CIFCPropertySetCollection*> m_mapPropertyCollections;
 
 public: // Methods
 
-	CIFCPropertyProvider(int64_t iModel);
+	CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUnitProvider);
 	virtual ~CIFCPropertyProvider();
 
 	CIFCPropertySetCollection* GetPropertPropertyCollection(int64_t iInstance);
@@ -81,4 +84,13 @@ protected: // Methods
 
 	void LoadProperties(int64_t iInstance);
 	void LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance);
+	void LoadQuantites(int64_t iIFCPropertySetInstance);
+	void LoadIFCQuantityLength(int_t iIFCQuantity);
+	void LoadIFCQuantityArea(int_t iIFCQuantity);
+	void LoadIFCQuantityVolume(int_t iIFCQuantity);
+	void LoadIFCQuantityCount(int_t iIFCQuantity);
+	void LoadIFCQuantityWeight(int_t iIFCQuantity);
+	void LoadIFCQuantityTime(int_t iIFCQuantity);
+	void LoadPropertySet(int64_t iIFCPropertySetInstance);
+	void LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance);
 };

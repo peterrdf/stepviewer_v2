@@ -72,51 +72,6 @@ wstring CIFCUnit::GetUnit() const
 		return szNominalValueADB;
 	}
 
-	if (wcscmp(szTypePath, L"IFCBOOLEAN") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCIDENTIFIER") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCINTEGER") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCLABEL") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCTEXT") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCREAL") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCCOUNTMEASURE") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCPOSITIVERATIOMEASURE") == 0)
-	{
-		return L"";
-	}
-
-	if (wcscmp(szTypePath, L"IFCVOLUMETRICFLOWRATEMEASURE") == 0)
-	{
-		return L"";
-	}
-
 	return L"";
 }
 
@@ -654,7 +609,87 @@ const CIFCUnit* CIFCUnitProvider::GetUnit(const wchar_t* szUnit) const
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCUnitProvider::Load()
+wstring CIFCUnitProvider::GetQuantity(int_t iIFCQuantity, const char* szValueName, const wchar_t* szUnitName) const
+{
+    wchar_t* szQuantityName = nullptr;
+    sdaiGetAttrBN(iIFCQuantity, "Name", sdaiUNICODE, &szQuantityName);
+
+    wchar_t* szQuantityDescription = nullptr;
+    sdaiGetAttrBN(iIFCQuantity, "Description", sdaiUNICODE, &szQuantityDescription);
+
+    wchar_t* szValue = nullptr;
+    sdaiGetAttrBN(iIFCQuantity, szValueName, sdaiUNICODE, &szValue);
+
+    wchar_t* szUnit = nullptr;
+    sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
+
+    wstring strQuantity = szQuantityName;
+    strQuantity += L" = ";
+    strQuantity += szValue;
+
+    if (szUnit != nullptr)
+    {
+        strQuantity += L" ";
+        strQuantity += szUnit;
+    } // if (szUnit != nullptr)
+    else
+    {
+        auto itUnit = m_mapUnits.find(szUnitName);
+        if (itUnit != m_mapUnits.end())
+        {
+            strQuantity += L" ";
+            strQuantity += itUnit->second->GetName();
+        }
+    } // else if (szUnit != nullptr)	
+
+    if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0))
+    {
+        strQuantity += L" ('";
+        strQuantity += szQuantityDescription;
+        strQuantity += L"')";
+    }
+
+    return strQuantity;
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityLength(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "LengthValue", L"LENGTHUNIT");
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityArea(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "AreaValue", L"AREAUNIT");
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityVolume(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "VolumeValue", L"VOLUMEUNIT");
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityCount(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "CountValue", L"");
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityWeight(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "WeigthValue", L"MASSUNIT");
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring CIFCUnitProvider::GetQuantityTime(int_t iIFCQuantity) const
+{
+    return GetQuantity(iIFCQuantity, "TimeValue", L"TIMEUNIT");
+}
+
+// ------------------------------------------------------------------------------------------------
+void CIFCUnitProvider::Load()
 {
     Clean();
 

@@ -59,7 +59,7 @@ public: // Methods
 	wstring GetType() const;
     wstring GetPrefix() const;
     wstring GetName() const;
-    wstring GetUnit() const; // PREFIX + SPACE + NAME
+    wstring GetUnit() const; // [PREFIX][SPACE][NAME]
 
 	static wstring GetPropertyValue(int64_t iIFCPropertySingleValue);
 
@@ -85,10 +85,18 @@ public: // Methods
 	virtual ~CIFCUnitProvider();
 
 	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
+	
+	wstring GetQuantity(int_t iIFCQuantity, const char* szValueName, const wchar_t* szUnitName) const;
+	wstring GetQuantityLength(int_t iIFCQuantity) const;
+	wstring GetQuantityArea(int_t iIFCQuantity) const;
+	wstring GetQuantityVolume(int_t iIFCQuantity) const;
+	wstring GetQuantityCount(int_t iIFCQuantity) const;
+	wstring GetQuantityWeight(int_t iIFCQuantity) const;
+	wstring GetQuantityTime(int_t iIFCQuantity) const;
 
 protected: // Methods
 
-	virtual void Load();
+	void Load();
 	void LoadUnits(int_t iIFCProjectInstance);
 	void Clean();
 };
