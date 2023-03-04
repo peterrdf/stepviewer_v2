@@ -692,8 +692,6 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
     int_t iIFCUnitAssignmentInstance = 0;
     sdaiGetAttrBN(iIFCProjectInstance, "UnitsInContext", sdaiINSTANCE, &iIFCUnitAssignmentInstance);
 
-    const int_t ifcSIUnit_TYPE = sdaiGetEntity(m_iModel, "IFCSIUNIT");
-
     int_t* pUnitSet = nullptr;
     sdaiGetAttrBN(iIFCUnitAssignmentInstance, "Units", sdaiAGGR, &pUnitSet);
 
@@ -713,7 +711,7 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
                 int_t iIFCSIUnitInstance = 0;
                 sdaiGetAttrBN(iIFCMeasureWithUnitInstance, "UnitComponent", sdaiINSTANCE, &iIFCSIUnitInstance);
 
-                if (sdaiGetInstanceType(iIFCSIUnitInstance) == ifcSIUnit_TYPE)
+                if (sdaiGetInstanceType(iIFCSIUnitInstance) == sdaiGetEntity(m_iModel, "IFCSIUNIT"))
                 {
                     wchar_t* szUnitType = nullptr;
                     sdaiGetAttrBN(iIFCSIUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
@@ -739,7 +737,7 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
         } // if (sdaiGetInstanceType(iIFCUnitInstance) == ...)
         else
         {
-            if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
+            if (sdaiGetInstanceType(iIFCUnitInstance) == sdaiGetEntity(m_iModel, "IFCSIUNIT"))
             {
                 wchar_t* szUnitType = nullptr;
                 sdaiGetAttrBN(iIFCUnitInstance, "UnitType", sdaiUNICODE, &szUnitType);
@@ -750,9 +748,9 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
                 wchar_t* szName = nullptr;
                 sdaiGetAttrBN(iIFCUnitInstance, "Name", sdaiUNICODE, &szName);
 
-                CIFCUnit* pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
+                auto pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
                 m_mapUnits[pUnit->GetType()] = pUnit;
-            } // if (sdaiGetInstanceType(iIFCUnitInstance) == ifcSIUnit_TYPE)
+            } // if (sdaiGetInstanceType(iIFCUnitInstance) == ...)
         } // else if (sdaiGetInstanceType(iIFCUnitInstance) == ...)				
     } // for (int_t iUnitSet = 
 }

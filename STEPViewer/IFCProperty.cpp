@@ -15,8 +15,39 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*static*/ bool CIFCProperty::HasProperties(int64_t iModel, int64_t iInstance)
+{
+	ASSERT(iModel != 0);
+	ASSERT(iInstance != 0);
+
+	int64_t* piIFCIsDefinedByInstances = 0;
+	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
+
+	if (piIFCIsDefinedByInstances == nullptr)
+	{
+		return false;
+	}
+
+	int64_t iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
+	for (int64_t i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
+	{
+		int64_t	iIFCIsDefinedByInstance = 0;
+		engiGetAggrElement(piIFCIsDefinedByInstances, i, sdaiINSTANCE, &iIFCIsDefinedByInstance);
+
+		if ((sdaiGetInstanceType(iIFCIsDefinedByInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYPROPERTIES")) ||
+			(sdaiGetInstanceType(iIFCIsDefinedByInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYTYPE")))
+		{
+			return true;
+		}
+	} // for (int64_t i = ...
+
+	return	false;
+}
+// ------------------------------------------------------------------------------------------------
 /*static*/ wstring CIFCProperty::GetPropertySingleValue(int64_t iIFCPropertySingleValue)
 {
+	ASSERT(iIFCPropertySingleValue != 0);
+
 	wchar_t* szNominalValueADB = nullptr;
 	sdaiGetAttrBN(iIFCPropertySingleValue, "NominalValue", sdaiUNICODE, &szNominalValueADB);
 

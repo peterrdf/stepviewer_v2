@@ -12,8 +12,7 @@ private: // Declarations
 
 	enum class enumSearchFilter {
 		All = 0,
-		ExpressLineNumber = 1,
-		Properties = 2
+		ExpressID = 1,
 	};
 
 private: // Members

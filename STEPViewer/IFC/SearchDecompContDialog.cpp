@@ -22,32 +22,13 @@ BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strTe
 	strTextLower.MakeLower();
 
 	// Express line number
-	if (m_enSearchFilter == enumSearchFilter::ExpressLineNumber)
+	if (m_enSearchFilter == enumSearchFilter::ExpressID)
 	{
 		CString strExpressionLine = L"#";
 		strExpressionLine += strText;
 
 		return strItemText.Find(strExpressionLine, 0) == 0;
-	}
-
-	// Properties
-	if (m_enSearchFilter == enumSearchFilter::Properties)
-	{
-		int iImage = -1;
-		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage == IMAGE_PROPERTY_SET) || (iImage == IMAGE_PROPERTY))
-		{
-			return strItemText.Find(strTextLower, 0) != -1;
-		}
-		else
-		{
-			return false;
-		}
-	}
+	}	
 
 	// All
 	return strItemText.Find(strTextLower, 0) != -1;
@@ -81,27 +62,7 @@ void CSearchDecompContDialog::UnselectItem(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchDecompContDialog::SearchChildren(HTREEITEM hParent)
 {
-	ASSERT(hParent != NULL);
-
-	// Load the Properties
-	if (m_enSearchFilter == enumSearchFilter::Properties)
-	{
-		int iImage = -1;
-		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hParent, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if (iImage == IMAGE_PROPERTY_SET)
-		{
-			HTREEITEM hChild = m_pIFCTreeCtrl->GetChildItem(hParent);
-
-			if ((hChild != NULL) && (m_pIFCTreeCtrl->GetItemText(hChild) == ITEM_PROPERTIES_PENDING))
-			{
-				m_pIFCTreeCtrl->Expand(hParent, TVE_EXPAND);
-			}
-		}
-	} // if (m_enSearchFilter == swProperties)
+	ASSERT(hParent != NULL);	
 
 	HTREEITEM hChild = m_pIFCTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != NULL)
@@ -310,8 +271,7 @@ BOOL CSearchDecompContDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	m_cmbSearchFilter.AddString(_T("(All)"));
-	m_cmbSearchFilter.AddString(_T("Express line number"));
-	m_cmbSearchFilter.AddString(_T("Properties"));
+	m_cmbSearchFilter.AddString(_T("Express ID"));
 
 	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
