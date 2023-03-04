@@ -76,7 +76,7 @@ public: // Methods
 	CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUnitProvider);
 	virtual ~CIFCPropertyProvider();
 
-	CIFCPropertySetCollection* GetPropertPropertyCollection(int64_t iInstance);
+	CIFCPropertySetCollection* GetPropertySetCollection(int64_t iInstance);
 
 protected: // Methods
 

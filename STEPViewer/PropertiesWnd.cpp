@@ -7,6 +7,7 @@
 #include "STEPViewer.h"
 #include "OpenGLSTEPView.h"
 #include "STEPModel.h"
+#include "IFCModel.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -777,18 +778,74 @@ void CPropertiesWnd::LoadInstanceProperties()
 		ASSERT(FALSE);
 
 		return;
+	}	
+
+	if (GetController()->GetSelectedInstance() == nullptr)
+	{
+		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pModel = pContoller->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	switch (pModel->GetType())
+	{
+		case enumSTEPModelType::STEP:
+		{
+			LoadSTEPInstanceProperties();
+		}
+		break;
+
+		case enumSTEPModelType::IFC:
+		{
+			LoadIFCInstanceProperties();
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Unknown
+		}
+		break;
+	} // switch (pModel ->GetType())
+}
+
+// ------------------------------------------------------------------------------------------------
+void CPropertiesWnd::LoadSTEPInstanceProperties()
+{
+	auto pContoller = GetController();
+	if (pContoller == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pContoller->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
+		ASSERT(FALSE);
+
 		return;
 	}
 
 	/*
 	* Instance
 	*/
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getId());	
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getId());
 
 	/*
 	* Properties
@@ -810,7 +867,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			char* name = nullptr;
 			sdaiGetAttrBN(propertyDefinitionInstance, "name", sdaiSTRING, &name);
-			
+
 			auto pProperty = new CMFCPropertyGridProperty(L"name", (_variant_t)name, L"name");
 			pProperty->AllowEdit(FALSE);
 			pPropertyGroup->AddSubItem(pProperty);
@@ -899,7 +956,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 								break;
 							}
 						}
-						else {							
+						else {
 							//ASSERT(false);
 						}
 					}
@@ -908,7 +965,52 @@ void CPropertiesWnd::LoadInstanceProperties()
 		}
 	}
 
-	m_wndPropList.AddProperty(pInstanceGroup);	
+	m_wndPropList.AddProperty(pInstanceGroup);
+}
+
+// ------------------------------------------------------------------------------------------------
+void CPropertiesWnd::LoadIFCInstanceProperties()
+{
+	auto pContoller = GetController();
+	if (pContoller == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pContoller->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pIFCModel = dynamic_cast<CIFCModel*>(pModel);
+	if (pIFCModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pPropertyProvider = pIFCModel->GetPropertyProvider();
+
+	auto pSelectedInstance = dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance());
+	if (pSelectedInstance == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pSelectedInstance->_getInstance());
+	if (pPropertySetCollection == nullptr)
+	{
+		return;
+	}
+
 }
 
 void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)

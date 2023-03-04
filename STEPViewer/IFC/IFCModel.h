@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "IFCUnit.h"
 #include "IFCEntity.h"
+#include "IFCProperty.h"
 #include "IFCClass.h"
 
 #include <string>
@@ -87,6 +88,10 @@ private: // Members
 	// IFC Units
 	CIFCUnitProvider* m_pUnitProvider;
 
+	// ------------------------------------------------------------------------
+	// IFC Properties
+	CIFCPropertyProvider* m_pPropertyProvider;
+
 	// --------------------------------------------------------------------------------------------
 	// Entity : CIFCEntity *
 	map<int_t, CIFCEntity*> m_mapEntities;
@@ -133,45 +138,19 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Clean up
 	void Clean();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	
 	int_t getModel() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	const wchar_t* getModelName() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	float GetBoundingSphereDiameter() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	CIFCUnitProvider* GetUnitProvider() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	CIFCPropertyProvider* CIFCModel::GetPropertyProvider() const;
 	const map<int_t, CIFCEntity*>& GetEntities() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	const map<int64_t, CIFCClass*>& GetClasses() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	CIFCInstance* GetInstanceByID(int_t iID);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
 
-	// --------------------------------------------------------------------------------------------
-	// Support for properties
 	void LoadIFCQuantityLength(int_t iIFCQuantity, wstring & strQuantity);
 
 	// --------------------------------------------------------------------------------------------

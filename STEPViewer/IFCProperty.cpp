@@ -88,7 +88,7 @@ CIFCPropertyProvider::CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUn
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertPropertyCollection(int64_t iInstance)
+CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(int64_t iInstance)
 {
 	if (iInstance == 0)
 	{
@@ -112,9 +112,9 @@ CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertPropertyCollection(in
 // ------------------------------------------------------------------------------------------------
 CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertPropertyCollection(int64_t iInstance)
 {
-	ASSERT(FALSE); // todo
+	auto pPropertySetCollection = new CIFCPropertySetCollection();
 
-	return nullptr;
+	return pPropertySetCollection;
 }
 
 // ------------------------------------------------------------------------------------------------
