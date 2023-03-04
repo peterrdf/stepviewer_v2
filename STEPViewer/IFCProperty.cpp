@@ -98,7 +98,7 @@ CIFCPropertySet::CIFCPropertySet(const wstring& strName)
 }
 
 // ------------------------------------------------------------------------------------------------
-wstring CIFCPropertySet::getName() const
+wstring CIFCPropertySet::GetName() const
 {
 	return m_strName;
 }

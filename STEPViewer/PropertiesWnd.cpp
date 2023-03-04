@@ -997,19 +997,41 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	auto pPropertyProvider = pIFCModel->GetPropertyProvider();
 
-	auto pSelectedInstance = dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance());
-	if (pSelectedInstance == nullptr)
+	auto pInstance = dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance());
+	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pSelectedInstance->_getInstance());
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->_getInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;
 	}
+
+	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->_getName().c_str());
+
+	for (auto pPropertySet : pPropertySetCollection->PropertySets())
+	{
+		auto pPropertySetGroup = new CMFCPropertyGridProperty(pPropertySet->GetName().c_str());
+
+		pInstanceGridGroup->AddSubItem(pPropertySetGroup);
+
+		for (auto pProperty : pPropertySet->Properties())
+		{
+			auto pGridProperty = new CMFCPropertyGridProperty(
+				pProperty->GetName().c_str(), 
+				(_variant_t)pProperty->GetValue().c_str(), 
+				L""); // Description
+			pGridProperty->AllowEdit(FALSE);
+
+			pPropertySetGroup->AddSubItem(pGridProperty);
+		}
+	}
+
+	m_wndPropList.AddProperty(pInstanceGridGroup);
 
 }
 

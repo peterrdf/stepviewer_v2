@@ -43,7 +43,7 @@ public: // Methods
 	CIFCPropertySet(const wstring& strName);
 	virtual ~CIFCPropertySet();
 
-	wstring getName() const;
+	wstring GetName() const;
 	vector<CIFCProperty*>& Properties();
 };
 
