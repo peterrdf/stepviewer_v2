@@ -50,7 +50,6 @@ public: // Methods
 	virtual void OnWorldDimensionsChanged();	
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstancePropertySelected();
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	virtual void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance);
 	virtual void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity);

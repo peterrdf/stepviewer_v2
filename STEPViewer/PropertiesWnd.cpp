@@ -18,9 +18,6 @@ static char THIS_FILE[]=__FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CResourceViewBar
 
-#define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
-#define WM_LOAD_INSTANCE_PROPERTIES WM_USER + 2
-
 #define TRUE_VALUE_PROPERTY L"Yes"
 #define FALSE_VALUE_PROPERTY L"No"
 #define REMOVE_OBJECT_PROPERTY_COMMAND L"---<REMOVE>---"
@@ -75,14 +72,6 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CPropertiesWnd::OnInstanceSelected(CSTEPView* /*pSender*/)
-{
-	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
-
-	LoadInstanceProperties();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnInstancePropertySelected()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -338,8 +327,6 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_CBN_SELENDOK(ID_COMBO_PROPERTIES_VIEW, OnViewModeChanged)
-	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTY_VALUES, OnLoadInstancePropertyValues)
-	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTIES, OnLoadInstanceProperties)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1069,72 +1056,6 @@ void CPropertiesWnd::OnViewModeChanged()
 		}
 		break;
 	}
-}
-
-LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	ASSERT(0); // todo
-
-	//ASSERT(wParam != 0);	
-
-	//CMFCPropertyGridProperty * pValueProperty = (CMFCPropertyGridProperty *)wParam;	
-	//CRDFInstancePropertyData * pValueData = (CRDFInstancePropertyData *)pValueProperty->GetData();
-	//ASSERT(pValueData != nullptr);
-
-	//CRDFInstance * pRDFInstance = pValueData->GetInstance();
-	//CRDFProperty * pRDFProperty = pValueData->GetProperty();
-
-	///*
-	//* Select the property
-	//*/
-	//CMFCPropertyGridProperty * pPropertyGroup = pValueProperty->GetParent();	
-	//m_wndPropList.SetCurSel(pPropertyGroup);
-
-	///*
-	//* Update the cardinality
-	//*/
-	//CAddRDFInstanceProperty * pCardinalityProperty = (CAddRDFInstanceProperty *)pPropertyGroup->GetSubItem(1);
-
-	//wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
-
-	//pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
-	//pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());
-
-	///*
-	//* Disable the drawing
-	//*/
-	//m_wndPropList.SendMessage(WM_SETREDRAW, 0, 0);
-
-	///*
-	//* Remove all values	
-	//*/
-	//while (pPropertyGroup->GetSubItemsCount() > 2/*keep range and cardinality*/)
-	//{
-	//	CMFCPropertyGridProperty * pValue = (CRDFInstanceProperty *)(pPropertyGroup->GetSubItem(2));
-
-	//	m_wndPropList.DeleteProperty(pValue);
-	//}	
-
-	///*
-	//* Add the values
-	//*/
-	//AddInstancePropertyValues(pPropertyGroup, pRDFInstance, pRDFProperty);
-
-	///*
-	//* Enable the drawing
-	//*/
-	//m_wndPropList.SendMessage(WM_SETREDRAW, 1, 0);
-
-	//m_wndPropList.AdjustLayout();
-
-	return 0;
-}
-
-LRESULT CPropertiesWnd::OnLoadInstanceProperties(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	LoadInstanceProperties();
-
-	return 0;
 }
 
 void CPropertiesWnd::SetPropListFont()

@@ -71,7 +71,6 @@ public: // Methods
 	virtual void OnModelChanged();
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstancePropertySelected();
 	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
@@ -120,8 +119,6 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 	afx_msg void OnViewModeChanged();
-	afx_msg LRESULT OnLoadInstancePropertyValues(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnLoadInstanceProperties(WPARAM wParam, LPARAM lParam);
 
 	DECLARE_MESSAGE_MAP()
 

@@ -44,11 +44,6 @@ void CSTEPView::SetController(CSTEPController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnInstancePropertySelected()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPView::OnInstancesEnabledStateChanged(CSTEPView* /*pSender*/)
 {
 }
