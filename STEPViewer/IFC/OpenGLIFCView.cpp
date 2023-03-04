@@ -5,7 +5,6 @@
 #include "IFCModel.h"
 #include "resource.h"
 
-#include <assert.h>
 #include <chrono>
 
 // ------------------------------------------------------------------------------------------------
@@ -332,7 +331,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
-				assert(false);
+				ASSERT(false);
 
 				return;
 			}
@@ -350,7 +349,7 @@ COpenGLIFCView::~COpenGLIFCView()
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
-					assert(false);
+					ASSERT(false);
 
 					return;
 				}
@@ -372,7 +371,7 @@ COpenGLIFCView::~COpenGLIFCView()
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
-					assert(false);
+					ASSERT(false);
 
 					return;
 				}
@@ -394,7 +393,7 @@ COpenGLIFCView::~COpenGLIFCView()
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
-					assert(false);
+					ASSERT(false);
 
 					return;
 				}
@@ -416,7 +415,7 @@ COpenGLIFCView::~COpenGLIFCView()
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
-					assert(false);
+					ASSERT(false);
 
 					return;
 				}
@@ -444,7 +443,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 		{
-			assert(false);
+			ASSERT(false);
 
 			return;
 		}
@@ -460,7 +459,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 		{
-			assert(false);
+			ASSERT(false);
 
 			return;
 		}
@@ -476,7 +475,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 		{
-			assert(false);
+			ASSERT(false);
 
 			return;
 		}
@@ -492,7 +491,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 		{
-			assert(false);
+			ASSERT(false);
 
 			return;
 		}
@@ -508,7 +507,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 		{
-			assert(false);
+			ASSERT(false);
 
 			return;
 		}

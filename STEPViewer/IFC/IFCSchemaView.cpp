@@ -33,7 +33,7 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 	* Model
 	*/		
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = NULL;
+	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
@@ -77,7 +77,7 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 {
-	ASSERT(pIFCEntity != NULL);
+	ASSERT(pIFCEntity != nullptr);
 
 	if (pIFCEntity->getAttributesCount() == 0)
 	{
@@ -114,7 +114,7 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 		tvInsertStruct.item.lParam = (LPARAM)pIFCEntity;
 
 		HTREEITEM hAttribute = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
-		VERIFY(hAttribute != NULL);
+		VERIFY(hAttribute != nullptr);
 	} // for (size_t iAttribute = ...
 }
 
@@ -154,7 +154,7 @@ void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREE
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_SUB_TYPES;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SUB_TYPES;
-		tvInsertStruct.item.lParam = NULL;	
+		tvInsertStruct.item.lParam = NULL;
 
 		HTREEITEM hSubType = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
@@ -168,7 +168,7 @@ void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREE
 // ------------------------------------------------------------------------------------------------
 pair<int, int> CIFCSchemaView::GetInstancesCount(CIFCEntity* pEntity) const
 {
-	ASSERT(pEntity != NULL);
+	ASSERT(pEntity != nullptr);
 
 	int iInstancesCount = (int)pEntity->getInstancesCount();
 
@@ -201,7 +201,7 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	UINT uFlags = 0;
 	HTREEITEM hItem = m_ifcTreeCtrl.HitTest(point, &uFlags);
 
-	if ((hItem == NULL) || (m_ifcTreeCtrl.GetItemData(hItem) == NULL))
+	if ((hItem == nullptr) || (m_ifcTreeCtrl.GetItemData(hItem) == NULL))
 	{
 		return;
 	}
@@ -248,7 +248,7 @@ void CIFCSchemaView::OnTvnItemexpandingTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResu
 }
 
 CIFCSchemaView::CIFCSchemaView()
-	: m_pSearchDialog(NULL)
+	: m_pSearchDialog(nullptr)
 {
 }
 
@@ -278,7 +278,7 @@ int CIFCSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -379,7 +379,7 @@ void CIFCSchemaView::ResetView()
 
 void CIFCSchemaView::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 	{
 		return;
 	}
@@ -390,7 +390,7 @@ void CIFCSchemaView::AdjustLayout()
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(
-		NULL, 
+		nullptr, 
 		rectClient.left, 
 		rectClient.top, 
 		rectClient.Width(), 
@@ -398,7 +398,7 @@ void CIFCSchemaView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_ifcTreeCtrl.SetWindowPos(
-		NULL,
+		nullptr,
 		rectClient.left + 1, 
 		rectClient.top + cyTlb + 1, 
 		rectClient.Width() - 2, 

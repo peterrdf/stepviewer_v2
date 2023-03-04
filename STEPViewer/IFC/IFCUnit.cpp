@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "IFCUnit.h"
 
-#include <assert.h>
-
 // ------------------------------------------------------------------------------------------------
 CIFCUnit::CIFCUnit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
 	: m_iType(UNKNOWN)
@@ -55,7 +53,7 @@ wstring CIFCUnit::GetUnit() const
 // ------------------------------------------------------------------------------------------------
 void CIFCUnit::ConvertType(const wchar_t* szUnitType)
 {
-    assert(szUnitType != nullptr);
+    ASSERT(szUnitType != nullptr);
 
     if (wcscmp(szUnitType, L".ABSORBEDDOSEUNIT.") == 0)
     {
@@ -372,7 +370,7 @@ void CIFCUnit::ConvertPrefix(const wchar_t* szPrefix)
 // ------------------------------------------------------------------------------------------------
 void CIFCUnit::ConvertName(const wchar_t* szName)
 {
-    assert(szName != nullptr);
+    ASSERT(szName != nullptr);
 
     if (wcscmp(szName, L".AMPERE.") == 0)
     {
@@ -687,7 +685,7 @@ void CIFCUnitProvider::Load()
 // ------------------------------------------------------------------------------------------------
 void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
 {
-    assert(iIFCProjectInstance != 0);
+    ASSERT(iIFCProjectInstance != 0);
 
     int_t iIFCUnitAssignmentInstance = 0;
     sdaiGetAttrBN(iIFCProjectInstance, "UnitsInContext", sdaiINSTANCE, &iIFCUnitAssignmentInstance);
@@ -727,12 +725,12 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
                 }
                 else
                 {
-                    assert(false);
+                    ASSERT(false);
                 }
             } // if (iIFCMeasureWithUnitInstance != 0) 
             else
             {
-                assert(false);
+                ASSERT(false);
             }
         } // if (sdaiGetInstanceType(iIFCUnitInstance) == ...)
         else

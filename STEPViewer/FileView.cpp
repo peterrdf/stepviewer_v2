@@ -210,7 +210,7 @@ void CFileView::AdjustLayout()
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(
-		NULL,
+		nullptr,
 		rectClient.left,
 		rectClient.top,
 		rectClient.Width(),
@@ -218,7 +218,7 @@ void CFileView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndFileView.SetWindowPos(
-		NULL, rectClient.left + 1,
+		nullptr, rectClient.left + 1,
 		rectClient.top + cyTlb + 1,
 		rectClient.Width() - 2,
 		rectClient.Height() - cyTlb - 2,

@@ -30,7 +30,7 @@ static char THIS_FILE[]=__FILE__;
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCRelationsView::OnModelChanged() /*override*/
 {
-	LoadProperties(0, NULL, vector<int_t>());
+	LoadProperties(0, nullptr, vector<int_t>());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void CIFCRelationsView::LoadInstances(const vector<CIFCInstance*>& vecInstances)
 	m_ifcTreeCtrl.DeleteAllItems();
 
 	auto pModel = GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -166,7 +166,7 @@ void CIFCRelationsView::LoadInstances(const vector<CIFCInstance*>& vecInstances)
 	// ******************************************************************************************** //
 	// Model
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = NULL;
+	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
@@ -194,7 +194,7 @@ void CIFCRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, c
 	m_ifcTreeCtrl.DeleteAllItems();
 
 	auto pModel = GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -202,7 +202,7 @@ void CIFCRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, c
 	// ******************************************************************************************** //
 	// Model
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = NULL;
+	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
@@ -230,10 +230,10 @@ void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int
 	ASSERT(iEntity != 0);
 	ASSERT(iInstance != 0);
 
-	wchar_t * szName = NULL;
+	wchar_t * szName = nullptr;
 	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t * szDescription = NULL;
+	wchar_t * szDescription = nullptr;
 	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
 
 	int_t iValue = internalGetP21Line(iInstance);
@@ -244,14 +244,14 @@ void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int
 	wstring strItem = strPrefix;
 	strItem += L" ";
 	strItem += szEntity;
-	if ((szName != NULL) && (wcslen(szName) > 0))
+	if ((szName != nullptr) && (wcslen(szName) > 0))
 	{
 		strItem += L" '";
 		strItem += szName;
 		strItem += L"'";
 	}
 
-	if ((szDescription != NULL) && (wcslen(szDescription) > 0))
+	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 	{
 		strItem += L" (";
 		strItem += szDescription;
@@ -293,7 +293,7 @@ int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, const wchar_t* sz
 	/*
 	* Entity
 	*/
-	wchar_t	* szEntityName = NULL;
+	wchar_t	* szEntityName = nullptr;
 	engiGetEntityName(iEntity, sdaiUNICODE, (char **)&szEntityName);
 
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -422,10 +422,10 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 
 		case sdaiAGGR:
 		{
-			int_t * pValue = NULL;
+			int_t * pValue = nullptr;
 			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiAGGR, &pValue);
 
-			if (pValue != NULL) 
+			if (pValue != nullptr) 
 			{
 				strText += L"(";
 
@@ -450,7 +450,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 				}
 
 				strText += L")";
-			} // if (pValue != NULL) 
+			} // if (pValue != nullptr) 
 			else 
 			{
 				strText += L"\u2205";
@@ -462,10 +462,10 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 		case sdaiENUM:
 		case sdaiLOGICAL:
 		{
-			wchar_t	* pValue = NULL;
+			wchar_t	* pValue = nullptr;
 			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiUNICODE, (char **)&pValue);
 
-			if (pValue != NULL) 
+			if (pValue != nullptr) 
 			{
 				strText += pValue;
 			}
@@ -518,7 +518,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 			wchar_t	* szValue = 0;
 			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiUNICODE, (char **)&szValue);
 
-			if (szValue != NULL) 
+			if (szValue != nullptr) 
 			{
 				strText += L"'";
 				strText += szValue;
@@ -580,7 +580,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			int_t * pValue = 0;
 			sdaiGetADBValue((void *)ADB, sdaiAGGR, &pValue);
 
-			if (pValue != NULL)
+			if (pValue != nullptr)
 			{
 				strText += L"(";
 				
@@ -614,7 +614,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			wchar_t	* szValue = 0;
 			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char **)&szValue);
 
-			if (szValue != NULL)
+			if (szValue != nullptr)
 			{
 				strText += szValue;
 			}
@@ -667,7 +667,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 			wchar_t	* szValue = 0;
 			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char **)&szValue);
 
-			if (szValue != NULL)
+			if (szValue != nullptr)
 			{
 				strText += L"'";
 				strText += szValue;
@@ -732,7 +732,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			int_t * pValue = 0;
 			engiGetAggrElement(pAggregate, iElementIndex, sdaiAGGR, &pValue);
 
-			if (pValue != NULL)
+			if (pValue != nullptr)
 			{
 				strText += L"(";
 
@@ -772,7 +772,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			wchar_t	* szValue = 0;
 			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char **)&szValue);
 
-			if (szValue != NULL) 
+			if (szValue != nullptr) 
 			{
 				strText += szValue;
 			}
@@ -825,7 +825,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 			wchar_t* szValue = 0;
 			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char **)&szValue);
 
-			if (szValue != NULL) 
+			if (szValue != nullptr) 
 			{
 				strText += L"'";
 				strText += szValue;
@@ -875,10 +875,10 @@ void CIFCRelationsView::GetAttributeReferences(int_t iInstance, const char* szAt
 
 		case sdaiAGGR:
 		{
-			int_t* pValue = NULL;
+			int_t* pValue = nullptr;
 			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiAGGR, &pValue);
 
-			if (pValue != NULL) 
+			if (pValue != nullptr) 
 			{
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -905,7 +905,7 @@ void CIFCRelationsView::GetAttributeReferences(int_t iInstance, const char* szAt
 
 			if (iAttributeInstance != 0) 
 			{
-				wchar_t	* szEntityName = NULL;
+				wchar_t	* szEntityName = nullptr;
 				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
 
 				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
@@ -947,10 +947,10 @@ void CIFCRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 
 		case sdaiAGGR:
 		{
-			int_t * pValue = NULL;
+			int_t * pValue = nullptr;
 			sdaiGetADBValue((void *)ADB, sdaiAGGR, &pValue);
 
-			if (pValue != NULL) 
+			if (pValue != nullptr) 
 			{
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -977,7 +977,7 @@ void CIFCRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 
 			if (iAttributeInstance != 0) 
 			{
-				wchar_t	* szEntityName = NULL;
+				wchar_t	* szEntityName = nullptr;
 				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
 
 				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
@@ -1022,10 +1022,10 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 
 		case sdaiAGGR:
 		{
-			int_t * pValue = NULL;
+			int_t * pValue = nullptr;
 			engiGetAggrElement(pAggregate, iElementIndex, sdaiAGGR, &pValue);
 
-			if (pValue != NULL) 
+			if (pValue != nullptr) 
 			{
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -1052,7 +1052,7 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 
 			if (iAttributeInstance != 0)
 			{
-				wchar_t	* szEntityName = NULL;
+				wchar_t	* szEntityName = nullptr;
 				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
 
 				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
@@ -1079,7 +1079,7 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 bool CIFCRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapEntities = pModel->GetEntities();
 
@@ -1122,7 +1122,7 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 	if ((iImage == IMAGE_INSTANCE) && (pNMTreeView->itemNew.cChildren == 1))
 	{
 		HTREEITEM hChild = m_ifcTreeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);
-		if (hChild == NULL)
+		if (hChild == nullptr)
 		{
 			ASSERT(FALSE);
 
@@ -1135,7 +1135,7 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 		}		
 
 		CIFCAttributeData * pIFCAttributeData = (CIFCAttributeData *)m_ifcTreeCtrl.GetItemData(hChild);
-		ASSERT(pIFCAttributeData != NULL);
+		ASSERT(pIFCAttributeData != nullptr);
 
 		m_ifcTreeCtrl.DeleteItem(hChild);
 
@@ -1146,7 +1146,7 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 CIFCRelationsView::CIFCRelationsView()
 	: m_vecIFCInstancesCache()
 	, m_vecIFCAttributesCache()
-	, m_pSearchDialog(NULL)
+	, m_pSearchDialog(nullptr)
 {
 }
 
@@ -1185,7 +1185,7 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -1237,7 +1237,7 @@ void CIFCRelationsView::OnSize(UINT nType, int cx, int cy)
 
 void CIFCRelationsView::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 	{
 		return;
 	}
@@ -1248,7 +1248,7 @@ void CIFCRelationsView::AdjustLayout()
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(
-		NULL, 
+		nullptr, 
 		rectClient.left, 
 		rectClient.top, 
 		rectClient.Width(), 
@@ -1256,7 +1256,7 @@ void CIFCRelationsView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_ifcTreeCtrl.SetWindowPos(
-		NULL, rectClient.left + 1, 
+		nullptr, rectClient.left + 1, 
 		rectClient.top + cyTlb + 1, 
 		rectClient.Width() - 2, 
 		rectClient.Height() - cyTlb - 2, 

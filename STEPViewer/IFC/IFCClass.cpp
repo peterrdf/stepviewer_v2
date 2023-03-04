@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "IFCClass.h"
 #include "engine.h"
-#include <assert.h>
 
 // ------------------------------------------------------------------------------------------------
 CIFCClass::CIFCClass(int64_t iInstance)
@@ -10,7 +9,7 @@ CIFCClass::CIFCClass(int64_t iInstance)
 	, m_vecParentClasses()
 	, m_vecAncestorClasses()
 {
-	assert(m_iInstance != 0);
+	ASSERT(m_iInstance != 0);
 
 	/*
 	* Name
