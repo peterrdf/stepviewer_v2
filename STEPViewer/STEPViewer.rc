@@ -548,7 +548,7 @@ IDR_POPUP_INSTANCES_NO_GEOMETRY MENU
 BEGIN
     POPUP "Instances"
     BEGIN
-        MENUITEM "Search",                      ID_INSTANCES_SEARCH
+        MENUITEM "View Attributes",             IDS_VIEW_IFC_RELATIONS
     END
 END
 

@@ -428,6 +428,28 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 
 		return;
 	} // if (pInstance->hasGeometry())
+	else
+	{
+		CMenu menu;
+		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
+
+		auto pPopup = menu.GetSubMenu(0);
+
+		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeView);
+		if (uiCommand == 0)
+		{
+			return;
+		}
+
+		switch (uiCommand)
+		{
+			case IDS_VIEW_IFC_RELATIONS:
+			{
+				pController->OnViewRelations(this, pInstance);
+			}
+			break;
+		}
+	} // else if (pInstance->hasGeometry())
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -867,9 +889,10 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = NULL;
+		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
 
-		m_pTreeView->InsertItem(&tvInsertStruct);
+		HTREEITEM hGeometry = m_pTreeView->InsertItem(&tvInsertStruct);
+		m_mapInstance2Item[itInstance->second] = hGeometry;
 
 		/*
 		* decomposition/contains
@@ -1051,13 +1074,10 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 			itInstance->second->hasGeometry() ? (itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = itInstance->second->hasGeometry() ? (LPARAM)itInstance->second : NULL;
+		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
 
 		HTREEITEM hGeometry = m_pTreeView->InsertItem(&tvInsertStruct);
-		if (itInstance->second->hasGeometry())
-		{
-			m_mapInstance2Item[itInstance->second] = hGeometry;
-		}
+		m_mapInstance2Item[itInstance->second] = hGeometry;
 
 		/*
 		* decomposition/contains
@@ -1189,13 +1209,10 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-			tvInsertStruct.item.lParam = pInstance->hasGeometry() ? (LPARAM)pInstance : NULL;
+			tvInsertStruct.item.lParam = (LPARAM)pInstance;
 
 			HTREEITEM hGeometry = m_pTreeView->InsertItem(&tvInsertStruct);
-			if (pInstance->hasGeometry())
-			{
-				m_mapInstance2Item[pInstance] = hGeometry;
-			}
+			m_mapInstance2Item[pInstance] = hGeometry;
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
 }
