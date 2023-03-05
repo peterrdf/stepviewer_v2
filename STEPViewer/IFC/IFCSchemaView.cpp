@@ -20,7 +20,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadModel(CIFCModel* pModel)
+void CIFCSchemaView::LoadModel(CSTEPModelBase* pModel)
 {
 	if (pModel == nullptr)
 	{
@@ -36,7 +36,7 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
+	tvInsertStruct.item.pszText = (LPWSTR)pModel->GetModelName();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL;
 	tvInsertStruct.item.lParam = NULL;
 
@@ -46,29 +46,27 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 
 	// Roots **************************************************************************************
 	auto pEntityProvider = pModel->GetEntityProvider();
-	auto& mapEntities = pEntityProvider->GetEntities();
-	if (mapEntities.empty())
+	if ((pEntityProvider == nullptr) || pEntityProvider->GetEntities().empty())
 	{
 		return;
 	}
 
-	map<wstring, CEntity *> mapRoots;
+	auto& mapEntities = pEntityProvider->GetEntities();
 
-	auto itEntity = mapEntities.begin();
-	for (; itEntity != mapEntities.end(); itEntity++)
+	map<wstring, CEntity *> mapRoots;
+	for (auto itEntity : mapEntities)
 	{
-		if (itEntity->second->hasParent())
+		if (itEntity.second->hasParent())
 		{
 			continue;
 		}
 
-		mapRoots[itEntity->second->getName()] = itEntity->second;
+		mapRoots[itEntity.second->getName()] = itEntity.second;
 	}	
 
-	auto itRoot = mapRoots.begin();
-	for (; itRoot != mapRoots.end(); itRoot++)
+	for (auto itRoot : mapRoots)
 	{
-		LoadEntity(pModel, itRoot->second, hModel);
+		LoadEntity(itRoot.second, hModel);
 	}
 	// ********************************************************************************************	
 
@@ -78,8 +76,6 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 {
-	ASSERT(pEntity != nullptr);
-
 	if (pEntity->getAttributesCount() == 0)
 	{
 		return;
@@ -120,11 +116,8 @@ void CIFCSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CEntity* pEntity, HTREEITEM hParent)
+void CIFCSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 {
-	ASSERT(pModel != nullptr);
-	ASSERT(pEntity != nullptr);
-
 	/*
 	* Entity
 	*/
@@ -161,7 +154,7 @@ void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CEntity* pEntity, HTREEITEM h
 
 		for (size_t iSubType = 0; iSubType < pEntity->getSubTypes().size(); iSubType++)
 		{
-			LoadEntity(pModel, pEntity->getSubTypes()[iSubType], hSubType);
+			LoadEntity(pEntity->getSubTypes()[iSubType], hSubType);
 		}
 	} // if (pEntity->getSubTypes().size() > 0)
 }
@@ -348,34 +341,7 @@ void CIFCSchemaView::ResetView()
 		return;
 	}
 
-	switch (pModel->GetType())
-	{
-		case enumSTEPModelType::STEP:
-		{
-			// NA
-		}
-		break;
-
-		case enumSTEPModelType::IFC:
-		{
-			auto pIFCModel = pController->GetModel()->As<CIFCModel>();
-			if (pIFCModel == nullptr)
-			{
-				ASSERT(FALSE);
-
-				return;
-			}
-
-			LoadModel(pIFCModel);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE); // Unknown
-		}
-		break;
-	} // switch (pModel ->GetType())
+	LoadModel(pModel);
 }
 
 void CIFCSchemaView::AdjustLayout()

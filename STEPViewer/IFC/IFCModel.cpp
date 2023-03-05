@@ -57,13 +57,25 @@ CIFCModel::~CIFCModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CIFCModel::GetInstance() const
+/*virtual*/ const wchar_t* CIFCModel::GetModelName() const  /*override*/
+{
+	return m_strIFCFile.c_str();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ int64_t CIFCModel::GetInstance() const /*override*/
 {
 	return m_iModel;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModel::ZoomToInstance(CSTEPInstance* pSTEPInstance)
+/*virtual*/ CEntityProvider* CIFCModel::GetEntityProvider() const /*override*/
+{
+	return m_pEntityProvider;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCModel::ZoomToInstance(CSTEPInstance* pSTEPInstance) /*override*/
 {
 	ASSERT(pSTEPInstance != nullptr);
 
@@ -128,7 +140,7 @@ CIFCModel::~CIFCModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModel::ZoomOut()
+/*virtual*/ void CIFCModel::ZoomOut() /*override*/
 {
 	m_fBoundingSphereDiameter = 0.f;
 
@@ -502,12 +514,6 @@ int_t CIFCModel::getModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CIFCModel::getModelName() const
-{
-	return m_strIFCFile.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
 float CIFCModel::GetBoundingSphereDiameter() const
 {
 	return m_fBoundingSphereDiameter;
@@ -529,12 +535,6 @@ CIFCUnitProvider* CIFCModel::GetUnitProvider() const
 CIFCPropertyProvider* CIFCModel::GetPropertyProvider() const
 {
 	return m_pPropertyProvider;
-}
-
-// ------------------------------------------------------------------------------------------------
-CEntityProvider* CIFCModel::GetEntityProvider() const
-{
-	return m_pEntityProvider;
 }
 
 // ------------------------------------------------------------------------------------------------

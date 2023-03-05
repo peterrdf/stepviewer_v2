@@ -506,7 +506,7 @@ void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)pModel->getModelName();
+	tvInsertStruct.item.pszText = (LPWSTR)pModel->GetModelName();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
 

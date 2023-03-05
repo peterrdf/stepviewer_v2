@@ -1,6 +1,7 @@
 #pragma once
 
 #include "STEPInstance.h"
+#include "Entity.h"
 
 #include <map>
 
@@ -31,11 +32,17 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	virtual ~CSTEPModelBase();
 
+	// --------------------------------------------------------------------------------------------
+	virtual const wchar_t* GetModelName() const PURE;
+
 	// --------------------------------------------------------------------------------------------	
 	enumSTEPModelType GetType() const;
 
 	// --------------------------------------------------------------------------------------------	
 	virtual int64_t GetInstance() const PURE;	
+
+	// --------------------------------------------------------------------------------------------	
+	virtual CEntityProvider* GetEntityProvider() const PURE;
 
 	// --------------------------------------------------------------------------------------------
 	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) PURE;

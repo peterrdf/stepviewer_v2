@@ -57,51 +57,22 @@ private: // Members
 	float m_fYmax;
 	float m_fZmin;
 	float m_fZmax;
-
-	// --------------------------------------------------------------------------------------------
-	// World's bounding sphere diameter
 	float m_fBoundingSphereDiameter;
-
-	// --------------------------------------------------------------------------------------------
-	// World's translations - center
+	
 	float m_fXTranslation;
 	float m_fYTranslation;
 	float m_fZTranslation;
-
-	// --------------------------------------------------------------------------------------------
-	// CIFCInstance-s
+	
 	vector<CIFCInstance*> m_vecInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// Handle : CIFCInstance*
 	map<int_t, CIFCInstance*> m_mapInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// ID (1-based) : CIFCInstance*
 	map<int_t, CIFCInstance*> m_mapID2Instance;
-
-	// --------------------------------------------------------------------------------------------
-	// ExpressID : CIFCInstance*
 	map<int64_t, CIFCInstance*> m_mapExpressID2Instance;
 
-	// ------------------------------------------------------------------------
-	// IFC Units
 	CIFCUnitProvider* m_pUnitProvider;
-
-	// ------------------------------------------------------------------------
-	// IFC Properties
 	CIFCPropertyProvider* m_pPropertyProvider;
-
-	// ------------------------------------------------------------------------
-	// Entities
 	CEntityProvider* m_pEntityProvider;
 
-	// --------------------------------------------------------------------------------------------
-	// Instance : Class
 	map<int64_t, CIFCClass*> m_mapClasses;
-
-	// --------------------------------------------------------------------------------------------
-	// Unique index for each object
 	static int_t s_iInstanceID;
 
 public: // Methods
@@ -110,23 +81,24 @@ public: // Methods
 	virtual ~CIFCModel();
 
 	// CSTEPModelBase
-	virtual int64_t GetInstance() const;
-	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance);
-	virtual void ZoomOut();	
-	virtual void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	virtual const wchar_t* GetModelName() const override;
+	virtual int64_t GetInstance() const override;
+	virtual CEntityProvider* GetEntityProvider() const override;
+	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) override;
+	virtual void ZoomOut() override;
+
+	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;		
 	void ScaleAndCenter(); // [-1, 1]
 
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
 	void Clean();
 	
-	int_t getModel() const;
-	const wchar_t* getModelName() const;
+	int_t getModel() const;	
 	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
-	CIFCPropertyProvider* GetPropertyProvider() const;
-	CEntityProvider* CIFCModel::GetEntityProvider() const;	
+	CIFCPropertyProvider* GetPropertyProvider() const;		
 	const map<int64_t, CIFCClass*>& GetClasses() const;
 	CIFCInstance* GetInstanceByID(int_t iID);
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);

@@ -47,9 +47,9 @@ protected:
 
 private: // Methods	
 
-	void LoadModel(CIFCModel* pModel);
+	void LoadModel(CSTEPModelBase* pModel);
 	void LoadAttributes(CEntity* pEntity, HTREEITEM hParent);
-	void LoadEntity(CIFCModel* pModel, CEntity* pEntity, HTREEITEM hParent);
+	void LoadEntity(CEntity* pEntity, HTREEITEM hParent);
 	pair<int, int> GetInstancesCount(CEntity* pEntity) const;
 
 // Construction

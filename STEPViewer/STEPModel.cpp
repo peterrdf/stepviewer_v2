@@ -20,6 +20,8 @@ using namespace std;
 CSTEPModel::CSTEPModel()
 	: CSTEPModelBase(enumSTEPModelType::STEP)
 	, m_iModel(0)
+	, m_strSTEPFile(L"")
+	, m_pEntityProvider(nullptr)
 	, m_mapProductDefinitions()
 	, m_mapProductInstances()
 	, m_mapAssemblies()
@@ -44,13 +46,25 @@ CSTEPModel::~CSTEPModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CSTEPModel::GetInstance() const
+/*virtual*/ const wchar_t* CSTEPModel::GetModelName() const  /*override*/
+{
+	return m_strSTEPFile.c_str();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ int64_t CSTEPModel::GetInstance() const /*override*/
 {
 	return m_iModel;
 }
 
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CEntityProvider* CSTEPModel::GetEntityProvider() const /*override*/
+{
+	return m_pEntityProvider;
+}
+
 // --------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomToInstance(CSTEPInstance* pSTEPInstance)
+/*virtual*/ void CSTEPModel::ZoomToInstance(CSTEPInstance* pSTEPInstance) /*override*/
 {	
 	ASSERT(pSTEPInstance != nullptr);
 
@@ -380,11 +394,14 @@ void CSTEPModel::Load(const wchar_t * szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Load(const wchar_t* /*szPath*/, int64_t iModel)
+void CSTEPModel::Load(const wchar_t* szPath, int64_t iModel)
 {
 	Clean();
 
 	m_iModel = iModel;
+	m_strSTEPFile = szPath;
+	
+	m_pEntityProvider = new CEntityProvider(m_iModel);
 
 	LoadProductDefinitions();
 
@@ -629,6 +646,9 @@ void CSTEPModel::Clean()
 		sdaiCloseModel(m_iModel);
 		m_iModel = 0;
 	}
+
+	delete m_pEntityProvider;
+	m_pEntityProvider = nullptr;
 
 	auto itDefinition = m_mapProductDefinitions.begin();
 	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
