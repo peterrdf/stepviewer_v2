@@ -213,7 +213,7 @@ void CSTEPController::OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstan
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity)
+void CSTEPController::OnViewRelations(CSTEPView* pSender, CEntity* pEntity)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

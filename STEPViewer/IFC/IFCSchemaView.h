@@ -6,7 +6,6 @@
 #include "STEPView.h"
 #include "ViewTree.h"
 #include "IFCUnit.h"
-#include "IFCEntity.h"
 #include "SearchSchemaDialog.h"
 
 #include <map>
@@ -49,9 +48,9 @@ protected:
 private: // Methods	
 
 	void LoadModel(CIFCModel* pModel);
-	void LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent);
-	void LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREEITEM hParent);
-	pair<int, int> GetInstancesCount(CIFCEntity* pEntity) const;
+	void LoadAttributes(CEntity* pEntity, HTREEITEM hParent);
+	void LoadEntity(CIFCModel* pModel, CEntity* pEntity, HTREEITEM hParent);
+	pair<int, int> GetInstancesCount(CEntity* pEntity) const;
 
 // Construction
 public:

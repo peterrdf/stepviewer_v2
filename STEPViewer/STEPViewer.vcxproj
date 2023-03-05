@@ -205,7 +205,6 @@
     <ClInclude Include="IFCDecompContTreeView.h" />
     <ClInclude Include="IFCProperty.h" />
     <ClInclude Include="IFC\IFCClass.h" />
-    <ClInclude Include="IFC\IFCEntity.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCRelationsView.h" />
@@ -253,7 +252,6 @@
     <ClCompile Include="IFCDecompContTreeView.cpp" />
     <ClCompile Include="IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCClass.cpp" />
-    <ClCompile Include="IFC\IFCEntity.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCRelationsView.cpp" />

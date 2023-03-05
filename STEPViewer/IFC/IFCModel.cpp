@@ -46,7 +46,6 @@ CIFCModel::CIFCModel()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pEntityProvider(nullptr)
-	, m_mapEntities()
 	, m_mapClasses()
 {
 }
@@ -270,7 +269,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	* Entities
 	*/
 	m_pEntityProvider = new CEntityProvider(m_iModel);
-	LoadEntities();
 
 	/*
 	* Classes
@@ -316,13 +314,6 @@ void CIFCModel::Clean()
 
 	delete m_pEntityProvider;
 	m_pEntityProvider = nullptr;
-
-	auto itEntities = m_mapEntities.begin();
-	for (; itEntities != m_mapEntities.end(); itEntities++)
-	{
-		delete itEntities->second;
-	}
-	m_mapEntities.clear();
 
 	auto itClass = m_mapClasses.begin();
 	for (; itClass != m_mapClasses.end(); itClass++)
@@ -547,12 +538,6 @@ CEntityProvider* CIFCModel::GetEntityProvider() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CIFCEntity *>& CIFCModel::GetEntities() const
-{
-	return m_mapEntities;
-}
-
-// ------------------------------------------------------------------------------------------------
 const map<int64_t, CIFCClass *>& CIFCModel::GetClasses() const
 {
 	return m_mapClasses;
@@ -605,27 +590,29 @@ void CIFCModel::SaveSchema()
 	// Version
 	archive << VERSION;
 
+	ASSERT(FALSE); // TODO: use CEntity
+
 	// Entities Count
-	archive << m_mapEntities.size();
+	//archive << m_mapEntities.size();
 
-	map<int_t, CIFCEntity*>::const_iterator itEntity = m_mapEntities.begin();
-	for (; itEntity != m_mapEntities.end(); itEntity++)
-	{
-		// Entity Name
-		archive << CString(itEntity->second->getName());
+	//map<int_t, CIFCEntity*>::const_iterator itEntity = m_mapEntities.begin();
+	//for (; itEntity != m_mapEntities.end(); itEntity++)
+	//{
+	//	// Entity Name
+	//	archive << CString(itEntity->second->getName());
 
-		const set<wstring>& setIgnoredAttributes = itEntity->second->getIgnoredAttributes();
+	//	const set<wstring>& setIgnoredAttributes = itEntity->second->getIgnoredAttributes();
 
-		// Ignored Attributes Count
-		archive << setIgnoredAttributes.size();
+	//	// Ignored Attributes Count
+	//	archive << setIgnoredAttributes.size();
 
-		set<wstring>::const_iterator itAttribute = setIgnoredAttributes.begin();
-		for (; itAttribute != setIgnoredAttributes.end(); itAttribute++)
-		{
-			// Attribute Name
-			archive << CString(itAttribute->c_str());
-		}
-	} // for (; itEntity != ...
+	//	set<wstring>::const_iterator itAttribute = setIgnoredAttributes.begin();
+	//	for (; itAttribute != setIgnoredAttributes.end(); itAttribute++)
+	//	{
+	//		// Attribute Name
+	//		archive << CString(itAttribute->c_str());
+	//	}
+	//} // for (; itEntity != ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -681,23 +668,25 @@ void CIFCModel::LoadSchema()
 		}
 	} // for (size_t iEntity = ...
 
-	map<int_t, CIFCEntity*>::iterator itEntity = m_mapEntities.begin();
-	for (; itEntity != m_mapEntities.end(); itEntity++)
-	{
-		CIFCEntity* pEntity = itEntity->second;
+	ASSERT(FALSE); // TODO: use CEntity
 
-		map<wstring, vector<wstring>>::iterator itIgnoredAttributes = mapIgnoredAttributes.find(pEntity->getName());
-		if (itIgnoredAttributes != mapIgnoredAttributes.end())
-		{
-			for (size_t iIgnoredAttribute = 0; iIgnoredAttribute < itIgnoredAttributes->second.size(); iIgnoredAttribute++)
-			{
-				if (!pEntity->isAttributeIgnored(itIgnoredAttributes->second[iIgnoredAttribute]))
-				{
-					pEntity->ignoreAttribute(itIgnoredAttributes->second[iIgnoredAttribute], true);
-				}
-			}
-		}
-	} // for (; itEntity != ...
+	//map<int_t, CIFCEntity*>::iterator itEntity = m_mapEntities.begin();
+	//for (; itEntity != m_mapEntities.end(); itEntity++)
+	//{
+	//	CIFCEntity* pEntity = itEntity->second;
+
+	//	map<wstring, vector<wstring>>::iterator itIgnoredAttributes = mapIgnoredAttributes.find(pEntity->getName());
+	//	if (itIgnoredAttributes != mapIgnoredAttributes.end())
+	//	{
+	//		for (size_t iIgnoredAttribute = 0; iIgnoredAttribute < itIgnoredAttributes->second.size(); iIgnoredAttribute++)
+	//		{
+	//			if (!pEntity->isAttributeIgnored(itIgnoredAttributes->second[iIgnoredAttribute]))
+	//			{
+	//				pEntity->ignoreAttribute(itIgnoredAttributes->second[iIgnoredAttribute], true);
+	//			}
+	//		}
+	//	}
+	//} // for (; itEntity != ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -791,10 +780,10 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 	iIntancesCount = engiGetEntityCount(m_iModel);
 	for (int_t i = 0; i < iIntancesCount; i++)
 	{
-		int_t ifcEntity = engiGetEntityElement(m_iModel, i);
-		if (engiGetEntityParent(ifcEntity) == iParentEntity)
+		int_t iEntity = engiGetEntityElement(m_iModel, i);
+		if (engiGetEntityParent(iEntity) == iParentEntity)
 		{
-			RetrieveObjects__depth(ifcEntity, iCircleSegments, depth + 1);
+			RetrieveObjects__depth(iEntity, iCircleSegments, depth + 1);
 		}
 	}
 }
@@ -1429,58 +1418,6 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 	cleanMemory(m_iModel, 0);
 
 	return pInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadEntities()
-{
-	int_t iEntitiesCount = engiGetEntityCount(m_iModel);
-
-	/*
-	* Retrieve the Entities
-	*/
-	int_t i = 0;
-	while (i < iEntitiesCount) 
-	{		
-		int_t iEntity = engiGetEntityElement(m_iModel, i);
-		int_t iAttributesCount = engiGetEntityNoArguments(iEntity);
-		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
-
-		CIFCEntity * pEntity = new CIFCEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
-		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());
-		m_mapEntities[iEntity] = pEntity;
-
-		i++;
-	}
-
-	/*
-	* Connect the Entities
-	*/
-	map<int_t, CIFCEntity *>::iterator itEntities = m_mapEntities.begin();
-	for (; itEntities != m_mapEntities.end(); itEntities++)
-	{
-		int_t iParentEntity = engiGetEntityParent(itEntities->first);
-		if (iParentEntity == 0)
-		{
-			continue;
-		}		
-
-		map<int_t, CIFCEntity *>::iterator itParentEntity = m_mapEntities.find(iParentEntity);
-		ASSERT(itParentEntity != m_mapEntities.end());
-
-		itEntities->second->setParent(itParentEntity->second);
-
-		itParentEntity->second->addSubType(itEntities->second);
-	} // for (; itEntities != ...	
-
-	/*
-	* Post-processing
-	*/
-	itEntities = m_mapEntities.begin();
-	for (; itEntities != m_mapEntities.end(); itEntities++)
-	{
-		itEntities->second->postProcessing();
-	} // for (; itEntities != ...	
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -18,14 +18,3 @@ public: // Methods
 	virtual bool _isEnabled() const PURE;
 	virtual wstring _getName() const PURE;
 };
-
-// ------------------------------------------------------------------------------------------------
-class CSTEPEntity
-{
-
-public: // Methods
-
-	CSTEPEntity();
-	virtual ~CSTEPEntity();
-};
-

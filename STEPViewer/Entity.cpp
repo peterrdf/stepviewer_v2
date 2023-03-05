@@ -240,3 +240,9 @@ void CEntityProvider::Load()
 		itEntity.second->postProcessing();
 	} // for (; itEntities != ...	
 }
+
+// ------------------------------------------------------------------------------------------------
+const map<int_t, CEntity*>& CEntityProvider::GetEntities() const
+{
+	return m_mapEntities;
+}

@@ -5,7 +5,6 @@
 #include "STEPView.h"
 #include "ViewTree.h"
 #include "IFCUnit.h"
-#include "IFCEntity.h"
 #include "IFCInstance.h"
 
 #include <map>
@@ -144,7 +143,7 @@ public: // Methods
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 	virtual void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance) override;
-	virtual void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity) override;
+	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity) override;
 	
 
 private: // Methods

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "STEPInstance.h"
+#include "Entity.h"
 #include "ProductInstance.h"
 
 #include <set>
@@ -86,7 +87,7 @@ public: // Methods
 	void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
 	void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance);
-	void OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity);
+	void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
 };
 
 

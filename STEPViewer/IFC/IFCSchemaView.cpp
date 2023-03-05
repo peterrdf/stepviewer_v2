@@ -45,15 +45,16 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 	//*********************************************************************************************
 
 	// Roots **************************************************************************************
-	auto& mapEntities = pModel->GetEntities();
+	auto pEntityProvider = pModel->GetEntityProvider();
+	auto& mapEntities = pEntityProvider->GetEntities();
 	if (mapEntities.empty())
 	{
 		return;
 	}
 
-	map<wstring, CIFCEntity *> mapRoots;
+	map<wstring, CEntity *> mapRoots;
 
-	map<int_t, CIFCEntity *>::const_iterator itEntity = mapEntities.begin();
+	auto itEntity = mapEntities.begin();
 	for (; itEntity != mapEntities.end(); itEntity++)
 	{
 		if (itEntity->second->hasParent())
@@ -64,7 +65,7 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 		mapRoots[itEntity->second->getName()] = itEntity->second;
 	}	
 
-	map<wstring, CIFCEntity *>::iterator itRoot = mapRoots.begin();
+	auto itRoot = mapRoots.begin();
 	for (; itRoot != mapRoots.end(); itRoot++)
 	{
 		LoadEntity(pModel, itRoot->second, hModel);
@@ -75,11 +76,11 @@ void CIFCSchemaView::LoadModel(CIFCModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
+void CIFCSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 {
-	ASSERT(pIFCEntity != nullptr);
+	ASSERT(pEntity != nullptr);
 
-	if (pIFCEntity->getAttributesCount() == 0)
+	if (pEntity->getAttributesCount() == 0)
 	{
 		return;
 	}
@@ -97,10 +98,10 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 
 	HTREEITEM hAttributes = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
-	for (size_t iAttribute = 0; iAttribute < pIFCEntity->getAttributes().size(); iAttribute++)
+	for (size_t iAttribute = 0; iAttribute < pEntity->getAttributes().size(); iAttribute++)
 	{
-		const wstring& strAttribute = pIFCEntity->getAttributes()[iAttribute];
-		if (pIFCEntity->isAttributeInherited(strAttribute))
+		const wstring& strAttribute = pEntity->getAttributes()[iAttribute];
+		if (pEntity->isAttributeInherited(strAttribute))
 		{
 			continue;
 		}
@@ -108,10 +109,10 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 		tvInsertStruct.hParent = hAttributes;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)pIFCEntity->getAttributes()[iAttribute].c_str();
+		tvInsertStruct.item.pszText = (LPWSTR)pEntity->getAttributes()[iAttribute].c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
-			pIFCEntity->isAttributeIgnored(pIFCEntity->getAttributes()[iAttribute]) ? IMAGE_IGNORED_ATTRIBUTE : IMAGE_ATTRIBUTE;
-		tvInsertStruct.item.lParam = (LPARAM)pIFCEntity;
+			pEntity->isAttributeIgnored(pEntity->getAttributes()[iAttribute]) ? IMAGE_IGNORED_ATTRIBUTE : IMAGE_ATTRIBUTE;
+		tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
 		HTREEITEM hAttribute = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 		VERIFY(hAttribute != nullptr);
@@ -119,18 +120,18 @@ void CIFCSchemaView::LoadAttributes(CIFCEntity* pIFCEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREEITEM hParent)
+void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CEntity* pEntity, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
-	ASSERT(pIFCEntity != nullptr);
+	ASSERT(pEntity != nullptr);
 
 	/*
 	* Entity
 	*/
-	pair<int, int>  prInstancesCount = GetInstancesCount(pIFCEntity);
+	pair<int, int>  prInstancesCount = GetInstancesCount(pEntity);
 
 	CString strEntity;
-	strEntity.Format(_T("%s (%d/%d)"), pIFCEntity->getName(), prInstancesCount.first, prInstancesCount.second);
+	strEntity.Format(_T("%s (%d/%d)"), pEntity->getName(), prInstancesCount.first, prInstancesCount.second);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
@@ -138,16 +139,16 @@ void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREE
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPTSTR)strEntity.GetBuffer();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
-	tvInsertStruct.item.lParam = (LPARAM)pIFCEntity;
+	tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
 	HTREEITEM hEntity = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
-	LoadAttributes(pIFCEntity, hEntity);
+	LoadAttributes(pEntity, hEntity);
 
 	/*
 	* Sub-types
 	*/
-	if (pIFCEntity->getSubTypes().size() > 0)
+	if (pEntity->getSubTypes().size() > 0)
 	{
 		tvInsertStruct.hParent = hEntity;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -158,15 +159,15 @@ void CIFCSchemaView::LoadEntity(CIFCModel* pModel, CIFCEntity* pIFCEntity, HTREE
 
 		HTREEITEM hSubType = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
-		for (size_t iSubType = 0; iSubType < pIFCEntity->getSubTypes().size(); iSubType++)
+		for (size_t iSubType = 0; iSubType < pEntity->getSubTypes().size(); iSubType++)
 		{
-			LoadEntity(pModel, pIFCEntity->getSubTypes()[iSubType], hSubType);
+			LoadEntity(pModel, pEntity->getSubTypes()[iSubType], hSubType);
 		}
-	} // if (pIFCEntity->getSubTypes().size() > 0)
+	} // if (pEntity->getSubTypes().size() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
-pair<int, int> CIFCSchemaView::GetInstancesCount(CIFCEntity* pEntity) const
+pair<int, int> CIFCSchemaView::GetInstancesCount(CEntity* pEntity) const
 {
 	ASSERT(pEntity != nullptr);
 
@@ -208,7 +209,7 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 	m_ifcTreeCtrl.SelectItem(hItem);
 
-	auto pIFCEntity = (CIFCEntity *)m_ifcTreeCtrl.GetItemData(hItem);
+	auto pEntity = (CEntity *)m_ifcTreeCtrl.GetItemData(hItem);
 
 	CMenu menu;
 	VERIFY(menu.CreatePopupMenu());
@@ -233,7 +234,7 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	{
 		case IDS_VIEW_IFC_RELATIONS:
 		{			
-			GetController()->OnViewRelations(this, pIFCEntity);
+			GetController()->OnViewRelations(this, pEntity);
 		}
 		break;
 	} // switch (iResult)

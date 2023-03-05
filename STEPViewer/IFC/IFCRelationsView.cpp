@@ -87,25 +87,17 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CSTEPEntity* pEntity) /*override*/
+/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CEntity* pEntity) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
-
-	auto pIFCEntity = dynamic_cast<CIFCEntity*>(pEntity);
-	if (pIFCEntity == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
 	
 	LoadProperties(
-		pIFCEntity->getEntity(), 
-		pIFCEntity->getName(), 
-		pIFCEntity->getInstances());
+		pEntity->getEntity(),
+		pEntity->getName(),
+		pEntity->getInstances());
 	
 	ShowPane(TRUE, TRUE, TRUE);
 }
@@ -1079,9 +1071,9 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 bool CIFCRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	auto pEntityProvider = pModel->GetEntityProvider();
 
-	auto& mapEntities = pModel->GetEntities();
+	auto& mapEntities = pEntityProvider->GetEntities();
 
 	auto itEntity = mapEntities.find(iEntity);
 	if (itEntity == mapEntities.end())

@@ -5,7 +5,6 @@
 #include "IFCInstance.h"
 #include "Texture.h"
 #include "IFCUnit.h"
-#include "IFCEntity.h"
 #include "IFCProperty.h"
 #include "IFCClass.h"
 #include "Entity.h"
@@ -98,10 +97,6 @@ private: // Members
 	CEntityProvider* m_pEntityProvider;
 
 	// --------------------------------------------------------------------------------------------
-	// Entity : CIFCEntity *
-	map<int_t, CIFCEntity*> m_mapEntities;
-
-	// --------------------------------------------------------------------------------------------
 	// Instance : Class
 	map<int64_t, CIFCClass*> m_mapClasses;
 
@@ -131,8 +126,7 @@ public: // Methods
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;
-	CEntityProvider* CIFCModel::GetEntityProvider() const;
-	const map<int_t, CIFCEntity*>& GetEntities() const;
+	CEntityProvider* CIFCModel::GetEntityProvider() const;	
 	const map<int64_t, CIFCClass*>& GetClasses() const;
 	CIFCInstance* GetInstanceByID(int_t iID);
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
@@ -146,8 +140,7 @@ private: // Methods
 	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
 	void RetrieveObjects(int_t iEntity, const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments);
-	
-	void LoadEntities();
+
 	void LoadClasses();
 };
 

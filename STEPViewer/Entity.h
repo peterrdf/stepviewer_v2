@@ -76,6 +76,8 @@ public: // Methods
 	CEntityProvider(int64_t iModel);
 	virtual ~CEntityProvider();
 
+	const map<int_t, CEntity*>& GetEntities() const;
+
 protected: // Methods
 
 	void Load();
