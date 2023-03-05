@@ -568,7 +568,10 @@ CIFCUnitProvider::CIFCUnitProvider(int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCUnitProvider::~CIFCUnitProvider()
 {
-    Clean();
+    for (auto itUnit : m_mapUnits)
+    {
+        delete itUnit.second;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -665,8 +668,6 @@ pair<wstring, wstring> CIFCUnitProvider::GetQuantityTime(int_t iIFCQuantity) con
 // ------------------------------------------------------------------------------------------------
 void CIFCUnitProvider::Load()
 {
-    Clean();
-
     int64_t* iIFCProjectInstances = sdaiGetEntityExtentBN(m_iModel, (char*)"IFCPROJECT");
 
     int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
@@ -753,12 +754,3 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
     } // for (int_t iUnitSet = 
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCUnitProvider::Clean()
-{    
-    for (auto itUnit : m_mapUnits)
-    {
-        delete itUnit.second;
-    }
-    m_mapUnits.clear();
-}

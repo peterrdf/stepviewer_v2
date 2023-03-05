@@ -200,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assembly.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="IFCDecompContTreeView.h" />
     <ClInclude Include="IFCProperty.h" />
@@ -247,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="IFCDecompContTreeView.cpp" />
     <ClCompile Include="IFCProperty.cpp" />

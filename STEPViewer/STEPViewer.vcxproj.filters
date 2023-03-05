@@ -158,6 +158,9 @@
     <ClInclude Include="IFCProperty.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -261,6 +264,9 @@
     </ClCompile>
     <ClCompile Include="IFCProperty.cpp">
       <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

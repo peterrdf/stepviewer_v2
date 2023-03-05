@@ -45,6 +45,7 @@ CIFCModel::CIFCModel()
 	, m_mapExpressID2Instance()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
+	, m_pEntityProvider(nullptr)
 	, m_mapEntities()
 	, m_mapClasses()
 {
@@ -268,6 +269,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Entities
 	*/
+	m_pEntityProvider = new CEntityProvider(m_iModel);
 	LoadEntities();
 
 	/*
@@ -311,6 +313,9 @@ void CIFCModel::Clean()
 
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
+
+	delete m_pEntityProvider;
+	m_pEntityProvider = nullptr;
 
 	auto itEntities = m_mapEntities.begin();
 	for (; itEntities != m_mapEntities.end(); itEntities++)
@@ -534,6 +539,13 @@ CIFCPropertyProvider* CIFCModel::GetPropertyProvider() const
 {
 	return m_pPropertyProvider;
 }
+
+// ------------------------------------------------------------------------------------------------
+CEntityProvider* CIFCModel::GetEntityProvider() const
+{
+	return m_pEntityProvider;
+}
+
 // ------------------------------------------------------------------------------------------------
 const map<int_t, CIFCEntity *>& CIFCModel::GetEntities() const
 {

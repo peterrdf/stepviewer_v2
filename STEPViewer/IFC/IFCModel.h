@@ -8,6 +8,7 @@
 #include "IFCEntity.h"
 #include "IFCProperty.h"
 #include "IFCClass.h"
+#include "Entity.h"
 
 #include <string>
 #include <map>
@@ -92,6 +93,10 @@ private: // Members
 	// IFC Properties
 	CIFCPropertyProvider* m_pPropertyProvider;
 
+	// ------------------------------------------------------------------------
+	// Entities
+	CEntityProvider* m_pEntityProvider;
+
 	// --------------------------------------------------------------------------------------------
 	// Entity : CIFCEntity *
 	map<int_t, CIFCEntity*> m_mapEntities;
@@ -125,7 +130,8 @@ public: // Methods
 	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
-	CIFCPropertyProvider* CIFCModel::GetPropertyProvider() const;
+	CIFCPropertyProvider* GetPropertyProvider() const;
+	CEntityProvider* CIFCModel::GetEntityProvider() const;
 	const map<int_t, CIFCEntity*>& GetEntities() const;
 	const map<int64_t, CIFCClass*>& GetClasses() const;
 	CIFCInstance* GetInstanceByID(int_t iID);

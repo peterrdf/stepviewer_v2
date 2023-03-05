@@ -96,7 +96,6 @@ protected: // Methods
 
 	void Load();
 	void LoadUnits(int_t iIFCProjectInstance);
-	void Clean();
 };
 
 #endif // IFCUNIT_H

@@ -1,0 +1,242 @@
+#include "stdafx.h"
+#include "Entity.h"
+#include "ifcengine.h"
+
+#include <algorithm>
+
+// ------------------------------------------------------------------------------------------------
+CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iInstancesCount)
+	: m_iEntity(iEntity)
+	, m_strName(L"")
+	, m_pParent(nullptr)
+	, m_iAttributesCount(iAttributesCount)
+	, m_vecAttributes()
+	, m_setIgnoredAttributes()
+	, m_iInstancesCount(iInstancesCount)
+	, m_vecSubTypes()
+	, m_vecInstances()
+{
+	// Name ***************************************************************************************
+	wchar_t* szName = nullptr;
+	engiGetEntityName(m_iEntity, sdaiUNICODE, (char**)&szName);
+	// ********************************************************************************************
+
+	m_strName = szName;
+
+	// Attributes *********************************************************************************
+	for (int_t iIndex = 0; iIndex < m_iAttributesCount; iIndex++)
+	{
+		wchar_t	* szArgumentName = 0;
+		engiGetEntityArgumentName(m_iEntity, iIndex, sdaiUNICODE, (char **)&szArgumentName);
+
+		m_vecAttributes.push_back(szArgumentName);
+	}
+	// ********************************************************************************************
+
+	// Instances **********************************************************************************
+	int_t* piInstances = sdaiGetEntityExtent(iModel, m_iEntity);
+	iInstancesCount = sdaiGetMemberCount(piInstances);
+
+	int_t iIndex = 0;
+	while (iIndex < iInstancesCount) {
+		int_t iInstance = 0;
+		engiGetAggrElement(piInstances, iIndex++, sdaiINSTANCE, &iInstance);
+
+		m_vecInstances.push_back(iInstance);
+	}
+	// ********************************************************************************************
+}
+
+// ------------------------------------------------------------------------------------------------
+CEntity::~CEntity()
+{
+}
+
+// ------------------------------------------------------------------------------------------------
+int_t CEntity::getEntity() const
+{
+	return m_iEntity;
+}
+
+// ------------------------------------------------------------------------------------------------
+const wchar_t* CEntity::getName() const
+{
+	return m_strName.c_str();
+}
+
+// ------------------------------------------------------------------------------------------------
+CEntity* CEntity::getParent() const
+{
+	return m_pParent;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CEntity::setParent(CEntity * pParent)
+{
+	m_pParent = pParent;
+}
+
+// ------------------------------------------------------------------------------------------------
+bool CEntity::hasParent() const
+{
+	return m_pParent != nullptr;
+}
+
+// ------------------------------------------------------------------------------------------------
+int_t CEntity::getAttributesCount() const
+{
+	return m_iAttributesCount;
+}
+
+// ------------------------------------------------------------------------------------------------
+const vector<wstring>& CEntity::getAttributes() const
+{
+	return m_vecAttributes;
+}
+
+// ------------------------------------------------------------------------------------------------
+const set<wstring>& CEntity::getIgnoredAttributes() const
+{
+	return m_setIgnoredAttributes;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CEntity::ignoreAttribute(const wstring& strAttribute, bool bIgnore)
+{
+	set<wstring>::iterator itAttribute = m_setIgnoredAttributes.find(strAttribute);
+
+	if (bIgnore)
+	{
+		ASSERT(itAttribute == m_setIgnoredAttributes.end());
+
+		m_setIgnoredAttributes.insert(strAttribute);
+	}
+	else
+	{
+		ASSERT(itAttribute != m_setIgnoredAttributes.end());
+
+		m_setIgnoredAttributes.erase(itAttribute);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+bool CEntity::isAttributeIgnored(const wstring& strAttribute) const
+{
+	return m_setIgnoredAttributes.find(strAttribute) != m_setIgnoredAttributes.end();
+}
+
+// ------------------------------------------------------------------------------------------------
+bool CEntity::isAttributeInherited(const wstring& strAttribute) const
+{
+	if (m_pParent != nullptr)
+	{
+		const vector<wstring> & vecParentAttributes = m_pParent->getAttributes();
+
+		return find(vecParentAttributes.begin(), vecParentAttributes.end(), strAttribute) != vecParentAttributes.end();
+	}
+
+	return false;
+}
+
+// ------------------------------------------------------------------------------------------------
+int_t CEntity::getInstancesCount() const
+{
+	return m_iInstancesCount;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CEntity::addSubType(CEntity* pEntity)
+{
+	m_vecSubTypes.push_back(pEntity);
+}
+
+// ------------------------------------------------------------------------------------------------
+const vector<CEntity*>& CEntity::getSubTypes() const
+{
+	return m_vecSubTypes;
+}
+
+// ------------------------------------------------------------------------------------------------
+const vector<int_t>& CEntity::getInstances() const
+{
+	return m_vecInstances;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CEntity::postProcessing()
+{
+	if (!m_vecSubTypes.empty())
+	{
+		std::sort(m_vecSubTypes.begin(), m_vecSubTypes.end(), SORT_ENTITIES());
+	}
+}
+
+
+// ------------------------------------------------------------------------------------------------
+CEntityProvider::CEntityProvider(int64_t iModel)
+	: m_iModel(iModel)
+	, m_mapEntities()
+{
+	ASSERT(m_iModel != 0);
+
+	Load();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CEntityProvider::~CEntityProvider()
+{
+	for (auto itEntity : m_mapEntities)
+	{
+		delete itEntity.second;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CEntityProvider::Load()
+{
+	int_t iEntitiesCount = engiGetEntityCount(m_iModel);
+
+	/*
+	* Retrieve the Entities
+	*/
+	int_t i = 0;
+	while (i < iEntitiesCount)
+	{
+		int_t iEntity = engiGetEntityElement(m_iModel, i);
+		int_t iAttributesCount = engiGetEntityNoArguments(iEntity);
+		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
+
+		auto pEntity = new CEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
+		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());
+		m_mapEntities[iEntity] = pEntity;
+
+		i++;
+	}
+
+	/*
+	* Connect the Entities
+	*/	
+	for (auto itEntity : m_mapEntities)
+	{
+		int_t iParentEntity = engiGetEntityParent(itEntity.first);
+		if (iParentEntity == 0)
+		{
+			continue;
+		}
+
+		map<int_t, CEntity*>::iterator itParentEntity = m_mapEntities.find(iParentEntity);
+		ASSERT(itParentEntity != m_mapEntities.end());
+
+		itEntity.second->setParent(itParentEntity->second);
+
+		itParentEntity->second->addSubType(itEntity.second);
+	} // for (; itEntities != ...	
+
+	/*
+	* Post-processing
+	*/
+	for (auto itEntity : m_mapEntities)
+	{
+		itEntity.second->postProcessing();
+	} // for (; itEntities != ...	
+}
