@@ -11,8 +11,9 @@ const double ARROW_SIZE_II = 1.;
 // ------------------------------------------------------------------------------------------------
 const float ZOOM_SPEED_MOUSE = 0.025f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
+const float ZOOM_SPEED_KEYS = 0.025f;
 const float PAN_SPEED_MOUSE = 4.f;
-const float PAN_SPEED_KEYS = 4.f;
+const float PAN_SPEED_KEYS = 40.f;
 const float ROTATION_SPEED = 1.f / 2500.f;
 const float ROTATION_SENSITIVITY = 0.1f;
 

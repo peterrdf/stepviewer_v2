@@ -313,15 +313,10 @@ void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance,
 		{
 			LoadQuantites(iIFCHasPropertySetInstance, pPropertySetCollection);
 		}
-		else
-			if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCPropertySetEntity)
-			{
-				LoadPropertySet(iIFCHasPropertySetInstance, pPropertySetCollection);
-			}
-			else
-			{
-				ASSERT(false);
-			}
+		else if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCPropertySetEntity)
+		{
+			LoadPropertySet(iIFCHasPropertySetInstance, pPropertySetCollection);
+		}
 	} // for (int64_t i = ...
 }
 

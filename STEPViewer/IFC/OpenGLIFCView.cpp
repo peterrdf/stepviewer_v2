@@ -623,37 +623,49 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	switch (nChar)
 	{
-	case VK_UP:
-	{
-		_move(
-			0.f,
-			PAN_SPEED_KEYS * (1.f / rcClient.Height()));
-	}
-	break;
+		case VK_UP:
+		{
+			_move(
+				0.f,
+				PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+		}
+		break;
 
-	case VK_DOWN:
-	{
-		_move(
-			0.f,
-			-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
-	}
-	break;
+		case VK_DOWN:
+		{
+			_move(
+				0.f,
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+		}
+		break;
 
-	case VK_LEFT:
-	{
-		_move(
-			-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
-			0.f);
-	}
-	break;
+		case VK_LEFT:
+		{
+			_move(
+				-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+				0.f);
+		}
+		break;
 
-	case VK_RIGHT:
-	{
-		_move(
-			PAN_SPEED_KEYS * (1.f / rcClient.Width()),
-			0.f);
-	}
-	break;
+		case VK_RIGHT:
+		{
+			_move(
+				PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+				0.f);
+		}
+		break;
+
+		case VK_PRIOR:
+		{
+			_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+		}
+		break;
+
+		case VK_NEXT:
+		{
+			_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+		}
+		break;
 	} // switch (nChar)
 }
 
