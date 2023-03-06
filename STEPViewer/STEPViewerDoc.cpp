@@ -10,7 +10,7 @@
 #endif
 
 #include "STEPViewerDoc.h"
-#include "STEPModelFactory.h"
+#include "ModelFactory.h"
 
 #include <propkey.h>
 
@@ -163,7 +163,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		m_pModel = nullptr;
 	}
 
-	m_pModel = CSTEPModelFactory::Load(lpszPathName);
+	m_pModel = CModelFactory::Load(lpszPathName);
 
 	SetModel(m_pModel);
 

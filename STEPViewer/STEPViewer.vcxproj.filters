@@ -107,7 +107,7 @@
     <ClInclude Include="IFC\OpenGLIFCView.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="STEPModelFactory.h">
+    <ClInclude Include="ModelFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLView.h">

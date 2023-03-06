@@ -222,7 +222,7 @@
     <ClInclude Include="Instance.h" />
     <ClInclude Include="STEPItemData.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="STEPModelFactory.h" />
+    <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="STEPProductsTreeView.h" />
     <ClInclude Include="STEPTreeViewBase.h" />
     <ClInclude Include="STEPViewer.h" />

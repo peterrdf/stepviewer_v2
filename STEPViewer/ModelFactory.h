@@ -6,7 +6,7 @@
 
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPModelFactory
+class CModelFactory
 {
 
 public: // Methods
