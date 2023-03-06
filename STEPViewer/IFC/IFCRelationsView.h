@@ -142,7 +142,7 @@ public: // Methods
 	// CSTEPView
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
-	virtual void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance) override;
+	virtual void OnViewRelations(CSTEPView* pSender, CInstance* pInstance) override;
 	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity) override;
 	
 

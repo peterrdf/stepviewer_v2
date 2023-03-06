@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPInstance.h"
+#include "Instance.h"
 #include "Entity.h"
 
 #include <map>
@@ -8,7 +8,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumSTEPModelType
+enum class enumModelType
 {
 	Unknown = -1,
 	STEP = 0,
@@ -16,27 +16,27 @@ enum class enumSTEPModelType
 };
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPModelBase
+class CModel
 {
 
 protected: // Members
 
 	// --------------------------------------------------------------------------------------------
-	enumSTEPModelType m_enSTEPModelType;
+	enumModelType m_enModelType;
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	CSTEPModelBase(enumSTEPModelType enSTEPModelType);
+	CModel(enumModelType enModelType);
 
 	// --------------------------------------------------------------------------------------------
-	virtual ~CSTEPModelBase();
+	virtual ~CModel();
 
 	// --------------------------------------------------------------------------------------------
 	virtual const wchar_t* GetModelName() const PURE;
 
 	// --------------------------------------------------------------------------------------------	
-	enumSTEPModelType GetType() const;
+	enumModelType GetType() const;
 
 	// --------------------------------------------------------------------------------------------	
 	virtual int64_t GetInstance() const PURE;	
@@ -45,7 +45,7 @@ public: // Methods
 	virtual CEntityProvider* GetEntityProvider() const PURE;
 
 	// --------------------------------------------------------------------------------------------
-	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) PURE;
+	virtual void ZoomToInstance(CInstance* pInstance) PURE;
 
 	// --------------------------------------------------------------------------------------------
 	virtual void ZoomOut() PURE;

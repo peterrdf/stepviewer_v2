@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "STEPController.h"
-#include "STEPModelBase.h"
+#include "Model.h"
 #include "STEPView.h"
 
 // ------------------------------------------------------------------------------------------------
@@ -20,13 +20,13 @@ CSTEPController::~CSTEPController()
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPModelBase* CSTEPController::GetModel() const
+CModel* CSTEPController::GetModel() const
 {
 	return m_pModel;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SetModel(CSTEPModelBase* pModel)
+void CSTEPController::SetModel(CModel* pModel)
 {
 	ASSERT(pModel != nullptr);
 
@@ -136,7 +136,7 @@ void CSTEPController::ShowMetaInformation(CProductInstance* /*pInstance*/)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SelectInstance(CSTEPView* pSender, CSTEPInstance* pInstance)
+void CSTEPController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -153,7 +153,7 @@ void CSTEPController::SelectInstance(CSTEPView* pSender, CSTEPInstance* pInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPInstance* CSTEPController::GetSelectedInstance() const
+CInstance* CSTEPController::GetSelectedInstance() const
 {
 	return m_pSelectedInstance;
 }
@@ -203,7 +203,7 @@ void CSTEPController::OnApplicationPropertyChanged(CSTEPView* pSender, enumAppli
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance)
+void CSTEPController::OnViewRelations(CSTEPView* pSender, CInstance* pInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

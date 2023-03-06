@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPInstance.h"
+#include "Instance.h"
 
 #include "engdef.h"
 

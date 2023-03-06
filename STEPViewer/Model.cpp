@@ -1,20 +1,20 @@
 #include "stdafx.h"
 
-#include "STEPModelBase.h"
+#include "Model.h"
 
 // ------------------------------------------------------------------------------------------------
-CSTEPModelBase::CSTEPModelBase(enumSTEPModelType enSTEPModelType)
-	: m_enSTEPModelType(enSTEPModelType)
+CModel::CModel(enumModelType enModelType)
+	: m_enModelType(enModelType)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CSTEPModelBase::~CSTEPModelBase()
+/*virtual*/ CModel::~CModel()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-enumSTEPModelType CSTEPModelBase::GetType() const
+enumModelType CModel::GetType() const
 {
-	return m_enSTEPModelType;
+	return m_enModelType;
 }

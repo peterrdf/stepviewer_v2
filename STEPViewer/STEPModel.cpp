@@ -18,7 +18,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 CSTEPModel::CSTEPModel()
-	: CSTEPModelBase(enumSTEPModelType::STEP)
+	: CModel(enumModelType::STEP)
 	, m_iModel(0)
 	, m_strSTEPFile(L"")
 	, m_pEntityProvider(nullptr)
@@ -64,13 +64,17 @@ CSTEPModel::~CSTEPModel()
 }
 
 // --------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomToInstance(CSTEPInstance* pSTEPInstance) /*override*/
+/*virtual*/ void CSTEPModel::ZoomToInstance(CInstance* pInstance) /*override*/
 {	
-	ASSERT(pSTEPInstance != nullptr);
-
-	auto pInstance = dynamic_cast<CProductInstance*>(pSTEPInstance);
 	ASSERT(pInstance != nullptr);
-	ASSERT(pInstance->getProductDefinition() != nullptr);	
+
+	auto pProductInstance = dynamic_cast<CProductInstance*>(pInstance);
+	if ((pProductInstance == nullptr) || (pProductInstance->getProductDefinition() != nullptr))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -81,8 +85,8 @@ CSTEPModel::~CSTEPModel()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	pInstance->getProductDefinition()->CalculateMinMaxTransform(
-		pInstance,
+	pProductInstance->getProductDefinition()->CalculateMinMaxTransform(
+		pProductInstance,
 		m_fXTranslation, m_fYTranslation, m_fZTranslation,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,

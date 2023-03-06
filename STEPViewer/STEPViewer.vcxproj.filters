@@ -98,10 +98,10 @@
     <ClInclude Include="IFC\IFCClass.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="STEPModelBase.h">
+    <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPInstance.h">
+    <ClInclude Include="Instance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFC\OpenGLIFCView.h">
@@ -220,10 +220,10 @@
     <ClCompile Include="IFC\IFCClass.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="STEPModelBase.cpp">
+    <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPInstance.cpp">
+    <ClCompile Include="Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\OpenGLIFCView.cpp">

@@ -219,9 +219,9 @@
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
     <ClInclude Include="SearchInstancesDialog.h" />
-    <ClInclude Include="STEPInstance.h" />
+    <ClInclude Include="Instance.h" />
     <ClInclude Include="STEPItemData.h" />
-    <ClInclude Include="STEPModelBase.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="STEPModelFactory.h" />
     <ClInclude Include="STEPProductsTreeView.h" />
     <ClInclude Include="STEPTreeViewBase.h" />
@@ -265,9 +265,9 @@
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />
     <ClCompile Include="SearchInstancesDialog.cpp" />
-    <ClCompile Include="STEPInstance.cpp" />
+    <ClCompile Include="Instance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
-    <ClCompile Include="STEPModelBase.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="STEPProductsTreeView.cpp" />
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />

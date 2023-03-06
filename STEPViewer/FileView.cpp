@@ -72,7 +72,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	switch (pModel->GetType())
 	{
-		case enumSTEPModelType::STEP:
+		case enumModelType::STEP:
 		{
 			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_wndFileView);
 			m_pSTEPTreeView->SetController(pController);
@@ -80,7 +80,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		}
 		break;
 
-		case enumSTEPModelType::IFC:
+		case enumModelType::IFC:
 		{
 			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_wndFileView);
 			m_pSTEPTreeView->SetController(pController);

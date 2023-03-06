@@ -784,13 +784,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 	switch (pModel->GetType())
 	{
-		case enumSTEPModelType::STEP:
+		case enumModelType::STEP:
 		{
 			LoadSTEPInstanceProperties();
 		}
 		break;
 
-		case enumSTEPModelType::IFC:
+		case enumModelType::IFC:
 		{
 			LoadIFCInstanceProperties();
 		}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPInstance.h"
+#include "Instance.h"
 #include "Entity.h"
 #include "ProductInstance.h"
 
@@ -10,7 +10,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPModelBase;
+class CModel;
 class CSTEPView;
 enum class enumApplicationProperty;
 
@@ -21,13 +21,13 @@ class CSTEPController
 
 private: // Members	
 	
-	CSTEPModelBase* m_pModel; // Model - MVC
+	CModel* m_pModel; // Model - MVC
 	bool m_bUpdatingModel; // Updating model - disable all notifications	
 	
 	set<CSTEPView*> m_setViews; // Views - MVC	
 	
 	// Selection
-	CSTEPInstance* m_pSelectedInstance;
+	CInstance* m_pSelectedInstance;
 	
 	// UI properties
 	int m_iVisibleValuesCountLimit;
@@ -38,8 +38,8 @@ public: // Methods
 	CSTEPController();	
 	virtual ~CSTEPController();
 	
-	CSTEPModelBase* GetModel() const;
-	void SetModel(CSTEPModelBase* pModel);
+	CModel* GetModel() const;
+	void SetModel(CModel* pModel);
 
 	// Events
 	void RegisterView(CSTEPView* pView);
@@ -74,8 +74,8 @@ public: // Methods
 	
 	// Events
 	void ShowMetaInformation(CProductInstance* pInstance);
-	void SelectInstance(CSTEPView* pSender, CSTEPInstance* pInstance);
-	CSTEPInstance* GetSelectedInstance() const;
+	void SelectInstance(CSTEPView* pSender, CInstance* pInstance);
+	CInstance* GetSelectedInstance() const;
 
 	// UI 
 	int GetVisibleValuesCountLimit() const;
@@ -86,7 +86,7 @@ public: // Methods
 	// Events
 	void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
-	void OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance);
+	void OnViewRelations(CSTEPView* pSender, CInstance* pInstance);
 	void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
 };
 

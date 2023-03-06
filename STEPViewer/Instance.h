@@ -5,29 +5,18 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPInstance
+class CInstance
 {
 
 public: // Methods
 	
-	CSTEPInstance();
-	virtual ~CSTEPInstance();
+	CInstance();
+	virtual ~CInstance();
 
 	virtual int64_t _getInstance() const PURE;
 	virtual bool _hasGeometry() const PURE;
 	virtual bool _isEnabled() const PURE;
 	virtual wstring _getName() const PURE;
-
-	int64_t _getEntity() const
-	{
-		return sdaiGetInstanceType(_getInstance());
-	}
-
-	const wchar_t* _getEntityName() const
-	{
-		wchar_t* szEntity = nullptr;
-		engiGetEntityName(_getEntity(), sdaiUNICODE, (char**)&szEntity);
-
-		return szEntity;
-	}
+	int64_t _getEntity() const;
+	const wchar_t* _getEntityName() const;
 };

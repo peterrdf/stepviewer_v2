@@ -4,7 +4,7 @@
 
 #include "Generic.h"
 #include "ProductInstance.h"
-#include "STEPInstance.h"
+#include "Instance.h"
 
 #include <string>
 #include <vector>

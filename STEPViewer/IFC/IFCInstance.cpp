@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------------------------------
 CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * szGUID)
-	: CSTEPInstance()
+	: CInstance()
 	, m_pModel(pModel)
 	, m_iInstance(iInstance)
 	, m_strGUID(szGUID != nullptr ? szGUID : L"")

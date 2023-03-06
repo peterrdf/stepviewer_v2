@@ -18,7 +18,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Model (MVC)
-	CSTEPModelBase* m_pModel;
+	CModel* m_pModel;
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();

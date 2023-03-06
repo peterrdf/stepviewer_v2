@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPModelBase.h"
+#include "Model.h"
 #include "Generic.h"
 
 #include <map>
@@ -16,7 +16,7 @@ class CProductInstance;
 
 // ------------------------------------------------------------------------------------------------
 // Model
-class CSTEPModel : public CSTEPModelBase
+class CSTEPModel : public CModel
 {
 
 private: // Members
@@ -48,11 +48,11 @@ public: // Methods
 	CSTEPModel();
 	virtual ~CSTEPModel();
 
-	// CSTEPModelBase
+	// CModel
 	virtual const wchar_t* GetModelName() const override;
 	virtual int64_t GetInstance() const override;
 	virtual CEntityProvider* GetEntityProvider() const override;
-	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) override;
+	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
 
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;	

@@ -12,7 +12,7 @@ class CSTEPModelFactory
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	static CSTEPModelBase* Load(const wchar_t* szPath)
+	static CModel* Load(const wchar_t* szPath)
 	{
 		auto iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (iModel == 0)

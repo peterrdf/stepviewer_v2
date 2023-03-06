@@ -1,7 +1,7 @@
 #ifndef IFCFILEPARSER_H
 #define IFCFILEPARSER_H
 
-#include "STEPModelBase.h"
+#include "Model.h"
 #include "IFCInstance.h"
 #include "Texture.h"
 #include "IFCUnit.h"
@@ -17,7 +17,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 // Parser for IFC files
-class CIFCModel : public CSTEPModelBase
+class CIFCModel : public CModel
 {
 	// --------------------------------------------------------------------------------------------
 	friend class CIFCController;
@@ -80,11 +80,11 @@ public: // Methods
 	CIFCModel();
 	virtual ~CIFCModel();
 
-	// CSTEPModelBase
+	// CModel
 	virtual const wchar_t* GetModelName() const override;
 	virtual int64_t GetInstance() const override;
 	virtual CEntityProvider* GetEntityProvider() const override;
-	virtual void ZoomToInstance(CSTEPInstance* pSTEPInstance) override;
+	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
 
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;

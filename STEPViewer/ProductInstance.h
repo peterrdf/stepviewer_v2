@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Generic.h"
-#include "STEPInstance.h"
+#include "Instance.h"
 
 // ------------------------------------------------------------------------------------------------
 class CProductDefinition;
 
 // ------------------------------------------------------------------------------------------------
-class CProductInstance : public CSTEPInstance
+class CProductInstance : public CInstance
 {
 
 	// --------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ public: // Methods
 	CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix);
 	virtual ~CProductInstance();
 
-	// CSTEPInstance
+	// CInstance
 	virtual int64_t _getInstance() const;
 	virtual bool _hasGeometry() const;
 	virtual bool _isEnabled() const;

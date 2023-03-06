@@ -204,13 +204,13 @@ void CSearchAttributeDialog::OnBnClickedButtonSearch()
 
 		switch (pModel->GetType())
 		{
-			case enumSTEPModelType::STEP:
+			case enumModelType::STEP:
 			{
 				ASSERT(FALSE); // TODO
 			}
 			break;
 
-			case enumSTEPModelType::IFC:
+			case enumModelType::IFC:
 			{
 				 auto pIFCmodel = m_pController->GetModel()->As<CIFCModel>();
 				 int64_t iExpressID = _wtoi64((LPCTSTR)m_strSearchText);

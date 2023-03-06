@@ -58,7 +58,7 @@ CSTEPController* CMySTEPViewerView::GetController()
 
 	switch (pModel->GetType())
 	{
-		case enumSTEPModelType::STEP:
+		case enumModelType::STEP:
 		{
 			m_pOpenGLView = new COpenGLSTEPView(this);
 			m_pOpenGLView->SetController(pController);
@@ -66,7 +66,7 @@ CSTEPController* CMySTEPViewerView::GetController()
 		}
 		break;
 
-		case enumSTEPModelType::IFC:
+		case enumModelType::IFC:
 		{
 			m_pOpenGLView = new COpenGLIFCView(this);
 			m_pOpenGLView->SetController(pController);

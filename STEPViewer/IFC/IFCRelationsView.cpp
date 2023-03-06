@@ -63,7 +63,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CSTEPInstance* pInstance) /*override*/
+/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CInstance* pInstance) /*override*/
 {
 	if (pSender == this)
 	{
@@ -128,13 +128,13 @@ CIFCModel* CIFCRelationsView::GetModel() const
 
 	switch (pModel->GetType())
 	{
-		case enumSTEPModelType::STEP:
+		case enumModelType::STEP:
 		{
 			// NA
 		}
 		break;
 
-		case enumSTEPModelType::IFC:
+		case enumModelType::IFC:
 		{
 			return pController->GetModel()->As<CIFCModel>();
 		}

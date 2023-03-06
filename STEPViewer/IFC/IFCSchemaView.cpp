@@ -20,7 +20,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCSchemaView::LoadModel(CSTEPModelBase* pModel)
+void CIFCSchemaView::LoadModel(CModel* pModel)
 {
 	if (pModel == nullptr)
 	{

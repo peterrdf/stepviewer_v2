@@ -5,7 +5,7 @@
 
 #include <glew.h>
 
-#include "STEPInstance.h"
+#include "Instance.h"
 
 #include "Generic.h"
 
@@ -18,7 +18,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CIFCInstance : public CSTEPInstance
+class CIFCInstance : public CInstance
 {
 	// --------------------------------------------------------------------------------------------
 	friend class CIFCModel;
@@ -64,7 +64,7 @@ public: // Methods
 	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID);
 	~CIFCInstance();
 
-	// CSTEPInstance
+	// CInstance
 	virtual int64_t _getInstance() const;
 	virtual bool _hasGeometry() const;
 	virtual bool _isEnabled() const;
