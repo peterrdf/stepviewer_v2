@@ -73,7 +73,7 @@ public: // Methods
 	void ScaleAndCenter();
 	
 	// Events
-	void ShowMetaInformation(CProductInstance* pInstance);
+	void ShowMetaInformation(CInstance* pInstance);
 	void SelectInstance(CSTEPView* pSender, CInstance* pInstance);
 	CInstance* GetSelectedInstance() const;
 

@@ -212,11 +212,11 @@ void CIFCSchemaView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	ASSERT(iImage == iSelectedImage);
 
 	// ********************************************************************************************
-	// View IFC Relations/Attributes
-	CString strViewIFCRelations;
-	VERIFY(strViewIFCRelations.LoadStringW(IDS_VIEW_IFC_RELATIONS));
+	// View Relations/Attributes
+	CString strViewRelations;
+	VERIFY(strViewRelations.LoadStringW(IDS_VIEW_IFC_RELATIONS));
 
-	menu.AppendMenu(MF_STRING, IDS_VIEW_IFC_RELATIONS, strViewIFCRelations);
+	menu.AppendMenu(MF_STRING, IDS_VIEW_IFC_RELATIONS, strViewRelations);
 	// ********************************************************************************************
 
 	CPoint pointScreen(LOWORD(dwPosition), HIWORD(dwPosition));

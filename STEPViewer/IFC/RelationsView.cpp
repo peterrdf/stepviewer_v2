@@ -1,9 +1,8 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "IFCRelationsView.h"
+#include "RelationsView.h"
 #include "Resource.h"
-#include "IFCModel.h"
 #include "STEPViewer.h"
 
 #ifdef _DEBUG
@@ -24,17 +23,17 @@ static char THIS_FILE[]=__FILE__;
 #define ITEM_PENDING_LOAD L"***..........***"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// CIFCRelationsView
+// CRelationsView
 
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnModelChanged() /*override*/
+/*virtual*/ void CRelationsView::OnModelChanged() /*override*/
 {
 	LoadProperties(0, nullptr, vector<int_t>());
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void CRelationsView::OnInstanceSelected(CSTEPView* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -49,29 +48,26 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
-		nullptr;
+	vector<int_t> vecInstances;
 
-	vector<CIFCInstance*> vecInstances;
-	if (pSelectedInstance != nullptr)
+	auto pInstance = GetController()->GetSelectedInstance();
+	if (pInstance != nullptr)
 	{
-		vecInstances.push_back(pSelectedInstance);
+		vecInstances.push_back(pInstance->_getInstance());
 	}
 	
 	LoadInstances(vecInstances);
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CInstance* pInstance) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, CInstance* pInstance) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	auto pIFCInstance = dynamic_cast<CIFCInstance*>(pInstance);
-	if (pIFCInstance == nullptr)
+	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -79,9 +75,9 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<int_t> vecInstances;
-	vecInstances.push_back(pIFCInstance->getInstance());
+	vecInstances.push_back(pInstance->_getInstance());
 
-	int_t iEntity = sdaiGetInstanceType(pIFCInstance->getInstance());
+	int_t iEntity = sdaiGetInstanceType(pInstance->_getInstance());
 
 	wchar_t* szEntity = nullptr;
 	engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
@@ -92,7 +88,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCRelationsView::OnViewRelations(CSTEPView* pSender, CEntity* pEntity) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, CEntity* pEntity) /*override*/
 {
 	if (pSender == this)
 	{
@@ -108,7 +104,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCModel* CIFCRelationsView::GetModel() const
+CModel* CRelationsView::GetModel() const
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -126,33 +122,13 @@ CIFCModel* CIFCRelationsView::GetModel() const
 		return nullptr;
 	}
 
-	switch (pModel->GetType())
-	{
-		case enumModelType::STEP:
-		{
-			// NA
-		}
-		break;
-
-		case enumModelType::IFC:
-		{
-			return pController->GetModel()->As<CIFCModel>();
-		}
-
-		default:
-		{
-			ASSERT(FALSE); // Unknown
-		}
-		break;
-	} // switch (pModel ->GetType())
-
-	return nullptr;
+	return pModel;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::LoadInstances(const vector<CIFCInstance*>& vecInstances)
+void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 {
-	m_ifcTreeCtrl.DeleteAllItems();
+	m_treeCtrl.DeleteAllItems();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -170,30 +146,30 @@ void CIFCRelationsView::LoadInstances(const vector<CIFCInstance*>& vecInstances)
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL;
 	tvInsertStruct.item.lParam = NULL;
 
-	HTREEITEM hModel = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
-	m_ifcTreeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
+	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	// ******************************************************************************************** //	
 
 	// ******************************************************************************************** //
 	// Instances
-	for (size_t iIFCObject = 0; iIFCObject < vecInstances.size(); iIFCObject++)
+	for (auto iInstance : vecInstances)
 	{
-		int_t iEntity = sdaiGetInstanceType(vecInstances[iIFCObject]->getInstance());
+		int_t iEntity = sdaiGetInstanceType(iInstance);
 
 		wchar_t* szEntity = nullptr;
 		engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
 
-		LoadInstance(iEntity, szEntity, vecInstances[iIFCObject]->getInstance(), hModel);
+		LoadInstance(iEntity, szEntity, iInstance, hModel);
 	}
 	// ******************************************************************************************** //
 
-	m_ifcTreeCtrl.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances)
+void CRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances)
 {
-	m_ifcTreeCtrl.DeleteAllItems();
+	m_treeCtrl.DeleteAllItems();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -211,8 +187,8 @@ void CIFCRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, c
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL;
 	tvInsertStruct.item.lParam = NULL;
 
-	HTREEITEM hModel = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
-	m_ifcTreeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
+	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	// ******************************************************************************************** //	
 
 	// ******************************************************************************************** //
@@ -223,11 +199,11 @@ void CIFCRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, c
 	}
 	// ******************************************************************************************** //
 
-	m_ifcTreeCtrl.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent)
+void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent)
 {	
 	ASSERT(iEntity != 0);
 	ASSERT(iInstance != 0);
@@ -263,8 +239,8 @@ void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int
 	/*
 	* Data
 	*/
-	CIFCInstanceData* pIFCInstanceData = new CIFCInstanceData(iInstance, iEntity, szEntity);
-	m_vecIFCInstancesCache.push_back(pIFCInstanceData);
+	CInstanceData* pIFCInstanceData = new CInstanceData(iInstance, iEntity, szEntity);
+	m_vecInstancesCache.push_back(pIFCInstanceData);
 
 	/*
 	* Instance
@@ -277,13 +253,13 @@ void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
 	tvInsertStruct.item.lParam = (LPARAM)pIFCInstanceData;
 
-	HTREEITEM hInstance = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
+	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	LoadInstanceAttributes(sdaiGetInstanceType(iInstance), iInstance, hInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent)
+int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent)
 {
 	if (iEntity == 0)
 	{
@@ -306,7 +282,7 @@ int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, 
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 	tvInsertStruct.item.lParam = NULL;
 
-	HTREEITEM hEntity = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
+	HTREEITEM hEntity = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
@@ -349,7 +325,7 @@ int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, 
 
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+void CRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
 {
 	ASSERT(iInstance != 0);
 
@@ -373,11 +349,11 @@ void CIFCRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szA
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = bChildren ? IMAGE_INSTANCE : IMAGE_ATTRIBUTE;
 	tvInsertStruct.item.lParam = NULL;
 
-	HTREEITEM hAttribute = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
+	HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	if (bChildren)
 	{
-		m_vecIFCAttributesCache.push_back(new CIFCAttributeData(iInstance, CW2A(szAttributeName), iAttributeType));
+		m_vecAttributesCache.push_back(new CAttributeData(iInstance, CW2A(szAttributeName), iAttributeType));
 
 		/*
 		* Add a fake item - load on demand
@@ -387,14 +363,14 @@ void CIFCRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szA
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_PENDING_LOAD;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
-		tvInsertStruct.item.lParam = (LPARAM)m_vecIFCAttributesCache[m_vecIFCAttributesCache.size() - 1];
+		tvInsertStruct.item.lParam = (LPARAM)m_vecAttributesCache[m_vecAttributesCache.size() - 1];
 
-		m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
+		m_treeCtrl.InsertItem(&tvInsertStruct);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strText)
+void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strText)
 {
 	strText = _T("");
 
@@ -551,7 +527,7 @@ void CIFCRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, c
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring& strText)
+void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring& strText)
 {
 	switch (sdaiGetADBType((void *)ADB)) 
 	{
@@ -700,7 +676,7 @@ void CIFCRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstr
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate, int_t iElementIndex, wstring& strText)
+void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate, int_t iElementIndex, wstring& strText)
 {
 	int_t iAggregateType = 0;
 	engiGetAggrType(pAggregate, &iAggregateType);
@@ -858,7 +834,7 @@ void CIFCRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggreg
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::GetAttributeReferences(int_t iInstance, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+void CRelationsView::GetAttributeReferences(int_t iInstance, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
 {
 	switch (iAttributeType) 
 	{
@@ -932,7 +908,7 @@ void CIFCRelationsView::GetAttributeReferences(int_t iInstance, const char* szAt
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
+void CRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 {
 	switch (sdaiGetADBType((void *)ADB)) 
 	{
@@ -1006,7 +982,7 @@ void CIFCRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent)
+void CRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent)
 {
 	int_t iAggregateType = 0;
 	engiGetAggrType(pAggregate, &iAggregateType);
@@ -1083,7 +1059,7 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const
+bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const
 {
 	auto pModel = GetModel();
 	auto pEntityProvider = pModel->GetEntityProvider();
@@ -1102,19 +1078,19 @@ bool CIFCRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttri
 }
 
 // ----------------------------------------------------------------------------
-void CIFCRelationsView::OnNMClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CRelationsView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
 // ----------------------------------------------------------------------------
-void CIFCRelationsView::OnNMRClickTreeIFC(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CRelationsView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
 // ----------------------------------------------------------------------------
-void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResult)
+void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
@@ -1122,13 +1098,13 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 
 	int iImage = -1;
 	int iSelectedImage = -1;
-	m_ifcTreeCtrl.GetItemImage(pNMTreeView->itemNew.hItem, iImage, iSelectedImage);
+	m_treeCtrl.GetItemImage(pNMTreeView->itemNew.hItem, iImage, iSelectedImage);
 
 	ASSERT(iImage == iSelectedImage);
 
 	if ((iImage == IMAGE_INSTANCE) && (pNMTreeView->itemNew.cChildren == 1))
 	{
-		HTREEITEM hChild = m_ifcTreeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);
+		HTREEITEM hChild = m_treeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);
 		if (hChild == nullptr)
 		{
 			ASSERT(FALSE);
@@ -1136,50 +1112,50 @@ void CIFCRelationsView::OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResul
 			return;
 		}
 
-		if (m_ifcTreeCtrl.GetItemText(hChild) != ITEM_PENDING_LOAD)
+		if (m_treeCtrl.GetItemText(hChild) != ITEM_PENDING_LOAD)
 		{
 			return;
 		}		
 
-		CIFCAttributeData * pIFCAttributeData = (CIFCAttributeData *)m_ifcTreeCtrl.GetItemData(hChild);
+		CAttributeData * pIFCAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
 		ASSERT(pIFCAttributeData != nullptr);
 
-		m_ifcTreeCtrl.DeleteItem(hChild);
+		m_treeCtrl.DeleteItem(hChild);
 
 		GetAttributeReferences(pIFCAttributeData->getInstance(), pIFCAttributeData->getName(), pIFCAttributeData->getType(), pNMTreeView->itemNew.hItem);
 	} // if ((iImage == IMAGE_INSTANCE) && ...
 }
 
-CIFCRelationsView::CIFCRelationsView()
-	: m_vecIFCInstancesCache()
-	, m_vecIFCAttributesCache()
+CRelationsView::CRelationsView()
+	: m_vecInstancesCache()
+	, m_vecAttributesCache()
 	, m_pSearchDialog(nullptr)
 {
 }
 
-CIFCRelationsView::~CIFCRelationsView()
+CRelationsView::~CRelationsView()
 {
-	for (size_t iData = 0; iData < m_vecIFCInstancesCache.size(); iData++)
+	for (size_t iData = 0; iData < m_vecInstancesCache.size(); iData++)
 	{
-		delete m_vecIFCInstancesCache[iData];
+		delete m_vecInstancesCache[iData];
 	}
 
-	for (size_t iData = 0; iData < m_vecIFCAttributesCache.size(); iData++)
+	for (size_t iData = 0; iData < m_vecAttributesCache.size(); iData++)
 	{
-		delete m_vecIFCAttributesCache[iData];
+		delete m_vecAttributesCache[iData];
 	}
 }
 
-BEGIN_MESSAGE_MAP(CIFCRelationsView, CDockablePane)
+BEGIN_MESSAGE_MAP(CRelationsView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
 	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CIFCRelationsView::OnNMClickTreeIFC)
-	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CIFCRelationsView::OnNMRClickTreeIFC)
-	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CIFCRelationsView::OnTvnItemexpandingTreeIFC)
+	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CRelationsView::OnNMClickTree)
+	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CRelationsView::OnNMRClickTree)
+	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CRelationsView::OnTvnItemexpandingTree)
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -1187,7 +1163,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -1201,7 +1177,7 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create view:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
 
-	if (!m_ifcTreeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_IFC))
+	if (!m_treeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_IFC))
 	{
 		TRACE0("Failed to create IFC Instances View\n");
 		return -1;      // fail to create
@@ -1209,7 +1185,7 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Load view images:
 	m_imageList.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
-	m_ifcTreeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
+	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
 	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
@@ -1230,19 +1206,19 @@ int CIFCRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchAttributeDialog(GetController(), &m_ifcTreeCtrl);
+	m_pSearchDialog = new CSearchAttributeDialog(GetController(), &m_treeCtrl);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }
 
-void CIFCRelationsView::OnSize(UINT nType, int cx, int cy)
+void CRelationsView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CIFCRelationsView::AdjustLayout()
+void CRelationsView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -1262,7 +1238,7 @@ void CIFCRelationsView::AdjustLayout()
 		cyTlb, 
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_ifcTreeCtrl.SetWindowPos(
+	m_treeCtrl.SetWindowPos(
 		nullptr, rectClient.left + 1, 
 		rectClient.top + cyTlb + 1, 
 		rectClient.Width() - 2, 
@@ -1270,7 +1246,7 @@ void CIFCRelationsView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CIFCRelationsView::OnProperties()
+void CRelationsView::OnProperties()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -1282,30 +1258,30 @@ void CIFCRelationsView::OnProperties()
 	}
 }
 
-void CIFCRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+void CRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {	
 }
 
-void CIFCRelationsView::OnPaint()
+void CRelationsView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
 	CRect rectTree;
-	m_ifcTreeCtrl.GetWindowRect(rectTree);
+	m_treeCtrl.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CIFCRelationsView::OnSetFocus(CWnd* pOldWnd)
+void CRelationsView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_ifcTreeCtrl.SetFocus();
+	m_treeCtrl.SetFocus();
 }
 
-void CIFCRelationsView::OnChangeVisualStyle()
+void CRelationsView::OnChangeVisualStyle()
 {
 	m_imageList.DeleteImageList();
 
@@ -1329,20 +1305,20 @@ void CIFCRelationsView::OnChangeVisualStyle()
 	m_imageList.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
 	m_imageList.Add(&bmp, RGB(255, 0, 0));
 
-	m_ifcTreeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
+	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
 	m_wndToolBar.CleanUpLockedImages();
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CIFCRelationsView::OnDestroy()
+void CRelationsView::OnDestroy()
 {
 	__super::OnDestroy();
 
 	delete m_pSearchDialog;
 }
 
-void CIFCRelationsView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CRelationsView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

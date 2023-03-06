@@ -4,13 +4,11 @@
 #include "SearchAttributeDialog.h"
 #include "STEPView.h"
 #include "ViewTree.h"
-#include "IFCUnit.h"
-#include "IFCInstance.h"
 
 #include <map>
 using namespace std;
 
-class CIFCRelationsViewToolBar : public CMFCToolBar
+class CRelationsViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -22,7 +20,7 @@ class CIFCRelationsViewToolBar : public CMFCToolBar
 
 // ------------------------------------------------------------------------------------------------
 // Load on demand
-class CIFCInstanceData
+class CInstanceData
 {
 private: // Members
 
@@ -40,7 +38,7 @@ private: // Members
 
 public: // Methods
 
-	CIFCInstanceData(int_t iInstance, int_t iEntity, const wchar_t* szEntity)
+	CInstanceData(int_t iInstance, int_t iEntity, const wchar_t* szEntity)
 		: m_iInstance(iInstance)
 		, m_iEntity(iEntity)
 		, m_srtEntity(szEntity)
@@ -71,7 +69,7 @@ public: // Methods
 
 // ------------------------------------------------------------------------------------------------
 // Load on demand
-class CIFCAttributeData
+class CAttributeData
 {
 private: // Members
 
@@ -89,7 +87,7 @@ private: // Members
 
 public: // Methods
 
-	CIFCAttributeData(int_t iInstance, const char * szName, int_t iType)
+	CAttributeData(int_t iInstance, const char * szName, int_t iType)
 		: m_iInstance(iInstance)
 		, m_srtName(szName)
 		, m_iType(iType)
@@ -123,7 +121,7 @@ public: // Methods
 */
 
 // ------------------------------------------------------------------------------------------------
-class CIFCRelationsView 
+class CRelationsView 
 	: public CDockablePane
 	, public CSTEPView
 {
@@ -131,8 +129,8 @@ class CIFCRelationsView
 private: // Members
 	
 	// Cache
-	vector<CIFCInstanceData*> m_vecIFCInstancesCache;
-	vector<CIFCAttributeData*> m_vecIFCAttributesCache;
+	vector<CInstanceData*> m_vecInstancesCache;
+	vector<CAttributeData*> m_vecAttributesCache;
 
 	// Search
 	CSearchAttributeDialog* m_pSearchDialog;
@@ -148,9 +146,9 @@ public: // Methods
 
 private: // Methods
 
-	CIFCModel* GetModel() const;
+	CModel* GetModel() const;
 	
-	void LoadInstances(const vector<CIFCInstance*>& vecInstances);
+	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances);
 	void LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
 	int_t LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent);
@@ -165,7 +163,7 @@ private: // Methods
 
 // Construction
 public:
-	CIFCRelationsView();
+	CRelationsView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -173,15 +171,15 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_ifcTreeCtrl;
+	CViewTree m_treeCtrl;
 	CImageList m_imageList;
-	CIFCRelationsViewToolBar m_wndToolBar;
+	CRelationsViewToolBar m_wndToolBar;
 
 protected:	
 
 // Implementation
 public:
-	virtual ~CIFCRelationsView();
+	virtual ~CRelationsView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -190,9 +188,9 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnNMClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:

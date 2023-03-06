@@ -8,7 +8,7 @@
 #include "FileView.h"
 #include "PropertiesWnd.h"
 #include "IFCSchemaView.h"
-#include "IFCRelationsView.h"
+#include "RelationsView.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -50,7 +50,7 @@ protected:  // control bar embedded members
 	CMFCToolBarImages   m_UserImages;
 	CFileView           m_wndFileView;
 	CIFCSchemaView		m_wndIFCSchema;
-	CIFCRelationsView	m_wndIFCRelations;
+	CRelationsView		m_wndRelations;
 	CPropertiesWnd      m_wndProperties;
 
 // Generated message map functions

@@ -207,7 +207,7 @@
     <ClInclude Include="IFC\IFCClass.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
-    <ClInclude Include="IFC\IFCRelationsView.h" />
+    <ClInclude Include="IFC\RelationsView.h" />
     <ClInclude Include="IFC\IFCSchemaView.h" />
     <ClInclude Include="IFC\IFCSchemaViewConsts.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
@@ -254,7 +254,7 @@
     <ClCompile Include="IFC\IFCClass.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
-    <ClCompile Include="IFC\IFCRelationsView.cpp" />
+    <ClCompile Include="IFC\RelationsView.cpp" />
     <ClCompile Include="IFC\IFCSchemaView.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\OpenGLIFCView.cpp" />

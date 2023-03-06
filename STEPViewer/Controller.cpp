@@ -130,7 +130,7 @@ void CController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::ShowMetaInformation(CProductInstance* /*pInstance*/)
+void CController::ShowMetaInformation(CInstance* /*pInstance*/)
 {
 	ASSERT(FALSE); // OBSOLETE
 }

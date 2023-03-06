@@ -137,9 +137,6 @@
     <ClInclude Include="IFC\IFCSchemaViewConsts.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCRelationsView.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\SearchDecompContDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\RelationsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -241,9 +241,6 @@
     <ClCompile Include="IFC\IFCSchemaView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCRelationsView.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\SearchDecompContDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
@@ -260,6 +257,9 @@
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\RelationsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

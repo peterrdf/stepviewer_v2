@@ -150,13 +150,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndIFCSchema.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndIFCRelations.EnableDocking(CBRS_ALIGN_ANY);
+	m_wndRelations.EnableDocking(CBRS_ALIGN_ANY);
 
 	DockPane(&m_wndFileView);
 
 	CDockablePane* pTabbedBar = nullptr;
 	m_wndIFCSchema.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
-	m_wndIFCRelations.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
+	m_wndRelations.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndProperties);
@@ -294,13 +294,13 @@ BOOL CMainFrame::CreateDockingWindows()
 	// ********************************************************************************************
 
 	// ********************************************************************************************
-	// Create IFC Relations/Attributes View
-	m_wndIFCRelations.SetController(pController);
+	// Create Relations/Attributes View
+	m_wndRelations.SetController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_IFC_RELATIONS_VIEW);
 	ASSERT(bNameValid);
 
-	if (!m_wndIFCRelations.Create(
+	if (!m_wndRelations.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -359,14 +359,14 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		0);
 	m_wndIFCSchema.SetIcon(hIFCSchemaIcon, FALSE);
 
-	HICON hIFCRelationsIcon = (HICON)::LoadImage(
+	HICON hRelationsIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_wndIFCRelations.SetIcon(hIFCRelationsIcon, FALSE);
+	m_wndRelations.SetIcon(hRelationsIcon, FALSE);
 
 	HICON hPropertiesBarIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
