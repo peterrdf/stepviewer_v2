@@ -6,12 +6,12 @@
 #pragma once
 
 #include "STEPModel.h"
-#include "STEPController.h"
+#include "Controller.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
 	: public CDocument
-	, public CSTEPController
+	, public CController
 {
 
 private: // Members

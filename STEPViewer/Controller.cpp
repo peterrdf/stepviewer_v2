@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "STEPController.h"
+#include "Controller.h"
 #include "Model.h"
 #include "STEPView.h"
 
 // ------------------------------------------------------------------------------------------------
-CSTEPController::CSTEPController()
+CController::CController()
 	: m_pModel(nullptr)
 	, m_bUpdatingModel(false)
 	, m_setViews()
@@ -15,18 +15,18 @@ CSTEPController::CSTEPController()
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPController::~CSTEPController()
+CController::~CController()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-CModel* CSTEPController::GetModel() const
+CModel* CController::GetModel() const
 {
 	return m_pModel;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SetModel(CModel* pModel)
+void CController::SetModel(CModel* pModel)
 {
 	ASSERT(pModel != nullptr);
 
@@ -46,7 +46,7 @@ void CSTEPController::SetModel(CModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::RegisterView(CSTEPView* pView)
+void CController::RegisterView(CSTEPView* pView)
 {
 	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) == m_setViews.end());
@@ -55,7 +55,7 @@ void CSTEPController::RegisterView(CSTEPView* pView)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::UnRegisterView(CSTEPView* pView)
+void CController::UnRegisterView(CSTEPView* pView)
 {
 	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) != m_setViews.end());
@@ -64,13 +64,13 @@ void CSTEPController::UnRegisterView(CSTEPView* pView)
 }
 
 // ------------------------------------------------------------------------------------------------
-const set<CSTEPView*> & CSTEPController::GetViews()
+const set<CSTEPView*> & CController::GetViews()
 {
 	return m_setViews;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ZoomToInstance()
+void CController::ZoomToInstance()
 {
 	ASSERT(m_pModel != nullptr);
 	ASSERT(m_pSelectedInstance != nullptr);
@@ -85,7 +85,7 @@ void CSTEPController::ZoomToInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ZoomOut()
+void CController::ZoomOut()
 {
 	ASSERT(m_pModel != nullptr);
 
@@ -99,7 +99,7 @@ void CSTEPController::ZoomOut()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SaveInstance()
+void CController::SaveInstance()
 {
 	ASSERT(m_pModel != nullptr);
 	ASSERT(m_pSelectedInstance != nullptr);
@@ -117,7 +117,7 @@ void CSTEPController::SaveInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ScaleAndCenter()
+void CController::ScaleAndCenter()
 {
 	ASSERT(FALSE); // OBSOLETE
 	/*m_pModel->ScaleAndCenter();
@@ -130,13 +130,13 @@ void CSTEPController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::ShowMetaInformation(CProductInstance* /*pInstance*/)
+void CController::ShowMetaInformation(CProductInstance* /*pInstance*/)
 {
 	ASSERT(FALSE); // OBSOLETE
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
+void CController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -153,37 +153,37 @@ void CSTEPController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-CInstance* CSTEPController::GetSelectedInstance() const
+CInstance* CController::GetSelectedInstance() const
 {
 	return m_pSelectedInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
-int CSTEPController::GetVisibleValuesCountLimit() const
+int CController::GetVisibleValuesCountLimit() const
 {
 	return m_iVisibleValuesCountLimit;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
+void CController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSTEPController::GetScaleAndCenter() const
+BOOL CController::GetScaleAndCenter() const
 {
 	return m_bScaleAndCenter;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::SetScaleAndCenter(BOOL bScaleAndCenter)
+void CController::SetScaleAndCenter(BOOL bScaleAndCenter)
 {
 	m_bScaleAndCenter = bScaleAndCenter;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
+void CController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -193,7 +193,7 @@ void CSTEPController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty)
+void CController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -203,7 +203,7 @@ void CSTEPController::OnApplicationPropertyChanged(CSTEPView* pSender, enumAppli
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnViewRelations(CSTEPView* pSender, CInstance* pInstance)
+void CController::OnViewRelations(CSTEPView* pSender, CInstance* pInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -213,7 +213,7 @@ void CSTEPController::OnViewRelations(CSTEPView* pSender, CInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPController::OnViewRelations(CSTEPView* pSender, CEntity* pEntity)
+void CController::OnViewRelations(CSTEPView* pSender, CEntity* pEntity)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

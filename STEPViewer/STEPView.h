@@ -5,7 +5,7 @@
 #include "Entity.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPController;
+class CController;
 
 // ------------------------------------------------------------------------------------------------
 enum class enumApplicationProperty
@@ -34,7 +34,7 @@ class CSTEPView
 private: // Members
 	
 	// Controller
-	CSTEPController* m_pController;
+	CController* m_pController;
 
 public: // Methods
 	
@@ -43,7 +43,7 @@ public: // Methods
 	virtual ~CSTEPView();
 	
 	// Controller
-	void SetController(CSTEPController* pController);
+	void SetController(CController* pController);
 
 	// Events
 	virtual void OnModelChanged();
@@ -61,6 +61,6 @@ protected: // Methods
 	virtual void OnControllerChanged();
 	
 	// Controller
-	CSTEPController* GetController() const;	
+	CController* GetController() const;	
 };
 

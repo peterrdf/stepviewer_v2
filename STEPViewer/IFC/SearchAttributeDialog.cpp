@@ -144,7 +144,7 @@ void CSearchAttributeDialog::Reset()
 
 IMPLEMENT_DYNAMIC(CSearchAttributeDialog, CDialogEx)
 
-CSearchAttributeDialog::CSearchAttributeDialog(CSTEPController* pController, CViewTree* pIFCTreeCtrl)
+CSearchAttributeDialog::CSearchAttributeDialog(CController* pController, CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pController(pController)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)

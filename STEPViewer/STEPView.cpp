@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "STEPView.h"
-#include "STEPController.h"
+#include "Controller.h"
 
 // ------------------------------------------------------------------------------------------------
 CSTEPView::CSTEPView()
@@ -14,7 +14,7 @@ CSTEPView::~CSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPView::SetController(CSTEPController* pController)
+void CSTEPView::SetController(CController* pController)
 {
 	ASSERT(pController != nullptr);
 
@@ -69,7 +69,7 @@ void CSTEPView::SetController(CSTEPController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPController* CSTEPView::GetController() const
+CController* CSTEPView::GetController() const
 {
 	return m_pController;
 }

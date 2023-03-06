@@ -233,7 +233,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OpenGLSTEPView.h" />
     <ClInclude Include="PropertiesWnd.h" />
-    <ClInclude Include="STEPController.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="STEPModel.h" />
     <ClInclude Include="STEPView.h" />
     <ClInclude Include="Resource.h" />
@@ -275,7 +275,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OpenGLSTEPView.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
-    <ClCompile Include="STEPController.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="STEPModel.cpp" />
     <ClCompile Include="STEPView.cpp" />
     <ClCompile Include="stdafx.cpp">

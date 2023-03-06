@@ -80,7 +80,7 @@
     <ClInclude Include="OpenGLSTEPView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPController.h">
+    <ClInclude Include="Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="STEPModel.h">
@@ -202,7 +202,7 @@
     <ClCompile Include="OpenGLSTEPView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPController.cpp">
+    <ClCompile Include="Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPModel.cpp">

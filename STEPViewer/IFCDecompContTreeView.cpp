@@ -496,7 +496,7 @@ CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 {
-	CSTEPController* pController = GetController();
+	CController* pController = GetController();
 	ASSERT(pController != nullptr);
 
 	/**********************************************************************************************

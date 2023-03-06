@@ -19,7 +19,7 @@
 #endif
 
 // ------------------------------------------------------------------------------------------------
-CSTEPController* CMySTEPViewerView::GetController()
+CController* CMySTEPViewerView::GetController()
 {
 	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);

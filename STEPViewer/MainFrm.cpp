@@ -38,7 +38,7 @@ static UINT indicators[] =
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-CSTEPController* CMainFrame::GetController() const
+CController* CMainFrame::GetController() const
 {
 	POSITION posDocTemplate = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (posDocTemplate == nullptr)
@@ -61,7 +61,7 @@ CSTEPController* CMainFrame::GetController() const
 	CDocument * pDocument = pDocTemplate->GetNextDoc(posDocument);
 	ASSERT(pDocument);
 
-	return dynamic_cast<CSTEPController*>(pDocument);
+	return dynamic_cast<CController*>(pDocument);
 }
 
 // CMainFrame construction/destruction
@@ -248,7 +248,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::CreateDockingWindows()
 {
-	CSTEPController* pController = GetController();
+	CController* pController = GetController();
 
 	BOOL bNameValid;
 

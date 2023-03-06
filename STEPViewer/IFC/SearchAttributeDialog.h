@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ViewTree.h"
-#include "STEPController.h"
+#include "Controller.h"
 
 // CSearchAttributeDialog dialog
 
@@ -18,7 +18,7 @@ private: // Declarations
 
 private: // Members
 	
-	CSTEPController* m_pController;
+	CController* m_pController;
 	CViewTree* m_pIFCTreeCtrl;	
 	enumSearchFilter m_enSearchFilter;
 	HTREEITEM m_hSearchResult;
@@ -40,7 +40,7 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchAttributeDialog(CSTEPController* pController, CViewTree* pIFCTreeCtrl);   // standard constructor
+	CSearchAttributeDialog(CController* pController, CViewTree* pIFCTreeCtrl);   // standard constructor
 	virtual ~CSearchAttributeDialog();
 
 // Dialog Data

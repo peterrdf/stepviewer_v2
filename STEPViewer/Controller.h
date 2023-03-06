@@ -16,7 +16,7 @@ enum class enumApplicationProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-class CSTEPController
+class CController
 {
 
 private: // Members	
@@ -35,8 +35,8 @@ private: // Members
 
 public: // Methods
 	
-	CSTEPController();	
-	virtual ~CSTEPController();
+	CController();	
+	virtual ~CController();
 	
 	CModel* GetModel() const;
 	void SetModel(CModel* pModel);

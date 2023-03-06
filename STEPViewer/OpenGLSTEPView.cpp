@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "OpenGLSTEPView.h"
-#include "STEPController.h"
+#include "Controller.h"
 #include "STEPModel.h"
 
 #include "Resource.h"
@@ -265,7 +265,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	CSTEPController* pController = GetController();
+	CController* pController = GetController();
 	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)
@@ -1257,7 +1257,7 @@ void COpenGLSTEPView::DrawPoints()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-	CSTEPController * pController = GetController();
+	CController * pController = GetController();
 	ASSERT(pController != nullptr);
 
 	if (pController->GetModel() == nullptr)

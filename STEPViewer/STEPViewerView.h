@@ -17,7 +17,7 @@ private: // Members
 
 private: // Methods
 
-	CSTEPController* GetController();
+	CController* GetController();
 
 public: // Methods
 

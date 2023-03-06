@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "OpenGLIFCView.h"
-#include "STEPController.h"
+#include "Controller.h"
 #include "IFCModel.h"
 #include "resource.h"
 

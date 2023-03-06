@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "STEPController.h"
+#include "Controller.h"
 #include "FileView.h"
 #include "PropertiesWnd.h"
 #include "IFCSchemaView.h"
@@ -17,7 +17,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Controller - MVC
-	CSTEPController* GetController() const;
+	CController* GetController() const;
 
 
 protected: // create from serialization only
