@@ -56,10 +56,10 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileViewConsts.h">
+    <ClInclude Include="StructureViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileView.h">
+    <ClInclude Include="StructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Assembly.h">
@@ -193,7 +193,7 @@
     <ClCompile Include="STEPItemData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileView.cpp">
+    <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPView.cpp">

@@ -201,7 +201,7 @@
   <ItemGroup>
     <ClInclude Include="Assembly.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="FileView.h" />
+    <ClInclude Include="StructureView.h" />
     <ClInclude Include="IFCDecompContTreeView.h" />
     <ClInclude Include="IFCProperty.h" />
     <ClInclude Include="IFC\IFCClass.h" />
@@ -228,7 +228,7 @@
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
     <ClInclude Include="STEPViewerView.h" />
-    <ClInclude Include="FileViewConsts.h" />
+    <ClInclude Include="StructureViewConsts.h" />
     <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OpenGLSTEPView.h" />
@@ -248,7 +248,7 @@
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="StructureView.cpp" />
     <ClCompile Include="IFCDecompContTreeView.cpp" />
     <ClCompile Include="IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCClass.cpp" />

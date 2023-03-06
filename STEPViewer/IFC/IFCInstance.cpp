@@ -93,12 +93,6 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::getInstance() const
-{
-	return m_iInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
 const wchar_t* CIFCInstance::getGUID() const
 {
 	return m_strGUID.c_str();

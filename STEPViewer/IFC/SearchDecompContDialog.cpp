@@ -5,7 +5,7 @@
 #include "SearchDecompContDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "FileViewConsts.h"
+#include "StructureViewConsts.h"
 
 
 // CSearchDecompContDialog dialog

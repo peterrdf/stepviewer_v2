@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Controller.h"
-#include "FileView.h"
+#include "StructureView.h"
 #include "PropertiesWnd.h"
 #include "SchemaView.h"
 #include "RelationsView.h"
@@ -48,7 +48,7 @@ protected:  // control bar embedded members
 	CMFCToolBar         m_wndToolBar;
 	CMFCStatusBar       m_wndStatusBar;
 	CMFCToolBarImages   m_UserImages;
-	CFileView           m_modelStructureView;
+	CStructureView           m_modelStructureView;
 	CSchemaView			m_schemaView;
 	CRelationsView		m_relationsView;
 	CPropertiesWnd      m_propertiesView;

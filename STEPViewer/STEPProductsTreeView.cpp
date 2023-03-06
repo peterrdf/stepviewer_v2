@@ -6,7 +6,7 @@
 #include "STEPViewer.h"
 #include "STEPModel.h"
 #include "Generic.h"
-#include "FileViewConsts.h"
+#include "StructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>

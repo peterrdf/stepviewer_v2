@@ -14,7 +14,7 @@ using namespace std;
 
 
 // ------------------------------------------------------------------------------------------------
-class CFileViewToolBar : public CMFCToolBar
+class CStructureViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -29,7 +29,7 @@ class CFileViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-class CFileView
+class CStructureView
 	: public CDockablePane
 	, public CSTEPView
 {
@@ -45,7 +45,7 @@ public: // Methods
 
 // Construction
 public:
-	CFileView();
+	CStructureView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -54,13 +54,13 @@ public:
 protected:
 
 	CViewTree m_modelStructureView;
-	CFileViewToolBar m_wndToolBar;
+	CStructureViewToolBar m_wndToolBar;
 
 protected:
 
 // Implementation
 public:
-	virtual ~CFileView();
+	virtual ~CStructureView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

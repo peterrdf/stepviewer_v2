@@ -69,8 +69,7 @@ public: // Methods
 	virtual bool _hasGeometry() const;
 	virtual bool _isEnabled() const;
 	virtual wstring _getName() const;
-	
-	int_t getInstance() const;
+
 	const wchar_t* getGUID() const;
 	int64_t expressID() const;
 	int64_t parentExpressID() const;

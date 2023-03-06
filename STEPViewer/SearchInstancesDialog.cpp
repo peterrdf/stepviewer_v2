@@ -5,7 +5,7 @@
 #include "SearchInstancesDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "FileViewConsts.h"
+#include "StructureViewConsts.h"
 #include "STEPItemData.h"
 
 

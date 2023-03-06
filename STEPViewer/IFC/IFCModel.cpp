@@ -87,7 +87,7 @@ CIFCModel::~CIFCModel()
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pIFCInstance->getInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pIFCInstance->_getInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 

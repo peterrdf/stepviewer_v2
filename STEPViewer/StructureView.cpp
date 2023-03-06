@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "FileView.h"
+#include "StructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "STEPModel.h"
@@ -19,37 +19,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-class CFileViewMenuButton : public CMFCToolBarMenuButton
-{
-
-	DECLARE_SERIAL(CFileViewMenuButton)
-
-public:
-	CFileViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
-	{
-	}
-
-	virtual void OnDraw(CDC* pDC, const CRect& rect, CMFCToolBarImages* pImages, BOOL bHorz = TRUE,
-		BOOL bCustomizeMode = FALSE, BOOL bHighlight = FALSE, BOOL bDrawBorder = TRUE, BOOL bGrayDisabledButtons = TRUE)
-	{
-		pImages = CMFCToolBar::GetImages();
-
-		// Patch: wrong background when the app starts
-		pImages->SetTransparentColor(::GetSysColor(COLOR_BTNFACE));
-
-		CAfxDrawState ds;
-		pImages->PrepareDrawImage(ds);
-
-		CMFCToolBarMenuButton::OnDraw(pDC, rect, pImages, bHorz, bCustomizeMode, bHighlight, bDrawBorder, bGrayDisabledButtons);
-
-		pImages->EndDrawImage(ds);
-	}
-};
-
-IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
-
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnModelChanged()
+/*virtual*/ void CStructureView::OnModelChanged()
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -97,19 +68,19 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CFileView
+// CStructureView
 
-CFileView::CFileView()
+CStructureView::CStructureView()
 	: m_pSTEPTreeView(nullptr)
 {
 }
 
-CFileView::~CFileView()
+CStructureView::~CStructureView()
 {	
 	delete m_pSTEPTreeView;
 }
 
-BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
+BEGIN_MESSAGE_MAP(CStructureView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
@@ -127,7 +98,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -176,13 +147,13 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFileView::OnSize(UINT nType, int cx, int cy)
+void CStructureView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CFileView::OnProperties()
+void CStructureView::OnProperties()
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -190,7 +161,7 @@ void CFileView::OnProperties()
 	}	
 }
 
-void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -198,7 +169,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 }
 
-void CFileView::AdjustLayout()
+void CStructureView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -226,7 +197,7 @@ void CFileView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFileView::OnPaint()
+void CStructureView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -238,14 +209,14 @@ void CFileView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CFileView::OnSetFocus(CWnd* pOldWnd)
+void CStructureView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_modelStructureView.SetFocus();
 }
 
-void CFileView::OnChangeVisualStyle()
+void CStructureView::OnChangeVisualStyle()
 {
 	UINT uiBmpId = theApp.m_bHiColorIcons ? IDB_CLASS_VIEW_24 : IDB_CLASS_VIEW;
 
@@ -272,7 +243,7 @@ void CFileView::OnChangeVisualStyle()
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CFileView::OnDestroy()
+void CStructureView::OnDestroy()
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -287,7 +258,7 @@ void CFileView::OnDestroy()
 	__super::OnDestroy();
 }
 
-void CFileView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
+void CStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -297,7 +268,7 @@ void CFileView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CFileView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
+void CStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;	
 
@@ -307,12 +278,12 @@ void CFileView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CFileView::OnNewInstance()
+void CStructureView::OnNewInstance()
 {
 	ASSERT(0); // todo
 }
 
-void CFileView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

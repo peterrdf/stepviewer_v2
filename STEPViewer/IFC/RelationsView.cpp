@@ -75,14 +75,12 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<int_t> vecInstances;
-	vecInstances.push_back(pInstance->_getInstance());
+	vecInstances.push_back(pInstance->_getInstance());	
 
-	int_t iEntity = sdaiGetInstanceType(pInstance->_getInstance());
-
-	wchar_t* szEntity = nullptr;
-	engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
-
-	LoadProperties(iEntity, szEntity, vecInstances);
+	LoadProperties(
+		pInstance->_getEntity(), 
+		pInstance->_getEntityName(), 
+		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
 }

@@ -6,7 +6,7 @@
 #include "STEPViewer.h"
 #include "IFCModel.h"
 #include "Generic.h"
-#include "FileViewConsts.h"
+#include "StructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>
@@ -853,12 +853,7 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	auto itInstance = mapInstances.find(iIFCProjectInstance);
 	if (itInstance != mapInstances.end())
 	{
-		int_t iEntity = sdaiGetInstanceType(itInstance->second->getInstance());
-
-		wchar_t* szEntity = nullptr;
-		engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
-
-		wstring strItem = szEntity;
+		wstring strItem = itInstance->second->_getEntityName();
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1037,17 +1032,12 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 	{
 		itInstance->second->referenced() = true;
 
-		int_t iEntity = sdaiGetInstanceType(itInstance->second->getInstance());
-
-		wchar_t* szEntity = nullptr;
-		engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
-
 		CString strExpressID;
 		strExpressID.Format(_T("#%lld"), itInstance->second->expressID());
 
 		wstring strItem = strExpressID;
 		strItem += L" ";
-		strItem += szEntity;
+		strItem += itInstance->second->_getEntityName();
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1120,10 +1110,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 		if (!itInstance->second->referenced())
 		{
-			int_t iEntity = sdaiGetInstanceType(itInstance->second->getInstance());
-
-			wchar_t* szEntity = nullptr;
-			engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+			const wchar_t* szEntity = itInstance->second->_getEntityName();
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
 			if (itUnreferencedItems == mapUnreferencedItems.end())
@@ -1178,22 +1165,17 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
 			wchar_t* szName = nullptr;
-			sdaiGetAttrBN(pInstance->getInstance(), "Name", sdaiUNICODE, &szName);
+			sdaiGetAttrBN(pInstance->_getInstance(), "Name", sdaiUNICODE, &szName);
 
 			wchar_t* szDescription = nullptr;
-			sdaiGetAttrBN(pInstance->getInstance(), "Description", sdaiUNICODE, &szDescription);
-
-			int_t iEntity = sdaiGetInstanceType(pInstance->getInstance());
-
-			wchar_t* szEntity = nullptr;
-			engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+			sdaiGetAttrBN(pInstance->_getInstance(), "Description", sdaiUNICODE, &szDescription);
 
 			CString strExpressID;
 			strExpressID.Format(_T("#%lld"), pInstance->expressID());
 
 			wstring strItem = strExpressID;
 			strItem += L" ";
-			strItem += szEntity;
+			strItem += pInstance->_getEntityName();
 			if ((szName != nullptr) && (wcslen(szName) > 0))
 			{
 				strItem += L" '";
