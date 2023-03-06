@@ -5,13 +5,11 @@
 #include <math.h>
 
 // ------------------------------------------------------------------------------------------------
-CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * szGUID, int_t iEntity, const wchar_t * szEntity)
+CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * szGUID)
 	: CSTEPInstance()
 	, m_pModel(pModel)
 	, m_iInstance(iInstance)
 	, m_strGUID(szGUID != nullptr ? szGUID : L"")
-	, m_iEntity(iEntity)
-	, m_strEntity(szEntity)
 	, m_iExpressID(0)
 	, m_iParentExpressID(0)
 	, m_iID(0)
@@ -89,7 +87,7 @@ CIFCInstance::~CIFCInstance()
 
 	strName.Format(_T("#%lld"), m_iInstance);
 	strName += L" ";
-	strName += getEntityName();
+	strName += _getEntityName();
 
 	return (LPCTSTR)strName;
 }
@@ -104,18 +102,6 @@ int_t CIFCInstance::getInstance() const
 const wchar_t* CIFCInstance::getGUID() const
 {
 	return m_strGUID.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::getEntity() const
-{
-	return m_iEntity;
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CIFCInstance::getEntityName() const
-{
-	return m_strEntity.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -28,8 +28,6 @@ private: // Members
 	CIFCModel* m_pModel;
 	int_t m_iInstance;
 	wstring m_strGUID;
-	int_t m_iEntity;
-	wstring m_strEntity;
 	int64_t m_iExpressID;
 	int64_t m_iParentExpressID;
 	int_t m_iID;
@@ -63,7 +61,7 @@ private: // Members
 
 public: // Methods
 	
-	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID, int_t iEntity, const wchar_t* szEntity);
+	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID);
 	~CIFCInstance();
 
 	// CSTEPInstance
@@ -74,8 +72,6 @@ public: // Methods
 	
 	int_t getInstance() const;
 	const wchar_t* getGUID() const;
-	int_t getEntity() const;
-	const wchar_t* getEntityName() const;
 	int64_t expressID() const;
 	int64_t parentExpressID() const;
 	int_t & ID();

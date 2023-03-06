@@ -81,7 +81,12 @@ static char THIS_FILE[]=__FILE__;
 	vector<int_t> vecInstances;
 	vecInstances.push_back(pIFCInstance->getInstance());
 
-	LoadProperties(pIFCInstance->getEntity(), pIFCInstance->getEntityName(), vecInstances);
+	int_t iEntity = sdaiGetInstanceType(pIFCInstance->getInstance());
+
+	wchar_t* szEntity = nullptr;
+	engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+
+	LoadProperties(iEntity, szEntity, vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
 }
@@ -173,7 +178,12 @@ void CIFCRelationsView::LoadInstances(const vector<CIFCInstance*>& vecInstances)
 	// Instances
 	for (size_t iIFCObject = 0; iIFCObject < vecInstances.size(); iIFCObject++)
 	{
-		LoadInstance(vecInstances[iIFCObject]->getEntity(), vecInstances[iIFCObject]->getEntityName(), vecInstances[iIFCObject]->getInstance(), hModel);
+		int_t iEntity = sdaiGetInstanceType(vecInstances[iIFCObject]->getInstance());
+
+		wchar_t* szEntity = nullptr;
+		engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+
+		LoadInstance(iEntity, szEntity, vecInstances[iIFCObject]->getInstance(), hModel);
 	}
 	// ******************************************************************************************** //
 
@@ -269,11 +279,11 @@ void CIFCRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int
 
 	HTREEITEM hInstance = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
-	LoadInstanceAttributes(sdaiGetInstanceType(iInstance), szEntity, iInstance, hInstance);
+	LoadInstanceAttributes(sdaiGetInstanceType(iInstance), iInstance, hInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent)
+int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent)
 {
 	if (iEntity == 0)
 	{
@@ -285,21 +295,20 @@ int_t CIFCRelationsView::LoadInstanceAttributes(int_t iEntity, const wchar_t* sz
 	/*
 	* Entity
 	*/
-	wchar_t	* szEntityName = nullptr;
-	engiGetEntityName(iEntity, sdaiUNICODE, (char **)&szEntityName);
+	wchar_t* szEntity = nullptr;
+	engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)szEntityName;
+	tvInsertStruct.item.pszText = (LPWSTR)szEntity;
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hEntity = m_ifcTreeCtrl.InsertItem(&tvInsertStruct);
 
-	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), szEntity, iInstance, hParent);
-
+	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
 	{
 		char * szAttributeName = 0;
@@ -897,10 +906,12 @@ void CIFCRelationsView::GetAttributeReferences(int_t iInstance, const char* szAt
 
 			if (iAttributeInstance != 0) 
 			{
-				wchar_t	* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
+				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
-				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
+				wchar_t* szEntity = nullptr;
+				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+
+				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -969,10 +980,12 @@ void CIFCRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 
 			if (iAttributeInstance != 0) 
 			{
-				wchar_t	* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
+				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
-				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
+				wchar_t* szEntity = nullptr;
+				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+
+				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}
 		}
 		break;
@@ -1044,10 +1057,12 @@ void CIFCRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iEle
 
 			if (iAttributeInstance != 0)
 			{
-				wchar_t	* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(iAttributeInstance), sdaiUNICODE, (char **)&szEntityName);
+				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
-				LoadInstance(sdaiGetInstanceType(iAttributeInstance), szEntityName, iAttributeInstance, hParent);
+				wchar_t* szEntity = nullptr;
+				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+
+				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}
 		} // case sdaiINSTANCE:
 		break;

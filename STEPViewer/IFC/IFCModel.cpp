@@ -263,9 +263,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	* Retrieve the objects recursively
 	*/
 	RetrieveObjects__depth(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS, 0);
-
-	int_t ifcRelSpaceBoundaryEntity = sdaiGetEntity(m_iModel, "IFCRELSPACEBOUNDARY");
-	RetrieveObjects(ifcRelSpaceBoundaryEntity, "IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+	RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 	/*
 	* Units
@@ -690,7 +688,7 @@ void CIFCModel::LoadSchema()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
+void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
 	int_t * iIFCInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
 
@@ -708,7 +706,7 @@ void CIFCModel::RetrieveObjects(int_t iEntity, const char * szEntityName, const 
 		wchar_t* szInstanceGUIDW = nullptr;
 		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-		auto pInstance = RetrieveGeometry(szInstanceGUIDW, iEntity, szEntityNameW, iInstance, iCircleSegements);
+		auto pInstance = RetrieveGeometry(szInstanceGUIDW, iInstance, iCircleSegements);
 		pInstance->ID() = s_iInstanceID++;
 
 		CString strEntity = szEntityNameW;
@@ -753,7 +751,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 		wchar_t* szParentEntityNameW = nullptr;
 		engiGetEntityName(iParentEntity, sdaiUNICODE, (char **)&szParentEntityNameW);
 
-		RetrieveObjects(iParentEntity, szParenEntityName, szParentEntityNameW, iCircleSegments);
+		RetrieveObjects(szParenEntityName, szParentEntityNameW, iCircleSegments);
 
 		if (iParentEntity == m_ifcProjectEntity) {
 			for (int_t i = 0; i < iIntancesCount; i++) {
@@ -763,7 +761,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 				wchar_t* szInstanceGUIDW = nullptr;
 				sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iParentEntity, szParentEntityNameW, iInstance, iCircleSegments);
+				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iInstance, iCircleSegments);
 				pInstance->ID() = s_iInstanceID++;
 
 				CString strEntity = szParentEntityNameW;
@@ -789,7 +787,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments)
+CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iInstance, int_t iCircleSegments)
 {
 	/*
 	* Set up format
@@ -844,7 +842,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pInstance = new CIFCInstance(this, iInstance, szInstanceGUIDW, iEntity, szEntityNameW);
+	auto pInstance = new CIFCInstance(this, iInstance, szInstanceGUIDW);
 
 	ASSERT(pInstance->m_pVertexBuffer == nullptr);
 	pInstance->m_pVertexBuffer = new _vertices_f();

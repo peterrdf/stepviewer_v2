@@ -153,7 +153,7 @@ private: // Methods
 	void LoadInstances(const vector<CIFCInstance*>& vecInstances);
 	void LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances);
 	void LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
-	int_t LoadInstanceAttributes(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
+	int_t LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent);
 	void AddInstanceAttribute(int_t iInstance, const wchar_t* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	void CreateAttributeText(bool* pbChildren, int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strText);
 	void CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring& strText);

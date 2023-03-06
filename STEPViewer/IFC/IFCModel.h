@@ -110,8 +110,8 @@ public: // Methods
 private: // Methods
 	
 	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
-	void RetrieveObjects(int_t iEntity, const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
-	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iEntity, const wchar_t* szEntityNameW, int_t iInstance, int_t iCircleSegments);
+	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
+	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iInstance, int_t iCircleSegments);
 
 	void LoadClasses();
 };
