@@ -131,22 +131,10 @@
     <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCSchemaView.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\IFCSchemaViewConsts.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\SearchDecompContDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchSchemaDialog.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFCDecompContTreeView.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\SearchAttributeDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFCProperty.h">
@@ -156,6 +144,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFC\RelationsView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SchemaView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SchemaViewConsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SearchSchemaDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\SearchAttributeDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -238,19 +238,7 @@
     <ClCompile Include="ProductDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCSchemaView.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SearchDecompContDialog.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFCDecompContTreeView.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SearchAttributeDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFCProperty.cpp">
@@ -260,6 +248,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\RelationsView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SchemaView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchDecompContDialog.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\SearchAttributeDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

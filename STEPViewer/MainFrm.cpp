@@ -148,18 +148,18 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndIFCSchema.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndRelations.EnableDocking(CBRS_ALIGN_ANY);
+	m_modelStructureView.EnableDocking(CBRS_ALIGN_ANY);
+	m_schemaView.EnableDocking(CBRS_ALIGN_ANY);
+	m_relationsView.EnableDocking(CBRS_ALIGN_ANY);
 
-	DockPane(&m_wndFileView);
+	DockPane(&m_modelStructureView);
 
 	CDockablePane* pTabbedBar = nullptr;
-	m_wndIFCSchema.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
-	m_wndRelations.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
+	m_schemaView.AttachToTabWnd(&m_modelStructureView, DM_SHOW, TRUE, &pTabbedBar);
+	m_relationsView.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 
-	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndProperties);
+	m_propertiesView.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&m_propertiesView);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -254,12 +254,12 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create IFC Hierarchy View
-	m_wndFileView.SetController(pController);
+	m_modelStructureView.SetController(pController);
 	
 	CString strCaption;
 	bNameValid = strCaption.LoadString(IDS_FILE_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndFileView.Create(
+	if (!m_modelStructureView.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -275,11 +275,11 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create IFC Schema View
-	m_wndIFCSchema.SetController(pController);
+	m_schemaView.SetController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_IFC_SCHEMA_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndIFCSchema.Create(
+	if (!m_schemaView.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -295,12 +295,12 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create Relations/Attributes View
-	m_wndRelations.SetController(pController);
+	m_relationsView.SetController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_IFC_RELATIONS_VIEW);
 	ASSERT(bNameValid);
 
-	if (!m_wndRelations.Create(
+	if (!m_relationsView.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -316,12 +316,12 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create IFC Instance Properties View
-	m_wndProperties.SetController(pController);
+	m_propertiesView.SetController(pController);
 	
 	bNameValid = strCaption.LoadString(IDS_PROPERTIES_WND);
 	ASSERT(bNameValid);
 
-	if (!m_wndProperties.Create(
+	if (!m_propertiesView.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -348,16 +348,16 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
+	m_modelStructureView.SetIcon(hFileViewIcon, FALSE);
 
-	HICON hIFCSchemaIcon = (HICON)::LoadImage(
+	HICON hSchemaIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_wndIFCSchema.SetIcon(hIFCSchemaIcon, FALSE);
+	m_schemaView.SetIcon(hSchemaIcon, FALSE);
 
 	HICON hRelationsIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
@@ -366,7 +366,7 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_wndRelations.SetIcon(hRelationsIcon, FALSE);
+	m_relationsView.SetIcon(hRelationsIcon, FALSE);
 
 	HICON hPropertiesBarIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
@@ -375,7 +375,7 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_wndProperties.SetIcon(hPropertiesBarIcon, FALSE);
+	m_propertiesView.SetIcon(hPropertiesBarIcon, FALSE);
 }
 
 // CMainFrame diagnostics

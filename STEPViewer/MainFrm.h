@@ -7,7 +7,7 @@
 #include "Controller.h"
 #include "FileView.h"
 #include "PropertiesWnd.h"
-#include "IFCSchemaView.h"
+#include "SchemaView.h"
 #include "RelationsView.h"
 
 class CMainFrame : public CFrameWndEx
@@ -48,10 +48,10 @@ protected:  // control bar embedded members
 	CMFCToolBar         m_wndToolBar;
 	CMFCStatusBar       m_wndStatusBar;
 	CMFCToolBarImages   m_UserImages;
-	CFileView           m_wndFileView;
-	CIFCSchemaView		m_wndIFCSchema;
-	CRelationsView		m_wndRelations;
-	CPropertiesWnd      m_wndProperties;
+	CFileView           m_modelStructureView;
+	CSchemaView			m_schemaView;
+	CRelationsView		m_relationsView;
+	CPropertiesWnd      m_propertiesView;
 
 // Generated message map functions
 protected:

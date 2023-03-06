@@ -19,7 +19,7 @@ private: // Declarations
 private: // Members
 	
 	CController* m_pController;
-	CViewTree* m_pIFCTreeCtrl;	
+	CViewTree* m_pTreeCtrl;	
 	enumSearchFilter m_enSearchFilter;
 	HTREEITEM m_hSearchResult;
 	BOOL m_bEndOfSearch;
@@ -40,7 +40,7 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchAttributeDialog(CController* pController, CViewTree* pIFCTreeCtrl);   // standard constructor
+	CSearchAttributeDialog(CController* pController, CViewTree* pTreeCtrl);   // standard constructor
 	virtual ~CSearchAttributeDialog();
 
 // Dialog Data

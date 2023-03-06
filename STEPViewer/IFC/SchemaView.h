@@ -5,17 +5,13 @@
 #include "ViewTree.h"
 #include "STEPView.h"
 #include "ViewTree.h"
-#include "IFCUnit.h"
 #include "SearchSchemaDialog.h"
 
 #include <map>
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CIFCModel;
-
-// ------------------------------------------------------------------------------------------------
-class CIFCSchemaViewToolBar : public CMFCToolBar
+class CSchemaViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -30,7 +26,7 @@ class CIFCSchemaViewToolBar : public CMFCToolBar
 */
 
 // ------------------------------------------------------------------------------------------------
-class CIFCSchemaView 
+class CSchemaView 
 	: public CDockablePane
 	, public CSTEPView
 {
@@ -54,7 +50,7 @@ private: // Methods
 
 // Construction
 public:
-	CIFCSchemaView();
+	CSchemaView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -62,16 +58,16 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_ifcTreeCtrl;
+	CViewTree m_treeCtrl;
 	CImageList m_imageList;
-	CIFCSchemaViewToolBar m_wndToolBar;
+	CSchemaViewToolBar m_wndToolBar;
 
 protected:
 	void ResetView();
 
 // Implementation
 public:
-	virtual ~CIFCSchemaView();
+	virtual ~CSchemaView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -80,9 +76,9 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnNMClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMRClickTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTvnItemexpandingTreeIFC(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:

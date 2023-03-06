@@ -5,7 +5,7 @@
 #include "SearchSchemaDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "IFCSchemaViewConsts.h"
+#include "SchemaViewConsts.h"
 
 
 // CSearchSchemaDialog dialog
@@ -15,7 +15,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 {
 	ASSERT(hItem != nullptr);
 
-	CString strItemText = m_pIFCTreeCtrl->GetItemText(hItem);
+	CString strItemText = m_pTreeCtrl->GetItemText(hItem);
 	strItemText.MakeLower();
 
 	CString strTextLower = strText;
@@ -26,7 +26,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
+		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
 
@@ -45,7 +45,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
-		m_pIFCTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
+		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
 
@@ -75,9 +75,9 @@ void CSearchSchemaDialog::SelectItem(HTREEITEM hItem)
 	}
 
 	// Select
-	m_pIFCTreeCtrl->EnsureVisible(hItem);
-	m_pIFCTreeCtrl->SetItemState(hItem, TVIS_SELECTED, TVIS_SELECTED);
-	m_pIFCTreeCtrl->SetFocus();
+	m_pTreeCtrl->EnsureVisible(hItem);
+	m_pTreeCtrl->SetItemState(hItem, TVIS_SELECTED, TVIS_SELECTED);
+	m_pTreeCtrl->SetFocus();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void CSearchSchemaDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	m_pIFCTreeCtrl->SetItemState(hItem, 0, TVIS_SELECTED);
+	m_pTreeCtrl->SetItemState(hItem, 0, TVIS_SELECTED);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ HTREEITEM CSearchSchemaDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);
 
-	HTREEITEM hChild = m_pIFCTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		if (ContainsText(hChild, m_strSearchText))
@@ -107,7 +107,7 @@ HTREEITEM CSearchSchemaDialog::SearchChildren(HTREEITEM hParent)
 			return hGrandchild;
 		}
 
-		hChild = m_pIFCTreeCtrl->GetNextSiblingItem(hChild);
+		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
 	return nullptr;
@@ -118,7 +118,7 @@ HTREEITEM CSearchSchemaDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	HTREEITEM hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hItem);
+	HTREEITEM hSibling = m_pTreeCtrl->GetNextSiblingItem(hItem);
 	while (hSibling != nullptr)
 	{
 		if (ContainsText(hSibling, m_strSearchText))
@@ -132,7 +132,7 @@ HTREEITEM CSearchSchemaDialog::SearchSiblings(HTREEITEM hItem)
 			return hGrandchild;
 		}
 
-		hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hSibling);
+		hSibling = m_pTreeCtrl->GetNextSiblingItem(hSibling);
 	} // while (hSibling != nullptr)
 
 	return nullptr;
@@ -143,13 +143,13 @@ HTREEITEM CSearchSchemaDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	HTREEITEM hParent = m_pIFCTreeCtrl->GetParentItem(hItem);
+	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 	if (hParent == nullptr)
 	{
 		return nullptr;
 	}
 
-	HTREEITEM hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hParent);
+	HTREEITEM hSibling = m_pTreeCtrl->GetNextSiblingItem(hParent);
 	if (hSibling == nullptr)
 	{
 		return SearchParents(hParent);
@@ -181,15 +181,15 @@ void CSearchSchemaDialog::Reset()
 
 IMPLEMENT_DYNAMIC(CSearchSchemaDialog, CDialogEx)
 
-CSearchSchemaDialog::CSearchSchemaDialog(CViewTree* pIFCTreeCtrl)
+CSearchSchemaDialog::CSearchSchemaDialog(CViewTree* pTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
-	, m_pIFCTreeCtrl(pIFCTreeCtrl)
+	, m_pTreeCtrl(pTreeCtrl)
 	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
 {
-	ASSERT(m_pIFCTreeCtrl != nullptr);
+	ASSERT(m_pTreeCtrl != nullptr);
 }
 
 CSearchSchemaDialog::~CSearchSchemaDialog()
@@ -241,7 +241,7 @@ void CSearchSchemaDialog::OnBnClickedButtonSearch()
 	// Initialize - take the first root
 	if (m_hSearchResult == nullptr)
 	{
-		m_hSearchResult = m_pIFCTreeCtrl->GetRootItem();
+		m_hSearchResult = m_pTreeCtrl->GetRootItem();
 		if (m_hSearchResult == nullptr)
 		{
 			// No items

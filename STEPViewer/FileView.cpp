@@ -74,7 +74,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	{
 		case enumModelType::STEP:
 		{
-			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_wndFileView);
+			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_modelStructureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -82,7 +82,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		case enumModelType::IFC:
 		{
-			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_wndFileView);
+			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_modelStructureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -148,7 +148,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create view:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS;
 
-	if (!m_wndFileView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
+	if (!m_modelStructureView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
 	{
 		ASSERT(FALSE);
 
@@ -218,7 +218,7 @@ void CFileView::AdjustLayout()
 		cyTlb,
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_wndFileView.SetWindowPos(
+	m_modelStructureView.SetWindowPos(
 		nullptr, rectClient.left + 1,
 		rectClient.top + cyTlb + 1,
 		rectClient.Width() - 2,
@@ -231,7 +231,7 @@ void CFileView::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rectTree;
-	m_wndFileView.GetWindowRect(rectTree);
+	m_modelStructureView.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
@@ -242,7 +242,7 @@ void CFileView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_wndFileView.SetFocus();
+	m_modelStructureView.SetFocus();
 }
 
 void CFileView::OnChangeVisualStyle()
@@ -265,7 +265,7 @@ void CFileView::OnChangeVisualStyle()
 
 	if (m_pSTEPTreeView != nullptr)
 	{
-		m_wndFileView.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
+		m_modelStructureView.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
 	}
 
 	m_wndToolBar.CleanUpLockedImages();

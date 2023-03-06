@@ -53,7 +53,7 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_wndFileView;
+	CViewTree m_modelStructureView;
 	CFileViewToolBar m_wndToolBar;
 
 protected:
