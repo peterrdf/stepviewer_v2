@@ -394,9 +394,6 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 		}
 
-		// Not supported
-		pPopup->EnableMenuItem(IDS_VIEW_IFC_RELATIONS, MF_BYCOMMAND | MF_DISABLED);
-
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeView);
 		if (uiCommand == 0)
 		{
@@ -510,6 +507,12 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 				ResetTree(true);
 
 				pController->OnInstancesEnabledStateChanged(this);
+			}
+			break;
+
+			case IDS_VIEW_IFC_RELATIONS:
+			{
+				pController->OnViewRelations(this, pInstance);
 			}
 			break;
 
