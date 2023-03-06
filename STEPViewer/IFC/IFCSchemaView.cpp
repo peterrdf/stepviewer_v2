@@ -162,8 +162,6 @@ void CIFCSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 // ------------------------------------------------------------------------------------------------
 pair<int, int> CIFCSchemaView::GetInstancesCount(CEntity* pEntity) const
 {
-	ASSERT(pEntity != nullptr);
-
 	int iInstancesCount = (int)pEntity->getInstancesCount();
 
 	int iSubInstancesCount = 0;
@@ -283,7 +281,8 @@ int CIFCSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_ifcTreeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_IFC))
 	{
-		TRACE0("Failed to create IFC Instances View\n");
+		ASSERT(FALSE);
+
 		return -1;      // fail to create
 	}
 

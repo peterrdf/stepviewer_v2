@@ -150,7 +150,8 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndFileView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
 	{
-		TRACE0("Failed to create file view\n");
+		ASSERT(FALSE);
+
 		return -1;      // fail to create
 	}	
 

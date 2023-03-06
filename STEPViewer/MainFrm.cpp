@@ -85,7 +85,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndMenuBar.Create(this))
 	{
-		TRACE0("Failed to create menubar\n");
+		ASSERT(FALSE);
+
 		return -1;      // fail to create
 	}
 
@@ -97,7 +98,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
 		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
-		TRACE0("Failed to create toolbar\n");
+		ASSERT(FALSE);
+
 		return -1;      // fail to create
 	}
 
@@ -116,7 +118,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndStatusBar.Create(this))
 	{
-		TRACE0("Failed to create status bar\n");
+		ASSERT(FALSE);
+
 		return -1;      // fail to create
 	}
 	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
@@ -140,7 +143,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// create docking windows
 	if (!CreateDockingWindows())
 	{
-		TRACE0("Failed to create docking windows\n");
+		ASSERT(FALSE);
+
 		return -1;
 	}
 
@@ -263,8 +267,9 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_VIEW_FILEVIEW, 
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create File View window\n");
-		return FALSE; // failed to create
+		ASSERT(FALSE);
+
+		return FALSE;
 	}
 	// ********************************************************************************************
 
@@ -282,8 +287,9 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_VIEW_IFC_SCHEMA, 
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create IFC Schema window\n");
-		return FALSE; // failed to create
+		ASSERT(FALSE);
+
+		return FALSE;
 	}
 	// ********************************************************************************************
 
@@ -302,8 +308,9 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_VIEW_RELATIONS,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create IFC Relations/Attributes window\n");
-		return FALSE; // failed to create
+		ASSERT(FALSE);
+
+		return FALSE;
 	}
 	// ********************************************************************************************
 
@@ -322,8 +329,9 @@ BOOL CMainFrame::CreateDockingWindows()
 		ID_VIEW_PROPERTIESWND, 
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
-		TRACE0("Failed to create Properties window\n");
-		return FALSE; // failed to create
+		ASSERT(FALSE);
+
+		return FALSE;
 	}
 	// ********************************************************************************************
 

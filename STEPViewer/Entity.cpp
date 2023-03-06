@@ -224,7 +224,7 @@ void CEntityProvider::Load()
 			continue;
 		}
 
-		map<int_t, CEntity*>::iterator itParentEntity = m_mapEntities.find(iParentEntity);
+		auto itParentEntity = m_mapEntities.find(iParentEntity);
 		ASSERT(itParentEntity != m_mapEntities.end());
 
 		itEntity.second->setParent(itParentEntity->second);

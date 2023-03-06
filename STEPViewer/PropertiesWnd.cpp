@@ -365,8 +365,9 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndObjectCombo.Create(dwViewStyle, rectDummy, this, ID_COMBO_PROPERTIES_VIEW))
 	{
-		TRACE0("Failed to create Properties Combo \n");
-		return -1;      // fail to create
+		ASSERT(FALSE);
+
+		return -1;
 	}
 
 	m_wndObjectCombo.AddString(_T("Application"));
@@ -380,8 +381,9 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rectDummy, this, 2))
 	{
-		TRACE0("Failed to create Properties Grid \n");
-		return -1;      // fail to create
+		ASSERT(FALSE);
+
+		return -1;
 	}
 
 	OnViewModeChanged();
