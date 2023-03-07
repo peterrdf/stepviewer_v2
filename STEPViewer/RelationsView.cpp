@@ -252,7 +252,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	LoadInstanceAttributes(sdaiGetInstanceType(iInstance), iInstance, hInstance);
+	LoadInstanceAttributes(CInstance::GetEntity(iInstance), iInstance, hInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.hInsertAfter = TVI_FIRST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)szEntity;
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
@@ -284,11 +284,11 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
 	{
-		char * szAttributeName = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (char **)&szAttributeName);
+		char* szAttributeName = 0;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (char**)&szAttributeName);
 
-		wchar_t * szAttributeNameW = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (char **)&szAttributeNameW);
+		wchar_t* szAttributeNameW = 0;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (char**)&szAttributeNameW);
 
 		if (!IsAttributeIgnored(iEntity, szAttributeNameW))
 		{
