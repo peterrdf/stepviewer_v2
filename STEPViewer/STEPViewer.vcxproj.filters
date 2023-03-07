@@ -143,19 +143,19 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\RelationsView.h">
+    <ClInclude Include="RelationsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SchemaView.h">
+    <ClInclude Include="SchemaView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SchemaViewConsts.h">
+    <ClInclude Include="SchemaViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchSchemaDialog.h">
+    <ClInclude Include="SearchAttributeDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchAttributeDialog.h">
+    <ClInclude Include="SearchSchemaDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -247,19 +247,19 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\RelationsView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SchemaView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\SearchSchemaDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\SearchDecompContDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\SearchAttributeDialog.cpp">
+    <ClCompile Include="SchemaView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchAttributeDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchSchemaDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RelationsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
