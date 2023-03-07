@@ -219,13 +219,23 @@ void CSearchAttributeDialog::OnBnClickedButtonSearch()
 				 auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);
 				 if (pInstance != nullptr)
 				 {
-					 m_pController->SelectInstance(nullptr, pInstance);
+					 m_pController->SelectInstance(
+						 nullptr, /*Attributes View will be updated also*/
+						 pInstance);
 				 }
 				 else
 				 {
 					 int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->GetInstance(), iExpressID);
-
-					 ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
+					 if (iInstance != 0)
+					 {
+						 m_pController->OnViewRelations(
+							 nullptr,  /*Attributes View will be updated also*/
+							 iInstance);
+					 }
+					 else
+					 {
+						 ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
+					 }
 				 }
 			}
 			break;

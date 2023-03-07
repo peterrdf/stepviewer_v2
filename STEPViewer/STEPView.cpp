@@ -49,7 +49,7 @@ void CSTEPView::SetController(CController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPView::OnViewRelations(CSTEPView* /*pSender*/, CInstance* /*pInstance*/)
+/*virtual*/ void CSTEPView::OnViewRelations(CSTEPView* /*pSender*/, int64_t /*iInstance*/)
 {
 }
 

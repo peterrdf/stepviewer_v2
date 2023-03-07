@@ -512,7 +512,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 			case IDS_VIEW_IFC_RELATIONS:
 			{
-				pController->OnViewRelations(this, pInstance);
+				pController->OnViewRelations(this, pInstance->GetInstance());
 			}
 			break;
 

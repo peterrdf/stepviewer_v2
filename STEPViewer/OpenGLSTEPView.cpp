@@ -1437,7 +1437,12 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pController = GetController();
-	ASSERT(pController != nullptr);
+	if (pController->GetModel() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	if (pController->GetModel() == nullptr)
 	{
@@ -1449,8 +1454,6 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	auto pModel = pController->GetModel()->As<CSTEPModel>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

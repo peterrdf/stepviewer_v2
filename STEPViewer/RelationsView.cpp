@@ -60,14 +60,14 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, CInstance* pInstance) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, int64_t iInstance) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (pInstance == nullptr)
+	if (iInstance == 0)
 	{
 		ASSERT(FALSE);
 
@@ -75,11 +75,11 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<int_t> vecInstances;
-	vecInstances.push_back(pInstance->GetInstance());	
+	vecInstances.push_back(iInstance);
 
 	LoadProperties(
-		pInstance->GetEntity(), 
-		pInstance->GetEntityName(), 
+		CInstance::GetEntity(iInstance),
+		CInstance::GetEntityName(iInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);

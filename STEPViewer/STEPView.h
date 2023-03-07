@@ -51,7 +51,7 @@ public: // Methods
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CSTEPView* pSender);
 	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-	virtual void OnViewRelations(CSTEPView* pSender, CInstance* pInstance);
+	virtual void OnViewRelations(CSTEPView* pSender, int64_t iInstance);
 	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
 	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
 

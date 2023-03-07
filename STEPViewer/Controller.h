@@ -86,7 +86,7 @@ public: // Methods
 	// Events
 	void OnInstancesEnabledStateChanged(CSTEPView* pSender);
 	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
-	void OnViewRelations(CSTEPView* pSender, CInstance* pInstance);
+	void OnViewRelations(CSTEPView* pSender, int64_t iInstance);
 	void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
 };
 

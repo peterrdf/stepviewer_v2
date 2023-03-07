@@ -1220,8 +1220,6 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	auto pModel = pController->GetModel()->As<CIFCModel>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

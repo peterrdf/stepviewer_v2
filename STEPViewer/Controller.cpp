@@ -203,12 +203,12 @@ void CController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicati
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnViewRelations(CSTEPView* pSender, CInstance* pInstance)
+void CController::OnViewRelations(CSTEPView* pSender, int64_t iInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnViewRelations(pSender, pInstance);
+		(*itView)->OnViewRelations(pSender, iInstance);
 	}
 }
 
