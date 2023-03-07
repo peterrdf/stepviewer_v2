@@ -87,7 +87,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		ASSERT(FALSE);
 
-		return -1;      // fail to create
+		return -1;
 	}
 
 	m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
@@ -100,7 +100,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		ASSERT(FALSE);
 
-		return -1;      // fail to create
+		return -1;
 	}
 
 	CString strToolBarName;
@@ -120,7 +120,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		ASSERT(FALSE);
 
-		return -1;      // fail to create
+		return -1;
 	}
 	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 

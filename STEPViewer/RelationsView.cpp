@@ -152,12 +152,11 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	// Instances
 	for (auto iInstance : vecInstances)
 	{
-		int_t iEntity = sdaiGetInstanceType(iInstance);
-
-		wchar_t* szEntity = nullptr;
-		engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
-
-		LoadInstance(iEntity, szEntity, iInstance, hModel);
+		LoadInstance(
+			CInstance::GetEntity(iInstance), 
+			CInstance::GetEntityName(iInstance),
+			iInstance, 
+			hModel);
 	}
 	// ******************************************************************************************** //
 
@@ -191,9 +190,9 @@ void CRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, cons
 
 	// ******************************************************************************************** //
 	// Instances
-	for (size_t iIFCObject = 0; iIFCObject < vecInstances.size(); iIFCObject++)
+	for (auto iInstance : vecInstances)
 	{
-		LoadInstance(iEntity, szEntity, vecInstances[iIFCObject], hModel);
+		LoadInstance(iEntity, szEntity, iInstance, hModel);
 	}
 	// ******************************************************************************************** //
 
@@ -206,10 +205,10 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	ASSERT(iEntity != 0);
 	ASSERT(iInstance != 0);
 
-	wchar_t * szName = nullptr;
+	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
 
-	wchar_t * szDescription = nullptr;
+	wchar_t* szDescription = nullptr;
 	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
 
 	int_t iValue = internalGetP21Line(iInstance);
@@ -237,8 +236,8 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	/*
 	* Data
 	*/
-	CInstanceData* pIFCInstanceData = new CInstanceData(iInstance, iEntity, szEntity);
-	m_vecInstancesCache.push_back(pIFCInstanceData);
+	auto pInstanceData = new CInstanceData(iInstance, iEntity, szEntity);
+	m_vecInstancesCache.push_back(pInstanceData);
 
 	/*
 	* Instance
@@ -249,7 +248,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
-	tvInsertStruct.item.lParam = (LPARAM)pIFCInstanceData;
+	tvInsertStruct.item.lParam = (LPARAM)pInstanceData;
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
@@ -1115,12 +1114,12 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			return;
 		}		
 
-		CAttributeData * pIFCAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
-		ASSERT(pIFCAttributeData != nullptr);
+		CAttributeData * pAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
+		ASSERT(pAttributeData != nullptr);
 
 		m_treeCtrl.DeleteItem(hChild);
 
-		GetAttributeReferences(pIFCAttributeData->getInstance(), pIFCAttributeData->getName(), pIFCAttributeData->getType(), pNMTreeView->itemNew.hItem);
+		GetAttributeReferences(pAttributeData->getInstance(), pAttributeData->getName(), pAttributeData->getType(), pNMTreeView->itemNew.hItem);
 	} // if ((iImage == IMAGE_INSTANCE) && ...
 }
 
@@ -1177,8 +1176,9 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_treeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_IFC))
 	{
-		TRACE0("Failed to create IFC Instances View\n");
-		return -1;      // fail to create
+		ASSERT(FALSE);
+
+		return -1;
 	}
 
 	// Load view images:

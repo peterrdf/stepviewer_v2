@@ -282,7 +282,7 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		ASSERT(FALSE);
 
-		return -1;      // fail to create
+		return -1;
 	}
 
 	// Load view images:

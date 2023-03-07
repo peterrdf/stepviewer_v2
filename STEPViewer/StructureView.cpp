@@ -123,7 +123,7 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		ASSERT(FALSE);
 
-		return -1;      // fail to create
+		return -1;
 	}	
 
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
