@@ -16,6 +16,7 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGE_ENTITY				1
 #define IMAGE_SUB_TYPES				2
 #define IMAGE_ATTRIBUTES			2
+#define IMAGE_INVERSE_ATTRIBUTE		3
 #define IMAGE_ATTRIBUTE				5
 
 #define ITEM_SUB_TYPES	  L"Sub-types"
@@ -311,7 +312,7 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 				}
 			}
 
-			AddInstanceAttribute(iInstance, szAttributeNameW, iAttributeType, hEntity);
+			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hEntity);
 		}
 
 		iAttrubutesCount++;
@@ -322,17 +323,26 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
 {
 	ASSERT(iInstance != 0);
 
-	wstring strText;
-	bool bChildren = false;
-	CreateAttributeText(&bChildren, iInstance, CW2A(szAttributeName), iAttributeType, strText);
+	wstring strLabel;
+	bool bInverse = false;
 
-	wstring strAttribute = szAttributeName;
+	bool bHasChildren = CreateAttributeLabel(iInstance, szAttributeName, iAttributeType, strLabel);
+	if (!bHasChildren)
+	{
+		bInverse = engiGetAttrInverseBN(iEntity, szAttributeName) != 0;
+	}
+
+	wstring strAttribute = CA2W(szAttributeName);
+	if (bInverse)
+	{
+		strAttribute += L" (INVERSE)";
+	}
 	strAttribute += L" = ";
-	strAttribute += strText;
+	strAttribute += strLabel;
 
 	/*
 	* Attribute
@@ -342,15 +352,17 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szAttr
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)strAttribute.c_str();
-	tvInsertStruct.item.cChildren = bChildren ? 1 : 0;
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = bChildren ? IMAGE_INSTANCE : IMAGE_ATTRIBUTE;
+	tvInsertStruct.item.cChildren = bHasChildren ? 1 : 0;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
+		bHasChildren ? IMAGE_INSTANCE : bInverse ? 
+			IMAGE_INVERSE_ATTRIBUTE : IMAGE_ATTRIBUTE;
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	if (bChildren)
+	if (bHasChildren)
 	{
-		m_vecAttributesCache.push_back(new CAttributeData(iInstance, CW2A(szAttributeName), iAttributeType));
+		m_vecAttributesCache.push_back(new CAttributeData(iInstance, szAttributeName, iAttributeType));
 
 		/*
 		* Add a fake item - load on demand
@@ -367,9 +379,10 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, const wchar_t* szAttr
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strText)
-{
-	strText = _T("");
+bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strLabel)
+{	
+	strLabel = _T("");
+	bool bHasChildren = false;
 
 	switch (iAttributeType)
 	{
@@ -380,28 +393,28 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 
 			if (ADB != 0) 
 			{
-				wchar_t	* szPath = (wchar_t *)sdaiGetADBTypePath((void *)ADB, sdaiUNICODE);
-				strText += szPath;
+				wchar_t* szPath = (wchar_t *)sdaiGetADBTypePath((void *)ADB, sdaiUNICODE);
+				strLabel += szPath;
 
-				strText += L"(";			
-				CreateAttributeTextADB(pbChildren, ADB, strText);
-				strText += L")";
+				strLabel += L"(";
+				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
+				strLabel += L")";
 			} // if (ADB != 0) 
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
 
 		case sdaiAGGR:
 		{
-			int_t * pValue = nullptr;
+			int_t* pValue = nullptr;
 			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiAGGR, &pValue);
 
 			if (pValue != nullptr) 
 			{
-				strText += L"(";
+				strLabel += L"(";
 
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -410,24 +423,24 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 				{
 					if (i != 0) 
 					{
-						strText += L", ";
+						strLabel += L", ";
 					}
 
-					CreateAttributeTextAGGR(pbChildren, pValue, i, strText);
+					CreateAttributeLabelAGGR(pValue, i, strLabel, bHasChildren);
 
 					i++;
 				}
 
 				if (i < iCount)
 				{
-					strText += L", ...";
+					strLabel += L", ...";
 				}
 
-				strText += L")";
+				strLabel += L")";
 			} // if (pValue != nullptr) 
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -441,11 +454,11 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 
 			if (pValue != nullptr) 
 			{
-				strText += pValue;
+				strLabel += pValue;
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -457,20 +470,20 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 
 			if (iAttributeInstance != 0) 
 			{
-				strText += L"#";
+				strLabel += L"#";
 
 				int_t iValue = internalGetP21Line(iAttributeInstance);
 
 				CString strValue;
 				strValue.Format(_T("%lld"), iValue);
 
-				strText += strValue;
+				strLabel += strValue;
 			
-				*pbChildren = true;
+				bHasChildren = true;
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -483,7 +496,7 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 			CString strValue;
 			strValue.Format(_T("%lld"), iValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		} // case sdaiINTEGER:
 		break;
 
@@ -494,13 +507,13 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 
 			if (szValue != nullptr) 
 			{
-				strText += L"'";
-				strText += szValue;
-				strText += L"'";
+				strLabel += L"'";
+				strLabel += szValue;
+				strLabel += L"'";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -513,7 +526,7 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 			CString strValue;
 			strValue.Format(_T("%f"), dValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		}
 		break;
 
@@ -521,10 +534,12 @@ void CRelationsView::CreateAttributeText(bool* pbChildren, int_t iInstance, cons
 			ASSERT(FALSE);
 			break;
 	} // switch (iAttributeType)
+
+	return bHasChildren;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring& strText)
+void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool& bHasChildren)
 {
 	switch (sdaiGetADBType((void *)ADB)) 
 	{
@@ -535,16 +550,16 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 
 			if (ADBsub != 0) 
 			{
-				wchar_t	* szPath = (wchar_t *)sdaiGetADBTypePath((void*)ADBsub, sdaiUNICODE);
-				strText += szPath;
+				wchar_t* szPath = (wchar_t *)sdaiGetADBTypePath((void*)ADBsub, sdaiUNICODE);
+				strLabel += szPath;
 
-				strText += L"(";
-				CreateAttributeTextADB(pbChildren, ADB, strText);
-				strText += L")";
+				strLabel += L"(";
+				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
+				strLabel += L")";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
@@ -556,7 +571,7 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 
 			if (pValue != nullptr)
 			{
-				strText += L"(";
+				strLabel += L"(";
 				
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -565,18 +580,18 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 				{
 					if (i != 0) 
 					{
-						strText += L", ";
+						strLabel += L", ";
 					}
 
-					strText += L"???";
+					strLabel += L"???";
 					i++;
 				}
 
-				strText += L")";
+				strLabel += L")";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -585,16 +600,16 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 		case sdaiENUM:
 		case sdaiLOGICAL:
 		{
-			wchar_t	* szValue = 0;
-			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char **)&szValue);
+			wchar_t* szValue = 0;
+			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char**)&szValue);
 
 			if (szValue != nullptr)
 			{
-				strText += szValue;
+				strLabel += szValue;
 			}
 			else
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -606,20 +621,20 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 
 			if (iAttributeInstance != 0)
 			{
-				strText += L"#";
+				strLabel += L"#";
 
 				int_t iValue = internalGetP21Line(iAttributeInstance);
 
 				CString strValue;
 				strValue.Format(_T("%lld"), iValue);
 
-				strText += strValue;
+				strLabel += strValue;
 
-				*pbChildren = true;
+				bHasChildren = true;
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -632,7 +647,7 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 			CString strValue;
 			strValue.Format(_T("%lld"), iValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		} // case sdaiINTEGER:
 		break;
 
@@ -643,13 +658,13 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 
 			if (szValue != nullptr)
 			{
-				strText += L"'";
-				strText += szValue;
-				strText += L"'";
+				strLabel += L"'";
+				strLabel += szValue;
+				strLabel += L"'";
 			}
 			else
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -662,7 +677,7 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 			CString strValue;
 			strValue.Format(_T("%f"), dValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		} // case sdaiREAL:
 		break;
 
@@ -673,7 +688,7 @@ void CRelationsView::CreateAttributeTextADB(bool* pbChildren, int_t ADB, wstring
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate, int_t iElementIndex, wstring& strText)
+void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementIndex, wstring& strLabel, bool& bHasChildren)
 {
 	int_t iAggregateType = 0;
 	engiGetAggrType(pAggregate, &iAggregateType);
@@ -688,27 +703,27 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 			if (ADB != 0) 
 			{
 				wchar_t	* szPath = (wchar_t *)sdaiGetADBTypePath((void*)ADB, sdaiUNICODE);
-				strText += szPath;
+				strLabel += szPath;
 
-				strText += L"(";
-				CreateAttributeTextADB(pbChildren, ADB, strText);
-				strText += L")";
+				strLabel += L"(";
+				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
+				strLabel += L")";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiADB:
 		break;
 
 		case sdaiAGGR:
 		{
-			int_t * pValue = 0;
+			int_t* pValue = 0;
 			engiGetAggrElement(pAggregate, iElementIndex, sdaiAGGR, &pValue);
 
 			if (pValue != nullptr)
 			{
-				strText += L"(";
+				strLabel += L"(";
 
 				int_t i = 0;
 				int_t iCount = sdaiGetMemberCount(pValue);
@@ -717,24 +732,24 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 				{
 					if (i != 0) 
 					{
-						strText += L", ";
+						strLabel += L", ";
 					}
 
-					CreateAttributeTextAGGR(pbChildren, pValue, i, strText);
+					CreateAttributeLabelAGGR(pValue, i, strLabel, bHasChildren);
 
 					i++;
 				}
 
 				if (i < iCount)
 				{
-					strText += L", ...";
+					strLabel += L", ...";
 				}
 
-				strText += L")";
+				strLabel += L")";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -743,16 +758,16 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 		case sdaiENUM:
 		case sdaiLOGICAL:
 		{
-			wchar_t	* szValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char **)&szValue);
+			wchar_t* szValue = 0;
+			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char**)&szValue);
 
 			if (szValue != nullptr) 
 			{
-				strText += szValue;
+				strLabel += szValue;
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -764,20 +779,20 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 
 			if (iAttributeInstance != 0)
 			{
-				strText += L"#";
+				strLabel += L"#";
 
 				int_t iValue = internalGetP21Line(iAttributeInstance);
 
 				CString strValue;
 				strValue.Format(_T("%lld"), iValue);
 
-				strText += strValue;
+				strLabel += strValue;
 
-				*pbChildren = true;
+				bHasChildren = true;
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -790,7 +805,7 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 			CString strValue;
 			strValue.Format(_T("%lld"), iValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		} // case sdaiINTEGER:
 		break;
 
@@ -801,13 +816,13 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 
 			if (szValue != nullptr) 
 			{
-				strText += L"'";
-				strText += szValue;
-				strText += L"'";
+				strLabel += L"'";
+				strLabel += szValue;
+				strLabel += L"'";
 			}
 			else 
 			{
-				strText += L"\u2205";
+				strLabel += L"\u2205";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -820,7 +835,7 @@ void CRelationsView::CreateAttributeTextAGGR(bool* pbChildren, int_t* pAggregate
 			CString strValue;
 			strValue.Format(_T("%f"), dValue);
 
-			strText += strValue;
+			strLabel += strValue;
 		} // case sdaiREAL:
 		break;
 
