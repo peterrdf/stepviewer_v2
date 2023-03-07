@@ -53,7 +53,7 @@ static char THIS_FILE[]=__FILE__;
 	auto pInstance = GetController()->GetSelectedInstance();
 	if (pInstance != nullptr)
 	{
-		vecInstances.push_back(pInstance->_getInstance());
+		vecInstances.push_back(pInstance->GetInstance());
 	}
 	
 	LoadInstances(vecInstances);
@@ -75,11 +75,11 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<int_t> vecInstances;
-	vecInstances.push_back(pInstance->_getInstance());	
+	vecInstances.push_back(pInstance->GetInstance());	
 
 	LoadProperties(
-		pInstance->_getEntity(), 
-		pInstance->_getEntityName(), 
+		pInstance->GetEntity(), 
+		pInstance->GetEntityName(), 
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);

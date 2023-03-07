@@ -63,31 +63,31 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CIFCInstance::_getInstance() const
+/*virtual*/ int64_t CIFCInstance::GetInstance() const
 {
 	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCInstance::_hasGeometry() const
+/*virtual*/ bool CIFCInstance::HasGeometry() const
 {
 	return hasGeometry();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCInstance::_isEnabled() const
+/*virtual*/ bool CIFCInstance::IsEnabled() const
 {
 	return getEnable();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ wstring CIFCInstance::_getName() const
+/*virtual*/ wstring CIFCInstance::GetName() const
 {
 	CString strName;
 
 	strName.Format(_T("#%lld"), m_iInstance);
 	strName += L" ";
-	strName += _getEntityName();
+	strName += GetEntityName();
 
 	return (LPCTSTR)strName;
 }

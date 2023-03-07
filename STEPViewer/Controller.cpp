@@ -105,7 +105,7 @@ void CController::SaveInstance()
 	ASSERT(m_pSelectedInstance != nullptr);
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), m_pSelectedInstance->_getName().c_str(),
+	CFileDialog dlgFile(FALSE, _T("bin"), m_pSelectedInstance->GetName().c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
@@ -113,7 +113,7 @@ void CController::SaveInstance()
 		return;
 	}
 
-	SaveInstanceTreeW(m_pSelectedInstance->_getInstance(), dlgFile.GetPathName());
+	SaveInstanceTreeW(m_pSelectedInstance->GetInstance(), dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------

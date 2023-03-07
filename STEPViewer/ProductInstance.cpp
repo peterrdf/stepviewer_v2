@@ -40,7 +40,7 @@ CProductInstance::~CProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CProductInstance::_getInstance() const
+/*virtual*/ int64_t CProductInstance::GetInstance() const
 {
 	return m_pProductDefinition != nullptr ?
 		m_pProductDefinition->getInstance() :
@@ -48,7 +48,7 @@ CProductInstance::~CProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CProductInstance::_hasGeometry() const
+/*virtual*/ bool CProductInstance::HasGeometry() const
 {
 	return m_pProductDefinition != nullptr ?
 		m_pProductDefinition->hasGeometry() :
@@ -56,13 +56,13 @@ CProductInstance::~CProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CProductInstance::_isEnabled() const
+/*virtual*/ bool CProductInstance::IsEnabled() const
 {
 	return getEnable();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ wstring CProductInstance::_getName() const
+/*virtual*/ wstring CProductInstance::GetName() const
 {	
 	CString strName;
 

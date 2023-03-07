@@ -223,6 +223,8 @@ void CSearchAttributeDialog::OnBnClickedButtonSearch()
 				 }
 				 else
 				 {
+					 int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->GetInstance(), iExpressID);
+
 					 ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
 				 }
 			}

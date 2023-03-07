@@ -65,10 +65,10 @@ public: // Methods
 	~CIFCInstance();
 
 	// CInstance
-	virtual int64_t _getInstance() const;
-	virtual bool _hasGeometry() const;
-	virtual bool _isEnabled() const;
-	virtual wstring _getName() const;
+	virtual int64_t GetInstance() const;
+	virtual bool HasGeometry() const;
+	virtual bool IsEnabled() const;
+	virtual wstring GetName() const;
 
 	const wchar_t* getGUID() const;
 	int64_t expressID() const;

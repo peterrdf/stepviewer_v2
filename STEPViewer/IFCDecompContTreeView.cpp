@@ -853,7 +853,7 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	auto itInstance = mapInstances.find(iIFCProjectInstance);
 	if (itInstance != mapInstances.end())
 	{
-		wstring strItem = itInstance->second->_getEntityName();
+		wstring strItem = itInstance->second->GetEntityName();
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1037,7 +1037,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 
 		wstring strItem = strExpressID;
 		strItem += L" ";
-		strItem += itInstance->second->_getEntityName();
+		strItem += itInstance->second->GetEntityName();
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1110,7 +1110,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 		if (!itInstance->second->referenced())
 		{
-			const wchar_t* szEntity = itInstance->second->_getEntityName();
+			const wchar_t* szEntity = itInstance->second->GetEntityName();
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
 			if (itUnreferencedItems == mapUnreferencedItems.end())
@@ -1165,17 +1165,17 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
 			wchar_t* szName = nullptr;
-			sdaiGetAttrBN(pInstance->_getInstance(), "Name", sdaiUNICODE, &szName);
+			sdaiGetAttrBN(pInstance->GetInstance(), "Name", sdaiUNICODE, &szName);
 
 			wchar_t* szDescription = nullptr;
-			sdaiGetAttrBN(pInstance->_getInstance(), "Description", sdaiUNICODE, &szDescription);
+			sdaiGetAttrBN(pInstance->GetInstance(), "Description", sdaiUNICODE, &szDescription);
 
 			CString strExpressID;
 			strExpressID.Format(_T("#%lld"), pInstance->expressID());
 
 			wstring strItem = strExpressID;
 			strItem += L" ";
-			strItem += pInstance->_getEntityName();
+			strItem += pInstance->GetEntityName();
 			if ((szName != nullptr) && (wcslen(szName) > 0))
 			{
 				strItem += L" '";

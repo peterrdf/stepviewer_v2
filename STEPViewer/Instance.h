@@ -13,10 +13,15 @@ public: // Methods
 	CInstance();
 	virtual ~CInstance();
 
-	virtual int64_t _getInstance() const PURE;
-	virtual bool _hasGeometry() const PURE;
-	virtual bool _isEnabled() const PURE;
-	virtual wstring _getName() const PURE;
-	int64_t _getEntity() const;
-	const wchar_t* _getEntityName() const;
+	virtual int64_t GetInstance() const PURE;
+	virtual bool HasGeometry() const PURE;
+	virtual bool IsEnabled() const PURE;
+	virtual wstring GetName() const PURE;
+
+	int64_t GetEntity() const;
+	static int64_t GetEntity(int64_t iInstance);
+	const wchar_t* GetEntityName() const;
+	static const wchar_t* GetEntityName(int64_t iInstance);
+
+
 };
