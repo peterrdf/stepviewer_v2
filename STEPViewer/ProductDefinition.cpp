@@ -990,7 +990,7 @@ int_t CProductDefinition::getRelatedProductRefs() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<CProductInstance*>& CProductDefinition::getProductInstances() const
+const vector<CProductInstance*>& CProductDefinition::GetInstances() const
 {
 	return m_vecProductInstances;
 }

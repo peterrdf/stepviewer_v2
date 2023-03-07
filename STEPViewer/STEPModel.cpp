@@ -22,9 +22,9 @@ CSTEPModel::CSTEPModel()
 	, m_iModel(0)
 	, m_strSTEPFile(L"")
 	, m_pEntityProvider(nullptr)
-	, m_mapProductDefinitions()
-	, m_mapProductInstances()
-	, m_mapAssemblies()
+	, m_mapExpressID2Definition()
+	, m_mapID2Instance()
+	, m_mapExpressIDAssembly()
 	, m_iID(1)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -124,10 +124,10 @@ CSTEPModel::~CSTEPModel()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	auto itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	auto itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		auto& vecInstances = itDefinition->second->getProductInstances();
+		auto& vecInstances = itDefinition->second->GetInstances();
 		for (auto pInstance : vecInstances)
 		{
 			if (!pInstance->getEnable())
@@ -190,28 +190,28 @@ float CSTEPModel::GetBoundingSphereDiameter() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CProductDefinition*>& CSTEPModel::getProductDefinitions()
+const map<int_t, CProductDefinition*>& CSTEPModel::GetDefinitions()
 {
-	return m_mapProductDefinitions;
+	return m_mapExpressID2Definition;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CProductInstance*>& CSTEPModel::getProductInstances()
+const map<int_t, CProductInstance*>& CSTEPModel::GetInstances()
 {
-	return m_mapProductInstances;
+	return m_mapID2Instance;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CAssembly*>& CSTEPModel::getAssemblies()
+const map<int_t, CAssembly*>& CSTEPModel::GetAssemblies()
 {
-	return m_mapAssemblies;
+	return m_mapExpressIDAssembly;
 }
 
 // ------------------------------------------------------------------------------------------------
 CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 {
-	auto itInstance = m_mapProductInstances.find(iID);
-	if (itInstance == m_mapProductInstances.end())
+	auto itInstance = m_mapID2Instance.find(iID);
+	if (itInstance == m_mapID2Instance.end())
 	{
 		ASSERT(FALSE);
 
@@ -240,16 +240,16 @@ void CSTEPModel::ScaleAndCenter()
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
 	
-	auto itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	auto itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
 
-		auto itInstance = itDefinition->second->getProductInstances();
-		for (auto pInstance : itDefinition->second->getProductInstances())
+		auto itInstance = itDefinition->second->GetInstances();
+		for (auto pInstance : itDefinition->second->GetInstances())
 		{
 			itDefinition->second->CalculateMinMaxTransform(
 				pInstance,
@@ -294,8 +294,8 @@ void CSTEPModel::ScaleAndCenter()
 	/*
 	* Scale
 	*/
-	itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		if (!itDefinition->second->hasGeometry())
 		{
@@ -315,16 +315,16 @@ void CSTEPModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
 
-		auto itInstance = itDefinition->second->getProductInstances();
-		for (auto pInstance : itDefinition->second->getProductInstances())
+		auto itInstance = itDefinition->second->GetInstances();
+		for (auto pInstance : itDefinition->second->GetInstances())
 		{
 			if (!pInstance->getEnable())
 			{
@@ -428,9 +428,9 @@ void CSTEPModel::LoadProductDefinitions()
 		engiGetAggrElement(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 
 		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-		ASSERT(m_mapProductDefinitions.find(pDefinition->getExpressID()) == m_mapProductDefinitions.end());
+		ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
 
-		m_mapProductDefinitions[pDefinition->getExpressID()] = pDefinition;
+		m_mapExpressID2Definition[pDefinition->getExpressID()] = pDefinition;
 	}	
 }
 
@@ -474,10 +474,10 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionIn
 // ------------------------------------------------------------------------------------------------
 CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
-	int_t expressID = internalGetP21Line(iProductDefinitionInstance);
+	int_t iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
-	map<int_t, CProductDefinition*>::iterator itDefinition = m_mapProductDefinitions.find(expressID);
-	if (itDefinition != m_mapProductDefinitions.end())
+	auto itDefinition = m_mapExpressID2Definition.find(iExpressID);
+	if (itDefinition != m_mapExpressID2Definition.end())
 	{
 		if (bRelatingProduct)
 		{
@@ -493,7 +493,7 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 	}
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-	ASSERT(m_mapProductDefinitions.find(pDefinition->getExpressID()) == m_mapProductDefinitions.end());
+	ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
 
 	if (bRelatingProduct)
 	{
@@ -505,7 +505,7 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 		pDefinition->m_iRelatedProductRefs++;
 	}
 
-	m_mapProductDefinitions[pDefinition->getExpressID()] = pDefinition;
+	m_mapExpressID2Definition[pDefinition->getExpressID()] = pDefinition;
 
 	return pDefinition;
 }
@@ -547,9 +547,9 @@ void CSTEPModel::LoadAssemblies()
 
 		pAssembly->m_pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
 
-		ASSERT(m_mapAssemblies.find(pAssembly->m_iExpressID) == m_mapAssemblies.end());
+		ASSERT(m_mapExpressIDAssembly.find(pAssembly->m_iExpressID) == m_mapExpressIDAssembly.end());
 
-		m_mapAssemblies[pAssembly->m_iExpressID] = pAssembly;
+		m_mapExpressIDAssembly[pAssembly->m_iExpressID] = pAssembly;
 	}	
 }
 
@@ -568,8 +568,8 @@ void CSTEPModel::LoadGeometry()
 	setSegmentation(m_iModel, 20, 0.);
 
 	// Load
-	auto itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	auto itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		if (itDefinition->second->getRelatedProductRefs() == 0)
 		{
@@ -581,8 +581,8 @@ void CSTEPModel::LoadGeometry()
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix)
 {
-	map<int_t, CAssembly*>::iterator itAssembly = m_mapAssemblies.begin();
-	for (; itAssembly != m_mapAssemblies.end(); itAssembly++)
+	map<int_t, CAssembly*>::iterator itAssembly = m_mapExpressIDAssembly.begin();
+	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
 	{
 		auto pAssembly = itAssembly->second;
 
@@ -637,7 +637,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	cleanMemory(m_iModel, 0);
 
 	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
-	m_mapProductInstances[pInstance->getID()] = pInstance;
+	m_mapID2Instance[pInstance->getID()] = pInstance;
 
 	pDefinition->m_vecProductInstances.push_back(pInstance);
 }
@@ -654,26 +654,26 @@ void CSTEPModel::Clean()
 	delete m_pEntityProvider;
 	m_pEntityProvider = nullptr;
 
-	auto itDefinition = m_mapProductDefinitions.begin();
-	for (; itDefinition != m_mapProductDefinitions.end(); itDefinition++)
+	auto itDefinition = m_mapExpressID2Definition.begin();
+	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		delete itDefinition->second;
 	}
-	m_mapProductDefinitions.clear();
+	m_mapExpressID2Definition.clear();
 
-	auto itInstance = m_mapProductInstances.begin();
-	for (; itInstance != m_mapProductInstances.end(); itInstance++)
+	auto itInstance = m_mapID2Instance.begin();
+	for (; itInstance != m_mapID2Instance.end(); itInstance++)
 	{
 		delete itInstance->second;
 	}
-	m_mapProductInstances.clear();
+	m_mapID2Instance.clear();
 
-	auto itAssembly = m_mapAssemblies.begin();
-	for (; itAssembly != m_mapAssemblies.end(); itAssembly++)
+	auto itAssembly = m_mapExpressIDAssembly.begin();
+	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
 	{
 		delete itAssembly->second;
 	}
-	m_mapAssemblies.clear();
+	m_mapExpressIDAssembly.clear();
 
 	m_iID = 1;
 }

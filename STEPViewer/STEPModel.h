@@ -25,9 +25,9 @@ private: // Members
 	wstring m_strSTEPFile;
 
 	CEntityProvider* m_pEntityProvider;
-	map<int_t, CProductDefinition*> m_mapProductDefinitions;
-	map<int_t, CProductInstance*> m_mapProductInstances;
-	map<int_t, CAssembly*> m_mapAssemblies;
+	map<int_t, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
+	map<int_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
+	map<int_t, CAssembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 	int64_t m_iID;
 
@@ -59,9 +59,9 @@ public: // Methods
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 	float GetBoundingSphereDiameter() const;
 
-	const map<int_t, CProductDefinition*>& getProductDefinitions();
-	const map<int_t, CProductInstance*>& getProductInstances();
-	const map<int_t, CAssembly*>& getAssemblies();
+	const map<int_t, CProductDefinition*>& GetDefinitions();
+	const map<int_t, CProductInstance*>& GetInstances();
+	const map<int_t, CAssembly*>& GetAssemblies();
 	CProductInstance* getProductInstanceByID(int_t iID) const;
 
 	void ScaleAndCenter(); // [-1, 1]

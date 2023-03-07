@@ -107,7 +107,7 @@ public: // Methods
 
 	int_t getRelatingProductRefs() const;
 	int_t getRelatedProductRefs() const;
-	const vector<CProductInstance*>& getProductInstances() const;
+	const vector<CProductInstance*>& GetInstances() const;
 	int getNextProductInstance();
 
 	bool hasGeometry() const;

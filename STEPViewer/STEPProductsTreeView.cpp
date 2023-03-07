@@ -423,7 +423,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		auto& mapInstances = pModel->getProductInstances();
+		auto& mapInstances = pModel->GetInstances();
 
 		switch (uiCommand)
 		{
@@ -853,7 +853,7 @@ void CSTEPProductsTreeView::LoadModel()
 		return;
 	}	
 
-	auto& mapDefinitions = pModel->getProductDefinitions();
+	auto& mapDefinitions = pModel->GetDefinitions();
 	if (mapDefinitions.empty())
 	{
 		return;
@@ -932,7 +932,7 @@ void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDe
 	} // if (pDefinition->getRelatingProductRefs() > 0)
 	else
 	{
-		auto& vecInstances = pDefinition->getProductInstances();
+		auto& vecInstances = pDefinition->GetInstances();
 		int iInstance = pDefinition->getNextProductInstance();
 
 		strName = pDefinition->getId();
@@ -957,7 +957,7 @@ void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDe
 // ------------------------------------------------------------------------------------------------
 void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
-	const map<int_t, CAssembly*>& mapAssemblies = pModel->getAssemblies();
+	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
 
 	map<int_t, CAssembly*>::const_iterator itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
@@ -985,7 +985,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CPro
 			*/
 			if (pAssembly->getRelatedProductDefinition()->getRelatingProductRefs() == 0)
 			{
-				auto& vecInstances = pAssembly->getRelatedProductDefinition()->getProductInstances();
+				auto& vecInstances = pAssembly->getRelatedProductDefinition()->GetInstances();
 				int iInstance = pAssembly->getRelatedProductDefinition()->getNextProductInstance();
 
 				strName = pAssembly->getRelatedProductDefinition()->getId();
@@ -1044,7 +1044,7 @@ void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CP
 	} // if (pDefinition->getRelatingProductRefs() > 0)	
 	else
 	{
-		auto& vecInstances = pDefinition->getProductInstances();
+		auto& vecInstances = pDefinition->GetInstances();
 		int iInstance = pDefinition->getNextProductInstance();
 
 		auto pProductInstanceData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
@@ -1057,7 +1057,7 @@ void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CP
 // ------------------------------------------------------------------------------------------------
 void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
-	const map<int_t, CAssembly*>& mapAssemblies = pModel->getAssemblies();
+	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
 
 	map<int_t, CAssembly*>::const_iterator itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
@@ -1079,7 +1079,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 			*/
 			if (pAssembly->getRelatedProductDefinition()->getRelatingProductRefs() == 0)
 			{
-				auto& vecInstances = pAssembly->getRelatedProductDefinition()->getProductInstances();
+				auto& vecInstances = pAssembly->getRelatedProductDefinition()->GetInstances();
 				int iInstance = pAssembly->getRelatedProductDefinition()->getNextProductInstance();
 
 				auto pInstanceItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
@@ -1102,7 +1102,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...	
 
-	auto& vecInstances = pDefinition->getProductInstances();
+	auto& vecInstances = pDefinition->GetInstances();
 	int iInstance = pDefinition->getNextProductInstance();
 
 	auto pInstanceItemData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
