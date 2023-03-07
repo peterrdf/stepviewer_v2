@@ -342,7 +342,7 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 		strAttribute += L" (INVERSE)";
 	}
 	strAttribute += L" = ";
-	strAttribute += strLabel;
+	strAttribute += strLabel.empty() || strLabel == L"()" ? L"NA" : strLabel;
 
 	/*
 	* Attribute
@@ -402,7 +402,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 			} // if (ADB != 0) 
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiADB:
 		break;
@@ -440,7 +440,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 			} // if (pValue != nullptr) 
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -458,7 +458,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -483,7 +483,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -513,7 +513,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -559,7 +559,7 @@ void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool&
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiADB:
 		break;
@@ -591,7 +591,7 @@ void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool&
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -609,7 +609,7 @@ void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool&
 			}
 			else
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -634,7 +634,7 @@ void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool&
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -664,7 +664,7 @@ void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool&
 			}
 			else
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiSTRING:
 		break;
@@ -711,7 +711,7 @@ void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementI
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiADB:
 		break;
@@ -749,7 +749,7 @@ void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementI
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiAGGR:
 		break;
@@ -767,7 +767,7 @@ void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementI
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiBOOLEAN:
 		break;
@@ -792,7 +792,7 @@ void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementI
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiINSTANCE:
 		break;
@@ -822,7 +822,7 @@ void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementI
 			}
 			else 
 			{
-				strLabel += L"\u2205";
+				strLabel += L"NA";
 			}
 		} // case sdaiSTRING:
 		break;
