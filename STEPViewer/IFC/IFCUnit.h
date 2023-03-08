@@ -2,7 +2,7 @@
 #define IFCUNIT_H
 
 #include "engine.h"
-#include "ifcengine.h"
+#include "stepengine.h"
 
 #include <string>
 #include <map>

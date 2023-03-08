@@ -270,13 +270,19 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	* Entity
 	*/
 	wchar_t* szEntity = nullptr;
-	engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+	engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
+
+	wstring strEntity = szEntity;
+	if (engiGetEntityIsAbstract(iEntity))
+	{
+		strEntity += L" (ABSTRACT)";
+	}
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_FIRST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)szEntity;
+	tvInsertStruct.item.pszText = (LPWSTR)strEntity.c_str();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 	tvInsertStruct.item.lParam = NULL;
 
@@ -286,10 +292,10 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
 	{
 		char* szAttributeName = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (char**)&szAttributeName);
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);
 
 		wchar_t* szAttributeNameW = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (char**)&szAttributeNameW);
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (const char**)&szAttributeNameW);
 
 		if (!IsAttributeIgnored(iEntity, szAttributeNameW))
 		{
@@ -897,7 +903,7 @@ void CRelationsView::GetAttributeReferences(int_t iInstance, const char* szAttri
 				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
 				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
 
 				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}
@@ -971,7 +977,7 @@ void CRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
 				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
 				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
 
 				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}
@@ -1048,7 +1054,7 @@ void CRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElemen
 				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
 				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (char**)&szEntity);
+				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
 
 				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
 			}

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
-#include "ifcengine.h"
+#include "stepengine.h"
 
 #include <algorithm>
 
@@ -18,7 +18,7 @@ CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iIns
 {
 	// Name ***************************************************************************************
 	wchar_t* szName = nullptr;
-	engiGetEntityName(m_iEntity, sdaiUNICODE, (char**)&szName);
+	engiGetEntityName(m_iEntity, sdaiUNICODE, (const char**)&szName);
 	// ********************************************************************************************
 
 	m_strName = szName;
@@ -27,7 +27,7 @@ CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iIns
 	for (int_t iIndex = 0; iIndex < m_iAttributesCount; iIndex++)
 	{
 		wchar_t	* szArgumentName = 0;
-		engiGetEntityArgumentName(m_iEntity, iIndex, sdaiUNICODE, (char **)&szArgumentName);
+		engiGetEntityArgumentName(m_iEntity, iIndex, sdaiUNICODE, (const char**)&szArgumentName);
 
 		m_vecAttributes.push_back(szArgumentName);
 	}

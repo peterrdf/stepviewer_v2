@@ -28,7 +28,7 @@ int64_t CInstance::GetEntity() const
 const wchar_t* CInstance::GetEntityName() const
 {
 	wchar_t* szEntity = nullptr;
-	engiGetEntityName(GetEntity(), sdaiUNICODE, (char**)&szEntity);
+	engiGetEntityName(GetEntity(), sdaiUNICODE, (const char**)&szEntity);
 
 	return szEntity;
 }
@@ -37,7 +37,7 @@ const wchar_t* CInstance::GetEntityName() const
 /*static*/ const wchar_t* CInstance::GetEntityName(int64_t iInstance)
 {
 	wchar_t* szEntity = nullptr;
-	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (char**)&szEntity);
+	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (const char**)&szEntity);
 
 	return szEntity;
 }
