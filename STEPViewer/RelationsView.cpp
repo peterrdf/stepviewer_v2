@@ -251,7 +251,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
 	tvInsertStruct.item.lParam = (LPARAM)pInstanceData;
 
-	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
+	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);	
 
 	LoadInstanceAttributes(CInstance::GetEntity(iInstance), iInstance, hInstance);
 }
@@ -318,7 +318,29 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 				}
 			}
 
-			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hEntity);
+			HTREEITEM hAttributesParent = NULL;
+			switch (m_enMode)
+			{
+				case enumRelationsViewMode::Hierarchy:
+				{
+					hAttributesParent = hEntity;
+				}
+				break;
+
+				case enumRelationsViewMode::Flat:
+				{
+					hAttributesParent = hParent;
+				}
+				break;
+
+				default:
+				{
+					ASSERT(FALSE); // Not supported!
+				}
+				break;
+			}
+
+			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
 		}
 
 		iAttrubutesCount++;
@@ -1135,7 +1157,7 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			return;
 		}		
 
-		CAttributeData * pAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
+		auto pAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
 		ASSERT(pAttributeData != nullptr);
 
 		m_treeCtrl.DeleteItem(hChild);
@@ -1145,7 +1167,8 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 CRelationsView::CRelationsView()
-	: m_vecInstancesCache()
+	: m_enMode(enumRelationsViewMode::Flat)
+	, m_vecInstancesCache()
 	, m_vecAttributesCache()
 	, m_pSearchDialog(nullptr)
 {

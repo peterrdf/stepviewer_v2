@@ -120,6 +120,29 @@ public: // Methods
 * Attributes
 */
 
+/*
+*** Nested ***
+Entity 1
+	Attribute 1
+	Attribute 2
+	Attribute N
+Entity 2
+Entity N
+
+*** Flat ***
+Entity 1
+Attribute 1
+Attribute 2
+Attribute N
+Entity 2
+Entity N
+*/
+enum class enumRelationsViewMode
+{
+	Hierarchy = 0,
+	Flat,
+};
+
 // ------------------------------------------------------------------------------------------------
 class CRelationsView 
 	: public CDockablePane
@@ -127,6 +150,9 @@ class CRelationsView
 {
 
 private: // Members
+
+	// View
+	enumRelationsViewMode m_enMode;
 	
 	// Cache
 	vector<CInstanceData*> m_vecInstancesCache;
