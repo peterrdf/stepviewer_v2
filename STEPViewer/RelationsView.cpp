@@ -272,17 +272,11 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	wchar_t* szEntity = nullptr;
 	engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
 
-	wstring strEntity = szEntity;
-	if (engiGetEntityIsAbstract(iEntity))
-	{
-		strEntity += L" (ABSTRACT)";
-	}
-
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_FIRST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)strEntity.c_str();
+	tvInsertStruct.item.pszText = (LPWSTR)CEntity::getName(iEntity);
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 	tvInsertStruct.item.lParam = NULL;
 
@@ -349,7 +343,6 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	return iAttrubutesCount;
 }
 
-
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
 {
@@ -363,18 +356,17 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 	{
 		bInverse = engiGetAttrInverseBN(iEntity, szAttributeName) != 0;
 	}
-
 	wstring strAttribute = CA2W(szAttributeName);
-	if (bInverse)
-	{
-		strAttribute += L" (INVERSE)";
-	}
 	strAttribute += L" = ";
-	strAttribute += strLabel.empty() || strLabel == L"()" ? L"NA" : strLabel;
+	strAttribute += strLabel.empty() || (strLabel == L"()") || (strLabel == L"''") ? 
+		L"NA" : strLabel;
 
 	/*
 	* Attribute
 	*/
+	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName, iAttributeType);
+	m_vecAttributesCache.push_back(pAttributeData);
+
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -384,14 +376,12 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
 		bHasChildren ? IMAGE_INSTANCE : bInverse ? 
 			IMAGE_INVERSE_ATTRIBUTE : IMAGE_ATTRIBUTE;
-	tvInsertStruct.item.lParam = NULL;
+	tvInsertStruct.item.lParam = (LPARAM)pAttributeData;
 
 	HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	if (bHasChildren)
 	{
-		m_vecAttributesCache.push_back(new CAttributeData(iInstance, szAttributeName, iAttributeType));
-
 		/*
 		* Add a fake item - load on demand
 		*/
@@ -400,7 +390,7 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_PENDING_LOAD;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
-		tvInsertStruct.item.lParam = (LPARAM)m_vecAttributesCache[m_vecAttributesCache.size() - 1];
+		tvInsertStruct.item.lParam = (LPARAM)pAttributeData;
 
 		m_treeCtrl.InsertItem(&tvInsertStruct);
 	}
@@ -1117,19 +1107,19 @@ bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttribut
 	return itEntity->second->isAttributeIgnored(szAttributeName);
 }
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
@@ -1157,7 +1147,7 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			return;
 		}		
 
-		auto pAttributeData = (CAttributeData *)m_treeCtrl.GetItemData(hChild);
+		auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(hChild);
 		ASSERT(pAttributeData != nullptr);
 
 		m_treeCtrl.DeleteItem(hChild);
@@ -1166,24 +1156,85 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 	} // if ((iImage == IMAGE_INSTANCE) && ...
 }
 
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::OnTvnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	*pResult = 0;
+
+	auto pNMTVGetInfoTip = reinterpret_cast<LPNMTVGETINFOTIPW>(pNMHDR);
+
+	m_strTooltip = pNMTVGetInfoTip->pszText;
+
+	int iImage, iSelectedImage = -1;
+	m_treeCtrl.GetItemImage(pNMTVGetInfoTip->hItem, iImage, iSelectedImage);
+
+	ASSERT(iImage == iSelectedImage);
+
+	if ((iImage == IMAGE_ATTRIBUTE) || (iImage == IMAGE_INVERSE_ATTRIBUTE))
+	{
+		auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
+		if (pAttributeData != nullptr)
+		{
+			m_strTooltip = CA2W(pAttributeData->getName());
+			if (engiGetAttrInverseBN(pAttributeData->getEntity(), pAttributeData->getName()))
+			{
+				m_strTooltip += L" (INVERSE)";
+			}
+
+			m_strTooltip += L"\n";
+
+			m_strTooltip += CEntity::getName(pAttributeData->getEntity());
+			if (engiGetEntityIsAbstract(pAttributeData->getEntity()))
+			{
+				m_strTooltip += L" (ABSTRACT)";
+			}
+		} // if (pAttributeData != nullptr)
+		else
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+	} // if ((iImage == IMAGE_ATTRIBUTE) || ...
+	else if (iImage == IMAGE_INSTANCE)
+	{
+		auto pInstanceData = (CInstanceData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
+		if (pInstanceData != nullptr)
+		{
+			m_strTooltip = CEntity::getName(pInstanceData->getEntity());
+			if (engiGetEntityIsAbstract(pInstanceData->getEntity()))
+			{
+				m_strTooltip += L" (ABSTRACT)";
+			}
+		} // if (pAttributeData != nullptr)
+		else
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+	} // if (iImage == IMAGE_INSTANCE)
+
+	pNMTVGetInfoTip->pszText = (LPWSTR)m_strTooltip.c_str();	
+}
+
+// ------------------------------------------------------------------------------------------------
 CRelationsView::CRelationsView()
 	: m_enMode(enumRelationsViewMode::Flat)
 	, m_vecInstancesCache()
 	, m_vecAttributesCache()
 	, m_pSearchDialog(nullptr)
+	, m_strTooltip(L"")
 {
 }
 
+// ------------------------------------------------------------------------------------------------
 CRelationsView::~CRelationsView()
 {
-	for (size_t iData = 0; iData < m_vecInstancesCache.size(); iData++)
+	for (auto pInstanceData : m_vecInstancesCache)
 	{
-		delete m_vecInstancesCache[iData];
+		delete pInstanceData;
 	}
 
-	for (size_t iData = 0; iData < m_vecAttributesCache.size(); iData++)
+	for (auto pAttributeData : m_vecAttributesCache)
 	{
-		delete m_vecAttributesCache[iData];
+		delete pAttributeData;
 	}
 }
 
@@ -1197,6 +1248,7 @@ BEGIN_MESSAGE_MAP(CRelationsView, CDockablePane)
 	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CRelationsView::OnNMClickTree)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CRelationsView::OnNMRClickTree)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CRelationsView::OnTvnItemexpandingTree)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_IFC, &CRelationsView::OnTvnGetInfoTip)
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -1216,7 +1268,8 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectDummy.SetRectEmpty();
 
 	// Create view:
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
+	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
+		TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_INFOTIP;
 
 	if (!m_treeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_IFC))
 	{

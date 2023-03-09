@@ -35,6 +35,7 @@ public: // Methods
 
 	int_t getEntity() const;
 	const wchar_t* getName() const;
+	static wchar_t* getName(int_t iEntity);
 	CEntity* getParent() const;
 	void setParent(CEntity* pParent);
 	bool hasParent() const;

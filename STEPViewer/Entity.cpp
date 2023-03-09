@@ -65,6 +65,15 @@ const wchar_t* CEntity::getName() const
 }
 
 // ------------------------------------------------------------------------------------------------
+/*static*/ wchar_t* CEntity::getName(int_t iEntity)
+{
+	wchar_t* szName = nullptr;
+	engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szName);
+
+	return szName;
+}
+
+// ------------------------------------------------------------------------------------------------
 CEntity* CEntity::getParent() const
 {
 	return m_pParent;

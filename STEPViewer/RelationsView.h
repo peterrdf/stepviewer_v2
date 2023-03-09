@@ -22,18 +22,11 @@ class CRelationsViewToolBar : public CMFCToolBar
 // Load on demand
 class CInstanceData
 {
+
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Instance
 	int_t m_iInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Entity
 	int_t m_iEntity;
-
-	// --------------------------------------------------------------------------------------------
-	// Entity
 	wstring m_srtEntity;
 
 public: // Methods
@@ -73,43 +66,38 @@ class CAttributeData
 {
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Instance
 	int_t m_iInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Attribute
+	int_t m_iEntity;
 	string m_srtName;
-
-	// --------------------------------------------------------------------------------------------
-	// Attribute
 	int_t m_iType;
 
 public: // Methods
 
-	CAttributeData(int_t iInstance, const char * szName, int_t iType)
+	CAttributeData(int_t iInstance, int_t iEntity, const char * szName, int_t iType)
 		: m_iInstance(iInstance)
+		, m_iEntity(iEntity)
 		, m_srtName(szName)
 		, m_iType(iType)
 	{
+		ASSERT(m_iInstance != 0);
+		ASSERT(m_iEntity != 0);
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int_t getInstance() const
 	{
 		return m_iInstance;
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	int_t getEntity() const
+	{
+		return m_iEntity;
+	}
+	
 	const char * getName() const
 	{
 		return m_srtName.c_str();
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int_t getType() const
 	{
 		return m_iType;
@@ -122,20 +110,23 @@ public: // Methods
 
 /*
 *** Nested ***
-Entity 1
-	Attribute 1
-	Attribute 2
-	Attribute N
-Entity 2
-Entity N
+Instance
+	Entity 1
+		Attribute 1
+		Attribute 2
+		Attribute N
+	Entity 2
+		...
+	Entity N
+		...
 
 *** Flat ***
-Entity 1
-Attribute 1
+Instance
+Attribute 1		
 Attribute 2
+	=> ...
 Attribute N
-Entity 2
-Entity N
+	=> ...
 */
 enum class enumRelationsViewMode
 {
@@ -197,7 +188,8 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_treeCtrl;
+	CViewTree m_treeCtrl;	
+	wstring m_strTooltip;
 	CImageList m_imageList;
 	CRelationsViewToolBar m_wndToolBar;
 
@@ -217,6 +209,7 @@ protected:
 	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTvnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:
