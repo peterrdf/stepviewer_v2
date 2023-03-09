@@ -128,6 +128,7 @@ CModel* CRelationsView::GetModel() const
 void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 {
 	m_treeCtrl.DeleteAllItems();
+	Clean();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -168,6 +169,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 void CRelationsView::LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances)
 {
 	m_treeCtrl.DeleteAllItems();
+	Clean();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -237,8 +239,8 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	/*
 	* Data
 	*/
-	auto pInstanceData = new CInstanceData(iInstance, iEntity, szEntity);
-	m_vecInstancesCache.push_back(pInstanceData);
+	auto pInstanceData = new CInstanceData(iInstance, iEntity);
+	m_vecItemDataCache.push_back(pInstanceData);
 
 	/*
 	* Instance
@@ -357,7 +359,7 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 	* Attribute
 	*/
 	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName, iAttributeType);
-	m_vecAttributesCache.push_back(pAttributeData);
+	m_vecItemDataCache.push_back(pAttributeData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
@@ -1101,6 +1103,16 @@ bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttribut
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRelationsView::Clean()
+{
+	for (auto pInstanceData : m_vecItemDataCache)
+	{
+		delete pInstanceData;
+	}
+	m_vecItemDataCache.clear();
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
@@ -1209,8 +1221,7 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 // ------------------------------------------------------------------------------------------------
 CRelationsView::CRelationsView()
 	: m_enMode(enumRelationsViewMode::Flat)
-	, m_vecInstancesCache()
-	, m_vecAttributesCache()
+	, m_vecItemDataCache()
 	, m_pSearchDialog(nullptr)
 	, m_strTooltip(L"")
 {
@@ -1219,15 +1230,7 @@ CRelationsView::CRelationsView()
 // ------------------------------------------------------------------------------------------------
 CRelationsView::~CRelationsView()
 {
-	for (auto pInstanceData : m_vecInstancesCache)
-	{
-		delete pInstanceData;
-	}
-
-	for (auto pAttributeData : m_vecAttributesCache)
-	{
-		delete pAttributeData;
-	}
+	Clean();
 }
 
 BEGIN_MESSAGE_MAP(CRelationsView, CDockablePane)
