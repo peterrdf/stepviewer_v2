@@ -44,11 +44,11 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar         m_wndMenuBar;
-	CMFCToolBar         m_wndToolBar;
-	CMFCStatusBar       m_wndStatusBar;
-	CMFCToolBarImages   m_UserImages;
-	CStructureView           m_modelStructureView;
+	CMFCMenuBar         m_menuBar;
+	CMFCToolBar         m_toolBar;
+	CMFCStatusBar       m_statusBar;
+	CMFCToolBarImages   m_userImages;
+	CStructureView      m_structureView;
 	CSchemaView			m_schemaView;
 	CRelationsView		m_relationsView;
 	CPropertiesWnd      m_propertiesView;

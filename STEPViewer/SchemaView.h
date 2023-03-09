@@ -60,7 +60,7 @@ protected:
 
 	CViewTree m_treeCtrl;
 	CImageList m_imageList;
-	CSchemaViewToolBar m_wndToolBar;
+	CSchemaViewToolBar m_toolBar;
 
 protected:
 	void ResetView();

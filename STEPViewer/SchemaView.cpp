@@ -289,20 +289,20 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_imageList.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
 	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
-	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
+	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
+	m_toolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() 
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() 
 		| CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & 
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() & 
 		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
-	m_wndToolBar.SetOwner(this);
+	m_toolBar.SetOwner(this);
 
 	// All commands will be routed via this control , not via the parent frame:
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+	m_toolBar.SetRouteCommandsViaFrame(FALSE);
 
 	AdjustLayout();
 
@@ -352,9 +352,9 @@ void CSchemaView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	int cyTlb = m_toolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(
+	m_toolBar.SetWindowPos(
 		nullptr, 
 		rectClient.left, 
 		rectClient.top, 
@@ -432,8 +432,8 @@ void CSchemaView::OnChangeVisualStyle()
 
 	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
-	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
+	m_toolBar.CleanUpLockedImages();
+	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
 void CSchemaView::OnDestroy()

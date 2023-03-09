@@ -83,20 +83,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	BOOL bNameValid;
 
-	if (!m_wndMenuBar.Create(this))
+	if (!m_menuBar.Create(this))
 	{
 		ASSERT(FALSE);
 
 		return -1;
 	}
 
-	m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_menuBar.SetPaneStyle(m_menuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
 
 	// prevent the menu bar from taking the focus on activation
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
+	if (!m_toolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_toolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
 		ASSERT(FALSE);
 
@@ -106,30 +106,30 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CString strToolBarName;
 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);
-	m_wndToolBar.SetWindowText(strToolBarName);
+	m_toolBar.SetWindowText(strToolBarName);
 
 	CString strCustomize;
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
-	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+	m_toolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(nullptr, uiFirstUserToolBarId, uiLastUserToolBarId);
 
-	if (!m_wndStatusBar.Create(this))
+	if (!m_statusBar.Create(this))
 	{
 		ASSERT(FALSE);
 
 		return -1;
 	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+	m_statusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 
 	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
-	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_menuBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_toolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndMenuBar);
-	DockPane(&m_wndToolBar);
+	DockPane(&m_menuBar);
+	DockPane(&m_toolBar);
 
 
 	// enable Visual Studio 2005 style docking window behavior
@@ -148,14 +148,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	m_modelStructureView.EnableDocking(CBRS_ALIGN_ANY);
+	m_structureView.EnableDocking(CBRS_ALIGN_ANY);
 	m_schemaView.EnableDocking(CBRS_ALIGN_ANY);
 	m_relationsView.EnableDocking(CBRS_ALIGN_ANY);
 
-	DockPane(&m_modelStructureView);
+	DockPane(&m_structureView);
 
 	CDockablePane* pTabbedBar = nullptr;
-	m_schemaView.AttachToTabWnd(&m_modelStructureView, DM_SHOW, TRUE, &pTabbedBar);
+	m_schemaView.AttachToTabWnd(&m_structureView, DM_SHOW, TRUE, &pTabbedBar);
 	m_relationsView.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 
 	m_propertiesView.EnableDocking(CBRS_ALIGN_ANY);
@@ -173,9 +173,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMFCToolBar::GetUserImages() == nullptr)
 	{
 		// load user-defined toolbar images
-		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
+		if (m_userImages.Load(_T(".\\UserImages.bmp")))
 		{
-			CMFCToolBar::SetUserImages(&m_UserImages);
+			CMFCToolBar::SetUserImages(&m_userImages);
 		}
 	}
 
@@ -254,12 +254,12 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create IFC Hierarchy View
-	m_modelStructureView.SetController(pController);
+	m_structureView.SetController(pController);
 	
 	CString strCaption;
 	bNameValid = strCaption.LoadString(IDS_FILE_VIEW);
 	ASSERT(bNameValid);
-	if (!m_modelStructureView.Create(
+	if (!m_structureView.Create(
 		strCaption, 
 		this, 
 		CRect(0, 0, 200, 200), 
@@ -348,7 +348,7 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_modelStructureView.SetIcon(hFileViewIcon, FALSE);
+	m_structureView.SetIcon(hFileViewIcon, FALSE);
 
 	HICON hSchemaIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 

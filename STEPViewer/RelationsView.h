@@ -191,7 +191,7 @@ protected:
 	CViewTree m_treeCtrl;	
 	wstring m_strTooltip;
 	CImageList m_imageList;
-	CRelationsViewToolBar m_wndToolBar;
+	CRelationsViewToolBar m_toolBar;
 
 protected:	
 

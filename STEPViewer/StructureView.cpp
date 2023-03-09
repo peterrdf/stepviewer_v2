@@ -45,7 +45,7 @@ static char THIS_FILE[]=__FILE__;
 	{
 		case enumModelType::STEP:
 		{
-			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_modelStructureView);
+			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_structureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -53,7 +53,7 @@ static char THIS_FILE[]=__FILE__;
 
 		case enumModelType::IFC:
 		{
-			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_modelStructureView);
+			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_structureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -119,28 +119,28 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create view:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS;
 
-	if (!m_modelStructureView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
+	if (!m_structureView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
 	{
 		ASSERT(FALSE);
 
 		return -1;
 	}	
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
-	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
+	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
+	m_toolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() 
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() 
 		| CBRS_TOOLTIPS | CBRS_FLYBY);
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & 
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() & 
 		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
-	m_wndToolBar.SetOwner(this);
+	m_toolBar.SetOwner(this);
 
 	// All commands will be routed via this control , not via the parent frame:
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);	
+	m_toolBar.SetRouteCommandsViaFrame(FALSE);	
 
 	AdjustLayout();
 
@@ -179,9 +179,9 @@ void CStructureView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	int cyTlb = m_toolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(
+	m_toolBar.SetWindowPos(
 		nullptr,
 		rectClient.left,
 		rectClient.top,
@@ -189,7 +189,7 @@ void CStructureView::AdjustLayout()
 		cyTlb,
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_modelStructureView.SetWindowPos(
+	m_structureView.SetWindowPos(
 		nullptr, rectClient.left + 1,
 		rectClient.top + cyTlb + 1,
 		rectClient.Width() - 2,
@@ -202,7 +202,7 @@ void CStructureView::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rectTree;
-	m_modelStructureView.GetWindowRect(rectTree);
+	m_structureView.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
@@ -213,7 +213,7 @@ void CStructureView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_modelStructureView.SetFocus();
+	m_structureView.SetFocus();
 }
 
 void CStructureView::OnChangeVisualStyle()
@@ -236,11 +236,11 @@ void CStructureView::OnChangeVisualStyle()
 
 	if (m_pSTEPTreeView != nullptr)
 	{
-		m_modelStructureView.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
+		m_structureView.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
 	}
 
-	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
+	m_toolBar.CleanUpLockedImages();
+	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
 void CStructureView::OnDestroy()

@@ -53,8 +53,8 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_modelStructureView;
-	CStructureViewToolBar m_wndToolBar;
+	CViewTree m_structureView;
+	CStructureViewToolBar m_toolBar;
 
 protected:
 
