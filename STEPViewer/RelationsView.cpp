@@ -266,21 +266,38 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 
 	ASSERT(iInstance != 0);
 
-	/*
-	* Entity
-	*/
-	wchar_t* szEntity = nullptr;
-	engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
+	HTREEITEM hAttributesParent = NULL;
+	switch (m_enMode)
+	{
+		case enumRelationsViewMode::Hierarchy:
+		{
+			wchar_t* szEntity = nullptr;
+			engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
 
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_FIRST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPWSTR)CEntity::getName(iEntity);
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
-	tvInsertStruct.item.lParam = NULL;
+			TV_INSERTSTRUCT tvInsertStruct;
+			tvInsertStruct.hParent = hParent;
+			tvInsertStruct.hInsertAfter = TVI_FIRST;
+			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+			tvInsertStruct.item.pszText = (LPWSTR)CEntity::getName(iEntity);
+			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
+			tvInsertStruct.item.lParam = NULL;
 
-	HTREEITEM hEntity = m_treeCtrl.InsertItem(&tvInsertStruct);
+			hAttributesParent = m_treeCtrl.InsertItem(&tvInsertStruct);
+		} // case enumRelationsViewMode::Hierarchy:
+		break;
+
+		case enumRelationsViewMode::Flat:
+		{
+			hAttributesParent = hParent;
+		} // case enumRelationsViewMode::Flat:
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Not supported!
+		}
+		break;
+	} // switch (m_enMode)
 
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
@@ -312,30 +329,8 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 				}
 			}
 
-			HTREEITEM hAttributesParent = NULL;
-			switch (m_enMode)
-			{
-				case enumRelationsViewMode::Hierarchy:
-				{
-					hAttributesParent = hEntity;
-				}
-				break;
-
-				case enumRelationsViewMode::Flat:
-				{
-					hAttributesParent = hParent;
-				}
-				break;
-
-				default:
-				{
-					ASSERT(FALSE); // Not supported!
-				}
-				break;
-			}
-
 			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
-		}
+		} // if (!IsAttributeIgnored(iEntity, szAttributeNameW))
 
 		iAttrubutesCount++;
 	} // while (iAttrubutesCount < engiGetEntityNoArguments(iEntity))
