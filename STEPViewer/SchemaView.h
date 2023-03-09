@@ -78,7 +78,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:

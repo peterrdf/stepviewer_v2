@@ -24,8 +24,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	// Entities
 	if (m_enSearchFilter == enumSearchFilter::Entities)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -43,8 +42,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 	// Attributes
 	if (m_enSearchFilter == enumSearchFilter::Attributes)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);

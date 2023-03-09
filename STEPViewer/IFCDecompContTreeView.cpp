@@ -157,8 +157,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1225,8 +1224,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItems(HTREEITEM hModel)
 	HTREEITEM hModelChild = m_pTreeView->GetNextItem(hModel, TVGN_CHILD);
 	while (hModelChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hModelChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1263,8 +1261,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 	HTREEITEM hChild = m_pTreeView->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1279,8 +1276,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 		LoadTree_UpdateItem(hChild);
 
-		iImage = -1;
-		iSelectedImage = -1;
+		iImage = iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1366,8 +1362,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 	HTREEITEM hChild = m_pTreeView->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1411,8 +1406,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 	HTREEITEM hChild = m_pTreeView->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);

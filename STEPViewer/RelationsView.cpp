@@ -95,9 +95,9 @@ static char THIS_FILE[]=__FILE__;
 	}
 	
 	LoadProperties(
-		pEntity->getEntity(),
-		pEntity->getName(),
-		pEntity->getInstances());
+		pEntity->GetEntity(),
+		pEntity->GetName(),
+		pEntity->GetInstances());
 	
 	ShowPane(TRUE, TRUE, TRUE);
 }
@@ -278,7 +278,7 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 			tvInsertStruct.hParent = hParent;
 			tvInsertStruct.hInsertAfter = TVI_FIRST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = (LPWSTR)CEntity::getName(iEntity);
+			tvInsertStruct.item.pszText = (LPWSTR)CEntity::GetName(iEntity);
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 			tvInsertStruct.item.lParam = NULL;
 
@@ -1099,7 +1099,7 @@ bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttribut
 		return false;
 	}
 
-	return itEntity->second->isAttributeIgnored(szAttributeName);
+	return itEntity->second->IsAttributeIgnored(szAttributeName);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1115,14 +1115,13 @@ void CRelationsView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
+void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
 	*pResult = 0;
 
-	int iImage = -1;
-	int iSelectedImage = -1;
+	int iImage, iSelectedImage = -1;
 	m_treeCtrl.GetItemImage(pNMTreeView->itemNew.hItem, iImage, iSelectedImage);
 
 	ASSERT(iImage == iSelectedImage);
@@ -1152,7 +1151,7 @@ void CRelationsView::OnTvnItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnTvnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -1178,7 +1177,7 @@ void CRelationsView::OnTvnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 
 			m_strTooltip += L"\n";
 
-			m_strTooltip += CEntity::getName(pAttributeData->getEntity());
+			m_strTooltip += CEntity::GetName(pAttributeData->getEntity());
 			if (engiGetEntityIsAbstract(pAttributeData->getEntity()))
 			{
 				m_strTooltip += L" (ABSTRACT)";
@@ -1194,7 +1193,7 @@ void CRelationsView::OnTvnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 		auto pInstanceData = (CInstanceData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
 		if (pInstanceData != nullptr)
 		{
-			m_strTooltip = CEntity::getName(pInstanceData->getEntity());
+			m_strTooltip = CEntity::GetName(pInstanceData->getEntity());
 			if (engiGetEntityIsAbstract(pInstanceData->getEntity()))
 			{
 				m_strTooltip += L" (ABSTRACT)";
@@ -1242,8 +1241,8 @@ BEGIN_MESSAGE_MAP(CRelationsView, CDockablePane)
 	ON_WM_SETFOCUS()
 	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CRelationsView::OnNMClickTree)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CRelationsView::OnNMRClickTree)
-	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CRelationsView::OnTvnItemexpandingTree)
-	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_IFC, &CRelationsView::OnTvnGetInfoTip)
+	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CRelationsView::OnTVNItemexpandingTree)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_IFC, &CRelationsView::OnTVNGetInfoTip)
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()

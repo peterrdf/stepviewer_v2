@@ -201,8 +201,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 			return;
 		}
 
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hItem, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -294,8 +293,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
-	int iImage = -1;
-	int iSelectedImage = -1;
+	int iImage, iSelectedImage = -1;
 	m_pTreeView->GetItemImage(pNMTreeView->itemNew.hItem, iImage, iSelectedImage);
 
 	ASSERT(iImage == iSelectedImage);
@@ -1252,8 +1250,7 @@ void CSTEPProductsTreeView::ResetTree(bool bEnable)
 	HTREEITEM hRoot = m_pTreeView->GetRootItem();
 	while (hRoot != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hRoot, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1327,8 +1324,7 @@ void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 	HTREEITEM hChild = m_pTreeView->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
@@ -1403,8 +1399,7 @@ void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 	HTREEITEM hChild = m_pTreeView->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage = -1;
-		int iSelectedImage = -1;
+		int iImage, iSelectedImage = -1;
 		m_pTreeView->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);

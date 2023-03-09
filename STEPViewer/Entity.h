@@ -33,25 +33,25 @@ public: // Methods
 	CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iInstancesCount);
 	virtual ~CEntity();
 
-	int_t getEntity() const;
-	const wchar_t* getName() const;
-	static wchar_t* getName(int_t iEntity);
-	CEntity* getParent() const;
-	void setParent(CEntity* pParent);
-	bool hasParent() const;
+	int_t GetEntity() const;
+	const wchar_t* GetName() const;
+	static wchar_t* GetName(int_t iEntity);
+	CEntity* GetParent() const;
+	void SetParent(CEntity* pParent);
+	bool HasParent() const;
 
-	int_t getAttributesCount() const;
-	const vector<wstring>& getAttributes() const;
-	const set<wstring>& getIgnoredAttributes() const;
-	void ignoreAttribute(const wstring& strAttribute, bool bIgnore);
-	bool isAttributeIgnored(const wstring& strAttribute) const;
-	bool isAttributeInherited(const wstring& strAttribute) const;
-	int_t getInstancesCount() const;
-	void addSubType(CEntity* pEntity);
-	const vector<CEntity*>& getSubTypes() const;
-	const vector<int_t>& getInstances() const;
+	int_t GetAttributesCount() const;
+	const vector<wstring>& GetAttributes() const;
+	const set<wstring>& GetIgnoredAttributes() const;
+	void IgnoreAttribute(const wstring& strAttribute, bool bIgnore);
+	bool IsAttributeIgnored(const wstring& strAttribute) const;
+	bool IsAttributeInherited(const wstring& strAttribute) const;
+	int_t GetInstancesCount() const;
+	void AddSubType(CEntity* pEntity);
+	const vector<CEntity*>& GetSubTypes() const;
+	const vector<int_t>& GetInstances() const;
 
-	void postProcessing();
+	void PostProcessing();
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ struct SORT_ENTITIES
 {
 	bool operator()(const CEntity * a, const CEntity * b) const
 	{
-		return wcscmp(a->getName(), b->getName()) < 0;
+		return wcscmp(a->GetName(), b->GetName()) < 0;
 	}
 };
 
