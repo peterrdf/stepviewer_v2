@@ -95,9 +95,6 @@
     <ClInclude Include="IFC\IFCUnit.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCClass.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -215,9 +212,6 @@
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCUnit.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCClass.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">

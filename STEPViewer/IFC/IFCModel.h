@@ -6,7 +6,6 @@
 #include "Texture.h"
 #include "IFCUnit.h"
 #include "IFCProperty.h"
-#include "IFCClass.h"
 #include "Entity.h"
 
 #include <string>
@@ -72,7 +71,6 @@ private: // Members
 	CIFCPropertyProvider* m_pPropertyProvider;
 	CEntityProvider* m_pEntityProvider;
 
-	map<int64_t, CIFCClass*> m_mapClasses;
 	static int_t s_iInstanceID;
 
 public: // Methods
@@ -98,8 +96,7 @@ public: // Methods
 	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
-	CIFCPropertyProvider* GetPropertyProvider() const;		
-	const map<int64_t, CIFCClass*>& GetClasses() const;
+	CIFCPropertyProvider* GetPropertyProvider() const;
 	CIFCInstance* GetInstanceByID(int_t iID);
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
 	
@@ -112,8 +109,6 @@ private: // Methods
 	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iInstance, int_t iCircleSegments);
-
-	void LoadClasses();
 };
 
 #endif // IFCFILEPARSER_H

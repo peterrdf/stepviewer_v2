@@ -46,7 +46,6 @@ CIFCModel::CIFCModel()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pEntityProvider(nullptr)
-	, m_mapClasses()
 {
 }
 
@@ -281,11 +280,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	m_pEntityProvider = new CEntityProvider(m_iModel);
 
 	/*
-	* Classes
-	*/
-	LoadClasses();
-
-	/*
 	* Helper data structures
 	*/
 	for (auto pInstance : m_vecInstances)
@@ -324,13 +318,6 @@ void CIFCModel::Clean()
 
 	delete m_pEntityProvider;
 	m_pEntityProvider = nullptr;
-
-	auto itClass = m_mapClasses.begin();
-	for (; itClass != m_mapClasses.end(); itClass++)
-	{
-		delete itClass->second;
-	}
-	m_mapClasses.clear();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -533,12 +520,6 @@ CIFCUnitProvider* CIFCModel::GetUnitProvider() const
 CIFCPropertyProvider* CIFCModel::GetPropertyProvider() const
 {
 	return m_pPropertyProvider;
-}
-
-// ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCClass *>& CIFCModel::GetClasses() const
-{
-	return m_mapClasses;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1415,16 +1396,4 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 	cleanMemory(m_iModel, 0);
 
 	return pInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::LoadClasses()
-{
-	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
-	while (iClassInstance != 0)
-	{
-		m_mapClasses[iClassInstance] = new CIFCClass(iClassInstance);
-
-		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
-	} // while (iClassInstance != 0)
 }
