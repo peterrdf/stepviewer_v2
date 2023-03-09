@@ -17,8 +17,7 @@ CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iIns
 	, m_vecInstances()
 {
 	// Name ***************************************************************************************
-	wchar_t* szName = nullptr;
-	engiGetEntityName(m_iEntity, sdaiUNICODE, (const char**)&szName);
+	wchar_t* szName = CEntity::GetName(m_iEntity);
 	// ********************************************************************************************
 
 	m_strName = szName;

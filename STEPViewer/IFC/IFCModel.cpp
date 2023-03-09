@@ -748,8 +748,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 		char* szParenEntityName = nullptr;
 		engiGetEntityName(iParentEntity, sdaiSTRING, (const char**)&szParenEntityName);
 
-		wchar_t* szParentEntityNameW = nullptr;
-		engiGetEntityName(iParentEntity, sdaiUNICODE, (const char**)&szParentEntityNameW);
+		wchar_t* szParentEntityNameW = CEntity::GetName(iParentEntity);
 
 		RetrieveObjects(szParenEntityName, szParentEntityNameW, iCircleSegments);
 

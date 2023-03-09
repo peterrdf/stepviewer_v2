@@ -271,9 +271,6 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	{
 		case enumRelationsViewMode::Hierarchy:
 		{
-			wchar_t* szEntity = nullptr;
-			engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
-
 			TV_INSERTSTRUCT tvInsertStruct;
 			tvInsertStruct.hParent = hParent;
 			tvInsertStruct.hInsertAfter = TVI_FIRST;
@@ -909,10 +906,11 @@ void CRelationsView::GetAttributeReferences(int_t iInstance, const char* szAttri
 			{
 				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
 
-				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
-
-				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
+				LoadInstance(
+					iEntity,
+					CEntity::GetName(iEntity), 
+					iAttributeInstance, 
+					hParent);
 			}
 		} // case sdaiINSTANCE:
 		break;
