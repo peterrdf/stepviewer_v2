@@ -5,7 +5,6 @@
 #define IMAGE_SUB_TYPES				2
 #define IMAGE_ATTRIBUTES			2
 #define IMAGE_ATTRIBUTE				5
-#define IMAGE_IGNORED_ATTRIBUTE 	6
 
 #define ITEM_SUB_TYPES  L"Sub-types"
 #define ITEM_ATTRIBUTES L"Attributes"

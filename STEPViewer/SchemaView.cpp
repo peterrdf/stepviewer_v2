@@ -40,7 +40,6 @@ void CSchemaView::LoadModel(CModel* pModel)
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
-	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	//*********************************************************************************************
 
 	// Roots **************************************************************************************
@@ -105,8 +104,7 @@ void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)pEntity->GetAttributes()[iAttribute].c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
-			pEntity->IsAttributeIgnored(pEntity->GetAttributes()[iAttribute]) ? IMAGE_IGNORED_ATTRIBUTE : IMAGE_ATTRIBUTE;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTE;
 		tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
 		HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);

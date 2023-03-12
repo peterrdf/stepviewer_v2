@@ -495,9 +495,6 @@ CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 {
-	CController* pController = GetController();
-	ASSERT(pController != nullptr);
-
 	/**********************************************************************************************
 	* Model
 	*/
@@ -510,12 +507,6 @@ void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_pTreeView->InsertItem(&tvInsertStruct);
-
-	if (pController->GetModel() == pModel)
-	{
-		m_pTreeView->SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
-	}
-
 	m_mapModelHTREEITEM[hModel] = pModel;
 	//*********************************************************************************************
 

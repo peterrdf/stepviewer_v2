@@ -147,7 +147,6 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
-	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	// ******************************************************************************************** //	
 
 	// ******************************************************************************************** //
@@ -301,38 +300,8 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
 	{
-		char* szAttributeName = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);
-
-		wchar_t* szAttributeNameW = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (const char**)&szAttributeNameW);
-
-		if (!IsAttributeIgnored(iEntity, szAttributeNameW))
-		{
-			int_t iAttributeType = engiGetAttrTypeBN(iInstance, (char*)szAttributeName);
-			if (iAttributeType & 128)
-			{
-				iAttributeType = sdaiAGGR;
-			}
-
-			if (iAttributeType == sdaiADB)
-			{
-				int_t ADB = 0;
-				sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
-
-				if (ADB == 0)
-				{
-					ASSERT(FALSE);
-
-					iAttributeType = sdaiINSTANCE;
-				}
-			}
-
-			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
-		} // if (!IsAttributeIgnored(iEntity, szAttributeNameW))
-
 		iAttrubutesCount++;
-	} // while (iAttrubutesCount < engiGetEntityNoArguments(iEntity))
+	}
 
 	return iAttrubutesCount;
 }
@@ -1081,25 +1050,6 @@ void CRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElemen
 			ASSERT(FALSE);
 			break;
 	} // switch (iAggregateType)
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const
-{
-	auto pModel = GetModel();
-	auto pEntityProvider = pModel->GetEntityProvider();
-
-	auto& mapEntities = pEntityProvider->GetEntities();
-
-	auto itEntity = mapEntities.find(iEntity);
-	if (itEntity == mapEntities.end())
-	{
-		ASSERT(FALSE);
-
-		return false;
-	}
-
-	return itEntity->second->IsAttributeIgnored(szAttributeName);
 }
 
 // ------------------------------------------------------------------------------------------------

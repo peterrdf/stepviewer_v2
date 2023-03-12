@@ -47,7 +47,7 @@ BOOL CSearchSchemaDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 
 		ASSERT(iImage == iSelectedImage);
 
-		if ((iImage == IMAGE_ATTRIBUTE) || (iImage == IMAGE_IGNORED_ATTRIBUTE))
+		if (iImage == IMAGE_ATTRIBUTE)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}

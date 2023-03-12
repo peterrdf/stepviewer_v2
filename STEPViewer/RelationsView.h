@@ -158,7 +158,6 @@ private: // Methods
 	void GetAttributeReferences(int_t iInstance, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	void GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent);
 	void GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent);
-	bool IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const;
 
 	void GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const;
 

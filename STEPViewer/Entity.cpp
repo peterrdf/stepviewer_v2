@@ -11,7 +11,6 @@ CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iIns
 	, m_pParent(nullptr)
 	, m_iAttributesCount(iAttributesCount)
 	, m_vecAttributes()
-	, m_setIgnoredAttributes()
 	, m_iInstancesCount(iInstancesCount)
 	, m_vecSubTypes()
 	, m_vecInstances()
@@ -100,37 +99,6 @@ int_t CEntity::GetAttributesCount() const
 const vector<wstring>& CEntity::GetAttributes() const
 {
 	return m_vecAttributes;
-}
-
-// ------------------------------------------------------------------------------------------------
-const set<wstring>& CEntity::GetIgnoredAttributes() const
-{
-	return m_setIgnoredAttributes;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CEntity::IgnoreAttribute(const wstring& strAttribute, bool bIgnore)
-{
-	set<wstring>::iterator itAttribute = m_setIgnoredAttributes.find(strAttribute);
-
-	if (bIgnore)
-	{
-		ASSERT(itAttribute == m_setIgnoredAttributes.end());
-
-		m_setIgnoredAttributes.insert(strAttribute);
-	}
-	else
-	{
-		ASSERT(itAttribute != m_setIgnoredAttributes.end());
-
-		m_setIgnoredAttributes.erase(itAttribute);
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CEntity::IsAttributeIgnored(const wstring& strAttribute) const
-{
-	return m_setIgnoredAttributes.find(strAttribute) != m_setIgnoredAttributes.end();
 }
 
 // ------------------------------------------------------------------------------------------------

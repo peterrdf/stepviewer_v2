@@ -23,7 +23,6 @@ private: // Members
 
 	int_t m_iAttributesCount;
 	vector<wstring> m_vecAttributes;
-	set<wstring> m_setIgnoredAttributes;
 	int_t m_iInstancesCount;
 	vector<CEntity*> m_vecSubTypes;
 	vector<int_t> m_vecInstances;
@@ -42,9 +41,6 @@ public: // Methods
 
 	int_t GetAttributesCount() const;
 	const vector<wstring>& GetAttributes() const;
-	const set<wstring>& GetIgnoredAttributes() const;
-	void IgnoreAttribute(const wstring& strAttribute, bool bIgnore);
-	bool IsAttributeIgnored(const wstring& strAttribute) const;
 	bool IsAttributeInherited(const wstring& strAttribute) const;
 	int_t GetInstancesCount() const;
 	void AddSubType(CEntity* pEntity);

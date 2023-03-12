@@ -99,10 +99,6 @@ public: // Methods
 	CIFCPropertyProvider* GetPropertyProvider() const;
 	CIFCInstance* GetInstanceByID(int_t iID);
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
-	
-	// Schema
-	void SaveSchema();
-	void LoadSchema();
 
 private: // Methods
 	
