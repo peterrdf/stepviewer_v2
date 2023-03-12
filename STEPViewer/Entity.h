@@ -19,13 +19,13 @@ private: // Members
 	
 	int_t m_iEntity;
 	wstring m_strName;
-	CEntity * m_pParent;
+	CEntity* m_pParent;
 
 	int_t m_iAttributesCount;
 	vector<wstring> m_vecAttributes;
 	set<wstring> m_setIgnoredAttributes;
 	int_t m_iInstancesCount;
-	vector<CEntity *> m_vecSubTypes;
+	vector<CEntity*> m_vecSubTypes;
 	vector<int_t> m_vecInstances;
 
 public: // Methods

@@ -1103,6 +1103,34 @@ bool CRelationsView::IsAttributeIgnored(int_t iEntity, const wchar_t* szAttribut
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const
+{
+	ASSERT(iEntity != 0);
+
+	wstring strEntity = CEntity::GetName(iEntity);
+	if (engiGetEntityIsAbstract(iEntity))
+	{
+		strEntity += L" (ABSTRACT)";
+	}
+
+	vecHierarchy.push_back(strEntity);
+
+	int_t iParent = engiGetEntityParent(iEntity);
+	while (iParent != 0)
+	{
+		strEntity = CEntity::GetName(iParent);
+		if (engiGetEntityIsAbstract(iParent))
+		{
+			strEntity += L" (ABSTRACT)";
+		}
+
+		vecHierarchy.insert(vecHierarchy.begin(), strEntity);
+
+		iParent = engiGetEntityParent(iParent);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::Clean()
 {
 	for (auto pInstanceData : m_vecItemDataCache)
@@ -1203,10 +1231,18 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 		auto pInstanceData = (CInstanceData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
 		if (pInstanceData != nullptr)
 		{
-			m_strTooltip = CEntity::GetName(pInstanceData->getEntity());
-			if (engiGetEntityIsAbstract(pInstanceData->getEntity()))
+			vector<wstring> vecHierarchy;
+			GetEntityHierarchy(pInstanceData->getEntity(), vecHierarchy);
+
+			m_strTooltip = L"";
+			for (auto strEntity : vecHierarchy)
 			{
-				m_strTooltip += L" (ABSTRACT)";
+				if (!m_strTooltip.empty())
+				{
+					m_strTooltip += L"\n";
+				}
+
+				m_strTooltip += strEntity;
 			}
 		} // if (pAttributeData != nullptr)
 		else

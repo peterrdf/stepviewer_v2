@@ -160,6 +160,8 @@ private: // Methods
 	void GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent);
 	bool IsAttributeIgnored(int_t iEntity, const wchar_t* szAttributeName) const;
 
+	void GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const;
+
 	void Clean();
 
 // Construction
