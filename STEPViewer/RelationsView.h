@@ -150,11 +150,17 @@ private: // Methods
 	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances);
 	void LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
+
 	int_t LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent);
+	
+	void LoadADB(SdaiADB ADB, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
+	void LoadAGGR(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	void AddInstanceAttribute(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	bool CreateAttributeLabel(int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strLabel);
+
 	void CreateAttributeLabelADB(int_t ADB, wstring& strText, bool& bHasChildren);
 	void CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementIndex, wstring& strLabel, bool& bHasChildren);
+
 	void GetAttributeReferences(int_t iInstance, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	void GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent);
 	void GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent);

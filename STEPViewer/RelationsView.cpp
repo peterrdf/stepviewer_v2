@@ -298,21 +298,19 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	} // switch (m_enMode)
 
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
-	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
+	while (iAttrubutesCount < engiGetEntityNoAttributes(iEntity))
 	{
 		char* szAttributeName = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);
-
-		wchar_t* szAttributeNameW = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (const char**)&szAttributeNameW);
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);		
 
 		int_t iAttributeType = engiGetAttrTypeBN(iInstance, (char*)szAttributeName);
 		if (iAttributeType & 128)
 		{
 			iAttributeType = sdaiAGGR;
-		}
 
-		if (iAttributeType == sdaiADB)
+			LoadAGGR(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
+		} 
+		else if (iAttributeType == sdaiADB)
 		{
 			int_t ADB = 0;
 			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
@@ -323,9 +321,13 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 
 				iAttributeType = sdaiINSTANCE;
 			}
-		}
 
-		AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
+			LoadADB(&ADB, iEntity, szAttributeName, iAttributeType, hAttributesParent);
+		}
+		else
+		{
+			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
+		}
 
 		iAttrubutesCount++;
 	} // while (iAttrubutesCount < ..
@@ -334,10 +336,130 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRelationsView::LoadADB(SdaiADB ADB, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+{
+	ASSERT(0);//todo
+
+	//switch (sdaiGetADBType(ADB))
+	//{
+	//	case  sdaiADB:
+	//	{
+	//		SdaiADB attributeDataBlock = 0;
+	//		if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) 
+	//		{
+	//			ASSERT(FALSE);
+	//			//CreateDetailedADB___cout(attributeDataBlock);
+	//		}
+	//		else 
+	//		{
+	//			ASSERT(FALSE);
+	//		}
+	//	}
+	//	break;
+
+	//	case  sdaiAGGR:
+	//	{
+	//		ASSERT(FALSE); //todo
+	//		/*SdaiAggr        valueAggr = nullptr;
+	//		SdaiInstance    valueInstance = 0;
+	//		if (sdaiGetADBValue(ADB, sdaiAGGR, &valueAggr)) {
+	//			cout << "(";
+	//			CreateDetailedAggregation___cout(valueAggr);
+	//			cout << ")";
+	//		}
+	//		else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &valueInstance)) {
+	//			CreateInstance___cout(valueInstance);
+	//		}
+	//		else {
+	//			assert(false);
+	//		}*/
+	//	}
+	//	break;
+
+	//	default:
+	//	{
+	//		AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hParent);
+	//	}
+	//	break;
+	//} // switch (sdaiGetADBType(ADB))
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::LoadAGGR(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+{
+	switch (iAttributeType)
+	{
+		case sdaiADB:
+		{
+			ASSERT(0);//todo
+			//int_t ADB = 0;
+			//sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
+
+			//if (ADB != 0)
+			//{
+			//	wchar_t* szPath = (wchar_t*)sdaiGetADBTypePath((void*)ADB, sdaiUNICODE);
+			//	strLabel += szPath;
+
+			//	strLabel += L"(";
+			//	CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
+			//	strLabel += L")";
+			//} // if (ADB != 0) 
+			//else
+			//{
+			//	strLabel += L"NA";
+			//}
+		} // case sdaiADB:
+		break;
+
+		case sdaiAGGR:
+		{
+			int_t* pValues = nullptr;
+			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiAGGR, &pValues);
+
+			if (pValues != nullptr)
+			{
+				int_t iCount = sdaiGetMemberCount(pValues);
+				for (int_t iIndex = 0; iIndex < iCount; iIndex++)
+				{
+					SdaiAggr sdaiAggr = nullptr;
+					SdaiInstance sdaiInstance = 0;
+
+					if (engiGetAggrElement(pValues, iIndex, sdaiAGGR, &sdaiAggr))
+					{
+						ASSERT(FALSE);
+						/*cout << "(";
+						CreateDetailedAggregation___cout(valueAggr);
+						cout << ")";*/
+					}
+					else if (engiGetAggrElement(pValues, iIndex, sdaiINSTANCE, &sdaiInstance))
+					{
+						ASSERT(FALSE);
+						//CreateInstance___cout(valueInstance);
+					}
+					else 
+					{
+						//AddInstanceAttribute(pValues[iIndex], iEntity, szAttributeName, iAttributeType, hParent);
+					}
+				} // for (int_t iIndex = ...
+			} // if (pValues != nullptr) 
+			else
+			{
+				ASSERT(FALSE);
+			}
+		} // case sdaiAGGR:
+		break;		
+
+		default:
+		{
+			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hParent);
+		}
+		break;
+	} // switch (iAttributeType)
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
 {
-	ASSERT(iInstance != 0);
-
 	wstring strLabel;
 	bool bInverse = false;
 
@@ -346,14 +468,12 @@ void CRelationsView::AddInstanceAttribute(int_t iInstance, int_t iEntity, const 
 	{
 		bInverse = engiGetAttrInverseBN(iEntity, szAttributeName) != 0;
 	}
+
 	wstring strAttribute = CA2W(szAttributeName);
 	strAttribute += L" = ";
 	strAttribute += strLabel.empty() || (strLabel == L"()") || (strLabel == L"''") ? 
 		L"NA" : strLabel;
-
-	/*
-	* Attribute
-	*/
+	
 	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName, iAttributeType);
 	m_vecItemDataCache.push_back(pAttributeData);
 
@@ -395,62 +515,53 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 	switch (iAttributeType)
 	{
 		case sdaiADB:
-		{
-			int_t ADB = 0;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiADB, &ADB);
-
-			if (ADB != 0) 
-			{
-				wchar_t* szPath = (wchar_t *)sdaiGetADBTypePath((void *)ADB, sdaiUNICODE);
-				strLabel += szPath;
-
-				strLabel += L"(";
-				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
-				strLabel += L")";
-			} // if (ADB != 0) 
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiADB:
-		break;
-
 		case sdaiAGGR:
 		{
-			int_t* pValue = nullptr;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiAGGR, &pValue);
+			strLabel += L"NA";
+		}
+		break;
 
-			if (pValue != nullptr) 
+		case sdaiINSTANCE:
+		{
+			int_t iAttributeInstance = 0;
+			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiINSTANCE, &iAttributeInstance);
+
+			if (iAttributeInstance != 0)
 			{
-				strLabel += L"(";
+				strLabel += L"#";
 
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
+				int_t iValue = internalGetP21Line(iAttributeInstance);
 
-				while ((i < iCount)  &&  (i < 8))
-				{
-					if (i != 0) 
-					{
-						strLabel += L", ";
-					}
+				CString strValue;
+				strValue.Format(_T("%lld"), iValue);
 
-					CreateAttributeLabelAGGR(pValue, i, strLabel, bHasChildren);
+				strLabel += strValue;
 
-					i++;
-				}
-
-				if (i < iCount)
-				{
-					strLabel += L", ...";
-				}
-
-				strLabel += L")";
-			} // if (pValue != nullptr) 
-			else 
+				bHasChildren = true;
+			}
+			else
 			{
 				strLabel += L"NA";
 			}
-		} // case sdaiAGGR:
+		} // case sdaiINSTANCE:
+		break;
+
+		case sdaiSTRING:
+		{
+			wchar_t* szValue = 0;
+			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiUNICODE, (char**)&szValue);
+
+			if (szValue != nullptr)
+			{
+				strLabel += L"'";
+				strLabel += szValue;
+				strLabel += L"'";
+			}
+			else
+			{
+				strLabel += L"NA";
+			}
+		} // case sdaiSTRING:
 		break;
 
 		case sdaiBOOLEAN:
@@ -469,32 +580,7 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 				strLabel += L"NA";
 			}
 		} // case sdaiBOOLEAN:
-		break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0) 
-			{
-				strLabel += L"#";
-
-				int_t iValue = internalGetP21Line(iAttributeInstance);
-
-				CString strValue;
-				strValue.Format(_T("%lld"), iValue);
-
-				strLabel += strValue;
-			
-				bHasChildren = true;
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiINSTANCE:
-		break;
+		break;		
 
 		case sdaiINTEGER:
 		{
@@ -506,24 +592,6 @@ bool CRelationsView::CreateAttributeLabel(int_t iInstance, const char* szAttribu
 
 			strLabel += strValue;
 		} // case sdaiINTEGER:
-		break;
-
-		case sdaiSTRING:
-		{
-			wchar_t	* szValue = 0;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiUNICODE, (char **)&szValue);
-
-			if (szValue != nullptr) 
-			{
-				strLabel += L"'";
-				strLabel += szValue;
-				strLabel += L"'";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiSTRING:
 		break;
 
 		case  sdaiREAL:
