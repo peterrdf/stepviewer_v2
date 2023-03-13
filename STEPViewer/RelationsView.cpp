@@ -300,8 +300,35 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
 	while (iAttrubutesCount < engiGetEntityNoArguments(iEntity)) 
 	{
+		char* szAttributeName = 0;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);
+
+		wchar_t* szAttributeNameW = 0;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiUNICODE, (const char**)&szAttributeNameW);
+
+		int_t iAttributeType = engiGetAttrTypeBN(iInstance, (char*)szAttributeName);
+		if (iAttributeType & 128)
+		{
+			iAttributeType = sdaiAGGR;
+		}
+
+		if (iAttributeType == sdaiADB)
+		{
+			int_t ADB = 0;
+			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
+
+			if (ADB == 0)
+			{
+				ASSERT(FALSE);
+
+				iAttributeType = sdaiINSTANCE;
+			}
+		}
+
+		AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
+
 		iAttrubutesCount++;
-	}
+	} // while (iAttrubutesCount < ..
 
 	return iAttrubutesCount;
 }
