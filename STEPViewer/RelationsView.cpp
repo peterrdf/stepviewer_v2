@@ -336,7 +336,7 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadADB(SdaiADB ADB, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
+void CRelationsView::LoadADB(SdaiADB /*ADB*/, int_t /*iEntity*/, const char* /*szAttributeName*/, int_t /*iAttributeType*/, HTREEITEM /*hParent*/)
 {
 	ASSERT(0);//todo
 
