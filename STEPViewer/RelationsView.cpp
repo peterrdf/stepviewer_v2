@@ -26,7 +26,6 @@ static char THIS_FILE[]=__FILE__;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CRelationsView
 
-
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRelationsView::OnModelChanged() /*override*/
 {
@@ -299,192 +298,28 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 		break;
 	} // switch (m_enMode)
 
-    SdaiInteger index = 0;
-    SdaiAttr    iAttribute = engiGetEntityAttributeByIndex(
-                                    iEntity,
-                                    index++,
-                                    false,
-                                    true
-                                );
-    while (iAttribute) {
-		const char	* attributeName = nullptr;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount++, sdaiSTRING, &attributeName);
+    SdaiInteger iIndex = 0;
+    SdaiAttr sdaiAttribute = engiGetEntityAttributeByIndex(
+		iEntity,
+		iIndex++,
+		false,
+		true);
 
-		AddInstanceAttribute(iEntity, iInstance, iAttribute, attributeName, hAttributesParent);
-        iAttribute = engiGetEntityAttributeByIndex(
-							iEntity,
-							index++,
-							false,
-							true
-						);
-    }
-
-/*	...
-
-	while (iAttrubutesCount < engiGetEntityNoAttributes(iEntity))
+    while (sdaiAttribute != nullptr)
 	{
-		char* szAttributeName = 0;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount, sdaiSTRING, (const char**)&szAttributeName);		
+		const char* szAttributeName = nullptr;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount++, sdaiSTRING, &szAttributeName);
 
-		int_t iAttributeType = engiGetAttrTypeBN(iInstance, (char*)szAttributeName);
-		if (iAttributeType & 128)
-		{
-			iAttributeType = sdaiAGGR;
-
-			LoadAGGR(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
-		} 
-		else if (iAttributeType == sdaiADB)
-		{
-			int_t ADB = 0;
-			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
-
-			if (ADB == 0)
-			{
-				ASSERT(FALSE);
-
-				iAttributeType = sdaiINSTANCE;
-			}
-
-			LoadADB(&ADB, iEntity, szAttributeName, iAttributeType, hAttributesParent);
-		}
-		else
-		{
-			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hAttributesParent);
-		}
-
-		iAttrubutesCount++;
-	} // while (iAttrubutesCount < ..	//	*/
+		AddInstanceAttribute(iEntity, iInstance, sdaiAttribute, szAttributeName, hAttributesParent);
+		sdaiAttribute = engiGetEntityAttributeByIndex(
+			iEntity,
+			iIndex++,
+			false,
+			true);
+    }
 
 	return iAttrubutesCount;
 }
-
-// ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadADB(SdaiADB ADB, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
-{
-	ADB = ADB;
-	iEntity = iEntity;
-	char szAttributeN = szAttributeName[0];
-	szAttributeN = szAttributeN;
-	iAttributeType = iAttributeType;
-	hParent = hParent;
-//	ASSERT(0);//todo
-
-	//switch (sdaiGetADBType(ADB))
-	//{
-	//	case  sdaiADB:
-	//	{
-	//		SdaiADB attributeDataBlock = 0;
-	//		if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) 
-	//		{
-	//			ASSERT(FALSE);
-	//			//CreateDetailedADB___cout(attributeDataBlock);
-	//		}
-	//		else 
-	//		{
-	//			ASSERT(FALSE);
-	//		}
-	//	}
-	//	break;
-
-	//	case  sdaiAGGR:
-	//	{
-	//		ASSERT(FALSE); //todo
-	//		/*SdaiAggr        valueAggr = nullptr;
-	//		SdaiInstance    valueInstance = 0;
-	//		if (sdaiGetADBValue(ADB, sdaiAGGR, &valueAggr)) {
-	//			cout << "(";
-	//			CreateDetailedAggregation___cout(valueAggr);
-	//			cout << ")";
-	//		}
-	//		else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &valueInstance)) {
-	//			CreateInstance___cout(valueInstance);
-	//		}
-	//		else {
-	//			assert(false);
-	//		}*/
-	//	}
-	//	break;
-
-	//	default:
-	//	{
-	//		AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hParent);
-	//	}
-	//	break;
-	//} // switch (sdaiGetADBType(ADB))
-}
-
-// ------------------------------------------------------------------------------------------------
-/*void CRelationsView::LoadAGGR(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent)
-{
-	switch (iAttributeType)
-	{
-		case sdaiADB:
-		{
-			ASSERT(0);//todo
-			//int_t ADB = 0;
-			//sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiADB, &ADB);
-
-			//if (ADB != 0)
-			//{
-			//	wchar_t* szPath = (wchar_t*)sdaiGetADBTypePath((void*)ADB, sdaiUNICODE);
-			//	strLabel += szPath;
-
-			//	strLabel += L"(";
-			//	CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
-			//	strLabel += L")";
-			//} // if (ADB != 0) 
-			//else
-			//{
-			//	strLabel += L"NA";
-			//}
-		} // case sdaiADB:
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t* pValues = nullptr;
-			sdaiGetAttrBN(iInstance, (char*)szAttributeName, sdaiAGGR, &pValues);
-
-			if (pValues != nullptr)
-			{
-				int_t iCount = sdaiGetMemberCount(pValues);
-				for (int_t iIndex = 0; iIndex < iCount; iIndex++)
-				{
-					SdaiAggr sdaiAggr = nullptr;
-					SdaiInstance sdaiInstance = 0;
-
-					if (engiGetAggrElement(pValues, iIndex, sdaiAGGR, &sdaiAggr))
-					{
-						ASSERT(FALSE);
-						/*cout << "(";
-						CreateDetailedAggregation___cout(valueAggr);
-						cout << ")";* /
-					}
-					else if (engiGetAggrElement(pValues, iIndex, sdaiINSTANCE, &sdaiInstance))
-					{
-						ASSERT(FALSE);
-						//CreateInstance___cout(valueInstance);
-					}
-					else 
-					{
-						//AddInstanceAttribute(pValues[iIndex], iEntity, szAttributeName, iAttributeType, hParent);
-					}
-				} // for (int_t iIndex = ...
-			} // if (pValues != nullptr) 
-			else
-			{
-				ASSERT(FALSE);
-			}
-		} // case sdaiAGGR:
-		break;		
-
-		default:
-		{
-			AddInstanceAttribute(iInstance, iEntity, szAttributeName, iAttributeType, hParent);
-		}
-		break;
-	} // switch (iAttributeType)
-}	//	*/
 
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char * szAttributeName, HTREEITEM hParent)
@@ -500,8 +335,6 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 
 	wstring strAttribute = CA2W(szAttributeName);
 	strAttribute += L" = ";
-//	strAttribute += strLabel.empty() || (strLabel == L"()") || (strLabel == L"''") ? 
-//		L"NA" : strLabel;
 	strAttribute += strLabel.empty() ? L"$" : strLabel;
 
 	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName, 2); //, iAttributeType);
@@ -536,64 +369,70 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 	}
 }
 
-void CRelationsView::CreateAttributeLabelInstance(SdaiInstance instance, wstring& strLabel)
+void CRelationsView::CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel)
 {
-    assert(instance);
+    ASSERT(iInstance != 0);
 
 	CString strValue;
-	strValue.Format(_T("%lld"), internalGetP21Line(instance));
+	strValue.Format(_T("%lld"), internalGetP21Line(iInstance));
 
 	strLabel += L"#";
 	strLabel += strValue;
 }
 
-void CRelationsView::CreateAttributeLabelBoolean(bool value, wstring& strLabel)
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelBoolean(bool bValue, wstring& strLabel)
 {
-    if (value)
-		strLabel += L".T.";
-    else
-		strLabel += L".F.";
+	strLabel += bValue ? L".T." : L".F.";
 }
 
-void CRelationsView::CreateAttributeLabelLogical(char * value, wstring& strLabel)
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelLogical(char* szValue, wstring& strLabel)
 {
 	strLabel += L".";
-	strLabel += CA2W(value);
-	strLabel += L".";
-}
-
-void CRelationsView::CreateAttributeLabelEnumeration(char * value, wstring& strLabel)
-{
-	strLabel += L".";
-	strLabel += CA2W(value);
+	strLabel += CA2W(szValue);
 	strLabel += L".";
 }
 
-void CRelationsView::CreateAttributeLabelReal(double value, wstring& strLabel)
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel)
+{
+	strLabel += L".";
+	strLabel += CA2W(szValue);
+	strLabel += L".";
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelReal(double dValue, wstring& strLabel)
 {
 	CString strValue;
-	strValue.Format(_T("%f"), value);
+	strValue.Format(_T("%f"), dValue);
 
 	strLabel += strValue;
 }
 
-void CRelationsView::CreateAttributeLabelInteger(int_t value, wstring& strLabel)
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelInteger(int_t iValue, wstring& strLabel)
 {
 	CString strValue;
-	strValue.Format(_T("%lld"), value);
+	strValue.Format(_T("%lld"), iValue);
 
 	strLabel += strValue;
 }
 
-void CRelationsView::CreateAttributeLabelString(wchar_t * value, wstring& strLabel)
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel)
 {
-	if (value) {
+	if (szValue != nullptr) 
+	{
 		strLabel += L"'";
-		strLabel += value;
+		strLabel += szValue;
 		strLabel += L"'";
 	}
-    else
+	else
+	{
 		strLabel += L"''";
+	}	
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -603,126 +442,166 @@ bool CRelationsView::CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel)
 
 	strLabel += (const wchar_t*) sdaiGetADBTypePath(ADB, sdaiUNICODE);
 
-    switch (sdaiGetADBType(ADB)) {
+    switch (sdaiGetADBType(ADB)) 
+	{
         case  sdaiADB:
             {
-                SdaiADB    attributeDataBlock = 0;
-                if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) {
+                SdaiADB attributeDataBlock = 0;
+                if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) 
+				{
 					bHasChildren |= CreateAttributeLabelADB(attributeDataBlock, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiAGGR:
             {
-                SdaiAggr        valueAggr = nullptr;
-                SdaiInstance    valueInstance = 0;
+                SdaiAggr valueAggr = nullptr;
+                SdaiInstance iValueInstance = 0;
                 if (sdaiGetADBValue(ADB, sdaiAGGR, &valueAggr)) {
 					strLabel += L"(";
 					bHasChildren |= CreateAttributeLabelAggregation(valueAggr, strLabel);
 					strLabel += L")";
                 }
-                else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &valueInstance) || valueInstance) {
-					CreateAttributeLabelInstance(valueInstance, strLabel);
+                else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &iValueInstance) || iValueInstance) 
+				{
+					CreateAttributeLabelInstance(iValueInstance, strLabel);
+
 					bHasChildren = true;
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
                 }
             }
             break;
+
         case  sdaiINSTANCE:
             {
-                SdaiInstance    value = 0;
-                if (sdaiGetADBValue(ADB, sdaiINSTANCE, &value) || value) {
-					CreateAttributeLabelInstance(value, strLabel);
+                SdaiInstance iValue = 0;
+                if (sdaiGetADBValue(ADB, sdaiINSTANCE, &iValue) || iValue)
+				{
+					CreateAttributeLabelInstance(iValue, strLabel);
+
 					bHasChildren = true;
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiBOOLEAN:
             {
-                bool    value = false;
-                if (sdaiGetADBValue(ADB, sdaiBOOLEAN, &value)) {
-					CreateAttributeLabelBoolean(value, strLabel);
+                bool bValue = false;
+                if (sdaiGetADBValue(ADB, sdaiBOOLEAN, &bValue)) 
+				{
+					CreateAttributeLabelBoolean(bValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiLOGICAL:
             {
-                char    * value = nullptr;
-                if (sdaiGetADBValue(ADB, sdaiLOGICAL, &value)) {
-					CreateAttributeLabelLogical(value, strLabel);
+                char* szValue = nullptr;
+                if (sdaiGetADBValue(ADB, sdaiLOGICAL, &szValue)) 
+				{
+					CreateAttributeLabelLogical(szValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiENUM:
             {
-                char    * value = nullptr;
-                if (sdaiGetADBValue(ADB, sdaiENUM, &value)) {
-					CreateAttributeLabelEnumeration(value, strLabel);
+                char* szValue = nullptr;
+                if (sdaiGetADBValue(ADB, sdaiENUM, &szValue)) 
+				{
+					CreateAttributeLabelEnumeration(szValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiREAL:
             {
-                double  value = 0.;
-                if (sdaiGetADBValue(ADB, sdaiREAL, &value)) {
-					CreateAttributeLabelReal(value, strLabel);
+                double dValue = 0.;
+                if (sdaiGetADBValue(ADB, sdaiREAL, &dValue)) 
+				{
+					CreateAttributeLabelReal(dValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiINTEGER:
             {
-                int_t   value = 0;
-                if (sdaiGetADBValue(ADB, sdaiINTEGER, &value)) {
-					CreateAttributeLabelInteger(value, strLabel);
+                int_t iValue = 0;
+                if (sdaiGetADBValue(ADB, sdaiINTEGER, &iValue)) 
+				{
+					CreateAttributeLabelInteger(iValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         case  sdaiSTRING:
             {
-                wchar_t	* value = nullptr;
-                if (sdaiGetADBValue(ADB, sdaiUNICODE, &value)) {
-					CreateAttributeLabelString(value, strLabel);
+                wchar_t* szValue = nullptr;
+                if (sdaiGetADBValue(ADB, sdaiUNICODE, &szValue))
+				{
+					CreateAttributeLabelString(szValue, strLabel);
                 }
-                else {
-                    assert(false);
+                else 
+				{
+                    ASSERT(FALSE);
+
 					strLabel += L"$";
                 }
             }
             break;
+
         default:
-            assert(false);
-            break;
-    }
+		{
+			ASSERT(FALSE);
+		}
+		break;
+    } // switch (sdaiGetADBType(ADB)) 
 
 	strLabel += L")";
 
@@ -730,160 +609,197 @@ bool CRelationsView::CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel)
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t aggrType, SdaiInteger index, wstring& strLabel)
+bool CRelationsView::CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel)
 {
 	bool bHasChildren = false;
 
-    switch (aggrType) {
-        case  sdaiADB:
+    switch (iAggrType)
+	{
+        case sdaiADB:
         {
-            SdaiADB    attributeDataBlock = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiADB, &attributeDataBlock)) {
+            SdaiADB attributeDataBlock = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiADB, &attributeDataBlock)) 
+			{
 				bHasChildren |= CreateAttributeLabelADB(attributeDataBlock, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiAGGR:
+        case sdaiAGGR:
         {
-            SdaiAggr        valueAggr = nullptr;
-            SdaiInstance    valueInstance = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiAGGR, &valueAggr)) {
+            SdaiAggr valueAggr = nullptr;
+            SdaiInstance    iValueInstance = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiAGGR, &valueAggr)) 
+			{
 				strLabel += L"(";
 				bHasChildren |= CreateAttributeLabelAggregation(valueAggr, strLabel);
 				strLabel += L")";
             }
-            else if (engiGetAggrElement(aggregation, index, sdaiINSTANCE, &valueInstance) || valueInstance) {
-				CreateAttributeLabelInstance(valueInstance, strLabel);
+            else if (engiGetAggrElement(aggregation, iIndex, sdaiINSTANCE, &iValueInstance) || iValueInstance)
+			{
+				CreateAttributeLabelInstance(iValueInstance, strLabel);
+
 				bHasChildren = true;
 			}
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
             }
         }
         break;
 
-		case  sdaiINSTANCE:
+		case sdaiINSTANCE:
         {
-            SdaiInstance    value = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiINSTANCE, &value) || value) {
-				CreateAttributeLabelInstance(value, strLabel);
+            SdaiInstance iValue = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiINSTANCE, &iValue) || iValue) 
+			{
+				CreateAttributeLabelInstance(iValue, strLabel);
+
 				bHasChildren = true;
 			}
-			else {
-				assert(false);
+			else 
+			{
+				ASSERT(FALSE);
+
 				strLabel += L"$";
 			}
 		}
         break;
 
-		case  sdaiBOOLEAN:
+		case sdaiBOOLEAN:
         {
-            bool    value = false;
-            if (engiGetAggrElement(aggregation, index, sdaiBOOLEAN, &value)) {
-				CreateAttributeLabelBoolean(value, strLabel);
+            bool bValue = false;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiBOOLEAN, &bValue)) 
+			{
+				CreateAttributeLabelBoolean(bValue, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-		case  sdaiLOGICAL:
+		case sdaiLOGICAL:
         {
-            char    * value = nullptr;
-            if (engiGetAggrElement(aggregation, index, sdaiLOGICAL, &value)) {
-				CreateAttributeLabelLogical(value, strLabel);
+            char* szValue = nullptr;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiLOGICAL, &szValue)) 
+			{
+				CreateAttributeLabelLogical(szValue, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiENUM:
+        case sdaiENUM:
         {
-            char    * value = nullptr;
-            if (engiGetAggrElement(aggregation, index, sdaiENUM, &value)) {
-				CreateAttributeLabelEnumeration(value, strLabel);
+            char* szValue = nullptr;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiENUM, &szValue)) 
+			{
+				CreateAttributeLabelEnumeration(szValue, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiREAL:
+        case sdaiREAL:
         {
-            double  value = 0.;
-            if (engiGetAggrElement(aggregation, index, sdaiREAL, &value)) {
-				CreateAttributeLabelReal(value, strLabel);
+            double dValue = 0.;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiREAL, &dValue)) 
+			{
+				CreateAttributeLabelReal(dValue, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiINTEGER:
+        case sdaiINTEGER:
         {
-            int_t   value = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiINTEGER, &value)) {
-				CreateAttributeLabelInteger(value, strLabel);
+            int_t iValue = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiINTEGER, &iValue)) 
+			{
+				CreateAttributeLabelInteger(iValue, strLabel);
             }
-            else {
-                assert(false);
+            else
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiSTRING:
+        case sdaiSTRING:
         {
-            wchar_t	* value = nullptr;
-            if (engiGetAggrElement(aggregation, index, sdaiUNICODE, &value)) {
-				CreateAttributeLabelString(value, strLabel);
+            wchar_t* szVlue = nullptr;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiUNICODE, &szVlue)) 
+			{
+				CreateAttributeLabelString(szVlue, strLabel);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
+
 				strLabel += L"$";
             }
         }
         break;
 
         default:
-        assert(false);
+		{
+			ASSERT(FALSE);
+		}        
         break;
-    }
+    } // switch (iAggrType)
 
 	return	bHasChildren;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabelAggregation(SdaiAggr aggregation, wstring& strLabel)
+bool CRelationsView::CreateAttributeLabelAggregation(SdaiAggr sdaiAggregation, wstring& strLabel)
 {
 	bool bHasChildren = false;
 
-    SdaiInteger memberCount = sdaiGetMemberCount(aggregation);
-    if (memberCount == 0)
-        return  bHasChildren;
+    SdaiInteger iMemberCount = sdaiGetMemberCount(sdaiAggregation);
+	if (iMemberCount == 0)
+	{
+		return  bHasChildren;
+	}
 
-    int_t   aggrType = 0;
-    engiGetAggrType(aggregation, &aggrType);
+    int_t iAggrType = 0;
+    engiGetAggrType(sdaiAggregation, &iAggrType);
 
-    SdaiInteger index = 0;
-	bHasChildren |= CreateAttributeLabelAggregationElement(aggregation, aggrType, index++, strLabel);
-    while (index < memberCount) {
+    SdaiInteger iIndex = 0;
+	bHasChildren |= CreateAttributeLabelAggregationElement(sdaiAggregation, iAggrType, iIndex++, strLabel);
+
+    while (iIndex < iMemberCount)
+	{
 		strLabel += L", ";
-		bHasChildren |= CreateAttributeLabelAggregationElement(aggregation, aggrType, index++, strLabel);
+
+		bHasChildren |= CreateAttributeLabelAggregationElement(sdaiAggregation, iAggrType, iIndex++, strLabel);
     }
 
 	return	bHasChildren;
@@ -895,73 +811,103 @@ bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttr
 	strLabel = _T("");
 	bool bHasChildren = false;
 
-    int_t   iAttributeType = engiGetAttrType(iAttribute);
+    int_t iAttributeType = engiGetAttrType(iAttribute);
     if (iAttributeType & engiTypeFlagAggr ||
 		iAttributeType & engiTypeFlagAggrOption)
 		iAttributeType = sdaiAGGR;
 
 	switch (iAttributeType)
 	{
-        case  0:
-		strLabel += L"$";
+        case 0:
+		{
+			strLabel += L"$";
+		}		
         break;
 
-		case  sdaiADB:
+		case sdaiADB:
 		{
-			SdaiADB    attributeDataBlock = 0;
-			if (sdaiGetAttr(iInstance, iAttribute, sdaiADB, &attributeDataBlock)) {
-				assert(attributeDataBlock);
+			SdaiADB attributeDataBlock = 0;
+			if (sdaiGetAttr(iInstance, iAttribute, sdaiADB, &attributeDataBlock)) 
+			{
+				ASSERT(attributeDataBlock != nullptr);
+
 				bHasChildren |= CreateAttributeLabelADB(attributeDataBlock, strLabel);
 			}
-			else {
-				assert(false);
+			else
+			{
+				ASSERT(FALSE);
+
 				strLabel += L"$";
 			}
 		}
 		break;
 
-		case  sdaiAGGR:
+		case sdaiAGGR:
 		{
-			SdaiAggr        valueAggr = nullptr;
-			SdaiInstance    valueInstance = 0;
-			if (sdaiGetAttr(iInstance, iAttribute, sdaiAGGR, &valueAggr)) {
+			SdaiAggr valueAggr = nullptr;
+			SdaiInstance iValueInstance = 0;
+			if (sdaiGetAttr(iInstance, iAttribute, sdaiAGGR, &valueAggr)) 
+			{
 				strLabel += L"(";
 				bHasChildren |= CreateAttributeLabelAggregation(valueAggr, strLabel);
 				strLabel += L")";
 			}
-			else if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &valueInstance) || valueInstance) {
-				CreateAttributeLabelInstance(valueInstance, strLabel);
+			else if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &iValueInstance) || iValueInstance) 
+			{
+				CreateAttributeLabelInstance(iValueInstance, strLabel);
+
 				bHasChildren = true;
 			}
-			else {
+			else 
+			{
 				strLabel += L"$";
 			}
 		}
 		break;
 
-        case  sdaiINSTANCE:
+        case sdaiINSTANCE:
         {
-            SdaiInstance    value = 0;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &value) || value) {
-				CreateAttributeLabelInstance(value, strLabel);
+            SdaiInstance iValue = 0;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &iValue) || iValue) 
+			{
+				CreateAttributeLabelInstance(iValue, strLabel);
+
 				bHasChildren = true;
 			}
-            else {
-                if (engiGetAttrDerived(sdaiGetInstanceType(iInstance), iAttribute)) {
+            else 
+			{
+                if (engiGetAttrDerived(sdaiGetInstanceType(iInstance), iAttribute)) 
+				{
 					strLabel += L"*";
                 }
-                else {
+                else 
+				{
 					strLabel += L"$";
                 }
             }
         }
         break;
 
-        case  sdaiBOOLEAN:
+        case sdaiBOOLEAN:
         {
-            bool    value = false;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiBOOLEAN, &value)) {
-				CreateAttributeLabelBoolean(value, strLabel);
+            bool bValue = false;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiBOOLEAN, &bValue)) 
+			{
+				CreateAttributeLabelBoolean(bValue, strLabel);
+            }
+            else 
+			{
+				strLabel += L"$";
+            }
+        }
+        break;
+
+        case sdaiLOGICAL:
+        {
+            char* szValue = nullptr;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiLOGICAL, &szValue)) 
+			{
+				CreateAttributeLabelLogical(szValue, strLabel);
             }
             else {
 				strLabel += L"$";
@@ -969,424 +915,119 @@ bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttr
         }
         break;
 
-        case  sdaiLOGICAL:
+		case sdaiENUM:
         {
-            char    * value = nullptr;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiLOGICAL, &value)) {
-				CreateAttributeLabelLogical(value, strLabel);
+            char* szValue = nullptr;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiENUM, &szValue))
+			{
+				CreateAttributeLabelEnumeration(szValue, strLabel);
             }
-            else {
+            else 
+			{
 				strLabel += L"$";
             }
         }
         break;
 
-		case  sdaiENUM:
+        case sdaiREAL:
         {
-            char    * value = nullptr;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiENUM, &value)) {
-				CreateAttributeLabelEnumeration(value, strLabel);
+            double dValue = 0.;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiREAL, &dValue)) {
+				CreateAttributeLabelReal(dValue, strLabel);
             }
-            else {
+            else 
+			{
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiREAL:
+        case sdaiINTEGER:
         {
-            double  value = 0.;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiREAL, &value)) {
-				CreateAttributeLabelReal(value, strLabel);
+            int_t iValue = 0;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiINTEGER, &iValue)) 
+			{
+				CreateAttributeLabelInteger(iValue, strLabel);
             }
-            else {
+            else 
+			{
 				strLabel += L"$";
             }
         }
         break;
 
-        case  sdaiINTEGER:
+		case sdaiSTRING:
         {
-            int_t   value = 0;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiINTEGER, &value)) {
-				CreateAttributeLabelInteger(value, strLabel);
+            wchar_t* szValue = nullptr;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiUNICODE, &szValue)) 
+			{
+				CreateAttributeLabelString(szValue, strLabel);
             }
-            else {
-				strLabel += L"$";
-            }
-        }
-        break;
-
-		case  sdaiSTRING:
-        {
-            wchar_t	* value = nullptr;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiUNICODE, &value)) {
-				CreateAttributeLabelString(value, strLabel);
-            }
-            else {
+            else 
+			{
 				strLabel += L"$";
             }
         }
         break;
 
 		default:
-        assert(false);
+		{
+			ASSERT(FALSE);
+		}
         break;
-	}
+	} // switch (iAttributeType)
 
 	return bHasChildren;
 }
 
-/* ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelADB(int_t ADB, wstring& strLabel, bool& bHasChildren)
-{
-	switch (sdaiGetADBType((void *)ADB)) 
-	{
-		case sdaiADB:
-		{
-			int_t ADBsub = 0;
-			sdaiGetADBValue((void *)ADB, sdaiADB, &ADBsub);
-
-			if (ADBsub != 0) 
-			{
-				wchar_t* szPath = (wchar_t *)sdaiGetADBTypePath((void*)ADBsub, sdaiUNICODE);
-				strLabel += szPath;
-
-				strLabel += L"(";
-				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
-				strLabel += L")";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiADB:
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t * pValue = 0;
-			sdaiGetADBValue((void *)ADB, sdaiAGGR, &pValue);
-
-			if (pValue != nullptr)
-			{
-				strLabel += L"(";
-				
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
-				
-				while (i < iCount) 
-				{
-					if (i != 0) 
-					{
-						strLabel += L", ";
-					}
-
-					strLabel += L"???";
-					i++;
-				}
-
-				strLabel += L")";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiAGGR:
-		break;
-
-		case sdaiBOOLEAN:
-		case sdaiENUM:
-		case sdaiLOGICAL:
-		{
-			wchar_t* szValue = 0;
-			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char**)&szValue);
-
-			if (szValue != nullptr)
-			{
-				strLabel += szValue;
-			}
-			else
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiBOOLEAN:
-		break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			sdaiGetADBValue((void *)ADB, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0)
-			{
-				strLabel += L"#";
-
-				int_t iValue = internalGetP21Line(iAttributeInstance);
-
-				CString strValue;
-				strValue.Format(_T("%lld"), iValue);
-
-				strLabel += strValue;
-
-				bHasChildren = true;
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiINSTANCE:
-		break;
-
-		case sdaiINTEGER:
-		{
-			int_t iValue = 0;
-			sdaiGetADBValue((void *)ADB, sdaiINTEGER, &iValue);
-
-			CString strValue;
-			strValue.Format(_T("%lld"), iValue);
-
-			strLabel += strValue;
-		} // case sdaiINTEGER:
-		break;
-
-		case sdaiSTRING:
-		{
-			wchar_t	* szValue = 0;
-			sdaiGetADBValue((void *)ADB, sdaiUNICODE, (char **)&szValue);
-
-			if (szValue != nullptr)
-			{
-				strLabel += L"'";
-				strLabel += szValue;
-				strLabel += L"'";
-			}
-			else
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiSTRING:
-		break;
-
-		case sdaiREAL:
-		{
-			double dValue = 0;
-			sdaiGetADBValue((void*)ADB, sdaiREAL, &dValue);
-
-			CString strValue;
-			strValue.Format(_T("%f"), dValue);
-
-			strLabel += strValue;
-		} // case sdaiREAL:
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (sdaiGetADBType((void *)ADB)) 
-}	//	*/
-
-/* ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementIndex, wstring& strLabel, bool& bHasChildren)
-{
-	int_t iAggregateType = 0;
-	engiGetAggrType(pAggregate, &iAggregateType);
-
-	switch (iAggregateType) 
-	{
-		case sdaiADB:
-		{
-			int_t ADB = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiADB, &ADB);
-
-			if (ADB != 0) 
-			{
-				wchar_t	* szPath = (wchar_t *)sdaiGetADBTypePath((void*)ADB, sdaiUNICODE);
-				strLabel += szPath;
-
-				strLabel += L"(";
-				CreateAttributeLabelADB(ADB, strLabel, bHasChildren);
-				strLabel += L")";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiADB:
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t* pValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiAGGR, &pValue);
-
-			if (pValue != nullptr)
-			{
-				strLabel += L"(";
-
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
-
-				while ((i < iCount)  &&  (i < 8)) 
-				{
-					if (i != 0) 
-					{
-						strLabel += L", ";
-					}
-
-					CreateAttributeLabelAGGR(pValue, i, strLabel, bHasChildren);
-
-					i++;
-				}
-
-				if (i < iCount)
-				{
-					strLabel += L", ...";
-				}
-
-				strLabel += L")";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiAGGR:
-		break;
-
-		case sdaiBOOLEAN:
-		case sdaiENUM:
-		case sdaiLOGICAL:
-		{
-			wchar_t* szValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char**)&szValue);
-
-			if (szValue != nullptr) 
-			{
-				strLabel += szValue;
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiBOOLEAN:
-		break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0)
-			{
-				strLabel += L"#";
-
-				int_t iValue = internalGetP21Line(iAttributeInstance);
-
-				CString strValue;
-				strValue.Format(_T("%lld"), iValue);
-
-				strLabel += strValue;
-
-				bHasChildren = true;
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiINSTANCE:
-		break;
-
-		case sdaiINTEGER:
-		{
-			int_t iValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiINTEGER, &iValue);
-
-			CString strValue;
-			strValue.Format(_T("%lld"), iValue);
-
-			strLabel += strValue;
-		} // case sdaiINTEGER:
-		break;
-
-		case sdaiSTRING:
-		{
-			wchar_t* szValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiUNICODE, (char **)&szValue);
-
-			if (szValue != nullptr) 
-			{
-				strLabel += L"'";
-				strLabel += szValue;
-				strLabel += L"'";
-			}
-			else 
-			{
-				strLabel += L"NA";
-			}
-		} // case sdaiSTRING:
-		break;
-
-		case sdaiREAL:
-		{
-			double dValue = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiREAL, &dValue);
-
-			CString strValue;
-			strValue.Format(_T("%f"), dValue);
-
-			strLabel += strValue;
-		} // case sdaiREAL:
-		break;
-
-	default:
-		ASSERT(false);
-		break;
-	} // switch (iAggregateType) 
-}	//	*/
-
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent)
 {
-    switch (sdaiGetADBType(ADB)) {
-        case  sdaiADB:
+    switch (sdaiGetADBType(ADB)) 
+	{
+        case sdaiADB:
         {
-            SdaiADB    attributeDataBlock = 0;
-            if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) {
+            SdaiADB attributeDataBlock = 0;
+            if (sdaiGetADBValue(ADB, sdaiADB, &attributeDataBlock)) 
+			{
 				GetAttributeReferencesADB(attributeDataBlock, hParent);
             }
         }
         break;
 
-        case  sdaiAGGR:
+        case sdaiAGGR:
         {
-            SdaiAggr        valueAggr = nullptr;
-            SdaiInstance    valueInstance = 0;
+            SdaiAggr valueAggr = nullptr;
+            SdaiInstance iValueInstance = 0;
             if (sdaiGetADBValue(ADB, sdaiAGGR, &valueAggr)) {
 				GetAttributeReferencesAggregation(valueAggr, hParent);
             }
-            else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &valueInstance) || valueInstance) {
-				int_t iEntity = sdaiGetInstanceType(valueInstance);
+            else if (sdaiGetADBValue(ADB, sdaiINSTANCE, &iValueInstance) || iValueInstance) 
+			{
+				int_t iEntity = sdaiGetInstanceType(iValueInstance);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity),
-					valueInstance,
+					iValueInstance,
 					hParent);
 			}
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
             }
         }
         break;
 
-        case  sdaiINSTANCE:
+        case sdaiINSTANCE:
         {
-            SdaiInstance    value = 0;
-            if (sdaiGetADBValue(ADB, sdaiINSTANCE, &value) || value) {
-				int_t iEntity = sdaiGetInstanceType(value);
+            SdaiInstance iValue = 0;
+            if (sdaiGetADBValue(ADB, sdaiINSTANCE, &iValue) || iValue)
+			{
+				int_t iEntity = sdaiGetInstanceType(iValue);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity),
-					value,
+					iValue,
 					hParent);
 			}
         }
@@ -1398,384 +1039,179 @@ void CRelationsView::GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent)
         case  sdaiREAL:
         case  sdaiINTEGER:
         case  sdaiSTRING:
-        break;
+			break;
 
         default:
-        assert(false);
+		{
+			ASSERT(FALSE);
+		}        
         break;
-    }
+    } // switch (sdaiGetADBType(ADB)) 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t aggrType, SdaiInteger index, HTREEITEM hParent)
+void CRelationsView::GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, HTREEITEM hParent)
 {
-    switch (aggrType) {
-        case  sdaiADB:
+    switch (iAggrType)
+	{
+        case sdaiADB:
         {
-            SdaiADB    attributeDataBlock = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiADB, &attributeDataBlock)) {
+            SdaiADB  attributeDataBlock = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiADB, &attributeDataBlock))
+			{
 				GetAttributeReferencesADB(attributeDataBlock, hParent);
             }
         }
         break;
 
-		case  sdaiAGGR:
+		case sdaiAGGR:
         {
-            SdaiAggr        valueAggr = nullptr;
-            SdaiInstance    valueInstance = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiAGGR, &valueAggr)) {
+            SdaiAggr valueAggr = nullptr;
+            SdaiInstance iValueInstance = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiAGGR, &valueAggr)) {
 				GetAttributeReferencesAggregation(valueAggr, hParent);
             }
-            else if (engiGetAggrElement(aggregation, index, sdaiINSTANCE, &valueInstance) || valueInstance) {
-				int_t iEntity = sdaiGetInstanceType(valueInstance);
+            else if (engiGetAggrElement(aggregation, iIndex, sdaiINSTANCE, &iValueInstance) || iValueInstance) {
+				int_t iEntity = sdaiGetInstanceType(iValueInstance);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity), 
-					valueInstance,
+					iValueInstance,
 					hParent);
             }
-            else {
-                assert(false);
+            else 
+			{
+                ASSERT(FALSE);
             }
         }
         break;
 
-		case  sdaiINSTANCE:
+		case sdaiINSTANCE:
         {
-            SdaiInstance    value = 0;
-            if (engiGetAggrElement(aggregation, index, sdaiINSTANCE, &value) || value) {
-				int_t iEntity = sdaiGetInstanceType(value);
+            SdaiInstance iValue = 0;
+            if (engiGetAggrElement(aggregation, iIndex, sdaiINSTANCE, &iValue) || iValue) 
+			{
+				int_t iEntity = sdaiGetInstanceType(iValue);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity),
-					value,
+					iValue,
 					hParent);
 			}
         }
         break;
 
-        case  sdaiBOOLEAN:
-        case  sdaiLOGICAL:
-        case  sdaiENUM:
-        case  sdaiREAL:
-        case  sdaiINTEGER:
-        case  sdaiSTRING:
-        break;
+        case sdaiBOOLEAN:
+        case sdaiLOGICAL:
+        case sdaiENUM:
+        case sdaiREAL:
+        case sdaiINTEGER:
+        case sdaiSTRING:
+			break;
 
 		default:
-        assert(false);
+		{
+			ASSERT(FALSE);
+		}        
         break;
-    }
+    } // switch (iAggrType)
 }
 
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent)
 {
-    SdaiInteger memberCount = sdaiGetMemberCount(aggregation);
-    if (memberCount == 0)
-        return;
+    SdaiInteger iMemberCount = sdaiGetMemberCount(aggregation);
+	if (iMemberCount == 0)
+	{
+		return;
+	}        
 
-    int_t   aggrType = 0;
-    engiGetAggrType(aggregation, &aggrType);
+    int_t iAggrType = 0;
+    engiGetAggrType(aggregation, &iAggrType);
 
-    SdaiInteger index = 0;
-	GetAttributeReferencesAggregationElement(aggregation, aggrType, index++, hParent);
-    while (index < memberCount) {
-		GetAttributeReferencesAggregationElement(aggregation, aggrType, index++, hParent);
+    SdaiInteger iIndex = 0;
+	GetAttributeReferencesAggregationElement(aggregation, iAggrType, iIndex++, hParent);
+
+    while (iIndex < iMemberCount)
+	{
+		GetAttributeReferencesAggregationElement(aggregation, iAggrType, iIndex++, hParent);
     }
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, const char* /*szAttributeName*/, HTREEITEM hParent)
+void CRelationsView::GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, HTREEITEM hParent)
 {
-    int_t   attrType = engiGetAttrType(iAttribute);
-    if (attrType & engiTypeFlagAggr ||
-        attrType & engiTypeFlagAggrOption)
-        attrType = sdaiAGGR;
+    int_t iAttrType = engiGetAttrType(iAttribute);
+    if (iAttrType & engiTypeFlagAggr ||
+		iAttrType & engiTypeFlagAggrOption)
+		iAttrType = sdaiAGGR;
 
-    switch (attrType) {
-        case  0:
+    switch (iAttrType)
+	{
+        case 0:
+		{
+		}
         break;
 
-        case  sdaiADB:
+        case sdaiADB:
 		{
-            SdaiADB    attributeDataBlock = 0;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiADB, &attributeDataBlock)) {
-                assert(attributeDataBlock);
+            SdaiADB attributeDataBlock = 0;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiADB, &attributeDataBlock)) 
+			{
+                ASSERT(attributeDataBlock != nullptr);
+
 				GetAttributeReferencesADB(attributeDataBlock, hParent);
             }
         }
         break;
 
-        case  sdaiAGGR:
+        case sdaiAGGR:
         {
-            SdaiAggr        valueAggr = nullptr;
-            SdaiInstance    valueInstance = 0;
+            SdaiAggr valueAggr = nullptr;
+            SdaiInstance iValueInstance = 0;
             if (sdaiGetAttr(iInstance, iAttribute, sdaiAGGR, &valueAggr)) {
 				GetAttributeReferencesAggregation(valueAggr, hParent);
             }
-            else if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &valueInstance) || valueInstance) {
-				int_t iEntity = sdaiGetInstanceType(valueInstance);
+            else if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &iValueInstance) || iValueInstance) {
+				int_t iEntity = sdaiGetInstanceType(iValueInstance);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity),
-					valueInstance,
+					iValueInstance,
 					hParent);
 			}
         }
         break;
 
-        case  sdaiINSTANCE:
+        case sdaiINSTANCE:
         {
-            SdaiInstance    value = 0;
-            if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &value) || value) {
-				int_t iEntity = sdaiGetInstanceType(value);
+            SdaiInstance iValue = 0;
+            if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &iValue) || iValue) {
+				int_t iEntity = sdaiGetInstanceType(iValue);
 				LoadInstance(
 					iEntity,
 					CEntity::GetName(iEntity), 
-					value, 
+					iValue,
 					hParent);
             }
         }
         break;
 
-        case  sdaiBOOLEAN:
-        case  sdaiLOGICAL:
-        case  sdaiENUM:
-        case  sdaiREAL:
-		case  sdaiINTEGER:
-		case  sdaiSTRING:
-        break;
-
-		default:
-        assert(false);
-        break;
-    }
-
-/*	...
-	switch (iAttributeType) 
-	{
-		case sdaiADB:
-		{
-			int_t ADB = 0;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiADB, &ADB);
-
-			if (ADB != 0) 
-			{
-				GetAttributeReferencesADB(ADB, hParent);
-			}
-		} // case sdaiADB:
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t* pValue = nullptr;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiAGGR, &pValue);
-
-			if (pValue != nullptr) 
-			{
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
-
-				while (i < iCount) 
-				{
-					GetAttributeReferencesAGGR(pValue, i, hParent);
-
-					i++;
-				}
-			}
-		} // case sdaiAGGR:
-		break;
-
-		case  sdaiBOOLEAN:
-		case  sdaiENUM:
-		case  sdaiLOGICAL:
-			break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			sdaiGetAttrBN(iInstance, (char *)szAttributeName, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0) 
-			{
-				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
-
-				LoadInstance(
-					iEntity,
-					CEntity::GetName(iEntity), 
-					iAttributeInstance, 
-					hParent);
-			}
-		} // case sdaiINSTANCE:
-		break;
-
-		case  sdaiINTEGER:
-			break;
-
-		case  sdaiSTRING:
-			break;
-
-		case  sdaiREAL:
-			break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (iAttributeType)	//	*/
-}
-
-/*
-// ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent)
-{
-	switch (sdaiGetADBType((void *)ADB)) 
-	{
-		case sdaiADB:
-		{
-			int_t ADBsub = 0;
-			sdaiGetADBValue((void *)ADB, sdaiADB, &ADBsub);
-
-			if (ADBsub != 0) 
-			{
-				GetAttributeReferencesADB(ADBsub, hParent);
-			}
-		} // case sdaiADB:
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t * pValue = nullptr;
-			sdaiGetADBValue((void *)ADB, sdaiAGGR, &pValue);
-
-			if (pValue != nullptr) 
-			{
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
-
-				while (i < iCount) 
-				{
-					GetAttributeReferencesAGGR(pValue, i, hParent);
-
-					i++;
-				}
-			}
-		} // case sdaiAGGR:
-		break;
-
-		case sdaiBOOLEAN:
-		case sdaiENUM:
-		case sdaiLOGICAL:
-			break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			sdaiGetADBValue((void*)ADB, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0) 
-			{
-				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
-
-				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
-
-				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
-			}
-		}
-		break;
-
+        case sdaiBOOLEAN:
+        case sdaiLOGICAL:
+        case sdaiENUM:
+        case sdaiREAL:
 		case sdaiINTEGER:
-			break;
-
 		case sdaiSTRING:
 			break;
 
-		case sdaiREAL:
-			break;
-
 		default:
+		{
 			ASSERT(FALSE);
-			break;
-	} // switch (sdaiGetADBType((void *)ADB))
+		}        
+        break;
+    } // switch (iAttrType)
 }
-
-// ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent)
-{
-	int_t iAggregateType = 0;
-	engiGetAggrType(pAggregate, &iAggregateType);
-
-	switch (iAggregateType)
-	{
-		case sdaiADB:
-		{
-			int_t ADB = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiADB, &ADB);
-
-			if (ADB != 0) 
-			{
-				GetAttributeReferencesADB(ADB, hParent);
-			}
-		}
-		break;
-
-		case sdaiAGGR:
-		{
-			int_t * pValue = nullptr;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiAGGR, &pValue);
-
-			if (pValue != nullptr) 
-			{
-				int_t i = 0;
-				int_t iCount = sdaiGetMemberCount(pValue);
-
-				while (i < iCount)
-				{
-					GetAttributeReferencesAGGR(pValue, i, hParent);
-
-					i++;
-				}
-			}
-		} // case sdaiAGGR:
-		break;
-
-		case  sdaiBOOLEAN:
-		case  sdaiENUM:
-		case  sdaiLOGICAL:
-			break;
-
-		case sdaiINSTANCE:
-		{
-			int_t iAttributeInstance = 0;
-			engiGetAggrElement(pAggregate, iElementIndex, sdaiINSTANCE, &iAttributeInstance);
-
-			if (iAttributeInstance != 0)
-			{
-				int_t iEntity = sdaiGetInstanceType(iAttributeInstance);
-
-				wchar_t* szEntity = nullptr;
-				engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szEntity);
-
-				LoadInstance(iEntity, szEntity, iAttributeInstance, hParent);
-			}
-		} // case sdaiINSTANCE:
-		break;
-
-		case sdaiINTEGER:
-			break;
-
-		case sdaiSTRING:
-			break;
-
-		case sdaiREAL:
-			break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (iAggregateType)
-}	//	*/
 
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const
@@ -1862,8 +1298,6 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 		GetAttributeReferences(
 				pAttributeData->getInstance(),
 				sdaiGetAttrDefinition(sdaiGetInstanceType(pAttributeData->getInstance()), pAttributeData->getName()),
-				pAttributeData->getName(),
-//				pAttributeData->getType(),
 				pNMTreeView->itemNew.hItem);
 	} // if ((iImage == IMAGE_INSTANCE) && ...
 }

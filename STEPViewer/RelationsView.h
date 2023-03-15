@@ -150,39 +150,27 @@ private: // Methods
 	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances);
 	void LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
-
 	int_t LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent);
-	
-	void LoadADB(SdaiADB ADB, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
-	void LoadAGGR(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 
-	void CreateAttributeLabelInstance(SdaiInstance instance, wstring& strLabel);
-	void CreateAttributeLabelBoolean(bool value, wstring& strLabel);
-	void CreateAttributeLabelLogical(char* value, wstring& strLabel);
-	void CreateAttributeLabelEnumeration(char* value, wstring& strLabel);
-	void CreateAttributeLabelReal(double value, wstring& strLabel);
-	void CreateAttributeLabelInteger(int_t value, wstring& strLabel);
-	void CreateAttributeLabelString(wchar_t* value, wstring& strLabel);
+	void CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel);
+	void CreateAttributeLabelBoolean(bool bValue, wstring& strLabel);
+	void CreateAttributeLabelLogical(char* szValue, wstring& strLabel);
+	void CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel);
+	void CreateAttributeLabelReal(double dValue, wstring& strLabel);
+	void CreateAttributeLabelInteger(int_t iValue, wstring& strLabel);
+	void CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel);
 
-//	void AddInstanceAttribute(int_t iInstance, int_t iEntity, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
 	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent);
-//	bool CreateAttributeLabel(int_t iInstance, const char* szAttributeName, int_t iAttributeType, wstring& strLabel);
 	bool CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttribute, wstring& strLabel);
 
-	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t aggrType, SdaiInteger index, wstring& strLabel);
+	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel);
 	bool CreateAttributeLabelAggregation(SdaiAggr aggregation, wstring& strLabel);
 	bool CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel);
 
-//	void CreateAttributeLabelADB(int_t ADB, wstring& strText, bool& bHasChildren);
-//	void CreateAttributeLabelAGGR(int_t* pAggregate, int_t iElementIndex, wstring& strLabel, bool& bHasChildren);
-
 	void GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent);
-	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t aggrType, SdaiInteger index, HTREEITEM hParent);
+	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, HTREEITEM hParent);
 	void GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent);
-	void GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent);
-//	void GetAttributeReferences(int_t iInstance, const char* szAttributeName, int_t iAttributeType, HTREEITEM hParent);
-//	void GetAttributeReferencesADB(int_t ADB, HTREEITEM hParent);
-//	void GetAttributeReferencesAGGR(int_t* pAggregate, int_t iElementIndex, HTREEITEM hParent);
+	void GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, HTREEITEM hParent);
 
 	void GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const;
 
