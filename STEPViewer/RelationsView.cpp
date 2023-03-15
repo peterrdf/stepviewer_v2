@@ -11,17 +11,19 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-#define IMAGE_MODEL 				2
-#define IMAGE_INSTANCE				0
-#define IMAGE_ENTITY				1
-#define IMAGE_SUB_TYPES				2
-#define IMAGE_ATTRIBUTES			2
-#define IMAGE_INVERSE_ATTRIBUTE		3
-#define IMAGE_ATTRIBUTE				5
+#define IMAGE_MODEL 			2
+#define IMAGE_INSTANCE			0
+#define IMAGE_ENTITY			1
+#define IMAGE_SUB_TYPES			2
+#define IMAGE_ATTRIBUTES		2
+#define IMAGE_INVERSE_ATTRIBUTE	3
+#define IMAGE_ATTRIBUTE			5
 
-#define ITEM_SUB_TYPES	  L"Sub-types"
-#define ITEM_ATTRIBUTES	  L"Attributes"
-#define ITEM_PENDING_LOAD L"***..........***"
+#define ITEM_SUB_TYPES			L"Sub-types"
+#define ITEM_ATTRIBUTES			L"Attributes"
+#define ITEM_PENDING_LOAD		L"***..........***"
+
+#define MAX_LABEL_SIZE			50
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CRelationsView
@@ -848,8 +850,17 @@ bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttr
 			SdaiInstance iValueInstance = 0;
 			if (sdaiGetAttr(iInstance, iAttribute, sdaiAGGR, &valueAggr)) 
 			{
+				wstring strAggrLabel;
+				bHasChildren |= CreateAttributeLabelAggregation(valueAggr, strAggrLabel);
+
+				if (strAggrLabel.size() > MAX_LABEL_SIZE)
+				{
+					strAggrLabel = strAggrLabel.substr(0, MAX_LABEL_SIZE);
+					strAggrLabel += L"...";
+				}
+
 				strLabel += L"(";
-				bHasChildren |= CreateAttributeLabelAggregation(valueAggr, strLabel);
+				strLabel += strAggrLabel;
 				strLabel += L")";
 			}
 			else if (sdaiGetAttr(iInstance, iAttribute, sdaiINSTANCE, &iValueInstance) || iValueInstance) 
@@ -909,7 +920,8 @@ bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttr
 			{
 				CreateAttributeLabelLogical(szValue, strLabel);
             }
-            else {
+            else 
+			{
 				strLabel += L"$";
             }
         }
