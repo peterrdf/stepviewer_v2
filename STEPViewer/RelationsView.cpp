@@ -1393,8 +1393,8 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			m_treeCtrl.DeleteItem(hChild);
 
 			GetAttributeReferences(
-				pAttributeData->getInstance(),
-				sdaiGetAttrDefinition(sdaiGetInstanceType(pAttributeData->getInstance()), pAttributeData->getName()),
+				pAttributeData->GetInstance(),
+				sdaiGetAttrDefinition(sdaiGetInstanceType(pAttributeData->GetInstance()), pAttributeData->GetName()),
 				pNMTreeView->itemNew.hItem);
 		}
 		else if (iImage == IMAGE_ATTRIBUTES)
@@ -1408,8 +1408,8 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			for (size_t iAttribute = 0; (iAttribute < pAttributeSet->Attributes().size()); iAttribute++)
 			{
 				LoadInstanceAttribute(
-					pAttributeSet->getEntity(),
-					pAttributeSet->getInstance(),
+					pAttributeSet->GetEntity(),
+					pAttributeSet->GetInstance(),
 					pAttributeSet->Attributes()[iAttribute].first,
 					pAttributeSet->Attributes()[iAttribute].second,
 					hParent,
@@ -1440,16 +1440,16 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 		auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
 		if (pAttributeData != nullptr)
 		{
-			m_strTooltip = CA2W(pAttributeData->getName());
-			if (engiGetAttrInverseBN(pAttributeData->getEntity(), pAttributeData->getName()))
+			m_strTooltip = CA2W(pAttributeData->GetName());
+			if (engiGetAttrInverseBN(pAttributeData->GetEntity(), pAttributeData->GetName()))
 			{
 				m_strTooltip += L" (INVERSE)";
 			}
 
 			m_strTooltip += L"\n";
 
-			m_strTooltip += CEntity::GetName(pAttributeData->getEntity());
-			if (engiGetEntityIsAbstract(pAttributeData->getEntity()))
+			m_strTooltip += CEntity::GetName(pAttributeData->GetEntity());
+			if (engiGetEntityIsAbstract(pAttributeData->GetEntity()))
 			{
 				m_strTooltip += L" (ABSTRACT)";
 			}
@@ -1465,7 +1465,7 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 		if (pInstanceData != nullptr)
 		{
 			vector<wstring> vecHierarchy;
-			GetEntityHierarchy(pInstanceData->getEntity(), vecHierarchy);
+			GetEntityHierarchy(pInstanceData->GetEntity(), vecHierarchy);
 
 			m_strTooltip = L"";
 			for (auto strEntity : vecHierarchy)

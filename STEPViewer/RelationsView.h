@@ -77,9 +77,9 @@ private: // Classes
 
 		virtual ~CItemData() {}
 
-		int_t getInstance() const { return m_iInstance; }
-		int_t getEntity() const { return m_iEntity; }
-		const wchar_t* getEntityName() const { return CEntity::GetName(m_iEntity); }
+		int_t GetInstance() const { return m_iInstance; }
+		int_t GetEntity() const { return m_iEntity; }
+		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iEntity); }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ private: // Classes
 
 		virtual ~CAttributeData() {}
 
-		const char* getName() const { return m_srtName.c_str(); }
-		int_t getType() const { return m_iType; }
+		const char* GetName() const { return m_srtName.c_str(); }
+		int_t GetType() const { return m_iType; }
 	};
 
 	// -----------------------------------------------------------------------------------------------
