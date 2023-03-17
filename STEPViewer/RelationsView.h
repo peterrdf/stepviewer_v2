@@ -86,11 +86,6 @@ private: // Classes
 	class CInstanceData : public CItemData
 	{
 
-	private: // Members
-
-		int_t m_iInstance;
-		int_t m_iEntity;
-
 	public: // Methods
 
 		CInstanceData(int_t iInstance, int_t iEntity)
@@ -123,6 +118,26 @@ private: // Classes
 		int_t getType() const { return m_iType; }
 	};
 
+	// -----------------------------------------------------------------------------------------------
+	class CAttributeSet : public CItemData
+	{
+
+	private: // Members
+
+		vector<pair<SdaiAttr, const char*>> m_vecAttributes;
+
+	public: // Methods
+
+		CAttributeSet(int_t iInstance, int_t iEntity)
+			: CItemData(iInstance, iEntity)
+			, m_vecAttributes()
+		{}
+
+		virtual ~CAttributeSet() {}
+
+		vector<pair<SdaiAttr, const char*>>& Attributes() { return m_vecAttributes; }
+	};
+
 private: // Members
 
 	// View
@@ -150,7 +165,9 @@ private: // Methods
 	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const wchar_t* szEntity, const vector<int_t>& vecInstances);
 	void LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t iInstance, HTREEITEM hParent);
-	int_t LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent);
+	int_t GetInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	void LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 
 	void CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel);
 	void CreateAttributeLabelBoolean(bool bValue, wstring& strLabel);
@@ -159,8 +176,7 @@ private: // Methods
 	void CreateAttributeLabelReal(double dValue, wstring& strLabel);
 	void CreateAttributeLabelInteger(int_t iValue, wstring& strLabel);
 	void CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel);
-
-	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent);
+	
 	bool CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttribute, wstring& strLabel);
 
 	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel);

@@ -14,7 +14,6 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGE_MODEL 			2
 #define IMAGE_INSTANCE			0
 #define IMAGE_ENTITY			1
-#define IMAGE_SUB_TYPES			2
 #define IMAGE_ATTRIBUTES		2
 #define IMAGE_INVERSE_ATTRIBUTE	3
 #define IMAGE_ATTRIBUTE			5
@@ -24,6 +23,7 @@ static char THIS_FILE[]=__FILE__;
 #define ITEM_PENDING_LOAD		L"***..........***"
 
 #define MAX_LABEL_SIZE			50
+#define LOAD_ATTRIBUTES_LIMIT	10
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CRelationsView
@@ -255,11 +255,77 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);	
 
-	LoadInstanceAttributes(CInstance::GetEntity(iInstance), iInstance, hInstance);
+	CAttributeSet attributeSet(iInstance, CInstance::GetEntity(iInstance));
+	GetInstanceAttributes(CInstance::GetEntity(iInstance), iInstance, hInstance, &attributeSet);
+
+	// Load first page
+	size_t iAttributeStart = 0;
+	size_t iAttributeEnd = iAttributeStart + LOAD_ATTRIBUTES_LIMIT;
+	if (iAttributeEnd >= attributeSet.Attributes().size())
+	{
+		iAttributeEnd = attributeSet.Attributes().size();
+	}
+
+	for (size_t iAttribute = iAttributeStart; (iAttribute < iAttributeEnd); iAttribute++)
+	{
+		LoadInstanceAttribute(
+			CInstance::GetEntity(iInstance), 
+			iInstance, 
+			attributeSet.Attributes()[iAttribute].first,
+			attributeSet.Attributes()[iAttribute].second,
+			hInstance,
+			TVI_LAST);
+
+		iAttributeStart++;
+	}
+
+	// Load on demand
+	while (iAttributeStart < attributeSet.Attributes().size())
+	{
+		iAttributeEnd = iAttributeStart + LOAD_ATTRIBUTES_LIMIT;
+		if (iAttributeEnd >= attributeSet.Attributes().size())
+		{
+			iAttributeEnd = attributeSet.Attributes().size();
+		}
+
+		auto pAttributeSet = new CAttributeSet(iInstance, CInstance::GetEntity(iInstance));
+		m_vecItemDataCache.push_back(pAttributeSet);
+
+		for (size_t iAttribute = iAttributeStart; (iAttribute < iAttributeEnd); iAttribute++)
+		{
+			pAttributeSet->Attributes().push_back(attributeSet.Attributes()[iAttribute]);
+		}
+
+		CString strPage;
+		strPage.Format(L"(%ld - %ld)...", iAttributeStart, iAttributeEnd);
+
+		// Pending load
+		tvInsertStruct.hParent = hInstance;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;;
+		tvInsertStruct.item.pszText = strPage.GetBuffer();
+		tvInsertStruct.item.cChildren = 1;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTES;
+		tvInsertStruct.item.lParam = NULL;
+
+		HTREEITEM hAttributes = m_treeCtrl.InsertItem(&tvInsertStruct);
+
+		// Add a fake item - load on demand
+		tvInsertStruct.hParent = hAttributes;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+		tvInsertStruct.item.pszText = ITEM_PENDING_LOAD;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
+		tvInsertStruct.item.lParam = (LPARAM)pAttributeSet;
+
+		m_treeCtrl.InsertItem(&tvInsertStruct);
+
+		iAttributeStart = iAttributeEnd;
+	} // while (iAttributeStart < ...
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent)
+int_t CRelationsView::GetInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet)
 {
 	if (iEntity == 0)
 	{
@@ -268,7 +334,41 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 
 	ASSERT(iInstance != 0);
 
-	int_t iAttrubutesCount = LoadInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent);
+	int_t iAttrubutesCount = GetInstanceAttributes(engiGetEntityParent(iEntity), iInstance, hParent, pAttributeSet);
+
+	SdaiInteger iIndex = 0;
+	SdaiAttr sdaiAttribute = engiGetEntityAttributeByIndex(
+		iEntity,
+		iIndex++,
+		false,
+		true);
+
+	while (sdaiAttribute != nullptr)
+	{
+		const char* szAttributeName = nullptr;
+		engiGetEntityArgumentName(iEntity, iAttrubutesCount++, sdaiSTRING, &szAttributeName);
+
+		pAttributeSet->Attributes().push_back(pair<SdaiAttr, const char*>(sdaiAttribute, szAttributeName));
+
+		sdaiAttribute = engiGetEntityAttributeByIndex(
+			iEntity,
+			iIndex++,
+			false,
+			true);
+	}
+
+	return iAttrubutesCount;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
+{
+	if ((iEntity == 0) || (iInstance == 0))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	HTREEITEM hAttributesParent = NULL;
 	switch (m_enMode)
@@ -300,31 +400,11 @@ int_t CRelationsView::LoadInstanceAttributes(int_t iEntity, int_t iInstance, HTR
 		break;
 	} // switch (m_enMode)
 
-    SdaiInteger iIndex = 0;
-    SdaiAttr sdaiAttribute = engiGetEntityAttributeByIndex(
-		iEntity,
-		iIndex++,
-		false,
-		true);
-
-    while (sdaiAttribute != nullptr)
-	{
-		const char* szAttributeName = nullptr;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount++, sdaiSTRING, &szAttributeName);
-
-		AddInstanceAttribute(iEntity, iInstance, sdaiAttribute, szAttributeName, hAttributesParent);
-		sdaiAttribute = engiGetEntityAttributeByIndex(
-			iEntity,
-			iIndex++,
-			false,
-			true);
-    }
-
-	return iAttrubutesCount;
+	AddInstanceAttribute(iEntity, iInstance, sdaiAttribute, szAttributeName, hAttributesParent, hInsertAfter);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char * szAttributeName, HTREEITEM hParent)
+void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
 {
 	wstring strLabel;
 	bool bInverse = false;
@@ -344,7 +424,7 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.hInsertAfter = hInsertAfter;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR) strAttribute.c_str();
 	tvInsertStruct.item.cChildren = bHasChildren ? 1 : 0;
@@ -371,6 +451,7 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
 void CRelationsView::CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel)
 {
     ASSERT(iInstance != 0);
@@ -1287,10 +1368,12 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 
 	ASSERT(iImage == iSelectedImage);
 
-	if ((iImage == IMAGE_INSTANCE) && (pNMTreeView->itemNew.cChildren == 1))
+	if (
+		((iImage == IMAGE_INSTANCE) || (iImage == IMAGE_ATTRIBUTES)) && 
+		(pNMTreeView->itemNew.cChildren == 1))
 	{
 		HTREEITEM hChild = m_treeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);
-		if (hChild == nullptr)
+		if (hChild == NULL)
 		{
 			ASSERT(FALSE);
 
@@ -1302,15 +1385,39 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 			return;
 		}		
 
-		auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(hChild);
-		ASSERT(pAttributeData != nullptr);
+		if (iImage == IMAGE_INSTANCE)
+		{
+			auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(hChild);
+			ASSERT(pAttributeData != nullptr);
 
-		m_treeCtrl.DeleteItem(hChild);
-		
-		GetAttributeReferences(
+			m_treeCtrl.DeleteItem(hChild);
+
+			GetAttributeReferences(
 				pAttributeData->getInstance(),
 				sdaiGetAttrDefinition(sdaiGetInstanceType(pAttributeData->getInstance()), pAttributeData->getName()),
 				pNMTreeView->itemNew.hItem);
+		}
+		else if (iImage == IMAGE_ATTRIBUTES)
+		{
+			auto pAttributeSet = (CAttributeSet*)m_treeCtrl.GetItemData(hChild);
+			ASSERT(pAttributeSet != nullptr);
+
+			HTREEITEM hParent = m_treeCtrl.GetParentItem(pNMTreeView->itemNew.hItem);
+			ASSERT(hParent != NULL);			
+
+			for (size_t iAttribute = 0; (iAttribute < pAttributeSet->Attributes().size()); iAttribute++)
+			{
+				LoadInstanceAttribute(
+					pAttributeSet->getEntity(),
+					pAttributeSet->getInstance(),
+					pAttributeSet->Attributes()[iAttribute].first,
+					pAttributeSet->Attributes()[iAttribute].second,
+					hParent,
+					pNMTreeView->itemNew.hItem);
+			}
+
+			m_treeCtrl.DeleteItem(pNMTreeView->itemNew.hItem);
+		} // else if (iImage == IMAGE_ATTRIBUTES)
 	} // if ((iImage == IMAGE_INSTANCE) && ...
 }
 
