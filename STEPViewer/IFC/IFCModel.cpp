@@ -547,6 +547,26 @@ CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
 }
 
 // ------------------------------------------------------------------------------------------------
+void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances)
+{
+	vecInstances.clear();
+
+	CString strTargetType = szType;
+	strTargetType.MakeUpper();
+
+	for (auto pInstance : m_vecInstances)
+	{
+		CString strType = pInstance->GetEntityName();
+		strType.MakeUpper();
+
+		if (strType == strTargetType)
+		{
+			vecInstances.push_back(pInstance);
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
 	int_t * iIFCInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);

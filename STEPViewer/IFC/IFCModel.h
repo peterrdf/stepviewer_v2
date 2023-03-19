@@ -97,8 +97,9 @@ public: // Methods
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;
-	CIFCInstance* GetInstanceByID(int_t iID);
+	CIFCInstance* GetInstanceByID(int_t iID);	
 	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
+	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods
 	
