@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "IFCDecompContTreeView.h"
+#include "IFCModelStructureView.h"
 #include "ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
@@ -14,7 +14,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
+CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 	: CSTEPTreeViewBase()
 	, m_pTreeView(pTreeView)
 	, m_pImageList(nullptr)
@@ -63,7 +63,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CIFCDecompContTreeView::~CIFCDecompContTreeView()
+/*virtual*/ CIFCModelStructureView::~CIFCModelStructureView()
 {
 	m_pTreeView->SetImageList(nullptr, TVSIL_NORMAL);
 
@@ -76,7 +76,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnInstanceSelected(CSTEPView* pSender)
+/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CSTEPView* pSender)
 {	
 	if (pSender == this)
 	{
@@ -112,19 +112,19 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::Load()
+/*virtual*/ void CIFCModelStructureView::Load()
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CImageList* CIFCDecompContTreeView::GetImageList() const
+/*virtual*/ CImageList* CIFCModelStructureView::GetImageList() const
 {
 	return m_pImageList;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
+/*virtual*/ void CIFCModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
 {
 	if (!bShow)
 	{
@@ -133,7 +133,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CIFCModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -236,13 +236,13 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CIFCModelStructureView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCDecompContTreeView::IsSelected(HTREEITEM hItem)
+/*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem)
 {
 	auto pInstance = (CIFCInstance*)m_pTreeView->GetItemData(hItem);
 	if (pInstance == nullptr)
@@ -262,7 +262,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
+/*virtual*/ void CIFCModelStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	ASSERT_VALID(m_pTreeView);
 	if (pWnd != m_pTreeView)
@@ -452,7 +452,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCDecompContTreeView::OnSearch()
+/*virtual*/ void CIFCModelStructureView::OnSearch()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -465,7 +465,7 @@ CIFCDecompContTreeView::CIFCDecompContTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
+CIFCModel* CIFCModelStructureView::GetModel(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -493,7 +493,7 @@ CIFCModel* CIFCDecompContTreeView::GetModel(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
+void CIFCModelStructureView::LoadModel(CIFCModel* pModel)
 {
 	/**********************************************************************************************
 	* Model
@@ -544,7 +544,7 @@ void CIFCDecompContTreeView::LoadModel(CIFCModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
+void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 {
 	/*********************************************************************************************
 	* Header
@@ -822,7 +822,7 @@ void CIFCDecompContTreeView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance)
+void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -899,7 +899,7 @@ void CIFCDecompContTreeView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
@@ -952,7 +952,7 @@ void CIFCDecompContTreeView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
@@ -1005,7 +1005,7 @@ void CIFCDecompContTreeView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
@@ -1082,7 +1082,7 @@ void CIFCDecompContTreeView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel)
+void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel)
 {
 	ASSERT(pModel != nullptr);
 
@@ -1210,7 +1210,7 @@ void CIFCDecompContTreeView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadTree_UpdateItems(HTREEITEM hModel)
+void CIFCModelStructureView::LoadTree_UpdateItems(HTREEITEM hModel)
 {
 	HTREEITEM hModelChild = m_pTreeView->GetNextItem(hModel, TVGN_CHILD);
 	while (hModelChild != nullptr)
@@ -1235,7 +1235,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItems(HTREEITEM hModel)
 }
 
 // ----------------------------------------------------------------------------
-void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
+void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);
 
@@ -1335,7 +1335,7 @@ void CIFCDecompContTreeView::LoadTree_UpdateItem(HTREEITEM hParent)
 }
 
 // ----------------------------------------------------------------------------
-void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
+void CIFCModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);
 
@@ -1381,7 +1381,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateChildren(HTREEITEM hParent)
 }
 
 // ----------------------------------------------------------------------------
-void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
+void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1499,7 +1499,7 @@ void CIFCDecompContTreeView::ClickItem_UpdateParent(HTREEITEM hParent)
 }
 
 // ----------------------------------------------------------------------------
-void CIFCDecompContTreeView::UnselectAllItems()
+void CIFCModelStructureView::UnselectAllItems()
 {
 	auto itSelectedIInstance = m_mapSelectedInstances.begin();
 	for (; itSelectedIInstance != m_mapSelectedInstances.end(); itSelectedIInstance++)
@@ -1511,7 +1511,7 @@ void CIFCDecompContTreeView::UnselectAllItems()
 }
 
 // ----------------------------------------------------------------------------
-void CIFCDecompContTreeView::ResetView()
+void CIFCModelStructureView::ResetView()
 {
 	m_mapModelHTREEITEM.clear();
 	m_mapInstance2Item.clear();

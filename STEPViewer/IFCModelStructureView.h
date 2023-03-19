@@ -15,7 +15,7 @@ using namespace std;
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-class CIFCDecompContTreeView 
+class CIFCModelStructureView 
 	: public CSTEPTreeViewBase
 	, public CItemStateProvider
 {
@@ -35,8 +35,8 @@ private: // Members
 
 public: // Methods
 
-	CIFCDecompContTreeView(CViewTree* pTreeView);
-	virtual ~CIFCDecompContTreeView();
+	CIFCModelStructureView(CViewTree* pTreeView);
+	virtual ~CIFCModelStructureView();
 
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);

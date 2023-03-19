@@ -207,7 +207,7 @@
     <ClInclude Include="SearchAttributeDialog.h" />
     <ClInclude Include="SearchSchemaDialog.h" />
     <ClInclude Include="StructureView.h" />
-    <ClInclude Include="IFCDecompContTreeView.h" />
+    <ClInclude Include="IFCModelStructureView.h" />
     <ClInclude Include="IFCProperty.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
@@ -222,7 +222,7 @@
     <ClInclude Include="STEPItemData.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
-    <ClInclude Include="STEPProductsTreeView.h" />
+    <ClInclude Include="STEPModelStructureView.h" />
     <ClInclude Include="STEPTreeViewBase.h" />
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
@@ -252,7 +252,7 @@
     <ClCompile Include="SearchAttributeDialog.cpp" />
     <ClCompile Include="SearchSchemaDialog.cpp" />
     <ClCompile Include="StructureView.cpp" />
-    <ClCompile Include="IFCDecompContTreeView.cpp" />
+    <ClCompile Include="IFCModelStructureView.cpp" />
     <ClCompile Include="IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
@@ -266,7 +266,7 @@
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="STEPProductsTreeView.cpp" />
+    <ClCompile Include="STEPModelStructureView.cpp" />
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />
     <ClCompile Include="STEPViewerView.cpp" />

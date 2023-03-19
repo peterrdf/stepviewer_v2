@@ -6,7 +6,7 @@
 #include "SearchInstancesDialog.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPProductsTreeView 
+class CSTEPModelStructureView 
 	: public CSTEPTreeViewBase
 	, public CItemStateProvider
 {
@@ -30,8 +30,8 @@ private: // Members
 
 public: // Methods
 
-	CSTEPProductsTreeView(CViewTree* pTreeView);
-	virtual ~CSTEPProductsTreeView();	
+	CSTEPModelStructureView(CViewTree* pTreeView);
+	virtual ~CSTEPModelStructureView();	
 
 	// CSTEPView
 	virtual void OnInstanceSelected(CSTEPView* pSender);

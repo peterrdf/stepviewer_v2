@@ -6,7 +6,7 @@
 #include "SearchInstancesDialog.h"
 #include "Assembly.h"
 #include "STEPItemData.h"
-#include "STEPProductsTreeView.h"
+#include "STEPModelStructureView.h"
 
 #include <map>
 

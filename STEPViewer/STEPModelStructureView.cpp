@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "STEPProductsTreeView.h"
+#include "STEPModelStructureView.h"
 #include "ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
@@ -18,7 +18,7 @@ using namespace std;
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
+CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 	: CSTEPTreeViewBase()
 	, m_pTreeView(pTreeView)
 	, m_pImageList(nullptr)
@@ -65,7 +65,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CSTEPProductsTreeView::~CSTEPProductsTreeView()
+/*virtual*/ CSTEPModelStructureView::~CSTEPModelStructureView()
 {
 	m_pTreeView->SetImageList(nullptr, TVSIL_NORMAL);
 
@@ -82,7 +82,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnInstanceSelected(CSTEPView* pSender)
+/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CSTEPView* pSender)
 {
 	if (pSender == this)
 	{
@@ -149,19 +149,19 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::Load()
+/*virtual*/ void CSTEPModelStructureView::Load()
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CImageList* CSTEPProductsTreeView::GetImageList() const
+/*virtual*/ CImageList* CSTEPModelStructureView::GetImageList() const
 {
 	return m_pImageList;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
+/*virtual*/ void CSTEPModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
 {
 	if (!bShow)
 	{
@@ -170,7 +170,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CSTEPModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -287,7 +287,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
+/*virtual*/ void CSTEPModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -333,7 +333,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CSTEPProductsTreeView::IsSelected(HTREEITEM /*hItem*/)
+/*virtual*/ bool CSTEPModelStructureView::IsSelected(HTREEITEM /*hItem*/)
 {
 	ASSERT(FALSE); // TODO
 
@@ -341,7 +341,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+/*virtual*/ void CSTEPModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	if (point == CPoint(-1, -1))
 	{
@@ -526,7 +526,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPProductsTreeView::OnSearch()
+/*virtual*/ void CSTEPModelStructureView::OnSearch()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -539,7 +539,7 @@ CSTEPProductsTreeView::CSTEPProductsTreeView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
+void CSTEPModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 {
 	auto pController = GetController();
 	ASSERT(pController != nullptr);
@@ -822,7 +822,7 @@ void CSTEPProductsTreeView::LoadHeaderDescription(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadModel()
+void CSTEPModelStructureView::LoadModel()
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -904,11 +904,11 @@ void CSTEPProductsTreeView::LoadModel()
 	m_bInitInProgress = false;
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** CSTEPProductsTreeView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** CSTEPModelStructureView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
+void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
 	CString strName = pDefinition->getId();
 	strName += ITEM_PRODUCT_DEFINION;
@@ -953,7 +953,7 @@ void CSTEPProductsTreeView::LoadProductDefinition(CSTEPModel* pModel, CProductDe
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
+void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
 	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
 
@@ -1026,7 +1026,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CPro
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	/*
 	* Instance
@@ -1053,7 +1053,7 @@ void CSTEPProductsTreeView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CP
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
 
@@ -1110,7 +1110,7 @@ void CSTEPProductsTreeView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pMod
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData* CSTEPProductsTreeView::FindItemData(CProductInstance* pInstance)
+CSTEPItemData* CSTEPModelStructureView::FindItemData(CProductInstance* pInstance)
 {
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
 	{
@@ -1124,7 +1124,7 @@ CSTEPItemData* CSTEPProductsTreeView::FindItemData(CProductInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadItemChildren(CSTEPItemData* pItemData)
+void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 {
 	if ((pItemData == nullptr) || (pItemData->treeItem() == nullptr) || pItemData->children().empty())
 	{
@@ -1209,7 +1209,7 @@ void CSTEPProductsTreeView::LoadItemChildren(CSTEPItemData* pItemData)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::LoadInstanceAncestors(CProductInstance* pInstance)
+void CSTEPModelStructureView::LoadInstanceAncestors(CProductInstance* pInstance)
 {
 	if (pInstance == nullptr)
 	{
@@ -1245,7 +1245,7 @@ void CSTEPProductsTreeView::LoadInstanceAncestors(CProductInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::ResetTree(bool bEnable)
+void CSTEPModelStructureView::ResetTree(bool bEnable)
 {
 	HTREEITEM hRoot = m_pTreeView->GetRootItem();
 	while (hRoot != nullptr)
@@ -1270,7 +1270,7 @@ void CSTEPProductsTreeView::ResetTree(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::ResetTree(HTREEITEM hParent, bool bEnable)
+void CSTEPModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
 {
 	if (hParent == nullptr)
 	{
@@ -1301,7 +1301,7 @@ void CSTEPProductsTreeView::ResetTree(HTREEITEM hParent, bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
+void CSTEPModelStructureView::UpdateChildren(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1361,7 +1361,7 @@ void CSTEPProductsTreeView::UpdateChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::UpdateChildrenInMemory(CSTEPItemData* pParent, bool bEnable)
+void CSTEPModelStructureView::UpdateChildrenInMemory(CSTEPItemData* pParent, bool bEnable)
 {
 	if (pParent == nullptr)
 	{
@@ -1383,7 +1383,7 @@ void CSTEPProductsTreeView::UpdateChildrenInMemory(CSTEPItemData* pParent, bool 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
+void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1501,7 +1501,7 @@ void CSTEPProductsTreeView::UpdateParent(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPProductsTreeView::ResetView()
+void CSTEPModelStructureView::ResetView()
 {
 	m_pTreeView->DeleteAllItems();
 

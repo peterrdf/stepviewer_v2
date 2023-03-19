@@ -6,7 +6,7 @@
 #include "STEPViewer.h"
 #include "STEPModel.h"
 #include "Generic.h"
-#include "IFCDecompContTreeView.h"
+#include "IFCModelStructureView.h"
 
 #include <algorithm>
 #include <chrono>
@@ -45,7 +45,7 @@ static char THIS_FILE[]=__FILE__;
 	{
 		case enumModelType::STEP:
 		{
-			m_pSTEPTreeView = new CSTEPProductsTreeView(&m_structureView);
+			m_pSTEPTreeView = new CSTEPModelStructureView(&m_structureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -53,7 +53,7 @@ static char THIS_FILE[]=__FILE__;
 
 		case enumModelType::IFC:
 		{
-			m_pSTEPTreeView = new CIFCDecompContTreeView(&m_structureView);
+			m_pSTEPTreeView = new CIFCModelStructureView(&m_structureView);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}

@@ -110,7 +110,7 @@
     <ClInclude Include="OpenGLView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPProductsTreeView.h">
+    <ClInclude Include="STEPModelStructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="STEPTreeViewBase.h">
@@ -131,7 +131,7 @@
     <ClInclude Include="IFC\SearchDecompContDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFCDecompContTreeView.h">
+    <ClInclude Include="IFCModelStructureView.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="IFCProperty.h">
@@ -226,13 +226,13 @@
     <ClCompile Include="OpenGLView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPProductsTreeView.cpp">
+    <ClCompile Include="STEPModelStructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProductDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFCDecompContTreeView.cpp">
+    <ClCompile Include="IFCModelStructureView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFCProperty.cpp">
