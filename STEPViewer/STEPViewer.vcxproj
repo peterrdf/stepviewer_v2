@@ -201,14 +201,14 @@
   <ItemGroup>
     <ClInclude Include="Assembly.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="IFC\IFCModelStructureView.h" />
+    <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
     <ClInclude Include="SearchAttributeDialog.h" />
     <ClInclude Include="SearchSchemaDialog.h" />
     <ClInclude Include="StructureView.h" />
-    <ClInclude Include="IFCModelStructureView.h" />
-    <ClInclude Include="IFCProperty.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
@@ -247,13 +247,13 @@
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="IFC\IFCModelStructureView.cpp" />
+    <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchAttributeDialog.cpp" />
     <ClCompile Include="SearchSchemaDialog.cpp" />
     <ClCompile Include="StructureView.cpp" />
-    <ClCompile Include="IFCModelStructureView.cpp" />
-    <ClCompile Include="IFCProperty.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
