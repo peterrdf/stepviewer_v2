@@ -493,12 +493,6 @@ void CIFCModel::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCModel::getModel() const
-{
-	return m_iModel;
-}
-
-// ------------------------------------------------------------------------------------------------
 float CIFCModel::GetBoundingSphereDiameter() const
 {
 	return m_fBoundingSphereDiameter;

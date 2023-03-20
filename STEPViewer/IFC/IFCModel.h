@@ -91,8 +91,7 @@ public: // Methods
 
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
 	void Clean();
-	
-	int_t getModel() const;	
+
 	float GetBoundingSphereDiameter() const;	
 	const map<int64_t, CIFCInstance*> & GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;

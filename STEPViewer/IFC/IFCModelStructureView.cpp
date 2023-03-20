@@ -518,7 +518,7 @@ void CIFCModelStructureView::LoadModel(CIFCModel* pModel)
 	/**********************************************************************************************
 	* Project/Units/Unreferenced
 	*/
-	int64_t* iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->getModel(), (char*)"IFCPROJECT");
+	int64_t* iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCPROJECT");
 
 	int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
 	if (iIFCProjectInstancesCount > 0)
@@ -576,9 +576,9 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 		HTREEITEM hDescriptions = m_pTreeView->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getModel(), 0, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->GetInstance(), 0, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getModel(), 0, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->GetInstance(), 0, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -599,7 +599,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* ImplementationLevel
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 1, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 1, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"ImplementationLevel";
 		strItem += L" = '";
@@ -620,7 +620,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* Name
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 2, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 2, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Name";
 		strItem += L" = '";
@@ -641,7 +641,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* TimeStamp
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 3, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 3, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"TimeStamp";
 		strItem += L" = '";
@@ -672,9 +672,9 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 		HTREEITEM hDescriptions = m_pTreeView->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getModel(), 4, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->GetInstance(), 4, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getModel(), 4, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->GetInstance(), 4, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -705,9 +705,9 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 		HTREEITEM hDescriptions = m_pTreeView->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getModel(), 5, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->GetInstance(), 5, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getModel(), 5, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->GetInstance(), 5, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -728,7 +728,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* PreprocessorVersion
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 6, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 6, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"PreprocessorVersion";
 		strItem += L" = '";
@@ -749,7 +749,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* OriginatingSystem
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 7, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 7, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"OriginatingSystem";
 		strItem += L" = '";
@@ -770,7 +770,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 	* Authorization
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getModel(), 8, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->GetInstance(), 8, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Authorization";
 		strItem += L" = '";
@@ -801,9 +801,9 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 		HTREEITEM hDescriptions = m_pTreeView->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getModel(), 9, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->GetInstance(), 9, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getModel(), 9, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->GetInstance(), 9, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -911,7 +911,7 @@ void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 		return;
 	}
 
-	const int64_t iIFCRelAggregatesEntity = sdaiGetEntity(pModel->getModel(), "IFCRELAGGREGATES");
+	const int64_t iIFCRelAggregatesEntity = sdaiGetEntity(pModel->GetInstance(), "IFCRELAGGREGATES");
 
 	int64_t iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
 	for (int64_t i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
@@ -964,7 +964,7 @@ void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 		return;
 	}
 
-	const int64_t iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->getModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+	const int64_t iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->GetInstance(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
 
 	int64_t iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
 	for (int64_t i = 0; i < iIFCContainsElementsInstancesCount; ++i)

@@ -42,8 +42,25 @@ void CDesignTreeView::LoadModel(CModel* pModel)
 	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
 	//*********************************************************************************************
 
+	// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	int64_t* iIFCSiteInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCSITE");
+
+	int64_t iIFCSiteInstancesCount = sdaiGetMemberCount(iIFCSiteInstances);
+	if (iIFCSiteInstancesCount > 0)
+	{
+		int64_t	iIFCSiteInstance = 0;
+		engiGetAggrElement(iIFCSiteInstances, 0, sdaiINSTANCE, &iIFCSiteInstance);
+
+		int64_t owlInstance = 0;
+		owlBuildInstance(pModel->GetInstance(), iIFCSiteInstance, &owlInstance);
+
+		TRACE(L"\n");
+	} // if (iIFCProjectInstancesCount > 0)
+	
+	// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 	// Roots **************************************************************************************
-	auto pEntityProvider = pModel->GetEntityProvider();
+	/*auto pEntityProvider = pModel->GetEntityProvider();
 	if ((pEntityProvider == nullptr) || pEntityProvider->GetEntities().empty())
 	{
 		return;
@@ -65,7 +82,7 @@ void CDesignTreeView::LoadModel(CModel* pModel)
 	for (auto itRoot : mapRoots)
 	{
 		LoadEntity(itRoot.second, hModel);
-	}
+	}*/
 	// ********************************************************************************************	
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
