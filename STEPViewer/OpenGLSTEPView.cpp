@@ -358,7 +358,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		{
 			if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 
 				return;
 			}
@@ -376,7 +376,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
-					ASSERT(false);
+					ASSERT(FALSE);
 
 					return;
 				}
@@ -398,7 +398,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
-					ASSERT(false);
+					ASSERT(FALSE);
 
 					return;
 				}
@@ -420,7 +420,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
-					ASSERT(false);
+					ASSERT(FALSE);
 
 					return;
 				}
@@ -442,7 +442,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
-					ASSERT(false);
+					ASSERT(FALSE);
 
 					return;
 				}
@@ -470,7 +470,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -486,7 +486,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -502,7 +502,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -518,7 +518,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -534,7 +534,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}

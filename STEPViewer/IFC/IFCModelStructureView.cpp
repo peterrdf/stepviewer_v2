@@ -894,7 +894,7 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 	} // if (itInstance != ...
 	else
 	{
-		ASSERT(false);
+		ASSERT(FALSE);
 	}
 }
 
@@ -1077,7 +1077,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 	} // if (itInstance != ...
 	else
 	{
-		ASSERT(false);
+		ASSERT(FALSE);
 	}
 }
 
@@ -1296,7 +1296,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 		default:
 		{
-			ASSERT(false); // unexpected
+			ASSERT(FALSE); // unexpected
 		}
 		break;
 		} // switch (iImage)
@@ -1434,7 +1434,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent)
 
 			default:
 			{
-				ASSERT(false); // unexpected
+				ASSERT(FALSE); // unexpected
 			}
 			break;
 		} // switch (iImage)

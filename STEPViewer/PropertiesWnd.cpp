@@ -290,7 +290,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				break;
 
 				default:
-					ASSERT(false);
+					ASSERT(FALSE);
 					break;
 			} // switch (pData->GetType())
 
@@ -941,12 +941,12 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 							}
 							break;
 							default:
-								ASSERT(false);
+								ASSERT(FALSE);
 								break;
 							}
 						}
 						else {
-							//ASSERT(false);
+							//ASSERT(FALSE);
 						}
 					}
 				}
@@ -1054,7 +1054,7 @@ void CPropertiesWnd::OnViewModeChanged()
 
 		default:
 		{
-			ASSERT(false); // unknown mode
+			ASSERT(FALSE); // unknown mode
 		}
 		break;
 	}

@@ -516,7 +516,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 
 			default:
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 			}
 			break;
 		} // switch (uiCommand)	
@@ -1436,7 +1436,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 
 		default:
 		{
-			ASSERT(false); // unexpected
+			ASSERT(FALSE); // unexpected
 		}
 		break;
 		} // switch (iImage)

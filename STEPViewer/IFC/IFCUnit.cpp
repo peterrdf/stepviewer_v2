@@ -726,12 +726,12 @@ void CIFCUnitProvider::LoadUnits(int_t iIFCProjectInstance)
                 }
                 else
                 {
-                    ASSERT(false);
+                    ASSERT(FALSE);
                 }
             } // if (iIFCMeasureWithUnitInstance != 0) 
             else
             {
-                ASSERT(false);
+                ASSERT(FALSE);
             }
         } // if (sdaiGetInstanceType(iIFCUnitInstance) == ...)
         else

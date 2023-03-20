@@ -208,7 +208,7 @@ static void	MatrixMultiply(
 		pOut->_43 = pTmp._43;
 	}
 	else {
-		ASSERT(false);
+		ASSERT(FALSE);
 	}
 }
 

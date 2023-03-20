@@ -265,7 +265,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}			
@@ -284,7 +284,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -304,7 +304,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -316,7 +316,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -329,7 +329,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}			
@@ -349,7 +349,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -360,7 +360,7 @@ protected: // Methods
 		}
 		else
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 		}			
 	}
 
@@ -368,7 +368,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -379,7 +379,7 @@ protected: // Methods
 		}
 		else
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 		}
 	}
 
@@ -387,7 +387,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -411,7 +411,7 @@ protected: // Methods
 	{ 
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -423,7 +423,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -817,7 +817,7 @@ public: // Methods
 	{
 		if (!_oglProgram::_link())
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return false;
 		}
@@ -1538,7 +1538,7 @@ public: // Methods
 			glGenVertexArrays(1, &iVAO);
 			if (iVAO == 0)
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 
 				return 0;
 			}
@@ -1573,7 +1573,7 @@ public: // Methods
 			glGenBuffers(1, &iBuffer);
 			if (iBuffer == 0)
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 
 				return 0;
 			}
@@ -1591,7 +1591,7 @@ public: // Methods
 	{
 		if (vecCohorts.empty())
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1601,7 +1601,7 @@ public: // Methods
 
 		if (iIBO == 0)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1613,7 +1613,7 @@ public: // Methods
 
 		if ((pIndices == nullptr) || (iIndicesCount == 0))
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1642,7 +1642,7 @@ public: // Methods
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1652,7 +1652,7 @@ public: // Methods
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1662,7 +1662,7 @@ public: // Methods
 
 		if (iVAO == 0)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1676,7 +1676,7 @@ public: // Methods
 
 		if (iVBO == 0)
 		{
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -2048,7 +2048,7 @@ public: // Methods
 
 			default:
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 			}
 			break;
 		}
@@ -2145,7 +2145,7 @@ public: // Methods
 
 			default:
 			{
-				ASSERT(false);
+				ASSERT(FALSE);
 			}
 			break;
 		} // switch (enView)
