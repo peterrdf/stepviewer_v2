@@ -54,6 +54,11 @@ void CDesignTreeView::LoadModel(CModel* pModel)
 		int64_t owlInstance = 0;
 		owlBuildInstance(pModel->GetInstance(), iIFCSiteInstance, &owlInstance);
 
+		auto iClass = GetInstanceClass(owlInstance);
+		
+		char* szClassName = nullptr;
+		GetNameOfClass(iClass, &szClassName);
+
 		TRACE(L"\n");
 	} // if (iIFCProjectInstancesCount > 0)
 	
@@ -86,107 +91,6 @@ void CDesignTreeView::LoadModel(CModel* pModel)
 	// ********************************************************************************************	
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CDesignTreeView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
-{
-	if (pEntity->GetAttributesCount() == 0)
-	{
-		return;
-	}
-
-	/*
-	* Attributes
-	*/
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = ITEM_ATTRIBUTES;
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTES;
-	tvInsertStruct.item.lParam = NULL;
-
-	HTREEITEM hAttributes = m_treeCtrl.InsertItem(&tvInsertStruct);
-
-	for (size_t iAttribute = 0; iAttribute < pEntity->GetAttributes().size(); iAttribute++)
-	{
-		const wstring& strAttribute = pEntity->GetAttributes()[iAttribute];
-		if (pEntity->IsAttributeInherited(strAttribute))
-		{
-			continue;
-		}
-
-		tvInsertStruct.hParent = hAttributes;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)pEntity->GetAttributes()[iAttribute].c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTE;
-		tvInsertStruct.item.lParam = (LPARAM)pEntity;
-
-		HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);
-		VERIFY(hAttribute != nullptr);
-	} // for (size_t iAttribute = ...
-}
-
-// ------------------------------------------------------------------------------------------------
-void CDesignTreeView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
-{
-	/*
-	* Entity
-	*/
-	pair<int, int>  prInstancesCount = GetInstancesCount(pEntity);
-
-	CString strEntity;
-	strEntity.Format(_T("%s (%d/%d)"), pEntity->GetName(), prInstancesCount.first, prInstancesCount.second);
-
-	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
-	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = (LPTSTR)strEntity.GetBuffer();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
-	tvInsertStruct.item.lParam = (LPARAM)pEntity;
-
-	HTREEITEM hEntity = m_treeCtrl.InsertItem(&tvInsertStruct);
-
-	LoadAttributes(pEntity, hEntity);
-
-	/*
-	* Sub-types
-	*/
-	if (pEntity->GetSubTypes().size() > 0)
-	{
-		tvInsertStruct.hParent = hEntity;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_SUB_TYPES;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SUB_TYPES;
-		tvInsertStruct.item.lParam = NULL;
-
-		HTREEITEM hSubType = m_treeCtrl.InsertItem(&tvInsertStruct);
-
-		for (size_t iSubType = 0; iSubType < pEntity->GetSubTypes().size(); iSubType++)
-		{
-			LoadEntity(pEntity->GetSubTypes()[iSubType], hSubType);
-		}
-	} // if (pEntity->getSubTypes().size() > 0)
-}
-
-// ------------------------------------------------------------------------------------------------
-pair<int, int> CDesignTreeView::GetInstancesCount(CEntity* pEntity) const
-{
-	int iInstancesCount = (int)pEntity->GetInstancesCount();
-
-	int iSubInstancesCount = 0;
-	for (size_t iSubType = 0; iSubType < pEntity->GetSubTypes().size(); iSubType++)
-	{
-		iSubInstancesCount += (int)pEntity->GetSubTypes()[iSubType]->GetInstancesCount();
-
-		iSubInstancesCount += GetInstancesCount(pEntity->GetSubTypes()[iSubType]).second;
-	}
-
-	return pair<int, int>(iInstancesCount, iSubInstancesCount);
 }
 
 // ----------------------------------------------------------------------------
