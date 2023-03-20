@@ -124,7 +124,7 @@ private: // Classes
 
 	private: // Members
 
-		vector<pair<SdaiAttr, const char*>> m_vecAttributes;
+		vector<pair<SdaiAttr, SdaiInteger>> m_vecAttributes;
 
 	public: // Methods
 
@@ -135,7 +135,7 @@ private: // Classes
 
 		virtual ~CAttributeSet() {}
 
-		vector<pair<SdaiAttr, const char*>>& Attributes() { return m_vecAttributes; }
+		vector<pair<SdaiAttr, SdaiInteger>>& Attributes() { return m_vecAttributes; }
 	};
 
 private: // Members

@@ -255,8 +255,8 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);	
 
-	CAttributeSet attributeSet(iInstance, CInstance::GetEntity(iInstance));
-	GetInstanceAttributes(CInstance::GetEntity(iInstance), iInstance, hInstance, &attributeSet);
+	CAttributeSet attributeSet(iInstance, iEntity);
+	GetInstanceAttributes(iEntity, iInstance, hInstance, &attributeSet);
 
 	// Load first page
 	size_t iAttributeStart = 0;
@@ -268,11 +268,17 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 
 	for (size_t iAttribute = iAttributeStart; (iAttribute < iAttributeEnd); iAttribute++)
 	{
+		const char* szAttributeName = nullptr;
+		engiGetEntityArgumentName(attributeSet.GetEntity(), 
+			attributeSet.Attributes()[iAttribute].second, 
+			sdaiSTRING, 
+			&szAttributeName);
+
 		LoadInstanceAttribute(
-			CInstance::GetEntity(iInstance), 
+			iEntity,
 			iInstance, 
 			attributeSet.Attributes()[iAttribute].first,
-			attributeSet.Attributes()[iAttribute].second,
+			szAttributeName,
 			hInstance,
 			TVI_LAST);
 
@@ -288,7 +294,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 			iAttributeEnd = attributeSet.Attributes().size();
 		}
 
-		auto pAttributeSet = new CAttributeSet(iInstance, CInstance::GetEntity(iInstance));
+		auto pAttributeSet = new CAttributeSet(iInstance, iEntity);
 		m_vecItemDataCache.push_back(pAttributeSet);
 
 		for (size_t iAttribute = iAttributeStart; (iAttribute < iAttributeEnd); iAttribute++)
@@ -297,7 +303,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 		}
 
 		CString strPage;
-		strPage.Format(L"(%ld - %ld)...", iAttributeStart, iAttributeEnd);
+		strPage.Format(L"(%lld - %lld)...", iAttributeStart, iAttributeEnd);
 
 		// Pending load
 		tvInsertStruct.hParent = hInstance;
@@ -345,10 +351,7 @@ int_t CRelationsView::GetInstanceAttributes(int_t iEntity, int_t iInstance, HTRE
 
 	while (sdaiAttribute != nullptr)
 	{
-		const char* szAttributeName = nullptr;
-		engiGetEntityArgumentName(iEntity, iAttrubutesCount++, sdaiSTRING, &szAttributeName);
-
-		pAttributeSet->Attributes().push_back(pair<SdaiAttr, const char*>(sdaiAttribute, szAttributeName));
+		pAttributeSet->Attributes().push_back(pair<SdaiAttr, SdaiInteger>(sdaiAttribute, iAttrubutesCount++));
 
 		sdaiAttribute = engiGetEntityAttributeByIndex(
 			iEntity,
@@ -1402,11 +1405,17 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 
 			for (size_t iAttribute = 0; (iAttribute < pAttributeSet->Attributes().size()); iAttribute++)
 			{
+				const char* szAttributeName = nullptr;
+				engiGetEntityArgumentName(pAttributeSet->GetEntity(),
+					pAttributeSet->Attributes()[iAttribute].second,
+					sdaiSTRING,
+					&szAttributeName);
+
 				LoadInstanceAttribute(
 					pAttributeSet->GetEntity(),
 					pAttributeSet->GetInstance(),
 					pAttributeSet->Attributes()[iAttribute].first,
-					pAttributeSet->Attributes()[iAttribute].second,
+					szAttributeName,
 					hParent,
 					pNMTreeView->itemNew.hItem);
 			}
