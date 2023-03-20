@@ -797,7 +797,8 @@ BEGIN
     IDS_LOAD_SCHEMA         "Load Schema"
     IDS_VIEW_GEOMETRY       "View Geometry"
     IDS_VIEW_INSTANCE_PROPERTIES "View Geometric Properties"
-    IDS_IFC_SCHEMA_VIEW     "Schema"
+    IDS_SCHEMA_VIEW         "Schema"
+    IDS_DESIGN_VIEW         "Design Tree"
 END
 
 STRINGTABLE

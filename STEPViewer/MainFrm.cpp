@@ -149,13 +149,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	m_structureView.EnableDocking(CBRS_ALIGN_ANY);
+	m_designTreeView.EnableDocking(CBRS_ALIGN_ANY);
 	m_schemaView.EnableDocking(CBRS_ALIGN_ANY);
 	m_relationsView.EnableDocking(CBRS_ALIGN_ANY);
 
 	DockPane(&m_structureView);
 
 	CDockablePane* pTabbedBar = nullptr;
-	m_schemaView.AttachToTabWnd(&m_structureView, DM_SHOW, TRUE, &pTabbedBar);
+	m_designTreeView.AttachToTabWnd(&m_structureView, DM_SHOW, TRUE, &pTabbedBar);
+	m_schemaView.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 	m_relationsView.AttachToTabWnd(pTabbedBar, DM_SHOW, TRUE, &pTabbedBar);
 
 	m_propertiesView.EnableDocking(CBRS_ALIGN_ANY);
@@ -253,7 +255,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	BOOL bNameValid;
 
 	// ********************************************************************************************
-	// Create IFC Hierarchy View
+	// Model Structure View
 	m_structureView.SetController(pController);
 	
 	CString strCaption;
@@ -274,17 +276,17 @@ BOOL CMainFrame::CreateDockingWindows()
 	// ********************************************************************************************
 
 	// ********************************************************************************************
-	// Create IFC Schema View
-	m_schemaView.SetController(pController);
+	// Design Tree View
+	m_designTreeView.SetController(pController);
 
-	bNameValid = strCaption.LoadString(IDS_IFC_SCHEMA_VIEW);
+	bNameValid = strCaption.LoadString(IDS_DESIGN_VIEW);
 	ASSERT(bNameValid);
-	if (!m_schemaView.Create(
-		strCaption, 
-		this, 
-		CRect(0, 0, 200, 200), 
-		TRUE, 
-		ID_VIEW_IFC_SCHEMA, 
+	if (!m_designTreeView.Create(
+		strCaption,
+		this,
+		CRect(0, 0, 200, 200),
+		TRUE,
+		ID_VIEW_DESIGN,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		ASSERT(FALSE);
@@ -294,7 +296,27 @@ BOOL CMainFrame::CreateDockingWindows()
 	// ********************************************************************************************
 
 	// ********************************************************************************************
-	// Create Relations/Attributes View
+	// Schema View
+	m_schemaView.SetController(pController);
+
+	bNameValid = strCaption.LoadString(IDS_SCHEMA_VIEW);
+	ASSERT(bNameValid);
+	if (!m_schemaView.Create(
+		strCaption, 
+		this, 
+		CRect(0, 0, 200, 200), 
+		TRUE, 
+		ID_VIEW_SCHEMA, 
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
+	// ********************************************************************************************
+
+	// ********************************************************************************************
+	// Relations/Attributes View
 	m_relationsView.SetController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_IFC_RELATIONS_VIEW);
@@ -341,41 +363,50 @@ BOOL CMainFrame::CreateDockingWindows()
 
 void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 {
-	HICON hFileViewIcon = (HICON)::LoadImage(
+	HICON hModelStructureViewIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_structureView.SetIcon(hFileViewIcon, FALSE);
+	m_structureView.SetIcon(hModelStructureViewIcon, FALSE);
 
-	HICON hSchemaIcon = (HICON)::LoadImage(
+	HICON hDesignTreeViewIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(),
+		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW),
+		IMAGE_ICON,
+		::GetSystemMetrics(SM_CXSMICON),
+		::GetSystemMetrics(SM_CYSMICON),
+		0);
+	m_designTreeView.SetIcon(hDesignTreeViewIcon, FALSE);
+
+	HICON hSchemaViewIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_schemaView.SetIcon(hSchemaIcon, FALSE);
+	m_schemaView.SetIcon(hSchemaViewIcon, FALSE);
 
-	HICON hRelationsIcon = (HICON)::LoadImage(
+	HICON hRelationsViewIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_relationsView.SetIcon(hRelationsIcon, FALSE);
+	m_relationsView.SetIcon(hRelationsViewIcon, FALSE);
 
-	HICON hPropertiesBarIcon = (HICON)::LoadImage(
+	HICON hPropertiesViewIcon = (HICON)::LoadImage(
 		::AfxGetResourceHandle(), 
 		MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), 
 		IMAGE_ICON, 
 		::GetSystemMetrics(SM_CXSMICON), 
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
-	m_propertiesView.SetIcon(hPropertiesBarIcon, FALSE);
+	m_propertiesView.SetIcon(hPropertiesViewIcon, FALSE);
 }
 
 // CMainFrame diagnostics
