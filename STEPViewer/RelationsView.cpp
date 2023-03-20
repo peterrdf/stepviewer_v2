@@ -422,7 +422,7 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 	strAttribute += L" = ";
 	strAttribute += strLabel.empty() ? L"$" : strLabel;
 
-	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName, 2); //, iAttributeType);
+	auto pAttributeData = new CAttributeData(iInstance, iEntity, szAttributeName);
 	m_vecItemDataCache.push_back(pAttributeData);
 
 	TV_INSERTSTRUCT tvInsertStruct;

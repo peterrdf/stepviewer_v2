@@ -2,11 +2,11 @@
 
 #include "ViewTree.h"
 
-// CSearchDecompContDialog dialog
+// CSearchModelStructureDialog dialog
 
-class CSearchDecompContDialog : public CDialogEx
+class CSearchModelStructureDialog : public CDialogEx
 {
-	DECLARE_DYNAMIC(CSearchDecompContDialog)
+	DECLARE_DYNAMIC(CSearchModelStructureDialog)
 
 private: // Declarations
 
@@ -38,8 +38,8 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchDecompContDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
-	virtual ~CSearchDecompContDialog();
+	CSearchModelStructureDialog(CViewTree* pIFCTreeCtrl);   // standard constructor
+	virtual ~CSearchModelStructureDialog();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

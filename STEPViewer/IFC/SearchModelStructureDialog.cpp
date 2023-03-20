@@ -1,17 +1,17 @@
-// SearchDecompContDialog.cpp : implementation file
+// SearchModelStructureDialog.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "SearchDecompContDialog.h"
+#include "SearchModelStructureDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
 #include "StructureViewConsts.h"
 
 
-// CSearchDecompContDialog dialog
+// CSearchModelStructureDialog dialog
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strText)
+BOOL CSearchModelStructureDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 {
 	ASSERT(hItem != nullptr);
 
@@ -35,7 +35,7 @@ BOOL CSearchDecompContDialog::ContainsText(HTREEITEM hItem, const CString& strTe
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::SelectItem(HTREEITEM hItem)
+void CSearchModelStructureDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -52,7 +52,7 @@ void CSearchDecompContDialog::SelectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::UnselectItem(HTREEITEM hItem)
+void CSearchModelStructureDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -60,7 +60,7 @@ void CSearchDecompContDialog::UnselectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchChildren(HTREEITEM hParent)
+HTREEITEM CSearchModelStructureDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);	
 
@@ -85,7 +85,7 @@ HTREEITEM CSearchDecompContDialog::SearchChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchSiblings(HTREEITEM hItem)
+HTREEITEM CSearchModelStructureDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -110,7 +110,7 @@ HTREEITEM CSearchDecompContDialog::SearchSiblings(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchDecompContDialog::SearchParents(HTREEITEM hItem)
+HTREEITEM CSearchModelStructureDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -144,15 +144,15 @@ HTREEITEM CSearchDecompContDialog::SearchParents(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::Reset()
+void CSearchModelStructureDialog::Reset()
 {
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 }
 
-IMPLEMENT_DYNAMIC(CSearchDecompContDialog, CDialogEx)
+IMPLEMENT_DYNAMIC(CSearchModelStructureDialog, CDialogEx)
 
-CSearchDecompContDialog::CSearchDecompContDialog(CViewTree* pIFCTreeCtrl)
+CSearchModelStructureDialog::CSearchModelStructureDialog(CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
 	, m_enSearchFilter(enumSearchFilter::All)
@@ -163,11 +163,11 @@ CSearchDecompContDialog::CSearchDecompContDialog(CViewTree* pIFCTreeCtrl)
 	ASSERT(m_pIFCTreeCtrl != nullptr);
 }
 
-CSearchDecompContDialog::~CSearchDecompContDialog()
+CSearchModelStructureDialog::~CSearchModelStructureDialog()
 {
 }
 
-void CSearchDecompContDialog::DoDataExchange(CDataExchange* pDX)
+void CSearchModelStructureDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
@@ -176,17 +176,17 @@ void CSearchDecompContDialog::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSearchDecompContDialog, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchDecompContDialog::OnEnChangeEditSearchText)
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchDecompContDialog::OnBnClickedButtonSearch)
-	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchDecompContDialog::OnCbnSelchangeComboSearchFilter)
+BEGIN_MESSAGE_MAP(CSearchModelStructureDialog, CDialogEx)
+	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchModelStructureDialog::OnEnChangeEditSearchText)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchModelStructureDialog::OnBnClickedButtonSearch)
+	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchModelStructureDialog::OnCbnSelchangeComboSearchFilter)
 END_MESSAGE_MAP()
 
 
-// CSearchDecompContDialog message handlers
+// CSearchModelStructureDialog message handlers
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnEnChangeEditSearchText()
+void CSearchModelStructureDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
 
@@ -194,7 +194,7 @@ void CSearchDecompContDialog::OnEnChangeEditSearchText()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnBnClickedButtonSearch()
+void CSearchModelStructureDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
 
@@ -266,7 +266,7 @@ void CSearchDecompContDialog::OnBnClickedButtonSearch()
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchDecompContDialog::OnInitDialog()
+BOOL CSearchModelStructureDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -280,7 +280,7 @@ BOOL CSearchDecompContDialog::OnInitDialog()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchDecompContDialog::OnCbnSelchangeComboSearchFilter()
+void CSearchModelStructureDialog::OnCbnSelchangeComboSearchFilter()
 {
 	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }

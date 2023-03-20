@@ -102,20 +102,17 @@ private: // Classes
 	private: // Members
 		
 		string m_srtName;
-		int_t m_iType;
 
 	public: // Methods
 
-		CAttributeData(int_t iInstance, int_t iEntity, const char* szName, int_t iType)
+		CAttributeData(int_t iInstance, int_t iEntity, const char* szName)
 			: CItemData(iInstance, iEntity)
 			, m_srtName(szName)
-			, m_iType(iType)
 		{}
 
 		virtual ~CAttributeData() {}
 
 		const char* GetName() const { return m_srtName.c_str(); }
-		int_t GetType() const { return m_iType; }
 	};
 
 	// -----------------------------------------------------------------------------------------------

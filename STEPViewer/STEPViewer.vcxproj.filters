@@ -128,7 +128,7 @@
     <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchDecompContDialog.h">
+    <ClInclude Include="IFC\SearchModelStructureDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
@@ -235,7 +235,7 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\SearchDecompContDialog.cpp">
+    <ClCompile Include="IFC\SearchModelStructureDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="SchemaView.cpp">

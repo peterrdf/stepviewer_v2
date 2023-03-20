@@ -5,7 +5,7 @@
 #include "STEPModel.h"
 #include "SearchInstancesDialog.h"
 #include "IFCInstance.h"
-#include "SearchDecompContDialog.h"
+#include "SearchModelStructureDialog.h"
 #include <map>
 
 using namespace std;
@@ -31,7 +31,7 @@ private: // Members
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
-	CSearchDecompContDialog* m_pSearchDialog;
+	CSearchModelStructureDialog* m_pSearchDialog;
 
 public: // Methods
 
