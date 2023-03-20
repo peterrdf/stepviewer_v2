@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
-#include "stepengine.h"
+#include "ifcengine.h"
 
 #include <algorithm>
 
@@ -38,7 +38,7 @@ CEntity::CEntity(int_t iModel, int_t iEntity, int_t iAttributesCount, int_t iIns
 	int_t iIndex = 0;
 	while (iIndex < iInstancesCount) {
 		int_t iInstance = 0;
-		engiGetAggrElement(piInstances, iIndex++, sdaiINSTANCE, &iInstance);
+		sdaiGetAggrByIndex(piInstances, iIndex++, sdaiINSTANCE, &iInstance);
 
 		m_vecInstances.push_back(iInstance);
 	}

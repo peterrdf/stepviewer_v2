@@ -425,7 +425,7 @@ void CSTEPModel::LoadProductDefinitions()
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
 	{
 		int_t iProductDefinitionInstance = 0;
-		engiGetAggrElement(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
+		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 
 		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
 		ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
@@ -519,7 +519,7 @@ void CSTEPModel::LoadAssemblies()
 	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
 	{
 		int_t pNextAssemblyUsageOccurrenceInstance = 0;
-		engiGetAggrElement(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
+		sdaiGetAggrByIndex(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
 
 		CAssembly* pAssembly = new CAssembly();
 

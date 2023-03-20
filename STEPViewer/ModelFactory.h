@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stepengine.h"
+#include "ifcengine.h"
 #include "IFCModel.h"
 #include "STEPModel.h"
 

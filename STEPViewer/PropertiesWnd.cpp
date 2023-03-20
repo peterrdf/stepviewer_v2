@@ -843,7 +843,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		noPropertyDefinitionInstances = sdaiGetMemberCount(propertyDefinitionInstances);
 	for (int_t i = 0; i < noPropertyDefinitionInstances; i++) {
 		int_t propertyDefinitionInstance = 0;
-		engiGetAggrElement(propertyDefinitionInstances, i, sdaiINSTANCE, &propertyDefinitionInstance);
+		sdaiGetAggrByIndex(propertyDefinitionInstances, i, sdaiINSTANCE, &propertyDefinitionInstance);
 
 		int_t definitionInstance = 0;
 		sdaiGetAttrBN(propertyDefinitionInstance, "definition", sdaiINSTANCE, &definitionInstance);
@@ -875,7 +875,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 				noPropertyDefinitionRepresentationInstances = sdaiGetMemberCount(propertyDefinitionRepresentationInstances);
 			for (int_t j = 0; j < noPropertyDefinitionRepresentationInstances; j++) {
 				int_t propertyDefinitionRepresentationInstance = 0;
-				engiGetAggrElement(propertyDefinitionRepresentationInstances, j, sdaiINSTANCE, &propertyDefinitionRepresentationInstance);
+				sdaiGetAggrByIndex(propertyDefinitionRepresentationInstances, j, sdaiINSTANCE, &propertyDefinitionRepresentationInstance);
 
 				int_t PDR_definitionInstance = 0;
 				sdaiGetAttrBN(propertyDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &PDR_definitionInstance);
@@ -888,7 +888,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 					int_t	noAggrItems = sdaiGetMemberCount(aggrItems);
 					for (int_t k = 0; k < noAggrItems; k++) {
 						int_t representationItemInstance = 0;
-						engiGetAggrElement(aggrItems, k, sdaiINSTANCE, &representationItemInstance);
+						sdaiGetAggrByIndex(aggrItems, k, sdaiINSTANCE, &representationItemInstance);
 
 						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
 							char* valueDescription = nullptr;
