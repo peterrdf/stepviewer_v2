@@ -71,7 +71,6 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnNMClickTree(NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
-	afx_msg void OnNewInstance();
 
 	DECLARE_MESSAGE_MAP()
 public:

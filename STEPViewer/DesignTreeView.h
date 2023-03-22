@@ -1,13 +1,13 @@
 
 #pragma once
 
-// ------------------------------------------------------------------------------------------------
 #include "ViewTree.h"
 #include "STEPView.h"
-#include "ViewTree.h"
-#include "SearchSchemaDialog.h"
+#include "Instance.h"
+#include "SearchInstancesDialog.h"
 
 #include <map>
+
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
@@ -21,29 +21,98 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
-/**************************************************************************************************
-* Schema
-*/
-
 // ------------------------------------------------------------------------------------------------
-class CDesignTreeView 
+class CDesignTreeView
 	: public CDockablePane
 	, public CSTEPView
+	, public CItemStateProvider
 {
 
+private: // Classes
+
+	// ------------------------------------------------------------------------------------------------
+	enum class enumItemType : int
+	{
+		Unknown = 0,
+		Instance = 1,
+		Property = 2,
+	};
+
+	// ------------------------------------------------------------------------------------------------
+	class CItemData
+	{
+
+	private: // Methods
+		
+		CInstance* m_pInstance;
+		enumItemType m_enItemType;
+		vector<HTREEITEM> m_vecItems;
+
+	public: // Members
+		
+		CItemData(CInstance* pInstance, enumItemType enItemType)
+			: m_pInstance(pInstance)
+			, m_enItemType(enItemType)
+			, m_vecItems()
+		{}
+
+		virtual ~CItemData() {}
+
+		CInstance* GetInstance() const { return m_pInstance; }
+		enumItemType GetType() const { return m_enItemType; }
+		vector<HTREEITEM>& Items() { return m_vecItems; }
+	};
+
+	// ------------------------------------------------------------------------------------------------
+	class CInstanceData
+		: public CItemData
+	{
+
+	public: // Methods
+
+		CInstanceData(CInstance* pInstance)
+			: CItemData(pInstance, enumItemType::Instance)
+		{}
+
+		virtual ~CInstanceData() {}
+	};
+
 private: // Members
+	
+	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE	
+	//map<int64_t, map<int64_t, CRDFPropertyItem *> > m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem *)
+	HTREEITEM m_hSelectedItem;
+	bool m_bInitInProgress;
+	//CSearchInstancesDialog* m_pSearchDialog;
 
-	// Search
-	CSearchSchemaDialog* m_pSearchDialog;
-
-protected:
-
-	// CSTEPView
+public: // Methods
+	
+	// CRDFView
 	virtual void OnModelChanged() override;
+	//virtual void OnInstanceSelected(CRDFView* pSender) override;
+	//virtual void OnInstancePropertyEdited(CInstance* pInstance, CRDFProperty* pProperty) override;
+	//virtual void OnNewInstanceCreated(CRDFView* pSender, CInstance* pInstance) override;
+	//virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
+	//virtual void OnMeasurementsAdded(CRDFView* pSender, CInstance* pInstance) override;
+	//irtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
+	
+	// CItemStateProvider
+	virtual bool IsSelected(HTREEITEM hItem) override;
 
-private: // Methods	
+private: // Methods
+	
+	//void GetItemPath(HTREEITEM hItem, vector<pair<CInstance*, CRDFProperty*>>& vecPath);
+	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
+	void RemoveInstanceItemData(CInstance* pInstance, HTREEITEM hInstance);
+	//void RemovePropertyItemData(CInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
+	void RemoveItemData(HTREEITEM hItem);
+	void UpdateView();
+	void LoadUnreferencedItems();
+	
+	void AddInstance(HTREEITEM hParent, CInstance * pInstance);
+	//void AddProperties(HTREEITEM hParent, CInstance* pInstance);
 
-	void LoadModel(CModel* pModel);
+	//void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
 
 // Construction
 public:
@@ -56,11 +125,10 @@ public:
 protected:
 
 	CViewTree m_treeCtrl;
-	CImageList m_imageList;
+	CImageList m_images;
 	CDesignTreeViewToolBar m_toolBar;
 
 protected:
-	void ResetView();
 
 // Implementation
 public:
@@ -69,13 +137,11 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnProperties();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSelectedItemChanged(NMHDR * pNMHDR, LRESULT * pResult);
+	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:

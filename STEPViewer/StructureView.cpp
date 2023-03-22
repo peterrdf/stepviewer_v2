@@ -91,7 +91,6 @@ BEGIN_MESSAGE_MAP(CStructureView, CDockablePane)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_NEW_INSTANCE, OnNewInstance)
 	ON_WM_SHOWWINDOW()	
 END_MESSAGE_MAP()
 
@@ -277,11 +276,6 @@ void CStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		m_pSTEPTreeView->OnTreeItemExpanding(pNMHDR, pResult);
 	}
-}
-
-void CStructureView::OnNewInstance()
-{
-	ASSERT(0); // todo
 }
 
 void CStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
