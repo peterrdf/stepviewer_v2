@@ -45,7 +45,7 @@ static char THIS_FILE[]=__FILE__;
 	{
 		case enumModelType::STEP:
 		{
-			m_pSTEPTreeView = new CSTEPModelStructureView(&m_structureView);
+			m_pSTEPTreeView = new CSTEPModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -53,7 +53,7 @@ static char THIS_FILE[]=__FILE__;
 
 		case enumModelType::IFC:
 		{
-			m_pSTEPTreeView = new CIFCModelStructureView(&m_structureView);
+			m_pSTEPTreeView = new CIFCModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -120,7 +120,7 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
 		TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS;
 
-	if (!m_structureView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
+	if (!m_treeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
 	{
 		ASSERT(FALSE);
 
@@ -190,7 +190,7 @@ void CStructureView::AdjustLayout()
 		cyTlb,
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_structureView.SetWindowPos(
+	m_treeCtrl.SetWindowPos(
 		nullptr, rectClient.left + 1,
 		rectClient.top + cyTlb + 1,
 		rectClient.Width() - 2,
@@ -203,7 +203,7 @@ void CStructureView::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rectTree;
-	m_structureView.GetWindowRect(rectTree);
+	m_treeCtrl.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
@@ -214,7 +214,7 @@ void CStructureView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_structureView.SetFocus();
+	m_treeCtrl.SetFocus();
 }
 
 void CStructureView::OnChangeVisualStyle()
@@ -237,7 +237,7 @@ void CStructureView::OnChangeVisualStyle()
 
 	if (m_pSTEPTreeView != nullptr)
 	{
-		m_structureView.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
+		m_treeCtrl.SetImageList(m_pSTEPTreeView->GetImageList(), TVSIL_NORMAL);
 	}
 
 	m_toolBar.CleanUpLockedImages();

@@ -427,6 +427,8 @@ void CSTEPModel::LoadProductDefinitions()
 		int_t iProductDefinitionInstance = 0;
 		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 
+		ASSERT(iProductDefinitionInstance != 0);
+
 		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
 		ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
 

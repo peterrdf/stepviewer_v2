@@ -25,9 +25,9 @@ BOOL CSearchInstancesDialog::ContainsText(HTREEITEM hItem, const CString& strTex
 	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);	
 
 	// Product Definition
-	if (m_enSearchWhere == swProductDefitions)
+	if (m_enSearchFilter == enumSearchFilter::ProductDefitions)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductDefinition))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductDefinition))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -36,9 +36,9 @@ BOOL CSearchInstancesDialog::ContainsText(HTREEITEM hItem, const CString& strTex
 	}
 
 	// Assemblies
-	if (m_enSearchWhere == swAssemblies)
+	if (m_enSearchFilter == enumSearchFilter::Assemblies)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtAssembly))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::Assembly))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -47,9 +47,9 @@ BOOL CSearchInstancesDialog::ContainsText(HTREEITEM hItem, const CString& strTex
 	}
 
 	// Product Instance
-	if (m_enSearchWhere == swProductInstances)
+	if (m_enSearchFilter == enumSearchFilter::ProductInstances)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -94,9 +94,9 @@ HTREEITEM CSearchInstancesDialog::SearchChildren(HTREEITEM hParent)
 	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
 
 	if ((pItemData != nullptr) && 
-		((pItemData->getType() == enumSTEPItemDataType::dtProductDefinition) || 
-			(pItemData->getType() == enumSTEPItemDataType::dtAssembly) || 
-			(pItemData->getType() == enumSTEPItemDataType::dtProductInstance)))
+		((pItemData->getType() == enumSTEPItemDataType::ProductDefinition) || 
+			(pItemData->getType() == enumSTEPItemDataType::Assembly) || 
+			(pItemData->getType() == enumSTEPItemDataType::ProductInstance)))
 	{
 		if (m_pTreeCtrl->ItemHasChildren(hParent) && (m_pTreeCtrl->GetChildItem(hParent) == nullptr))
 		{
@@ -195,7 +195,7 @@ IMPLEMENT_DYNAMIC(CSearchInstancesDialog, CDialogEx)
 CSearchInstancesDialog::CSearchInstancesDialog(CViewTree* pTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pTreeCtrl(pTreeCtrl)
-	, m_enSearchWhere(swAll)
+	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
@@ -212,7 +212,7 @@ void CSearchInstancesDialog::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_btnSearch);
-	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchWhere);
+	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchFilter);
 }
 
 
@@ -310,12 +310,12 @@ BOOL CSearchInstancesDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_cmbSearchWhere.AddString(_T("(All)"));
-	m_cmbSearchWhere.AddString(_T("Product Definitions"));
-	m_cmbSearchWhere.AddString(_T("Assemblies"));
-	m_cmbSearchWhere.AddString(_T("Product Instances"));
+	m_cmbSearchFilter.AddString(_T("(All)"));
+	m_cmbSearchFilter.AddString(_T("Product Definitions"));
+	m_cmbSearchFilter.AddString(_T("Assemblies"));
+	m_cmbSearchFilter.AddString(_T("Product Instances"));
 
-	m_cmbSearchWhere.SetCurSel(m_enSearchWhere);
+	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -324,5 +324,5 @@ BOOL CSearchInstancesDialog::OnInitDialog()
 // ------------------------------------------------------------------------------------------------
 void CSearchInstancesDialog::OnCbnSelchangeComboSearchFilter()
 {
-	m_enSearchWhere = (enumSearchWhere)m_cmbSearchWhere.GetCurSel();
+	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }

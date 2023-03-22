@@ -42,7 +42,7 @@ Attribute 2
 Attribute N
 	=> ...
 */
-enum class enumRelationsViewMode
+enum class enumRelationsViewMode : int
 {
 	Hierarchy = 0,
 	Flat,

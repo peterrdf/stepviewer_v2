@@ -8,7 +8,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumModelType
+enum class enumModelType : int
 {
 	Unknown = -1,
 	STEP = 0,

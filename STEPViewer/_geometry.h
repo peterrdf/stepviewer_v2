@@ -188,6 +188,69 @@ struct _matrix
 	double _41, _42, _43;
 };
 
+// mathematicsGeometryDoublePrecisionDerived.h
+// Example: 30 degrees in the XY plane
+//	MatrixRotateByEulerAngles(matrix, 0, 0, 2 * Pi * 30. / 360.);
+static void	MatrixRotateByEulerAngles(
+	_matrix* matrix,
+	double	alpha,
+	double	beta,
+	double	gamma
+)
+{
+	//
+	//	https://en.wikipedia.org/wiki/Rotation_matrix
+	//
+	double	cos_alpha = cos(alpha), sin_alpha = sin(alpha),
+		cos_beta = cos(beta), sin_beta = sin(beta),
+		cos_gamma = cos(gamma), sin_gamma = sin(gamma);
+
+	matrix->_11 = 1. * cos_beta * cos_gamma;
+	matrix->_12 = 1. * cos_beta * sin_gamma;
+	matrix->_13 = -1. * sin_beta * 1.;
+
+	matrix->_21 = sin_alpha * sin_beta * cos_gamma
+		- cos_alpha * 1. * sin_gamma;
+	matrix->_22 = sin_alpha * sin_beta * sin_gamma
+		+ cos_alpha * 1. * cos_gamma;
+	matrix->_23 = sin_alpha * cos_beta * 1.;
+
+	matrix->_31 = cos_alpha * sin_beta * cos_gamma
+		+ sin_alpha * 1. * sin_gamma;
+	matrix->_32 = cos_alpha * sin_beta * sin_gamma
+		- sin_alpha * 1. * cos_gamma;
+	matrix->_33 = cos_alpha * cos_beta * 1.;
+
+	matrix->_41 = 0.;
+	matrix->_42 = 0.;
+	matrix->_43 = 0.;
+}
+
+static void _rotateMatrix(
+	int64_t iModel, 
+	int64_t iMatrixInstance, 
+	double	alpha,
+	double	beta,
+	double	gamma)
+{
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
+
+	MatrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_33"), &matrix._33, 1);
+}
+
 template<class T>
 class _buffer
 {

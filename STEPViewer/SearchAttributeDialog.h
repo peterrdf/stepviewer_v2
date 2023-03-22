@@ -11,7 +11,7 @@ class CSearchAttributeDialog : public CDialogEx
 
 private: // Declarations
 
-	enum class enumSearchFilter {
+	enum class enumSearchFilter : int {
 		All = 0,
 		ExpressID,
 	};

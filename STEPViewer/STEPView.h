@@ -8,7 +8,7 @@
 class CController;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumApplicationProperty
+enum class enumApplicationProperty : int
 {
 	Projection,
 	View,
