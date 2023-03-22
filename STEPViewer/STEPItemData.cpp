@@ -10,7 +10,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTE
 	, m_vecChildren()
 {
 	ASSERT(m_pInstance != nullptr);
-	ASSERT(m_enSTEPItemDataType != enumSTEPItemDataType::dtUnknown);
+	ASSERT(m_enSTEPItemDataType != enumSTEPItemDataType::Unknown);
 }
 
 // ------------------------------------------------------------------------------------------------

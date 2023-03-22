@@ -212,7 +212,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 			case IMAGE_SEMI_SELECTED:
 			{
 				auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hItem);
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
 					pItemData->getInstance<CProductInstance>()->setEnable(false);
 				}
@@ -231,7 +231,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 			case IMAGE_NOT_SELECTED:
 			{
 				auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hItem);
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
 					pItemData->getInstance<CProductInstance>()->setEnable(true);
 				}
@@ -272,7 +272,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 		m_hSelectedItem = hItem;
 
 		auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hItem);
-		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::ProductInstance))
 		{
 			GetController()->SelectInstance(this, nullptr);
 
@@ -366,7 +366,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 	* Instances
 	*/
 	auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hItem);
-	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
 		auto pInstance = pItemData->getInstance<CProductInstance>();
 
@@ -866,7 +866,7 @@ void CSTEPModelStructureView::LoadModel()
 	/*
 	* Model
 	*/
-	auto pModelItemData = new CSTEPItemData(nullptr, (int64_t*)pModel, enumSTEPItemDataType::dtModel);
+	auto pModelItemData = new CSTEPItemData(nullptr, (int64_t*)pModel, enumSTEPItemDataType::Model);
 	m_vecItemData.push_back(pModelItemData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -921,7 +921,7 @@ void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProduct
 		HTREEITEM hProductDefinition = m_pTreeView->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 		m_pTreeView->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
 
-		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
+		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
 		m_vecItemData.push_back(pItemData);
 
 		m_pTreeView->SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
@@ -938,7 +938,7 @@ void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProduct
 
 		HTREEITEM hInstance = m_pTreeView->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 
-		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
+		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 		m_vecItemData.push_back(pItemData);
 
 		m_pTreeView->SetItemData(hInstance, (DWORD_PTR)pItemData);
@@ -973,7 +973,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 			HTREEITEM hAssembly = m_pTreeView->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 			m_pTreeView->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hAssembly);
 
-			auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pAssembly, enumSTEPItemDataType::dtAssembly);
+			auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pAssembly, enumSTEPItemDataType::Assembly);
 			m_vecItemData.push_back(pItemData);
 
 			m_pTreeView->SetItemData(hAssembly, (DWORD_PTR)pItemData);
@@ -991,7 +991,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 
 				HTREEITEM hInstance = m_pTreeView->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hAssembly);
 
-				pItemData = new CSTEPItemData(nullptr, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
+				pItemData = new CSTEPItemData(nullptr, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 				m_vecItemData.push_back(pItemData);
 
 				m_pTreeView->SetItemData(hInstance, (DWORD_PTR)pItemData);
@@ -1014,7 +1014,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 				HTREEITEM hProductDefinition = m_pTreeView->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hAssembly);
 				m_pTreeView->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
 
-				pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
+				pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
 				m_vecItemData.push_back(pItemData);
 
 				m_pTreeView->SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
@@ -1033,7 +1033,7 @@ void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, 
 	*/
 	if (pDefinition->getRelatingProductRefs() > 0)
 	{
-		auto pProductItemData = new CSTEPItemData(pParent, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
+		auto pProductItemData = new CSTEPItemData(pParent, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
 		pParent->children().push_back(pProductItemData);
 
 		m_vecItemData.push_back(pProductItemData);
@@ -1045,7 +1045,7 @@ void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, 
 		auto& vecInstances = pDefinition->GetInstances();
 		int iInstance = pDefinition->getNextProductInstance();
 
-		auto pProductInstanceData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
+		auto pProductInstanceData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 		pParent->children().push_back(pProductInstanceData);
 
 		m_vecItemData.push_back(pProductInstanceData);
@@ -1067,7 +1067,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 			/*
 			* Assembly
 			*/
-			auto pAssemblyItemData = new CSTEPItemData(pParent, (int64_t*)pAssembly, enumSTEPItemDataType::dtAssembly);
+			auto pAssemblyItemData = new CSTEPItemData(pParent, (int64_t*)pAssembly, enumSTEPItemDataType::Assembly);
 			pParent->children().push_back(pAssemblyItemData);
 
 			m_vecItemData.push_back(pAssemblyItemData);
@@ -1080,7 +1080,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 				auto& vecInstances = pAssembly->getRelatedProductDefinition()->GetInstances();
 				int iInstance = pAssembly->getRelatedProductDefinition()->getNextProductInstance();
 
-				auto pInstanceItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
+				auto pInstanceItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 				pAssemblyItemData->children().push_back(pInstanceItemData);
 
 				m_vecItemData.push_back(pInstanceItemData);
@@ -1090,7 +1090,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 				/*
 				* Product
 				*/
-				auto pProductItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)pDefinition, enumSTEPItemDataType::dtProductDefinition);
+				auto pProductItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
 				pAssemblyItemData->children().push_back(pProductItemData);
 
 				m_vecItemData.push_back(pProductItemData);
@@ -1103,7 +1103,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 	auto& vecInstances = pDefinition->GetInstances();
 	int iInstance = pDefinition->getNextProductInstance();
 
-	auto pInstanceItemData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::dtProductInstance);
+	auto pInstanceItemData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 	pParent->children().push_back(pInstanceItemData);
 
 	m_vecItemData.push_back(pInstanceItemData);
@@ -1143,7 +1143,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		int iGeometryImage = IMAGE_NO_GEOMETRY;
 		switch (pChild->getType())
 		{
-		case enumSTEPItemDataType::dtProductDefinition:
+		case enumSTEPItemDataType::ProductDefinition:
 		{
 			auto pDefinition = pChild->getInstance<CProductDefinition>();
 
@@ -1152,7 +1152,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		}
 		break;
 
-		case enumSTEPItemDataType::dtAssembly:
+		case enumSTEPItemDataType::Assembly:
 		{
 			auto pAssembly = pChild->getInstance<CAssembly>();
 
@@ -1161,7 +1161,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		}
 		break;
 
-		case enumSTEPItemDataType::dtProductInstance:
+		case enumSTEPItemDataType::ProductInstance:
 		{
 			auto pInstance = pChild->getInstance<CProductInstance>();
 
@@ -1198,7 +1198,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 
 		HTREEITEM hGeometry = m_pTreeView->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hChild);
 
-		if (pChild->getType() == enumSTEPItemDataType::dtProductInstance)
+		if (pChild->getType() == enumSTEPItemDataType::ProductInstance)
 		{
 			m_pTreeView->SetItemData(hGeometry, (DWORD_PTR)pChild);
 
@@ -1341,7 +1341,7 @@ void CSTEPModelStructureView::UpdateChildren(HTREEITEM hParent)
 
 #ifdef _DEBUG
 		auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hChild);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED))
 			{
@@ -1373,7 +1373,7 @@ void CSTEPModelStructureView::UpdateChildrenInMemory(CSTEPItemData* pParent, boo
 	for (size_t iChild = 0; iChild < pParent->children().size(); iChild++)
 	{
 		auto pChild = pParent->children()[iChild];
-		if (pChild->getType() == enumSTEPItemDataType::dtProductInstance)
+		if (pChild->getType() == enumSTEPItemDataType::ProductInstance)
 		{
 			pChild->getInstance<CProductInstance>()->setEnable(bEnable);
 		}
@@ -1449,7 +1449,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		m_pTreeView->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->getInstance<CProductInstance>()->setEnable(true);
 		}
@@ -1464,7 +1464,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		m_pTreeView->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
 		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->getInstance<CProductInstance>()->setEnable(false);
 		}
@@ -1479,7 +1479,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		m_pTreeView->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->getInstance<CProductInstance>()->setEnable(true);
 		}
@@ -1492,7 +1492,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 	m_pTreeView->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(hParent);
-	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::dtProductInstance))
+	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
 		pItemData->getInstance<CProductInstance>()->setEnable(true);
 	}

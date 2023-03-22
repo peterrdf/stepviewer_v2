@@ -5,13 +5,13 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumSTEPItemDataType
+enum class enumSTEPItemDataType : int
 {
-	dtUnknown = -1,
-	dtModel = 0,
-	dtProductDefinition = 1,
-	dtAssembly = 2,
-	dtProductInstance = 3
+	Unknown = -1,
+	Model = 0,
+	ProductDefinition = 1,
+	Assembly = 2,
+	ProductInstance = 3
 };
 
 // ------------------------------------------------------------------------------------------------
