@@ -42,6 +42,7 @@ public: // Methods
 			(strFileSchema.Find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
 			(strFileSchema.Find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
 			(strFileSchema.Find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
+			(strFileSchema.Find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
 			(strFileSchema.Find(L"AUTOMOTIVE_DESIGN") == 0) ||
 			(strFileSchema.Find(L"AP203") == 0) || 
 			(strFileSchema.Find(L"AP209") == 0) ||
