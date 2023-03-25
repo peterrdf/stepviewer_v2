@@ -82,7 +82,7 @@ public: // Methods
 
 private: // Methods
 
-	CIFCPropertySetCollection* LoadPropertPropertyCollection(int64_t iInstance);
+	CIFCPropertySetCollection* LoadPropertyCollection(int64_t iInstance);
 
 	void LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection);
 	void LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection);

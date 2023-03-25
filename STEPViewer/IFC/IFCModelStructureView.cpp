@@ -1009,38 +1009,14 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 {
 	ASSERT(pModel != nullptr);
 
-	const map<int64_t, CIFCInstance*>& mapInstances = pModel->GetInstances();
+	auto& mapInstances = pModel->GetInstances();
 
-	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
-
-	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
-
-	map<int64_t, CIFCInstance*>::const_iterator itInstance = mapInstances.find(iInstance);
+	auto itInstance = mapInstances.find(iInstance);
 	if (itInstance != mapInstances.end())
 	{
-		itInstance->second->referenced() = true;
+		itInstance->second->referenced() = true;		
 
-		CString strExpressID;
-		strExpressID.Format(_T("#%lld"), itInstance->second->expressID());
-
-		wstring strItem = strExpressID;
-		strItem += L" ";
-		strItem += itInstance->second->GetEntityName();
-		if ((szName != nullptr) && (wcslen(szName) > 0))
-		{
-			strItem += L" '";
-			strItem += szName;
-			strItem += L"'";
-		}
-
-		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-		{
-			strItem += L" (";
-			strItem += szDescription;
-			strItem += L")";
-		}
+		wstring strItem = CInstance::GetUniqueName(iInstance);
 
 		/*
 		* Object
@@ -1154,31 +1130,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wchar_t* szName = nullptr;
-			sdaiGetAttrBN(pInstance->GetInstance(), "Name", sdaiUNICODE, &szName);
-
-			wchar_t* szDescription = nullptr;
-			sdaiGetAttrBN(pInstance->GetInstance(), "Description", sdaiUNICODE, &szDescription);
-
-			CString strExpressID;
-			strExpressID.Format(_T("#%lld"), pInstance->expressID());
-
-			wstring strItem = strExpressID;
-			strItem += L" ";
-			strItem += pInstance->GetEntityName();
-			if ((szName != nullptr) && (wcslen(szName) > 0))
-			{
-				strItem += L" '";
-				strItem += szName;
-				strItem += L"'";
-			}
-
-			if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-			{
-				strItem += L" (";
-				strItem += szDescription;
-				strItem += L")";
-			}
+			wstring strItem = CInstance::GetUniqueName(pInstance->GetInstance());
 
 			/*
 			* Object

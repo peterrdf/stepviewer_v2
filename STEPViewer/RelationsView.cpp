@@ -217,7 +217,7 @@ void CRelationsView::LoadInstance(int_t iEntity, const wchar_t* szEntity, int_t 
 	int_t iValue = internalGetP21Line(iInstance);
 
 	CString strPrefix;
-	strPrefix.Format(_T("# %lld ="), iValue);
+	strPrefix.Format(_T("#%lld ="), iValue);
 	
 	wstring strItem = strPrefix;
 	strItem += L" ";

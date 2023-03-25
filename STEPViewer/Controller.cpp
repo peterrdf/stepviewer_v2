@@ -9,7 +9,6 @@ CController::CController()
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
-	, m_iVisibleValuesCountLimit(100)
 	, m_bScaleAndCenter(FALSE)
 {
 }
@@ -156,18 +155,6 @@ void CController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
 CInstance* CController::GetSelectedInstance() const
 {
 	return m_pSelectedInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-int CController::GetVisibleValuesCountLimit() const
-{
-	return m_iVisibleValuesCountLimit;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
-{
-	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
 }
 
 // ------------------------------------------------------------------------------------------------

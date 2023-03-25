@@ -204,6 +204,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
+    <ClInclude Include="OWLProperty.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
+    <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchAttributeDialog.cpp" />

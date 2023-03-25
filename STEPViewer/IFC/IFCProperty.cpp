@@ -165,14 +165,14 @@ CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(int64_
 		return itPropertyCollection->second;
 	}
 
-	auto pPropertyCollection = LoadPropertPropertyCollection(iInstance);
+	auto pPropertyCollection = LoadPropertyCollection(iInstance);
 	m_mapPropertyCollections[iInstance] = pPropertyCollection;
 
 	return pPropertyCollection;
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertPropertyCollection(int64_t iInstance)
+CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertyCollection(int64_t iInstance)
 {
 	auto pPropertySetCollection = new CIFCPropertySetCollection();
 	LoadProperties(iInstance, pPropertySetCollection);

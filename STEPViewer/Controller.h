@@ -30,7 +30,6 @@ private: // Members
 	CInstance* m_pSelectedInstance;
 	
 	// UI properties
-	int m_iVisibleValuesCountLimit;
 	BOOL m_bScaleAndCenter;
 
 public: // Methods
@@ -77,9 +76,7 @@ public: // Methods
 	void SelectInstance(CSTEPView* pSender, CInstance* pInstance);
 	CInstance* GetSelectedInstance() const;
 
-	// UI 
-	int GetVisibleValuesCountLimit() const;
-	void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
+	// UI
 	BOOL GetScaleAndCenter() const;
 	void SetScaleAndCenter(BOOL bScaleAndCenter);
 	

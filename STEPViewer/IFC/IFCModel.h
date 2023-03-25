@@ -18,20 +18,16 @@ using namespace std;
 // Parser for IFC files
 class CIFCModel : public CModel
 {
-	// --------------------------------------------------------------------------------------------
+
+private: // Classes
+
 	friend class CIFCController;
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Input file
-	wstring m_strIFCFile;
+	wstring m_strIFCFile; // Input file	
+	int_t m_iModel; // Model
 
-	// --------------------------------------------------------------------------------------------
-	// Model
-	int_t m_iModel;
-
-	// --------------------------------------------------------------------------------------------
 	// Entities
 	int_t m_ifcProjectEntity;
 	int_t m_ifcSpaceEntity;
@@ -48,7 +44,6 @@ private: // Members
 	int_t m_ifcTransportElementEntity;
 	int_t m_ifcVirtualElementEntity;
 
-	// --------------------------------------------------------------------------------------------
 	// World's dimensions
 	float m_fXmin;
 	float m_fXmax;
@@ -92,8 +87,8 @@ public: // Methods
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
 	void Clean();
 
-	float GetBoundingSphereDiameter() const;	
-	const map<int64_t, CIFCInstance*> & GetInstances() const;
+	float GetBoundingSphereDiameter() const;
+	const map<int64_t, CIFCInstance*>& GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;
 	CIFCInstance* GetInstanceByID(int_t iID);	

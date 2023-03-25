@@ -4,6 +4,7 @@
 #include "ViewTree.h"
 #include "STEPView.h"
 #include "Instance.h"
+#include "OWLProperty.h"
 #include "SearchInstancesDialog.h"
 
 #include <map>
@@ -44,21 +45,21 @@ private: // Classes
 
 	private: // Methods
 		
-		CInstance* m_pInstance;
+		int64_t m_iInstance;
 		enumItemType m_enItemType;
 		vector<HTREEITEM> m_vecItems;
 
 	public: // Members
 		
-		CItemData(CInstance* pInstance, enumItemType enItemType)
-			: m_pInstance(pInstance)
+		CItemData(int64_t iInstance, enumItemType enItemType)
+			: m_iInstance(iInstance)
 			, m_enItemType(enItemType)
 			, m_vecItems()
 		{}
 
 		virtual ~CItemData() {}
 
-		CInstance* GetInstance() const { return m_pInstance; }
+		int64_t GetInstance() const { return m_iInstance; }
 		enumItemType GetType() const { return m_enItemType; }
 		vector<HTREEITEM>& Items() { return m_vecItems; }
 	};
@@ -70,8 +71,8 @@ private: // Classes
 
 	public: // Methods
 
-		CInstanceData(CInstance* pInstance)
-			: CItemData(pInstance, enumItemType::Instance)
+		CInstanceData(int64_t iInstance)
+			: CItemData(iInstance, enumItemType::Instance)
 		{}
 
 		virtual ~CInstanceData() {}
@@ -107,10 +108,10 @@ private: // Methods
 	//void RemovePropertyItemData(CInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);
 	void UpdateView();
-	void LoadUnreferencedItems();
+	void LoadIFCDeisgnTree(CIFCModel* pModel);
 	
-	void AddInstance(HTREEITEM hParent, CInstance * pInstance);
-	//void AddProperties(HTREEITEM hParent, CInstance* pInstance);
+	void AddInstance(HTREEITEM hParent, int64_t iInstance);
+	void AddProperties(HTREEITEM hParent, int64_t iInstance);
 
 	//void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
 

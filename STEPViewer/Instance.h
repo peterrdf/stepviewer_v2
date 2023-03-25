@@ -18,6 +18,14 @@ public: // Methods
 	virtual bool IsEnabled() const PURE;
 	virtual wstring GetName() const PURE;
 
+	wstring GetUniqueName() const;
+	static wstring GetUniqueName(int64_t iInstance);
+
+	int64_t GetClass() const;
+	static int64_t GetClass(int64_t iInstance);
+	const wchar_t* GetClassName() const;
+	static const wchar_t* GetClassName(int64_t iInstance);
+
 	int64_t GetEntity() const;
 	static int64_t GetEntity(int64_t iInstance);
 	const wchar_t* GetEntityName() const;
