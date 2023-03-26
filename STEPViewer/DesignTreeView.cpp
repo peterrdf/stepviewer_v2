@@ -579,6 +579,34 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 			strProperty += pProperty->GetTypeName();
 
 			HTREEITEM hProperty = m_treeCtrl.InsertItem(strProperty.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
+
+			/*
+			* rdfs:range
+			*/
+			if (pProperty->GetType() == OBJECTTYPEPROPERTY_TYPE)
+			{
+				HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+
+				/*CObjectRDFProperty* pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
+				ASSERT(pObjectRDFProperty != nullptr);
+
+				auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
+				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+				{
+					char* szClassName = nullptr;
+					GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
+
+					m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
+				}*/
+			} // if (pProperty->getType() == TYPE_OBJECTTYPE)
+			else
+			{
+				wstring strRange = L"rdfs:range : ";
+				strRange += pProperty->GetRange();
+
+				m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			}
+
 			switch (pProperty->GetType())
 			{
 				case OBJECTTYPEPROPERTY_TYPE:

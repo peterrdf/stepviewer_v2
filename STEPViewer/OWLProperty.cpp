@@ -2,6 +2,8 @@
 #include "OWLProperty.h"
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 COWLProperty::COWLProperty(int64_t iInstance)
 	: m_iInstance(iInstance)
 {
@@ -21,7 +23,13 @@ int64_t COWLProperty::GetInstance() const
 // ------------------------------------------------------------------------------------------------
 int64_t COWLProperty::GetType() const
 {
-	return GetPropertyType(GetInstance());
+	return GetType(GetInstance());
+}
+
+// ------------------------------------------------------------------------------------------------
+/*static*/ int64_t COWLProperty::GetType(int64_t iInstance)
+{
+	return GetPropertyType(iInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -49,6 +57,71 @@ wchar_t* COWLProperty::GetName() const
 	return szName;
 }
 
+// ------------------------------------------------------------------------------------------------
+wstring COWLProperty::GetRange() const
+{
+	return GetRange(GetInstance());
+}
+
+// ------------------------------------------------------------------------------------------------
+/*static*/ wstring COWLProperty::GetRange(int64_t iInstance)
+{
+	wstring strRange = L"unknown";
+
+	switch (GetType(iInstance))
+	{
+		case OBJECTTYPEPROPERTY_TYPE:
+		{
+			strRange = L"xsd:object";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			strRange = L"xsd:boolean";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_CHAR:
+		{
+			strRange = L"xsd:string";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			strRange = L"xsd:integer";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			strRange = L"xsd:double";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BYTE:
+		{
+			strRange = L"xsd:integer";
+		}
+		break;
+
+		default:
+		{
+			ASSERT(false);
+		}
+		break;
+	} // switch (getType())
+
+	return strRange;
+}
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 COWLPropertyCollection::COWLPropertyCollection()
 	: m_vecProperties()

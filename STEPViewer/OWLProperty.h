@@ -20,10 +20,17 @@ public: // Methods
 	virtual ~COWLProperty();
 
 	int64_t GetInstance() const;
+
 	int64_t GetType() const;
+	static int64_t GetType(int64_t iInstance);
+
 	wstring GetTypeName();
 	static wstring GetTypeName(int64_t iType);
+
 	wchar_t* GetName() const;
+
+	wstring GetRange() const;
+	static wstring GetRange(int64_t iInstance);
 };
 
 // ------------------------------------------------------------------------------------------------
