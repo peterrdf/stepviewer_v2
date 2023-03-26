@@ -161,6 +161,9 @@
     <ClInclude Include="OWLProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DesignTreeViewConsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">

@@ -36,24 +36,15 @@ public: // Methods
 	virtual int64_t GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
-	virtual wstring GetName() const;
 
-	// --------------------------------------------------------------------------------------------
+	
 	int_t getID() const;
-
-	// --------------------------------------------------------------------------------------------
 	CProductDefinition* getProductDefinition() const;
-
-	// --------------------------------------------------------------------------------------------
 	OGLMATRIX* getTransformationMatrix() const;
 
-	// --------------------------------------------------------------------------------------------
 	bool getEnable() const;
-
-	// --------------------------------------------------------------------------------------------
 	void setEnable(bool bEnable);
 
-	// --------------------------------------------------------------------------------------------
 	void ScaleAndCenter(float fResoltuion);
 };
 

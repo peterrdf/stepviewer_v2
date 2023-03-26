@@ -13,13 +13,13 @@ CInstance::CInstance()
 }
 
 // --------------------------------------------------------------------------------------------
-wstring CInstance::GetUniqueName() const
+wstring CInstance::GetName() const
 {
-	return GetUniqueName(GetInstance());
+	return GetName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ wstring CInstance::GetUniqueName(int64_t iInstance)
+/*static*/ wstring CInstance::GetName(int64_t iInstance)
 {
 	wstring strUniqueName;
 

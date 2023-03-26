@@ -1016,7 +1016,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 	{
 		itInstance->second->referenced() = true;		
 
-		wstring strItem = CInstance::GetUniqueName(iInstance);
+		wstring strItem = CInstance::GetName(iInstance);
 
 		/*
 		* Object
@@ -1130,7 +1130,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = CInstance::GetUniqueName(pInstance->GetInstance());
+			wstring strItem = CInstance::GetName(pInstance->GetInstance());
 
 			/*
 			* Object

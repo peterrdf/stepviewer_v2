@@ -81,18 +81,6 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ wstring CIFCInstance::GetName() const
-{
-	CString strName;
-
-	strName.Format(_T("#%lld"), m_iInstance);
-	strName += L" ";
-	strName += GetEntityName();
-
-	return (LPCTSTR)strName;
-}
-
-// ------------------------------------------------------------------------------------------------
 const wchar_t* CIFCInstance::getGUID() const
 {
 	return m_strGUID.c_str();

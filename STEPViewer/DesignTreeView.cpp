@@ -1013,16 +1013,9 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 		int64_t owlInstance = 0;
 		owlBuildInstance(pModel->GetInstance(), iIFCSiteInstance, &owlInstance);
 
-		auto iClass = GetInstanceClass(owlInstance);
-
-		char* szClassName = nullptr;
-		GetNameOfClass(iClass, &szClassName);
-
 		// ???
-		HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-		
-		// ???
-		//m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+		HTREEITEM hModel = m_treeCtrl.InsertItem(
+			pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
 
 		AddInstance(hModel, owlInstance);
 
@@ -1075,15 +1068,16 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, int64_t iInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = CInstance::GetUniqueName(iInstance);
+	wstring strItem = CInstance::GetName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
 	tvInsertStruct.item.lParam = NULL;
-	tvInsertStruct.item.cChildren = IMAGE_INSTANCE;
+	tvInsertStruct.item.cChildren = 1;
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
