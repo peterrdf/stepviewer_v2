@@ -29,8 +29,11 @@ public: // Methods
 
 	wchar_t* GetName() const;
 
-	wstring GetRange() const;
-	static wstring GetRange(int64_t iInstance);
+	wstring GetRange(vector<int64_t>& vecRestrictionClasses) const;
+	static wstring GetRange(int64_t iInstance, vector<int64_t>& vecRestrictionClasses);
+
+	wstring GetCardinality(int64_t iInstance) const;
+	static wstring GetCardinality(int64_t iInstance, int64_t iPropertyInstance);
 };
 
 // ------------------------------------------------------------------------------------------------

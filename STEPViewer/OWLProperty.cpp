@@ -58,21 +58,30 @@ wchar_t* COWLProperty::GetName() const
 }
 
 // ------------------------------------------------------------------------------------------------
-wstring COWLProperty::GetRange() const
+wstring COWLProperty::GetRange(vector<int64_t>& vecRestrictionClasses) const
 {
-	return GetRange(GetInstance());
+	return GetRange(GetInstance(), vecRestrictionClasses);
 }
 
 // ------------------------------------------------------------------------------------------------
-/*static*/ wstring COWLProperty::GetRange(int64_t iInstance)
+/*static*/ wstring COWLProperty::GetRange(int64_t iInstance, vector<int64_t>& vecRestrictionClasses)
 {
 	wstring strRange = L"unknown";
+	vecRestrictionClasses.clear();
 
 	switch (GetType(iInstance))
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
 			strRange = L"xsd:object";
+
+			int64_t	iRestrictionClassInstance = GetRangeRestrictionsByIterator(iInstance, 0);
+			while (iRestrictionClassInstance != 0)
+			{
+				vecRestrictionClasses.push_back(iRestrictionClassInstance);				
+
+				iRestrictionClassInstance = GetRangeRestrictionsByIterator(iInstance, iRestrictionClassInstance);
+			}
 		}
 		break;
 
@@ -114,6 +123,97 @@ wstring COWLProperty::GetRange() const
 	} // switch (getType())
 
 	return strRange;
+}
+
+// ------------------------------------------------------------------------------------------------
+wstring COWLProperty::GetCardinality(int64_t iInstance) const
+{
+	return GetCardinality(iInstance, GetInstance());
+}
+
+// ------------------------------------------------------------------------------------------------
+/*static*/ wstring COWLProperty::GetCardinality(int64_t iInstance, int64_t iPropertyInstance)
+{
+	ASSERT(iInstance != 0);
+	ASSERT(iPropertyInstance != 0);
+
+	int64_t iCard = 0;
+	switch (GetType(iPropertyInstance))
+	{
+		case OBJECTTYPEPROPERTY_TYPE:
+		{
+			int64_t* piInstances = nullptr;
+			GetObjectProperty(iInstance, iPropertyInstance, &piInstances, &iCard);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			bool* pbValue = nullptr;
+			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&pbValue, &iCard);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_CHAR:
+		{
+			char** szValue = nullptr;
+			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&szValue, &iCard);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			int64_t* piValue = nullptr;
+			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&piValue, &iCard);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			double* pdValue = nullptr;
+			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&pdValue, &iCard);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BYTE:
+		{
+			BYTE* piValue = nullptr;
+			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&piValue, &iCard);
+		}
+		break;	
+
+		default:
+		{
+			ASSERT(false);
+		}
+		break;
+	} // switch (GetType(iPropertyInstance))
+
+	int64_t iInstanceClass = GetInstanceClass(iInstance);
+	ASSERT(iInstanceClass != 0);
+
+	int64_t	iMinCard = 0;
+	int64_t iMaxCard = 0;
+	GetClassPropertyAggregatedCardinalityRestriction(iInstanceClass, iPropertyInstance, &iMinCard, &iMaxCard);
+
+	wchar_t szBuffer[100];
+	if ((iMinCard == -1) && (iMaxCard == -1))
+	{
+		swprintf(szBuffer, 100, L"%lld of [0 - infinity>", iCard);
+	}
+	else
+	{
+		if (iMaxCard == -1)
+		{
+			swprintf(szBuffer, 100, L"%lld of [%lld - infinity>", iCard, iMinCard);
+		}
+		else
+		{
+			swprintf(szBuffer, 100, L"%lld of [%lld - %lld]", iCard, iMinCard, iMaxCard);
+		}
+	}
+
+	return szBuffer;
 }
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------

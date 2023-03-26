@@ -583,30 +583,32 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 			/*
 			* rdfs:range
 			*/
-			if (pProperty->GetType() == OBJECTTYPEPROPERTY_TYPE)
+			vector<int64_t> vecRestrictionClasses;
+
+			wstring strRange = L"rdfs:range : ";
+			strRange += pProperty->GetRange(vecRestrictionClasses);
+
+			HTREEITEM hRange = m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+
+			for (auto iRestrictionClass : vecRestrictionClasses)
 			{
-				HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+				wchar_t* szClassName = nullptr;
+				GetNameOfClassW(iRestrictionClass, &szClassName);
 
-				/*CObjectRDFProperty* pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
-				ASSERT(pObjectRDFProperty != nullptr);
-
-				auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
-				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
-				{
-					char* szClassName = nullptr;
-					GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
-
-					m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
-				}*/
-			} // if (pProperty->getType() == TYPE_OBJECTTYPE)
-			else
-			{
-				wstring strRange = L"rdfs:range : ";
-				strRange += pProperty->GetRange();
-
-				m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+				m_treeCtrl.InsertItem(szClassName, IMAGE_VALUE, IMAGE_VALUE, hRange);
 			}
+			
+			/*
+			* owl:cardinality
+			*/
+			wstring strCardinality = L"owl:cardinality : ";
+			strCardinality += pProperty->GetCardinality(iInstance);
 
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+
+			/*
+			* value(s)
+			*/
 			switch (pProperty->GetType())
 			{
 				case OBJECTTYPEPROPERTY_TYPE:
@@ -665,14 +667,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 					int64_t iValuesCount = 0;
 					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
 
-					/*
-					* owl:cardinality
-					*/
-					/*wstring strCardinality = L"owl:cardinality : ";
-					strCardinality += pProperty->getCardinality(pInstance->getInstance());
-
-					m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);*/
-
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
 						swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
@@ -688,13 +682,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 					int64_t iValuesCount = 0;
 					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&pdValue, &iValuesCount);
 
-					/*
-					* owl:cardinality
-					*/
-					/*wstring strCardinality = L"owl:cardinality : ";
-					strCardinality += pProperty->getCardinality(pInstance->getInstance());
-
-					m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);*/
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
 						swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
@@ -709,14 +696,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 					BYTE* piValue = nullptr;
 					int64_t iValuesCount = 0;
 					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
-
-					/*
-					* owl:cardinality
-					*/
-					/*wstring strCardinality = L"owl:cardinality : ";
-					strCardinality += pProperty->getCardinality(pInstance->getInstance());
-
-					m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);*/
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
