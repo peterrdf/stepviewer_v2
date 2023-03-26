@@ -412,6 +412,9 @@ void CDesignTreeView::UpdateView()
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 {
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
+
 	m_treeCtrl.DeleteAllItems();
 
 	map<int64_t, CInstanceData *>::iterator itInstance2Data = m_mapInstance2Item.begin();
@@ -440,6 +443,8 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 
 		return;
 	}
+
+	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
 
 	// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int64_t* iIFCSiteInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCSITE");
@@ -565,9 +570,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 		return;
 	}
 
-	auto propertyProvider = new COWLPropertyProvider(pModel->GetInstance());
-
-	auto pPropertyCollection = propertyProvider->GetPropertyCollection(iInstance);
+	auto pPropertyCollection = m_pPropertyProvider->GetPropertyCollection(iInstance);
 	if (pPropertyCollection != nullptr)
 	{
 		wchar_t szBuffer[100];
@@ -805,8 +808,8 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 // CDesignTreeView
 
 CDesignTreeView::CDesignTreeView()
-	: m_mapInstance2Item()
-	//, m_mapInstance2Properties()
+	: m_pPropertyProvider(nullptr)
+	, m_mapInstance2Item()
 	, m_hSelectedItem(nullptr)
 	, m_bInitInProgress(false)
 	//, m_pSearchDialog(nullptr)
@@ -815,6 +818,8 @@ CDesignTreeView::CDesignTreeView()
 
 CDesignTreeView::~CDesignTreeView()
 {	
+	delete m_pPropertyProvider;
+
 	for (auto itInstance2Data : m_mapInstance2Item)
 	{
 		delete itInstance2Data.second;

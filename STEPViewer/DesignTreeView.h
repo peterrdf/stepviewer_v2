@@ -80,8 +80,8 @@ private: // Classes
 
 private: // Members
 	
-	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE	
-	//map<int64_t, map<int64_t, CRDFPropertyItem *> > m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem *)
+	COWLPropertyProvider* m_pPropertyProvider;
+	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE
 	HTREEITEM m_hSelectedItem;
 	bool m_bInitInProgress;
 	//CSearchInstancesDialog* m_pSearchDialog;
