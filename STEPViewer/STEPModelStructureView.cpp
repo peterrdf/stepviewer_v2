@@ -893,9 +893,6 @@ void CSTEPModelStructureView::LoadModel()
 		{
 			// Load all items in the memory
 			LoadProductDefinitionInMemory(pModel, pDefinition, pModelItemData);
-
-			// Load all items and populate the tree
-			//LoadProductDefinition(pModel, pDefinition, hModel);
 		}
 	}
 

@@ -12,6 +12,8 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -22,6 +24,8 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class CDesignTreeView
 	: public CDockablePane
@@ -88,14 +92,9 @@ private: // Members
 
 public: // Methods
 	
-	// CRDFView
+	// CSTEPView
 	virtual void OnModelChanged() override;
-	//virtual void OnInstanceSelected(CRDFView* pSender) override;
-	//virtual void OnInstancePropertyEdited(CInstance* pInstance, CRDFProperty* pProperty) override;
-	//virtual void OnNewInstanceCreated(CRDFView* pSender, CInstance* pInstance) override;
-	//virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
-	//virtual void OnMeasurementsAdded(CRDFView* pSender, CInstance* pInstance) override;
-	//irtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 	
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;
