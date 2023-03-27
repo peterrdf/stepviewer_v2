@@ -107,6 +107,8 @@ private: // Methods
 	//void RemovePropertyItemData(CInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);
 	void UpdateView();
+
+	void LoadSTEPDeisgnTree(CSTEPModel* pModel);
 	void LoadIFCDeisgnTree(CIFCModel* pModel);
 	
 	void AddInstance(HTREEITEM hParent, int64_t iInstance);

@@ -7,6 +7,8 @@
 #include "Generic.h"
 #include "DesignTreeViewConsts.h"
 #include "IFCModel.h"
+#include "STEPModel.h"
+#include "ProductDefinition.h"
 
 #include <algorithm>
 
@@ -449,19 +451,8 @@ void CDesignTreeView::UpdateView()
 	switch (pModel->GetType())
 	{
 		case enumModelType::STEP:
-		{			
-			/*int64_t* iIFCSiteInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCSITE");
-			ASSERT(iIFCSiteInstances != NULL);
-			int64_t iIFCSiteInstancesCount = sdaiGetMemberCount(iIFCSiteInstances);
-			ASSERT(iIFCSiteInstancesCount > 0);*/
-
-			ASSERT(FALSE); // TODO
-
-			//LoadSTEPDeisgnTree(dynamic_cast<CSTEPModel*>(pModel));
-
-			/*m_pSTEPTreeView = new CSTEPModelStructureView(&m_treeCtrl);
-			m_pSTEPTreeView->SetController(pController);
-			m_pSTEPTreeView->Load();*/
+		{
+			LoadSTEPDeisgnTree(dynamic_cast<CSTEPModel*>(pModel));
 		}
 		break;
 
@@ -554,6 +545,8 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 
 	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
 
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+
 	// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int64_t* iIFCSiteInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCSITE");
 
@@ -564,15 +557,9 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 		engiGetAggrElement(iIFCSiteInstances, 0, sdaiINSTANCE, &iIFCSiteInstance);
 
 		int64_t owlInstance = 0;
-		owlBuildInstance(pModel->GetInstance(), iIFCSiteInstance, &owlInstance);
-
-		// ???
-		HTREEITEM hModel = m_treeCtrl.InsertItem(
-			pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+		owlBuildInstance(pModel->GetInstance(), iIFCSiteInstance, &owlInstance);		
 
 		AddInstance(hModel, owlInstance);
-
-		TRACE(L"\n");
 	} // if (iIFCProjectInstancesCount > 0)
 
 	// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -612,7 +599,66 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 	//	AddInstance(hModel, vecModel[iInstance]);
 	//}
 
-	//m_treeCtrl.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
+}
+
+// ------------------------------------------------------------------------------------------------
+void CDesignTreeView::LoadSTEPDeisgnTree(CSTEPModel* pModel)
+{
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
+
+	m_treeCtrl.DeleteAllItems();
+
+	map<int64_t, CInstanceData*>::iterator itInstance2Data = m_mapInstance2Item.begin();
+	for (; itInstance2Data != m_mapInstance2Item.end(); itInstance2Data++)
+	{
+		delete itInstance2Data->second;
+	}
+
+	m_mapInstance2Item.clear();
+
+	/*map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.begin();
+	for (; itInstance2Properties != m_mapInstance2Properties.end(); itInstance2Properties++)
+	{
+		map<int64_t, CRDFPropertyItem *>::iterator itPropertyItem = itInstance2Properties->second.begin();
+		for (; itPropertyItem != itInstance2Properties->second.end(); itPropertyItem++)
+		{
+			delete itPropertyItem->second;
+		}
+	}
+
+	m_mapInstance2Properties.clear();*/
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
+
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+
+	auto& mapDefinitions = pModel->GetDefinitions();
+	for (auto itDefinition = mapDefinitions.begin();
+		itDefinition != mapDefinitions.end();
+		itDefinition++)
+	{
+		auto pDefinition = itDefinition->second;
+
+		// Root
+		if (pDefinition->getRelatedProductRefs() == 0)
+		{
+			int64_t owlInstance = 0;
+			owlBuildInstance(pModel->GetInstance(), pDefinition->getInstance(), &owlInstance);
+
+			AddInstance(hModel, owlInstance);
+		}
+	} // for (auto itDefinition = ...
+
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -624,7 +670,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, int64_t iInstance)
 	wstring strItem = CInstance::GetName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
-	tvInsertStruct.hParent = hParent;
+ 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
@@ -737,7 +783,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 						else
 						{
 							m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
-						}
+  						}
 					} // for (int64_t iInstance = ...
 				}
 				break;
