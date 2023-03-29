@@ -53,9 +53,28 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
 {
-	m_hSelectedItem = nullptr;
+	ResetView();
 
-	UpdateView();
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetModel();
+	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
+	{
+		return;
+	}
+
+	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
+
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -65,6 +84,8 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	{
 		return;
 	}
+
+	ResetView();
 
 	if (m_hSelectedItem != nullptr)
 	{
@@ -79,91 +100,118 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		return;
 	}
+
+	auto pModel = pController->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 		
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+
 	auto pSelectedInstance = pController->GetSelectedInstance();
 	if (pSelectedInstance == nullptr)
-	{
-		/*
-		* Select the Model by default
-		*/
-		HTREEITEM hModel = m_treeCtrl.GetRootItem();
-		ASSERT(hModel != nullptr);
-		
+	{	
 		m_treeCtrl.SelectItem(hModel);
 		
 		return;
 	}
+
+	int64_t owlInstance = 0;
+	owlBuildInstance(pModel->GetInstance(), pSelectedInstance->GetInstance(), &owlInstance);
+
+	if (owlInstance == 0)
+	{
+		int_t iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
+		if (iExpressID != 0)
+		{
+			owlInstance = internalGetInstanceFromP21Line(pModel->GetInstance(), iExpressID);
+		}
+	}
+
+	if (owlInstance == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	AddInstance(hModel, owlInstance);
+
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 		
 	/*
 	* Disable the drawing
 	*/
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-		
-	auto itInstance2Data = m_mapInstance2Item.find(pSelectedInstance->GetInstance());
-	if (itInstance2Data == m_mapInstance2Item.end())
-	{
-		/*
-		* Load all ancestors
-		*/
-		vector<int64_t> vecAncestors;
-		
-		int64_t iInstance = GetInstanceInverseReferencesByIterator(pSelectedInstance->GetInstance(), 0);
-		while (iInstance != 0)
-		{
-			vecAncestors.push_back(iInstance);
-		
-			iInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);			
-		}		
-		
-		/*
-		* Load the ancestors
-		*/
-		for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor >= 0; iAncestor--)
-		{
-			itInstance2Data = m_mapInstance2Item.find(vecAncestors[iAncestor]);
-			if (itInstance2Data != m_mapInstance2Item.end())
-			{
-				// The item is visible	
-				ASSERT(!itInstance2Data->second->Items().empty());
-				m_treeCtrl.Expand(itInstance2Data->second->Items()[0], TVE_EXPAND);
-			} 
-			else
-			{
-				// The item is not visible - it is in "..." group
-				break;
-			}
-		} // for (size_t iAncestor = ...
-		
-		itInstance2Data = m_mapInstance2Item.find(pSelectedInstance->GetInstance());
-	} // if (itInstance2Data == m_mapInstance2Item.end())
-		
-	if (itInstance2Data != m_mapInstance2Item.end())
-	{
-		// The item is visible
-		ASSERT(!itInstance2Data->second->Items().empty());
-		
-		m_hSelectedItem = itInstance2Data->second->Items()[0];
-		
-		m_treeCtrl.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
-		m_treeCtrl.EnsureVisible(m_hSelectedItem);
-		m_treeCtrl.SelectItem(m_hSelectedItem);
-	}
-	else
-	{
-		// The item is not visible - it is in "..." group
-		if (m_hSelectedItem != nullptr)
-		{
-			m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-			m_hSelectedItem = nullptr;
-		}
-		
-		MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.", L"Information", MB_ICONINFORMATION | MB_OK);
-	}
+	//m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+	//	
+	//auto itInstance2Data = m_mapInstance2Item.find(pSelectedInstance->GetInstance());
+	//if (itInstance2Data == m_mapInstance2Item.end())
+	//{
+	//	/*
+	//	* Load all ancestors
+	//	*/
+	//	vector<int64_t> vecAncestors;
+	//	
+	//	int64_t iInstance = GetInstanceInverseReferencesByIterator(pSelectedInstance->GetInstance(), 0);
+	//	while (iInstance != 0)
+	//	{
+	//		vecAncestors.push_back(iInstance);
+	//	
+	//		iInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);			
+	//	}		
+	//	
+	//	/*
+	//	* Load the ancestors
+	//	*/
+	//	for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor >= 0; iAncestor--)
+	//	{
+	//		itInstance2Data = m_mapInstance2Item.find(vecAncestors[iAncestor]);
+	//		if (itInstance2Data != m_mapInstance2Item.end())
+	//		{
+	//			// The item is visible	
+	//			ASSERT(!itInstance2Data->second->Items().empty());
+	//			m_treeCtrl.Expand(itInstance2Data->second->Items()[0], TVE_EXPAND);
+	//		} 
+	//		else
+	//		{
+	//			// The item is not visible - it is in "..." group
+	//			break;
+	//		}
+	//	} // for (size_t iAncestor = ...
+	//	
+	//	itInstance2Data = m_mapInstance2Item.find(pSelectedInstance->GetInstance());
+	//} // if (itInstance2Data == m_mapInstance2Item.end())
+	//	
+	//if (itInstance2Data != m_mapInstance2Item.end())
+	//{
+	//	// The item is visible
+	//	ASSERT(!itInstance2Data->second->Items().empty());
+	//	
+	//	m_hSelectedItem = itInstance2Data->second->Items()[0];
+	//	
+	//	m_treeCtrl.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
+	//	m_treeCtrl.EnsureVisible(m_hSelectedItem);
+	//	m_treeCtrl.SelectItem(m_hSelectedItem);
+	//}
+	//else
+	//{
+	//	// The item is not visible - it is in "..." group
+	//	if (m_hSelectedItem != nullptr)
+	//	{
+	//		m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
+	//		m_hSelectedItem = nullptr;
+	//	}
+	//	
+	//	MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.", L"Information", MB_ICONINFORMATION | MB_OK);
+	//}
 		
 	/*
 	* Enable the drawing
 	*/
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+	//m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -419,63 +467,89 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CDesignTreeView::UpdateView()
+void CDesignTreeView::ResetView()
 {
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
+	m_treeCtrl.DeleteAllItems();
+	m_hSelectedItem = nullptr;
 
-		return;
-	}
+	Clean();	
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}	
+	
 
 	//m_pSearchDialog->Reset();
 
 	/*
 	* Disable the drawing
 	*/
-	m_bInitInProgress = true;
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+	/*m_bInitInProgress = true;
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);*/
+
+	/*map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.begin();
+	for (; itInstance2Properties != m_mapInstance2Properties.end(); itInstance2Properties++)
+	{
+		map<int64_t, CRDFPropertyItem *>::iterator itPropertyItem = itInstance2Properties->second.begin();
+		for (; itPropertyItem != itInstance2Properties->second.end(); itPropertyItem++)
+		{
+			delete itPropertyItem->second;
+		}
+	}
+
+	m_mapInstance2Properties.clear();*/
+
+	
+
+	//HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+
+	//auto& mapDefinitions = pModel->GetDefinitions();
+	//for (auto itDefinition = mapDefinitions.begin();
+	//	itDefinition != mapDefinitions.end();
+	//	itDefinition++)
+	//{
+	//	auto pDefinition = itDefinition->second;
+
+	//	// Root
+	//	if (pDefinition->getRelatedProductRefs() == 0)
+	//	{
+	//		int64_t owlInstance = 0;
+	//		owlBuildInstance(pModel->GetInstance(), pDefinition->getInstance(), &owlInstance);
+
+	//		AddInstance(hModel, owlInstance);
+	//	}
+	//} // for (auto itDefinition = ...
+
+	//m_treeCtrl.Expand(hModel, TVE_EXPAND);
 
 	/*
 	* Load
 	*/
-	switch (pModel->GetType())
-	{
-		case enumModelType::STEP:
-		{
-			LoadSTEPDeisgnTree(dynamic_cast<CSTEPModel*>(pModel));
-		}
-		break;
+	//switch (pModel->GetType())
+	//{
+	//	case enumModelType::STEP:
+	//	{
+	//		LoadSTEPDeisgnTree(dynamic_cast<CSTEPModel*>(pModel));
+	//	}
+	//	break;
 
-		case enumModelType::IFC:
-		{
-			LoadIFCDeisgnTree(dynamic_cast<CIFCModel*>(pModel));
-		}
-		break;
+	//	case enumModelType::IFC:
+	//	{
+	//		LoadIFCDeisgnTree(dynamic_cast<CIFCModel*>(pModel));
+	//	}
+	//	break;
 
-		default:
-		{
-			ASSERT(FALSE); // Unknown
-		}
-		break;
-	} // switch (pModel ->GetType())
+	//	default:
+	//	{
+	//		ASSERT(FALSE); // Unknown
+	//	}
+	//	break;
+	//} // switch (pModel ->GetType())
 
 	/*
 	* Restore the selected instance
 	*/	
-	if (pController->GetSelectedInstance() != nullptr)
-	{
-		//OnInstanceSelected(nullptr);
-	}
+	//if (pController->GetSelectedInstance() != nullptr)
+	//{
+	//	//OnInstanceSelected(nullptr);
+	//}
 
 	/*
 	* Restore the selected property
@@ -504,8 +578,8 @@ void CDesignTreeView::UpdateView()
 	/*
 	* Enable the drawing
 	*/
-	m_bInitInProgress = false;
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+	/*m_bInitInProgress = false;
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -605,18 +679,7 @@ void CDesignTreeView::LoadIFCDeisgnTree(CIFCModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::LoadSTEPDeisgnTree(CSTEPModel* pModel)
 {
-	delete m_pPropertyProvider;
-	m_pPropertyProvider = nullptr;
-
-	m_treeCtrl.DeleteAllItems();
-
-	map<int64_t, CInstanceData*>::iterator itInstance2Data = m_mapInstance2Item.begin();
-	for (; itInstance2Data != m_mapInstance2Item.end(); itInstance2Data++)
-	{
-		delete itInstance2Data->second;
-	}
-
-	m_mapInstance2Item.clear();
+	Clean();
 
 	/*map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.begin();
 	for (; itInstance2Properties != m_mapInstance2Properties.end(); itInstance2Properties++)
@@ -878,6 +941,17 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
+void CDesignTreeView::Clean()
+{
+	auto itInstance2Data = m_mapInstance2Item.begin();
+	for (; itInstance2Data != m_mapInstance2Item.end(); itInstance2Data++)
+	{
+		delete itInstance2Data->second;
+	}
+	m_mapInstance2Item.clear();
+}
+
+// ------------------------------------------------------------------------------------------------
 //void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
 //{
 	//ASSERT(iModel != 0);
@@ -972,25 +1046,9 @@ CDesignTreeView::CDesignTreeView()
 
 CDesignTreeView::~CDesignTreeView()
 {	
+	Clean();
+
 	delete m_pPropertyProvider;
-
-	for (auto itInstance2Data : m_mapInstance2Item)
-	{
-		delete itInstance2Data.second;
-	}
-	m_mapInstance2Item.clear();
-
-	/*map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.begin();
-	for (; itInstance2Properties != m_mapInstance2Properties.end(); itInstance2Properties++)
-	{
-		map<int64_t, CRDFPropertyItem *>::iterator itPropertyItem = itInstance2Properties->second.begin();
-		for (; itPropertyItem != itInstance2Properties->second.end(); itPropertyItem++)
-		{
-			delete itPropertyItem->second;
-		}
-	}
-
-	m_mapInstance2Properties.clear();	*/
 }
 
 BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
