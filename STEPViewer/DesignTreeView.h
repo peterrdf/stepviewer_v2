@@ -30,7 +30,6 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 class CDesignTreeView
 	: public CDockablePane
 	, public CSTEPView
-	, public CItemStateProvider
 {
 
 private: // Classes
@@ -40,7 +39,6 @@ private: // Classes
 	{
 		Unknown = 0,
 		Instance = 1,
-		Property = 2,
 	};
 
 	// ------------------------------------------------------------------------------------------------
@@ -86,7 +84,6 @@ private: // Members
 	
 	COWLPropertyProvider* m_pPropertyProvider;
 	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE
-	HTREEITEM m_hSelectedItem;
 	bool m_bInitInProgress;
 	//CSearchInstancesDialog* m_pSearchDialog;
 
@@ -95,26 +92,12 @@ public: // Methods
 	// CSTEPView
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
-	
-	// CItemStateProvider
-	virtual bool IsSelected(HTREEITEM hItem) override;
 
 private: // Methods
-	
-	//void GetItemPath(HTREEITEM hItem, vector<pair<CInstance*, CRDFProperty*>>& vecPath);
-	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
-	void RemoveInstanceItemData(CInstance* pInstance, HTREEITEM hInstance);
-	//void RemovePropertyItemData(CInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
-	void RemoveItemData(HTREEITEM hItem);
-	void ResetView();
 
-	void LoadSTEPDeisgnTree(CSTEPModel* pModel);
-	void LoadIFCDeisgnTree(CIFCModel* pModel);
-	
+	void ResetView();	
 	void AddInstance(HTREEITEM hParent, int64_t iInstance);
 	void AddProperties(HTREEITEM hParent, int64_t iInstance);
-
-	//void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
 
 	void Clean();
 
