@@ -691,13 +691,13 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
-	double d_41 = pInstance->getTransformationMatrix()->_41;
-	double d_42 = pInstance->getTransformationMatrix()->_42;
-	double d_43 = pInstance->getTransformationMatrix()->_43;
+	double d_41 = pInstance->GetTransformationMatrix()->_41;
+	double d_42 = pInstance->GetTransformationMatrix()->_42;
+	double d_43 = pInstance->GetTransformationMatrix()->_43;
 
-	pInstance->getTransformationMatrix()->_41 += fXTranslation;
-	pInstance->getTransformationMatrix()->_42 += fYTranslation;
-	pInstance->getTransformationMatrix()->_43 += fZTranslation;
+	pInstance->GetTransformationMatrix()->_41 += fXTranslation;
+	pInstance->GetTransformationMatrix()->_42 += fYTranslation;
+	pInstance->GetTransformationMatrix()->_43 += fZTranslation;
 
 	CalculateMinMaxTransform(
 		pInstance,
@@ -705,9 +705,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 		fYmin, fYmax,
 		fZmin, fZmax);
 
-	pInstance->getTransformationMatrix()->_41 = d_41;
-	pInstance->getTransformationMatrix()->_42 = d_42;
-	pInstance->getTransformationMatrix()->_43 = d_43;
+	pInstance->GetTransformationMatrix()->_41 = d_41;
+	pInstance->GetTransformationMatrix()->_42 = d_42;
+	pInstance->GetTransformationMatrix()->_43 = d_43;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -742,7 +742,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -780,7 +780,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -818,7 +818,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -851,7 +851,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -936,7 +936,7 @@ void CProductDefinition::Scale(float fResoltuion)
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CProductDefinition::getExpressID() const
+int_t CProductDefinition::GetExpressID() const
 {
 	return m_iExpressID;
 }
@@ -948,19 +948,19 @@ int_t CProductDefinition::getInstance() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::getId() const
+const wchar_t* CProductDefinition::GetId() const
 {
 	return m_strId.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::getName() const
+const wchar_t* CProductDefinition::GetName() const
 {
 	return m_strName.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::getDescription() const
+const wchar_t* CProductDefinition::GetDescription() const
 {
 	return m_strDescription.c_str();
 }

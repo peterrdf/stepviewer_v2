@@ -13,6 +13,8 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CProductDefinition
 {
 	friend class CSTEPModel;
@@ -97,11 +99,11 @@ public: // Methods
 
 	void Scale(float fResoltuion);
 	
-	int_t getExpressID() const;
+	int_t GetExpressID() const;
 	int_t getInstance() const;	
-	const wchar_t* getId() const;
-	const wchar_t* getName() const;
-	const wchar_t* getDescription() const;
+	const wchar_t* GetId() const;
+	const wchar_t* GetName() const;
+	const wchar_t* GetDescription() const;
 	const wchar_t* getProductId() const;
 	const wchar_t* getProductName() const;
 

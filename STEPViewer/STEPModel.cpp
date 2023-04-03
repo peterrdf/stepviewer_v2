@@ -69,7 +69,7 @@ CSTEPModel::~CSTEPModel()
 	ASSERT(pInstance != nullptr);
 
 	auto pProductInstance = dynamic_cast<CProductInstance*>(pInstance);
-	if ((pProductInstance == nullptr) || (pProductInstance->getProductDefinition() != nullptr))
+	if ((pProductInstance == nullptr) || (pProductInstance->GetProductDefinition() != nullptr))
 	{
 		ASSERT(FALSE);
 
@@ -85,7 +85,7 @@ CSTEPModel::~CSTEPModel()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	pProductInstance->getProductDefinition()->CalculateMinMaxTransform(
+	pProductInstance->GetProductDefinition()->CalculateMinMaxTransform(
 		pProductInstance,
 		m_fXTranslation, m_fYTranslation, m_fZTranslation,
 		m_fXmin, m_fXmax,
@@ -130,7 +130,7 @@ CSTEPModel::~CSTEPModel()
 		auto& vecInstances = itDefinition->second->GetInstances();
 		for (auto pInstance : vecInstances)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -326,7 +326,7 @@ void CSTEPModel::ScaleAndCenter()
 		auto itInstance = itDefinition->second->GetInstances();
 		for (auto pInstance : itDefinition->second->GetInstances())
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -430,9 +430,9 @@ void CSTEPModel::LoadProductDefinitions()
 		ASSERT(iProductDefinitionInstance != 0);
 
 		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-		ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
+		ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
 
-		m_mapExpressID2Definition[pDefinition->getExpressID()] = pDefinition;
+		m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
 	}	
 }
 
@@ -495,7 +495,7 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 	}
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-	ASSERT(m_mapExpressID2Definition.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
+	ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
 
 	if (bRelatingProduct)
 	{
@@ -507,7 +507,7 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 		pDefinition->m_iRelatedProductRefs++;
 	}
 
-	m_mapExpressID2Definition[pDefinition->getExpressID()] = pDefinition;
+	m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
 
 	return pDefinition;
 }
@@ -591,7 +591,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		if (pAssembly->m_pRelatingProductDefinition == pDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(m_iModel, internalGetInstanceFromP21Line(m_iModel, pAssembly->getExpressID()), &owlInstanceMatrix);
+			owlBuildInstance(m_iModel, internalGetInstanceFromP21Line(m_iModel, pAssembly->GetExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(GetModel(owlInstanceMatrix), "Transformation")) 
 			{
@@ -629,7 +629,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pDefinition->getExpressID());
+	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pDefinition->GetExpressID());
 
 	int64_t	owlInstanceProductDefinition = 0;
 	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
@@ -639,7 +639,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	cleanMemory(m_iModel, 0);
 
 	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
-	m_mapID2Instance[pInstance->getID()] = pInstance;
+	m_mapID2Instance[pInstance->GetID()] = pInstance;
 
 	pDefinition->m_vecProductInstances.push_back(pInstance);
 }

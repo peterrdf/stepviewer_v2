@@ -19,37 +19,37 @@ CAssembly::CAssembly()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CAssembly::getExpressID() const
+int_t CAssembly::GetExpressID() const
 {
 	return m_iExpressID;
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::getId() const
+const wchar_t* CAssembly::GetId() const
 {
 	return m_strId.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::getName() const
+const wchar_t* CAssembly::GetName() const
 {
 	return m_strName.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::getDescription() const
+const wchar_t* CAssembly::GetDescription() const
 {
 	return m_strDescription.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CAssembly::getRelatingProductDefinition() const
+CProductDefinition* CAssembly::GetRelatingProductDefinition() const
 {
 	return m_pRelatingProductDefinition;
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CAssembly::getRelatedProductDefinition() const
+CProductDefinition* CAssembly::GetRelatedProductDefinition() const
 {
 	return m_pRelatedProductDefinition;
 }

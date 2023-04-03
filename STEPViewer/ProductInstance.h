@@ -4,27 +4,25 @@
 #include "Instance.h"
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CProductDefinition;
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class CProductInstance : public CInstance
 {
 
-	// --------------------------------------------------------------------------------------------
 	friend class CProductDefinition;
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
 	int_t m_iID;
 
-	// --------------------------------------------------------------------------------------------
 	CProductDefinition* m_pProductDefinition;
-
-	// --------------------------------------------------------------------------------------------
 	OGLMATRIX* m_pTransformationMatrix;
 
-	// --------------------------------------------------------------------------------------------
 	bool m_bEnable;	
 
 public: // Methods
@@ -36,14 +34,14 @@ public: // Methods
 	virtual int64_t GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
-
 	
-	int_t getID() const;
-	CProductDefinition* getProductDefinition() const;
-	OGLMATRIX* getTransformationMatrix() const;
+	int_t GetID() const;
 
-	bool getEnable() const;
-	void setEnable(bool bEnable);
+	CProductDefinition* GetProductDefinition() const;
+	OGLMATRIX* GetTransformationMatrix() const;
+
+	bool GetEnable() const;
+	void SetEnable(bool bEnable);
 
 	void ScaleAndCenter(float fResoltuion);
 };

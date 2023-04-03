@@ -849,7 +849,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
@@ -857,7 +857,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -984,7 +984,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
@@ -992,7 +992,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -1092,7 +1092,7 @@ void COpenGLSTEPView::DrawLines()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
@@ -1100,7 +1100,7 @@ void COpenGLSTEPView::DrawLines()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -1200,7 +1200,7 @@ void COpenGLSTEPView::DrawPoints()
 			auto& vecInstances = pDefinition->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
@@ -1208,7 +1208,7 @@ void COpenGLSTEPView::DrawPoints()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -1329,15 +1329,15 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
 
 				float fR, fG, fB;
-				_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
+				_i64RGBCoder::encode(pInstance->GetID(), fR, fG, fB);
 
-				m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+				m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetID()] = _color(fR, fG, fB);
 			}
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
@@ -1380,7 +1380,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
+				if (!pInstance->GetEnable())
 				{
 					continue;
 				}
@@ -1388,7 +1388,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -1404,7 +1404,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				{
 					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
 
-					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
+					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetID());
 					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 					m_pOGLProgram->_setAmbientColor(

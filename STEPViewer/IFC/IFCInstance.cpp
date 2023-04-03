@@ -77,7 +77,7 @@ CIFCInstance::~CIFCInstance()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCInstance::IsEnabled() const
 {
-	return getEnable();
+	return GetEnable();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -225,13 +225,13 @@ bool&  CIFCInstance::referenced()
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CIFCInstance::getEnable() const
+bool CIFCInstance::GetEnable() const
 {
 	return m_bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCInstance::setEnable(bool bEnable)
+void CIFCInstance::SetEnable(bool bEnable)
 {
 	m_bEnable = bEnable;
 }

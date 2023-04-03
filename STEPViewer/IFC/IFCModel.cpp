@@ -157,7 +157,7 @@ CIFCModel::~CIFCModel()
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (!itInstance->second->getEnable())
+		if (!itInstance->second->GetEnable())
 		{
 			continue;
 		}
@@ -429,7 +429,7 @@ void CIFCModel::ScaleAndCenter()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		if (itIinstance->second->getEnable())
+		if (itIinstance->second->GetEnable())
 		{
 			itIinstance->second->CalculateMinMax(
 				m_fXmin, m_fXmax, 
@@ -585,7 +585,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pInstance->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
+		pInstance->SetEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 		
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;
@@ -639,7 +639,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 				CString strEntity = szParentEntityNameW;
 				strEntity.MakeUpper();
 
-				pInstance->setEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
+				pInstance->SetEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 
 				m_vecInstances.push_back(pInstance);
 				m_mapInstances[iInstance] = pInstance;

@@ -806,7 +806,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -901,7 +901,7 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -969,7 +969,7 @@ void COpenGLIFCView::DrawLines()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -1038,7 +1038,7 @@ void COpenGLIFCView::DrawPoints()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}
@@ -1159,7 +1159,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if (!pInstance->GetEnable())
 			{
 				continue;
 			}

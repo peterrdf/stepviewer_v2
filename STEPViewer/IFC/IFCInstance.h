@@ -100,8 +100,8 @@ public: // Methods
 
 	// State
 	bool& referenced();
-	bool getEnable() const;
-	void setEnable(bool bEnable);
+	bool GetEnable() const;
+	void SetEnable(bool bEnable);
 	
 	GLuint& VBO();
 	GLsizei& VBOOffset();

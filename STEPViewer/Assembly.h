@@ -44,21 +44,21 @@ public: // Methods
 	virtual ~CAssembly();
 
 	// --------------------------------------------------------------------------------------------
-	int_t getExpressID() const;
+	int_t GetExpressID() const;
 
 	// --------------------------------------------------------------------------------------------
-	const wchar_t* getId() const;
+	const wchar_t* GetId() const;
 
 	// --------------------------------------------------------------------------------------------
-	const wchar_t* getName() const;
+	const wchar_t* GetName() const;
 
 	// --------------------------------------------------------------------------------------------
-	const wchar_t* getDescription() const;
+	const wchar_t* GetDescription() const;
 
 	//---------------------------------------------------------------------------------------------
-	CProductDefinition* getRelatingProductDefinition() const;
+	CProductDefinition* GetRelatingProductDefinition() const;
 
 	//---------------------------------------------------------------------------------------------
-	CProductDefinition* getRelatedProductDefinition() const;
+	CProductDefinition* GetRelatedProductDefinition() const;
 };
 

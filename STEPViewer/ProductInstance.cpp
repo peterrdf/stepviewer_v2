@@ -58,35 +58,35 @@ CProductInstance::~CProductInstance()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CProductInstance::IsEnabled() const
 {
-	return getEnable();
+	return GetEnable();
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CProductInstance::getID() const
+int_t CProductInstance::GetID() const
 {
 	return m_iID;
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CProductInstance::getProductDefinition() const
+CProductDefinition* CProductInstance::GetProductDefinition() const
 {
 	return m_pProductDefinition;
 }
 
 // ------------------------------------------------------------------------------------------------
-OGLMATRIX* CProductInstance::getTransformationMatrix() const
+OGLMATRIX* CProductInstance::GetTransformationMatrix() const
 {
 	return m_pTransformationMatrix;
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CProductInstance::getEnable() const
+bool CProductInstance::GetEnable() const
 {
 	return m_bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductInstance::setEnable(bool bEnable)
+void CProductInstance::SetEnable(bool bEnable)
 {
 	m_bEnable = bEnable;
 }
