@@ -2,11 +2,12 @@
 
 #include "ViewTree.h"
 
-// CSearchInstancesDialog dialog
+// CSTEPSearchModelStructureDialog dialog
 
-class CSearchInstancesDialog : public CDialogEx
+// ------------------------------------------------------------------------------------------------
+class CSTEPSearchModelStructureDialog : public CDialogEx
 {
-	DECLARE_DYNAMIC(CSearchInstancesDialog)
+	DECLARE_DYNAMIC(CSTEPSearchModelStructureDialog)
 
 private: // Declarations
 
@@ -21,7 +22,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// IFC Tree
-	CViewTree * m_pTreeCtrl;
+	CViewTree* m_pTreeCtrl;
 
 	// --------------------------------------------------------------------------------------------
 	// Filter
@@ -68,8 +69,8 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchInstancesDialog(CViewTree* pTreeCtrl);   // standard constructor
-	virtual ~CSearchInstancesDialog();
+	CSTEPSearchModelStructureDialog(CViewTree* pTreeCtrl);   // standard constructor
+	virtual ~CSTEPSearchModelStructureDialog();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

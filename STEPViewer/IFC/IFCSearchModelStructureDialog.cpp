@@ -1,68 +1,41 @@
-// SearchInstancesDialog.cpp : implementation file
+// IFCSearchModelStructureDialog.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "SearchInstancesDialog.h"
+#include "IFCSearchModelStructureDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
 #include "StructureViewConsts.h"
-#include "STEPItemData.h"
 
 
-// CSearchInstancesDialog dialog
+// CIFCSearchModelStructureDialog dialog
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchInstancesDialog::ContainsText(HTREEITEM hItem, const CString& strText)
+BOOL CIFCSearchModelStructureDialog::ContainsText(HTREEITEM hItem, const CString& strText)
 {
 	ASSERT(hItem != nullptr);
 
-	CString strItemText = m_pTreeCtrl->GetItemText(hItem);
+	CString strItemText = m_pIFCTreeCtrl->GetItemText(hItem);
 	strItemText.MakeLower();
 
 	CString strTextLower = strText;
 	strTextLower.MakeLower();
 
-	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);	
-
-	// Product Definition
-	if (m_enSearchFilter == enumSearchFilter::ProductDefitions)
+	// Express line number
+	if (m_enSearchFilter == enumSearchFilter::ExpressID)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductDefinition))
-		{
-			return strItemText.Find(strText, 0) != -1;
-		}
+		CString strExpressionLine = L"#";
+		strExpressionLine += strText;
 
-		return FALSE;
-	}
-
-	// Assemblies
-	if (m_enSearchFilter == enumSearchFilter::Assemblies)
-	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::Assembly))
-		{
-			return strItemText.Find(strText, 0) != -1;
-		}
-
-		return FALSE;
-	}
-
-	// Product Instance
-	if (m_enSearchFilter == enumSearchFilter::ProductInstances)
-	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
-		{
-			return strItemText.Find(strText, 0) != -1;
-		}
-
-		return FALSE;
-	}
+		return strItemText.Find(strExpressionLine, 0) == 0;
+	}	
 
 	// All
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::SelectItem(HTREEITEM hItem)
+void CIFCSearchModelStructureDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -73,38 +46,25 @@ void CSearchInstancesDialog::SelectItem(HTREEITEM hItem)
 	}
 
 	// Select
-	m_pTreeCtrl->EnsureVisible(hItem);
-	m_pTreeCtrl->SetItemState(hItem, TVIS_SELECTED, TVIS_SELECTED);
-	m_pTreeCtrl->SetFocus();
+	m_pIFCTreeCtrl->EnsureVisible(hItem);
+	m_pIFCTreeCtrl->SetItemState(hItem, TVIS_SELECTED, TVIS_SELECTED);
+	m_pIFCTreeCtrl->SetFocus();
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::UnselectItem(HTREEITEM hItem)
+void CIFCSearchModelStructureDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	m_pTreeCtrl->SetItemState(hItem, 0, TVIS_SELECTED);
+	m_pIFCTreeCtrl->SetItemState(hItem, 0, TVIS_SELECTED);
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchInstancesDialog::SearchChildren(HTREEITEM hParent)
+HTREEITEM CIFCSearchModelStructureDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);	
 
-	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
-
-	if ((pItemData != nullptr) && 
-		((pItemData->getType() == enumSTEPItemDataType::ProductDefinition) || 
-			(pItemData->getType() == enumSTEPItemDataType::Assembly) || 
-			(pItemData->getType() == enumSTEPItemDataType::ProductInstance)))
-	{
-		if (m_pTreeCtrl->ItemHasChildren(hParent) && (m_pTreeCtrl->GetChildItem(hParent) == nullptr))
-		{
-			m_pTreeCtrl->Expand(hParent, TVE_EXPAND);
-		}
-	}
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pIFCTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		if (ContainsText(hChild, m_strSearchText))
@@ -118,18 +78,18 @@ HTREEITEM CSearchInstancesDialog::SearchChildren(HTREEITEM hParent)
 			return hGrandchild;
 		}
 
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+		hChild = m_pIFCTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
 	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchInstancesDialog::SearchSiblings(HTREEITEM hItem)
+HTREEITEM CIFCSearchModelStructureDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	HTREEITEM hSibling = m_pTreeCtrl->GetNextSiblingItem(hItem);
+	HTREEITEM hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hItem);
 	while (hSibling != nullptr)
 	{
 		if (ContainsText(hSibling, m_strSearchText))
@@ -143,24 +103,24 @@ HTREEITEM CSearchInstancesDialog::SearchSiblings(HTREEITEM hItem)
 			return hGrandchild;
 		}
 
-		hSibling = m_pTreeCtrl->GetNextSiblingItem(hSibling);
+		hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hSibling);
 	} // while (hSibling != nullptr)
 
 	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchInstancesDialog::SearchParents(HTREEITEM hItem)
+HTREEITEM CIFCSearchModelStructureDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+	HTREEITEM hParent = m_pIFCTreeCtrl->GetParentItem(hItem);
 	if (hParent == nullptr)
 	{
 		return nullptr;
 	}
 
-	HTREEITEM hSibling = m_pTreeCtrl->GetNextSiblingItem(hParent);
+	HTREEITEM hSibling = m_pIFCTreeCtrl->GetNextSiblingItem(hParent);
 	if (hSibling == nullptr)
 	{
 		return SearchParents(hParent);
@@ -184,30 +144,30 @@ HTREEITEM CSearchInstancesDialog::SearchParents(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::Reset()
+void CIFCSearchModelStructureDialog::Reset()
 {
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 }
 
-IMPLEMENT_DYNAMIC(CSearchInstancesDialog, CDialogEx)
+IMPLEMENT_DYNAMIC(CIFCSearchModelStructureDialog, CDialogEx)
 
-CSearchInstancesDialog::CSearchInstancesDialog(CViewTree* pTreeCtrl)
+CIFCSearchModelStructureDialog::CIFCSearchModelStructureDialog(CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
-	, m_pTreeCtrl(pTreeCtrl)
+	, m_pIFCTreeCtrl(pIFCTreeCtrl)
 	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
 {
-	ASSERT(m_pTreeCtrl != nullptr);
+	ASSERT(m_pIFCTreeCtrl != nullptr);
 }
 
-CSearchInstancesDialog::~CSearchInstancesDialog()
+CIFCSearchModelStructureDialog::~CIFCSearchModelStructureDialog()
 {
 }
 
-void CSearchInstancesDialog::DoDataExchange(CDataExchange* pDX)
+void CIFCSearchModelStructureDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
@@ -216,17 +176,17 @@ void CSearchInstancesDialog::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSearchInstancesDialog, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchInstancesDialog::OnEnChangeEditSearchText)
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchInstancesDialog::OnBnClickedButtonSearch)
-	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchInstancesDialog::OnCbnSelchangeComboSearchFilter)
+BEGIN_MESSAGE_MAP(CIFCSearchModelStructureDialog, CDialogEx)
+	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CIFCSearchModelStructureDialog::OnEnChangeEditSearchText)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CIFCSearchModelStructureDialog::OnBnClickedButtonSearch)
+	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CIFCSearchModelStructureDialog::OnCbnSelchangeComboSearchFilter)
 END_MESSAGE_MAP()
 
 
-// CSearchInstancesDialog message handlers
+// CIFCSearchModelStructureDialog message handlers
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::OnEnChangeEditSearchText()
+void CIFCSearchModelStructureDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
 
@@ -234,7 +194,7 @@ void CSearchInstancesDialog::OnEnChangeEditSearchText()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::OnBnClickedButtonSearch()
+void CIFCSearchModelStructureDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
 
@@ -252,7 +212,7 @@ void CSearchInstancesDialog::OnBnClickedButtonSearch()
 	// Initialize - take the first root
 	if (m_hSearchResult == nullptr)
 	{
-		m_hSearchResult = m_pTreeCtrl->GetRootItem();
+		m_hSearchResult = m_pIFCTreeCtrl->GetRootItem();
 		if (m_hSearchResult == nullptr)
 		{
 			// No items
@@ -306,14 +266,12 @@ void CSearchInstancesDialog::OnBnClickedButtonSearch()
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchInstancesDialog::OnInitDialog()
+BOOL CIFCSearchModelStructureDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
 	m_cmbSearchFilter.AddString(_T("(All)"));
-	m_cmbSearchFilter.AddString(_T("Product Definitions"));
-	m_cmbSearchFilter.AddString(_T("Assemblies"));
-	m_cmbSearchFilter.AddString(_T("Product Instances"));
+	m_cmbSearchFilter.AddString(_T("Express ID"));
 
 	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
@@ -322,7 +280,7 @@ BOOL CSearchInstancesDialog::OnInitDialog()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchInstancesDialog::OnCbnSelchangeComboSearchFilter()
+void CIFCSearchModelStructureDialog::OnCbnSelchangeComboSearchFilter()
 {
 	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }

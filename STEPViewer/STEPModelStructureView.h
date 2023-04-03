@@ -3,7 +3,7 @@
 #include "STEPTreeViewBase.h"
 #include "STEPItemData.h"
 #include "STEPModel.h"
-#include "SearchInstancesDialog.h"
+#include "STEPSearchModelStructureDialog.h"
 
 // ------------------------------------------------------------------------------------------------
 class CSTEPModelStructureView 
@@ -26,7 +26,7 @@ private: // Members
 	bool m_bInitInProgress;
 
 	// Search
-	CSearchInstancesDialog* m_pSearchDialog;
+	CSTEPSearchModelStructureDialog* m_pSearchDialog;
 
 public: // Methods
 

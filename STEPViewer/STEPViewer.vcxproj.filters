@@ -68,7 +68,7 @@
     <ClInclude Include="ProductInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchInstancesDialog.h">
+    <ClInclude Include="STEPSearchModelStructureDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="STEPItemData.h">
@@ -128,7 +128,7 @@
     <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\SearchModelStructureDialog.h">
+    <ClInclude Include="IFC\IFCSearchModelStructureDialog.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
@@ -193,7 +193,7 @@
     <ClCompile Include="ProductInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SearchInstancesDialog.cpp">
+    <ClCompile Include="STEPSearchModelStructureDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPItemData.cpp">
@@ -244,7 +244,7 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\SearchModelStructureDialog.cpp">
+    <ClCompile Include="IFC\IFCSearchModelStructureDialog.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="SchemaView.cpp">

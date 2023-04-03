@@ -464,7 +464,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();*/
 
 	//  Search
-	//m_pSearchDialog = new CSearchInstancesDialog(&m_treeCtrl);
+	//m_pSearchDialog = new CSTEPSearchModelStructureDialog(&m_treeCtrl);
 	//m_pSearchDialog->Create(IDD_DIALOG_SEARCH_INSTANCES, this);
 
 	return 0;

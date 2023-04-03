@@ -5,7 +5,7 @@
 #include "STEPView.h"
 #include "Instance.h"
 #include "OWLProperty.h"
-#include "SearchInstancesDialog.h"
+#include "STEPSearchModelStructureDialog.h"
 
 #include <map>
 
@@ -85,7 +85,7 @@ private: // Members
 	COWLPropertyProvider* m_pPropertyProvider;
 	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
-	//CSearchInstancesDialog* m_pSearchDialog;
+	//CSTEPSearchModelStructureDialog* m_pSearchDialog;
 
 public: // Methods
 	

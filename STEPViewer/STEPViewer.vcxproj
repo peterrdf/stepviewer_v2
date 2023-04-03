@@ -216,11 +216,11 @@
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
     <ClInclude Include="IFC\OpenGLIFCView.h" />
-    <ClInclude Include="IFC\SearchModelStructureDialog.h" />
+    <ClInclude Include="IFC\IFCSearchModelStructureDialog.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
-    <ClInclude Include="SearchInstancesDialog.h" />
+    <ClInclude Include="STEPSearchModelStructureDialog.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="STEPItemData.h" />
     <ClInclude Include="Model.h" />
@@ -263,11 +263,11 @@
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\OpenGLIFCView.cpp" />
-    <ClCompile Include="IFC\SearchModelStructureDialog.cpp" />
+    <ClCompile Include="IFC\IFCSearchModelStructureDialog.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />
-    <ClCompile Include="SearchInstancesDialog.cpp" />
+    <ClCompile Include="STEPSearchModelStructureDialog.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
     <ClCompile Include="Model.cpp" />

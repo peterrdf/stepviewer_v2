@@ -3,9 +3,8 @@
 #include "STEPTreeViewBase.h"
 #include "STEPItemData.h"
 #include "STEPModel.h"
-#include "SearchInstancesDialog.h"
 #include "IFCInstance.h"
-#include "SearchModelStructureDialog.h"
+#include "IFCSearchModelStructureDialog.h"
 #include <map>
 
 using namespace std;
@@ -31,7 +30,7 @@ private: // Members
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
-	CSearchModelStructureDialog* m_pSearchDialog;
+	CIFCSearchModelStructureDialog* m_pSearchDialog;
 
 public: // Methods
 

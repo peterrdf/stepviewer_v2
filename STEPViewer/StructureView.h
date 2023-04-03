@@ -3,7 +3,6 @@
 
 #include "ViewTree.h"
 #include "STEPView.h"
-#include "SearchInstancesDialog.h"
 #include "Assembly.h"
 #include "STEPItemData.h"
 #include "STEPModelStructureView.h"
