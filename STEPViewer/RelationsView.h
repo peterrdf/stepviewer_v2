@@ -207,6 +207,8 @@ private: // Methods
 
 	void Clean();
 
+	void ResetView();
+
 // Construction
 public:
 	CRelationsView();

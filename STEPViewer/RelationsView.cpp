@@ -273,8 +273,7 @@ CModel* CRelationsView::GetModel() const
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 {
-	m_treeCtrl.DeleteAllItems();
-	Clean();
+	ResetView();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -312,8 +311,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 // ------------------------------------------------------------------------------------------------
 void CRelationsView::LoadProperties(int_t iEntity, const vector<int_t>& vecInstances)
 {
-	m_treeCtrl.DeleteAllItems();
-	Clean();
+	ResetView();
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
@@ -1452,8 +1450,17 @@ void CRelationsView::Clean()
 		delete pInstanceData;
 	}
 	m_vecItemDataCache.clear();
+}
 
+// ------------------------------------------------------------------------------------------------
+void CRelationsView::ResetView()
+{
+	// UI
+	m_treeCtrl.DeleteAllItems();
 	m_pSearchDialog->Reset();
+
+	// Data
+	Clean();
 }
 
 // ------------------------------------------------------------------------------------------------
