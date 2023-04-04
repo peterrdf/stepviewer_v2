@@ -274,7 +274,7 @@ void CRelationsView::LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hPar
 		}
 
 		CString strPage;
-		strPage.Format(L"(%lld - %lld)...", iAttributeStart, iAttributeEnd);
+		strPage.Format(L"[%lld - %lld]", iAttributeStart + 1, iAttributeEnd);
 
 		// Pending load
 		tvInsertStruct.hParent = hInstance;
