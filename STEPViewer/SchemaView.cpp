@@ -19,6 +19,79 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ CViewTree* CSchemaView::GetTreeView() /*override*/
+{
+	return &m_treeCtrl;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<wstring> CSchemaView::GetSearchFilters() /*override*/
+{
+	return vector<wstring>
+		{
+			_T("(All)"),
+			_T("Entities"),
+			_T("Attributes"),
+		};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSchemaView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+{
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CSchemaView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	ASSERT(hItem != nullptr);
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// Entities
+	if (iFilter == (int)enumSearchFilter::Entities)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_ENTITY)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Attributes
+	if (iFilter == (int)enumSearchFilter::Attributes)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_ATTRIBUTE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
+}
+
+// ------------------------------------------------------------------------------------------------
 void CSchemaView::LoadModel(CModel* pModel)
 {
 	if (pModel == nullptr)
@@ -305,7 +378,7 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchSchemaDialog(&m_treeCtrl);
+	m_pSearchDialog = new CSearchTreeViewDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;

@@ -5,11 +5,13 @@
 #include "ViewTree.h"
 #include "STEPView.h"
 #include "ViewTree.h"
-#include "SearchSchemaDialog.h"
+#include "SearchTreeViewDialog.h"
 
 #include <map>
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class CSchemaViewToolBar : public CMFCToolBar
 {
@@ -26,20 +28,37 @@ class CSchemaViewToolBar : public CMFCToolBar
 */
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CSchemaView 
 	: public CDockablePane
 	, public CSTEPView
+	, public CSearchTreeViewDialogSite
 {
+
+private: // Classes
+
+	enum class enumSearchFilter {
+		All = 0,
+		Entities = 1,
+		Attributes = 2
+	};
 
 private: // Members
 
 	// Search
-	CSearchSchemaDialog* m_pSearchDialog;
+	CSearchTreeViewDialog* m_pSearchDialog;
 
 protected:
 
 	// CSTEPView
 	virtual void OnModelChanged() override;
+
+	// CSearchTreeViewDialogSite
+	virtual CViewTree* GetTreeView() override;
+	virtual vector<wstring> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
 private: // Methods	
 

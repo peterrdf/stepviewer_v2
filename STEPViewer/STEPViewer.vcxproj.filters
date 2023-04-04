@@ -140,9 +140,6 @@
     <ClInclude Include="SearchAttributeDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchSchemaDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCModelStructureView.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -242,9 +239,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SearchAttributeDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SearchSchemaDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RelationsView.cpp">
