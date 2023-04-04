@@ -21,6 +21,7 @@ public: // Methods
 
 class CViewTree : public CTreeCtrl
 {
+
 private: // Members
 	
 	CItemStateProvider* m_pItemStateProvider;

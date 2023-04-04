@@ -211,6 +211,7 @@
     <ClInclude Include="SchemaViewConsts.h" />
     <ClInclude Include="SearchAttributeDialog.h" />
     <ClInclude Include="SearchSchemaDialog.h" />
+    <ClInclude Include="SearchTreeViewDialog.h" />
     <ClInclude Include="StructureView.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchAttributeDialog.cpp" />
     <ClCompile Include="SearchSchemaDialog.cpp" />
+    <ClCompile Include="SearchTreeViewDialog.cpp" />
     <ClCompile Include="StructureView.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
