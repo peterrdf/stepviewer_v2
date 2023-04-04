@@ -119,8 +119,43 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+/*virtual*/ void CRelationsView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	TVITEMW tvItem = {};
+	tvItem.hItem = hItem;
+	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
+
+	if (!GetTreeView()->GetItem(&tvItem))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (tvItem.cChildren != 1)
+	{
+		return;
+	}
+
+	HTREEITEM hChild = GetTreeView()->GetChildItem(hItem);
+	if (hChild == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (GetTreeView()->GetItemText(hChild) == ITEM_PENDING_LOAD)
+	{
+		GetTreeView()->Expand(hItem, TVE_EXPAND);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1417,6 +1452,8 @@ void CRelationsView::Clean()
 		delete pInstanceData;
 	}
 	m_vecItemDataCache.clear();
+
+	m_pSearchDialog->Reset();
 }
 
 // ------------------------------------------------------------------------------------------------
