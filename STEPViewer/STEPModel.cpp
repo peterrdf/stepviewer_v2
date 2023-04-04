@@ -243,7 +243,7 @@ void CSTEPModel::ScaleAndCenter()
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->hasGeometry())
+		if (!itDefinition->second->HasGeometry())
 		{
 			continue;
 		}
@@ -297,7 +297,7 @@ void CSTEPModel::ScaleAndCenter()
 	itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->hasGeometry())
+		if (!itDefinition->second->HasGeometry())
 		{
 			continue;
 		}
@@ -318,7 +318,7 @@ void CSTEPModel::ScaleAndCenter()
 	itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->hasGeometry())
+		if (!itDefinition->second->HasGeometry())
 		{
 			continue;
 		}
@@ -573,7 +573,7 @@ void CSTEPModel::LoadGeometry()
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (itDefinition->second->getRelatedProductRefs() == 0)
+		if (itDefinition->second->GetRelatedProductRefs() == 0)
 		{
 			WalkAssemblyTreeRecursively("", "", itDefinition->second, nullptr);
 		}

@@ -69,37 +69,35 @@ public: // Methods
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
 
-	const wchar_t* getGUID() const;
-	int64_t expressID() const;
-	int64_t parentExpressID() const;
-	int_t & ID();
-
-	bool hasGeometry() const;
+	const wchar_t* GetGUID() const;
+	int64_t ExpressID() const;
+	int64_t ParentExpressID() const;
+	int_t& ID();
 
 	CIFCModel* GetModel() const;
 	
-	float* getVertices();
-	int_t getVerticesCount();
-	int64_t getVertexLength() const;
-	int32_t* getIndices() const;
-	int64_t getIndicesCount() const;
+	float* GetVertices();
+	int_t GetVerticesCount();
+	int64_t GetVertexLength() const;
+	int32_t* GetIndices() const;
+	int64_t GetIndicesCount() const;
 	int64_t& conceptualFacesCount();
 
-	const vector<_primitives>& getTriangles() const;
-	const vector<_primitives>& getLines() const;
-	const vector<_primitives>& getPoints() const;
-	const vector<_primitives>& getConcFacesPolygons() const;
+	const vector<_primitives>& GetTriangles() const;
+	const vector<_primitives>& GetLines() const;
+	const vector<_primitives>& GetPoints() const;
+	const vector<_primitives>& GetConcFacesPolygons() const;
 
 	// Materials
-	vector<_facesCohort*>& concFacesCohorts();
+	vector<_facesCohort*>& ConcFacesCohorts();
 
 	// Cohorts
-	vector<_cohort*>& concFacePolygonsCohorts();
-	vector<_cohort*>& linesCohorts();
-	vector<_facesCohort*>& pointsCohorts();
+	vector<_cohort*>& ConcFacePolygonsCohorts();
+	vector<_cohort*>& LinesCohorts();
+	vector<_facesCohort*>& PointsCohorts();
 
 	// State
-	bool& referenced();
+	bool& Referenced();
 	bool GetEnable() const;
 	void SetEnable(bool bEnable);
 	

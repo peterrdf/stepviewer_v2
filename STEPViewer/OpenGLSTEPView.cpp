@@ -342,7 +342,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	for (auto itProductDefinitions = mapDefinitions.begin(); itProductDefinitions != mapDefinitions.end(); itProductDefinitions++)
 	{
 		auto pDefinition = itProductDefinitions->second;
-		if (pDefinition->getVerticesCount() == 0)
+		if (pDefinition->GetVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -354,7 +354,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pDefinition->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pDefinition->GetVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -370,9 +370,9 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		/*
 		* IBO - Conceptual faces
 		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pDefinition->concFacesCohorts().size(); iFacesCohort++)
+		for (size_t iFacesCohort = 0; iFacesCohort < pDefinition->ConcFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pDefinition->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacesIndicesCount + pDefinition->ConcFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -385,16 +385,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecConcFacesCohorts.clear();
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pDefinition->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pDefinition->concFacesCohorts()[iFacesCohort]);
+			iConcFacesIndicesCount += (GLsizei)pDefinition->ConcFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pDefinition->ConcFacesCohorts()[iFacesCohort]);
 		}
 
 		/*
 		* IBO - Conceptual face polygons
 		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pDefinition->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pDefinition->ConcFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacePolygonsIndicesCount + pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -407,16 +407,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecConcFacePolygonsCohorts.clear();
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+			iConcFacePolygonsIndicesCount += (GLsizei)pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]);
 		}
 
 		/*
 		* IBO - Lines
 		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pDefinition->linesCohorts().size(); iLinesCohort++)
+		for (size_t iLinesCohort = 0; iLinesCohort < pDefinition->LinesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pDefinition->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iLinesIndicesCount + pDefinition->LinesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -429,16 +429,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecLinesCohorts.clear();
 			}
 
-			iLinesIndicesCount += (GLsizei)pDefinition->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pDefinition->linesCohorts()[iLinesCohort]);
+			iLinesIndicesCount += (GLsizei)pDefinition->LinesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pDefinition->LinesCohorts()[iLinesCohort]);
 		}
 
 		/*
 		* IBO - Points
 		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pDefinition->pointsCohorts().size(); iPointsCohort++)
+		for (size_t iPointsCohort = 0; iPointsCohort < pDefinition->PointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pDefinition->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pDefinition->PointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
@@ -451,11 +451,11 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecPointsCohorts.clear();
 			}
 
-			iPointsIndicesCount += (GLsizei)pDefinition->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pDefinition->pointsCohorts()[iPointsCohort]);
+			iPointsIndicesCount += (GLsizei)pDefinition->PointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pDefinition->PointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pDefinition->getVerticesCount();
+		iVerticesCount += (GLsizei)pDefinition->GetVerticesCount();
 		vecProductDefinitionsCohort.push_back(pDefinition);
 	} // for (auto itProductDefinitions = ...
 
@@ -840,7 +840,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->concFacesCohorts().empty())
+			if (pDefinition->ConcFacesCohorts().empty())
 			{
 				continue;
 			}
@@ -869,9 +869,9 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacesCohorts().size(); iCohort++)
 				{
-					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
+					auto pCohort = pDefinition->ConcFacesCohorts()[iCohort];
 
 					const _material* pMaterial =
 						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -975,7 +975,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->concFacePolygonsCohorts().empty())
+			if (pDefinition->ConcFacePolygonsCohorts().empty())
 			{
 				continue;
 			}
@@ -1004,9 +1004,9 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				
-				for (size_t iCohort = 0; iCohort < pDefinition->concFacePolygonsCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacePolygonsCohorts().size(); iCohort++)
 				{
-					_cohort* pCohort = pDefinition->concFacePolygonsCohorts()[iCohort];
+					_cohort* pCohort = pDefinition->ConcFacePolygonsCohorts()[iCohort];
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 					glDrawElementsBaseVertex(GL_LINES,
@@ -1083,7 +1083,7 @@ void COpenGLSTEPView::DrawLines()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->linesCohorts().empty())
+			if (pDefinition->LinesCohorts().empty())
 			{
 				continue;
 			}
@@ -1112,9 +1112,9 @@ void COpenGLSTEPView::DrawLines()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->linesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->LinesCohorts().size(); iCohort++)
 				{
-					_cohort* pCohort = pDefinition->linesCohorts()[iCohort];
+					_cohort* pCohort = pDefinition->LinesCohorts()[iCohort];
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 					glDrawElementsBaseVertex(GL_LINES,
@@ -1192,7 +1192,7 @@ void COpenGLSTEPView::DrawPoints()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->pointsCohorts().empty())
+			if (pDefinition->PointsCohorts().empty())
 			{
 				continue;
 			}
@@ -1220,7 +1220,7 @@ void COpenGLSTEPView::DrawPoints()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (auto pCohort : pDefinition->pointsCohorts())
+				for (auto pCohort : pDefinition->PointsCohorts())
 				{
 					const _material* pMaterial =
 						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -1320,7 +1320,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 			itDefinition != mapDefinitions.end(); 
 			itDefinition++)
 		{
-			if (itDefinition->second->getTriangles().empty())
+			if (itDefinition->second->GetTriangles().empty())
 			{
 				continue;
 			}
@@ -1371,7 +1371,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->getTriangles().empty())
+			if (pDefinition->GetTriangles().empty())
 			{
 				continue;
 			}
@@ -1400,9 +1400,9 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacesCohorts().size(); iCohort++)
 				{
-					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
+					auto pCohort = pDefinition->ConcFacesCohorts()[iCohort];
 
 					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetID());
 					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());

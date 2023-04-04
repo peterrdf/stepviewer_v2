@@ -57,7 +57,7 @@ public: // Members
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	template<typename T>
-	T* getInstance() const
+	T* GetInstance() const
 	{
 		return (T*)m_pInstance;
 	}

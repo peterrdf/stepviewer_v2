@@ -43,7 +43,7 @@ CProductInstance::~CProductInstance()
 /*virtual*/ int64_t CProductInstance::GetInstance() const
 {
 	return m_pProductDefinition != nullptr ?
-		m_pProductDefinition->getInstance() :
+		m_pProductDefinition->GetInstance() :
 		0;
 }
 
@@ -51,7 +51,7 @@ CProductInstance::~CProductInstance()
 /*virtual*/ bool CProductInstance::HasGeometry() const
 {
 	return m_pProductDefinition != nullptr ?
-		m_pProductDefinition->hasGeometry() :
+		m_pProductDefinition->HasGeometry() :
 		false;
 }
 

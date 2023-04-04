@@ -100,39 +100,39 @@ public: // Methods
 	void Scale(float fResoltuion);
 	
 	int_t GetExpressID() const;
-	int_t getInstance() const;	
+	int_t GetInstance() const;	
 	const wchar_t* GetId() const;
 	const wchar_t* GetName() const;
 	const wchar_t* GetDescription() const;
-	const wchar_t* getProductId() const;
-	const wchar_t* getProductName() const;
+	const wchar_t* GetProductId() const;
+	const wchar_t* GetProductName() const;
 
-	int_t getRelatingProductRefs() const;
-	int_t getRelatedProductRefs() const;
+	int_t GetRelatingProductRefs() const;
+	int_t GetRelatedProductRefs() const;
 	const vector<CProductInstance*>& GetInstances() const;
-	int getNextProductInstance();
+	int GetNextProductInstance();
 
-	bool hasGeometry() const;
+	bool HasGeometry() const;
 	
-	int32_t * getIndices() const;
-	int64_t getIndicesCount() const;
-	float * getVertices() const;
-	int64_t getVerticesCount() const;
-	int64_t getVertexLength() const;
-	int64_t getConceptualFacesCount() const;
+	int32_t* GetIndices() const;
+	int64_t GetIndicesCount() const;
+	float*  GetVertices() const;
+	int64_t GetVerticesCount() const;
+	int64_t GetVertexLength() const;
+	int64_t GetConceptualFacesCount() const;
 
-	const vector<_primitives> & getTriangles() const;
-	const vector<_primitives> & getLines() const;
-	const vector<_primitives> & getPoints() const;
-	const vector<_primitives> & getConcFacesPolygons() const;
+	const vector<_primitives>& GetTriangles() const;
+	const vector<_primitives>& GetLines() const;
+	const vector<_primitives>& GetPoints() const;
+	const vector<_primitives>& GetConcFacesPolygons() const;
 
 	// Materials
-	vector<_facesCohort*>& concFacesCohorts();
+	vector<_facesCohort*>& ConcFacesCohorts();
 
 	// Cohorts
-	vector<_cohort*>& concFacePolygonsCohorts();
-	vector<_cohort*>& linesCohorts();
-	vector<_facesCohort*>& pointsCohorts();	
+	vector<_cohort*>& ConcFacePolygonsCohorts();
+	vector<_cohort*>& LinesCohorts();
+	vector<_facesCohort*>& PointsCohorts();	
 
 	// VBO (OpenGL)
 	GLuint& VBO();

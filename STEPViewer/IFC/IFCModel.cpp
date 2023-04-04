@@ -285,7 +285,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->ID()] = pInstance;
-		m_mapExpressID2Instance[pInstance->expressID()] = pInstance;
+		m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
 	}
 
 	/**
@@ -907,7 +907,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pInstance->concFacesCohorts().push_back(pNewCohort);
+					pInstance->ConcFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -931,7 +931,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pInstance->concFacesCohorts().push_back(pNewCohort);
+					pInstance->ConcFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -952,7 +952,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				pInstance->concFacesCohorts().push_back(pCohort);
+				pInstance->ConcFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -962,7 +962,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				pInstance->concFacesCohorts().push_back(pCohort);
+				pInstance->ConcFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -993,8 +993,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = pInstance->concFacePolygonsCohorts().empty() ? 
-			nullptr : pInstance->concFacePolygonsCohorts()[pInstance->concFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = pInstance->ConcFacePolygonsCohorts().empty() ? 
+			nullptr : pInstance->ConcFacePolygonsCohorts()[pInstance->ConcFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -1002,7 +1002,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
-			pInstance->concFacePolygonsCohorts().push_back(pCohort);
+			pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < pInstance->m_vecConcFacePolygons.size(); iFace++)
@@ -1018,7 +1018,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
-					pInstance->concFacePolygonsCohorts().push_back(pCohort);
+					pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndex;
@@ -1048,7 +1048,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 				if (iIndicesCount > 0)
 				{
 					pCohort = new _cohort();
-					pInstance->concFacePolygonsCohorts().push_back(pCohort);
+					pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndex;
@@ -1081,7 +1081,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			if ((pCohort->indices().size() + (iIndicesCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				pInstance->concFacePolygonsCohorts().push_back(pCohort);
+				pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 			}
 
 			int_t iPreviousIndex = -1;
@@ -1107,9 +1107,9 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pInstance->concFacePolygonsCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < pInstance->ConcFacePolygonsCohorts().size(); iCohort++)
 		{
-			ASSERT(pInstance->concFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+			ASSERT(pInstance->ConcFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConcFacePolygons.empty())
@@ -1122,8 +1122,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		/*
 		* Use the last cohort (if any)
 		*/
-		auto pCohort = pInstance->linesCohorts().empty() ? 
-			nullptr : pInstance->linesCohorts()[pInstance->linesCohorts().size() - 1];
+		auto pCohort = pInstance->LinesCohorts().empty() ? 
+			nullptr : pInstance->LinesCohorts()[pInstance->LinesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -1131,7 +1131,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
-			pInstance->linesCohorts().push_back(pCohort);
+			pInstance->LinesCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < pInstance->m_vecLines.size(); iFace++)
@@ -1145,7 +1145,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				pInstance->linesCohorts().push_back(pCohort);
+				pInstance->LinesCohorts().push_back(pCohort);
 			}
 
 			for (int_t iIndex = iStartIndex;
@@ -1162,9 +1162,9 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pInstance->linesCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < pInstance->LinesCohorts().size(); iCohort++)
 		{
-			ASSERT(pInstance->linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
+			ASSERT(pInstance->LinesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -1199,7 +1199,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pInstance->pointsCohorts().push_back(pNewCohort);
+					pInstance->PointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1223,7 +1223,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 						pNewCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
 					}
 
-					pInstance->pointsCohorts().push_back(pNewCohort);
+					pInstance->PointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -1244,7 +1244,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
 
-				pInstance->pointsCohorts().push_back(pCohort);
+				pInstance->PointsCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1254,7 +1254,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t 
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
 
-				pInstance->pointsCohorts().push_back(pCohort);
+				pInstance->PointsCohorts().push_back(pCohort);
 			}
 
 			/*
