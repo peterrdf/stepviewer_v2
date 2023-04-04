@@ -125,9 +125,6 @@
     <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCSearchModelStructureDialog.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -240,9 +237,6 @@
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCSearchModelStructureDialog.cpp">
-      <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="SchemaView.cpp">
       <Filter>Source Files</Filter>

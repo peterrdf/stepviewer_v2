@@ -217,7 +217,6 @@
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
     <ClInclude Include="IFC\OpenGLIFCView.h" />
-    <ClInclude Include="IFC\IFCSearchModelStructureDialog.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
@@ -264,7 +263,6 @@
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\OpenGLIFCView.cpp" />
-    <ClCompile Include="IFC\IFCSearchModelStructureDialog.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />

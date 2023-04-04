@@ -4,7 +4,7 @@
 #include "STEPItemData.h"
 #include "STEPModel.h"
 #include "IFCInstance.h"
-#include "IFCSearchModelStructureDialog.h"
+#include "SearchTreeViewDialog.h"
 #include <map>
 
 using namespace std;
@@ -17,7 +17,15 @@ using namespace std;
 class CIFCModelStructureView 
 	: public CSTEPTreeViewBase
 	, public CItemStateProvider
+	, public CSearchTreeViewDialogSite
 {
+
+private: // Classes
+
+	enum class enumSearchFilter : int {
+		All = 0,
+		ExpressID = 1,
+	};
 
 private: // Members	
 	
@@ -30,7 +38,7 @@ private: // Members
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
-	CIFCSearchModelStructureDialog* m_pSearchDialog;
+	CSearchTreeViewDialog* m_pSearchDialog;
 
 public: // Methods
 
@@ -38,19 +46,25 @@ public: // Methods
 	virtual ~CIFCModelStructureView();
 
 	// CSTEPView
-	virtual void OnInstanceSelected(CSTEPView* pSender);
+	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 
 	// CSTEPTreeViewBase
-	virtual void Load();
-	virtual CImageList* GetImageList() const;
-	virtual void OnShowWindow(BOOL bShow, UINT nStatus);
-	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult);
-	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
-	virtual void OnContextMenu(CWnd* pWnd, CPoint point);
-	virtual void OnSearch();
+	virtual void Load() override;
+	virtual CImageList* GetImageList() const override;
+	virtual void OnShowWindow(BOOL bShow, UINT nStatus) override;
+	virtual void OnTreeItemClick(NMHDR* pNMHDR, LRESULT* pResult) override;
+	virtual void OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) override;
+	virtual void OnContextMenu(CWnd* pWnd, CPoint point) override;
+	virtual void OnSearch() override;
 
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem);
+
+	// CSearchTreeViewDialogSite
+	virtual CViewTree* GetTreeView() override;
+	virtual vector<wstring> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
 private: // Methods		
 

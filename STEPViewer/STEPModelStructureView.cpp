@@ -368,9 +368,10 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 		return;
 	}
 
-	TVITEMW tvItem;
+	TVITEMW tvItem = {};
 	tvItem.hItem = hItem;
 	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
+	
 	if (!GetTreeView()->GetItem(&tvItem))
 	{
 		ASSERT(FALSE);

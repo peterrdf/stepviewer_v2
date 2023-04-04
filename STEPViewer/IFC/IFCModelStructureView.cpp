@@ -58,7 +58,7 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 	m_pTreeView->SetItemStateProvider(this);
 
 	//  Search
-	m_pSearchDialog = new CIFCSearchModelStructureDialog(m_pTreeView);
+	m_pSearchDialog = new CSearchTreeViewDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeView);
 }
 
@@ -76,7 +76,7 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CSTEPView* pSender)
+/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CSTEPView* pSender) /*override*/
 {	
 	if (pSender == this)
 	{
@@ -112,19 +112,19 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::Load()
+/*virtual*/ void CIFCModelStructureView::Load() /*override*/
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CImageList* CIFCModelStructureView::GetImageList() const
+/*virtual*/ CImageList* CIFCModelStructureView::GetImageList() const /*override*/
 {
 	return m_pImageList;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
+/*virtual*/ void CIFCModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/) /*override*/
 {
 	if (!bShow)
 	{
@@ -133,7 +133,7 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CIFCModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 
@@ -236,13 +236,13 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CIFCModelStructureView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem)
+/*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pInstance = (CIFCInstance*)m_pTreeView->GetItemData(hItem);
 	if (pInstance == nullptr)
@@ -261,8 +261,54 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 	return pInstance == pController->GetSelectedInstance();
 }
 
+
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
+/*virtual*/ CViewTree* CIFCModelStructureView::GetTreeView() /*override*/
+{
+	return m_pTreeView;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<wstring> CIFCModelStructureView::GetSearchFilters() /*override*/
+{
+	return vector<wstring>
+		{
+			_T("(All)"),
+			_T("Express ID"),
+		};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCModelStructureView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+{
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CIFCModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	ASSERT(hItem != nullptr);
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// Express line number
+	if (iFilter == (int)enumSearchFilter::ExpressID)
+	{
+		CString strExpressionLine = L"#";
+		strExpressionLine += strText;
+
+		return strItemText.Find(strExpressionLine, 0) == 0;
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CIFCModelStructureView::OnContextMenu(CWnd* pWnd, CPoint point) /*override*/
 {
 	ASSERT_VALID(m_pTreeView);
 	if (pWnd != m_pTreeView)
@@ -452,7 +498,7 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnSearch()
+/*virtual*/ void CIFCModelStructureView::OnSearch() /*override*/
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
