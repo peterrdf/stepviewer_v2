@@ -60,7 +60,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 	m_pTreeView->SetImageList(m_pImageList, TVSIL_NORMAL);
 
 	//  Search
-	m_pSearchDialog = new CSTEPSearchModelStructureDialog(m_pTreeView);
+	m_pSearchDialog = new CSearchTreeViewDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeView);
 }
 
@@ -82,7 +82,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CSTEPView* pSender)
+/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CSTEPView* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -149,19 +149,19 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::Load()
+/*virtual*/ void CSTEPModelStructureView::Load() /*override*/
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CImageList* CSTEPModelStructureView::GetImageList() const
+/*virtual*/ CImageList* CSTEPModelStructureView::GetImageList() const /*override*/
 {
 	return m_pImageList;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/)
+/*virtual*/ void CSTEPModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/) /*override*/
 {
 	if (!bShow)
 	{
@@ -170,7 +170,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+/*virtual*/ void CSTEPModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 
@@ -287,7 +287,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
+/*virtual*/ void CSTEPModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 
@@ -315,7 +315,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 
 		m_pTreeView->DeleteItem(hChild);
 
-		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(pNMTreeView->itemNew.hItem);
+		auto pItemData = (CSTEPItemData*)m_pTreeView->GetItemData(pNMTreeView->itemNew.hItem);
 		if (pItemData == nullptr)
 		{
 			ASSERT(FALSE); // Internal error
@@ -341,7 +341,114 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+/*virtual*/ CViewTree* CSTEPModelStructureView::GetTreeView() /*override*/
+{
+	return m_pTreeView;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<wstring> CSTEPModelStructureView::GetSearchFilters() /*override*/
+{
+	return vector<wstring>
+		{
+			_T("(All)"),
+			_T("Product Definitions"),
+			_T("Assemblies"),
+			_T("Product Instances")
+		};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSTEPModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+{
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	TVITEMW tvItem;
+	tvItem.hItem = hItem;
+	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
+	if (!GetTreeView()->GetItem(&tvItem))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (tvItem.cChildren != 1)
+	{
+		return;
+	}
+	
+	HTREEITEM hChild = GetTreeView()->GetChildItem(hItem);
+	if (hChild == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (GetTreeView()->GetItemText(hChild) == ITEM_PENDING_LOAD)
+	{
+		GetTreeView()->Expand(hItem, TVE_EXPAND);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CSTEPModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	ASSERT(hItem != nullptr);
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	CSTEPItemData* pItemData = (CSTEPItemData*)GetTreeView()->GetItemData(hItem);
+
+	// Product Definition
+	if (iFilter == (int)enumSearchFilter::ProductDefitions)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductDefinition))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// Assemblies
+	if (iFilter == (int)enumSearchFilter::Assemblies)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::Assembly))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// Product Instance
+	if (iFilter == (int)enumSearchFilter::ProductInstances)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSTEPModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
 {
 	if (point == CPoint(-1, -1))
 	{
@@ -526,7 +633,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CViewTree* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnSearch()
+/*virtual*/ void CSTEPModelStructureView::OnSearch() /*override*/
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
