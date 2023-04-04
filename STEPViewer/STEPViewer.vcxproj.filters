@@ -68,9 +68,6 @@
     <ClInclude Include="ProductInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPSearchModelStructureDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="STEPItemData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -194,9 +191,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProductInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="STEPSearchModelStructureDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPItemData.cpp">

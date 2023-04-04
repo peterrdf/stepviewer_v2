@@ -5,7 +5,6 @@
 #include "STEPView.h"
 #include "Instance.h"
 #include "OWLProperty.h"
-#include "STEPSearchModelStructureDialog.h"
 
 #include <map>
 

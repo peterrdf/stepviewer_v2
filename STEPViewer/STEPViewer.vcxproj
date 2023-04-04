@@ -221,7 +221,6 @@
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ProductDefinition.h" />
     <ClInclude Include="ProductInstance.h" />
-    <ClInclude Include="STEPSearchModelStructureDialog.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="STEPItemData.h" />
     <ClInclude Include="Model.h" />
@@ -269,7 +268,6 @@
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="ProductDefinition.cpp" />
     <ClCompile Include="ProductInstance.cpp" />
-    <ClCompile Include="STEPSearchModelStructureDialog.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="STEPItemData.cpp" />
     <ClCompile Include="Model.cpp" />
