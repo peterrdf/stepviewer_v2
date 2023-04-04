@@ -137,9 +137,6 @@
     <ClInclude Include="SchemaViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchAttributeDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCModelStructureView.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -236,9 +233,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SchemaView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SearchAttributeDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RelationsView.cpp">

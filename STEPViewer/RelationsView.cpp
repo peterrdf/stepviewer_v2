@@ -4,6 +4,7 @@
 #include "RelationsView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
+#include "IFCModel.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -99,6 +100,117 @@ static char THIS_FILE[]=__FILE__;
 		pEntity->GetInstances());
 	
 	ShowPane(TRUE, TRUE, TRUE);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CViewTree* CRelationsView::GetTreeView() /*override*/
+{
+	return &m_treeCtrl;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<wstring> CRelationsView::GetSearchFilters() /*override*/
+{
+	return vector<wstring>
+	{
+		_T("(All)"),
+		_T("Express ID"),
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CRelationsView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+{
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CRelationsView::ProcessSearch(int iFilter, const CString& strSearchText) /*override*/
+{
+	// ExpressID
+	if (iFilter == (int)enumSearchFilter::ExpressID)
+	{
+		auto pController = GetController();
+		if (pController == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return FALSE;
+		}
+
+		auto pModel = pController->GetModel();
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return FALSE;
+		}
+
+		switch (pModel->GetType())
+		{
+			case enumModelType::STEP:
+			{
+				ASSERT(FALSE); // TODO
+			}
+			break;
+
+			case enumModelType::IFC:
+			{
+				auto pIFCmodel = pController->GetModel()->As<CIFCModel>();
+				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
+
+				auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);
+				if (pInstance != nullptr)
+				{
+					pController->SelectInstance(
+						nullptr, /*Attributes View will be updated also*/
+						pInstance);
+				}
+				else
+				{
+					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->GetInstance(), iExpressID);
+					if (iInstance != 0)
+					{
+						pController->OnViewRelations(
+							nullptr,  /*Attributes View will be updated also*/
+							iInstance);
+					}
+					else
+					{
+						::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
+					}
+				}
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE); // Unknown
+			}
+			break;
+		} // switch (pModel ->GetType())
+
+		return TRUE;
+	} // if (iFilter == (int)enumSearchFilter::ExpressID)
+
+	return FALSE;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CRelationsView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	ASSERT(iFilter == 0);
+	UNREFERENCED_PARAMETER(iFilter);
+
+	ASSERT(hItem != nullptr);
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1534,7 +1646,7 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchAttributeDialog(GetController(), &m_treeCtrl);
+	m_pSearchDialog = new CSearchTreeViewDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;

@@ -173,6 +173,11 @@ void CSearchTreeViewDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
 
+	if (m_pSite->ProcessSearch(m_cmbSearchFilter.GetCurSel(), m_strSearchText))
+	{
+		return;
+	}
+
 	// Reset
 	if (m_bEndOfSearch)
 	{

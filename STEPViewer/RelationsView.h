@@ -1,13 +1,16 @@
 
 #pragma once
 
-#include "SearchAttributeDialog.h"
 #include "STEPView.h"
 #include "ViewTree.h"
+#include "SearchTreeViewDialog.h"
 
 #include <map>
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CRelationsViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -49,9 +52,12 @@ enum class enumRelationsViewMode : int
 };
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CRelationsView 
 	: public CDockablePane
 	, public CSTEPView
+	, public CSearchTreeViewDialogSite
 {
 
 private: // Classes
@@ -135,6 +141,12 @@ private: // Classes
 		vector<pair<SdaiAttr, SdaiInteger>>& Attributes() { return m_vecAttributes; }
 	};
 
+	// -----------------------------------------------------------------------------------------------
+	enum class enumSearchFilter : int {
+		All = 0,
+		ExpressID,
+	};
+
 private: // Members
 
 	// View
@@ -144,7 +156,7 @@ private: // Members
 	vector<CItemData*> m_vecItemDataCache;
 
 	// Search
-	CSearchAttributeDialog* m_pSearchDialog;
+	CSearchTreeViewDialog* m_pSearchDialog;
 
 public: // Methods
 	
@@ -153,7 +165,13 @@ public: // Methods
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 	virtual void OnViewRelations(CSTEPView* pSender, int64_t iInstance) override;
 	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity) override;
-	
+
+	// CSearchTreeViewDialogSite
+	virtual CViewTree* GetTreeView() override;
+	virtual vector<wstring> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
+	virtual BOOL ProcessSearch(int iFilter, const CString& strSearchText) override;
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;	
 
 private: // Methods
 
