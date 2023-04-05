@@ -43,7 +43,12 @@ static char THIS_FILE[]=__FILE__;
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CSchemaView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
-	ASSERT(hItem != nullptr);
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
 
 	CString strItemText = GetTreeView()->GetItemText(hItem);
 	strItemText.MakeLower();
@@ -65,7 +70,7 @@ static char THIS_FILE[]=__FILE__;
 		}
 		else
 		{
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -83,7 +88,7 @@ static char THIS_FILE[]=__FILE__;
 		}
 		else
 		{
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -509,6 +514,9 @@ void CSchemaView::OnChangeVisualStyle()
 
 void CSchemaView::OnDestroy()
 {
+	ASSERT(GetController() != nullptr);
+	GetController()->UnRegisterView(this);
+
 	__super::OnDestroy();
 
 	delete m_pSearchDialog;

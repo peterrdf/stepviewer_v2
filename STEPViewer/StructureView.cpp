@@ -245,15 +245,8 @@ void CStructureView::OnChangeVisualStyle()
 
 void CStructureView::OnDestroy()
 {
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	pController->UnRegisterView(this);
+	ASSERT(GetController() != nullptr);
+	GetController()->UnRegisterView(this);
 
 	__super::OnDestroy();
 }

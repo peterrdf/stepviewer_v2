@@ -141,10 +141,139 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CViewTree* CDesignTreeView::GetTreeView() /*override*/
+{
+	return &m_treeCtrl;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<wstring> CDesignTreeView::GetSearchFilters() /*override*/
+{
+	return vector<wstring>
+	{
+		_T("(All)"),
+		_T("Instances"),
+		_T("Properties"),
+		_T("Values"),
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+{
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	TVITEMW tvItem = {};
+	tvItem.hItem = hItem;
+	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
+
+	if (!GetTreeView()->GetItem(&tvItem))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (tvItem.cChildren != 1)
+	{
+		return;
+	}
+
+	if (m_treeCtrl.GetChildItem(hItem) == nullptr)
+	{
+		GetTreeView()->Expand(hItem, TVE_EXPAND);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	if (hItem == NULL) 
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// Instances
+	if (iFilter == (int)enumSearchFilter::Instances)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_INSTANCE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Properties
+	if (iFilter == (int)enumSearchFilter::Properties)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_PROPERTY)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Values
+	if (iFilter == (int)enumSearchFilter::Values)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_VALUE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
+}
+
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::ResetView()
 {
+	// UI
 	m_treeCtrl.DeleteAllItems();
+	m_pSearchDialog->Reset();
+
+	// Data
 	Clean();
 }
 
@@ -382,7 +511,7 @@ CDesignTreeView::CDesignTreeView()
 	: m_pPropertyProvider(nullptr)
 	, m_mapInstance2Item()
 	, m_bInitInProgress(false)
-	//, m_pSearchDialog(nullptr)
+	, m_pSearchDialog(nullptr)
 {
 }
 
@@ -396,6 +525,7 @@ CDesignTreeView::~CDesignTreeView()
 BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_PROPERTIES, OnProperties)
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_INSTANCE_VIEW, OnSelectedItemChanged)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_INSTANCE_VIEW, OnItemExpanding)
@@ -432,40 +562,27 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_images.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
 	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
-	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT_INSTANCES);
-	m_toolBar.LoadToolBar(IDR_SORT_INSTANCES, 0, 0, TRUE /* Is locked */);
+	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
+	m_toolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
-	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle()
+		| CBRS_TOOLTIPS | CBRS_FLYBY);
 
-	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() &
+		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
 	m_toolBar.SetOwner(this);
 
 	// All commands will be routed via this control , not via the parent frame:
 	m_toolBar.SetRouteCommandsViaFrame(FALSE);
 
-	/*CMenu menuSort;
-	menuSort.LoadMenu(IDR_POPUP_SORT_INSTANCES);
-
-	m_toolBar.ReplaceButton(ID_SORT_MENU, CDesignTreeViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
-
-	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_toolBar.GetButton(0));
-
-	if (pButton != nullptr)
-	{
-		pButton->m_bText = FALSE;
-		pButton->m_bImage = TRUE;
-		pButton->SetImage(GetCmdMgr()->GetCmdImage(m_nCurrSort));
-		pButton->SetMessageWnd(this);
-	}
-
-	AdjustLayout();*/
+	AdjustLayout();
 
 	//  Search
-	//m_pSearchDialog = new CSTEPSearchModelStructureDialog(&m_treeCtrl);
-	//m_pSearchDialog->Create(IDD_DIALOG_SEARCH_INSTANCES, this);
+	m_pSearchDialog = new CSearchTreeViewDialog(this);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }
@@ -474,6 +591,18 @@ void CDesignTreeView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CDesignTreeView::OnProperties()
+{
+	if (!m_pSearchDialog->IsWindowVisible())
+	{
+		m_pSearchDialog->ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		m_pSearchDialog->ShowWindow(SW_HIDE);
+	}
 }
 
 void CDesignTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
@@ -492,8 +621,20 @@ void CDesignTreeView::AdjustLayout()
 
 	int cyTlb = m_toolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_toolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_treeCtrl.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_toolBar.SetWindowPos(
+		nullptr,
+		rectClient.left,
+		rectClient.top,
+		rectClient.Width(),
+		cyTlb,
+		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_treeCtrl.SetWindowPos(
+		nullptr, rectClient.left + 1,
+		rectClient.top + cyTlb + 1,
+		rectClient.Width() - 2,
+		rectClient.Height() - cyTlb - 2,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CDesignTreeView::OnPaint()
@@ -542,7 +683,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
 	m_toolBar.CleanUpLockedImages();
-	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_INSTANCES_24 : IDR_SORT_INSTANCES, 0, 0, TRUE /* Locked */);
+	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
 void CDesignTreeView::OnDestroy()
@@ -552,7 +693,7 @@ void CDesignTreeView::OnDestroy()
 
 	__super::OnDestroy();
 
-	//delete m_pSearchDialog;
+	delete m_pSearchDialog;
 }
 
 void CDesignTreeView::OnSelectedItemChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
@@ -588,6 +729,6 @@ void CDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
 
 	if (!bShow)
 	{
-		//m_pSearchDialog->ShowWindow(SW_HIDE);
+		m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
 }

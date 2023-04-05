@@ -29,6 +29,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 class CDesignTreeView
 	: public CDockablePane
 	, public CSTEPView
+	, public CSearchTreeViewDialogSite
 {
 
 private: // Classes
@@ -79,18 +80,31 @@ private: // Classes
 		virtual ~CInstanceData() {}
 	};
 
+	enum class enumSearchFilter : int {
+		All = 0,
+		Instances,
+		Properties,
+		Values,
+	};
+
 private: // Members
 	
 	COWLPropertyProvider* m_pPropertyProvider;
 	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
-	//CSTEPSearchModelStructureDialog* m_pSearchDialog;
+	CSearchTreeViewDialog* m_pSearchDialog;
 
 public: // Methods
 	
 	// CSTEPView
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
+
+	// CSearchTreeViewDialogSite
+	virtual CViewTree* GetTreeView() override;
+	virtual vector<wstring> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
 private: // Methods
 
@@ -123,6 +137,7 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnProperties();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

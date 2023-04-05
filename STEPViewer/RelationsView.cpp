@@ -233,8 +233,14 @@ static char THIS_FILE[]=__FILE__;
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CRelationsView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
-	ASSERT(iFilter == 0);
 	UNREFERENCED_PARAMETER(iFilter);
+
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}	
 
 	ASSERT(hItem != nullptr);
 
@@ -1797,6 +1803,9 @@ void CRelationsView::OnChangeVisualStyle()
 
 void CRelationsView::OnDestroy()
 {
+	ASSERT(GetController() != nullptr);
+	GetController()->UnRegisterView(this);
+
 	__super::OnDestroy();
 
 	delete m_pSearchDialog;

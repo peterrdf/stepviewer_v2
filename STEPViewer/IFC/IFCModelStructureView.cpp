@@ -286,7 +286,12 @@ CIFCModelStructureView::CIFCModelStructureView(CViewTree* pTreeView)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CIFCModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
-	ASSERT(hItem != nullptr);
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
 
 	CString strItemText = GetTreeView()->GetItemText(hItem);
 	strItemText.MakeLower();
