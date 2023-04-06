@@ -22,6 +22,7 @@ CViewTree::~CViewTree()
 
 BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CViewTree::OnNMCustomdraw)
+    ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,4 +84,52 @@ void CViewTree::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
         }
         break;
     } // switch (pNMCD->nmcd.dwDrawStage)
+}
+
+// ------------------------------------------------------------------------------------------------
+void CViewTree::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if ((GetKeyState(VK_CONTROL) & 0x8000) &&
+        ((nChar == L'c') || (nChar == L'C')))
+    {
+        HTREEITEM hItem = GetSelectedItem();
+        if (hItem != NULL)
+        {
+            CString strText = GetItemText(hItem);
+
+            HTREEITEM hParent = GetParentItem(hItem);
+            while (hParent != NULL)
+            {
+                strText += L" - ";
+                strText += GetItemText(hParent);
+
+                hParent = GetParentItem(hParent);
+            }
+
+            // https://www.codeproject.com/Articles/2242/Using-the-Clipboard-Part-I-Transferring-Simple-Tex
+            if (OpenClipboard())
+            {
+                EmptyClipboard();
+
+                HGLOBAL hClipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(wchar_t) * (wcslen(strText) + 1));
+                if (hClipboardData != NULL)
+                {
+                    wchar_t* pchData = (wchar_t*)GlobalLock(hClipboardData);
+                    if (pchData != nullptr)
+                    {
+                        wcscpy(pchData, (LPCTSTR)strText);
+
+                        GlobalUnlock(hClipboardData);
+
+                        SetClipboardData(CF_UNICODETEXT, hClipboardData);
+
+                        CloseClipboard();
+
+                    } // if (pchData != nullptr)
+                } // if (hClipboardData != NULL)
+            } // if (OpenClipboard())
+        } // if (hItem != NULL)
+    } // if ((GetKeyState(VK_CONTROL)
+
+    CTreeCtrl::OnKeyUp(nChar, nRepCnt, nFlags);
 }
