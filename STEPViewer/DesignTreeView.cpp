@@ -59,9 +59,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 {
 	ResetView();
 
-	delete m_pPropertyProvider;
-	m_pPropertyProvider = nullptr;
-
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
@@ -502,6 +499,9 @@ void CDesignTreeView::Clean()
 		delete itInstance2Data->second;
 	}
 	m_mapInstance2Data.clear();
+
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -518,8 +518,6 @@ CDesignTreeView::CDesignTreeView()
 CDesignTreeView::~CDesignTreeView()
 {	
 	Clean();
-
-	delete m_pPropertyProvider;
 }
 
 BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
