@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPTreeViewBase.h"
+#include "TreeViewBase.h"
 #include "STEPItemData.h"
 #include "STEPModel.h"
 #include "IFCInstance.h"
@@ -15,7 +15,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 class CIFCModelStructureView 
-	: public CSTEPTreeViewBase
+	: public CTreeViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -45,10 +45,10 @@ public: // Methods
 	CIFCModelStructureView(CTreeCtrlEx* pTreeView);
 	virtual ~CIFCModelStructureView();
 
-	// CSTEPView
-	virtual void OnInstanceSelected(CSTEPView* pSender) override;
+	// CViewBase
+	virtual void OnInstanceSelected(CViewBase* pSender) override;
 
-	// CSTEPTreeViewBase
+	// CTreeViewBase
 	virtual void Load() override;
 	virtual CImageList* GetImageList() const override;
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus) override;

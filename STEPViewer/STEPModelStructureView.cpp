@@ -19,7 +19,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
-	: CSTEPTreeViewBase()
+	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
 	, m_pImageList(nullptr)
 	, m_vecItemData()
@@ -82,7 +82,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{

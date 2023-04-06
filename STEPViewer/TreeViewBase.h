@@ -1,27 +1,27 @@
 #pragma once
 
-#include "STEPView.h"
+#include "ViewBase.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPTreeViewBase : public CSTEPView
+class CTreeViewBase : public CViewBase
 {
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	CSTEPTreeViewBase()
-		: CSTEPView()
+	CTreeViewBase()
+		: CViewBase()
 	{
 	}
 
 	// --------------------------------------------------------------------------------------------
-	virtual ~CSTEPTreeViewBase()
+	virtual ~CTreeViewBase()
 	{
 		GetController()->UnRegisterView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// CSTEPView
+	// CViewBase
 	virtual void OnControllerChanged()
 	{
 		ASSERT(GetController() != nullptr);

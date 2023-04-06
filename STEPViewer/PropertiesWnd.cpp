@@ -71,7 +71,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnInstanceSelected(CSTEPView* /*pSender*/)
+/*virtual*/ void CPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -79,7 +79,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{

@@ -28,7 +28,7 @@ enum class enumApplicationProperty : int
 
 // ------------------------------------------------------------------------------------------------
 // View - MVC
-class CSTEPView
+class CViewBase
 {
 
 private: // Members
@@ -39,8 +39,8 @@ private: // Members
 public: // Methods
 	
 	// ctor/dtor
-	CSTEPView();
-	virtual ~CSTEPView();
+	CViewBase();
+	virtual ~CViewBase();
 	
 	// Controller
 	void SetController(CController* pController);
@@ -49,11 +49,11 @@ public: // Methods
 	virtual void OnModelChanged();
 	virtual void OnWorldDimensionsChanged();	
 	virtual void OnShowMetaInformation();
-	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-	virtual void OnViewRelations(CSTEPView* pSender, int64_t iInstance);
-	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
-	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
+	virtual void OnInstanceSelected(CViewBase* pSender);
+	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender);
+	virtual void OnViewRelations(CViewBase* pSender, int64_t iInstance);
+	virtual void OnViewRelations(CViewBase* pSender, CEntity* pEntity);
+	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Controller.h"
 #include "Model.h"
-#include "STEPView.h"
+#include "ViewBase.h"
 
 // ------------------------------------------------------------------------------------------------
 CController::CController()
@@ -45,7 +45,7 @@ void CController::SetModel(CModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::RegisterView(CSTEPView* pView)
+void CController::RegisterView(CViewBase* pView)
 {
 	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) == m_setViews.end());
@@ -54,7 +54,7 @@ void CController::RegisterView(CSTEPView* pView)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::UnRegisterView(CSTEPView* pView)
+void CController::UnRegisterView(CViewBase* pView)
 {
 	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) != m_setViews.end());
@@ -63,7 +63,7 @@ void CController::UnRegisterView(CSTEPView* pView)
 }
 
 // ------------------------------------------------------------------------------------------------
-const set<CSTEPView*> & CController::GetViews()
+const set<CViewBase*> & CController::GetViews()
 {
 	return m_setViews;
 }
@@ -135,7 +135,7 @@ void CController::ShowMetaInformation(CInstance* /*pInstance*/)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::SelectInstance(CSTEPView* pSender, CInstance* pInstance)
+void CController::SelectInstance(CViewBase* pSender, CInstance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -170,7 +170,7 @@ void CController::SetScaleAndCenter(BOOL bScaleAndCenter)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
+void CController::OnInstancesEnabledStateChanged(CViewBase* pSender)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -180,7 +180,7 @@ void CController::OnInstancesEnabledStateChanged(CSTEPView* pSender)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty)
+void CController::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -190,7 +190,7 @@ void CController::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicati
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnViewRelations(CSTEPView* pSender, int64_t iInstance)
+void CController::OnViewRelations(CViewBase* pSender, int64_t iInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -200,7 +200,7 @@ void CController::OnViewRelations(CSTEPView* pSender, int64_t iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnViewRelations(CSTEPView* pSender, CEntity* pEntity)
+void CController::OnViewRelations(CViewBase* pSender, CEntity* pEntity)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

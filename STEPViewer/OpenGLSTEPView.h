@@ -38,15 +38,15 @@ public: // Methods
 	COpenGLSTEPView(CWnd* pWnd);
 	virtual ~COpenGLSTEPView();	
 
-	// CSTEPView
+	// CViewBase
 	virtual void OnWorldDimensionsChanged() override;
-	virtual void OnInstanceSelected(CSTEPView* pSender) override;
-	virtual void OnInstancesEnabledStateChanged(CSTEPView* pSender) override;
-	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(CViewBase* pSender) override;
+	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender) override;
+	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 
-	// CSTEPView
+	// CViewBase
 	virtual void OnControllerChanged() override;
 
 public: // Methods

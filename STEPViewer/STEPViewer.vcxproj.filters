@@ -71,7 +71,7 @@
     <ClInclude Include="STEPItemData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPView.h">
+    <ClInclude Include="ViewBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLSTEPView.h">
@@ -110,7 +110,7 @@
     <ClInclude Include="STEPModelStructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPTreeViewBase.h">
+    <ClInclude Include="TreeViewBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProductDefinition.h">
@@ -190,7 +190,7 @@
     <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPView.cpp">
+    <ClCompile Include="ViewBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLSTEPView.cpp">

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "STEPView.h"
+#include "ViewBase.h"
 #include "Instance.h"
 #include "OWLProperty.h"
 
@@ -28,7 +28,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CDesignTreeView
 	: public CDockablePane
-	, public CSTEPView
+	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -96,9 +96,9 @@ private: // Members
 
 public: // Methods
 	
-	// CSTEPView
+	// CViewBase
 	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CSTEPView* pSender) override;
+	virtual void OnInstanceSelected(CViewBase* pSender) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

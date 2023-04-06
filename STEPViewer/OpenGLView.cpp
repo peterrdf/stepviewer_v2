@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------------------------------
 COpenGLView::COpenGLView()
-	: CSTEPView()
+	: CViewBase()
 	, m_bShowFaces(TRUE)
 	, m_bShowConceptualFacesPolygons(TRUE)
 	, m_bShowLines(TRUE)

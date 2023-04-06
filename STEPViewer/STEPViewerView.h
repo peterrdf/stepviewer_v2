@@ -8,7 +8,7 @@
 
 class CMySTEPViewerView 
 	: public CView
-	, public CSTEPView
+	, public CViewBase
 {
 
 private: // Members
@@ -21,7 +21,7 @@ private: // Methods
 
 public: // Methods
 
-	// CSTEPView
+	// CViewBase
 	virtual void OnModelChanged();
 
 protected: // create from serialization only

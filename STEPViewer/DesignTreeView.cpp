@@ -79,7 +79,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CDesignTreeView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void CDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{

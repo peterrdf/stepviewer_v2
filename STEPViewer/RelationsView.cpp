@@ -36,7 +36,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void CRelationsView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -63,7 +63,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, int64_t iInstance) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, int64_t iInstance) /*override*/
 {
 	if (pSender == this)
 	{
@@ -88,7 +88,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CSTEPView* pSender, CEntity* pEntity) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, CEntity* pEntity) /*override*/
 {
 	if (pSender == this)
 	{

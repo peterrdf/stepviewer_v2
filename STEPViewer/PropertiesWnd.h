@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "STEPView.h"
+#include "ViewBase.h"
 
 #include <map>
 #include <string>
@@ -61,17 +61,17 @@ public: // Methods
 
 class CPropertiesWnd
 	: public CDockablePane
-	, public CSTEPView
+	, public CViewBase
 {
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	// CSTEPView
+	// CViewBase
 	virtual void OnModelChanged();
 	virtual void OnShowMetaInformation();
-	virtual void OnInstanceSelected(CSTEPView* pSender);
-	virtual void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(CViewBase* pSender);
+	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 

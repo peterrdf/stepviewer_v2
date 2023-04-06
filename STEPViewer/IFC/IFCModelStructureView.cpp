@@ -15,7 +15,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
-	: CSTEPTreeViewBase()
+	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
 	, m_pImageList(nullptr)
 	, m_mapModelHTREEITEM()
@@ -76,7 +76,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {	
 	if (pSender == this)
 	{

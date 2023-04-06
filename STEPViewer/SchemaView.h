@@ -3,7 +3,7 @@
 
 // ------------------------------------------------------------------------------------------------
 #include "TreeCtrlEx.h"
-#include "STEPView.h"
+#include "ViewBase.h"
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
 
@@ -32,7 +32,7 @@ class CSchemaViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CSchemaView 
 	: public CDockablePane
-	, public CSTEPView
+	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -51,7 +51,7 @@ private: // Members
 
 protected:
 
-	// CSTEPView
+	// CViewBase
 	virtual void OnModelChanged() override;
 
 	// CSearchTreeCtrlDialogSite

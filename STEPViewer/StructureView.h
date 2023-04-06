@@ -2,7 +2,7 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "STEPView.h"
+#include "ViewBase.h"
 #include "Assembly.h"
 #include "STEPItemData.h"
 #include "STEPModelStructureView.h"
@@ -30,16 +30,16 @@ class CStructureViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CStructureView
 	: public CDockablePane
-	, public CSTEPView
+	, public CViewBase
 {
 
 private: // Members
 
-	CSTEPTreeViewBase* m_pSTEPTreeView;
+	CTreeViewBase* m_pSTEPTreeView;
 
 public: // Methods
 
-	// CSTEPView
+	// CViewBase
 	virtual void OnModelChanged();	
 
 // Construction

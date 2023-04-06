@@ -153,7 +153,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CSTEPView* pSender)  /*override*/
+/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -184,7 +184,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CSTEPView* pSender)  /*override*/
+/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -204,7 +204,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{

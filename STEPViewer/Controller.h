@@ -11,7 +11,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 class CModel;
-class CSTEPView;
+class CViewBase;
 enum class enumApplicationProperty;
 
 // ------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ private: // Members
 	CModel* m_pModel; // Model - MVC
 	bool m_bUpdatingModel; // Updating model - disable all notifications	
 	
-	set<CSTEPView*> m_setViews; // Views - MVC	
+	set<CViewBase*> m_setViews; // Views - MVC	
 	
 	// Selection
 	CInstance* m_pSelectedInstance;
@@ -41,14 +41,14 @@ public: // Methods
 	void SetModel(CModel* pModel);
 
 	// Events
-	void RegisterView(CSTEPView* pView);
-	void UnRegisterView(CSTEPView* pView);
+	void RegisterView(CViewBase* pView);
+	void UnRegisterView(CViewBase* pView);
 	
-	const set<CSTEPView*> & GetViews();
+	const set<CViewBase*> & GetViews();
 	template <class T>
 	T * GetView()
 	{
-		set<CSTEPView*>::const_iterator itView = m_setViews.begin();
+		set<CViewBase*>::const_iterator itView = m_setViews.begin();
 		for (; itView != m_setViews.end(); itView++)
 		{
 			T * pView = dynamic_cast<T *>(*itView);
@@ -73,7 +73,7 @@ public: // Methods
 	
 	// Events
 	void ShowMetaInformation(CInstance* pInstance);
-	void SelectInstance(CSTEPView* pSender, CInstance* pInstance);
+	void SelectInstance(CViewBase* pSender, CInstance* pInstance);
 	CInstance* GetSelectedInstance() const;
 
 	// UI
@@ -81,10 +81,10 @@ public: // Methods
 	void SetScaleAndCenter(BOOL bScaleAndCenter);
 	
 	// Events
-	void OnInstancesEnabledStateChanged(CSTEPView* pSender);
-	void OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty);
-	void OnViewRelations(CSTEPView* pSender, int64_t iInstance);
-	void OnViewRelations(CSTEPView* pSender, CEntity* pEntity);
+	void OnInstancesEnabledStateChanged(CViewBase* pSender);
+	void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty);
+	void OnViewRelations(CViewBase* pSender, int64_t iInstance);
+	void OnViewRelations(CViewBase* pSender, CEntity* pEntity);
 };
 
 

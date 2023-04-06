@@ -119,7 +119,7 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CSTEPView* pSender) /*override*/
+/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -150,7 +150,7 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CSTEPView* pSender) /*override*/
+/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -161,7 +161,7 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CSTEPView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{

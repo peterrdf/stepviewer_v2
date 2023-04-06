@@ -1,6 +1,6 @@
 #pragma once
 
-#include "STEPView.h"
+#include "ViewBase.h"
 #include "_oglUtils.h"
 
 const double ZOOM_SPEED_1 = 0.01;
@@ -32,7 +32,7 @@ enum class enumMouseEvent : int
 
 // ------------------------------------------------------------------------------------------------
 class COpenGLView 
-	: public CSTEPView
+	: public CViewBase
 {
 
 protected: // Members
