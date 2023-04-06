@@ -825,6 +825,7 @@ END
 STRINGTABLE
 BEGIN
     ID_NEW_INSTANCE         "New instance\nCreate new instance"
+    ID_PROPERTIES           "Search by name, type, etc.\nSearch..."
 END
 
 #endif    // English (United States) resources
