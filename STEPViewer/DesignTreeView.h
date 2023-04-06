@@ -29,7 +29,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 class CDesignTreeView
 	: public CDockablePane
 	, public CSTEPView
-	, public CSearchTreeViewDialogSite
+	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
@@ -92,7 +92,7 @@ private: // Members
 	COWLPropertyProvider* m_pPropertyProvider;
 	map<int64_t, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
-	CSearchTreeViewDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 	
@@ -100,7 +100,7 @@ public: // Methods
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(CSTEPView* pSender) override;
 
-	// CSearchTreeViewDialogSite
+	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;

@@ -209,7 +209,7 @@
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
-    <ClInclude Include="SearchTreeViewDialog.h" />
+    <ClInclude Include="SearchTreeCtrlDialog.h" />
     <ClInclude Include="StructureView.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
@@ -253,7 +253,7 @@
     <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
-    <ClCompile Include="SearchTreeViewDialog.cpp" />
+    <ClCompile Include="SearchTreeCtrlDialog.cpp" />
     <ClCompile Include="StructureView.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />

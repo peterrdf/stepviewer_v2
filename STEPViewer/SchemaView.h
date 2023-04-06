@@ -5,7 +5,7 @@
 #include "TreeCtrlEx.h"
 #include "STEPView.h"
 #include "TreeCtrlEx.h"
-#include "SearchTreeViewDialog.h"
+#include "SearchTreeCtrlDialog.h"
 
 #include <map>
 using namespace std;
@@ -33,7 +33,7 @@ class CSchemaViewToolBar : public CMFCToolBar
 class CSchemaView 
 	: public CDockablePane
 	, public CSTEPView
-	, public CSearchTreeViewDialogSite
+	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
@@ -47,14 +47,14 @@ private: // Classes
 private: // Members
 
 	// Search
-	CSearchTreeViewDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 protected:
 
 	// CSTEPView
 	virtual void OnModelChanged() override;
 
-	// CSearchTreeViewDialogSite
+	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;

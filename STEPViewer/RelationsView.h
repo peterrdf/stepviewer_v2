@@ -3,7 +3,7 @@
 
 #include "STEPView.h"
 #include "TreeCtrlEx.h"
-#include "SearchTreeViewDialog.h"
+#include "SearchTreeCtrlDialog.h"
 
 #include <map>
 using namespace std;
@@ -57,7 +57,7 @@ enum class enumRelationsViewMode : int
 class CRelationsView 
 	: public CDockablePane
 	, public CSTEPView
-	, public CSearchTreeViewDialogSite
+	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
@@ -156,7 +156,7 @@ private: // Members
 	vector<CItemData*> m_vecItemDataCache;
 
 	// Search
-	CSearchTreeViewDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 	
@@ -166,7 +166,7 @@ public: // Methods
 	virtual void OnViewRelations(CSTEPView* pSender, int64_t iInstance) override;
 	virtual void OnViewRelations(CSTEPView* pSender, CEntity* pEntity) override;
 
-	// CSearchTreeViewDialogSite
+	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;

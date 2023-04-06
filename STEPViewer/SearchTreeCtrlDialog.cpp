@@ -1,16 +1,16 @@
-// SearchTreeViewDialog.cpp : implementation file
+// SearchTreeCtrlDialog.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "SearchTreeViewDialog.h"
+#include "SearchTreeCtrlDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
 
 
-// CSearchTreeViewDialog dialog
+// CSearchTreeCtrlDialog dialog
 
 // ------------------------------------------------------------------------------------------------
-void CSearchTreeViewDialog::SelectItem(HTREEITEM hItem)
+void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -27,7 +27,7 @@ void CSearchTreeViewDialog::SelectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchTreeViewDialog::UnselectItem(HTREEITEM hItem)
+void CSearchTreeCtrlDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -35,7 +35,7 @@ void CSearchTreeViewDialog::UnselectItem(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchTreeViewDialog::SearchChildren(HTREEITEM hParent)
+HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);	
 
@@ -62,7 +62,7 @@ HTREEITEM CSearchTreeViewDialog::SearchChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchTreeViewDialog::SearchSiblings(HTREEITEM hItem)
+HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -87,7 +87,7 @@ HTREEITEM CSearchTreeViewDialog::SearchSiblings(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM CSearchTreeViewDialog::SearchParents(HTREEITEM hItem)
+HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -121,15 +121,15 @@ HTREEITEM CSearchTreeViewDialog::SearchParents(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchTreeViewDialog::Reset()
+void CSearchTreeCtrlDialog::Reset()
 {
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 }
 
-IMPLEMENT_DYNAMIC(CSearchTreeViewDialog, CDialogEx)
+IMPLEMENT_DYNAMIC(CSearchTreeCtrlDialog, CDialogEx)
 
-CSearchTreeViewDialog::CSearchTreeViewDialog(CSearchTreeViewDialogSite* pSite)
+CSearchTreeCtrlDialog::CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite)
 	: CDialogEx(IDD_DIALOG_SEARCH, nullptr)
 	, m_pSite(pSite)
 	, m_hSearchResult(nullptr)
@@ -139,11 +139,11 @@ CSearchTreeViewDialog::CSearchTreeViewDialog(CSearchTreeViewDialogSite* pSite)
 	ASSERT(m_pSite != nullptr);
 }
 
-CSearchTreeViewDialog::~CSearchTreeViewDialog()
+CSearchTreeCtrlDialog::~CSearchTreeCtrlDialog()
 {
 }
 
-void CSearchTreeViewDialog::DoDataExchange(CDataExchange* pDX)
+void CSearchTreeCtrlDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
@@ -152,16 +152,16 @@ void CSearchTreeViewDialog::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSearchTreeViewDialog, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchTreeViewDialog::OnEnChangeEditSearchText)
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchTreeViewDialog::OnBnClickedButtonSearch)
+BEGIN_MESSAGE_MAP(CSearchTreeCtrlDialog, CDialogEx)
+	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchTreeCtrlDialog::OnEnChangeEditSearchText)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchTreeCtrlDialog::OnBnClickedButtonSearch)
 END_MESSAGE_MAP()
 
 
-// CSearchTreeViewDialog message handlers
+// CSearchTreeCtrlDialog message handlers
 
 // ------------------------------------------------------------------------------------------------
-void CSearchTreeViewDialog::OnEnChangeEditSearchText()
+void CSearchTreeCtrlDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
 
@@ -169,7 +169,7 @@ void CSearchTreeViewDialog::OnEnChangeEditSearchText()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSearchTreeViewDialog::OnBnClickedButtonSearch()
+void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
 
@@ -246,7 +246,7 @@ void CSearchTreeViewDialog::OnBnClickedButtonSearch()
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CSearchTreeViewDialog::OnInitDialog()
+BOOL CSearchTreeCtrlDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 

@@ -4,7 +4,7 @@
 #include "STEPItemData.h"
 #include "STEPModel.h"
 #include "IFCInstance.h"
-#include "SearchTreeViewDialog.h"
+#include "SearchTreeCtrlDialog.h"
 #include <map>
 
 using namespace std;
@@ -17,7 +17,7 @@ using namespace std;
 class CIFCModelStructureView 
 	: public CSTEPTreeViewBase
 	, public CItemStateProvider
-	, public CSearchTreeViewDialogSite
+	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
@@ -38,7 +38,7 @@ private: // Members
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
-	CSearchTreeViewDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 
@@ -60,7 +60,7 @@ public: // Methods
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem);
 
-	// CSearchTreeViewDialogSite
+	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;

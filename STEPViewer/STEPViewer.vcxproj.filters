@@ -152,7 +152,7 @@
     <ClInclude Include="DesignTreeViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchTreeViewDialog.h">
+    <ClInclude Include="SearchTreeCtrlDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -250,7 +250,7 @@
     <ClCompile Include="OWLProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SearchTreeViewDialog.cpp">
+    <ClCompile Include="SearchTreeCtrlDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

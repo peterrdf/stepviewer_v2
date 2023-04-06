@@ -10,7 +10,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSearchTreeViewDialogSite
+class CSearchTreeCtrlDialogSite
 {
 
 public: // Methods
@@ -25,13 +25,13 @@ public: // Methods
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSearchTreeViewDialog : public CDialogEx
+class CSearchTreeCtrlDialog : public CDialogEx
 {
-	DECLARE_DYNAMIC(CSearchTreeViewDialog)
+	DECLARE_DYNAMIC(CSearchTreeCtrlDialog)
 
 private: // Members
 
-	CSearchTreeViewDialogSite* m_pSite;
+	CSearchTreeCtrlDialogSite* m_pSite;
 
 	HTREEITEM m_hSearchResult;
 	BOOL m_bEndOfSearch;
@@ -52,8 +52,8 @@ public: // Methods
 	void Reset();
 
 public:
-	CSearchTreeViewDialog(CSearchTreeViewDialogSite* pSite);   // standard constructor
-	virtual ~CSearchTreeViewDialog();
+	CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite);   // standard constructor
+	virtual ~CSearchTreeCtrlDialog();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

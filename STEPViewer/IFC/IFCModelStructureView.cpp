@@ -58,7 +58,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	m_pTreeCtrl->SetItemStateProvider(this);
 
 	//  Search
-	m_pSearchDialog = new CSearchTreeViewDialog(this);
+	m_pSearchDialog = new CSearchTreeCtrlDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeCtrl);
 }
 

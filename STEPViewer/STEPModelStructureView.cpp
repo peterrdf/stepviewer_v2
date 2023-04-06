@@ -60,7 +60,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 	m_pTreeCtrl->SetImageList(m_pImageList, TVSIL_NORMAL);
 
 	//  Search
-	m_pSearchDialog = new CSearchTreeViewDialog(this);
+	m_pSearchDialog = new CSearchTreeCtrlDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeCtrl);
 }
 

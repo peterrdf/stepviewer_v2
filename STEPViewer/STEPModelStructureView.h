@@ -3,13 +3,13 @@
 #include "STEPTreeViewBase.h"
 #include "STEPItemData.h"
 #include "STEPModel.h"
-#include "SearchTreeViewDialog.h"
+#include "SearchTreeCtrlDialog.h"
 
 // ------------------------------------------------------------------------------------------------
 class CSTEPModelStructureView 
 	: public CSTEPTreeViewBase
 	, public CItemStateProvider
-	, public CSearchTreeViewDialogSite
+	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
@@ -36,7 +36,7 @@ private: // Members
 	bool m_bInitInProgress;
 
 	// Search
-	CSearchTreeViewDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 
@@ -58,7 +58,7 @@ public: // Methods
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem);
 
-	// CSearchTreeViewDialogSite
+	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
