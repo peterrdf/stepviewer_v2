@@ -296,13 +296,13 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, int64_t iInstance)
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	auto itInstance2Data = m_mapInstance2Item.find(iInstance);
-	if (itInstance2Data == m_mapInstance2Item.end())
+	auto itInstance2Data = m_mapInstance2Data.find(iInstance);
+	if (itInstance2Data == m_mapInstance2Data.end())
 	{
 		auto pInstanceData = new CInstanceData(iInstance);
 		pInstanceData->Items().push_back(hInstance);
 
-		m_mapInstance2Item[iInstance] = pInstanceData;
+		m_mapInstance2Data[iInstance] = pInstanceData;
 
 		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)pInstanceData);
 	}
@@ -496,12 +496,12 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::Clean()
 {
-	auto itInstance2Data = m_mapInstance2Item.begin();
-	for (; itInstance2Data != m_mapInstance2Item.end(); itInstance2Data++)
+	auto itInstance2Data = m_mapInstance2Data.begin();
+	for (; itInstance2Data != m_mapInstance2Data.end(); itInstance2Data++)
 	{
 		delete itInstance2Data->second;
 	}
-	m_mapInstance2Item.clear();
+	m_mapInstance2Data.clear();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -509,7 +509,7 @@ void CDesignTreeView::Clean()
 
 CDesignTreeView::CDesignTreeView()
 	: m_pPropertyProvider(nullptr)
-	, m_mapInstance2Item()
+	, m_mapInstance2Data()
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
 {

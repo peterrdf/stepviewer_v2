@@ -90,7 +90,7 @@ private: // Classes
 private: // Members
 	
 	COWLPropertyProvider* m_pPropertyProvider;
-	map<int64_t, CInstanceData*> m_mapInstance2Item; // C INSTANCE : C++ INSTANCE
+	map<int64_t, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
 	CSearchTreeViewDialog* m_pSearchDialog;
 
