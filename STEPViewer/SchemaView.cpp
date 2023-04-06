@@ -19,7 +19,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CViewTree* CSchemaView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CSchemaView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }

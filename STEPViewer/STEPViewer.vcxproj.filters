@@ -44,7 +44,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ViewTree.h">
+    <ClInclude Include="TreeCtrlEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropertiesWnd.h">
@@ -172,7 +172,7 @@
     <ClCompile Include="STEPViewerView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ViewTree.cpp">
+    <ClCompile Include="TreeCtrlEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropertiesWnd.cpp">

@@ -103,7 +103,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CViewTree* CRelationsView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CRelationsView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }

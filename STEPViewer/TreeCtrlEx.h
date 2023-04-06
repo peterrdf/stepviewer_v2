@@ -17,9 +17,9 @@ public: // Methods
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewTree window
+// CTreeCtrlEx window
 
-class CViewTree : public CTreeCtrl
+class CTreeCtrlEx : public CTreeCtrl
 {
 
 private: // Members
@@ -32,7 +32,7 @@ public: // Methods
 
 // Construction
 public:
-	CViewTree();
+	CTreeCtrlEx();
 
 // Overrides
 protected:
@@ -40,7 +40,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CViewTree();
+	virtual ~CTreeCtrlEx();
 
 protected:
 	DECLARE_MESSAGE_MAP()

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ class CSearchTreeViewDialogSite
 
 public: // Methods
 
-	virtual CViewTree* GetTreeView() PURE;
+	virtual CTreeCtrlEx* GetTreeView() PURE;
 	virtual vector<wstring> GetSearchFilters() PURE;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) PURE;
 	virtual BOOL ProcessSearch(int /*iFilter*/, const CString& /*strSearchText*/) { return FALSE; }
@@ -38,7 +38,7 @@ private: // Members
 
 private: // Methods
 
-	CViewTree* GetTreeView() { return m_pSite->GetTreeView(); }
+	CTreeCtrlEx* GetTreeView() { return m_pSite->GetTreeView(); }
 
 	void SelectItem(HTREEITEM hItem);
 	void UnselectItem(HTREEITEM hItem);

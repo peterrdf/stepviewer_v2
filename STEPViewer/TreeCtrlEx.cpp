@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -9,27 +9,27 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewTree
+// CTreeCtrlEx
 
-CViewTree::CViewTree()
+CTreeCtrlEx::CTreeCtrlEx()
 	: m_pItemStateProvider(nullptr)
 {
 }
 
-CViewTree::~CViewTree()
+CTreeCtrlEx::~CTreeCtrlEx()
 {
 }
 
-BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
-	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CViewTree::OnNMCustomdraw)
+BEGIN_MESSAGE_MAP(CTreeCtrlEx, CTreeCtrl)
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CTreeCtrlEx::OnNMCustomdraw)
     ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewTree message handlers
+// CTreeCtrlEx message handlers
 
 // ------------------------------------------------------------------------------------------------
-BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL CTreeCtrlEx::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	BOOL bRes = CTreeCtrl::OnNotify(wParam, lParam, pResult);
 
@@ -45,13 +45,13 @@ BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CViewTree::SetItemStateProvider(CItemStateProvider* pItemStateProvider)
+void CTreeCtrlEx::SetItemStateProvider(CItemStateProvider* pItemStateProvider)
 {
     m_pItemStateProvider = pItemStateProvider;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CViewTree::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
+void CTreeCtrlEx::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
 {
     NMTVCUSTOMDRAW* pNMCD = reinterpret_cast<NMTVCUSTOMDRAW*>(pNMHDR);
 
@@ -87,7 +87,7 @@ void CViewTree::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CViewTree::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CTreeCtrlEx::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
     if ((GetKeyState(VK_CONTROL) & 0x8000) &&
         ((nChar == L'c') || (nChar == L'C')))

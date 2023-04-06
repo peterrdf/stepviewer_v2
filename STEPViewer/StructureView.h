@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 #include "STEPView.h"
 #include "Assembly.h"
 #include "STEPItemData.h"
@@ -52,7 +52,7 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_treeCtrl;
+	CTreeCtrlEx m_treeCtrl;
 	CStructureViewToolBar m_toolBar;
 
 protected:

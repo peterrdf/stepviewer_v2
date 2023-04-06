@@ -2,9 +2,9 @@
 #pragma once
 
 // ------------------------------------------------------------------------------------------------
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 #include "STEPView.h"
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 #include "SearchTreeViewDialog.h"
 
 #include <map>
@@ -55,7 +55,7 @@ protected:
 	virtual void OnModelChanged() override;
 
 	// CSearchTreeViewDialogSite
-	virtual CViewTree* GetTreeView() override;
+	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
 	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
@@ -77,7 +77,7 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_treeCtrl;
+	CTreeCtrlEx m_treeCtrl;
 	CImageList m_imageList;
 	CSchemaViewToolBar m_toolBar;
 

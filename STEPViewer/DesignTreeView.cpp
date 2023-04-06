@@ -143,7 +143,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CViewTree* CDesignTreeView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }

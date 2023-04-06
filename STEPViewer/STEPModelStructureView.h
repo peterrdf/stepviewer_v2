@@ -23,7 +23,7 @@ private: // Classes
 
 private: // Members
 	
-	CViewTree* m_pTreeView;
+	CTreeCtrlEx* m_pTreeCtrl;
 	CImageList* m_pImageList;
 
 	// Cache
@@ -40,7 +40,7 @@ private: // Members
 
 public: // Methods
 
-	CSTEPModelStructureView(CViewTree* pTreeView);
+	CSTEPModelStructureView(CTreeCtrlEx* pTreeView);
 	virtual ~CSTEPModelStructureView();	
 
 	// CSTEPView
@@ -59,7 +59,7 @@ public: // Methods
 	virtual bool IsSelected(HTREEITEM hItem);
 
 	// CSearchTreeViewDialogSite
-	virtual CViewTree* GetTreeView() override;
+	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<wstring> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
 	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
