@@ -111,7 +111,7 @@ void CViewTree::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
             {
                 EmptyClipboard();
 
-                HGLOBAL hClipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(wchar_t) * (wcslen(strText) + 1));
+                HGLOBAL hClipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(wchar_t) * ((int64_t)strText.GetLength() + 1));
                 if (hClipboardData != NULL)
                 {
                     wchar_t* pchData = (wchar_t*)GlobalLock(hClipboardData);
@@ -124,7 +124,6 @@ void CViewTree::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
                         SetClipboardData(CF_UNICODETEXT, hClipboardData);
 
                         CloseClipboard();
-
                     } // if (pchData != nullptr)
                 } // if (hClipboardData != NULL)
             } // if (OpenClipboard())
