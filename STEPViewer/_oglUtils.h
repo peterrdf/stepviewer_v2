@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_geometry.h"
+#include "_quaterniond.h"
 
 #include "glew.h"
 #include "wglew.h"
@@ -1864,8 +1865,13 @@ protected: // Members
 
 	_oglBuffers<Instance> m_oglBuffers;
 
+	// Rotation
 	float m_fXAngle;
 	float m_fYAngle;
+
+	// Rotation - quaternion
+	_quaterniond m_quatRotation;
+
 	float m_fXTranslation;
 	float m_fYTranslation;
 	float m_fZTranslation;
@@ -1883,17 +1889,14 @@ public: // Methods
 		, m_oglBuffers()
 		, m_fXAngle(30.0f)
 		, m_fYAngle(30.0f)
+		, m_quatRotation(_quaterniond::toQuaternion(0., 45. * (M_PI / 180.), -45. * (M_PI / 180.)))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
-	{
-	}	
+	{}	
 
 	// _ioglRenderer
-	virtual _oglProgram* _getOGLProgram() const override
-	{
-		return m_pOGLProgram;
-	}
+	virtual _oglProgram* _getOGLProgram() const override { return m_pOGLProgram; }
 	
 	// _ioglRenderer
 	virtual void _redraw() override
@@ -2078,8 +2081,29 @@ public: // Methods
 		fZTranslation = -fZTranslation;
 
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-		m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-		m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		_quaterniond quatRotation = _quaterniond::toQuaternion(0., m_fXAngle, m_fYAngle);
+
+		// Reset
+		m_fXAngle = m_fYAngle = 0.f;
+
+		m_quatRotation.cross(quatRotation);
+
+		const double* pRotationMatirx = m_quatRotation.toMatrix();
+		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
+
+		m_matModelView = m_matModelView * matTransformation;
+		//glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+
+		//glMultMatrixd(pRotationMatirx);
+
+		delete pRotationMatirx;
+
+
+		//m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+		//m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
@@ -2163,7 +2187,13 @@ public: // Methods
 
 	void _rotateMouseLButton(float fXAngle, float fYAngle)
 	{
-		if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+		const float _ROTATION_SPEED = 1.f / 25.f;
+		m_fXAngle = -fYAngle * _ROTATION_SPEED;
+		m_fYAngle = -fXAngle* _ROTATION_SPEED;
+
+		_redraw();
+
+		/*if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
 		{
 			fYAngle = 0.;
 		}
@@ -2177,7 +2207,7 @@ public: // Methods
 
 		_rotate(
 			fXAngle * ROTATION_SPEED,
-			fYAngle * ROTATION_SPEED);
+			fYAngle * ROTATION_SPEED);*/
 	}
 
 	void _zoomMouseMButton(LONG lDelta)

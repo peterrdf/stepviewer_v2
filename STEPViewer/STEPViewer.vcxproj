@@ -243,6 +243,7 @@
     <ClInclude Include="_geometry.h" />
     <ClInclude Include="_material.h" />
     <ClInclude Include="_oglUtils.h" />
+    <ClInclude Include="_quaterniond.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assembly.cpp" />
