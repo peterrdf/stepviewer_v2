@@ -603,70 +603,13 @@ COpenGLIFCView::~COpenGLIFCView()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) /*override*/
 {
-	UNREFERENCED_PARAMETER(nFlags);
-	UNREFERENCED_PARAMETER(pt);
-
-	_zoom(
-		(float)zDelta < 0.f ?
-		-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
-		abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+	_onMouseWheel(nFlags, zDelta, pt);
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
 {
-	UNREFERENCED_PARAMETER(nRepCnt);
-	UNREFERENCED_PARAMETER(nFlags);
-
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	switch (nChar)
-	{
-		case VK_UP:
-		{
-			_move(
-				0.f,
-				PAN_SPEED_KEYS * (1.f / rcClient.Height()));
-		}
-		break;
-
-		case VK_DOWN:
-		{
-			_move(
-				0.f,
-				-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
-		}
-		break;
-
-		case VK_LEFT:
-		{
-			_move(
-				-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
-				0.f);
-		}
-		break;
-
-		case VK_RIGHT:
-		{
-			_move(
-				PAN_SPEED_KEYS * (1.f / rcClient.Width()),
-				0.f);
-		}
-		break;
-
-		case VK_PRIOR:
-		{
-			_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
-		}
-		break;
-
-		case VK_NEXT:
-		{
-			_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
-		}
-		break;
-	} // switch (nChar)
+	_onKeyUp(nChar, nRepCnt, nFlags);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1300,24 +1243,9 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
 	{
-		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
-		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
-
-		if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
-		{
-			fYAngle = 0.;
-		}
-		else
-		{
-			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
-			{
-				fXAngle = 0.;
-			}
-		}
-
-		_rotate(
-			fXAngle * ROTATION_SPEED, 
-			fYAngle * ROTATION_SPEED);
+		_rotateMouseLButton(
+			(float)point.y - (float)m_ptPrevMousePosition.y,
+			(float)point.x - (float)m_ptPrevMousePosition.x);
 
 		m_ptPrevMousePosition = point;
 
@@ -1329,10 +1257,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
 	{
-		_zoom(
-			point.y - m_ptPrevMousePosition.y > 0 ? 
-			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE : 
-			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+		_zoomMouseMButton(point.y - m_ptPrevMousePosition.y);
 
 		m_ptPrevMousePosition = point;
 
@@ -1347,9 +1272,9 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
 
-		_move(
-			PAN_SPEED_MOUSE* (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width()),
-			-(PAN_SPEED_MOUSE * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height())));
+		_panMouseRButton(
+			((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width(),
+			((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
 
 		m_ptPrevMousePosition = point;
 

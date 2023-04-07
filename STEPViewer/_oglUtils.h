@@ -1840,6 +1840,14 @@ struct _ioglRenderer
 	virtual void _redraw() PURE;
 };
 
+const float ZOOM_SPEED_MOUSE = 0.025f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
+const float ZOOM_SPEED_KEYS = 0.025f;
+const float PAN_SPEED_MOUSE = 4.f;
+const float PAN_SPEED_KEYS = 40.f;
+const float ROTATION_SPEED = 1.f / 2500.f;
+const float ROTATION_SENSITIVITY = 0.1f;
+
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {
@@ -2151,19 +2159,103 @@ public: // Methods
 		} // switch (enView)
 
 		_redraw();
-	}
+	}		
 
-	void _zoom(float fZTranslation)
+	void _rotateMouseLButton(float fXAngle, float fYAngle)
 	{
-		if (m_enProjection == enumProjection::Isometric)
+		if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
 		{
-			return;
+			fYAngle = 0.;
+		}
+		else
+		{
+			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+			{
+				fXAngle = 0.;
+			}
 		}
 
-		m_fZTranslation += fZTranslation;
-
-		_redraw();
+		_rotate(
+			fXAngle * ROTATION_SPEED,
+			fYAngle * ROTATION_SPEED);
 	}
+
+	void _zoomMouseMButton(LONG lDelta)
+	{
+		_zoom(
+			lDelta > 0 ?
+			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE :
+			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+	}
+
+	void _panMouseRButton(float fX, float fY)
+	{
+		_pan(
+			PAN_SPEED_MOUSE * fX,
+			PAN_SPEED_MOUSE * -fY);
+	}
+
+	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+	{
+		_zoom(zDelta < 0 ?
+			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
+			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+	}	
+
+	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+	{
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		switch (nChar)
+		{
+			case VK_UP:
+			{
+				_pan(
+					0.f,
+					PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+			}
+			break;
+
+			case VK_DOWN:
+			{
+				_pan(
+					0.f,
+					-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+			}
+			break;
+
+			case VK_LEFT:
+			{
+				_pan(
+					-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+					0.f);
+			}
+			break;
+
+			case VK_RIGHT:
+			{
+				_pan(
+					PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+					0.f);
+			}
+			break;
+
+			case VK_PRIOR:
+			{
+				_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+			}
+			break;
+
+			case VK_NEXT:
+			{
+				_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+			}
+			break;
+		} // switch (nChar)
+	}	
+
+private: //  Methods
 
 	void _rotate(float fXAngle, float fYAngle)
 	{
@@ -2190,7 +2282,19 @@ public: // Methods
 		_redraw();
 	}
 
-	void _move(float fX, float fY)
+	void _zoom(float fZTranslation)
+	{
+		if (m_enProjection == enumProjection::Isometric)
+		{
+			return;
+		}
+
+		m_fZTranslation += fZTranslation;
+
+		_redraw();
+	}
+
+	void _pan(float fX, float fY)
 	{
 		m_fXTranslation += fX;
 		m_fYTranslation += fY;
