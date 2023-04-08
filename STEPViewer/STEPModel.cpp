@@ -69,7 +69,7 @@ CSTEPModel::~CSTEPModel()
 	ASSERT(pInstance != nullptr);
 
 	auto pProductInstance = dynamic_cast<CProductInstance*>(pInstance);
-	if ((pProductInstance == nullptr) || (pProductInstance->GetProductDefinition() != nullptr))
+	if ((pProductInstance == nullptr) || (pProductInstance->GetProductDefinition() == nullptr))
 	{
 		ASSERT(FALSE);
 

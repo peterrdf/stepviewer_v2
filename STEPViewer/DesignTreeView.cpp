@@ -59,6 +59,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 {
 	ResetView();
 
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
+
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
@@ -72,7 +75,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	{
 		return;
 	}
-
+	
 	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
 
 	m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
@@ -499,9 +502,6 @@ void CDesignTreeView::Clean()
 		delete itInstance2Data->second;
 	}
 	m_mapInstance2Data.clear();
-
-	delete m_pPropertyProvider;
-	m_pPropertyProvider = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -518,6 +518,9 @@ CDesignTreeView::CDesignTreeView()
 CDesignTreeView::~CDesignTreeView()
 {	
 	Clean();
+
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
 }
 
 BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
