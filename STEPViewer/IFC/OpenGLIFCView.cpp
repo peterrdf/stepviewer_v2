@@ -176,6 +176,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::RotationMode:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
 		case enumApplicationProperty::SpecularLightWeighting:
@@ -186,12 +187,6 @@ COpenGLIFCView::~COpenGLIFCView()
 		case enumApplicationProperty::Gamma:
 		{
 			_redraw();
-		}
-		break;
-
-		case enumApplicationProperty::RotationMode:
-		{
-			// NA
 		}
 		break;
 

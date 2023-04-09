@@ -2005,6 +2005,7 @@ public: // Methods
 
 	void _reset()
 	{
+		// TODO: Isometric view
 		m_fXAngle = 30.0f;
 		m_fYAngle = 30.0f;
 		m_rotation = _quaterniond::toQuaternion(0., -30. * (M_PI / 180.), -30. * (M_PI / 180.));
@@ -2012,6 +2013,8 @@ public: // Methods
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
 		m_fZTranslation = -5.0f;
+
+		// TODO: all settings???
 	}
 
 	void _prepare(
@@ -2101,10 +2104,9 @@ public: // Methods
 		else if (m_enRotationMode == enumRotationMode::XYZ)
 		{
 			_quaterniond rotation = _quaterniond::toQuaternion(0., m_fXAngle, m_fYAngle);
+			m_rotation.cross(rotation);
 
 			m_fXAngle = m_fYAngle = 0.f;
-
-			m_rotation.cross(rotation);
 
 			const double* pRotationMatirx = m_rotation.toMatrix();
 			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
@@ -2137,6 +2139,8 @@ public: // Methods
 
 	void _setProjection(enumProjection enProjection)
 	{
+		_reset();
+
 		m_enProjection = enProjection;
 	}
 
@@ -2147,11 +2151,15 @@ public: // Methods
 
 	void _setRotationMode(enumRotationMode enRotationMode)
 	{
+		_reset();
+
 		m_enRotationMode = enRotationMode;
 	}
 
 	void _setView(enumView enView)
 	{
+		_reset();
+
 		switch (enView)
 		{
 			case enumView::Front:

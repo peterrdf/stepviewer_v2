@@ -219,6 +219,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::RotationMode:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
 		case enumApplicationProperty::SpecularLightWeighting:
@@ -229,12 +230,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		case enumApplicationProperty::Gamma:
 		{
 			_redraw();
-		}
-		break;
-
-		case enumApplicationProperty::RotationMode:
-		{
-			// NA
 		}
 		break;
 
