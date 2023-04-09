@@ -569,6 +569,18 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ enumRotationMode COpenGLSTEPView::GetRotationMode() const /*override*/
+{
+	return _getRotationMode();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLSTEPView::SetRotationMode(enumRotationMode enRotationMode) /*override*/
+{
+	_setRotationMode(enRotationMode);
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)

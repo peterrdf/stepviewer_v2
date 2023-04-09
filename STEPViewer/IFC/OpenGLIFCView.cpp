@@ -189,6 +189,12 @@ COpenGLIFCView::~COpenGLIFCView()
 		}
 		break;
 
+		case enumApplicationProperty::RotationMode:
+		{
+			// NA
+		}
+		break;
+
 		default:
 		{
 			ASSERT(FALSE); // Internal error!
@@ -539,6 +545,18 @@ COpenGLIFCView::~COpenGLIFCView()
 /*virtual*/ void COpenGLIFCView::SetView(enumView enView) /*override*/
 {
 	_setView(enView);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ enumRotationMode COpenGLIFCView::GetRotationMode() const /*override*/
+{
+	return _getRotationMode();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::SetRotationMode(enumRotationMode enRotationMode) /*override*/
+{
+	_setRotationMode(enRotationMode);
 }
 
 // ------------------------------------------------------------------------------------------------

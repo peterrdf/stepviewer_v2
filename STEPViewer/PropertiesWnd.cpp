@@ -20,8 +20,8 @@ static char THIS_FILE[]=__FILE__;
 
 #define TRUE_VALUE_PROPERTY L"Yes"
 #define FALSE_VALUE_PROPERTY L"No"
-#define ROTATION_MODE_2D L"2D"
-#define ROTATION_MODE_3D L"3D"
+#define ROTATION_MODE_XY L"2D"
+#define ROTATION_MODE_XYZ L"3D"
 
 // ------------------------------------------------------------------------------------------------
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
@@ -153,6 +153,14 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+				}
+				break;
+
+				case enumApplicationProperty::RotationMode:
+				{
+					pOpenGLView->SetRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 				}
 				break;
 
@@ -518,6 +526,19 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(
+			_T("Rotation mode"), 
+			pOpenGLView->GetRotationMode() == enumRotationMode::XY ? ROTATION_MODE_XY : ROTATION_MODE_XYZ,
+			_T("XY/XYZ"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
+		pProperty->AddOption(ROTATION_MODE_XY);
+		pProperty->AddOption(ROTATION_MODE_XYZ);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);

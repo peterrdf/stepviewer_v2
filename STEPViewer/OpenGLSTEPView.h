@@ -58,13 +58,11 @@ public: // Methods
 	virtual void SetProjection(enumProjection enProjection) override;
 	virtual enumProjection GetProjection() const override;
 	virtual void SetView(enumView enView) override;
-
-	// COpenGLView
+	virtual enumRotationMode GetRotationMode() const override;
+	virtual void SetRotationMode(enumRotationMode enRotationMode) override;
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
 	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) override;
 	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) override;
-
-	// COpenGLView
 	virtual void Draw(CDC* pDC) override;
 
 private: // Methods

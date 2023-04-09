@@ -50,10 +50,13 @@ public: // Methods
 	// Load
 	virtual void Load() PURE;
 
-	// Projection/View
+	// Projection/View...
 	virtual void SetProjection(enumProjection enProjection) PURE;
 	virtual enumProjection GetProjection() const PURE;
 	virtual void SetView(enumView enView) PURE;
+	virtual enumRotationMode GetRotationMode() const PURE;
+	virtual void SetRotationMode(enumRotationMode enRotationMode) PURE;
+
 	
 	// Events
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) PURE;

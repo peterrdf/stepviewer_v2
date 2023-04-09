@@ -16,6 +16,7 @@ enum class enumApplicationProperty : int
 	ShowConceptualFacesWireframes,
 	ShowLines,
 	ShowPoints,
+	RotationMode,
 	PointLightingLocation,
 	AmbientLightWeighting,
 	SpecularLightWeighting,
