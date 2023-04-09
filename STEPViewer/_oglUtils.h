@@ -1898,7 +1898,7 @@ public: // Methods
 		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(30.0f)
 		, m_fYAngle(30.0f)
-		, m_rotation(_quaterniond::toQuaternion(0., 30. * (M_PI / 180.), -30. * (M_PI / 180.)))
+		, m_rotation(_quaterniond::toQuaternion(0., -30. * (M_PI / 180.), -30. * (M_PI / 180.)))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2007,6 +2007,8 @@ public: // Methods
 	{
 		m_fXAngle = 30.0f;
 		m_fYAngle = 30.0f;
+		m_rotation = _quaterniond::toQuaternion(0., -30. * (M_PI / 180.), -30. * (M_PI / 180.));
+
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
 		m_fZTranslation = -5.0f;
@@ -2106,10 +2108,9 @@ public: // Methods
 
 			const double* pRotationMatirx = m_rotation.toMatrix();
 			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
+			delete pRotationMatirx;
 
 			m_matModelView = m_matModelView * matTransformation;
-
-			delete pRotationMatirx;
 		}
 		else
 		{
@@ -2137,8 +2138,6 @@ public: // Methods
 	void _setProjection(enumProjection enProjection)
 	{
 		m_enProjection = enProjection;
-
-		_redraw();
 	}
 
 	enumRotationMode _getRotationMode() const
@@ -2149,8 +2148,6 @@ public: // Methods
 	void _setRotationMode(enumRotationMode enRotationMode)
 	{
 		m_enRotationMode = enRotationMode;
-
-		_redraw();
 	}
 
 	void _setView(enumView enView)

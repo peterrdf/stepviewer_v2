@@ -232,6 +232,12 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		}
 		break;
 
+		case enumApplicationProperty::RotationMode:
+		{
+			// NA
+		}
+		break;
+
 		default:
 		{
 			ASSERT(FALSE); // Internal error!
