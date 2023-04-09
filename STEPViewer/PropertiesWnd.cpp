@@ -20,9 +20,8 @@ static char THIS_FILE[]=__FILE__;
 
 #define TRUE_VALUE_PROPERTY L"Yes"
 #define FALSE_VALUE_PROPERTY L"No"
-#define REMOVE_OBJECT_PROPERTY_COMMAND L"---<REMOVE>---"
-#define SELECT_OBJECT_PROPERTY_COMMAND L"---<SELECT>---"
-
+#define ROTATION_MODE_2D L"2D"
+#define ROTATION_MODE_3D L"3D"
 
 // ------------------------------------------------------------------------------------------------
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)

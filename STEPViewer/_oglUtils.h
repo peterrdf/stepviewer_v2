@@ -1828,6 +1828,12 @@ enum class enumView : int
 	Back,
 };
 
+enum class enumRotationMode : int
+{
+	XY = 0, // Standard
+	XYZ,	// Quaternions
+};
+
 struct _ioglRenderer
 {
 	virtual _oglProgram* _getOGLProgram() const PURE;
@@ -1866,12 +1872,14 @@ protected: // Members
 	_oglBuffers<Instance> m_oglBuffers;
 
 	// Rotation
+	enumRotationMode m_enRotationMode;
+
 	float m_fXAngle;
 	float m_fYAngle;
 
-	// Rotation - quaternion
-	_quaterniond m_quatRotation;
+	_quaterniond m_rotation;
 
+	// Translation
 	float m_fXTranslation;
 	float m_fYTranslation;
 	float m_fZTranslation;
@@ -1887,9 +1895,10 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
+		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(30.0f)
 		, m_fYAngle(30.0f)
-		, m_quatRotation(_quaterniond::toQuaternion(0., 45. * (M_PI / 180.), -45. * (M_PI / 180.)))
+		, m_rotation(_quaterniond::toQuaternion(0., 30. * (M_PI / 180.), -30. * (M_PI / 180.)))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2082,27 +2091,30 @@ public: // Methods
 
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-		_quaterniond quatRotation = _quaterniond::toQuaternion(0., m_fXAngle, m_fYAngle);
+		if (m_enRotationMode == enumRotationMode::XY)
+		{
+			m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+			m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ)
+		{
+			_quaterniond rotation = _quaterniond::toQuaternion(0., m_fXAngle, m_fYAngle);
 
-		// Reset
-		m_fXAngle = m_fYAngle = 0.f;
+			m_fXAngle = m_fYAngle = 0.f;
 
-		m_quatRotation.cross(quatRotation);
+			m_rotation.cross(rotation);
 
-		const double* pRotationMatirx = m_quatRotation.toMatrix();
-		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
+			const double* pRotationMatirx = m_rotation.toMatrix();
+			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
 
-		m_matModelView = m_matModelView * matTransformation;
-		//glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+			m_matModelView = m_matModelView * matTransformation;
 
-		//glMultMatrixd(pRotationMatirx);
-
-		delete pRotationMatirx;
-
-
-		//m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-		//m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-
+			delete pRotationMatirx;
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
 
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
@@ -2117,6 +2129,11 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
+	enumProjection _getProjection() const
+	{
+		return m_enProjection;
+	}
+
 	void _setProjection(enumProjection enProjection)
 	{
 		m_enProjection = enProjection;
@@ -2124,9 +2141,16 @@ public: // Methods
 		_redraw();
 	}
 
-	enumProjection _getProjection() const
+	enumRotationMode _getRotationMode() const
 	{
-		return m_enProjection;
+		return m_enRotationMode;
+	}
+
+	void _setRotationMode(enumRotationMode enRotationMode)
+	{
+		m_enRotationMode = enRotationMode;
+
+		_redraw();
 	}
 
 	void _setView(enumView enView)
@@ -2187,27 +2211,34 @@ public: // Methods
 
 	void _rotateMouseLButton(float fXAngle, float fYAngle)
 	{
-		const float _ROTATION_SPEED = 1.f / 25.f;
-		m_fXAngle = -fYAngle * _ROTATION_SPEED;
-		m_fYAngle = -fXAngle* _ROTATION_SPEED;
-
-		_redraw();
-
-		/*if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+		if (m_enRotationMode == enumRotationMode::XY)
 		{
-			fYAngle = 0.;
+			if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+			{
+				fYAngle = 0.;
+			}
+			else
+			{
+				if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+				{
+					fXAngle = 0.;
+				}
+			}
+
+			_rotate(
+				fXAngle * ROTATION_SPEED,
+				fYAngle * ROTATION_SPEED);
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ)
+		{
+			_rotate(
+				-fYAngle * ROTATION_SPEED,
+				-fXAngle * ROTATION_SPEED);
 		}
 		else
 		{
-			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
-			{
-				fXAngle = 0.;
-			}
+			ASSERT(FALSE);
 		}
-
-		_rotate(
-			fXAngle * ROTATION_SPEED,
-			fYAngle * ROTATION_SPEED);*/
 	}
 
 	void _zoomMouseMButton(LONG lDelta)

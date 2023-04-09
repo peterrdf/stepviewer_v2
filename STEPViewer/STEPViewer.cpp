@@ -64,10 +64,6 @@ CMySTEPViewerApp theApp;
 
 BOOL CMySTEPViewerApp::InitInstance()
 {
-//	LOG_INIT("STEPViewer_%N.log");
-
-//	LOG_INFO("STEPViewer is starting...");
-
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
@@ -148,8 +144,6 @@ BOOL CMySTEPViewerApp::InitInstance()
 
 int CMySTEPViewerApp::ExitInstance()
 {
-//	LOG_INFO("STEPViewer is terminating...");
-
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 
