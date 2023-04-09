@@ -2202,8 +2202,6 @@ public: // Methods
 			}
 			break;
 		} // switch (enView)
-
-		_redraw();
 	}		
 
 	void _rotateMouseLButton(float fXAngle, float fYAngle)
