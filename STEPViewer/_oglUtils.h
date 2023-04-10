@@ -1815,7 +1815,7 @@ public: // Methods
 enum class enumProjection : int
 {
 	Perspective = 0,
-	Isometric,
+	Orthographic,
 };
 
 enum class enumView : int
@@ -1898,7 +1898,7 @@ public: // Methods
 		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(30.0f)
 		, m_fYAngle(30.0f)
-		, m_rotation(_quaterniond::toQuaternion(0., -30. * (M_PI / 180.), -30. * (M_PI / 180.)))
+		, m_rotation(_quaterniond::toQuaternion(45. * (M_PI / 180.), 45. * (M_PI / 180.), 45. * (M_PI / 180.)))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2005,10 +2005,10 @@ public: // Methods
 
 	void _reset()
 	{
-		// TODO: Isometric view
-		m_fXAngle = 30.0f;
-		m_fYAngle = 30.0f;
-		m_rotation = _quaterniond::toQuaternion(0., -30. * (M_PI / 180.), -30. * (M_PI / 180.));
+		// TODO: Orthographic view
+		m_fXAngle = 45.;
+		m_fYAngle = 45.;
+		m_rotation = _quaterniond::toQuaternion(45. * (M_PI / 180.), 45. * (M_PI / 180.), 45. * (M_PI / 180.));
 
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
@@ -2064,7 +2064,7 @@ public: // Methods
 			}
 			break;
 
-			case enumProjection::Isometric:
+			case enumProjection::Orthographic:
 			{
 				glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
 				m_pOGLProgram->_setProjectionMatrix(matProjection);
@@ -2203,6 +2203,13 @@ public: // Methods
 				m_fYAngle = 0.;
 			}
 			break;
+
+			/*case enumView::Isometric:
+			{
+				m_fXAngle = 45.;
+				m_fYAngle = 45.;
+			}
+			break;*/
 
 			default:
 			{
@@ -2348,7 +2355,7 @@ private: //  Methods
 
 	void _zoom(float fZTranslation)
 	{
-		if (m_enProjection == enumProjection::Isometric)
+		if (m_enProjection == enumProjection::Orthographic)
 		{
 			return;
 		}

@@ -73,8 +73,8 @@ public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnProjectionIsometric();
-	afx_msg void OnUpdateProjectionIsometric(CCmdUI* pCmdUI);
+	afx_msg void OnProjectionOrthographic();
+	afx_msg void OnUpdateProjectionOrthographic(CCmdUI* pCmdUI);
 	afx_msg void OnProjectionPerspective();
 	afx_msg void OnUpdateProjectionPerspective(CCmdUI* pCmdUI);
 	afx_msg void OnViewFront();

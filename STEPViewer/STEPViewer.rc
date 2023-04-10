@@ -440,9 +440,9 @@ BEGIN
         POPUP "Projection"
         BEGIN
             MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
-            MENUITEM "Isometric",                   ID_PROJECTION_ISOMETRIC
+            MENUITEM "Orthographic",                ID_PROJECTION_ORTHOGRAPHIC
         END
-        POPUP "View"
+        POPUP "View Direction"
         BEGIN
             MENUITEM "Front",                       ID_VIEW_FRONT
             MENUITEM "Top",                         ID_VIEW_TOP
@@ -450,6 +450,8 @@ BEGIN
             MENUITEM "Back",                        ID_VIEW_BACK
             MENUITEM "Left",                        ID_VIEW_LEFT
             MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+            MENUITEM SEPARATOR
+            MENUITEM "Isometric",                   ID_VIEW_ISOMETRIC
         END
         POPUP "Show"
         BEGIN
@@ -564,9 +566,9 @@ BEGIN
         POPUP "Projection"
         BEGIN
             MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
-            MENUITEM "Isometric",                   ID_PROJECTION_ISOMETRIC
+            MENUITEM "Orthographic",                ID_PROJECTION_ORTHOGRAPHIC
         END
-        POPUP "View"
+        POPUP "View Direction"
         BEGIN
             MENUITEM "Front",                       ID_VIEW_FRONT
             MENUITEM "Top",                         ID_VIEW_TOP
@@ -574,6 +576,8 @@ BEGIN
             MENUITEM "Back",                        ID_VIEW_BACK
             MENUITEM "Left",                        ID_VIEW_LEFT
             MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+            MENUITEM SEPARATOR
+            MENUITEM "Isometric",                   ID_VIEW_ISOMETRIC
         END
         POPUP "Show"
         BEGIN
@@ -672,6 +676,7 @@ END
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "STEPViewer\n\nSTEPViewer\nSTEP Files (*.stp)\n.stp\nMySTEPViewer.Document\nSTEPViewer.Document"
+    ID_PROPERTIES           "Search by name, type, etc.\nSearch..."
 END
 
 STRINGTABLE
@@ -825,7 +830,6 @@ END
 STRINGTABLE
 BEGIN
     ID_NEW_INSTANCE         "New instance\nCreate new instance"
-    ID_PROPERTIES           "Search by name, type, etc.\nSearch..."
 END
 
 #endif    // English (United States) resources

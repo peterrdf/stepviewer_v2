@@ -89,7 +89,7 @@
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
 #define IDD_DIALOG_NEW_INSTANCE         314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
-#define IDD_DIALOG_SEARCH			    316
+#define IDD_DIALOG_SEARCH               316
 #define IDD_DIALOG_SELECT_INSTANCE      318
 #define IDR_MENU_3D_VIEW                320
 #define IDB_NONE                        322
@@ -100,21 +100,20 @@
 #define IDB_SELECTED_PART               327
 #define IDR_TEXTFILE_VERTEX_SHADER2     331
 #define IDR_TEXTFILE_FRAGMENT_SHADER2   332
-#define ID_STATUS_IFC_MODEL_NAME "NA"   333
-#define IDS_IFC_RELATIONS_VIEW			334
-#define IDS_VIEW_IFC_RELATIONS			335
-#define IDS_VIEW_ORIGIN					336
-#define IDS_IGNORE_ATTRIBUTE			337
-#define IDS_SAVE_SCHEMA					338
-#define IDS_LOAD_SCHEMA					339
-#define IDS_VIEW_GEOMETRY				340
+#define IDS_IFC_RELATIONS_VIEW          334
+#define IDS_VIEW_IFC_RELATIONS          335
+#define IDS_VIEW_ORIGIN                 336
+#define IDS_IGNORE_ATTRIBUTE            337
+#define IDS_SAVE_SCHEMA                 338
+#define IDS_LOAD_SCHEMA                 339
+#define IDS_VIEW_GEOMETRY               340
 #define IDS_VIEW_INSTANCE_PROPERTIES    341
-#define IDC_TREE_IFC					342
-#define IDS_SCHEMA_VIEW					343
-#define ID_VIEW_SCHEMA					344
+#define IDC_TREE_IFC                    342
+#define IDS_SCHEMA_VIEW                 343
+#define ID_VIEW_SCHEMA                  344
 #define ID_VIEW_RELATIONS               345
-#define ID_VIEW_DESIGN		            346
-#define IDS_DESIGN_VIEW 				347
+#define ID_VIEW_DESIGN                  346
+#define IDS_DESIGN_VIEW                 347
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -146,7 +145,7 @@
 #define ID_VIEW_ZOOM_OUT                32807
 #define ID_VIEW_PROJECTION              32808
 #define ID_PROJECTION_PERSPECTIVE       32809
-#define ID_PROJECTION_ISOMETRIC         32810
+#define ID_PROJECTION_ORTHOGRAPHIC      32810
 #define ID_VIEW_VIEW                    32811
 #define ID_VIEW_FRONT                   32812
 #define ID_VIEW_TOP                     32813
@@ -159,13 +158,14 @@
 #define ID_SHOW_CONC_FACES_WIREFRAMES   32822
 #define ID_SHOW_LINES                   32823
 #define ID_SHOW_POINTS                  32824
+#define ID_VIEW_ISOMETRIC				32825
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
-#define _APS_NEXT_COMMAND_VALUE         32825
+#define _APS_NEXT_COMMAND_VALUE         32826
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
