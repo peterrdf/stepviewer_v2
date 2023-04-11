@@ -1852,8 +1852,7 @@ const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
 const float ZOOM_SPEED_KEYS = 0.025f;
 const float PAN_SPEED_MOUSE = 4.f;
 const float PAN_SPEED_KEYS = 40.f;
-const float ROTATION_SPEED = 1.f / 2500.f;
-const float ROTATION_SENSITIVITY = 0.1f;
+const float ROTATION_SPEED = 1.f / 25.f;
 
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
@@ -1874,9 +1873,12 @@ protected: // Members
 	// Rotation
 	enumRotationMode m_enRotationMode;
 
+	// degrees
 	float m_fXAngle;
 	float m_fYAngle;
+	float m_fZAngle;
 
+	// radians
 	_quaterniond m_rotation;
 
 	// Translation
@@ -1895,9 +1897,10 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XYZ)
-		, m_fXAngle(30.0f)
-		, m_fYAngle(30.0f)
+		, m_enRotationMode(enumRotationMode::XY)
+		, m_fXAngle(270.f)
+		, m_fYAngle(0.f)
+		, m_fZAngle(0.f)
 		, m_rotation(_quaterniond::toQuaternion(45. * (M_PI / 180.), 45. * (M_PI / 180.), 45. * (M_PI / 180.)))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
@@ -2005,10 +2008,10 @@ public: // Methods
 
 	void _reset()
 	{
-		// TODO: Orthographic view
-		m_fXAngle = 45.;
-		m_fYAngle = 45.;
-		m_rotation = _quaterniond::toQuaternion(45. * (M_PI / 180.), 45. * (M_PI / 180.), 45. * (M_PI / 180.));
+		m_fXAngle = 270.f;
+		m_fYAngle = 0.f;
+		m_fZAngle = 0.f;
+		m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(270.));
 
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
@@ -2098,8 +2101,9 @@ public: // Methods
 
 		if (m_enRotationMode == enumRotationMode::XY)
 		{
-			m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-			m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
 		}
 		else if (m_enRotationMode == enumRotationMode::XYZ)
 		{
@@ -2164,50 +2168,57 @@ public: // Methods
 		{
 			case enumView::Front:
 			{
-				m_fXAngle = 0.;
-				m_fYAngle = 0.;
-			}
-			break;
-
-			case enumView::Right:
-			{
-				m_fXAngle = 0.;
-				m_fYAngle = -90.;
-			}
-			break;
-
-			case enumView::Top:
-			{
-				m_fXAngle = 90.;
-				m_fYAngle = 0.;
+				m_fXAngle = 270.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 0.f;
 			}
 			break;
 
 			case enumView::Back:
 			{
-				m_fXAngle = 0.;
-				m_fYAngle = -180.;
+				m_fXAngle = 90.f;
+				m_fYAngle = 180.f;
+				m_fZAngle = 0.f;
 			}
 			break;
 
-			case enumView::Left:
+			case enumView::Top:
 			{
-				m_fXAngle = 0.;
-				m_fYAngle = 90.;
+				m_fXAngle = 0.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 0.f;
 			}
 			break;
 
 			case enumView::Bottom:
 			{
-				m_fXAngle = -90.;
-				m_fYAngle = 0.;
+				m_fXAngle = 180.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 0.f;
+			}
+			break;
+
+			case enumView::Left:
+			{
+				m_fXAngle = 270.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 90.f;
+			}
+			break;
+
+			case enumView::Right:
+			{
+				m_fXAngle = 270.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 270.f;
 			}
 			break;
 
 			/*case enumView::Isometric:
 			{
-				m_fXAngle = 45.;
-				m_fYAngle = 45.;
+				m_fXAngle = 45.f;
+				m_fYAngle = 45.f;
+				m_fZAngle = 45.f;
 			}
 			break;*/
 
@@ -2223,13 +2234,13 @@ public: // Methods
 	{
 		if (m_enRotationMode == enumRotationMode::XY)
 		{
-			if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+			if (abs(fXAngle) >= abs(fYAngle))
 			{
 				fYAngle = 0.;
 			}
 			else
 			{
-				if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+				if (abs(fYAngle) >= abs(fXAngle))
 				{
 					fXAngle = 0.;
 				}
