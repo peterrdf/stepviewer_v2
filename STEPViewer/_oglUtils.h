@@ -1898,11 +1898,11 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XY)
+		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(270.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
-		, m_rotation(_quaterniond::toQuaternion(45. * (M_PI / 180.), 45. * (M_PI / 180.), 45. * (M_PI / 180.)))
+		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2009,10 +2009,11 @@ public: // Methods
 
 	void _reset()
 	{
+		// Front View
 		m_fXAngle = 270.f;
 		m_fYAngle = 0.f;
 		m_fZAngle = 0.f;
-		m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(270.));
+		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
@@ -2108,10 +2109,12 @@ public: // Methods
 		}
 		else if (m_enRotationMode == enumRotationMode::XYZ)
 		{
-			_quaterniond rotation = _quaterniond::toQuaternion(0., m_fXAngle, m_fYAngle);
+			// Apply rotation...
+			_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fXAngle), glm::radians(m_fYAngle));
 			m_rotation.cross(rotation);
 
-			m_fXAngle = m_fYAngle = 0.f;
+			// ... and reset
+			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
 
 			const double* pRotationMatirx = m_rotation.toMatrix();
 			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
