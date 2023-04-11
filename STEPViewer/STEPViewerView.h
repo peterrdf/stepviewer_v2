@@ -83,6 +83,7 @@ public:
 	afx_msg void OnViewBack();
 	afx_msg void OnViewLeft();
 	afx_msg void OnViewBottom();
+	afx_msg void OnViewIsometric();
 	afx_msg void OnInstancesSave();
 	afx_msg void OnUpdateInstancesSave(CCmdUI* pCmdUI);
 	afx_msg void OnInstancesZoomTo();

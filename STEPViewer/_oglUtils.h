@@ -1820,12 +1820,13 @@ enum class enumProjection : int
 
 enum class enumView : int
 {
-	Top = 0,
+	Front = 0,
+	Back,
+	Top,
+	Bottom,
 	Left,
 	Right,
-	Bottom,
-	Front,
-	Back,
+	Isometric,
 };
 
 enum class enumRotationMode : int
@@ -2214,13 +2215,13 @@ public: // Methods
 			}
 			break;
 
-			/*case enumView::Isometric:
+			case enumView::Isometric:
 			{
-				m_fXAngle = 45.f;
-				m_fYAngle = 45.f;
+				m_fXAngle = 315.f;
+				m_fYAngle = 0.f;
 				m_fZAngle = 45.f;
 			}
-			break;*/
+			break;
 
 			default:
 			{

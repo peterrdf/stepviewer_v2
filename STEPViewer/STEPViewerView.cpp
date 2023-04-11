@@ -117,6 +117,7 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_COMMAND(ID_VIEW_BACK, &CMySTEPViewerView::OnViewBack)
 	ON_COMMAND(ID_VIEW_LEFT, &CMySTEPViewerView::OnViewLeft)
 	ON_COMMAND(ID_VIEW_BOTTOM, &CMySTEPViewerView::OnViewBottom)
+	ON_COMMAND(ID_VIEW_ISOMETRIC, &CMySTEPViewerView::OnViewIsometric)
 	ON_COMMAND(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnInstancesSave)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnUpdateInstancesSave)
 	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
@@ -473,6 +474,16 @@ void CMySTEPViewerView::OnViewBottom()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->SetView(enumView::Bottom);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+	}
+}
+
+void CMySTEPViewerView::OnViewIsometric()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->SetView(enumView::Isometric);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
