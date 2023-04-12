@@ -1898,7 +1898,7 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XYZ)
+		, m_enRotationMode(enumRotationMode::XY)
 		, m_fXAngle(0.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
@@ -2184,7 +2184,7 @@ public: // Methods
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
 					m_fXAngle = 0.f;
-					m_fYAngle = 180.f;
+					m_fYAngle = 0.f;
 					m_fZAngle = 0.f;
 				}
 				else
@@ -2204,8 +2204,8 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					m_fXAngle = 90.f;
-					m_fYAngle = 180.f;
+					m_fXAngle = 0.f;
+					m_fYAngle = 0.f;
 					m_fZAngle = 0.f;
 				}
 				else
@@ -2234,7 +2234,7 @@ public: // Methods
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
 					m_fXAngle = 0.f;
-					m_fYAngle = 180.f;
+					m_fYAngle = 0.f;
 					m_fZAngle = 0.f;
 				}
 				else
@@ -2254,9 +2254,9 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					m_fXAngle = 270.f;
+					m_fXAngle = 0.f;
 					m_fYAngle = 0.f;
-					m_fZAngle = 90.f;
+					m_fZAngle = 0.f;
 				}
 				else
 				{
@@ -2275,9 +2275,9 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					m_fXAngle = 270.f;
+					m_fXAngle = 0.f;
 					m_fYAngle = 0.f;
-					m_fZAngle = 270.f;
+					m_fZAngle = 0.f;
 				}
 				else
 				{
@@ -2296,9 +2296,9 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					m_fXAngle = 315.f;
+					m_fXAngle = 0.f;
 					m_fYAngle = 0.f;
-					m_fZAngle = 45.f;
+					m_fZAngle = 0.f;
 				}
 				else
 				{
