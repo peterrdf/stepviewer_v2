@@ -2145,6 +2145,8 @@ public: // Methods
 	void _setRotationMode(enumRotationMode enRotationMode)
 	{
 		m_enRotationMode = enRotationMode;
+
+		_setView(enumView::Front);
 	}
 
 	void _setView(enumView enView)
