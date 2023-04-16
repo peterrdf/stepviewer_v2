@@ -1848,11 +1848,10 @@ struct _ioglRenderer
 	virtual void _redraw() PURE;
 };
 
-const float ZOOM_SPEED_MOUSE = 0.025f;
-const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
-const float ZOOM_SPEED_KEYS = 0.025f;
-const float PAN_SPEED_MOUSE = 4.f;
-const float PAN_SPEED_KEYS = 40.f;
+const float ZOOM_SPEED_MOUSE = 0.01f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
+const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
+const float PAN_SPEED_KEYS = 0.01f;
 const float ROTATION_SPEED = 1.f / 25.f;
 
 template <class Instance>
@@ -1882,6 +1881,26 @@ protected: // Members
 	// radians
 	_quaterniond m_rotation;
 
+	// World
+	float m_fXmin;
+	float m_fXmax;
+	float m_fYmin;
+	float m_fYmax;
+	float m_fZmin;
+	float m_fZmax;
+
+	// Zoom/Pan
+	float m_fZoomMin;
+	float m_fZoomMax;
+	float m_fZoomInterval;
+	float m_fPanXMin;
+	float m_fPanXMax;
+	float m_fPanXInterval;
+	float m_fPanYMin;
+	float m_fPanYMax;
+	float m_fPanYInterval;
+
+
 	// Translation
 	float m_fXTranslation;
 	float m_fYTranslation;
@@ -1903,6 +1922,21 @@ public: // Methods
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
 		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+		, m_fXmin(-1.f)
+		, m_fXmax(1.f)
+		, m_fYmin(-1.f)
+		, m_fYmax(1.f)
+		, m_fZmin(-1.f)
+		, m_fZmax(1.f)
+		, m_fZoomMin(-1.f)
+		, m_fZoomMax(1.f)
+		, m_fZoomInterval(2.f)
+		, m_fPanXMin(-1.f)
+		, m_fPanXMax(1.f)
+		, m_fPanXInterval(2.f)
+		, m_fPanYMin(-1.f)
+		, m_fPanYMax(1.f)
+		, m_fPanYInterval(2.f)
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2011,10 +2045,46 @@ public: // Methods
 
 	void _prepare(
 		int iWidth, int iHeight,
-		float& fXmin, float& fXmax, 
-		float& fYmin, float& fYmax, 
-		float& fZmin, float& fZmax)
+		float fXmin, float fXmax, 
+		float fYmin, float fYmax, 
+		float fZmin, float fZmax)
 	{
+		m_fXmin = fXmin;
+		m_fXmax = fXmax;
+		m_fYmin = fYmin;
+		m_fYmax = fYmax;
+		m_fZmin = fZmin;
+		m_fZmax = fZmax;
+
+		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		// Zoom
+		m_fZoomMin = m_fZmin;
+		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
+		m_fZoomMin = -m_fZoomMin;
+		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
+		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
+
+		m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+
+		// Pan X
+		m_fPanXMin = fXmin;
+		m_fPanXMin += (fXmax - fXmin) / 2.f;
+		m_fPanXMin = -m_fPanXMin;
+		m_fPanXMax = m_fPanXMin + (fBoundingSphereDiameter * 2.f);
+
+		m_fPanXInterval = abs(m_fPanXMax - m_fPanXMin);
+
+		// Pan Y
+		m_fPanYMin = fXmin;
+		m_fPanYMin += (fXmax - fXmin) / 2.f;
+		m_fPanYMin = -m_fPanYMin;
+		m_fPanYMax = m_fPanYMin + (fBoundingSphereDiameter * 2.f);
+
+		m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
+
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -2127,23 +2197,15 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
-	enumProjection _getProjection() const
-	{
-		return m_enProjection;
-	}
-
-	void _setProjection(enumProjection enProjection)
+	enumProjection _getProjection() const { return m_enProjection; }
+	void _setProjection(enumProjection enProjection) 
 	{
 		m_enProjection = enProjection;
 
 		_setView(enumView::Isometric);
 	}
 
-	enumRotationMode _getRotationMode() const
-	{
-		return m_enRotationMode;
-	}
-
+	enumRotationMode _getRotationMode() const { return m_enRotationMode; }
 	void _setRotationMode(enumRotationMode enRotationMode)
 	{
 		m_enRotationMode = enRotationMode;
@@ -2153,6 +2215,8 @@ public: // Methods
 
 	void _setView(enumView enView)
 	{
+		// Note: OpenGL/Quaternions - CW/CCW
+
 		m_fXAngle = 0.f;
 		m_fYAngle = 0.f;
 		m_fZAngle = 0.f;
@@ -2319,22 +2383,22 @@ public: // Methods
 	{
 		_zoom(
 			lDelta > 0 ?
-			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE :
-			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
 	}
 
 	void _panMouseRButton(float fX, float fY)
 	{
 		_pan(
-			PAN_SPEED_MOUSE * fX,
-			PAN_SPEED_MOUSE * -fY);
+			m_fPanXInterval * fX,
+			m_fPanYInterval * -fY);
 	}
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	{
 		_zoom(zDelta < 0 ?
-			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
-			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
 	}	
 
 	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
@@ -2348,7 +2412,7 @@ public: // Methods
 			{
 				_pan(
 					0.f,
-					PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+					PAN_SPEED_KEYS * m_fPanYInterval);
 			}
 			break;
 
@@ -2356,14 +2420,14 @@ public: // Methods
 			{
 				_pan(
 					0.f,
-					-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+					-PAN_SPEED_KEYS * m_fPanYInterval);
 			}
 			break;
 
 			case VK_LEFT:
 			{
 				_pan(
-					-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+					-PAN_SPEED_KEYS * m_fPanXInterval,
 					0.f);
 			}
 			break;
@@ -2371,20 +2435,20 @@ public: // Methods
 			case VK_RIGHT:
 			{
 				_pan(
-					PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+					PAN_SPEED_KEYS * m_fPanXInterval,
 					0.f);
 			}
 			break;
 
 			case VK_PRIOR:
 			{
-				_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+				_zoom(abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
 			}
 			break;
 
 			case VK_NEXT:
 			{
-				_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+				_zoom(-abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
 			}
 			break;
 		} // switch (nChar)
@@ -2422,9 +2486,17 @@ private: //  Methods
 		if (m_enProjection == enumProjection::Orthographic)
 		{
 			return;
+		}		
+
+		float fNewZTranslation = m_fZTranslation + fZTranslation;
+
+		if ((fNewZTranslation >= m_fZoomMax) ||
+			(fNewZTranslation <= m_fZoomMin))
+		{
+			return;
 		}
 
-		m_fZTranslation += fZTranslation;
+		m_fZTranslation = fNewZTranslation;
 
 		_redraw();
 	}
