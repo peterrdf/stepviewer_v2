@@ -10,6 +10,9 @@
 // CSearchTreeCtrlDialog dialog
 
 // ------------------------------------------------------------------------------------------------
+const int MAX_SERACH_DEPTH = 20;
+
+// ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -39,11 +42,19 @@ HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);	
 
+	if (m_iSearchDepth > MAX_SERACH_DEPTH)
+	{
+		return nullptr;
+	}
+
 	m_pSite->LoadChildrenIfNeeded(hParent);
 
 	HTREEITEM hChild = GetTreeView()->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
+		m_iSearchDepth++;
+		ASSERT(m_iSearchDepth >= 0);
+
 		if (m_pSite->ContainsText(m_cmbSearchFilter.GetCurSel(), hChild, m_strSearchText))
 		{
 			return hChild;
@@ -97,6 +108,8 @@ HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 		return nullptr;
 	}
 
+	m_iSearchDepth--;
+
 	HTREEITEM hSibling = GetTreeView()->GetNextSiblingItem(hParent);
 	if (hSibling == nullptr)
 	{
@@ -125,6 +138,7 @@ void CSearchTreeCtrlDialog::Reset()
 {
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
+	m_iSearchDepth = 0;
 }
 
 IMPLEMENT_DYNAMIC(CSearchTreeCtrlDialog, CDialogEx)
@@ -134,6 +148,7 @@ CSearchTreeCtrlDialog::CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite)
 	, m_pSite(pSite)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
+	, m_iSearchDepth(0)
 	, m_strSearchText(_T(""))
 {
 	ASSERT(m_pSite != nullptr);
@@ -182,12 +197,12 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	// Reset
 	if (m_bEndOfSearch)
 	{
-		ASSERT(m_hSearchResult != nullptr);
+		if (m_hSearchResult != nullptr)
+		{
+			UnselectItem(m_hSearchResult);
+		}		
 
-		UnselectItem(m_hSearchResult);
-
-		m_hSearchResult = nullptr;
-		m_bEndOfSearch = FALSE;
+		Reset();
 	}
 
 	// Initialize - take the first root

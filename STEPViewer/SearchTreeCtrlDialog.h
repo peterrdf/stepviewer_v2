@@ -36,6 +36,7 @@ private: // Members
 
 	HTREEITEM m_hSearchResult;
 	BOOL m_bEndOfSearch;
+	int m_iSearchDepth;
 
 private: // Methods
 
