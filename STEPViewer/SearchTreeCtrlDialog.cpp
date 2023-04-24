@@ -253,12 +253,14 @@ BOOL CSearchTreeCtrlDialog::OnInitDialog()
 	auto vecSearchFilters = m_pSite->GetSearchFilters();
 	ASSERT(!vecSearchFilters.empty());
 
-	for (auto searchFilter : vecSearchFilters)
+	for (auto strSearchFilter : vecSearchFilters)
 	{
-		m_cmbSearchFilter.AddString(searchFilter.c_str());
+		m_cmbSearchFilter.AddString(strSearchFilter);
 	}
 
 	m_cmbSearchFilter.SetCurSel(0);
+
+	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[0]));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

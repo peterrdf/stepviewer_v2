@@ -25,9 +25,9 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<wstring> CSchemaView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CSchemaView::GetSearchFilters() /*override*/
 {
-	return vector<wstring>
+	return vector<CString>
 		{
 			_T("(All)"),
 			_T("Entities"),

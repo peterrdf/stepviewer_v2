@@ -347,9 +347,9 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<wstring> CSTEPModelStructureView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CSTEPModelStructureView::GetSearchFilters() /*override*/
 {
-	return vector<wstring>
+	return vector<CString>
 		{
 			_T("(All)"),
 			_T("Product Definitions"),

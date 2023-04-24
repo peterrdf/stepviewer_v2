@@ -149,9 +149,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<wstring> CDesignTreeView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
 {
-	return vector<wstring>
+	return vector<CString>
 	{
 		_T("(All)"),
 		_T("Instances"),

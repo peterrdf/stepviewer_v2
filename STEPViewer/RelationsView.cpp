@@ -109,13 +109,24 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<wstring> CRelationsView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CRelationsView::GetSearchFilters() /*override*/
 {
-	return vector<wstring>
+	return vector<CString>
 	{
 		_T("(All)"),
 		_T("Express ID"),
 	};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CString CRelationsView::GetSearchFilterType(const CString& strFilter) /*override*/
+{
+	if (strFilter == _T("Express ID"))
+	{
+		return _T("Select");
+	}
+
+	return __super::GetSearchFilterType(strFilter);
 }
 
 // ------------------------------------------------------------------------------------------------

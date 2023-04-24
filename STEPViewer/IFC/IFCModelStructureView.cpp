@@ -269,9 +269,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<wstring> CIFCModelStructureView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CIFCModelStructureView::GetSearchFilters() /*override*/
 {
-	return vector<wstring>
+	return vector<CString>
 		{
 			_T("(All)"),
 			_T("Express ID"),

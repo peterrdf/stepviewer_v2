@@ -62,7 +62,7 @@ public: // Methods
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
-	virtual vector<wstring> GetSearchFilters() override;
+	virtual vector<CString> GetSearchFilters() override;
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
 	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
