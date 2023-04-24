@@ -155,6 +155,7 @@ void CSearchTreeCtrlDialog::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CSearchTreeCtrlDialog, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchTreeCtrlDialog::OnEnChangeEditSearchText)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchTreeCtrlDialog::OnBnClickedButtonSearch)
+	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter)
 END_MESSAGE_MAP()
 
 
@@ -264,4 +265,13 @@ BOOL CSearchTreeCtrlDialog::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+// ------------------------------------------------------------------------------------------------
+void CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter()
+{
+	auto vecSearchFilters = m_pSite->GetSearchFilters();
+	ASSERT(!vecSearchFilters.empty());
+
+	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[m_cmbSearchFilter.GetCurSel()]));
 }

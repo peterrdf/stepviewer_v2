@@ -17,7 +17,7 @@ public: // Methods
 
 	virtual CTreeCtrlEx* GetTreeView() PURE;
 	virtual vector<CString> GetSearchFilters() PURE;
-	virtual CString GetSearchFilterType(const CString& /*strFilter*/) { return L"Select"; } // Title
+	virtual CString GetSearchFilterType(const CString& /*strFilter*/) { return L"Search"; } // Title
 	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) PURE;
 	virtual BOOL ProcessSearch(int /*iFilter*/, const CString& /*strSearchText*/) { return FALSE; }
 	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) PURE;
@@ -73,4 +73,5 @@ public:
 	afx_msg void OnBnClickedButtonSearch();
 	CComboBox m_cmbSearchFilter;
 	virtual BOOL OnInitDialog();
+	afx_msg void OnSelchangeComboSearchFilter();
 };
