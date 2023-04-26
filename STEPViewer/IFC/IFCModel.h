@@ -60,7 +60,7 @@ private: // Members
 	vector<CIFCInstance*> m_vecInstances;
 	map<int_t, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
 	map<int_t, CIFCInstance*> m_mapID2Instance; // ID : Instance
-	map<int64_t, CIFCInstance*> m_mapExpressID2Instance; // ID : Instance
+	map<int64_t, CIFCInstance*> m_mapExpressID2Instance; // Express ID : Instance
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;

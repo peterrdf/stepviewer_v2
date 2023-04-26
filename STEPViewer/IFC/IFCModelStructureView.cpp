@@ -371,12 +371,33 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 	auto& mapInstances = pModel->GetInstances();	
 
+	// ENTITY : VISIBLE COUNT
+	map<wstring, long> mapEntity2VisibleCount;
+	for (auto itInstance = mapInstances.begin(); 
+		itInstance != mapInstances.end(); 
+		itInstance++)
+	{
+		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->GetEntityName());
+
+		wstring ent = itInstance->second->GetEntityName();
+		ASSERT(!ent.empty());
+		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
+		{
+			mapEntity2VisibleCount[itInstance->second->GetEntityName()] = itInstance->second->GetEnable() ? 1 : 0;
+		}
+		else
+		{
+			itEntity2VisibleCount->second += itInstance->second->GetEnable() ? 1 : 0;
+		}
+	} // for (; itInstance != ...
+	ASSERT(!mapEntity2VisibleCount.empty());
+
 	if (pInstance->HasGeometry())
 	{
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
-		auto pPopup = menu.GetSubMenu(0);		
+		auto pPopup = menu.GetSubMenu(0);
 
 		// Zoom to
 		if (!pInstance->GetEnable())
@@ -394,6 +415,24 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		if (pInstance->GetEnable())
 		{
 			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
+		}
+
+		// Entities
+		CMenu menuEntities;
+		VERIFY(menuEntities.CreatePopupMenu());
+
+		pPopup->AppendMenu(MF_SEPARATOR, 0, _T(""));
+		pPopup->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
+
+		UINT uiID = 1;
+		for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
+			itEntity2VisibleCount != mapEntity2VisibleCount.end();
+			itEntity2VisibleCount++)
+		{
+			menuEntities.AppendMenu(
+				MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
+				uiID++,
+				itEntity2VisibleCount->first.c_str());
 		}
 
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
@@ -484,6 +523,24 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 
 		auto pPopup = menu.GetSubMenu(0);
+
+		// Entities
+		CMenu menuEntities;
+		VERIFY(menuEntities.CreatePopupMenu());
+
+		pPopup->AppendMenu(MF_SEPARATOR, 0, _T(""));
+		pPopup->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
+
+		UINT uiID = 1;
+		for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
+			itEntity2VisibleCount != mapEntity2VisibleCount.end();
+			itEntity2VisibleCount++)
+		{
+			menuEntities.AppendMenu(
+				MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
+				uiID++,
+				itEntity2VisibleCount->first.c_str());
+		}
 
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
 		if (uiCommand == 0)

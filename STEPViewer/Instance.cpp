@@ -103,7 +103,7 @@ int64_t CInstance::GetEntity() const
 // --------------------------------------------------------------------------------------------
 const wchar_t* CInstance::GetEntityName() const
 {
-	return GetEntityName(GetEntity());
+	return GetEntityName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
