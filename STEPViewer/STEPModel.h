@@ -52,8 +52,8 @@ public: // Methods
 private: // Methods
 	
 	void LoadProductDefinitions();
-	CProductDefinition* LoadProductDefinition(int_t iProductDefinitionInstance);
-	CProductDefinition* GetProductDefinition(int_t iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
+	CProductDefinition* LoadProductDefinition(SdaiInstance iProductDefinitionInstance);
+	CProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
 	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix);

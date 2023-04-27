@@ -63,12 +63,12 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_pPropertyProvider = nullptr;
 
 	auto pModel = GetModel<CModel>();
-	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
+	if ((pModel == nullptr) || (pModel->GetSdaiModel() == 0))
 	{
 		return;
 	}
 	
-	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
+	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetSdaiModel());
 
 	m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
 }
@@ -110,14 +110,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	int64_t owlInstance = 0;
-	owlBuildInstance(pModel->GetInstance(), pSelectedInstance->GetInstance(), &owlInstance);
+	owlBuildInstance(pModel->GetSdaiModel(), pSelectedInstance->GetInstance(), &owlInstance);
 
 	if (owlInstance == 0)
 	{
 		int_t iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
 		if (iExpressID != 0)
 		{
-			owlInstance = internalGetInstanceFromP21Line(pModel->GetInstance(), iExpressID);
+			owlInstance = internalGetInstanceFromP21Line(pModel->GetSdaiModel(), iExpressID);
 		}
 	}
 

@@ -508,7 +508,7 @@ SdaiModel CModelCheckDlg::GetActiveModel()
 	if (auto pMainFrame = DYNAMIC_DOWNCAST(CMainFrame, AfxGetMainWnd())) {
 		if (auto pDoc = DYNAMIC_DOWNCAST(CMySTEPViewerDoc, pMainFrame->GetActiveDocument())) {
 			if (auto pModel = pDoc->GetModel()) {
-				return pModel->GetInstance();
+				return pModel->GetSdaiModel();
 			}
 		}
 	}

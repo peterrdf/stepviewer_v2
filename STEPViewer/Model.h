@@ -54,7 +54,7 @@ public: // Methods
 	enumModelType GetType() const;
 
 	// --------------------------------------------------------------------------------------------	
-	int64_t GetInstance() const;	
+	SdaiModel GetSdaiModel() const;
 
 	// --------------------------------------------------------------------------------------------	
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;

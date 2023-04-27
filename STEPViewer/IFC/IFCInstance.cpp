@@ -5,7 +5,7 @@
 #include <math.h>
 
 // ------------------------------------------------------------------------------------------------
-CIFCInstance::CIFCInstance(CIFCModel * pModel, int_t iInstance, const wchar_t * szGUID)
+CIFCInstance::CIFCInstance(CIFCModel * pModel, SdaiInstance iInstance, const wchar_t * szGUID)
 	: CInstance()
 	, m_pModel(pModel)
 	, m_iInstance(iInstance)

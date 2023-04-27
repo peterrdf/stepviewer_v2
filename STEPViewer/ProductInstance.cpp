@@ -40,7 +40,7 @@ CProductInstance::~CProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CProductInstance::GetInstance() const
+/*virtual*/ SdaiInstance CProductInstance::GetInstance() const
 {
 	return m_pProductDefinition != nullptr ?
 		m_pProductDefinition->GetInstance() :

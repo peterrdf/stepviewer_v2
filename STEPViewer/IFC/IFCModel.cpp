@@ -453,7 +453,7 @@ void CIFCModel::ScaleAndCenter()
 
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CIFCInstance *>& CIFCModel::GetInstances() const
+const map<SdaiInstance, CIFCInstance *>& CIFCModel::GetInstances() const
 {
 	return m_mapInstances;
 }
@@ -517,7 +517,7 @@ void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>&
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
-	int_t * iIFCInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
+	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(m_iModel, (char *) szEntityName);
 
 	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
 	if (iIFCInstancesCount == 0)
@@ -527,7 +527,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 
 	for (int_t i = 0; i < iIFCInstancesCount; ++i)
 	{
-		int_t iInstance = 0;
+		SdaiInstance iInstance = 0;
 		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
 		wchar_t* szInstanceGUIDW = nullptr;
@@ -581,7 +581,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 
 		if (iParentEntity == m_ifcProjectEntity) {
 			for (int_t i = 0; i < iIntancesCount; i++) {
-				int_t iInstance = 0;
+				SdaiInstance iInstance = 0;
 				engiGetAggrElement(piInstances, i, sdaiINSTANCE, &iInstance);
 
 				wchar_t* szInstanceGUIDW = nullptr;
@@ -604,7 +604,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 	iIntancesCount = engiGetEntityCount(m_iModel);
 	for (int_t i = 0; i < iIntancesCount; i++)
 	{
-		int_t iEntity = engiGetEntityElement(m_iModel, i);
+		SdaiEntity iEntity = engiGetEntityElement(m_iModel, i);
 		if (engiGetEntityParent(iEntity) == iParentEntity)
 		{
 			RetrieveObjects__depth(iEntity, iCircleSegments, depth + 1);
@@ -613,7 +613,7 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iInstance, int_t iCircleSegments)
+CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiInstance iInstance, int_t iCircleSegments)
 {
 	/*
 	* Set up format

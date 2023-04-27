@@ -370,12 +370,12 @@ void CSTEPModel::Load(const wchar_t* szPath, int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadProductDefinitions()
 {
-	int_t* pProductDefinitionInstances = sdaiGetEntityExtentBN(m_iModel, "PRODUCT_DEFINITION");
+	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(m_iModel, "PRODUCT_DEFINITION");
 
 	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
 	{
-		int_t iProductDefinitionInstance = 0;
+		SdaiInstance iProductDefinitionInstance = 0;
 		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 
 		ASSERT(iProductDefinitionInstance != 0);
@@ -388,7 +388,7 @@ void CSTEPModel::LoadProductDefinitions()
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionInstance)
+CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	auto pDefinition = new CProductDefinition();
 
@@ -425,7 +425,7 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(int_t iProductDefinitionIn
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	int_t iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
@@ -466,12 +466,12 @@ CProductDefinition* CSTEPModel::GetProductDefinition(int_t iProductDefinitionIns
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadAssemblies()
 {
-	int_t* pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(m_iModel, "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(m_iModel, "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
 	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
 	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
 	{
-		int_t pNextAssemblyUsageOccurrenceInstance = 0;
+		SdaiInstance pNextAssemblyUsageOccurrenceInstance = 0;
 		sdaiGetAggrByIndex(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
 
 		CAssembly* pAssembly = new CAssembly();

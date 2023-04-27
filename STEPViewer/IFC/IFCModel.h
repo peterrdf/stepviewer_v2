@@ -26,23 +26,23 @@ private: // Classes
 private: // Members
 
 	// Entities
-	int_t m_ifcProjectEntity;
-	int_t m_ifcSpaceEntity;
-	int_t m_ifcOpeningElementEntity;
-	int_t m_ifcDistributionElementEntity;
-	int_t m_ifcElectricalElementEntity;
-	int_t m_ifcElementAssemblyEntity;
-	int_t m_ifcElementComponentEntity;
-	int_t m_ifcEquipmentElementEntity;
-	int_t m_ifcFeatureElementEntity;
-	int_t m_ifcFeatureElementSubtractionEntity;
-	int_t m_ifcFurnishingElementEntity;
-	int_t m_ifcReinforcingElementEntity;
-	int_t m_ifcTransportElementEntity;
-	int_t m_ifcVirtualElementEntity;
+	SdaiEntity m_ifcProjectEntity;
+	SdaiEntity m_ifcSpaceEntity;
+	SdaiEntity m_ifcOpeningElementEntity;
+	SdaiEntity m_ifcDistributionElementEntity;
+	SdaiEntity m_ifcElectricalElementEntity;
+	SdaiEntity m_ifcElementAssemblyEntity;
+	SdaiEntity m_ifcElementComponentEntity;
+	SdaiEntity m_ifcEquipmentElementEntity;
+	SdaiEntity m_ifcFeatureElementEntity;
+	SdaiEntity m_ifcFeatureElementSubtractionEntity;
+	SdaiEntity m_ifcFurnishingElementEntity;
+	SdaiEntity m_ifcReinforcingElementEntity;
+	SdaiEntity m_ifcTransportElementEntity;
+	SdaiEntity m_ifcVirtualElementEntity;
 	
 	vector<CIFCInstance*> m_vecInstances;
-	map<int_t, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
+	map<SdaiInstance, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
 	map<int_t, CIFCInstance*> m_mapID2Instance; // ID : Instance
 	map<int64_t, CIFCInstance*> m_mapExpressID2Instance; // Express ID : Instance
 
@@ -67,7 +67,7 @@ public: // Methods
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
 	void Clean();
 
-	const map<int64_t, CIFCInstance*>& GetInstances() const;
+	const map<SdaiInstance, CIFCInstance*>& GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;
 	CIFCInstance* GetInstanceByID(int_t iID);	
@@ -78,7 +78,7 @@ private: // Methods
 	
 	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
-	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, int_t iInstance, int_t iCircleSegments);
+	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiInstance iInstance, int_t iCircleSegments);
 };
 
 #endif // IFCFILEPARSER_H

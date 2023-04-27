@@ -26,7 +26,7 @@ class CIFCInstance : public CInstance
 private: // Members
 	
 	CIFCModel* m_pModel;
-	int_t m_iInstance;
+	SdaiInstance m_iInstance;
 	wstring m_strGUID;
 	int64_t m_iExpressID;
 	int64_t m_iParentExpressID;
@@ -61,7 +61,7 @@ private: // Members
 
 public: // Methods
 	
-	CIFCInstance(CIFCModel* pModel, int_t iInstance, const wchar_t* szGUID);
+	CIFCInstance(CIFCModel* pModel, SdaiInstance iInstance, const wchar_t* szGUID);
 	~CIFCInstance();
 
 	// CInstance

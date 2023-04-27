@@ -38,7 +38,7 @@ const wchar_t* CModel::GetModelName() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CModel::GetInstance() const
+SdaiModel CModel::GetSdaiModel() const
 {
 	return m_iModel;
 }

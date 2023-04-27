@@ -942,7 +942,7 @@ int_t CProductDefinition::GetExpressID() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CProductDefinition::GetInstance() const
+SdaiInstance CProductDefinition::GetInstance() const
 {
 	return m_iInstance;
 }

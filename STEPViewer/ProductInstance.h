@@ -31,7 +31,7 @@ public: // Methods
 	virtual ~CProductInstance();
 
 	// CInstance
-	virtual int64_t GetInstance() const;
+	virtual SdaiInstance GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
 	
