@@ -59,6 +59,7 @@ public: // Methods
 
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override;
+	virtual CInstance* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
 
@@ -71,7 +72,6 @@ public: // Methods
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;
 	CIFCInstance* GetInstanceByID(int_t iID);	
-	CIFCInstance* GetInstanceByExpressID(int64_t iExpressID);
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods

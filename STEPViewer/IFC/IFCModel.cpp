@@ -483,7 +483,7 @@ CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID)
+/*virtual*/ CInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
 {
 	auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
 	if (itExpressID2Instance != m_mapExpressID2Instance.end())

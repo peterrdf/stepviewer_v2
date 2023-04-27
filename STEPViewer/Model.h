@@ -64,6 +64,9 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------	
 	virtual CEntityProvider* GetEntityProvider() const PURE;
 
+	// --------------------------------------------------------------------------------------------	
+	virtual CInstance* GetInstanceByExpressID(int64_t iExpressID) const PURE;
+
 	// --------------------------------------------------------------------------------------------
 	virtual void ZoomToInstance(CInstance* pInstance) PURE;
 

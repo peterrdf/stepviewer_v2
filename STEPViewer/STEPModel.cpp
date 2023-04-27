@@ -39,6 +39,19 @@ CSTEPModel::~CSTEPModel()
 	return m_pEntityProvider;
 }
 
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CInstance* CSTEPModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
+{
+	for (auto& item : m_mapID2Instance) {
+		if (auto pDef = item.second->GetProductDefinition()) {
+			if (pDef->GetExpressID() == iExpressID) {
+				return item.second;
+			}
+		}
+	}
+	return nullptr;
+}
+
 // --------------------------------------------------------------------------------------------
 /*virtual*/ void CSTEPModel::ZoomToInstance(CInstance* pInstance) /*override*/
 {	

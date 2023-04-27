@@ -35,6 +35,7 @@ public: // Methods
 
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override;
+	virtual CInstance* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
 
