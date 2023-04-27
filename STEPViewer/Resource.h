@@ -91,6 +91,7 @@
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
 #define IDD_DIALOG_SEARCH               316
 #define IDD_DIALOG_SELECT_INSTANCE      318
+#define IDD_MODELCHECK                  319
 #define IDR_MENU_3D_VIEW                320
 #define IDB_NONE                        322
 #define IDB_PROPERTY                    323
@@ -117,9 +118,11 @@
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
+#define IDC_ISSUELIST                   1002
 #define IDC_COMBO_NEW_INSTANCE          1003
 #define ID_APPLY_CHANGES                1004
 #define IDC_COMBO_CLASSES               1005
+#define IDC_VIEW_ALL_ISSUES             1005
 #define IDC_BUTTON_SEARCH               1006
 #define IDC_EDIT_SEARCH_TEXT            1007
 #define IDC_COMBO_SEARCH_FILTER         1008
@@ -158,14 +161,16 @@
 #define ID_SHOW_CONC_FACES_WIREFRAMES   32822
 #define ID_SHOW_LINES                   32823
 #define ID_SHOW_POINTS                  32824
-#define ID_VIEW_ISOMETRIC				32825
+#define ID_VIEW_ISOMETRIC               32825
+#define ID_VIEW_MODELCHECKER            32826
+#define ID_VIEW_MODEL_CHECKER           32827
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
-#define _APS_NEXT_COMMAND_VALUE         32826
+#define _APS_NEXT_COMMAND_VALUE         32828
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

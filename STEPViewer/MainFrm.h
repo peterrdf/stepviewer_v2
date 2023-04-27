@@ -10,6 +10,7 @@
 #include "DesignTreeView.h"
 #include "SchemaView.h"
 #include "RelationsView.h"
+#include "ModelCheckDlg.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -54,6 +55,7 @@ protected:  // control bar embedded members
 	CSchemaView			m_schemaView;
 	CRelationsView		m_relationsView;
 	CPropertiesWnd      m_propertiesView;
+	CModelCheckDlg		m_wndModelChecker;
 
 // Generated message map functions
 protected:
@@ -62,6 +64,8 @@ protected:
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
+	afx_msg void OnViewModelChecker();
+	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL CreateDockingWindows();
