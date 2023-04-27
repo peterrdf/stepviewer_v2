@@ -326,26 +326,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	// Select clicked item:
-	CPoint ptTree = point;
-	m_pTreeCtrl->ScreenToClient(&ptTree);
-
-	UINT flags = 0;
-	HTREEITEM hItem = m_pTreeCtrl->HitTest(ptTree, &flags);
-	if (hItem == nullptr)
-	{
-		return;
-	}
-
-	m_pTreeCtrl->SelectItem(hItem);
-	m_pTreeCtrl->SetFocus();
-
-	auto pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-	if (pInstance == nullptr)
-	{
-		return;
-	}
-
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
@@ -369,6 +349,34 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
+	// Select clicked item
+	CPoint ptTree = point;
+	m_pTreeCtrl->ScreenToClient(&ptTree);
+
+	UINT flags = 0;
+	HTREEITEM hItem = m_pTreeCtrl->HitTest(ptTree, &flags);
+	if (hItem == nullptr)
+	{
+		return;
+	}
+
+	m_pTreeCtrl->SelectItem(hItem);
+	m_pTreeCtrl->SetFocus();
+
+	auto pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+	if (pInstance == nullptr)
+	{		
+		// Check the first child
+		HTREEITEM hChild = NULL;
+		if (((hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD)) != NULL) &&
+			(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
+			(m_pTreeCtrl->GetItemData(hChild) != NULL))
+		{
+			hItem = hChild;
+			pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+		}
+	} // if (pInstance == nullptr)
+
 	auto& mapInstances = pModel->GetInstances();	
 
 	// ENTITY : VISIBLE COUNT
@@ -378,9 +386,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		itInstance++)
 	{
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->GetEntityName());
-
-		wstring ent = itInstance->second->GetEntityName();
-		ASSERT(!ent.empty());
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
 		{
 			mapEntity2VisibleCount[itInstance->second->GetEntityName()] = itInstance->second->GetEnable() ? 1 : 0;
@@ -390,59 +395,88 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			itEntity2VisibleCount->second += itInstance->second->GetEnable() ? 1 : 0;
 		}
 	} // for (; itInstance != ...
+
 	ASSERT(!mapEntity2VisibleCount.empty());
 
-	if (pInstance->HasGeometry())
+	// Build menu
+	CMenu menuMain;
+	CMenu* pMenu = nullptr;
+
+	if (pInstance != nullptr)
 	{
-		CMenu menu;
-		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
-
-		auto pPopup = menu.GetSubMenu(0);
-
-		// Zoom to
-		if (!pInstance->GetEnable())
+		if (pInstance->HasGeometry())
 		{
-			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
-		}
+			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES));
+			pMenu = menuMain.GetSubMenu(0);
 
-		// Save
-		if (!pInstance->GetEnable())
+			// Zoom to
+			if (!pInstance->GetEnable())
+			{
+				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
+			}
+
+			// Save
+			if (!pInstance->GetEnable())
+			{
+				pMenu->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
+			}
+
+			// Enable
+			if (pInstance->GetEnable())
+			{
+				pMenu->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
+			}
+		} // if (pInstance->HasGeometry())
+		else 
 		{
-			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
-		}
+			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
+			pMenu = menuMain.GetSubMenu(0);
+		} // else if (pInstance->HasGeometry())
+	} // if (pInstance != nullptr)
 
-		// Enable
-		if (pInstance->GetEnable())
+	// Entities
+	CMenu menuEntities;
+	VERIFY(menuEntities.CreatePopupMenu());
+
+	UINT uiID = 1;
+	map<UINT, wstring> mapCommand2Entity;
+	for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
+		itEntity2VisibleCount != mapEntity2VisibleCount.end();
+		itEntity2VisibleCount++)
+	{
+		mapCommand2Entity[uiID] = itEntity2VisibleCount->first;
+
+		menuEntities.AppendMenu(
+			MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
+			uiID++,
+			itEntity2VisibleCount->first.c_str());
+	}
+
+	if (pMenu != nullptr)
+	{
+		pMenu->AppendMenu(MF_SEPARATOR, 0, L"");
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
+	}
+	else
+	{
+		pMenu = &menuEntities;
+	}
+
+	// Show
+	UINT uiCommand = pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
+	if (uiCommand == 0)
+	{
+		return;
+	}
+
+	// Execute the command
+	bool bExecuted = true;
+	if (pInstance != nullptr)
+	{
+		if (pInstance->HasGeometry())
 		{
-			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
-		}
-
-		// Entities
-		CMenu menuEntities;
-		VERIFY(menuEntities.CreatePopupMenu());
-
-		pPopup->AppendMenu(MF_SEPARATOR, 0, _T(""));
-		pPopup->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
-
-		UINT uiID = 1;
-		for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
-			itEntity2VisibleCount != mapEntity2VisibleCount.end();
-			itEntity2VisibleCount++)
-		{
-			menuEntities.AppendMenu(
-				MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
-				uiID++,
-				itEntity2VisibleCount->first.c_str());
-		}
-
-		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
-		if (uiCommand == 0)
-		{
-			return;
-		}
-
-		switch (uiCommand)
-		{
+			switch (uiCommand)
+			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
 				pController->ZoomToInstance();
@@ -477,14 +511,15 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				auto itInstance = mapInstances.begin();
-				for (; itInstance != mapInstances.end(); itInstance++)
+				for (auto itInstance = mapInstances.begin(); 
+					itInstance != mapInstances.end(); 
+					itInstance++)
 				{
 					itInstance->second->SetEnable(itInstance->second == pInstance);
 				}
 
 				int iImage = pInstance->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);				
+				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
 				ResetView();
 				OnInstanceSelected(nullptr);
@@ -495,8 +530,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				auto itInstance = mapInstances.begin();
-				for (; itInstance != mapInstances.end(); itInstance++)
+				for (auto itInstance = mapInstances.begin(); 
+					itInstance != mapInstances.end(); 
+					itInstance++)
 				{
 					itInstance->second->SetEnable(true);
 				}
@@ -513,50 +549,87 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				pController->OnViewRelations(this, pInstance->GetInstance());
 			}
 			break;
-		} // switch (uiCommand)
 
-		return;
-	} // if (pInstance->HasGeometry())
-	else
-	{
-		CMenu menu;
-		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
-
-		auto pPopup = menu.GetSubMenu(0);
-
-		// Entities
-		CMenu menuEntities;
-		VERIFY(menuEntities.CreatePopupMenu());
-
-		pPopup->AppendMenu(MF_SEPARATOR, 0, _T(""));
-		pPopup->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
-
-		UINT uiID = 1;
-		for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
-			itEntity2VisibleCount != mapEntity2VisibleCount.end();
-			itEntity2VisibleCount++)
+			default:
+			{
+				bExecuted = false;
+			}
+			break;
+			} // switch (uiCommand)
+		} // if (pInstance->HasGeometry())
+		else
 		{
-			menuEntities.AppendMenu(
-				MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
-				uiID++,
-				itEntity2VisibleCount->first.c_str());
-		}
-
-		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
-		if (uiCommand == 0)
-		{
-			return;
-		}
-
-		switch (uiCommand)
-		{
+			switch (uiCommand)
+			{
 			case IDS_VIEW_IFC_RELATIONS:
 			{
 				pController->OnViewRelations(this, pInstance->GetInstance());
 			}
 			break;
+
+			default:
+			{
+				bExecuted = false;
+			}
+			break;
+			} // switch (uiCommand) 
+		} // else if (pInstance->HasGeometry())
+	} // if (pInstance != nullptr)
+	else
+	{
+		bExecuted = false;
+	}
+
+	// Enable Entity command
+	if (!bExecuted)
+	{
+		auto itCommand2Entity = mapCommand2Entity.find(uiCommand);
+		if (itCommand2Entity == mapCommand2Entity.end())
+		{
+			ASSERT(FALSE); // Internal error!
+
+			return;
 		}
-	} // else if (pInstance->HasGeometry())
+
+		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itCommand2Entity->second);
+		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
+		{
+			ASSERT(FALSE); // Internal error!
+
+			return;
+		}
+
+		for (auto itInstance = mapInstances.begin();
+			itInstance != mapInstances.end();
+			itInstance++)
+		{
+			if (itInstance->second->GetEntityName() == itCommand2Entity->second)
+			{
+				itInstance->second->SetEnable(itEntity2VisibleCount->second > 0 ? false : true);
+
+				auto itIInstance2Item = m_mapInstance2Item.find(itInstance->second);
+				ASSERT(itIInstance2Item != m_mapInstance2Item.end());
+
+				HTREEITEM hTargetItem = itIInstance2Item->second;
+				if (m_pTreeCtrl->GetItemText(hTargetItem) == ITEM_GEOMETRY)
+				{
+					hTargetItem = m_pTreeCtrl->GetParentItem(hTargetItem);
+					ASSERT(hTargetItem != NULL);
+				}
+
+				int iImage = itInstance->second->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeCtrl->SetItemImage(hTargetItem, iImage, iImage);
+
+				ClickItem_UpdateChildren(hTargetItem);
+				ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hTargetItem));
+			} // if (itInstance->second->GetEntityName() == ...
+		} // for (auto itInstance = ...
+
+		ResetView();
+		OnInstanceSelected(nullptr);
+
+		pController->OnInstancesEnabledStateChanged(this);
+	} // if (!bProcessed)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1147,7 +1220,9 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HT
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			itInstance->second->HasGeometry() ? (itInstance->second->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+			itInstance->second->HasGeometry() ? 
+			(itInstance->second->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : 
+			IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
 
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
