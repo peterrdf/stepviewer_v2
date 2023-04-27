@@ -25,9 +25,6 @@ private: // Classes
 
 private: // Members
 
-	wstring m_strIFCFile; // Input file	
-	int_t m_iModel; // Model
-
 	// Entities
 	int_t m_ifcProjectEntity;
 	int_t m_ifcSpaceEntity;
@@ -43,19 +40,6 @@ private: // Members
 	int_t m_ifcReinforcingElementEntity;
 	int_t m_ifcTransportElementEntity;
 	int_t m_ifcVirtualElementEntity;
-
-	// World's dimensions
-	float m_fXmin;
-	float m_fXmax;
-	float m_fYmin;
-	float m_fYmax;
-	float m_fZmin;
-	float m_fZmax;
-	float m_fBoundingSphereDiameter;
-	
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
 	
 	vector<CIFCInstance*> m_vecInstances;
 	map<int_t, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
@@ -74,20 +58,15 @@ public: // Methods
 	virtual ~CIFCModel();
 
 	// CModel
-	virtual const wchar_t* GetModelName() const override;
-	virtual int64_t GetInstance() const override;
 	virtual CEntityProvider* GetEntityProvider() const override;
 	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
 
-	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;		
 	void ScaleAndCenter(); // [-1, 1]
 
 	void Load(const wchar_t* szIFCFile, int64_t iModel);
 	void Clean();
 
-	float GetBoundingSphereDiameter() const;
 	const map<int64_t, CIFCInstance*>& GetInstances() const;
 	CIFCUnitProvider* GetUnitProvider() const;
 	CIFCPropertyProvider* GetPropertyProvider() const;

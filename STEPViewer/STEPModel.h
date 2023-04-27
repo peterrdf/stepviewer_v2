@@ -21,9 +21,6 @@ class CSTEPModel : public CModel
 
 private: // Members
 	
-	int_t m_iModel;
-	wstring m_strSTEPFile;
-
 	CEntityProvider* m_pEntityProvider;
 	map<int_t, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
 	map<int_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
@@ -31,33 +28,15 @@ private: // Members
 
 	int64_t m_iID;
 
-	float m_fXmin;
-	float m_fXmax;
-	float m_fYmin;
-	float m_fYmax;
-	float m_fZmin;
-	float m_fZmax;	
-	float m_fBoundingSphereDiameter;
-
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
-
 public: // Methods
 	
 	CSTEPModel();
 	virtual ~CSTEPModel();
 
 	// CModel
-	virtual const wchar_t* GetModelName() const override;
-	virtual int64_t GetInstance() const override;
 	virtual CEntityProvider* GetEntityProvider() const override;
 	virtual void ZoomToInstance(CInstance* pInstance) override;
 	virtual void ZoomOut() override;
-
-	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;	
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
-	float GetBoundingSphereDiameter() const;
 
 	const map<int_t, CProductDefinition*>& GetDefinitions();
 	const map<int_t, CProductInstance*>& GetInstances();

@@ -13,8 +13,6 @@
 // ------------------------------------------------------------------------------------------------
 CIFCModel::CIFCModel()
 	: CModel(enumModelType::IFC)
-	, m_strIFCFile(L"")
-	, m_iModel(0)
 	, m_ifcProjectEntity(0)
 	, m_ifcSpaceEntity(0)
 	, m_ifcOpeningElementEntity(0)
@@ -29,16 +27,6 @@ CIFCModel::CIFCModel()
 	, m_ifcReinforcingElementEntity(0)
 	, m_ifcTransportElementEntity(0)
 	, m_ifcVirtualElementEntity(0)
-	, m_fXmin(-1.f)
-	, m_fXmax(1.f)
-	, m_fYmin(-1.f)
-	, m_fYmax(1.f)
-	, m_fZmin(-1.f)
-	, m_fZmax(1.f)
-	, m_fBoundingSphereDiameter(1.f)
-	, m_fXTranslation(0.f)
-	, m_fYTranslation(0.f)
-	, m_fZTranslation(0.f)
 	, m_vecInstances()
 	, m_mapInstances()
 	, m_mapID2Instance()
@@ -55,17 +43,6 @@ CIFCModel::~CIFCModel()
 	Clean();
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ const wchar_t* CIFCModel::GetModelName() const  /*override*/
-{
-	return m_strIFCFile.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CIFCModel::GetInstance() const /*override*/
-{
-	return m_iModel;
-}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CEntityProvider* CIFCModel::GetEntityProvider() const /*override*/
@@ -203,24 +180,6 @@ CIFCModel::~CIFCModel()
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-{
-	fXmin = m_fXmin;
-	fXmax = m_fXmax;
-	fYmin = m_fYmin;
-	fYmax = m_fYmax;
-	fZmin = m_fZmin;
-	fZmax = m_fZmax;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const
-{
-	fXTranslation = m_fXTranslation;
-	fYTranslation = m_fYTranslation;
-	fZTranslation = m_fZTranslation;
-}
 
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
@@ -237,7 +196,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	* Model
 	*/
 	m_iModel = iModel;
-	m_strIFCFile = szIFCFile;
+	m_strFilePath = szIFCFile;
 
 	/*
 	* Entities
@@ -492,11 +451,6 @@ void CIFCModel::ScaleAndCenter()
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-float CIFCModel::GetBoundingSphereDiameter() const
-{
-	return m_fBoundingSphereDiameter;
-}
 
 // ------------------------------------------------------------------------------------------------
 const map<int64_t, CIFCInstance *>& CIFCModel::GetInstances() const

@@ -22,7 +22,22 @@ class CModel
 protected: // Members
 
 	// --------------------------------------------------------------------------------------------
+	wstring		  m_strFilePath; // Input file	
 	enumModelType m_enModelType;
+	SdaiModel	  m_iModel; // Model
+
+	// World's dimensions
+	float m_fXmin;
+	float m_fXmax;
+	float m_fYmin;
+	float m_fYmax;
+	float m_fZmin;
+	float m_fZmax;
+	float m_fBoundingSphereDiameter;
+
+	float m_fXTranslation;
+	float m_fYTranslation;
+	float m_fZTranslation;
 
 public: // Methods
 
@@ -33,13 +48,18 @@ public: // Methods
 	virtual ~CModel();
 
 	// --------------------------------------------------------------------------------------------
-	virtual const wchar_t* GetModelName() const PURE;
+	const wchar_t* GetModelName() const;
 
 	// --------------------------------------------------------------------------------------------	
 	enumModelType GetType() const;
 
 	// --------------------------------------------------------------------------------------------	
-	virtual int64_t GetInstance() const PURE;	
+	int64_t GetInstance() const;	
+
+	// --------------------------------------------------------------------------------------------	
+	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
+	float GetBoundingSphereDiameter() const;
 
 	// --------------------------------------------------------------------------------------------	
 	virtual CEntityProvider* GetEntityProvider() const PURE;

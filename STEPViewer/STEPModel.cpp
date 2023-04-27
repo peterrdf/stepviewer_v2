@@ -19,23 +19,11 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 CSTEPModel::CSTEPModel()
 	: CModel(enumModelType::STEP)
-	, m_iModel(0)
-	, m_strSTEPFile(L"")
 	, m_pEntityProvider(nullptr)
 	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()
 	, m_iID(1)
-	, m_fXmin(-1.f)
-	, m_fXmax(1.f)
-	, m_fYmin(-1.f)
-	, m_fYmax(1.f)
-	, m_fZmin(-1.f)
-	, m_fZmax(1.f)
-	, m_fBoundingSphereDiameter(1.f)
-	, m_fXTranslation(0.f)
-	, m_fYTranslation(0.f)
-	, m_fZTranslation(0.f)
 {
 }
 
@@ -43,18 +31,6 @@ CSTEPModel::CSTEPModel()
 CSTEPModel::~CSTEPModel()
 {
 	Clean();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ const wchar_t* CSTEPModel::GetModelName() const  /*override*/
-{
-	return m_strSTEPFile.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CSTEPModel::GetInstance() const /*override*/
-{
-	return m_iModel;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -162,31 +138,6 @@ CSTEPModel::~CSTEPModel()
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-{
-	fXmin = m_fXmin;
-	fXmax = m_fXmax;
-	fYmin = m_fYmin;
-	fYmax = m_fYmax;
-	fZmin = m_fZmin;
-	fZmax = m_fZmax;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const
-{
-	fXTranslation = m_fXTranslation;
-	fYTranslation = m_fYTranslation;
-	fZTranslation = m_fZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-float CSTEPModel::GetBoundingSphereDiameter() const
-{
-	return m_fBoundingSphereDiameter;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -403,7 +354,7 @@ void CSTEPModel::Load(const wchar_t* szPath, int64_t iModel)
 	Clean();
 
 	m_iModel = iModel;
-	m_strSTEPFile = szPath;
+	m_strFilePath = szPath;
 	
 	m_pEntityProvider = new CEntityProvider(m_iModel);
 
