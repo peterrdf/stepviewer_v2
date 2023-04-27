@@ -242,7 +242,7 @@ CModelCheckDlg::~CModelCheckDlg()
 /// </summary>
 void CModelCheckDlg::OnNewModel()
 {
-	if (m_wndIssueList.GetSafeHwnd() && m_model != GetActiveModel()) {
+	if (m_wndIssueList.GetSafeHwnd() && m_model != GetActiveSdaiModel()) {
 		FillIssueList(false);
 	}
 }
@@ -306,16 +306,16 @@ void CModelCheckDlg::FormatIssueList()
 /// </summary>
 void CModelCheckDlg::FillIssueList(bool all)
 {
-	if (!all && m_model == GetActiveModel()) {
+	if (!all && m_model == GetActiveSdaiModel()) {
 		return; //do not reload existing model
 	}
 
-	m_model = GetActiveModel();
+	m_model = GetActiveSdaiModel();
 
 	m_wndIssueList.DeleteAllItems();
 	m_btnViewAll.EnableWindow(!all);
 
-	if (GetActiveModel()) {
+	if (GetActiveSdaiModel()) {
 
 		if (all) {
 			validateSetOptions(-1, -1, false, 0, 0);
@@ -324,7 +324,7 @@ void CModelCheckDlg::FillIssueList(bool all)
 			validateSetOptions(5, 100, true, 0, 0);
 		}
 
-		auto checks = validateModel(GetActiveModel());
+		auto checks = validateModel(GetActiveSdaiModel());
 
 		int rWidth[4] = {0,0,0,0};
 	
@@ -440,42 +440,50 @@ void CModelCheckDlg::OnColumnclickIssuelist(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CModelCheckDlg::OnActivateListItem(int iItem)
 {
-	auto pFrame = DYNAMIC_DOWNCAST(CMainFrame, AfxGetMainWnd());
-	ASSERT(pFrame); if (!pFrame) return;
+	auto pDoc = GetActiveDoc();
+	if (!pDoc)
+		return;
+	auto pModel = GetActiveModel();
+	if (!pModel)
+		return;
 
 	if (iItem >= 0) {
 		auto data = m_wndIssueList.GetItemData(iItem);
 		if (data) {
-			auto p = (IssueData*) data;
+			auto p = (IssueData*)data;
 
 			if (!p->relatingInstancesCollected) {
 				p->relatingInstancesCollected = true;
-				auto instance = internalGetInstanceFromP21Line(GetActiveModel(), p->stepId);
+				auto instance = internalGetInstanceFromP21Line(GetActiveSdaiModel(), p->stepId);
 				ASSERT(instance);
 				if (instance) {
 
 					int_t searchEntities[3] = {
-					sdaiGetEntity(GetActiveModel(), (char*) L"IfcProduct"),
-					sdaiGetEntity(GetActiveModel(), (char*) L"IfcProject"),
-					0};
+					sdaiGetEntity(GetActiveSdaiModel(), "IfcProduct"),
+					sdaiGetEntity(GetActiveSdaiModel(), "IfcProject"),
+					0 };
+
+					if (pModel && pModel->GetType() == enumModelType::STEP) {
+						searchEntities[0] = sdaiGetEntity(GetActiveSdaiModel(), "PRODUCT_DEFINITION");
+						searchEntities[1] = 0;
+					}
 
 					CollectReferencingInstancesRecursive(p->relatingInstances, instance, searchEntities);
 				}
 
 			}
 
-			/*TODO for (auto inst : p->relatingInstances) {
-				 if (pFrame->SelectInstance(inst)) {
-					return; //>>>>
+			for (auto inst : p->relatingInstances) {
+				if (auto stepId = internalGetP21Line(inst)) {
+					if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {
+						pDoc->SelectInstance(NULL, pInst);
+						return; //>>>>
+					}
 				}
-			}*/
+			}
 		}
 	}
-
-	//nothing found
-	//TODO pFrame->SelectInstance(NULL);
 }
-
 
 void CModelCheckDlg::OnDblclkIssuelist(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
@@ -503,14 +511,26 @@ void CModelCheckDlg::OnClickedViewAllIssues()
 	}
 }
 
-SdaiModel CModelCheckDlg::GetActiveModel()
+SdaiModel CModelCheckDlg::GetActiveSdaiModel()
+{
+	if (auto pModel = GetActiveModel()) {
+		return pModel->GetSdaiModel();
+	}
+	return NULL;
+}
+
+CModel* CModelCheckDlg::GetActiveModel()
+{
+	if (auto pDoc = GetActiveDoc()) {
+		return pDoc->GetModel();
+	}
+	return NULL;
+}
+
+CMySTEPViewerDoc* CModelCheckDlg::GetActiveDoc()
 {
 	if (auto pMainFrame = DYNAMIC_DOWNCAST(CMainFrame, AfxGetMainWnd())) {
-		if (auto pDoc = DYNAMIC_DOWNCAST(CMySTEPViewerDoc, pMainFrame->GetActiveDocument())) {
-			if (auto pModel = pDoc->GetModel()) {
-				return pModel->GetSdaiModel();
-			}
-		}
+		return DYNAMIC_DOWNCAST(CMySTEPViewerDoc, pMainFrame->GetActiveDocument());
 	}
 	return NULL;
 }

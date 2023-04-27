@@ -1,5 +1,7 @@
 #pragma once
 
+class CMySTEPViewerDoc;
+
 // CModelCheckDlg dialog
 
 class CModelCheckDlg : public CDialog
@@ -25,7 +27,9 @@ public:
 	virtual BOOL OnInitDialog();
 
 private:
-	SdaiModel GetActiveModel();
+	CMySTEPViewerDoc* GetActiveDoc();
+	CModel* GetActiveModel();
+	SdaiModel GetActiveSdaiModel();
 	void FormatIssueList();
 	void FillIssueList(bool all);
 
