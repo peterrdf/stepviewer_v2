@@ -519,14 +519,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 			return;
 		}
 
-		if (pController->GetModel() == nullptr)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		auto pModel = pController->GetModel()->As<CSTEPModel>();
+		auto pModel = GetModel<CSTEPModel>();
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);
@@ -654,17 +647,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 // ------------------------------------------------------------------------------------------------
 void CSTEPModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 {
-	auto pController = GetController();
-	ASSERT(pController != nullptr);
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -941,28 +924,13 @@ void CSTEPModelStructureView::LoadModel()
 
 	m_bInitInProgress = true;
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (GetController()->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = GetController()->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
-	}	
+	}
 
 	auto& mapDefinitions = pModel->GetDefinitions();
 	if (mapDefinitions.empty())

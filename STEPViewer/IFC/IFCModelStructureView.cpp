@@ -18,7 +18,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
 	, m_pImageList(nullptr)
-	, m_mapModelHTREEITEM()
 	, m_mapInstance2Item()
 	, m_mapSelectedInstances()
 	, m_pSearchDialog(nullptr)
@@ -334,14 +333,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -646,34 +638,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-CIFCModel* CIFCModelStructureView::GetModel(HTREEITEM hItem)
-{
-	ASSERT(hItem != nullptr);
-
-	HTREEITEM hModel = nullptr;
-	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
-	if (hParent != nullptr)
-	{
-		// Item
-		while (hParent != nullptr)
-		{
-			hModel = hParent;
-
-			hParent = m_pTreeCtrl->GetParentItem(hParent);
-		}
-	}
-	else
-	{
-		// Model
-		hModel = hItem;
-	}
-
-	ASSERT(m_mapModelHTREEITEM.find(hModel) != m_mapModelHTREEITEM.end());
-
-	return m_mapModelHTREEITEM[hModel];
-}
-
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadModel(CIFCModel* pModel)
 {
 	/**********************************************************************************************
@@ -688,7 +652,6 @@ void CIFCModelStructureView::LoadModel(CIFCModel* pModel)
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-	m_mapModelHTREEITEM[hModel] = pModel;
 	//*********************************************************************************************
 
 	/*
@@ -1648,28 +1611,12 @@ void CIFCModelStructureView::UnselectAllItems()
 // ----------------------------------------------------------------------------
 void CIFCModelStructureView::ResetView()
 {
-	m_mapModelHTREEITEM.clear();
 	m_mapInstance2Item.clear();
 	m_mapSelectedInstances.clear();
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

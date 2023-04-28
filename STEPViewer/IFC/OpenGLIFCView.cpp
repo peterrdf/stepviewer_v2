@@ -63,22 +63,7 @@ COpenGLIFCView::~COpenGLIFCView()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
 {
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -235,22 +220,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -628,20 +598,7 @@ COpenGLIFCView::~COpenGLIFCView()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::Draw(CDC* pDC) /*override*/
 {
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -722,22 +679,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -822,22 +764,7 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -890,22 +817,7 @@ void COpenGLIFCView::DrawLines()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -958,22 +870,7 @@ void COpenGLIFCView::DrawPoints()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1036,22 +933,7 @@ void COpenGLIFCView::DrawPoints()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawInstancesFrameBuffer()
 {
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1158,22 +1040,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CIFCModel>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		return;

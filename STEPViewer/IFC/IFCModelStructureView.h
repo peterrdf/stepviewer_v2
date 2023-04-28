@@ -33,7 +33,6 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	map<HTREEITEM, CIFCModel*> m_mapModelHTREEITEM;
 	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;	
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
@@ -68,7 +67,6 @@ public: // Methods
 
 private: // Methods		
 
-	CIFCModel* GetModel(HTREEITEM hItem);	
 	void LoadModel(CIFCModel* pModel);
 	void LoadHeader(CIFCModel* pModel, HTREEITEM hModel);
 	void LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance);

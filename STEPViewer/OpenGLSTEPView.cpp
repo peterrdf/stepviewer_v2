@@ -100,22 +100,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
 {
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -266,17 +251,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	CController* pController = GetController();
-	ASSERT(pController != nullptr);
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -662,22 +637,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 {
 	VERIFY(pDC != nullptr);
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -758,22 +718,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -898,22 +843,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1006,22 +936,7 @@ void COpenGLSTEPView::DrawLines()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1114,22 +1029,7 @@ void COpenGLSTEPView::DrawPoints()
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1225,17 +1125,7 @@ void COpenGLSTEPView::DrawPoints()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-	CController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1404,24 +1294,11 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pController = GetController();
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (pController->GetModel() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel()->As<CSTEPModel>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
+		ASSERT(FALSE);
+
 		return;
 	}
 

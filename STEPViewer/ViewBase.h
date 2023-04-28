@@ -6,6 +6,7 @@
 
 // ------------------------------------------------------------------------------------------------
 class CController;
+class CModel;
 
 // ------------------------------------------------------------------------------------------------
 enum class enumApplicationProperty : int
@@ -63,5 +64,18 @@ protected: // Methods
 	
 	// Controller
 	CController* GetController() const;	
+
+	// Model
+	template<class Model>
+	Model* GetModel()
+	{
+		auto pController = GetController();
+		if (pController == nullptr)
+		{
+			return nullptr;
+		}
+
+		return pController->GetModel()->As<Model>();
+	}
 };
 

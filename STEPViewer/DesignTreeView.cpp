@@ -62,15 +62,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
 
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel();
+	auto pModel = GetModel<CModel>();
 	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
 	{
 		return;
@@ -140,7 +132,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
-
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
