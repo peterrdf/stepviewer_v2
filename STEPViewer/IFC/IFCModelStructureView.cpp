@@ -515,9 +515,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 					itInstance->second->SetEnable(itInstance->second == pInstance);
 				}
 
-				int iImage = pInstance->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
-
 				ResetView();
 				OnInstanceSelected(nullptr);
 
