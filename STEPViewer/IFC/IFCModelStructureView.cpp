@@ -345,29 +345,29 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	CPoint ptTree = point;
 	m_pTreeCtrl->ScreenToClient(&ptTree);
 
+	CIFCInstance* pInstance = nullptr;
+
 	UINT flags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(ptTree, &flags);
-	if (hItem == nullptr)
+	if (hItem != nullptr)
 	{
-		return;
-	}
+		m_pTreeCtrl->SelectItem(hItem);
+		m_pTreeCtrl->SetFocus();
 
-	m_pTreeCtrl->SelectItem(hItem);
-	m_pTreeCtrl->SetFocus();
-
-	auto pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-	if (pInstance == nullptr)
-	{		
-		// Check the first child
-		HTREEITEM hChild = NULL;
-		if (((hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD)) != NULL) &&
-			(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
-			(m_pTreeCtrl->GetItemData(hChild) != NULL))
+		pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+		if (pInstance == nullptr)
 		{
-			hItem = hChild;
-			pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-		}
-	} // if (pInstance == nullptr)
+			// Check the first child
+			HTREEITEM hChild = NULL;
+			if (((hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD)) != NULL) &&
+				(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
+				(m_pTreeCtrl->GetItemData(hChild) != NULL))
+			{
+				hItem = hChild;
+				pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+			}
+		} // if (pInstance == nullptr)
+	} // if (hItem != nullptr)	
 
 	auto& mapInstances = pModel->GetInstances();	
 
