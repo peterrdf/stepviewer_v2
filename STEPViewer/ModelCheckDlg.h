@@ -17,7 +17,9 @@ public:
 	enum { IDD = IDD_MODELCHECK };
 #endif
 
-	void OnNewModel();
+	bool IsVisible();
+	void Show();
+	void Hide(bool deleteContent);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

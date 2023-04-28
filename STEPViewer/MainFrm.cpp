@@ -25,8 +25,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
-	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMainFrame::OnViewModelChecker)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMainFrame::OnUpdateViewModelChecker)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -558,22 +556,3 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
-void CMainFrame::OnViewModelChecker()
-{
-	if (m_wndModelChecker.GetSafeHwnd() && m_wndModelChecker.IsWindowVisible()) {
-		m_wndModelChecker.ShowWindow(SW_HIDE);
-	}
-	else {
-		if (!m_wndModelChecker.GetSafeHwnd()) {
-			m_wndModelChecker.Create(IDD_MODELCHECK);
-		}
-		m_wndModelChecker.ShowWindow(SW_SHOW);
-	}
-}
-
-
-void CMainFrame::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
-{
-	auto visible = m_wndModelChecker.GetSafeHwnd() && m_wndModelChecker.IsWindowVisible();
-	pCmdUI->SetCheck(visible);
-}

@@ -7,6 +7,7 @@
 
 #include "STEPModel.h"
 #include "Controller.h"
+#include "ModelCheckDlg.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
@@ -28,6 +29,7 @@ public:
 public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
+	virtual void DeleteContents();
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
@@ -42,6 +44,7 @@ public:
 #endif
 
 protected:
+	CModelCheckDlg		m_wndModelChecker;
 
 // Generated message map functions
 protected:
@@ -56,4 +59,6 @@ public:
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	afx_msg void OnFileOpen();
 	afx_msg void OnViewZoomOut();
+	afx_msg void OnViewModelChecker();
+	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
 };

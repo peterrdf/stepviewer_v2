@@ -33,6 +33,8 @@ IMPLEMENT_DYNCREATE(CMySTEPViewerDoc, CDocument)
 BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_FILE_OPEN, &CMySTEPViewerDoc::OnFileOpen)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
+	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
 END_MESSAGE_MAP()
 
 
@@ -202,4 +204,28 @@ void CMySTEPViewerDoc::OnFileOpen()
 void CMySTEPViewerDoc::OnViewZoomOut()
 {
 	ZoomOut();
+}
+
+
+void CMySTEPViewerDoc::DeleteContents()
+{
+	m_wndModelChecker.Hide(true);
+	__super::DeleteContents();
+}
+
+void CMySTEPViewerDoc::OnViewModelChecker()
+{
+	if (m_wndModelChecker.IsVisible()) {
+		m_wndModelChecker.Hide(false);
+	}
+	else {
+		m_wndModelChecker.Show();
+	}
+}
+
+
+void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
+{
+	auto visible = m_wndModelChecker.IsVisible();
+	pCmdUI->SetCheck(visible);
 }

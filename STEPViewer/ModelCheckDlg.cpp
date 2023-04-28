@@ -237,13 +237,41 @@ CModelCheckDlg::~CModelCheckDlg()
 {
 }
 
+
 /// <summary>
 /// 
 /// </summary>
-void CModelCheckDlg::OnNewModel()
+bool CModelCheckDlg::IsVisible()
 {
-	if (m_wndIssueList.GetSafeHwnd() && m_model != GetActiveSdaiModel()) {
-		FillIssueList(false);
+	return IsWindow (GetSafeHwnd()) && IsWindowVisible();
+}
+
+/// <summary>
+/// 
+/// </summary>
+void CModelCheckDlg::Show()
+{
+	if (!IsWindow(GetSafeHwnd())) {
+		Create(IDD_MODELCHECK);
+	}
+	ShowWindow(SW_SHOW);
+	FillIssueList(false);
+}
+
+/// <summary>
+/// 
+/// </summary>
+void CModelCheckDlg::Hide(bool deleteContent)
+{
+	if (IsWindow(GetSafeHwnd())) {
+		ShowWindow(SW_HIDE);
+		if (deleteContent) {
+			m_wndIssueList.DeleteAllItems();
+		}
+	}
+
+	if (deleteContent) {
+		m_model = NULL;
 	}
 }
 
