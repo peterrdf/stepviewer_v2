@@ -455,7 +455,6 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 			if (!p->relatingInstancesCollected) {
 				p->relatingInstancesCollected = true;
 				auto instance = internalGetInstanceFromP21Line(GetActiveSdaiModel(), p->stepId);
-				ASSERT(instance);
 				if (instance) {
 
 					int_t searchEntities[3] = {

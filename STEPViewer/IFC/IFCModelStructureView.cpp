@@ -100,13 +100,15 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	if (pSelectedInstance != nullptr)
 	{
 		auto itIInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
-		ASSERT(itIInstance2Item != m_mapInstance2Item.end());
+	
+		if (itIInstance2Item != m_mapInstance2Item.end()) {
 
-		ASSERT(m_mapSelectedInstances.find(pSelectedInstance) == m_mapSelectedInstances.end());
-		m_mapSelectedInstances[pSelectedInstance] = itIInstance2Item->second;
+			ASSERT(m_mapSelectedInstances.find(pSelectedInstance) == m_mapSelectedInstances.end());
+			m_mapSelectedInstances[pSelectedInstance] = itIInstance2Item->second;
 
-		m_pTreeCtrl->SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
-		m_pTreeCtrl->EnsureVisible(itIInstance2Item->second);
+			m_pTreeCtrl->SetItemState(itIInstance2Item->second, TVIS_BOLD, TVIS_BOLD);
+			m_pTreeCtrl->EnsureVisible(itIInstance2Item->second);
+		}
 	}
 }
 
