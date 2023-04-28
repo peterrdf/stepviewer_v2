@@ -251,11 +251,13 @@ bool CModelCheckDlg::IsVisible()
 /// </summary>
 void CModelCheckDlg::Show()
 {
+	BeginWaitCursor();
 	if (!IsWindow(GetSafeHwnd())) {
 		Create(IDD_MODELCHECK);
 	}
 	ShowWindow(SW_SHOW);
 	FillIssueList(false);
+	EndWaitCursor();
 }
 
 /// <summary>
@@ -495,7 +497,9 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 						searchEntities[1] = 0;
 					}
 
+					BeginWaitCursor();
 					CollectReferencingInstancesRecursive(p->relatingInstances, instance, searchEntities);
+					EndWaitCursor();
 				}
 
 			}
