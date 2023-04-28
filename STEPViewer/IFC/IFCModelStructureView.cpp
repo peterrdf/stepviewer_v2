@@ -377,6 +377,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		itInstance != mapInstances.end(); 
 		itInstance++)
 	{
+		if (!itInstance->second->HasGeometry())
+		{
+			continue;
+		}
+
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->GetEntityName());
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
 		{
@@ -553,17 +558,17 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			switch (uiCommand)
 			{
-			case IDS_VIEW_IFC_RELATIONS:
-			{
-				pController->OnViewRelations(this, pInstance->GetInstance());
-			}
-			break;
+				case IDS_VIEW_IFC_RELATIONS:
+				{
+					pController->OnViewRelations(this, pInstance->GetInstance());
+				}
+				break;
 
-			default:
-			{
-				bExecuted = false;
-			}
-			break;
+				default:
+				{
+					bExecuted = false;
+				}
+				break;
 			} // switch (uiCommand) 
 		} // else if (pInstance->HasGeometry())
 	} // if (pInstance != nullptr)
@@ -598,23 +603,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			if (itInstance->second->GetEntityName() == itCommand2Entity->second)
 			{
 				itInstance->second->SetEnable(itEntity2VisibleCount->second > 0 ? false : true);
-
-				auto itIInstance2Item = m_mapInstance2Item.find(itInstance->second);
-				ASSERT(itIInstance2Item != m_mapInstance2Item.end());
-
-				HTREEITEM hTargetItem = itIInstance2Item->second;
-				if (m_pTreeCtrl->GetItemText(hTargetItem) == ITEM_GEOMETRY)
-				{
-					hTargetItem = m_pTreeCtrl->GetParentItem(hTargetItem);
-					ASSERT(hTargetItem != NULL);
-				}
-
-				int iImage = itInstance->second->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hTargetItem, iImage, iImage);
-
-				ClickItem_UpdateChildren(hTargetItem);
-				ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hTargetItem));
-			} // if (itInstance->second->GetEntityName() == ...
+			}
 		} // for (auto itInstance = ...
 
 		ResetView();
