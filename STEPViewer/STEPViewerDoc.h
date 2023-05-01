@@ -14,12 +14,6 @@ class CMySTEPViewerDoc
 	, public CController
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Model (MVC)
-	CModel* m_pModel;
-
 protected: // create from serialization only
 	CMySTEPViewerDoc();
 	DECLARE_DYNCREATE(CMySTEPViewerDoc)

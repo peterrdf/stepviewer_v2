@@ -39,7 +39,6 @@ END_MESSAGE_MAP()
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
-	: m_pModel(nullptr)
 {
 }
 
