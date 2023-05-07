@@ -599,14 +599,24 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			itInstance != mapInstances.end();
 			itInstance++)
 		{
-			if (itInstance->second->GetEntityName() == itCommand2Entity->second)
+			pInstance = itInstance->second;
+
+			if (pInstance->GetEntityName() == itCommand2Entity->second)
 			{
-				itInstance->second->SetEnable(itEntity2VisibleCount->second > 0 ? false : true);
+				pInstance->SetEnable(itEntity2VisibleCount->second > 0 ? false : true);
+
+				auto itInstance2Item = m_mapInstance2Item.find(pInstance);
+				ASSERT(itInstance2Item != m_mapInstance2Item.end());
+
+				HTREEITEM hInstance = itInstance2Item->second;
+
+				int iImage = pInstance->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeCtrl->SetItemImage(hInstance, iImage, iImage);
+
+				ClickItem_UpdateChildren(hInstance);
+				ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hInstance));
 			}
 		} // for (auto itInstance = ...
-
-		ResetView();
-		OnInstanceSelected(nullptr);
 
 		pController->OnInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
