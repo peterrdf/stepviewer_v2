@@ -33,7 +33,7 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	map<CIFCInstance*, HTREEITEM> m_mapInstance2Item;	
+	map<CIFCInstance*, HTREEITEM> m_mapInstance2GeometryItem;	
 	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
@@ -77,7 +77,7 @@ private: // Methods
 	void LoadTree_UpdateItems(HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
-	void ClickItem_UpdateParent(HTREEITEM hParent);
+	void ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive = TRUE);
 	void UnselectAllItems();
 	void ResetView();
 };
