@@ -903,7 +903,7 @@ void CProductDefinition::ScaleAndCenter(
 	*/
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
 	{
-		m_vecProductInstances[iInstance]->ScaleAndCenter(fResoltuion);
+		m_vecProductInstances[iInstance]->Scale(fResoltuion);
 	}
 }
 
@@ -931,7 +931,7 @@ void CProductDefinition::Scale(float fResoltuion)
 	*/
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
 	{
-		m_vecProductInstances[iInstance]->ScaleAndCenter(fResoltuion);
+		m_vecProductInstances[iInstance]->Scale(fResoltuion);
 	}
 }
 

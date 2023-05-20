@@ -92,7 +92,7 @@ void CProductInstance::SetEnable(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductInstance::ScaleAndCenter(float fResoltuion)
+void CProductInstance::Scale(float fResoltuion)
 {
 	/*
 	* Transformation
