@@ -93,8 +93,9 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
@@ -254,8 +255,9 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
