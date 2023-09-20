@@ -14,13 +14,12 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <limits>
 #include <map>
-
 #undef max
 using namespace std;
 
+// ************************************************************************************************
 class _oglUtils
 {
 
@@ -58,7 +57,11 @@ public: // Methods
 #ifdef _LINUX
 				wxLogError(wxT("OpenGL error state couldn't be reset."));
 #else
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(), 
+					_T("OpenGL error state couldn't be reset."), 
+					_T("OpenGL"), 
+					MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 #endif // _LINUX
@@ -71,14 +74,26 @@ public: // Methods
 #ifdef _LINUX
 			wxLogError(wxT("OpenGL error %d"), err);
 #else
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
-
+#ifdef UNICODE
+			::MessageBoxW(
+				::AfxGetMainWnd()->GetSafeHwnd(),
+				gluErrorUnicodeStringEXT(errLast),
+				_T("OpenGL"),
+				MB_ICONERROR | MB_OK);
+#else
+			::MessageBoxA(
+				::AfxGetMainWnd()->GetSafeHwnd(),
+				(LPCSTR)gluErrorString(errLast),
+				_T("OpenGL"),
+				MB_ICONERROR | MB_OK);
+#endif
 			PostQuitMessage(0);
 #endif // _LINUX
 		}
 	}
 };
 
+// ************************************************************************************************
 class _oglShader
 {
 
@@ -164,7 +179,7 @@ public: // Methods
 
 	void getInfoLog(CString& strInfoLog)
 	{
-		strInfoLog = L"NA";
+		strInfoLog = _T("NA");
 
 		int iLength = 0;
 		glGetShaderiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -186,10 +201,11 @@ public: // Methods
 		CString strInfoLog;
 		getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, _T("Error"), MB_ICONERROR | MB_OK);
 	}
 };
 
+// ************************************************************************************************
 class _oglProgram
 {
 
@@ -468,7 +484,7 @@ protected: // Methods
 
 	void _getInfoLog(CString& strInfoLog) const
 	{
-		strInfoLog = L"NA";
+		strInfoLog = _T("NA");
 
 		int iLength = 0;
 		glGetProgramiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -490,7 +506,7 @@ protected: // Methods
 		CString strInfoLog;
 		_getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, _T("Error"), MB_ICONERROR | MB_OK);
 	}
 
 	glm::vec3 _getUniform3f(GLint iUniform) const
@@ -542,6 +558,7 @@ protected: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglBlinnPhongProgram : public _oglProgram
 {
 
@@ -956,6 +973,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uiMsg)
@@ -971,6 +989,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lPa
 	return 0;
 }
 
+// ************************************************************************************************
 class _oglContext
 {
 
@@ -1054,19 +1073,31 @@ public: // Methods
 		WndClassEx.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		WndClassEx.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		WndClassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		WndClassEx.lpszClassName = L"_OpenGL_Renderer_Window_";
+		WndClassEx.lpszClassName = _T("_OpenGL_Renderer_Window_");
 
 		if (!GetClassInfoEx(::AfxGetInstanceHandle(), WndClassEx.lpszClassName, &WndClassEx))
 		{
 			if (RegisterClassEx(&WndClassEx) == 0)
 			{
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(), 
+					_T("RegisterClassEx() failed."), 
+					_T("Error"), 
+					MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
 		}
 
-		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, nullptr, nullptr, ::AfxGetInstanceHandle(), nullptr);
+		HWND hWndTemp = CreateWindowEx(
+			WS_EX_APPWINDOW, 
+			WndClassEx.lpszClassName, _T("OpenGL"), 
+			dwStyle, 
+			0, 0, 600, 600, 
+			nullptr, 
+			nullptr, 
+			::AfxGetInstanceHandle(), 
+			nullptr);
 
 		HDC hDCTemp = ::GetDC(hWndTemp);
 
@@ -1130,9 +1161,9 @@ public: // Methods
 			if (bWrongGLVersion)
 			{
 				CString strErrorMessage;
-				strErrorMessage.Format(L"OpenGL version %d.%d or higher is required.", MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
+				strErrorMessage.Format(_T("OpenGL version %d.%d or higher is required."), MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
 
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, _T("Error"), MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
@@ -1158,7 +1189,7 @@ public: // Methods
 		} // if (glewInit() == GLEW_OK) 
 		else
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("glewInit() failed."), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -1273,6 +1304,7 @@ public: // Methods
 #endif
 };
 
+// ************************************************************************************************
 #define BUFFER_SIZE 512
 
 class _oglFramebuffer
@@ -1386,6 +1418,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglSelectionFramebuffer : public _oglFramebuffer
 {
 
@@ -1411,6 +1444,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 // (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
 class _i64RGBCoder
 {
@@ -1464,6 +1498,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 template <class Instance>
 class _oglBuffers
 {
@@ -1529,7 +1564,7 @@ public: // Methods
 		return 0;
 	}
 
-	GLuint getVAOcreateNew(const wstring& strName, bool& bIsNew)
+	GLuint getVAOcreateNewIfNeeded(const wstring& strName, bool& bIsNew)
 	{
 		bIsNew = false;
 
@@ -1564,7 +1599,7 @@ public: // Methods
 		return 0;
 	}
 
-	GLuint getBufferCreateNew(const wstring& strName, bool& bIsNew)
+	GLuint getBufferCreateNewIfNeeded(const wstring& strName, bool& bIsNew)
 	{
 		bIsNew = false;
 
@@ -1812,12 +1847,14 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 enum class enumProjection : int
 {
 	Perspective = 0,
 	Orthographic,
 };
 
+// ************************************************************************************************
 enum class enumView : int
 {
 	Front = 0,
@@ -1835,6 +1872,7 @@ enum class enumRotationMode : int
 	XYZ,	// Quaternions
 };
 
+// ************************************************************************************************
 struct _ioglRenderer
 {
 	virtual _oglProgram* _getOGLProgram() const PURE;
@@ -1848,12 +1886,18 @@ struct _ioglRenderer
 	virtual void _redraw() PURE;
 };
 
+// ************************************************************************************************
 const float ZOOM_SPEED_MOUSE = 0.01f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
 const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
 const float PAN_SPEED_KEYS = 0.01f;
 const float ROTATION_SPEED = 1.f / 25.f;
 
+const wchar_t COORDINATE_SYSTEM_VAO[] = L"COORDINATE_SYSTEM_VAO";
+const wchar_t COORDINATE_SYSTEM_VBO[] = L"COORDINATE_SYSTEM_VBO";
+const wchar_t COORDINATE_SYSTEM_IBO[] = L"COORDINATE_SYSTEM_IBO";
+
+// ************************************************************************************************
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {
@@ -1861,6 +1905,8 @@ class _oglRenderer : public _ioglRenderer
 protected: // Members
 
 	CWnd* m_pWnd;
+	CMFCToolTipCtrl m_toolTipCtrl;
+
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
@@ -1916,6 +1962,7 @@ public: // Methods
 
 	_oglRenderer()
 		: m_pWnd(nullptr)
+		, m_toolTipCtrl()
 		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
@@ -1977,6 +2024,13 @@ public: // Methods
 		m_pWnd = pWnd;
 		ASSERT(m_pWnd != nullptr);
 
+		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | WS_CLIPSIBLINGS | TTS_NOANIMATE | TTS_NOFADE | TTS_ALWAYSTIP);
+		m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
+		m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
+		m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
+		m_toolTipCtrl.Activate(TRUE);
+		m_toolTipCtrl.AddTool(m_pWnd, _T(""));
+
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
@@ -1986,28 +2040,28 @@ public: // Methods
 
 		if (!m_pVertexShader->load(iVertexShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader loading error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader loading error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pVertexShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -2019,7 +2073,7 @@ public: // Methods
 
 		if (!m_pOGLProgram->_link())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Program linking error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Program linking error!"), _T("Error"), MB_ICONERROR | MB_OK);
 		}
 
 		m_matModelView = glm::identity<glm::mat4>();
@@ -2209,6 +2263,215 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
+	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
+	{
+		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
+
+		if (m_toolTipCtrl.GetToolCount() == 1)
+		{
+			CToolInfo toolInfo;
+			m_toolTipCtrl.GetToolInfo(toolInfo, m_pWnd);
+
+			if (CString(toolInfo.lpszText) != szText)
+			{
+				m_toolTipCtrl.SetTitle(0, szTitle);
+
+				toolInfo.lpszText = (LPWSTR)szText;
+				m_toolTipCtrl.SetToolInfo(&toolInfo);
+			}
+			else
+			{
+				CPoint ptCursor;
+				GetCursorPos(&ptCursor);
+
+				m_toolTipCtrl.SetWindowPos(
+					NULL, 
+					ptCursor.x + 10, 
+					ptCursor.y + 10, 
+					0, 
+					0,
+					SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+				return;
+			}
+		} // if (m_toolTipCtrl.GetToolCount() == 1)
+		else
+		{
+			m_toolTipCtrl.SetTitle(0, szTitle);
+			m_toolTipCtrl.AddTool(m_pWnd, szText);
+		}		
+
+		m_toolTipCtrl.Popup();
+	}
+
+	void _hideTooltip()
+	{
+		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
+
+		if (m_toolTipCtrl.GetToolCount() == 1)
+		{
+			m_toolTipCtrl.DelTool(m_pWnd, 0);
+		}
+	}
+
+	void _drawCoordinateSystem()
+	{
+		m_pOGLProgram->_enableBlinnPhongModel(false);		
+		m_pOGLProgram->_setTransparency(1.f);
+
+		_oglUtils::checkForErrors();
+
+		bool bIsNew = false;
+		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(COORDINATE_SYSTEM_VAO, bIsNew);
+
+		if (iVAO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		GLuint iVBO = 0;
+
+		if (bIsNew)
+		{
+			glBindVertexArray(iVAO);
+
+			iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_VBO, bIsNew);
+			if ((iVBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}			
+
+			float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+			vector<float> vecVertices;
+
+			/* Origin */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* X */
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* Y */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* Z */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+			GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_IBO, bIsNew);
+			if ((iIBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			vector<unsigned int> vecIndices =
+			{
+				0, 1,
+				0, 2,
+				0, 3,
+			};
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+
+			glBindVertexArray(0);
+
+			_oglUtils::checkForErrors();
+		} // if (bIsNew)
+
+		glBindVertexArray(iVAO);
+
+		m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint)* 0),
+			0);
+
+		m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 2),
+			0);
+
+		m_pOGLProgram->_setAmbientColor(0.f, 0.f, 1.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 4),
+			0);
+
+		glBindVertexArray(0);
+	}
+
 	enumProjection _getProjection() const { return m_enProjection; }
 	void _setProjection(enumProjection enProjection) 
 	{
@@ -2393,6 +2656,11 @@ public: // Methods
 
 	void _zoomMouseMButton(LONG lDelta)
 	{
+		if (lDelta == 0)
+		{
+			return;
+		}
+
 		switch (m_enProjection)
 		{
 			case enumProjection::Perspective:
