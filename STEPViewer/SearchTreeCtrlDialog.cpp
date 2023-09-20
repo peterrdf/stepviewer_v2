@@ -10,7 +10,7 @@
 // CSearchTreeCtrlDialog dialog
 
 // ------------------------------------------------------------------------------------------------
-const int MAX_SERACH_DEPTH = 20;
+const int MAX_SEARCH_DEPTH = 20;
 
 // ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
@@ -42,7 +42,7 @@ HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);	
 
-	if (m_iSearchDepth > MAX_SERACH_DEPTH)
+	if (m_iSearchDepth > MAX_SEARCH_DEPTH)
 	{
 		return nullptr;
 	}
