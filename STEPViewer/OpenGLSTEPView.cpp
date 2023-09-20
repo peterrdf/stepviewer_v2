@@ -672,43 +672,32 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		fYmin, fYmax,
 		fZmin, fZmax);
 
-	/*
-	* Non-transparent faces
-	*/
+	/* Coordinate System */
+	_drawCoordinateSystem();
+
+	/* Non-transparent faces */
 	DrawFaces(false);
 
-	/*
-	* Transparent faces
-	*/
+	/* Transparent faces */
 	DrawFaces(true);
 
-	/*
-	* Conceptual faces polygons
-	*/
+	/* Conceptual faces polygons */
 	DrawConceptualFacesPolygons();
 
-	/*
-	* Lines
-	*/
+	/* Lines */
 	DrawLines();
 
-	/*
-	* Points
-	*/
+	/* Points */
 	DrawPoints();
 
-	/*
-	* End
-	*/
+	/* End */
 #ifdef _LINUX
 	m_pWnd->SwapBuffers();
 #else
 	SwapBuffers(*pDC);
 #endif // _LINUX	
 
-	/*
-	*Selection support
-	*/
+	/* Selection support */
 	DrawInstancesFrameBuffer();
 }
 
