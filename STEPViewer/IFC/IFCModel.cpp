@@ -340,7 +340,8 @@ void CIFCModel::ScaleAndCenter()
 		m_fBoundingSphereDiameter);
 
 	bool bScale = true;
-	if (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.0001)
+	// !!!Frustum v2
+	/*if (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.0001)
 	{
 		bScale = false;
 	}
@@ -359,7 +360,7 @@ void CIFCModel::ScaleAndCenter()
 		strWarning += L"Please, use 'Zoom to/extent' to explore the model.";
 
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strWarning, L"Warning", MB_ICONWARNING | MB_OK);
-	}
+	}*/
 
 	/*
 	* Scale and Center
