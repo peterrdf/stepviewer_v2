@@ -602,7 +602,7 @@ pair<wstring, wstring> CIFCUnitProvider::GetQuantity(int_t iIFCQuantity, const c
     sdaiGetAttrBN(iIFCQuantity, "Unit", sdaiUNICODE, &szUnit);
 
     wstring strName = szQuantityName;
-    wstring strValue = szValue;
+    wstring strValue = szValue != nullptr ? szValue : L"NA";
 
     if (szUnit != nullptr)
     {

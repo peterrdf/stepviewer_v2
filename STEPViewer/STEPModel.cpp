@@ -188,21 +188,20 @@ CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::ScaleAndCenter()
 {
-	/*
-	* Min/Max
-	*/
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
+	/* World */
 	m_fBoundingSphereDiameter = 0.f;
 
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
+
+	/* Min/Max */
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;	
 	
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
@@ -230,17 +229,14 @@ void CSTEPModel::ScaleAndCenter()
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -252,12 +248,9 @@ void CSTEPModel::ScaleAndCenter()
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f",
-		m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/*
-	* Scale
-	*/
+	/* Scale */
 	itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
@@ -269,9 +262,7 @@ void CSTEPModel::ScaleAndCenter()
 		itDefinition->second->Scale(m_fBoundingSphereDiameter);
 	}
 
-	/*
-	* Min/max
-	*/
+	/* Min/Max */
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -310,17 +301,14 @@ void CSTEPModel::ScaleAndCenter()
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -332,8 +320,7 @@ void CSTEPModel::ScaleAndCenter()
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f",
-		m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 // ------------------------------------------------------------------------------------------------

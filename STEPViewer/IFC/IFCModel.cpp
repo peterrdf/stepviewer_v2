@@ -282,21 +282,20 @@ void CIFCModel::Clean()
 // ------------------------------------------------------------------------------------------------
 void CIFCModel::ScaleAndCenter()
 {
-	/*
-	* Min/Max
-	*/
+	/* World */
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
+	/* Min/Max */
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
 	m_fYmax = -FLT_MAX;
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
-
-	m_fBoundingSphereDiameter = 0.f;
-
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
 
 	auto itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
@@ -314,17 +313,14 @@ void CIFCModel::ScaleAndCenter()
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -336,35 +332,9 @@ void CIFCModel::ScaleAndCenter()
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f",
-		m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	bool bScale = true;
-	// !!!Frustum v2
-	/*if (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.0001)
-	{
-		bScale = false;
-	}
-	else if (((m_fYmax - m_fYmin) / m_fBoundingSphereDiameter) <= 0.0001)
-	{
-		bScale = false;
-	}
-	else if (((m_fZmax - m_fZmin) / m_fBoundingSphereDiameter) <= 0.0001)
-	{
-		bScale = false;
-	}
-
-	if (!bScale)
-	{
-		CString strWarning = L"'Scale' algorithm cannot be used.\n";
-		strWarning += L"Please, use 'Zoom to/extent' to explore the model.";
-
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strWarning, L"Warning", MB_ICONWARNING | MB_OK);
-	}*/
-
-	/*
-	* Scale and Center
-	*/
+	/* Scale and Center */
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
@@ -372,13 +342,10 @@ void CIFCModel::ScaleAndCenter()
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter,
-			bScale);
+			m_fBoundingSphereDiameter, true);
 	}
 
-	/*
-	* Min/Max
-	*/
+	/* Min/Max */
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -405,17 +372,14 @@ void CIFCModel::ScaleAndCenter()
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -427,12 +391,8 @@ void CIFCModel::ScaleAndCenter()
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f",
-		m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/*
-	* Translations
-	*/
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_fXTranslation -= m_fXmin;
 	m_fYTranslation -= m_fYmin;
@@ -444,12 +404,9 @@ void CIFCModel::ScaleAndCenter()
 	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	if (bScale)
-	{
-		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	}
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 

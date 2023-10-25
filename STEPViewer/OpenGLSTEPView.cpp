@@ -14,6 +14,8 @@
 #include <GL/glext.h>
 #endif // _LINUX
 
+// ------------------------------------------------------------------------------------------------
+static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
@@ -653,7 +655,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	int iWidth = rcClient.Width();
 	int iHeight = rcClient.Height();
 
-	if ((iWidth < 20) || (iHeight < 20))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
@@ -667,10 +669,13 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
+		0, 0,
 		iWidth, iHeight,
 		fXmin, fXmax,
 		fYmin, fYmax,
-		fZmin, fZmax);
+		fZmin, fZmax,
+		true,
+		true);
 
 	/* Coordinate System */
 	_drawCoordinateSystem();
@@ -1130,9 +1135,8 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	}
 
 	/*
-	* Create a frame buffer
+	* Validation
 	*/
-
 	int iWidth = 0;
 	int iHeight = 0;
 
@@ -1149,11 +1153,14 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	if ((iWidth < 20) || (iHeight < 20))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
 
+	/*
+	* Create a frame buffer
+	*/
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 

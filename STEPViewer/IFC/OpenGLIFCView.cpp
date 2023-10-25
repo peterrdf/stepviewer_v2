@@ -8,6 +8,9 @@
 #include <chrono>
 
 // ------------------------------------------------------------------------------------------------
+static const int MIN_VIEW_PORT_LENGTH = 100;
+
+// ------------------------------------------------------------------------------------------------
 COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 	:  COpenGLView()
 	, _oglRenderer()
@@ -614,7 +617,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	int iWidth = rcClient.Width();
 	int iHeight = rcClient.Height();
 
-	if ((iWidth < 20) || (iHeight < 20))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
@@ -628,10 +631,13 @@ COpenGLIFCView::~COpenGLIFCView()
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
+		0, 0,
 		iWidth, iHeight,
 		fXmin, fXmax,
 		fYmin, fYmax,
-		fZmin, fZmax);
+		fZmin, fZmax,
+		true,
+		true);
 
 	/* Coordinate System */
 	_drawCoordinateSystem();
@@ -933,9 +939,32 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	}
 
 	/*
+	* Validation
+	*/
+	int iWidth = 0;
+	int iHeight = 0;
+
+#ifdef _LINUX
+	const wxSize szClient = m_pWnd->GetClientSize();
+
+	iWidth = szClient.GetWidth();
+	iHeight = szClient.GetHeight();
+#else
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	iWidth = rcClient.Width();
+	iHeight = rcClient.Height();
+#endif // _LINUX
+
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
+	{
+		return;
+	}
+
+	/*
 	* Create a frame buffer
 	*/
-
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
