@@ -34,6 +34,7 @@ CIFCModel::CIFCModel()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pEntityProvider(nullptr)
+	, m_bUpdteVertexBuffers(true)
 {
 }
 
@@ -43,6 +44,37 @@ CIFCModel::~CIFCModel()
 	Clean();
 }
 
+void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
+{
+	if (m_bUpdteVertexBuffers)
+	{
+		_vector3d vecOriginalBBMin;
+		_vector3d vecOriginalBBMax;
+		if (GetInstanceGeometryClass(iInstance) &&
+			GetBoundingBox(
+				iInstance,
+				(double*)&vecOriginalBBMin,
+				(double*)&vecOriginalBBMax))
+		{
+			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+			SetVertexBufferOffset(
+				m_iModel,
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+			ClearedExternalBuffers(m_iModel);
+
+			m_bUpdteVertexBuffers = false;
+		}
+	} // if (m_bUpdteVertexBuffers)
+}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CEntityProvider* CIFCModel::GetEntityProvider() const /*override*/
@@ -573,6 +605,8 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 // ------------------------------------------------------------------------------------------------
 CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiInstance iInstance, int_t iCircleSegments)
 {
+	PreLoadInstance(iInstance);
+
 	/*
 	* Set up format
 	*/

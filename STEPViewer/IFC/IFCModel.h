@@ -52,10 +52,14 @@ private: // Members
 
 	static int_t s_iInstanceID;
 
+	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
+
 public: // Methods
 	
 	CIFCModel();
 	virtual ~CIFCModel();
+
+	void PreLoadInstance(SdaiInstance iInstance);
 
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override;
