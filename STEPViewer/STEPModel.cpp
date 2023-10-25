@@ -24,6 +24,7 @@ CSTEPModel::CSTEPModel()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()
 	, m_iID(1)
+	, m_bUpdteVertexBuffers(true)
 {
 }
 
@@ -31,6 +32,38 @@ CSTEPModel::CSTEPModel()
 CSTEPModel::~CSTEPModel()
 {
 	Clean();
+}
+
+void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+{
+	if (m_bUpdteVertexBuffers)
+	{
+		_vector3d vecOriginalBBMin;
+		_vector3d vecOriginalBBMax;
+		if (GetInstanceGeometryClass(iProductDefinitionInstance) &&
+			GetBoundingBox(
+				iProductDefinitionInstance,
+				(double*)&vecOriginalBBMin,
+				(double*)&vecOriginalBBMax))
+		{
+			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+			SetVertexBufferOffset(
+				m_iModel,
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+			ClearedExternalBuffers(m_iModel);
+
+			m_bUpdteVertexBuffers = false;
+		}
+	} // if (m_bUpdteVertexBuffers)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -390,6 +423,8 @@ void CSTEPModel::LoadProductDefinitions()
 // ------------------------------------------------------------------------------------------------
 CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
+	PreLoadProductDefinition(iProductDefinitionInstance);
+
 	auto pDefinition = new CProductDefinition();
 
 	pDefinition->m_iExpressID = internalGetP21Line(iProductDefinitionInstance);
@@ -583,7 +618,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pDefinition->GetExpressID());
 
 	int64_t	owlInstanceProductDefinition = 0;
-	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
+	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);	
 
 	pDefinition->Calculate();
 

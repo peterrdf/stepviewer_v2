@@ -28,10 +28,14 @@ private: // Members
 
 	int64_t m_iID;
 
+	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
+
 public: // Methods
 	
 	CSTEPModel();
 	virtual ~CSTEPModel();
+
+	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
 
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override;
