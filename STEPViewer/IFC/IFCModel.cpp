@@ -644,13 +644,17 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	/*
 	* Default color
 	*/
-	SetDefaultColor(
-		m_iModel,
-		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
-		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
-		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255,
-		50 * 256 * 256 * 256 + 50 * 256 * 256 + 50 * 256 + 255
-	);
+	int32_t	iR = 10,
+		iG = 150,
+		iB = 10,
+		iA = 255;
+	int32_t	iDefaultColor = 256 * 256 * 256 * iR +
+		256 * 256 * iG +
+		256 * iB +
+		iA;
+	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
+
+	setSegmentation(m_iModel, 16, 0.);
 
 	/*
 	* Set up circleSegments()
