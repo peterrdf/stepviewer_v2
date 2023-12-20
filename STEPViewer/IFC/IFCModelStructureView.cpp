@@ -1049,10 +1049,6 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 
 		m_pTreeCtrl->Expand(hProject, TVE_EXPAND);
 	} // if (itInstance != ...
-	else
-	{
-		ASSERT(FALSE);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------

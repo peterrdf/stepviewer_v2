@@ -1295,8 +1295,6 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
