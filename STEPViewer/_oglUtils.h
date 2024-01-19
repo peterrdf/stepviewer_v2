@@ -2146,25 +2146,23 @@ public: // Methods
 		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
 		// Zoom
-		m_fZoomMin = m_fZmin;
-		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
-		m_fZoomMin = -m_fZoomMin;
-		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
-		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
-		m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+		m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
+		m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
+		m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
+		m_fZoomInterval = m_fZoomMax - m_fZoomMin;
 
 		// Pan X
-		m_fPanXMin = fXmin;
-		m_fPanXMin += (fXmax - fXmin) / 2.f;
-		m_fPanXMin = -m_fPanXMin;
-		m_fPanXMax = m_fPanXMin + (fBoundingSphereDiameter * 2.f);
-		m_fPanXInterval = abs(m_fPanXMax - m_fPanXMin);
+		m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
+		m_fPanXMin -= fBoundingSphereDiameter * 1.25f;
+		m_fPanXMax = (m_fXmax - m_fXmin) / 2.f;
+		m_fPanXMax += fBoundingSphereDiameter * 1.25f;
+		m_fPanXInterval = m_fPanXMax - m_fPanXMin;
 
 		// Pan Y
-		m_fPanYMin = fXmin;
-		m_fPanYMin += (fXmax - fXmin) / 2.f;
-		m_fPanYMin = -m_fPanYMin;
-		m_fPanYMax = m_fPanYMin + (fBoundingSphereDiameter * 2.f);
+		m_fPanYMin = -(m_fYmax - m_fYmin) / 2.f;
+		m_fPanYMin -= fBoundingSphereDiameter * .75f;
+		m_fPanYMax = (m_fYmax - m_fYmin) / 2.f;
+		m_fPanYMax += fBoundingSphereDiameter * .75f;
 		m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
 
 		// Scale (Orthographic)
@@ -2360,166 +2358,6 @@ public: // Methods
 		{
 			m_toolTipCtrl.DelTool(m_pWnd, 0);
 		}
-	}
-
-	void _drawCoordinateSystem()
-	{
-		m_pOGLProgram->_enableBlinnPhongModel(false);		
-		m_pOGLProgram->_setTransparency(1.f);
-
-		_oglUtils::checkForErrors();
-
-		bool bIsNew = false;
-		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(COORDINATE_SYSTEM_VAO, bIsNew);
-
-		if (iVAO == 0)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		GLuint iVBO = 0;
-
-		if (bIsNew)
-		{
-			glBindVertexArray(iVAO);
-
-			iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_VBO, bIsNew);
-			if ((iVBO == 0) || !bIsNew)
-			{
-				ASSERT(FALSE);
-
-				return;
-			}			
-
-			float fBoundingSphereDiameter = m_fXmax - m_fXmin;
-			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
-			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-			vector<float> vecVertices;
-
-			/* Origin */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
-
-			/* X */
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
-
-			/* Y */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
-			vecVertices.push_back(0.f);
-
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
-
-			/* Z */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
-
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
-
-			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
-
-			GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_IBO, bIsNew);
-			if ((iIBO == 0) || !bIsNew)
-			{
-				ASSERT(FALSE);
-
-				return;
-			}
-
-			vector<unsigned int> vecIndices =
-			{
-				0, 1,
-				0, 2,
-				0, 3,
-			};
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
-
-			glBindVertexArray(0);
-
-			_oglUtils::checkForErrors();
-		} // if (bIsNew)
-
-		glBindVertexArray(iVAO);
-
-		m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint)* 0),
-			0);
-
-		m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint) * 2),
-			0);
-
-		m_pOGLProgram->_setAmbientColor(0.f, 0.f, 1.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint) * 4),
-			0);
-
-		glBindVertexArray(0);
-
-		_oglUtils::checkForErrors();
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }
@@ -3041,9 +2879,29 @@ private: //  Methods
 
 	void _pan(float fX, float fY)
 	{
-		m_fXTranslation += fX;
-		m_fYTranslation += fY;
+		bool bRedraw = false;
 
-		_redraw();
+		float fNewXTranslation = m_fXTranslation + fX;
+		if ((fNewXTranslation < m_fPanXMax) &&
+			(fNewXTranslation > m_fPanXMin))
+		{
+			m_fXTranslation += fX;
+
+			bRedraw = true;
+		}
+
+		float fNewYTranslation = m_fYTranslation + fY;
+		if ((fNewYTranslation < m_fPanYMax) &&
+			(fNewYTranslation > m_fPanYMin))
+		{
+			m_fYTranslation += fY;
+
+			bRedraw = true;
+		}
+
+		if (bRedraw)
+		{
+			_redraw();
+		}
 	}
 };

@@ -677,9 +677,6 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		true,
 		true);
 
-	/* Coordinate System */
-	_drawCoordinateSystem();
-
 	/* Non-transparent faces */
 	DrawFaces(false);
 

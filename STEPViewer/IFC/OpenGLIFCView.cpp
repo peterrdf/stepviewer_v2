@@ -639,9 +639,6 @@ COpenGLIFCView::~COpenGLIFCView()
 		true,
 		true);
 
-	/* Coordinate System */
-	_drawCoordinateSystem();
-
 	/* Non-transparent faces */
 	DrawFaces(false);
 
