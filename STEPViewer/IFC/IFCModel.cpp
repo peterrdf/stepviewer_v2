@@ -252,7 +252,9 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Retrieve the objects recursively
 	*/
-	RetrieveObjects__depth(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS, 0);
+	RetrieveObjects__depth(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS, 0);	
+	//#test
+	RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 	RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 	/*
@@ -571,26 +573,27 @@ void CIFCModel::RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegment
 
 		RetrieveObjects(szParenEntityName, szParentEntityNameW, iCircleSegments);
 
-		if (iParentEntity == m_ifcProjectEntity) {
-			for (int_t i = 0; i < iIntancesCount; i++) {
-				SdaiInstance iInstance = 0;
-				engiGetAggrElement(piInstances, i, sdaiINSTANCE, &iInstance);
+		//#test
+		///*if (iParentEntity == m_ifcProjectEntity) {
+		//	for (int_t i = 0; i < iIntancesCount; i++) {
+		//		SdaiInstance iInstance = 0;
+		//		engiGetAggrElement(piInstances, i, sdaiINSTANCE, &iInstance);
 
-				wchar_t* szInstanceGUIDW = nullptr;
-				sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
+		//		wchar_t* szInstanceGUIDW = nullptr;
+		//		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
 
-				CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iInstance, iCircleSegments);
-				pInstance->ID() = s_iInstanceID++;
+		//		CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iInstance, iCircleSegments);
+		//		pInstance->ID() = s_iInstanceID++;
 
-				CString strEntity = szParentEntityNameW;
-				strEntity.MakeUpper();
+		//		CString strEntity = szParentEntityNameW;
+		//		strEntity.MakeUpper();
 
-				pInstance->SetEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
+		//		pInstance->SetEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
 
-				m_vecInstances.push_back(pInstance);
-				m_mapInstances[iInstance] = pInstance;
-			}
-		}
+		//		m_vecInstances.push_back(pInstance);
+		//		m_mapInstances[iInstance] = pInstance;
+		//	}
+		//}*/
 	} // if (iIntancesCount != 0)
 
 	iIntancesCount = engiGetEntityCount(m_iModel);
