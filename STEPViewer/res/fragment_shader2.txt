@@ -4,6 +4,9 @@ in float vUseBlinnPhongModel;
 in vec4 vPosition;
 in vec3 vTransformedNormal;
 
+in float vUseTexture;
+in vec2 vTextureCoord;
+
 uniform vec3 uPointLightingLocation = vec3(0.0, 0.0, 10000.0);
 uniform vec3 uAmbientLightWeighting = vec3(0.001, 0.001, 0.001);
 uniform vec3 uSpecularLightWeighting = vec3(0.8, 0.8, 0.8);
@@ -22,37 +25,44 @@ uniform vec3 uMaterialDiffuseColor;
 uniform vec3 uMaterialSpecularColor;
 uniform vec3 uMaterialEmissiveColor;
 
+uniform sampler2D uSampler;
+
 layout(location = 0) out vec4 FragColor;
 
 void main(void) {
-    if (vUseBlinnPhongModel > 0.5) {
-        vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
-        vec3 normal = normalize(vTransformedNormal);
-
-        vec3 eyeDirection = normalize(-vPosition.xyz);
-        vec3 reflectionDirection = reflect(-lightDirection, normal);
-
-        float specularLightBrightness = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
-        vec3 specularLightWeighting = uSpecularLightWeighting * specularLightBrightness;
-
-        float diffuseLightBrightness = max(dot(normal, lightDirection), 0.0);
-        vec3 diffuseLightWeighting = uDiffuseLightWeighting * diffuseLightBrightness;
-
-        vec4 color = vec4(
-            uMaterialAmbientColor * uAmbientLightWeighting
-            + uMaterialDiffuseColor * diffuseLightWeighting
-            + uMaterialSpecularColor * specularLightWeighting
-            + uMaterialEmissiveColor,
-            uTransparency);
-
-        vec4 newColor = vec4(0.0, 0.0, 0.0, uTransparency);
-        newColor.r = (pow(color.r, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
-        newColor.g = (pow(color.g, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
-        newColor.b = (pow(color.b, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
-
-        FragColor = newColor;
-    } // if (vUseBlinnPhongModel > ...
+    if (vUseTexture > 0.5) {
+        FragColor = texture(uSampler, vTextureCoord);
+    }
     else {
-        FragColor = vec4(uMaterialAmbientColor, uTransparency);
+        if (vUseBlinnPhongModel > 0.5) {
+            vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
+            vec3 normal = normalize(vTransformedNormal);
+
+            vec3 eyeDirection = normalize(-vPosition.xyz);
+            vec3 reflectionDirection = reflect(-lightDirection, normal);
+
+            float specularLightBrightness = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
+            vec3 specularLightWeighting = uSpecularLightWeighting * specularLightBrightness;
+
+            float diffuseLightBrightness = max(dot(normal, lightDirection), 0.0);
+            vec3 diffuseLightWeighting = uDiffuseLightWeighting * diffuseLightBrightness;            
+
+            vec4 color = vec4(
+                uMaterialAmbientColor * uAmbientLightWeighting
+                + uMaterialDiffuseColor * diffuseLightWeighting
+                + uMaterialSpecularColor * specularLightWeighting
+                + uMaterialEmissiveColor,
+                uTransparency);
+
+            vec4 newColor = vec4(0.0, 0.0, 0.0, uTransparency);
+            newColor.r = (pow(color.r, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
+            newColor.g = (pow(color.g, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
+            newColor.b = (pow(color.b, uGamma) - 0.5) * uContrast + uBrightness + 0.5;
+
+            FragColor = newColor;
+        } // if (vUseBlinnPhongModel > ...
+        else {
+            FragColor = vec4(uMaterialAmbientColor, uTransparency);
+        }
     }
 }

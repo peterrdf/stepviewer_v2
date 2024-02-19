@@ -2,8 +2,10 @@
 
 in vec3 aVertexPosition;
 in vec3 aVertexNormal;
+in vec2 aTextureCoord;
 
 uniform float uUseBlinnPhongModel = 1.0;
+uniform float uUseTexture = 0.0;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
@@ -13,17 +15,25 @@ out float vUseBlinnPhongModel;
 out vec4 vPosition;
 out vec3 vTransformedNormal;
 
+out float vUseTexture;
+out vec2 vTextureCoord;
+
 void main(void) {
     vec4 vertex = uMVMatrix * vec4(aVertexPosition, 1.0);
     vPosition = vertex;
 
     gl_Position = uPMatrix * vertex;
+    gl_PointSize = 5;
 
-    if (uUseBlinnPhongModel > 0.5) {
-        vTransformedNormal = vec3(uNMatrix * vec4(aVertexNormal, 1.0));
+    if (uUseTexture > 0.5) {
+        vTextureCoord = aTextureCoord;
+    }
+    else {
+        if (uUseBlinnPhongModel > 0.5) {
+            vTransformedNormal = vec3(uNMatrix * vec4(aVertexNormal, 1.0));
+        }
     }
 
     vUseBlinnPhongModel = uUseBlinnPhongModel;
-
-    gl_PointSize = 2;
+    vUseTexture = uUseTexture;
 }

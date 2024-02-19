@@ -3,6 +3,7 @@
 #include "STEPModel.h"
 #include "ProductDefinition.h"
 #include "Assembly.h"
+#include "_3DUtils.h"
 
 #include <bitset>
 #include <algorithm>

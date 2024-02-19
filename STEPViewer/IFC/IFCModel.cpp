@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "_3DUtils.h"
 #include "_oglUtils.h"
 #include "IFCModel.h"
 
