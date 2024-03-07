@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "InstanceBase.h"
 #include "Entity.h"
 
 #include <map>
@@ -65,10 +65,10 @@ public: // Methods
 	virtual CEntityProvider* GetEntityProvider() const PURE;
 
 	// --------------------------------------------------------------------------------------------	
-	virtual CInstance* GetInstanceByExpressID(int64_t iExpressID) const PURE;
+	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
 
 	// --------------------------------------------------------------------------------------------
-	virtual void ZoomToInstance(CInstance* pInstance) PURE;
+	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 
 	// --------------------------------------------------------------------------------------------
 	virtual void ZoomOut() PURE;

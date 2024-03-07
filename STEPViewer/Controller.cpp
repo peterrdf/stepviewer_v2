@@ -129,13 +129,13 @@ void CController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::ShowMetaInformation(CInstance* /*pInstance*/)
+void CController::ShowMetaInformation(CInstanceBase* /*pInstance*/)
 {
 	ASSERT(FALSE); // OBSOLETE
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::SelectInstance(CViewBase* pSender, CInstance* pInstance)
+void CController::SelectInstance(CViewBase* pSender, CInstanceBase* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -152,7 +152,7 @@ void CController::SelectInstance(CViewBase* pSender, CInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-CInstance* CController::GetSelectedInstance() const
+CInstanceBase* CController::GetSelectedInstance() const
 {
 	return m_pSelectedInstance;
 }

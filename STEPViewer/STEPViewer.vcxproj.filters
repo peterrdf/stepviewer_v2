@@ -95,7 +95,7 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Instance.h">
+    <ClInclude Include="InstanceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFC\OpenGLIFCView.h">
@@ -220,7 +220,7 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Instance.cpp">
+    <ClCompile Include="InstanceBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\OpenGLIFCView.cpp">

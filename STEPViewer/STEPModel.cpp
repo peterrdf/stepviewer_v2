@@ -74,7 +74,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CInstance* CSTEPModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
+/*virtual*/ CInstanceBase* CSTEPModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
 {
 	for (auto& item : m_mapID2Instance) {
 		if (auto pDef = item.second->GetProductDefinition()) {
@@ -87,7 +87,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // --------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomToInstance(CInstance* pInstance) /*override*/
+/*virtual*/ void CSTEPModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
 {	
 	ASSERT(pInstance != nullptr);
 

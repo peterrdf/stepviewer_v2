@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Generic.h"
-#include "Instance.h"
+#include "InstanceBase.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ class CProductDefinition;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CProductInstance : public CInstance
+class CProductInstance : public CInstanceBase
 {
 
 	friend class CProductDefinition;
@@ -30,7 +30,7 @@ public: // Methods
 	CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix);
 	virtual ~CProductInstance();
 
-	// CInstance
+	// CInstanceBase
 	virtual SdaiInstance GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "InstanceBase.h"
 
 #include "engdef.h"
 

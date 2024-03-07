@@ -5,13 +5,13 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class CInstance
+class CInstanceBase
 {
 
 public: // Methods
 	
-	CInstance();
-	virtual ~CInstance();
+	CInstanceBase();
+	virtual ~CInstanceBase();
 
 	virtual int64_t GetInstance() const PURE;
 	virtual bool HasGeometry() const PURE;

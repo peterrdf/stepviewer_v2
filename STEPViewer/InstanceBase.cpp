@@ -1,25 +1,25 @@
 #include "stdafx.h"
 
-#include "Instance.h"
+#include "InstanceBase.h"
 
 // --------------------------------------------------------------------------------------------
-CInstance::CInstance()
+CInstanceBase::CInstanceBase()
 {
 }
 
 // --------------------------------------------------------------------------------------------
-/*virtual*/ CInstance::~CInstance()
+/*virtual*/ CInstanceBase::~CInstanceBase()
 {
 }
 
 // --------------------------------------------------------------------------------------------
-wstring CInstance::GetName() const
+wstring CInstanceBase::GetName() const
 {
 	return GetName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ wstring CInstance::GetName(int64_t iInstance)
+/*static*/ wstring CInstanceBase::GetName(int64_t iInstance)
 {
 	wstring strUniqueName;
 
@@ -62,25 +62,25 @@ wstring CInstance::GetName() const
 }
 
 // --------------------------------------------------------------------------------------------
-int64_t CInstance::GetClass() const
+int64_t CInstanceBase::GetClass() const
 {
 	return GetClass(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstance::GetClass(int64_t iInstance)
+/*static*/ int64_t CInstanceBase::GetClass(int64_t iInstance)
 {
 	return GetInstanceClass(iInstance);
 }
 
 // --------------------------------------------------------------------------------------------
-const wchar_t* CInstance::GetClassName() const
+const wchar_t* CInstanceBase::GetClassName() const
 {
 	return GetClassName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstance::GetClassName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetClassName(int64_t iInstance)
 {
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
@@ -89,25 +89,25 @@ const wchar_t* CInstance::GetClassName() const
 }
 
 // --------------------------------------------------------------------------------------------
-int64_t CInstance::GetEntity() const
+int64_t CInstanceBase::GetEntity() const
 {
 	return sdaiGetInstanceType(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstance::GetEntity(int64_t iInstance)
+/*static*/ int64_t CInstanceBase::GetEntity(int64_t iInstance)
 {
 	return sdaiGetInstanceType(iInstance);
 }
 
 // --------------------------------------------------------------------------------------------
-const wchar_t* CInstance::GetEntityName() const
+const wchar_t* CInstanceBase::GetEntityName() const
 {
 	return GetEntityName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstance::GetEntityName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetEntityName(int64_t iInstance)
 {
 	wchar_t* szEntityName = nullptr;
 	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (const char**)&szEntityName);

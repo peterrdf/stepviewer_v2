@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "InstanceBase.h"
 #include "Entity.h"
 #include "ProductInstance.h"
 
@@ -30,7 +30,7 @@ private: // Members
 	set<CViewBase*> m_setViews; // Views - MVC	
 	
 	// Selection
-	CInstance* m_pSelectedInstance;
+	CInstanceBase* m_pSelectedInstance;
 	
 	// UI properties
 	BOOL m_bScaleAndCenter;
@@ -75,9 +75,9 @@ public: // Methods
 	void ScaleAndCenter();
 	
 	// Events
-	void ShowMetaInformation(CInstance* pInstance);
-	void SelectInstance(CViewBase* pSender, CInstance* pInstance);
-	CInstance* GetSelectedInstance() const;
+	void ShowMetaInformation(CInstanceBase* pInstance);
+	void SelectInstance(CViewBase* pSender, CInstanceBase* pInstance);
+	CInstanceBase* GetSelectedInstance() const;
 
 	// UI
 	BOOL GetScaleAndCenter() const;

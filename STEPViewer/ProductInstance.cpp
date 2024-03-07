@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------------------------------
 CProductInstance::CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix)
-	: CInstance()
+	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pDefinition)
 	, m_pTransformationMatrix(nullptr)

@@ -84,7 +84,7 @@ void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModel::ZoomToInstance(CInstance* pInstance) /*override*/
+/*virtual*/ void CIFCModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
 {
 	ASSERT(pInstance != nullptr);
 
@@ -478,7 +478,7 @@ CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CInstance* CIFCModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
+/*virtual*/ CInstanceBase* CIFCModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
 {
 	auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
 	if (itExpressID2Instance != m_mapExpressID2Instance.end())
