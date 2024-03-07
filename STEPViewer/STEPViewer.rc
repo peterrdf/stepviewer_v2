@@ -576,6 +576,8 @@ IDR_POPUP_INSTANCES_NO_GEOMETRY MENU
 BEGIN
     POPUP "Instances"
     BEGIN
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
+        MENUITEM SEPARATOR
         MENUITEM "View Attributes",             IDS_VIEW_IFC_RELATIONS
     END
 END

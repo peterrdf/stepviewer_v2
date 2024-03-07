@@ -245,19 +245,17 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem) /*override*/
 {
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		return false;
+	}
+
 	auto pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
 	if (pInstance == nullptr)
 	{
 		return false;
-	}
-
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return false;
-	}
+	}	
 
 	return pInstance == pController->GetSelectedInstance();
 }
@@ -476,87 +474,93 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			switch (uiCommand)
 			{
-			case ID_INSTANCES_ZOOM_TO:
-			{
-				pController->ZoomToInstance();
-			}
-			break;
-
-			case ID_VIEW_ZOOM_OUT:
-			{
-				pController->ZoomOut();
-			}
-			break;
-
-			case ID_INSTANCES_SAVE:
-			{
-				pController->SaveInstance();
-			}
-			break;
-
-			case ID_INSTANCES_ENABLE:
-			{
-				pInstance->SetEnable(!pInstance->GetEnable());
-
-				int iImage = pInstance->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
-
-				ClickItem_UpdateChildren(hItem);
-				ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
-
-				pController->OnInstancesEnabledStateChanged(this);
-			}
-			break;
-
-			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
-			{
-				for (auto itInstance = mapInstances.begin(); 
-					itInstance != mapInstances.end(); 
-					itInstance++)
+				case ID_INSTANCES_ZOOM_TO:
 				{
-					itInstance->second->SetEnable(itInstance->second == pInstance);
+					pController->ZoomToInstance();
 				}
+				break;
 
-				ResetView();
-				OnInstanceSelected(nullptr);
-
-				pController->OnInstancesEnabledStateChanged(this);
-			}
-			break;
-
-			case ID_INSTANCES_ENABLE_ALL:
-			{
-				for (auto itInstance = mapInstances.begin(); 
-					itInstance != mapInstances.end(); 
-					itInstance++)
+				case ID_VIEW_ZOOM_OUT:
 				{
-					itInstance->second->SetEnable(true);
+					pController->ZoomOut();
 				}
+				break;
 
-				ResetView();
-				OnInstanceSelected(nullptr);
+				case ID_INSTANCES_SAVE:
+				{
+					pController->SaveInstance();
+				}
+				break;
 
-				pController->OnInstancesEnabledStateChanged(this);
-			}
-			break;
+				case ID_INSTANCES_ENABLE:
+				{
+					pInstance->SetEnable(!pInstance->GetEnable());
 
-			case IDS_VIEW_IFC_RELATIONS:
-			{
-				pController->OnViewRelations(this, pInstance->GetInstance());
-			}
-			break;
+					int iImage = pInstance->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
-			default:
-			{
-				bExecuted = false;
-			}
-			break;
+					ClickItem_UpdateChildren(hItem);
+					ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
+
+					pController->OnInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+				{
+					for (auto itInstance = mapInstances.begin(); 
+						itInstance != mapInstances.end(); 
+						itInstance++)
+					{
+						itInstance->second->SetEnable(itInstance->second == pInstance);
+					}
+
+					ResetView();
+					OnInstanceSelected(nullptr);
+
+					pController->OnInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case ID_INSTANCES_ENABLE_ALL:
+				{
+					for (auto itInstance = mapInstances.begin(); 
+						itInstance != mapInstances.end(); 
+						itInstance++)
+					{
+						itInstance->second->SetEnable(true);
+					}
+
+					ResetView();
+					OnInstanceSelected(nullptr);
+
+					pController->OnInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case IDS_VIEW_IFC_RELATIONS:
+				{
+					pController->OnViewRelations(this, pInstance->GetInstance());
+				}
+				break;
+
+				default:
+				{
+					bExecuted = false;
+				}
+				break;
 			} // switch (uiCommand)
 		} // if (pInstance->HasGeometry())
 		else
 		{
 			switch (uiCommand)
 			{
+				case ID_VIEW_ZOOM_OUT:
+				{
+					pController->ZoomOut();
+				}
+				break;
+
 				case IDS_VIEW_IFC_RELATIONS:
 				{
 					pController->OnViewRelations(this, pInstance->GetInstance());
