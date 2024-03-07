@@ -430,6 +430,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			pMenu = menuMain.GetSubMenu(0);
 		} // else if (pInstance->HasGeometry())
 	} // if (pInstance != nullptr)
+	else
+	{
+		VERIFY(menuMain.LoadMenuW(IDR_POPUP_META_DATA));
+		pMenu = menuMain.GetSubMenu(0);
+	} // else if (pInstance != nullptr)
 
 	// Entities
 	CMenu menuEntities;
@@ -577,8 +582,21 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	} // if (pInstance != nullptr)
 	else
 	{
-		bExecuted = false;
-	}
+		switch (uiCommand)
+		{
+			case ID_VIEW_ZOOM_OUT:
+			{
+				pController->ZoomOut();
+			}
+			break;
+
+			default:
+			{
+				bExecuted = false;
+			}
+			break;
+		}
+	}  // else if (pInstance != nullptr)
 
 	// Enable Entity command
 	if (!bExecuted)

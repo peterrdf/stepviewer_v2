@@ -617,6 +617,14 @@ BEGIN
     END
 END
 
+IDR_POPUP_META_DATA MENU
+BEGIN
+    POPUP "Metadata"
+    BEGIN
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

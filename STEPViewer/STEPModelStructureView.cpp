@@ -461,6 +461,22 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = GetModel<CSTEPModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	// Select clicked item:
 	CPoint ptTree = point;
 	m_pTreeCtrl->ScreenToClient(&ptTree);
@@ -508,22 +524,6 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
 		if (uiCommand == 0)
 		{
-			return;
-		}
-
-		auto pController = GetController();
-		if (pController == nullptr)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		auto pModel = GetModel<CSTEPModel>();
-		if (pModel == nullptr)
-		{
-			ASSERT(FALSE);
-
 			return;
 		}
 
@@ -625,10 +625,36 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 				ASSERT(FALSE);
 			}
 			break;
-		} // switch (uiCommand)	
-
-		return;
+		} // switch (uiCommand)
 	} // if ((pItemData != nullptr) && ...
+	else
+	{
+		CMenu menu;
+		VERIFY(menu.LoadMenuW(IDR_POPUP_META_DATA));
+
+		auto pPopup = menu.GetSubMenu(0);
+
+		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
+		if (uiCommand == 0)
+		{
+			return;
+		}
+
+		switch (uiCommand)
+		{
+			case ID_VIEW_ZOOM_OUT:
+			{
+				pController->ZoomOut();
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		}
+	} // else if ((pItemData != nullptr) && ...
 }
 
 // ------------------------------------------------------------------------------------------------
