@@ -208,15 +208,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
-	lstBasicCommands.AddTail(ID_VIEW_CENTER_ALL_GEOMETRY);
-	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
-
 	// Projection
 	lstBasicCommands.AddTail(ID_PROJECTION_PERSPECTIVE);
 	lstBasicCommands.AddTail(ID_PROJECTION_ORTHOGRAPHIC);
 
-	// View
-	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
+	// View	
 	lstBasicCommands.AddTail(ID_VIEW_TOP);
 	lstBasicCommands.AddTail(ID_VIEW_LEFT);
 	lstBasicCommands.AddTail(ID_VIEW_RIGHT);
@@ -224,6 +220,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_FRONT);
 	lstBasicCommands.AddTail(ID_VIEW_BACK);
 	lstBasicCommands.AddTail(ID_VIEW_ISOMETRIC);
+	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
+	lstBasicCommands.AddTail(ID_VIEW_CENTER_ALL_GEOMETRY);
+	lstBasicCommands.AddTail(ID_VIEW_MODEL_CHECKER);
 
 	// Show
 	lstBasicCommands.AddTail(ID_SHOW_FACES);

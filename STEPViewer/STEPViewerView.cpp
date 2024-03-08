@@ -230,27 +230,34 @@ CMySTEPViewerDoc* CMySTEPViewerView::GetDocument() const // non-debug version is
 int CMySTEPViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CView::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 
 	DragAcceptFiles(TRUE);
 
-	CMySTEPViewerDoc* pDoc = GetDocument();
+	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
+
 	if (!pDoc)
+	{
 		return -1;
+	}
 
 	pDoc->RegisterView(this);
 
 	return 0;
 }
 
-
 void CMySTEPViewerView::OnDestroy()
 {
-	CMySTEPViewerDoc* pDoc = GetDocument();
+	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
+
 	if (!pDoc)
+	{
 		return;
+	}
 
 	pDoc->UnRegisterView(this);
 
@@ -260,12 +267,10 @@ void CMySTEPViewerView::OnDestroy()
 	CView::OnDestroy();
 }
 
-
 BOOL CMySTEPViewerView::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
-
 
 void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -277,7 +282,6 @@ void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 	CView::OnLButtonDown(nFlags, point);
 }
 
-
 void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
@@ -287,7 +291,6 @@ void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CView::OnLButtonUp(nFlags, point);
 }
-
 
 void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
@@ -299,7 +302,6 @@ void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 	CView::OnMButtonDown(nFlags, point);
 }
 
-
 void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
@@ -309,7 +311,6 @@ void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 
 	CView::OnMButtonUp(nFlags, point);
 }
-
 
 void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
@@ -360,7 +361,7 @@ void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 	DragQueryFile(hDropInfo, 0, strFile.GetBuffer(dwBuffer + 1), dwBuffer + 1);
 
 	// Open
-	CMySTEPViewerDoc* pDoc = GetDocument();
+	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
 	pDoc->OnOpenDocument(strFile);

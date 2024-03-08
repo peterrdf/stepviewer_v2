@@ -347,7 +347,6 @@ void CRelationsView::LoadProperties(int_t iEntity, const vector<int_t>& vecInsta
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
-	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 	// ******************************************************************************************** //	
 
 	// ******************************************************************************************** //
