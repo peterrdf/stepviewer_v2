@@ -3,6 +3,7 @@
 #include "OpenGLSTEPView.h"
 #include "Controller.h"
 #include "STEPModel.h"
+#include "_3DUtils.h"
 
 #include "Resource.h"
 
@@ -733,12 +734,15 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	m_pOGLProgram->_enableBlinnPhongModel(true);
+	m_pOGLProgram->_enableBlinnPhongModel(true);	
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -855,10 +859,13 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -948,10 +955,13 @@ void COpenGLSTEPView::DrawLines()
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1042,10 +1052,13 @@ void COpenGLSTEPView::DrawPoints()
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1213,10 +1226,13 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{

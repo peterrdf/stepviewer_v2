@@ -26,6 +26,9 @@ protected: // Members
 	enumModelType m_enModelType;
 	SdaiModel	  m_iModel; // Model
 
+	// Offset
+	float m_dOriginalBoundingSphereDiameter;
+
 	// World's dimensions
 	float m_fXmin;
 	float m_fXmax;
@@ -57,6 +60,7 @@ public: // Methods
 	SdaiModel GetSdaiModel() const;
 
 	// --------------------------------------------------------------------------------------------	
+	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 	float GetBoundingSphereDiameter() const;

@@ -318,7 +318,8 @@ void CIFCModel::Clean()
 void CIFCModel::ScaleAndCenter()
 {
 	/* World */
-	m_fBoundingSphereDiameter = 0.f;
+	m_dOriginalBoundingSphereDiameter = 2.;
+	m_fBoundingSphereDiameter = 2.f;
 
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
@@ -357,9 +358,11 @@ void CIFCModel::ScaleAndCenter()
 	}
 
 	/* World */
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_dOriginalBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_fBoundingSphereDiameter = m_dOriginalBoundingSphereDiameter;
 
 	TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
