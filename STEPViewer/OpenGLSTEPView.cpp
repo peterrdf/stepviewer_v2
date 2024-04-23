@@ -733,6 +733,11 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+	else
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+	}
 
 	m_pOGLProgram->_enableBlinnPhongModel(true);	
 
@@ -821,6 +826,10 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 	if (bTransparent)
 	{
 		glDisable(GL_BLEND);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
 	}
 
 	// Restore Model-View Matrix
