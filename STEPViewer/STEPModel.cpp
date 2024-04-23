@@ -549,9 +549,10 @@ void CSTEPModel::LoadAssemblies()
 void CSTEPModel::LoadGeometry()
 {
 	// Defaults
-	int32_t	iR = 10,
-		iG = 150,
-		iB = 10,
+	int32_t	
+		iR = 175,
+		iG = 175,
+		iB = 175,
 		iA = 255;
 	int32_t	iDefaultColor = 256 * 256 * 256 * iR +
 		256 * 256 * iG +
