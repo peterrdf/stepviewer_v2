@@ -65,7 +65,7 @@ class CEntityProvider
 
 private: // Members
 
-	SdaiModel m_iModel;
+	int64_t m_iModel;
 	map<int_t, CEntity*> m_mapEntities;
 
 public: // Methods

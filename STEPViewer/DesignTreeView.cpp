@@ -114,7 +114,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	if (owlInstance == 0)
 	{
-		int_t iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
+		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
 		if (iExpressID != 0)
 		{
 			owlInstance = internalGetInstanceFromP21Line(pModel->GetSdaiModel(), iExpressID);

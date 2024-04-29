@@ -19,7 +19,7 @@ class CProductDefinition
 
 private: // Members
 
-	int_t m_iExpressID;
+	ExpressID m_iExpressID;
 	SdaiInstance m_iInstance;
 	wstring m_strId;
 	wstring m_strName;
@@ -97,8 +97,8 @@ public: // Methods
 
 	void Scale(float fResoltuion);
 	
-	int_t GetExpressID() const;
-	SdaiInstance GetInstance() const;	
+	ExpressID GetExpressID() const { return m_iExpressID; }
+	SdaiInstance GetInstance() const { return m_iInstance; }
 	const wchar_t* GetId() const;
 	const wchar_t* GetName() const;
 	const wchar_t* GetDescription() const;

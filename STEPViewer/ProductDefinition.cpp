@@ -100,8 +100,8 @@ void CProductDefinition::Calculate()
 	/**
 	* Retrieves the vertices
 	*/
-	m_pVertexBuffer->data() = new float[m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength()];
-	memset(m_pVertexBuffer->data(), 0, m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertexBuffer->data() = new float[(uint32_t)m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength()];
+	memset(m_pVertexBuffer->data(), 0, (uint32_t)m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
 
@@ -465,13 +465,6 @@ void CProductDefinition::Calculate()
 				iPreviousIndex = iIndex;
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
-
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < ConcFacesCohorts().size(); iCohort++)
-		{
-			ASSERT(ConcFacesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
-		}
-#endif
 	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
@@ -931,18 +924,6 @@ void CProductDefinition::Scale(float fResoltuion)
 	{
 		m_vecProductInstances[iInstance]->Scale(fResoltuion);
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-int_t CProductDefinition::GetExpressID() const
-{
-	return m_iExpressID;
-}
-
-// ------------------------------------------------------------------------------------------------
-SdaiInstance CProductDefinition::GetInstance() const
-{
-	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------

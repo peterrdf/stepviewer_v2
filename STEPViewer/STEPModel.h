@@ -22,7 +22,7 @@ class CSTEPModel : public CModel
 private: // Members
 	
 	CEntityProvider* m_pEntityProvider;
-	map<int_t, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
+	map<ExpressID, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
 	map<int_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
 	map<int_t, CAssembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
@@ -43,16 +43,16 @@ public: // Methods
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 
-	const map<int_t, CProductDefinition*>& GetDefinitions();
-	const map<int_t, CProductInstance*>& GetInstances();
-	const map<int_t, CAssembly*>& GetAssemblies();
+	const map<ExpressID, CProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
+	const map<int_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }
+	const map<int_t, CAssembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
 	CProductInstance* getProductInstanceByID(int_t iID) const;
 
 	void ScaleAndCenter(); // [-1, 1]
 
 	void Save(const wchar_t * szPath);
 	void Load(const wchar_t * szPath);
-	void Load(const wchar_t* szPath, int64_t iModel);
+	void Load(const wchar_t* szPath, SdaiModel iModel);
 
 private: // Methods
 	

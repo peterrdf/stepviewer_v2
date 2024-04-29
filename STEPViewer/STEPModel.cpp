@@ -188,24 +188,6 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int_t, CProductDefinition*>& CSTEPModel::GetDefinitions()
-{
-	return m_mapExpressID2Definition;
-}
-
-// ------------------------------------------------------------------------------------------------
-const map<int_t, CProductInstance*>& CSTEPModel::GetInstances()
-{
-	return m_mapID2Instance;
-}
-
-// ------------------------------------------------------------------------------------------------
-const map<int_t, CAssembly*>& CSTEPModel::GetAssemblies()
-{
-	return m_mapExpressIDAssembly;
-}
-
-// ------------------------------------------------------------------------------------------------
 CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
@@ -374,7 +356,7 @@ void CSTEPModel::Load(const wchar_t * szPath)
 {
 	Clean();
 
-	int64_t iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
+	SdaiModel iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 	if (iModel == 0)
 	{
 		MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -386,7 +368,7 @@ void CSTEPModel::Load(const wchar_t * szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Load(const wchar_t* szPath, int64_t iModel)
+void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 {
 	Clean();
 
