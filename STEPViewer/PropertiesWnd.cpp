@@ -922,14 +922,14 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 							int_t* valueComponentADB = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "value_component", sdaiADB, &valueComponentADB);
 
-							char* typePath = sdaiGetADBTypePath(valueComponentADB, 0);
+							const char* typePath = sdaiGetADBTypePath(valueComponentADB, 0);
 							switch (sdaiGetADBType(valueComponentADB)) {
 							case  sdaiINTEGER:
 							{
 								int_t	value = 0;
 								sdaiGetADBValue(valueComponentADB, sdaiINTEGER, (void*)&value);
 
-								strValue.Format(L"%i [%s]", (int)value, (LPCWSTR)CA2W(typePath));
+								strValue.Format(L"%i [%s]", (int)value, (LPCTSTR)CA2W(typePath));
 
 								pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
 								pProperty->AllowEdit(FALSE);
@@ -941,7 +941,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 								double	value = 0;
 								sdaiGetADBValue(valueComponentADB, sdaiREAL, (void*)&value);
 
-								strValue.Format(L"%f [%s]", value, (LPCWSTR)CA2W(typePath));
+								strValue.Format(L"%f [%s]", value, (LPCTSTR)CA2W(typePath));
 
 								pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
 								pProperty->AllowEdit(FALSE);
@@ -953,7 +953,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 								char* value = nullptr;
 								sdaiGetADBValue(valueComponentADB, sdaiSTRING, (void*)&value);
 
-								strValue.Format(L"%s [%s]", (LPCWSTR)CA2W(value), (LPCWSTR)CA2W(typePath));
+								strValue.Format(L"%s [%s]", (LPCWSTR)CA2W(value), (LPCTSTR)CA2W(typePath));
 
 								pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
 								pProperty->AllowEdit(FALSE);

@@ -91,7 +91,7 @@ wstring COWLProperty::GetRange(vector<int64_t>& vecRestrictionClasses) const
 		}
 		break;
 
-		case DATATYPEPROPERTY_TYPE_CHAR:
+		case DATATYPEPROPERTY_TYPE_STRING:
 		{
 			strRange = L"xsd:string";
 		}
@@ -154,7 +154,7 @@ wstring COWLProperty::GetCardinality(int64_t iInstance) const
 		}
 		break;
 
-		case DATATYPEPROPERTY_TYPE_CHAR:
+		case DATATYPEPROPERTY_TYPE_STRING:
 		{
 			char** szValue = nullptr;
 			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&szValue, &iCard);

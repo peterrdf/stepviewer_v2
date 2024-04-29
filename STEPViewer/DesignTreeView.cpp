@@ -409,7 +409,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 				}
 				break;
 
-				case DATATYPEPROPERTY_TYPE_CHAR:
+				case DATATYPEPROPERTY_TYPE_STRING:
 				{
 					char** szValue = nullptr;
 					int64_t iValuesCount = 0;
