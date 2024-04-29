@@ -25,7 +25,7 @@ typedef unsigned int UINT;
 // X, Y, Z, Nx, Ny, Nz, Ambient, Diffuse, Emissive, Specular
 // (Normal vectors - bit 5, Diffuse, Emissive, Specular - bit 25, 26 & 27)
 */
-#define VERTEX_LENGTH  10
+#define _VERTEX_LENGTH  10
 
 // ------------------------------------------------------------------------------------------------
 // X, Y, Z, Nx, Ny, Nz

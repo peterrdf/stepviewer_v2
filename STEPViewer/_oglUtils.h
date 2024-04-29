@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_mvc.h"
 #include "_geometry.h"
 #include "_quaterniond.h"
 
@@ -633,8 +634,7 @@ public: // Methods
 	}
 
 	virtual ~_oglBlinnPhongProgram(void)
-	{
-	}
+	{}
 
 	bool _getSupportsTexture() const
 	{
@@ -1644,7 +1644,7 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iIBO)] = iIBO;
 
-		int_t iIndicesCount = 0;
+		uint32_t iIndicesCount = 0;
 		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
 
 		if ((pIndices == nullptr) || (iIndicesCount == 0))
@@ -1665,8 +1665,8 @@ public: // Methods
 		GLsizei iIBOOffset = 0;
 		for (auto pCohort : vecCohorts)
 		{
-			pCohort->ibo() = iIBO;
-			pCohort->iboOffset() = iIBOOffset;
+			pCohort->IBO() = iIBO;
+			pCohort->IBOOffset() = iIBOOffset;
 
 			iIBOOffset += (GLsizei)pCohort->indices().size();
 		}
@@ -1683,7 +1683,7 @@ public: // Methods
 			return 0;
 		}
 
-		int_t iVerticesCount = 0;
+		int64_t iVerticesCount = 0;
 		float* pVertices = getVertices(vecInstances, pProgram->_getSupportsTexture(), iVerticesCount);
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
@@ -1719,10 +1719,10 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
+		const int64_t VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * _VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
 		delete[] pVertices;
 
 		setVBOAttributes(pProgram);
@@ -1733,7 +1733,7 @@ public: // Methods
 			pInstance->VBO() = iVBO;
 			pInstance->VBOOffset() = iVBOOffset;
 
-			iVBOOffset += (GLsizei)pInstance->GetVerticesCount();
+			iVBOOffset += (GLsizei)pInstance->getVerticesCount();
 		}
 
 		glBindVertexArray(0);
@@ -1747,13 +1747,13 @@ public: // Methods
 
 	void setVBOAttributes(_oglBlinnPhongProgram* pProgram) const
 	{
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
+		const int64_t VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
-		glVertexAttribPointer(pProgram->_getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
-		glVertexAttribPointer(pProgram->_getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
+		glVertexAttribPointer(pProgram->_getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), 0);
+		glVertexAttribPointer(pProgram->_getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
 		if (pProgram->_getSupportsTexture())
 		{
-			glVertexAttribPointer(pProgram->_getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
+			glVertexAttribPointer(pProgram->_getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
 		}
 
 		glEnableVertexAttribArray(pProgram->_getVertexPosition());
@@ -1767,29 +1767,29 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int_t& iVerticesCount)
+	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
 	{
-		const int64_t _VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
+		const int64_t VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
 		iVerticesCount = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
-			iVerticesCount += vecInstances[i]->GetVerticesCount();
+			iVerticesCount += vecInstances[i]->getVerticesCount();
 		}
 
-		float* pVertices = new float[iVerticesCount * _VERTEX_LENGTH];
+		float* pVertices = new float[iVerticesCount * VERTEX_LENGTH];
 
-		int_t iOffset = 0;
+		int64_t iOffset = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
 			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
-				vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH * sizeof(float));
+				vecInstances[i]->getVerticesCount() * VERTEX_LENGTH * sizeof(float));
 
 			delete[] pSrcVertices;
 
-			iOffset += vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH;
+			iOffset += vecInstances[i]->getVerticesCount() * VERTEX_LENGTH;
 		}
 
 		return pVertices;
@@ -1798,29 +1798,29 @@ public: // Methods
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
 	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
 	{
-		const int64_t _SRC_VERTEX_LENGTH = pInstance->GetVertexLength();
+		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
 		const int64_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
-		float* pVertices = new float[pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH];
-		memset(pVertices, 0, pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
 
-		for (int64_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
+		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 		{
 			// X, Y, Z
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
 
 			// Nx, Ny, Nz
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
 
 			// Tx, Ty
 			if (bSupportsTexture)
 			{
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
 			}
 		}
 
@@ -1874,6 +1874,7 @@ enum class enumView : int64_t
 	Isometric,
 };
 
+// ************************************************************************************************
 enum class enumRotationMode : int
 {
 	XY = 0, // Standard
@@ -1912,15 +1913,34 @@ const wchar_t COORDINATE_SYSTEM_VBO[] = L"COORDINATE_SYSTEM_VBO";
 const wchar_t COORDINATE_SYSTEM_IBO[] = L"COORDINATE_SYSTEM_IBO";
 
 // ************************************************************************************************
+enum class enumMouseEvent : int
+{
+	Move = 0,
+	LBtnDown,
+	LBtnUp,
+	MBtnDown,
+	MBtnUp,
+	RBtnDown,
+	RBtnUp,
+};
+
+// ************************************************************************************************
+#define CULL_FACES_NONE L"<none>"
+#define CULL_FACES_FRONT L"Front"
+#define CULL_FACES_BACK L"Back"
+
+// ************************************************************************************************
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {
 
 protected: // Members
 
+	// MFC
 	CWnd* m_pWnd;
 	CMFCToolTipCtrl m_toolTipCtrl;
 
+	// OpenGL
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
@@ -1928,17 +1948,18 @@ protected: // Members
 	enumProjection m_enProjection;
 	glm::mat4 m_matModelView;	
 
+	// Cache
 	_oglBuffers<Instance> m_oglBuffers;
 
 	// Rotation
 	enumRotationMode m_enRotationMode;
 
-	// degrees
+	// 2D Rotation
 	float m_fXAngle;
 	float m_fYAngle;
 	float m_fZAngle;
 
-	// radians
+	// 3D Rotation
 	_quaterniond m_rotation;
 
 	// World
@@ -1963,7 +1984,6 @@ protected: // Members
 	// Translation
 	float m_fXTranslation; // Perspective & Orthographic
 	float m_fYTranslation; // Perspective & Orthographic
-
 	float m_fZTranslation; // Perspective
 
 	// Orthographic
@@ -1971,6 +1991,23 @@ protected: // Members
 	float m_fScaleFactorMin;
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
+
+	// UI
+	BOOL m_bShowFaces;
+	CString m_strCullFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+	BOOL m_bShowBoundingBoxes;
+	BOOL m_bShowNormalVectors;
+	BOOL m_bShowTangenVectors;
+	BOOL m_bShowBiNormalVectors;
+	BOOL m_bScaleVectors;
+	BOOL m_bShowCoordinateSystem;
+	BOOL m_bShowNavigator;
 
 public: // Methods
 
@@ -2011,13 +2048,27 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
+		, m_bShowFaces(TRUE)
+		, m_strCullFaces(CULL_FACES_NONE)
+		, m_bShowFacesPolygons(FALSE)
+		, m_bShowConceptualFacesPolygons(TRUE)
+		, m_bShowLines(TRUE)
+		, m_fLineWidth(1.f)
+		, m_bShowPoints(TRUE)
+		, m_fPointSize(1.f)
+		, m_bShowBoundingBoxes(FALSE)
+		, m_bShowNormalVectors(FALSE)
+		, m_bShowTangenVectors(FALSE)
+		, m_bShowBiNormalVectors(FALSE)
+		, m_bScaleVectors(FALSE)
+		, m_bShowCoordinateSystem(TRUE)
+		, m_bShowNavigator(TRUE)
 	{
 		_setView(enumView::Isometric);
 	}	
 
 	virtual ~_oglRenderer()
-	{
-	}
+	{}
 
 	// _ioglRenderer
 	virtual _oglProgram* _getOGLProgram() const override { return m_pOGLProgram; }
@@ -2807,7 +2858,10 @@ public: // Methods
 			}
 			break;
 		} // switch (nChar)
-	}	
+	}
+
+	// UI
+	
 
 private: //  Methods
 

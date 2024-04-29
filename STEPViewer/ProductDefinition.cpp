@@ -86,7 +86,7 @@ void CProductDefinition::Calculate()
 	SetFormat(iModel, setting, mask);
 
 	ASSERT(m_pVertexBuffer == nullptr);
-	m_pVertexBuffer = new _vertices_f();
+	m_pVertexBuffer = new _vertices_f(_VERTEX_LENGTH);
 
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
@@ -100,10 +100,8 @@ void CProductDefinition::Calculate()
 	/**
 	* Retrieves the vertices
 	*/
-	m_pVertexBuffer->vertexLength() = SetFormat(iModel, 0, 0) / sizeof(float);
-
-	m_pVertexBuffer->data() = new float[m_pVertexBuffer->size() * m_pVertexBuffer->vertexLength()];
-	memset(m_pVertexBuffer->data(), 0, m_pVertexBuffer->size() * m_pVertexBuffer->vertexLength() * sizeof(float));
+	m_pVertexBuffer->data() = new float[m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength()];
+	memset(m_pVertexBuffer->data(), 0, m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
 
@@ -145,7 +143,7 @@ void CProductDefinition::Calculate()
 			* Material
 			*/
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= VERTEX_LENGTH;
+			iIndexValue *= _VERTEX_LENGTH;
 
 			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -200,7 +198,7 @@ void CProductDefinition::Calculate()
 		if (iIndicesCountPoints > 0)
 		{
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= VERTEX_LENGTH;
+			iIndexValue *= _VERTEX_LENGTH;
 
 			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -246,7 +244,7 @@ void CProductDefinition::Calculate()
 	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
 	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
 		{
@@ -262,7 +260,7 @@ void CProductDefinition::Calculate()
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -286,7 +284,7 @@ void CProductDefinition::Calculate()
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -313,7 +311,7 @@ void CProductDefinition::Calculate()
 			*/
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				ConcFacesCohorts().push_back(pCohort);
 			}
@@ -323,7 +321,7 @@ void CProductDefinition::Calculate()
 			*/
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				ConcFacesCohorts().push_back(pCohort);
 			}
@@ -536,7 +534,7 @@ void CProductDefinition::Calculate()
 	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
 	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFacePoints->second.size(); iConcFace++)
 		{
@@ -552,7 +550,7 @@ void CProductDefinition::Calculate()
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -576,7 +574,7 @@ void CProductDefinition::Calculate()
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -603,7 +601,7 @@ void CProductDefinition::Calculate()
 			*/
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				PointsCohorts().push_back(pCohort);
 			}
@@ -613,7 +611,7 @@ void CProductDefinition::Calculate()
 			*/
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				PointsCohorts().push_back(pCohort);
 			}
@@ -645,7 +643,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
 {
-	if (GetVerticesCount() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -667,7 +665,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
 {
-	if (GetVerticesCount() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -717,7 +715,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
 {
-	if (GetVerticesCount() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -735,9 +733,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -773,9 +771,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				VECTOR3 vecPoint =
 				{
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -811,9 +809,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				VECTOR3 vecPoint =
 				{
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -844,9 +842,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -872,7 +870,7 @@ void CProductDefinition::ScaleAndCenter(
 	float fZmin, float fZmax, 
 	float fResoltuion)
 {
-	if (GetVerticesCount() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}	
@@ -880,22 +878,22 @@ void CProductDefinition::ScaleAndCenter(
 	/**
 	* Vertices
 	*/
-	for (int_t iVertex = 0; iVertex < GetVerticesCount(); iVertex++)
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] -= fXmin;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] -= fYmin;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] -= fZmin;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] -= fXmin;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] -= fYmin;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] -= fZmin;
 
 		// center
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] -= ((fXmax - fXmin) / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] -= ((fYmax - fYmin) / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] -= ((fZmax - fZmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] -= ((fXmax - fXmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] -= ((fYmax - fYmin) / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] -= ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
 	}	
 
 	/**
@@ -910,7 +908,7 @@ void CProductDefinition::ScaleAndCenter(
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::Scale(float fResoltuion)
 {
-	if (GetVerticesCount() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -918,12 +916,12 @@ void CProductDefinition::Scale(float fResoltuion)
 	/**
 	* Vertices
 	*/
-	for (int_t iVertex = 0; iVertex < GetVerticesCount(); iVertex++)
+	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
 		// [-1.0 -> 1.0]
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
 	}
 
 	/**
@@ -1034,7 +1032,7 @@ int64_t CProductDefinition::GetIndicesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-float* CProductDefinition::GetVertices() const
+float* CProductDefinition::getVertices() const
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -1045,7 +1043,7 @@ float* CProductDefinition::GetVertices() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CProductDefinition::GetVerticesCount() const
+int64_t CProductDefinition::getVerticesCount() const
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -1056,9 +1054,9 @@ int64_t CProductDefinition::GetVerticesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CProductDefinition::GetVertexLength() const
+int64_t CProductDefinition::getVertexLength() const
 {
-	return VERTEX_LENGTH;
+	return _VERTEX_LENGTH;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1092,7 +1090,7 @@ const vector<_primitives >& CProductDefinition::GetConcFacesPolygons() const
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CProductDefinition::ConcFacesCohorts()
+vector<_cohortWithMaterial*>& CProductDefinition::ConcFacesCohorts()
 {
 	return m_vecConcFacesCohorts;
 }
@@ -1109,7 +1107,7 @@ vector<_cohort*>& CProductDefinition::LinesCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CProductDefinition::PointsCohorts()
+vector<_cohortWithMaterial*>& CProductDefinition::PointsCohorts()
 {
 	return m_vecPointsCohorts;
 }

@@ -323,7 +323,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	for (auto itProductDefinitions = mapDefinitions.begin(); itProductDefinitions != mapDefinitions.end(); itProductDefinitions++)
 	{
 		auto pDefinition = itProductDefinitions->second;
-		if (pDefinition->GetVerticesCount() == 0)
+		if (pDefinition->getVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -335,7 +335,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pDefinition->GetVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pDefinition->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -436,7 +436,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			vecPointsCohorts.push_back(pDefinition->PointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pDefinition->GetVerticesCount();
+		iVerticesCount += (GLsizei)pDefinition->getVerticesCount();
 		vecProductDefinitionsCohort.push_back(pDefinition);
 	} // for (auto itProductDefinitions = ...
 
@@ -707,7 +707,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawFaces(bool bTransparent)
 {
-	if (!m_bShowFaces)
+	if (!COpenGLView::m_bShowFaces)
 	{
 		return;
 	}
@@ -810,11 +810,11 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 					m_pOGLProgram->_setMaterial(pMaterial);
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,
 						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pDefinition->VBOOffset());
 				}
 			} // for (size_t iInstance = ...			
@@ -844,7 +844,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawConceptualFacesPolygons()
 {
-	if (!m_bShowConceptualFacesPolygons)
+	if (!COpenGLView::m_bShowConceptualFacesPolygons)
 	{
 		return;
 	}
@@ -915,11 +915,11 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 				{
 					_cohort* pCohort = pDefinition->ConcFacePolygonsCohorts()[iCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_LINES,
 						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pDefinition->VBOOffset());
 				}
 			} // for (size_t iInstance = ...			
@@ -940,7 +940,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawLines()
 {
-	if (!m_bShowLines)
+	if (!COpenGLView::m_bShowLines)
 	{
 		return;
 	}
@@ -1011,11 +1011,11 @@ void COpenGLSTEPView::DrawLines()
 				{
 					_cohort* pCohort = pDefinition->LinesCohorts()[iCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_LINES,
 						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pDefinition->VBOOffset());
 				}
 			} // for (size_t iInstance = ...			
@@ -1036,7 +1036,7 @@ void COpenGLSTEPView::DrawLines()
 // ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawPoints()
 {
-	if (!m_bShowPoints)
+	if (!COpenGLView::m_bShowPoints)
 	{
 		return;
 	}
@@ -1115,11 +1115,11 @@ void COpenGLSTEPView::DrawPoints()
 						pMaterial->getDiffuseColor().g(),
 						pMaterial->getDiffuseColor().b());
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_POINTS,
 						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pDefinition->VBOOffset());
 				}
 			} // for (auto pInstance ...
@@ -1290,11 +1290,11 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 						itSelectionColor->second.g(),
 						itSelectionColor->second.b());
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,
 						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pDefinition->VBOOffset());
 				}
 			} // for (size_t iInstance = ...			

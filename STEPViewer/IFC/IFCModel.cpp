@@ -676,7 +676,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	auto pInstance = new CIFCInstance(this, iInstance, szInstanceGUIDW);
 
 	ASSERT(pInstance->m_pVertexBuffer == nullptr);
-	pInstance->m_pVertexBuffer = new _vertices_f();
+	pInstance->m_pVertexBuffer = new _vertices_f(_VERTEX_LENGTH);
 
 	ASSERT(pInstance->m_pIndexBuffer == nullptr);
 	pInstance->m_pIndexBuffer = new _indices_i32();
@@ -696,10 +696,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	/**
 	* Retrieves the vertices
 	*/
-	pInstance->m_pVertexBuffer->vertexLength() = SetFormat(m_iModel, 0, 0) / sizeof(float);
-
-	pInstance->m_pVertexBuffer->data() = new float[pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->vertexLength()];
-	memset(pInstance->m_pVertexBuffer->data(), 0, pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->vertexLength() * sizeof(float));
+	pInstance->m_pVertexBuffer->data() = new float[pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength()];
+	memset(pInstance->m_pVertexBuffer->data(), 0, pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(iOWLInstance, pInstance->m_pVertexBuffer->data());
 
@@ -741,7 +739,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			* Material
 			*/
 			int32_t iIndexValue = *(pInstance->m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= VERTEX_LENGTH;
+			iIndexValue *= _VERTEX_LENGTH;
 
 			float fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -796,7 +794,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 		if (iIndicesCountPoints > 0)
 		{
 			int32_t iIndexValue = *(pInstance->m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= VERTEX_LENGTH;
+			iIndexValue *= _VERTEX_LENGTH;
 
 			float fColor = *(pInstance->m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -842,7 +840,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
 	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
 		{
@@ -858,7 +856,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -882,7 +880,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -909,7 +907,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			*/
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				pInstance->ConcFacesCohorts().push_back(pCohort);
 			}
@@ -919,7 +917,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			*/
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				pInstance->ConcFacesCohorts().push_back(pCohort);
 			}
@@ -1127,7 +1125,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
 	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFacePoints->second.size(); iConcFace++)
 		{
@@ -1143,7 +1141,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -1167,7 +1165,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -1194,7 +1192,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			*/
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				pInstance->PointsCohorts().push_back(pCohort);
 			}
@@ -1204,7 +1202,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			*/
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				pInstance->PointsCohorts().push_back(pCohort);
 			}

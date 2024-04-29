@@ -110,7 +110,7 @@ CIFCModel * CIFCInstance::GetModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-float* CIFCInstance::GetVertices()
+float* CIFCInstance::getVertices()
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -121,7 +121,7 @@ float* CIFCInstance::GetVertices()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::GetVerticesCount()
+int_t CIFCInstance::getVerticesCount()
 {
 	if (m_pVertexBuffer != nullptr)
 	{
@@ -132,9 +132,9 @@ int_t CIFCInstance::GetVerticesCount()
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CIFCInstance::GetVertexLength() const
+int64_t CIFCInstance::getVertexLength() const
 {
-	return VERTEX_LENGTH;
+	return _VERTEX_LENGTH;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ const vector<_primitives >& CIFCInstance::GetConcFacesPolygons() const
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CIFCInstance::ConcFacesCohorts()
+vector<_cohortWithMaterial*>& CIFCInstance::ConcFacesCohorts()
 {
 	return m_vecConcFacesCohorts;
 }
@@ -207,7 +207,7 @@ vector<_cohort*>& CIFCInstance::LinesCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_facesCohort*>& CIFCInstance::PointsCohorts()
+vector<_cohortWithMaterial*>& CIFCInstance::PointsCohorts()
 {
 	return m_vecPointsCohorts;
 }
@@ -265,12 +265,12 @@ void CIFCInstance::CalculateMinMax(
 				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iTriangle = ...
 	} // if (!m_vecTriangles.empty())	
@@ -291,12 +291,12 @@ void CIFCInstance::CalculateMinMax(
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecConcFacePolygons.empty())
@@ -317,12 +317,12 @@ void CIFCInstance::CalculateMinMax(
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecLines.empty())
@@ -338,12 +338,12 @@ void CIFCInstance::CalculateMinMax(
 				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecPoints.empty())
@@ -368,21 +368,21 @@ void CIFCInstance::ScaleAndCenter(
 	for (int_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		GetVertices()[(iVertex * VERTEX_LENGTH)] = GetVertices()[(iVertex * VERTEX_LENGTH)] - fXmin;
-		GetVertices()[(iVertex * VERTEX_LENGTH) + 1] = GetVertices()[(iVertex * VERTEX_LENGTH) + 1] - fYmin;
-		GetVertices()[(iVertex * VERTEX_LENGTH) + 2] = GetVertices()[(iVertex * VERTEX_LENGTH) + 2] - fZmin;
+		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] - fXmin;
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] - fYmin;
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] - fZmin;
 
 		// center
-		GetVertices()[(iVertex * VERTEX_LENGTH)] = GetVertices()[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		GetVertices()[(iVertex * VERTEX_LENGTH) + 1] = GetVertices()[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		GetVertices()[(iVertex * VERTEX_LENGTH) + 2] = GetVertices()[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
 		if (bScale)
 		{
-			GetVertices()[(iVertex * VERTEX_LENGTH)] = GetVertices()[(iVertex * VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-			GetVertices()[(iVertex * VERTEX_LENGTH) + 1] = GetVertices()[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-			GetVertices()[(iVertex * VERTEX_LENGTH) + 2] = GetVertices()[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+			getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+			getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+			getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 		}
 	}
 }

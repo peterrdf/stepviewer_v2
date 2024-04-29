@@ -46,12 +46,12 @@ private: // Members
 	vector<_primitives> m_vecPoints;	
 
 	// Materials
-	vector<_facesCohort*> m_vecConcFacesCohorts;
+	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
 
 	// Cohorts
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
 	vector<_cohort*> m_vecLinesCohorts;
-	vector<_facesCohort*> m_vecPointsCohorts;
+	vector<_cohortWithMaterial*> m_vecPointsCohorts;
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -114,9 +114,9 @@ public: // Methods
 	
 	int32_t* GetIndices() const;
 	int64_t GetIndicesCount() const;
-	float*  GetVertices() const;
-	int64_t GetVerticesCount() const;
-	int64_t GetVertexLength() const;
+	float*  getVertices() const;
+	int64_t getVerticesCount() const;
+	int64_t getVertexLength() const;
 	int64_t GetConceptualFacesCount() const;
 
 	const vector<_primitives>& GetTriangles() const;
@@ -125,12 +125,12 @@ public: // Methods
 	const vector<_primitives>& GetConcFacesPolygons() const;
 
 	// Materials
-	vector<_facesCohort*>& ConcFacesCohorts();
+	vector<_cohortWithMaterial*>& ConcFacesCohorts();
 
 	// Cohorts
 	vector<_cohort*>& ConcFacePolygonsCohorts();
 	vector<_cohort*>& LinesCohorts();
-	vector<_facesCohort*>& PointsCohorts();	
+	vector<_cohortWithMaterial*>& PointsCohorts();
 
 	// VBO (OpenGL)
 	GLuint& VBO();

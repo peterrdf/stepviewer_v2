@@ -291,7 +291,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	for (auto itIinstance = mapInstances.begin(); itIinstance != mapInstances.end(); itIinstance++)
 	{
 		auto pInstance = itIinstance->second;
-		if (pInstance->GetVerticesCount() == 0)
+		if (pInstance->getVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -303,7 +303,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pInstance->GetVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -404,7 +404,7 @@ COpenGLIFCView::~COpenGLIFCView()
 			vecPointsCohorts.push_back(pInstance->PointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pInstance->GetVerticesCount();
+		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
 		vecInstancesCohort.push_back(pInstance);
 	} // for (; itIinstances != ...
 
@@ -668,7 +668,7 @@ COpenGLIFCView::~COpenGLIFCView()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawFaces(bool bTransparent)
 {
-	if (!m_bShowFaces)
+	if (!COpenGLView::m_bShowFaces)
 	{
 		return;
 	}
@@ -727,11 +727,11 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 
 				m_pOGLProgram->_setMaterial(pMaterial);
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			} // for (auto pConcFacesCohort ...
 		} // for (auto pInstance ...
@@ -753,7 +753,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawConceptualFacesPolygons()
 {
-	if (!m_bShowConceptualFacesPolygons)
+	if (!COpenGLView::m_bShowConceptualFacesPolygons)
 	{
 		return;
 	}
@@ -785,11 +785,11 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 
 			for (auto pCohort : pInstance->ConcFacePolygonsCohorts())
 			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto pInstance ...
@@ -806,7 +806,7 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawLines()
 {
-	if (!m_bShowLines)
+	if (!COpenGLView::m_bShowLines)
 	{
 		return;
 	}
@@ -838,11 +838,11 @@ void COpenGLIFCView::DrawLines()
 
 			for (auto pCohort : pInstance->LinesCohorts())
 			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto pInstance ...
@@ -859,7 +859,7 @@ void COpenGLIFCView::DrawLines()
 // ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawPoints()
 {
-	if (!m_bShowPoints)
+	if (!COpenGLView::m_bShowPoints)
 	{
 		return;
 	}
@@ -904,11 +904,11 @@ void COpenGLIFCView::DrawPoints()
 					pMaterial->getDiffuseColor().g(),
 					pMaterial->getDiffuseColor().b());
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_POINTS,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			} // for (size_t iPointsCohort = ...		
 		} // for (auto itInstance ...
@@ -1037,11 +1037,11 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 			{
 				auto pConcFacesCohort = pInstance->ConcFacesCohorts()[iConcFacesCohort];
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto pInstance ...

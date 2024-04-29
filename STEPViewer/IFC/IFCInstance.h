@@ -44,12 +44,12 @@ private: // Members
 	vector<_primitives> m_vecPoints;
 
 	// Materials
-	vector<_facesCohort*> m_vecConcFacesCohorts;
+	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
 
 	// Cohorts
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
 	vector<_cohort*> m_vecLinesCohorts;
-	vector<_facesCohort*> m_vecPointsCohorts;
+	vector<_cohortWithMaterial*> m_vecPointsCohorts;
 	
 	// UI
 	bool m_bReferenced;
@@ -76,9 +76,9 @@ public: // Methods
 
 	CIFCModel* GetModel() const;
 	
-	float* GetVertices();
-	int_t GetVerticesCount();
-	int64_t GetVertexLength() const;
+	float* getVertices();
+	int_t getVerticesCount();
+	int64_t getVertexLength() const;
 	int32_t* GetIndices() const;
 	int64_t GetIndicesCount() const;
 	int64_t& conceptualFacesCount();
@@ -89,12 +89,12 @@ public: // Methods
 	const vector<_primitives>& GetConcFacesPolygons() const;
 
 	// Materials
-	vector<_facesCohort*>& ConcFacesCohorts();
+	vector<_cohortWithMaterial*>& ConcFacesCohorts();
 
 	// Cohorts
 	vector<_cohort*>& ConcFacePolygonsCohorts();
 	vector<_cohort*>& LinesCohorts();
-	vector<_facesCohort*>& PointsCohorts();
+	vector<_cohortWithMaterial*>& PointsCohorts();
 
 	// State
 	bool& Referenced();

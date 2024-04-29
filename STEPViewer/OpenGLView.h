@@ -4,26 +4,13 @@
 #include "_oglUtils.h"
 
 // ------------------------------------------------------------------------------------------------
-// Mouse support
-enum class enumMouseEvent : int
-{
-	Move = 0,
-	LBtnDown = 1,
-	LBtnUp = 2,
-	MBtnDown = 3,
-	MBtnUp = 4,
-	RBtnDown = 5,
-	RBtnUp = 6,
-};
-
-// ------------------------------------------------------------------------------------------------
 class COpenGLView 
 	: public CViewBase
 {
 
 protected: // Members
 
-	// UI
+// UI
 	BOOL m_bShowFaces;
 	BOOL m_bShowConceptualFacesPolygons;
 	BOOL m_bShowLines;
@@ -45,7 +32,7 @@ public: // Methods
 	void ShowLines(BOOL bShow) { m_bShowLines = bShow; }
 	BOOL AreLinesShown() const { return m_bShowLines; }
 	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; }
-	BOOL ArePointsShown() const { return m_bShowPoints; }	
+	BOOL ArePointsShown() const { return m_bShowPoints; }
 
 	// Load
 	virtual void Load() PURE;
