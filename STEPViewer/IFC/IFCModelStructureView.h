@@ -69,10 +69,10 @@ private: // Methods
 
 	void LoadModel(CIFCModel* pModel);
 	void LoadHeader(CIFCModel* pModel, HTREEITEM hModel);
-	void LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance);
-	void LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
-	void LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
-	void LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent);
+	void LoadProject(CIFCModel* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance);
+	void LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadContainsElements(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadObject(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel);
 	void LoadTree_UpdateItems(HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);

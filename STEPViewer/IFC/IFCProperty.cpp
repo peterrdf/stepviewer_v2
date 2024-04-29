@@ -14,13 +14,12 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 {
 }
 
-// ------------------------------------------------------------------------------------------------
-/*static*/ bool CIFCProperty::HasProperties(int64_t iModel, int64_t iInstance)
+/*static*/ bool CIFCProperty::HasProperties(SdaiModel iModel, SdaiInstance iInstance)
 {
 	ASSERT(iModel != 0);
 	ASSERT(iInstance != 0);
 
-	int64_t* piIFCIsDefinedByInstances = 0;
+	SdaiAggr piIFCIsDefinedByInstances = 0;
 	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
 
 	if (piIFCIsDefinedByInstances == nullptr)
@@ -28,10 +27,10 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 		return false;
 	}
 
-	int64_t iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
-	for (int64_t i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
+	SdaiInteger iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
 	{
-		int64_t	iIFCIsDefinedByInstance = 0;
+		SdaiInstance iIFCIsDefinedByInstance = 0;
 		engiGetAggrElement(piIFCIsDefinedByInstances, i, sdaiINSTANCE, &iIFCIsDefinedByInstance);
 
 		if ((sdaiGetInstanceType(iIFCIsDefinedByInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYPROPERTIES")) ||
@@ -44,7 +43,7 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 	return	false;
 }
 // ------------------------------------------------------------------------------------------------
-/*static*/ wstring CIFCProperty::GetPropertySingleValue(int64_t iIFCPropertySingleValue)
+/*static*/ wstring CIFCProperty::GetPropertySingleValue(SdaiInstance iIFCPropertySingleValue)
 {
 	ASSERT(iIFCPropertySingleValue != 0);
 
@@ -183,7 +182,7 @@ CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertyCollection(int64_t 
 // ------------------------------------------------------------------------------------------------
 void CIFCPropertyProvider::LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	int64_t* piIFCIsDefinedByInstances = 0;
+	SdaiAggr piIFCIsDefinedByInstances = 0;
 	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
 
 	if (piIFCIsDefinedByInstances == nullptr)
@@ -191,13 +190,13 @@ void CIFCPropertyProvider::LoadProperties(int64_t iInstance, CIFCPropertySetColl
 		return;
 	}
 
-	const int64_t iIFCRelDefinesByTypeEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYTYPE");
-	const int64_t iIFCRelDefinesByPropertiesEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYPROPERTIES");
+	SdaiEntity iIFCRelDefinesByTypeEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYTYPE");
+	SdaiEntity iIFCRelDefinesByPropertiesEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYPROPERTIES");
 
-	int64_t iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
-	for (int64_t i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
+	SdaiInteger iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
 	{
-		int64_t	iIFCIsDefinedByInstance = 0;
+		SdaiInstance iIFCIsDefinedByInstance = 0;
 		engiGetAggrElement(piIFCIsDefinedByInstances, i, sdaiINSTANCE, &iIFCIsDefinedByInstance);
 
 		if (sdaiGetInstanceType(iIFCIsDefinedByInstance) == iIFCRelDefinesByPropertiesEntity)
@@ -246,7 +245,7 @@ void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance, CIFC
 	/*
 	* Property set
 	*/
-	int64_t* piIFCHasPropertiesInstances = nullptr;
+	SdaiAggr piIFCHasPropertiesInstances = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "HasProperties", sdaiAGGR, &piIFCHasPropertiesInstances);
 
 	if (piIFCHasPropertiesInstances == nullptr)
@@ -258,12 +257,12 @@ void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance, CIFC
 
 	auto pPropertySet = new CIFCPropertySet(strItem);
 
-	const int64_t iIFCPropertySingleValueEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSINGLEVALUE");
+	SdaiEntity iIFCPropertySingleValueEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSINGLEVALUE");
 
-	int64_t iIFCHasPropertiesInstancesCount = sdaiGetMemberCount(piIFCHasPropertiesInstances);
-	for (int64_t i = 0; i < iIFCHasPropertiesInstancesCount; ++i)
+	SdaiInteger iIFCHasPropertiesInstancesCount = sdaiGetMemberCount(piIFCHasPropertiesInstances);
+	for (SdaiInteger i = 0; i < iIFCHasPropertiesInstancesCount; ++i)
 	{
-		int64_t iIFCHasPropertiesInstance = 0;
+		SdaiInstance iIFCHasPropertiesInstance = 0;
 		engiGetAggrElement(piIFCHasPropertiesInstances, i, sdaiINSTANCE, &iIFCHasPropertiesInstance);
 
 		strItem = GetPropertyName(iIFCHasPropertiesInstance);
@@ -298,16 +297,16 @@ void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance,
 		return;
 	}
 
-	const int64_t iIFCElementQuantityEntity = sdaiGetEntity(m_iModel, "IFCELEMENTQUANTITY");
-	const int64_t iIFCPropertySetEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSET");
+	SdaiEntity iIFCElementQuantityEntity = sdaiGetEntity(m_iModel, "IFCELEMENTQUANTITY");
+	SdaiEntity iIFCPropertySetEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSET");
 
-	int64_t* piIFCHasPropertySets = nullptr;
+	SdaiAggr piIFCHasPropertySets = nullptr;
 	sdaiGetAttrBN(iIFCRelatingType, "HasPropertySets", sdaiAGGR, &piIFCHasPropertySets);
 
-	int64_t iIFCHasPropertySetsCount = sdaiGetMemberCount(piIFCHasPropertySets);
-	for (int64_t i = 0; i < iIFCHasPropertySetsCount; ++i)
+	SdaiInteger iIFCHasPropertySetsCount = sdaiGetMemberCount(piIFCHasPropertySets);
+	for (SdaiInteger i = 0; i < iIFCHasPropertySetsCount; ++i)
 	{
-		int64_t iIFCHasPropertySetInstance = 0;
+		SdaiInstance iIFCHasPropertySetInstance = 0;
 		engiGetAggrElement(piIFCHasPropertySets, i, sdaiINSTANCE, &iIFCHasPropertySetInstance);
 		if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCElementQuantityEntity)
 		{
@@ -332,13 +331,13 @@ void CIFCPropertyProvider::LoadQuantites(int64_t iIFCPropertySetInstance, CIFCPr
 	*/
 	auto pPropertySet = new CIFCPropertySet(strItem);
 
-	int64_t* piIFCQuantities = nullptr;
+	SdaiAggr piIFCQuantities = nullptr;
 	sdaiGetAttrBN(iIFCPropertySetInstance, "Quantities", sdaiAGGR, &piIFCQuantities);
 
-	int64_t iIFCQuantitiesCount = sdaiGetMemberCount(piIFCQuantities);
-	for (int64_t i = 0; i < iIFCQuantitiesCount; ++i)
+	SdaiInteger iIFCQuantitiesCount = sdaiGetMemberCount(piIFCQuantities);
+	for (SdaiInteger i = 0; i < iIFCQuantitiesCount; ++i)
 	{
-		int64_t iIFCQuantityInstance = 0;
+		SdaiInstance iIFCQuantityInstance = 0;
 		engiGetAggrElement(piIFCQuantities, i, sdaiINSTANCE, &iIFCQuantityInstance);
 
 		if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYLENGTH"))

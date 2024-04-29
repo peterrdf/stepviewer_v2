@@ -697,12 +697,12 @@ void CIFCModelStructureView::LoadModel(CIFCModel* pModel)
 	/**********************************************************************************************
 	* Project/Units/Unreferenced
 	*/
-	int64_t* iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->GetSdaiModel(), (char*)"IFCPROJECT");
+	SdaiAggr iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->GetSdaiModel(), (char*)"IFCPROJECT");
 
-	int64_t iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
+	SdaiInteger iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
 	if (iIFCProjectInstancesCount > 0)
 	{
-		int64_t	iIFCProjectInstance = 0;
+		SdaiInstance iIFCProjectInstance = 0;
 		engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
 
 		/*
@@ -1001,7 +1001,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, int64_t iIFCProjectInstance)
+void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -1074,11 +1074,11 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, in
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	int64_t* piIsDecomposedByInstances = nullptr;
+	SdaiAggr piIsDecomposedByInstances = nullptr;
 	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &piIsDecomposedByInstances);
 
 	if (piIsDecomposedByInstances == nullptr)
@@ -1086,12 +1086,12 @@ void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 		return;
 	}
 
-	const int64_t iIFCRelAggregatesEntity = sdaiGetEntity(pModel->GetSdaiModel(), "IFCRELAGGREGATES");
+	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(pModel->GetSdaiModel(), "IFCRELAGGREGATES");
 
-	int64_t iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
-	for (int64_t i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
 	{
-		int64_t iIFCIsDecomposedByInstance = 0;
+		SdaiInstance iIFCIsDecomposedByInstance = 0;
 		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelAggregatesEntity)
@@ -1112,13 +1112,13 @@ void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 
 		HTREEITEM hDecomposition = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		int64_t* piIFCRelatedObjectsInstances = 0;
+		SdaiAggr piIFCRelatedObjectsInstances = 0;
 		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
 
-		int64_t iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
-		for (int64_t j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
 		{
-			int64_t iIFCRelatedObjectsInstance = 0;
+			SdaiInstance iIFCRelatedObjectsInstance = 0;
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
 			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
@@ -1127,11 +1127,11 @@ void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, int64_t iInst
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	int64_t* piContainsElementsInstances = nullptr;
+	SdaiAggr piContainsElementsInstances = nullptr;
 	sdaiGetAttrBN(iInstance, "ContainsElements", sdaiAGGR, &piContainsElementsInstances);
 
 	if (piContainsElementsInstances == nullptr)
@@ -1139,12 +1139,12 @@ void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 		return;
 	}
 
-	const int64_t iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->GetSdaiModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->GetSdaiModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
 
-	int64_t iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
-	for (int64_t i = 0; i < iIFCContainsElementsInstancesCount; ++i)
+	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
+	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
 	{
-		int64_t iIFCContainsElementsInstance = 0;
+		SdaiInstance iIFCContainsElementsInstance = 0;
 		engiGetAggrElement(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
 
 		if (sdaiGetInstanceType(iIFCContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity)
@@ -1165,13 +1165,13 @@ void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 
 		HTREEITEM hContains = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		int64_t* piIFCRelatedElementsInstances = 0;
+		SdaiAggr piIFCRelatedElementsInstances = 0;
 		sdaiGetAttrBN(iIFCContainsElementsInstance, "RelatedElements", sdaiAGGR, &piIFCRelatedElementsInstances);
 
-		int64_t iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(piIFCRelatedElementsInstances);
-		for (int64_t j = 0; j < iIFCRelatedElementsInstancesCount; ++j)
+		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(piIFCRelatedElementsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j)
 		{
-			int64_t iIFCRelatedElementsInstance = 0;
+			SdaiInstance iIFCRelatedElementsInstance = 0;
 			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
 
 			LoadObject(pModel, iIFCRelatedElementsInstance, hContains);
@@ -1180,7 +1180,7 @@ void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, int64_t iIn
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadObject(CIFCModel* pModel, int64_t iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 

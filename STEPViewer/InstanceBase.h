@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CInstanceBase
 {
 
@@ -13,7 +13,7 @@ public: // Methods
 	CInstanceBase();
 	virtual ~CInstanceBase();
 
-	virtual int64_t GetInstance() const PURE;
+	virtual SdaiInstance GetInstance() const PURE;
 	virtual bool HasGeometry() const PURE;
 	virtual bool IsEnabled() const PURE;
 

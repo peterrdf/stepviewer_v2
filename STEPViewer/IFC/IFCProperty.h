@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCProperty
 {
 
@@ -22,8 +22,8 @@ public: // Methods
 	CIFCProperty(const wstring& strName, const wstring& strValue);
 	virtual ~CIFCProperty();
 
-	static bool HasProperties(int64_t iModel, int64_t iInstance);
-	static wstring GetPropertySingleValue(int64_t iIFCPropertySingleValue);
+	static bool HasProperties(SdaiModel iModel, SdaiInstance iInstance);
+	static wstring GetPropertySingleValue(SdaiInstance iIFCPropertySingleValue);
 
 	wstring GetName() const;
 	wstring GetValue() const;
