@@ -63,7 +63,7 @@ CIFCInstance::~CIFCInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ int64_t CIFCInstance::GetInstance() const
+/*virtual*/ SdaiInstance CIFCInstance::GetInstance() const
 {
 	return m_iInstance;
 }
@@ -87,13 +87,13 @@ const wchar_t* CIFCInstance::GetGUID() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::ExpressID() const
+int64_t CIFCInstance::ExpressID() const
 {
 	return m_iExpressID;
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::ParentExpressID() const
+int64_t CIFCInstance::ParentExpressID() const
 {
 	return m_iParentExpressID;
 }
@@ -160,7 +160,7 @@ int64_t CIFCInstance::GetIndicesCount() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t & CIFCInstance::conceptualFacesCount()
+int64_t& CIFCInstance::conceptualFacesCount()
 {
 	return m_iConceptualFacesCount;
 }

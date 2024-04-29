@@ -69,7 +69,7 @@ public: // Methods
 
 	void ScaleAndCenter(); // [-1, 1]
 
-	void Load(const wchar_t* szIFCFile, int64_t iModel);
+	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const;

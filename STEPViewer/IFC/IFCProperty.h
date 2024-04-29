@@ -23,13 +23,13 @@ public: // Methods
 	virtual ~CIFCProperty();
 
 	static bool HasProperties(SdaiModel iModel, SdaiInstance iInstance);
-	static wstring GetPropertySingleValue(SdaiInstance iIFCPropertySingleValue);
+	static wstring GetPropertySingleValue(SdaiInstance iPropertySingleValueInstance);
 
 	wstring GetName() const;
 	wstring GetValue() const;
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCPropertySet
 {
 
@@ -47,7 +47,7 @@ public: // Methods
 	vector<CIFCProperty*>& Properties();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCPropertySetCollection
 {
 
@@ -63,38 +63,38 @@ public: // Methods
 	vector<CIFCPropertySet*>& PropertySets();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCPropertyProvider
 {
 
 private: // Members
 
-	int64_t m_iModel;
+	SdaiModel m_iModel;
 	CIFCUnitProvider* m_pUnitProvider;
-	map<int64_t, CIFCPropertySetCollection*> m_mapPropertyCollections;
+	map<SdaiInstance, CIFCPropertySetCollection*> m_mapPropertyCollections;
 
 public: // Methods
 
-	CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUnitProvider);
+	CIFCPropertyProvider(SdaiModel SdaiModel, CIFCUnitProvider* pUnitProvider);
 	virtual ~CIFCPropertyProvider();
 
-	CIFCPropertySetCollection* GetPropertySetCollection(int64_t iInstance);
+	CIFCPropertySetCollection* GetPropertySetCollection(SdaiInstance iInstance);
 
 private: // Methods
 
-	CIFCPropertySetCollection* LoadPropertyCollection(int64_t iInstance);
+	CIFCPropertySetCollection* LoadPropertyCollection(SdaiInstance iInstance);
 
-	void LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection);
-	void LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection);
-	void LoadPropertySet(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection);
-	void LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection);
-	void LoadQuantites(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection);
-	void LoadIFCQuantityLength(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
-	void LoadIFCQuantityArea(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
-	void LoadIFCQuantityVolume(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
-	void LoadIFCQuantityCount(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
-	void LoadIFCQuantityWeight(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);
-	void LoadIFCQuantityTime(int_t iIFCQuantity, CIFCPropertySet* pPropertySet);	
+	void LoadProperties(SdaiInstance iInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadRelDefinesByProperties(SdaiInstance iIsDefinedByPropertiesInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadPropertySet(SdaiInstance iPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadRelDefinesByType(SdaiInstance iRelDefinesByTypeInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadQuantites(SdaiInstance iElementQuantityInstance, CIFCPropertySetCollection* pPropertySetCollection);
+	void LoadIFCQuantityLength(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityArea(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityVolume(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityCount(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityWeight(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
+	void LoadIFCQuantityTime(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet);
 
-	wstring GetPropertyName(int64_t iInstance) const;
+	wstring GetPropertyName(SdaiInstance iInstance) const;
 };

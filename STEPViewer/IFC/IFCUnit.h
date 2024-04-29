@@ -40,7 +40,7 @@ using namespace std;
 #define	VOLUMEUNIT	128
 #define	USERDEFINED	129
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCUnit
 {
 
@@ -68,34 +68,34 @@ protected: // Methods
 	void ConvertName(const wchar_t * szName);
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCUnitProvider
 {
 
 private: // Members
 
-	int64_t m_iModel;
+	SdaiModel m_iModel;
 	map<wstring, CIFCUnit*> m_mapUnits;
 
 public: // Methods
 
-	CIFCUnitProvider(int64_t iModel);
+	CIFCUnitProvider(SdaiModel iModel);
 	virtual ~CIFCUnitProvider();
 
 	const CIFCUnit* GetUnit(const wchar_t* szUnit) const;
 	
-	pair<wstring, wstring> GetQuantity(int_t iIFCQuantity, const char* szValueName, const wchar_t* szUnitName) const;
-	pair<wstring, wstring> GetQuantityLength(int_t iIFCQuantity) const;
-	pair<wstring, wstring> GetQuantityArea(int_t iIFCQuantity) const;
-	pair<wstring, wstring> GetQuantityVolume(int_t iIFCQuantity) const;
-	pair<wstring, wstring> GetQuantityCount(int_t iIFCQuantity) const;
-	pair<wstring, wstring> GetQuantityWeight(int_t iIFCQuantity) const;
-	pair<wstring, wstring> GetQuantityTime(int_t iIFCQuantity) const;
+	pair<wstring, wstring> GetQuantity(SdaiInstance iQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
+	pair<wstring, wstring> GetQuantityLength(SdaiInstance iQuantityInstance) const;
+	pair<wstring, wstring> GetQuantityArea(SdaiInstance iQuantityInstance) const;
+	pair<wstring, wstring> GetQuantityVolume(SdaiInstance iQuantityInstance) const;
+	pair<wstring, wstring> GetQuantityCount(SdaiInstance iQuantityInstance) const;
+	pair<wstring, wstring> GetQuantityWeight(SdaiInstance iQuantityInstance) const;
+	pair<wstring, wstring> GetQuantityTime(SdaiInstance iQuantityInstance) const;
 
 protected: // Methods
 
 	void Load();
-	void LoadUnits(int_t iIFCProjectInstance);
+	void LoadUnits(SdaiInstance iProjectInstance);
 };
 
 #endif // IFCUNIT_H

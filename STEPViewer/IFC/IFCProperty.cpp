@@ -2,53 +2,50 @@
 #include "IFCProperty.h"
 #include "IFCUnit.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 	: m_strName(strName)
 	, m_strValue(strValue)
-{
-}
+{}
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCProperty::~CIFCProperty()
-{
-}
+{}
 
 /*static*/ bool CIFCProperty::HasProperties(SdaiModel iModel, SdaiInstance iInstance)
 {
 	ASSERT(iModel != 0);
 	ASSERT(iInstance != 0);
 
-	SdaiAggr piIFCIsDefinedByInstances = 0;
-	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
+	SdaiAggr pIsDefinedByAggr = 0;
+	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &pIsDefinedByAggr);
 
-	if (piIFCIsDefinedByInstances == nullptr)
+	if (pIsDefinedByAggr == nullptr)
 	{
 		return false;
 	}
 
-	SdaiInteger iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
-	for (SdaiInteger i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pIsDefinedByAggr);
+	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
 	{
-		SdaiInstance iIFCIsDefinedByInstance = 0;
-		engiGetAggrElement(piIFCIsDefinedByInstances, i, sdaiINSTANCE, &iIFCIsDefinedByInstance);
+		SdaiInstance iAggrInstance = 0;
+		engiGetAggrElement(pIsDefinedByAggr, iMember, sdaiINSTANCE, &iAggrInstance);
 
-		if ((sdaiGetInstanceType(iIFCIsDefinedByInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYPROPERTIES")) ||
-			(sdaiGetInstanceType(iIFCIsDefinedByInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYTYPE")))
+		if ((sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYPROPERTIES")) ||
+			(sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(iModel, "IFCRELDEFINESBYTYPE")))
 		{
 			return true;
 		}
-	} // for (int64_t i = ...
+	} // for (SdaiInteger iMember = ...
 
 	return	false;
 }
-// ------------------------------------------------------------------------------------------------
-/*static*/ wstring CIFCProperty::GetPropertySingleValue(SdaiInstance iIFCPropertySingleValue)
+
+/*static*/ wstring CIFCProperty::GetPropertySingleValue(SdaiInstance iPropertySingleValueInstance)
 {
-	ASSERT(iIFCPropertySingleValue != 0);
+	ASSERT(iPropertySingleValueInstance != 0);
 
 	wchar_t* szNominalValueADB = nullptr;
-	sdaiGetAttrBN(iIFCPropertySingleValue, "NominalValue", sdaiUNICODE, &szNominalValueADB);
+	sdaiGetAttrBN(iPropertySingleValueInstance, "NominalValue", sdaiUNICODE, &szNominalValueADB);
 
 	if (szNominalValueADB == nullptr)
 	{
@@ -56,7 +53,7 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 	}
 
 	wchar_t* szUnitADB = nullptr;
-	sdaiGetAttrBN(iIFCPropertySingleValue, "Unit", sdaiUNICODE, &szUnitADB);
+	sdaiGetAttrBN(iPropertySingleValueInstance, "Unit", sdaiUNICODE, &szUnitADB);
 
 	wchar_t* szTypePath = (wchar_t*)sdaiGetADBTypePath(szNominalValueADB, 0);
 	if (szTypePath == nullptr)
@@ -67,19 +64,17 @@ CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)
 	return L"";
 }
 
-// ------------------------------------------------------------------------------------------------
 wstring CIFCProperty::GetName() const
 {
 	return m_strName;
 }
 
-// ------------------------------------------------------------------------------------------------
 wstring CIFCProperty::GetValue() const
 {
 	return m_strValue;
 }
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 CIFCPropertySet::CIFCPropertySet(const wstring& strName)
 	: m_strName(strName)
 	, m_vecProperties()
@@ -87,7 +82,6 @@ CIFCPropertySet::CIFCPropertySet(const wstring& strName)
 	ASSERT(!m_strName.empty());
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCPropertySet::~CIFCPropertySet()
 {
 	for (auto pProperty : m_vecProperties)
@@ -96,25 +90,21 @@ CIFCPropertySet::CIFCPropertySet(const wstring& strName)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 wstring CIFCPropertySet::GetName() const
 {
 	return m_strName;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<CIFCProperty*>& CIFCPropertySet::Properties()
 {
 	return m_vecProperties;
 }
 
-// ------------------------------------------------------------------------------------------------
 CIFCPropertySetCollection::CIFCPropertySetCollection()
 	: m_vecPropertySets()
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCPropertySetCollection::~CIFCPropertySetCollection()
 {
 	for (auto pPropertySet : m_vecPropertySets)
@@ -123,14 +113,13 @@ CIFCPropertySetCollection::CIFCPropertySetCollection()
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<CIFCPropertySet*>& CIFCPropertySetCollection::PropertySets()
 {
 	return m_vecPropertySets;
 }
 
-// ------------------------------------------------------------------------------------------------
-CIFCPropertyProvider::CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUnitProvider)
+// ************************************************************************************************
+CIFCPropertyProvider::CIFCPropertyProvider(SdaiModel iModel, CIFCUnitProvider* pUnitProvider)
 	: m_iModel(iModel)
 	, m_pUnitProvider(pUnitProvider)
 	, m_mapPropertyCollections()
@@ -139,7 +128,6 @@ CIFCPropertyProvider::CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUn
 	ASSERT(m_pUnitProvider != nullptr);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCPropertyProvider::~CIFCPropertyProvider()
 {
 	for (auto itPropertyCollection : m_mapPropertyCollections)
@@ -148,8 +136,7 @@ CIFCPropertyProvider::CIFCPropertyProvider(int64_t iModel, CIFCUnitProvider* pUn
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(int64_t iInstance)
+CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(SdaiInstance iInstance)
 {
 	if (iInstance == 0)
 	{
@@ -170,8 +157,7 @@ CIFCPropertySetCollection* CIFCPropertyProvider::GetPropertySetCollection(int64_
 	return pPropertyCollection;
 }
 
-// ------------------------------------------------------------------------------------------------
-CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertyCollection(int64_t iInstance)
+CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertyCollection(SdaiInstance iInstance)
 {
 	auto pPropertySetCollection = new CIFCPropertySetCollection();
 	LoadProperties(iInstance, pPropertySetCollection);
@@ -179,13 +165,12 @@ CIFCPropertySetCollection* CIFCPropertyProvider::LoadPropertyCollection(int64_t 
 	return pPropertySetCollection;
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadProperties(int64_t iInstance, CIFCPropertySetCollection* pPropertySetCollection)
+void CIFCPropertyProvider::LoadProperties(SdaiInstance iInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	SdaiAggr piIFCIsDefinedByInstances = 0;
-	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &piIFCIsDefinedByInstances);
+	SdaiAggr pIsDefinedByAggr = nullptr;
+	sdaiGetAttrBN(iInstance, "IsDefinedBy", sdaiAGGR, &pIsDefinedByAggr);
 
-	if (piIFCIsDefinedByInstances == nullptr)
+	if (pIsDefinedByAggr == nullptr)
 	{
 		return;
 	}
@@ -193,84 +178,82 @@ void CIFCPropertyProvider::LoadProperties(int64_t iInstance, CIFCPropertySetColl
 	SdaiEntity iIFCRelDefinesByTypeEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYTYPE");
 	SdaiEntity iIFCRelDefinesByPropertiesEntity = sdaiGetEntity(m_iModel, "IFCRELDEFINESBYPROPERTIES");
 
-	SdaiInteger iIFCIsDefinedByInstancesCount = sdaiGetMemberCount(piIFCIsDefinedByInstances);
-	for (SdaiInteger i = 0; i < iIFCIsDefinedByInstancesCount; ++i)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pIsDefinedByAggr);
+	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
 	{
-		SdaiInstance iIFCIsDefinedByInstance = 0;
-		engiGetAggrElement(piIFCIsDefinedByInstances, i, sdaiINSTANCE, &iIFCIsDefinedByInstance);
+		SdaiInstance iAggrInstance = 0;
+		engiGetAggrElement(pIsDefinedByAggr, iMember, sdaiINSTANCE, &iAggrInstance);
 
-		if (sdaiGetInstanceType(iIFCIsDefinedByInstance) == iIFCRelDefinesByPropertiesEntity)
+		if (sdaiGetInstanceType(iAggrInstance) == iIFCRelDefinesByPropertiesEntity)
 		{
-			LoadRelDefinesByProperties(iIFCIsDefinedByInstance, pPropertySetCollection);
+			LoadRelDefinesByProperties(iAggrInstance, pPropertySetCollection);
 		}
 		else
 		{
-			if (sdaiGetInstanceType(iIFCIsDefinedByInstance) == iIFCRelDefinesByTypeEntity)
+			if (sdaiGetInstanceType(iAggrInstance) == iIFCRelDefinesByTypeEntity)
 			{
-				LoadRelDefinesByType(iIFCIsDefinedByInstance, pPropertySetCollection);
+				LoadRelDefinesByType(iAggrInstance, pPropertySetCollection);
 			}
 		}
-	} // for (int64_t i = ...
+	} // for (SdaiInteger iMember = ...
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadRelDefinesByProperties(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection)
+void CIFCPropertyProvider::LoadRelDefinesByProperties(SdaiInstance iIsDefinedByPropertiesInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	ASSERT(iIFCIsDefinedByInstance != 0);
+	ASSERT(iIsDefinedByPropertiesInstance != 0);
 
-	const int64_t iIFCElementQuantityEntity = sdaiGetEntity(m_iModel, "IFCELEMENTQUANTITY");
-	const int64_t iIFCPropertySetEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSET");
+	SdaiEntity iIFCElementQuantityEntity = sdaiGetEntity(m_iModel, "IFCELEMENTQUANTITY");
+	SdaiEntity iIFCPropertySetEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSET");
 
-	int64_t iIFCPropertyDefinitionInstance = 0;
-	sdaiGetAttrBN(iIFCIsDefinedByInstance, "RelatingPropertyDefinition", sdaiINSTANCE, &iIFCPropertyDefinitionInstance);
+	SdaiInstance iRelatingPropertyDefinitionInstance = 0;
+	sdaiGetAttrBN(iIsDefinedByPropertiesInstance, "RelatingPropertyDefinition", sdaiINSTANCE, &iRelatingPropertyDefinitionInstance);
 
-	if (sdaiGetInstanceType(iIFCPropertyDefinitionInstance) == iIFCElementQuantityEntity)
+	if (sdaiGetInstanceType(iRelatingPropertyDefinitionInstance) == iIFCElementQuantityEntity)
 	{
-		LoadQuantites(iIFCPropertyDefinitionInstance, pPropertySetCollection);
+		LoadQuantites(iRelatingPropertyDefinitionInstance, pPropertySetCollection);
 	}
 	else
 	{
-		if (sdaiGetInstanceType(iIFCPropertyDefinitionInstance) == iIFCPropertySetEntity)
+		if (sdaiGetInstanceType(iRelatingPropertyDefinitionInstance) == iIFCPropertySetEntity)
 		{
-			LoadPropertySet(iIFCPropertyDefinitionInstance, pPropertySetCollection);
+			LoadPropertySet(iRelatingPropertyDefinitionInstance, pPropertySetCollection);
 		}
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection)
+void CIFCPropertyProvider::LoadPropertySet(SdaiInstance iPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	ASSERT(iIFCPropertySetInstance != 0);
+	ASSERT(iPropertySetInstance != 0);
 
 	/*
 	* Property set
 	*/
-	SdaiAggr piIFCHasPropertiesInstances = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "HasProperties", sdaiAGGR, &piIFCHasPropertiesInstances);
+	SdaiAggr pHasPropertiesAggr = nullptr;
+	sdaiGetAttrBN(iPropertySetInstance, "HasProperties", sdaiAGGR, &pHasPropertiesAggr);
 
-	if (piIFCHasPropertiesInstances == nullptr)
+	if (pHasPropertiesAggr == nullptr)
 	{
 		return;
 	}
 
-	wstring strItem = GetPropertyName(iIFCPropertySetInstance);
+	wstring strItem = GetPropertyName(iPropertySetInstance);
 
 	auto pPropertySet = new CIFCPropertySet(strItem);
 
 	SdaiEntity iIFCPropertySingleValueEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSINGLEVALUE");
 
-	SdaiInteger iIFCHasPropertiesInstancesCount = sdaiGetMemberCount(piIFCHasPropertiesInstances);
-	for (SdaiInteger i = 0; i < iIFCHasPropertiesInstancesCount; ++i)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pHasPropertiesAggr);
+	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
 	{
-		SdaiInstance iIFCHasPropertiesInstance = 0;
-		engiGetAggrElement(piIFCHasPropertiesInstances, i, sdaiINSTANCE, &iIFCHasPropertiesInstance);
+		SdaiInstance iAggrInstance = 0;
+		engiGetAggrElement(pHasPropertiesAggr, iMember, sdaiINSTANCE, &iAggrInstance);
 
-		strItem = GetPropertyName(iIFCHasPropertiesInstance);
+		strItem = GetPropertyName(iAggrInstance);
 
 		wstring strValue;
-		if (sdaiGetInstanceType(iIFCHasPropertiesInstance) == iIFCPropertySingleValueEntity)
+		if (sdaiGetInstanceType(iAggrInstance) == iIFCPropertySingleValueEntity)
 		{
-			strValue = CIFCProperty::GetPropertySingleValue(iIFCHasPropertiesInstance);
+			strValue = CIFCProperty::GetPropertySingleValue(iAggrInstance);
 			if (strValue.empty())
 			{
 				strValue = L"<empty>";
@@ -279,20 +262,19 @@ void CIFCPropertyProvider::LoadPropertySet(int64_t iIFCPropertySetInstance, CIFC
 
 		auto pProperty = new CIFCProperty(strItem, strValue);
 		pPropertySet->Properties().push_back(pProperty);
-	} // for  (int64_t i = ...
+	} // for (SdaiInteger iMember = ...
 
 	pPropertySetCollection->PropertySets().push_back(pPropertySet);
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance, CIFCPropertySetCollection* pPropertySetCollection)
+void CIFCPropertyProvider::LoadRelDefinesByType(SdaiInstance iRelDefinesByTypeInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	ASSERT(iIFCIsDefinedByInstance != 0);
+	ASSERT(iRelDefinesByTypeInstance != 0);
 
-	int64_t iIFCRelatingType = 0;
-	sdaiGetAttrBN(iIFCIsDefinedByInstance, "RelatingType", sdaiINSTANCE, &iIFCRelatingType);
+	SdaiInstance iRelatingTypeInstance = 0;
+	sdaiGetAttrBN(iRelDefinesByTypeInstance, "RelatingType", sdaiINSTANCE, &iRelatingTypeInstance);
 
-	if (iIFCRelatingType == 0)
+	if (iRelatingTypeInstance == 0)
 	{
 		return;
 	}
@@ -300,129 +282,121 @@ void CIFCPropertyProvider::LoadRelDefinesByType(int64_t iIFCIsDefinedByInstance,
 	SdaiEntity iIFCElementQuantityEntity = sdaiGetEntity(m_iModel, "IFCELEMENTQUANTITY");
 	SdaiEntity iIFCPropertySetEntity = sdaiGetEntity(m_iModel, "IFCPROPERTYSET");
 
-	SdaiAggr piIFCHasPropertySets = nullptr;
-	sdaiGetAttrBN(iIFCRelatingType, "HasPropertySets", sdaiAGGR, &piIFCHasPropertySets);
+	SdaiAggr pHasPropertySetsAggr = nullptr;
+	sdaiGetAttrBN(iRelatingTypeInstance, "HasPropertySets", sdaiAGGR, &pHasPropertySetsAggr);
 
-	SdaiInteger iIFCHasPropertySetsCount = sdaiGetMemberCount(piIFCHasPropertySets);
-	for (SdaiInteger i = 0; i < iIFCHasPropertySetsCount; ++i)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pHasPropertySetsAggr);
+	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
 	{
-		SdaiInstance iIFCHasPropertySetInstance = 0;
-		engiGetAggrElement(piIFCHasPropertySets, i, sdaiINSTANCE, &iIFCHasPropertySetInstance);
-		if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCElementQuantityEntity)
+		SdaiInstance iAggrInstance = 0;
+		engiGetAggrElement(pHasPropertySetsAggr, iMember, sdaiINSTANCE, &iAggrInstance);
+		if (sdaiGetInstanceType(iAggrInstance) == iIFCElementQuantityEntity)
 		{
-			LoadQuantites(iIFCHasPropertySetInstance, pPropertySetCollection);
+			LoadQuantites(iAggrInstance, pPropertySetCollection);
 		}
-		else if (sdaiGetInstanceType(iIFCHasPropertySetInstance) == iIFCPropertySetEntity)
+		else if (sdaiGetInstanceType(iAggrInstance) == iIFCPropertySetEntity)
 		{
-			LoadPropertySet(iIFCHasPropertySetInstance, pPropertySetCollection);
+			LoadPropertySet(iAggrInstance, pPropertySetCollection);
 		}
-	} // for (int64_t i = ...
+	} // for (SdaiInteger iMember = ...
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadQuantites(int64_t iIFCPropertySetInstance, CIFCPropertySetCollection* pPropertySetCollection)
+void CIFCPropertyProvider::LoadQuantites(SdaiInstance iElementQuantityInstance, CIFCPropertySetCollection* pPropertySetCollection)
 {
-	ASSERT(iIFCPropertySetInstance != 0);
+	ASSERT(iElementQuantityInstance != 0);
 
-	wstring strItem = GetPropertyName(iIFCPropertySetInstance);
+	wstring strItem = GetPropertyName(iElementQuantityInstance);
 
 	/*
 	* Property set
 	*/
 	auto pPropertySet = new CIFCPropertySet(strItem);
 
-	SdaiAggr piIFCQuantities = nullptr;
-	sdaiGetAttrBN(iIFCPropertySetInstance, "Quantities", sdaiAGGR, &piIFCQuantities);
+	SdaiAggr pQuantitiesAggr = nullptr;
+	sdaiGetAttrBN(iElementQuantityInstance, "Quantities", sdaiAGGR, &pQuantitiesAggr);
 
-	SdaiInteger iIFCQuantitiesCount = sdaiGetMemberCount(piIFCQuantities);
-	for (SdaiInteger i = 0; i < iIFCQuantitiesCount; ++i)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pQuantitiesAggr);
+	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
 	{
-		SdaiInstance iIFCQuantityInstance = 0;
-		engiGetAggrElement(piIFCQuantities, i, sdaiINSTANCE, &iIFCQuantityInstance);
+		SdaiInstance iAggrInstance = 0;
+		engiGetAggrElement(pQuantitiesAggr, iMember, sdaiINSTANCE, &iAggrInstance);
 
-		if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYLENGTH"))
+		if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYLENGTH"))
 		{
-			LoadIFCQuantityLength(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityLength(iAggrInstance, pPropertySet);
 		}
-		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYAREA"))
+		else if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYAREA"))
 		{
-			LoadIFCQuantityArea(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityArea(iAggrInstance, pPropertySet);
 		}
-		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYVOLUME"))
+		else if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYVOLUME"))
 		{
-			LoadIFCQuantityVolume(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityVolume(iAggrInstance, pPropertySet);
 		}
-		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYCOUNT"))
+		else if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYCOUNT"))
 		{
-			LoadIFCQuantityCount(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityCount(iAggrInstance, pPropertySet);
 		} 
-		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYWEIGHT"))
+		else if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYWEIGHT"))
 		{
-			LoadIFCQuantityWeight(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityWeight(iAggrInstance, pPropertySet);
 		}
-		else if (sdaiGetInstanceType(iIFCQuantityInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYTIME"))
+		else if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCQUANTITYTIME"))
 		{
-			LoadIFCQuantityTime(iIFCQuantityInstance, pPropertySet);
+			LoadIFCQuantityTime(iAggrInstance, pPropertySet);
 		}
 		else
 		{
 			ASSERT(FALSE); // TODO
 		}
-	} // for (int64_t i = ...
+	} // for (SdaiInteger iMember = ...
 
 	pPropertySetCollection->PropertySets().push_back(pPropertySet);
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityLength(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityLength(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityLength(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityLength(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityArea(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityArea(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityArea(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityArea(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityVolume(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityVolume(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityVolume(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityVolume(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityCount(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityCount(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityCount(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityCount(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityWeight(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityWeight(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityWeight(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityWeight(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCPropertyProvider::LoadIFCQuantityTime(int_t iIFCQuantity, CIFCPropertySet* pPropertySet)
+void CIFCPropertyProvider::LoadIFCQuantityTime(SdaiInstance iQuantityInstance, CIFCPropertySet* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityTime(iIFCQuantity);
+	auto prProperty = m_pUnitProvider->GetQuantityTime(iQuantityInstance);
 
 	pPropertySet->Properties().push_back(new CIFCProperty(prProperty.first, prProperty.second));
 }
 
-// ------------------------------------------------------------------------------------------------
-wstring CIFCPropertyProvider::GetPropertyName(int64_t iInstance) const
+wstring CIFCPropertyProvider::GetPropertyName(SdaiInstance iInstance) const
 {
 	ASSERT(iInstance != 0);
 

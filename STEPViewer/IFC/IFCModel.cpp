@@ -215,7 +215,7 @@ void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
 
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
+void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 {
 	ASSERT(szIFCFile != nullptr);
 	ASSERT(iModel != 0);
@@ -234,7 +234,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, int64_t iModel)
 	/*
 	* Entities
 	*/
-	int_t ifcObjectEntity = sdaiGetEntity(m_iModel, "IFCOBJECT");
+	SdaiEntity ifcObjectEntity = sdaiGetEntity(m_iModel, "IFCOBJECT");
 	m_ifcProjectEntity = sdaiGetEntity(m_iModel, "IFCPROJECT");
 	m_ifcSpaceEntity = sdaiGetEntity(m_iModel, "IFCSPACE");
 	m_ifcOpeningElementEntity = sdaiGetEntity(m_iModel, "IFCOPENINGELEMENT");
@@ -1064,13 +1064,6 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				iPreviousIndex = iIndex;
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
-
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pInstance->ConcFacePolygonsCohorts().size(); iCohort++)
-		{
-			ASSERT(pInstance->ConcFacePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
-		}
-#endif
 	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
