@@ -2,10 +2,11 @@
 #include "ProductDefinition.h"
 #include "Generic.h"
 
-// ------------------------------------------------------------------------------------------------
-CProductDefinition::CProductDefinition()
-	: m_iExpressID(0)
-	, m_iInstance(0)	
+// ************************************************************************************************
+CProductDefinition::CProductDefinition(SdaiInstance iInstance)
+	: _instance(0, 0, true)
+	, m_iInstance(iInstance)
+	, m_iExpressID(internalGetP21Line(iInstance))
 	, m_strId(L"")
 	, m_strName(L"")
 	, m_strDescription(L"")
@@ -17,12 +18,7 @@ CProductDefinition::CProductDefinition()
 	, m_iNextProductInstance(-1)
 	, m_pVertexBuffer(nullptr)
 	, m_pIndexBuffer(nullptr)
-	, m_iConceptualFacesCount(0)
 	, m_bCalculated(false)
-	, m_vecTriangles()
-	, m_vecConcFacePolygons()
-	, m_vecLines()
-	, m_vecPoints()	
 	, m_vecConcFacesCohorts()
 	, m_vecConcFacePolygonsCohorts()
 	, m_vecLinesCohorts()
@@ -30,9 +26,36 @@ CProductDefinition::CProductDefinition()
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
+	ASSERT(m_iInstance != 0);
+	ASSERT(m_iExpressID != 0);
+
+	char* szId = nullptr;
+	sdaiGetAttrBN(m_iInstance, "id", sdaiSTRING, &szId);
+	m_strId = szId != nullptr ? CA2W(szId) : L"";
+
+	char* szName = nullptr;
+	sdaiGetAttrBN(m_iInstance, "name", sdaiSTRING, &szName);
+	m_strName = szName != nullptr ? CA2W(szName) : L"";
+
+	char* szDescription = nullptr;
+	sdaiGetAttrBN(m_iInstance, "description", sdaiSTRING, &szDescription);
+	m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
+
+	SdaiInstance iFormationInstance = 0;
+	sdaiGetAttrBN(m_iInstance, "formation", sdaiINSTANCE, &iFormationInstance);
+
+	SdaiInstance iProductInstance = 0;
+	sdaiGetAttrBN(iFormationInstance, "of_product", sdaiINSTANCE, &iProductInstance);
+
+	char* szProductId = nullptr;
+	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
+	m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
+
+	char* szProductName = nullptr;
+	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
+	m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CProductDefinition::~CProductDefinition()
 {
 	Clean();
@@ -48,7 +71,7 @@ void CProductDefinition::Calculate()
 
 	m_bCalculated = true;
 
-	int64_t iModel = GetModel(m_iInstance);
+	OwlModel iModel = GetModel(m_iInstance);
 
 	/*
 	* Set up format
@@ -920,54 +943,6 @@ void CProductDefinition::Scale(float fResoltuion)
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::GetId() const
-{
-	return m_strId.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::GetName() const
-{
-	return m_strName.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::GetDescription() const
-{
-	return m_strDescription.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::GetProductId() const
-{
-	return m_strProductId.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CProductDefinition::GetProductName() const
-{
-	return m_strProductName.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-int_t CProductDefinition::GetRelatingProductRefs() const
-{
-	return m_iRelatingProductRefs;
-}
-
-// ------------------------------------------------------------------------------------------------
-int_t CProductDefinition::GetRelatedProductRefs() const
-{
-	return m_iRelatedProductRefs;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<CProductInstance*>& CProductDefinition::GetInstances() const
-{
-	return m_vecProductInstances;
-}
-
-// ------------------------------------------------------------------------------------------------
 int CProductDefinition::GetNextProductInstance()
 {
 	if (++m_iNextProductInstance >= (int)m_vecProductInstances.size())
@@ -1031,36 +1006,6 @@ int64_t CProductDefinition::getVerticesCount() const
 int64_t CProductDefinition::getVertexLength() const
 {
 	return _VERTEX_LENGTH;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CProductDefinition::GetConceptualFacesCount() const
-{
-	return m_iConceptualFacesCount;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CProductDefinition::GetTriangles() const
-{
-	return m_vecTriangles;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CProductDefinition::GetLines() const
-{
-	return m_vecLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CProductDefinition::GetPoints() const
-{
-	return m_vecPoints;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CProductDefinition::GetConcFacesPolygons() const
-{
-	return m_vecConcFacePolygons;
 }
 
 // ------------------------------------------------------------------------------------------------

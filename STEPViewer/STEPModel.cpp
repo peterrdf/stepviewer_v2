@@ -411,36 +411,7 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefin
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
-	auto pDefinition = new CProductDefinition();
-
-	pDefinition->m_iExpressID = internalGetP21Line(iProductDefinitionInstance);
-	pDefinition->m_iInstance = iProductDefinitionInstance;
-
-	char* szId = nullptr;
-	sdaiGetAttrBN(iProductDefinitionInstance, "id", sdaiSTRING, &szId);
-	pDefinition->m_strId = szId != nullptr ? CA2W(szId) : L"";
-
-	char* szName = nullptr;
-	sdaiGetAttrBN(iProductDefinitionInstance, "name", sdaiSTRING, &szName);
-	pDefinition->m_strName = szName != nullptr ? CA2W(szName) : L"";
-
-	char* szDescription = nullptr;
-	sdaiGetAttrBN(iProductDefinitionInstance, "description", sdaiSTRING, &szDescription);
-	pDefinition->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
-
-	int_t iProductDefinitionFormationInstance = 0;
-	sdaiGetAttrBN(iProductDefinitionInstance, "formation", sdaiINSTANCE, &iProductDefinitionFormationInstance);
-
-	int_t iProductInstance = 0;
-	sdaiGetAttrBN(iProductDefinitionFormationInstance, "of_product", sdaiINSTANCE, &iProductInstance);
-
-	char* szProductId = nullptr;
-	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
-	pDefinition->m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
-
-	char* szProductName = nullptr;
-	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
-	pDefinition->m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
+	auto pDefinition = new CProductDefinition(iProductDefinitionInstance);	
 
 	return pDefinition;
 }

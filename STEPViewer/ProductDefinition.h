@@ -11,16 +11,15 @@
 #include <map>
 using namespace std;
 
-
 // ************************************************************************************************
-class CProductDefinition
+class CProductDefinition : public _instance
 {
 	friend class CSTEPModel;
 
 private: // Members
 
-	ExpressID m_iExpressID;
 	SdaiInstance m_iInstance;
+	ExpressID m_iExpressID;	
 	wstring m_strId;
 	wstring m_strName;
 	wstring m_strDescription;
@@ -36,14 +35,7 @@ private: // Members
 	// Geometry
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
 	_indices_i32* m_pIndexBuffer;
-	int64_t m_iConceptualFacesCount;
-	bool m_bCalculated;
-
-	// Primitives
-	vector<_primitives> m_vecTriangles;
-	vector<_primitives> m_vecConcFacePolygons;
-	vector<_primitives> m_vecLines;
-	vector<_primitives> m_vecPoints;	
+	bool m_bCalculated;	
 
 	// Materials
 	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
@@ -60,7 +52,7 @@ private: // Members
 public: // Methods
 
 	// ctor/dtor
-	CProductDefinition();
+	CProductDefinition(SdaiInstance iInstance);
 	virtual ~CProductDefinition();
 	
 	void Calculate();	
@@ -97,17 +89,17 @@ public: // Methods
 
 	void Scale(float fResoltuion);
 	
-	ExpressID GetExpressID() const { return m_iExpressID; }
 	SdaiInstance GetInstance() const { return m_iInstance; }
-	const wchar_t* GetId() const;
-	const wchar_t* GetName() const;
-	const wchar_t* GetDescription() const;
-	const wchar_t* GetProductId() const;
-	const wchar_t* GetProductName() const;
+	ExpressID GetExpressID() const { return m_iExpressID; }
+	const wchar_t* GetId() const { return m_strId.c_str(); }
+	const wchar_t* GetName() const { return m_strName.c_str(); }
+	const wchar_t* GetDescription() const { return m_strDescription.c_str(); }
+	const wchar_t* GetProductId() const { return m_strProductId.c_str(); }
+	const wchar_t* GetProductName() const { return m_strProductName.c_str(); }
+	int_t GetRelatingProductRefs() const { return m_iRelatingProductRefs; }
+	int_t GetRelatedProductRefs() const { return m_iRelatedProductRefs; }
+	const vector<CProductInstance*>& GetInstances() const { return m_vecProductInstances; }
 
-	int_t GetRelatingProductRefs() const;
-	int_t GetRelatedProductRefs() const;
-	const vector<CProductInstance*>& GetInstances() const;
 	int GetNextProductInstance();
 
 	bool HasGeometry() const;
@@ -117,12 +109,6 @@ public: // Methods
 	float*  getVertices() const;
 	int64_t getVerticesCount() const;
 	int64_t getVertexLength() const;
-	int64_t GetConceptualFacesCount() const;
-
-	const vector<_primitives>& GetTriangles() const;
-	const vector<_primitives>& GetLines() const;
-	const vector<_primitives>& GetPoints() const;
-	const vector<_primitives>& GetConcFacesPolygons() const;
 
 	// Materials
 	vector<_cohortWithMaterial*>& ConcFacesCohorts();

@@ -1195,7 +1195,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 			itDefinition != mapDefinitions.end(); 
 			itDefinition++)
 		{
-			if (itDefinition->second->GetTriangles().empty())
+			if (itDefinition->second->getTriangles().empty())
 			{
 				continue;
 			}
@@ -1249,7 +1249,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->GetTriangles().empty())
+			if (pDefinition->getTriangles().empty())
 			{
 				continue;
 			}
