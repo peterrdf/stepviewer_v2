@@ -108,8 +108,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 		return;
 	}
-
-	int64_t owlInstance = 0;
+	
+	// #tbd
+	/*int64_t owlInstance = 0;
 	owlBuildInstance(pModel->GetSdaiModel(), pSelectedInstance->GetInstance(), &owlInstance);
 
 	if (owlInstance == 0)
@@ -128,7 +129,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	AddInstance(hModel, owlInstance);
+	AddInstance(hModel, owlInstance);*/
+
+	AddInstance(hModel, pSelectedInstance->GetInstance());
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }

@@ -23,7 +23,7 @@ wstring CInstanceBase::GetName() const
 {
 	wstring strUniqueName;
 
-	int64_t iExpressID = internalGetP21Line(iInstance);	
+	ExpressID iExpressID = internalGetP21Line(iInstance);	
 	if (iExpressID != 0)
 	{
 		CString strID;
