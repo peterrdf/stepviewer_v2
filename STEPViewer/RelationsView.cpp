@@ -435,7 +435,7 @@ void CRelationsView::LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hPar
 		}
 
 		CString strPage;
-		strPage.Format(L"[%lld - %lld]", iAttributeStart + 1, iAttributeEnd);
+		strPage.Format(L"[%lld - %lld]", (int64_t)iAttributeStart + 1, (int64_t)iAttributeEnd);
 
 		// Pending load
 		tvInsertStruct.hParent = hInstance;
@@ -633,7 +633,7 @@ void CRelationsView::CreateAttributeLabelReal(double dValue, wstring& strLabel)
 void CRelationsView::CreateAttributeLabelInteger(int_t iValue, wstring& strLabel)
 {
 	CString strValue;
-	strValue.Format(_T("%lld"), iValue);
+	strValue.Format(_T("%lld"), (int64_t)iValue);
 
 	strLabel += strValue;
 }
