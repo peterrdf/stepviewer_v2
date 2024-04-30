@@ -10,9 +10,7 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -23,9 +21,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
 	, public CViewBase
@@ -34,26 +30,24 @@ class CDesignTreeView
 
 private: // Classes
 
-	// ------------------------------------------------------------------------------------------------
 	enum class enumItemType : int
 	{
 		Unknown = 0,
 		Instance = 1,
 	};
 
-	// ------------------------------------------------------------------------------------------------
 	class CItemData
 	{
 
 	private: // Methods
 		
-		SdaiInstance m_iInstance;
+		OwlInstance m_iInstance;
 		enumItemType m_enItemType;
 		vector<HTREEITEM> m_vecItems;
 
 	public: // Members
 		
-		CItemData(SdaiInstance iInstance, enumItemType enItemType)
+		CItemData(OwlInstance iInstance, enumItemType enItemType)
 			: m_iInstance(iInstance)
 			, m_enItemType(enItemType)
 			, m_vecItems()
@@ -61,19 +55,18 @@ private: // Classes
 
 		virtual ~CItemData() {}
 
-		SdaiInstance GetInstance() const { return m_iInstance; }
+		OwlInstance GetInstance() const { return m_iInstance; }
 		enumItemType GetType() const { return m_enItemType; }
 		vector<HTREEITEM>& Items() { return m_vecItems; }
 	};
 
-	// ------------------------------------------------------------------------------------------------
 	class CInstanceData
 		: public CItemData
 	{
 
 	public: // Methods
 
-		CInstanceData(SdaiInstance iInstance)
+		CInstanceData(OwlInstance iInstance)
 			: CItemData(iInstance, enumItemType::Instance)
 		{}
 
@@ -90,7 +83,7 @@ private: // Classes
 private: // Members
 	
 	COWLPropertyProvider* m_pPropertyProvider;
-	map<int64_t, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
+	map<OwlInstance, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
@@ -109,8 +102,8 @@ public: // Methods
 private: // Methods
 
 	void ResetView();	
-	void AddInstance(HTREEITEM hParent, SdaiInstance iInstance);
-	void AddProperties(HTREEITEM hParent, SdaiInstance iInstance);
+	void AddInstance(HTREEITEM hParent, OwlInstance iInstance);
+	void AddProperties(HTREEITEM hParent, OwlInstance iInstance);
 
 	void Clean();
 

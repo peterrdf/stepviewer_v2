@@ -109,7 +109,26 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	AddInstance(hModel, pSelectedInstance->GetInstance());
+	OwlInstance iInstance = 0;
+	owlBuildInstance(pModel->GetSdaiModel(), pSelectedInstance->GetInstance(), &iInstance);
+
+	if (iInstance == 0)
+	{
+		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
+		if (iExpressID != 0)
+		{
+			iInstance = internalGetInstanceFromP21Line(pModel->GetSdaiModel(), iExpressID);
+		}
+	}
+
+	if (iInstance == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	AddInstance(hModel, iInstance);
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
@@ -250,12 +269,12 @@ void CDesignTreeView::ResetView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CDesignTreeView::AddInstance(HTREEITEM hParent, SdaiInstance iInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 {
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = CInstanceBase::GetName(iInstance);
+	wstring strItem = CInstanceBase::GetName((SdaiInstance)iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;
@@ -287,7 +306,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, SdaiInstance iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CDesignTreeView::AddProperties(HTREEITEM hParent, SdaiInstance iInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 {
 	if (iInstance == 0)
 	{
