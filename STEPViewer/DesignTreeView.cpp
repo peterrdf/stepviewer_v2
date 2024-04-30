@@ -108,28 +108,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 		return;
 	}
-	
-	// #tbd
-	/*int64_t owlInstance = 0;
-	owlBuildInstance(pModel->GetSdaiModel(), pSelectedInstance->GetInstance(), &owlInstance);
-
-	if (owlInstance == 0)
-	{
-		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
-		if (iExpressID != 0)
-		{
-			owlInstance = internalGetInstanceFromP21Line(pModel->GetSdaiModel(), iExpressID);
-		}
-	}
-
-	if (owlInstance == 0)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	AddInstance(hModel, owlInstance);*/
 
 	AddInstance(hModel, pSelectedInstance->GetInstance());
 
