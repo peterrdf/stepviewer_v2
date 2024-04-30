@@ -190,7 +190,7 @@ void CController::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicati
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::OnViewRelations(CViewBase* pSender, int64_t iInstance)
+void CController::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

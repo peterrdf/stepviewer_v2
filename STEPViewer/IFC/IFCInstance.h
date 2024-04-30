@@ -77,7 +77,7 @@ public: // Methods
 	CIFCModel* GetModel() const;
 	
 	float* getVertices();
-	int_t getVerticesCount();
+	int64_t getVerticesCount();
 	int64_t getVertexLength() const;
 	int32_t* GetIndices() const;
 	int64_t GetIndicesCount() const;

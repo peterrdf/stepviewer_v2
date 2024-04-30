@@ -306,7 +306,7 @@ COWLPropertyCollection* COWLPropertyProvider::LoadPropertyCollection(int64_t iIn
 }
 
 // ------------------------------------------------------------------------------------------------
-wstring COWLPropertyProvider::GetPropertyName(int64_t iPropertyInstance) const
+wstring COWLPropertyProvider::GetPropertyName(SdaiInstance iPropertyInstance) const
 {
 	if (iPropertyInstance == 0)
 	{

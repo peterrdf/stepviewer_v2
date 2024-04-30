@@ -19,7 +19,7 @@ CAssembly::CAssembly()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CAssembly::GetExpressID() const
+ExpressID CAssembly::GetExpressID() const
 {
 	return m_iExpressID;
 }

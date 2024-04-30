@@ -188,7 +188,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance* CSTEPModel::getProductInstanceByID(int_t iID) const
+CProductInstance* CSTEPModel::getProductInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
 	if (itInstance == m_mapID2Instance.end())
@@ -448,7 +448,7 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefin
 // ------------------------------------------------------------------------------------------------
 CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
-	int_t iExpressID = internalGetP21Line(iProductDefinitionInstance);
+	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
 	auto itDefinition = m_mapExpressID2Definition.find(iExpressID);
 	if (itDefinition != m_mapExpressID2Definition.end())
@@ -558,7 +558,7 @@ void CSTEPModel::LoadGeometry()
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix)
 {
-	map<int_t, CAssembly*>::iterator itAssembly = m_mapExpressIDAssembly.begin();
+	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
 	{
 		auto pAssembly = itAssembly->second;

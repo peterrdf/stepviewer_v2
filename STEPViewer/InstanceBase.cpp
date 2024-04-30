@@ -19,7 +19,7 @@ wstring CInstanceBase::GetName() const
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ wstring CInstanceBase::GetName(int64_t iInstance)
+/*static*/ wstring CInstanceBase::GetName(SdaiInstance iInstance)
 {
 	wstring strUniqueName;
 
@@ -89,13 +89,13 @@ const wchar_t* CInstanceBase::GetClassName() const
 }
 
 // --------------------------------------------------------------------------------------------
-int64_t CInstanceBase::GetEntity() const
+SdaiEntity CInstanceBase::GetEntity() const
 {
 	return sdaiGetInstanceType(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstanceBase::GetEntity(int64_t iInstance)
+/*static*/ SdaiEntity CInstanceBase::GetEntity(SdaiInstance iInstance)
 {
 	return sdaiGetInstanceType(iInstance);
 }
@@ -107,7 +107,7 @@ const wchar_t* CInstanceBase::GetEntityName() const
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstanceBase::GetEntityName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetEntityName(SdaiInstance iInstance)
 {
 	wchar_t* szEntityName = nullptr;
 	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (const char**)&szEntityName);

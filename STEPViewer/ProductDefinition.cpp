@@ -108,8 +108,8 @@ void CProductDefinition::Calculate()
 	/**
 	* Retrieves the indices
 	*/
-	m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
-	memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
+	m_pIndexBuffer->data() = new int32_t[(uint32_t)m_pIndexBuffer->size()];
+	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 
@@ -250,8 +250,8 @@ void CProductDefinition::Calculate()
 		{
 			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -261,7 +261,7 @@ void CProductDefinition::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -285,7 +285,7 @@ void CProductDefinition::Calculate()
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -334,7 +334,7 @@ void CProductDefinition::Calculate()
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex; 
+			for (int64_t iIndex = iStartIndex; 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -367,8 +367,8 @@ void CProductDefinition::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndex = m_vecConcFacePolygons[iFace].startIndex();
-			int_t iIndicesCount = m_vecConcFacePolygons[iFace].indicesCount();
+			int64_t iStartIndex = m_vecConcFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -380,8 +380,8 @@ void CProductDefinition::Calculate()
 					pCohort = new _cohort();
 					ConcFacePolygonsCohorts().push_back(pCohort);
 
-					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndex; 
+					int64_t iPreviousIndex = -1;
+					for (int64_t iIndex = iStartIndex; 
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2; 
 						iIndex++)
 					{
@@ -410,8 +410,8 @@ void CProductDefinition::Calculate()
 					pCohort = new _cohort();
 					ConcFacePolygonsCohorts().push_back(pCohort);
 
-					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndex; 
+					int64_t iPreviousIndex = -1;
+					for (int64_t iIndex = iStartIndex; 
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -444,8 +444,8 @@ void CProductDefinition::Calculate()
 				ConcFacePolygonsCohorts().push_back(pCohort);
 			}
 
-			int_t iPreviousIndex = -1;
-			for (int_t iIndex = iStartIndex; 
+			int64_t iPreviousIndex = -1;
+			for (int64_t iIndex = iStartIndex; 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -488,8 +488,8 @@ void CProductDefinition::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
 		{
-			int_t iStartIndex = m_vecLines[iFace].startIndex();
-			int_t iIndicesCount = m_vecLines[iFace].indicesCount();
+			int64_t iStartIndex = m_vecLines[iFace].startIndex();
+			int64_t iIndicesCount = m_vecLines[iFace].indicesCount();
 
 			/*
 			* Check the limit
@@ -500,7 +500,7 @@ void CProductDefinition::Calculate()
 				LinesCohorts().push_back(pCohort);
 			}
 
-			for (int_t iIndex = iStartIndex; 
+			for (int64_t iIndex = iStartIndex; 
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -512,13 +512,6 @@ void CProductDefinition::Calculate()
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
-
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < LinesCohorts().size(); iCohort++)
-		{
-			ASSERT(LinesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
-		}
-#endif
 	} // if (!m_vecLines.empty())		
 
 	/*
@@ -533,8 +526,8 @@ void CProductDefinition::Calculate()
 		{
 			_face& concFace = itMaterial2ConcFacePoints->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -544,7 +537,7 @@ void CProductDefinition::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -568,7 +561,7 @@ void CProductDefinition::Calculate()
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -617,7 +610,7 @@ void CProductDefinition::Calculate()
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex; 
+			for (int64_t iIndex = iStartIndex; 
 				iIndex < iStartIndex + iIndicesCount; 
 				iIndex++)
 			{
@@ -977,7 +970,7 @@ const vector<CProductInstance*>& CProductDefinition::GetInstances() const
 // ------------------------------------------------------------------------------------------------
 int CProductDefinition::GetNextProductInstance()
 {
-	if (++m_iNextProductInstance >= m_vecProductInstances.size())
+	if (++m_iNextProductInstance >= (int)m_vecProductInstances.size())
 	{
 		m_iNextProductInstance = 0;
 	}

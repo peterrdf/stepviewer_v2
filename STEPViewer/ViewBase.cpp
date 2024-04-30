@@ -49,7 +49,7 @@ void CViewBase::SetController(CController* pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CViewBase::OnViewRelations(CViewBase* /*pSender*/, int64_t /*iInstance*/)
+/*virtual*/ void CViewBase::OnViewRelations(CViewBase* /*pSender*/, SdaiInstance /*iInstance*/)
 {
 }
 

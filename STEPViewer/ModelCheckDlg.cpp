@@ -410,7 +410,7 @@ void CModelCheckDlg::AddIssue(ValidationIssue issue, int rWidth[4])
 	rWidth[3] = max(rWidth[3], m_wndIssueList.GetStringWidth(attr));
 
 	auto data = new IssueData();
-	data->stepId = GetStepId (issue);
+	data->stepId = (int_t)GetStepId (issue);
 	m_wndIssueList.SetItemData(item, (DWORD_PTR)data);
 }
 

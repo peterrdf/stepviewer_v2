@@ -269,7 +269,7 @@ void CDesignTreeView::ResetView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CDesignTreeView::AddInstance(HTREEITEM hParent, int64_t iInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, SdaiInstance iInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -306,7 +306,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, int64_t iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, SdaiInstance iInstance)
 {
 	if (iInstance == 0)
 	{
@@ -377,7 +377,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, int64_t iInstance)
 			{
 				case OBJECTTYPEPROPERTY_TYPE:
 				{
-					int64_t* piInstances = nullptr;
+					OwlInstance* piInstances = nullptr;
 					int64_t iValuesCount = 0;
 					GetObjectProperty(iInstance, pProperty->GetInstance(), &piInstances, &iValuesCount);
 

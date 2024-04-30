@@ -121,7 +121,7 @@ float* CIFCInstance::getVertices()
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CIFCInstance::getVerticesCount()
+int64_t CIFCInstance::getVerticesCount()
 {
 	if (m_pVertexBuffer != nullptr)
 	{

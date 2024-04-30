@@ -18,15 +18,15 @@ public: // Methods
 	virtual bool IsEnabled() const PURE;
 
 	wstring GetName() const;
-	static wstring GetName(int64_t iInstance);
+	static wstring GetName(SdaiInstance iInstance);
 
 	int64_t GetClass() const;
 	static int64_t GetClass(int64_t iInstance);
 	const wchar_t* GetClassName() const;
 	static const wchar_t* GetClassName(int64_t iInstance);
 
-	int64_t GetEntity() const;
-	static int64_t GetEntity(int64_t iInstance);
+	SdaiEntity GetEntity() const;
+	static SdaiEntity GetEntity(SdaiInstance iInstance);
 	const wchar_t* GetEntityName() const;
-	static const wchar_t* GetEntityName(int64_t iInstance);
+	static const wchar_t* GetEntityName(SdaiInstance iInstance);
 };

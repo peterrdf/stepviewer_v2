@@ -72,5 +72,5 @@ private: // Methods
 
 	COWLPropertyCollection* LoadPropertyCollection(int64_t iInstance);
 
-	wstring GetPropertyName(int64_t iPropertyInstance) const;
+	wstring GetPropertyName(SdaiInstance iPropertyInstance) const;
 };

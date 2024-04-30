@@ -1059,9 +1059,9 @@ void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProduct
 // ------------------------------------------------------------------------------------------------
 void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
 {
-	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
+	const auto& mapAssemblies = pModel->GetAssemblies();
 
-	map<int_t, CAssembly*>::const_iterator itAssembly = mapAssemblies.begin();
+	auto itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
 	{
 		CAssembly* pAssembly = itAssembly->second;
@@ -1159,9 +1159,9 @@ void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, 
 // ------------------------------------------------------------------------------------------------
 void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
-	const map<int_t, CAssembly*>& mapAssemblies = pModel->GetAssemblies();
+	const auto& mapAssemblies = pModel->GetAssemblies();
 
-	map<int_t, CAssembly*>::const_iterator itAssembly = mapAssemblies.begin();
+	auto itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
 	{
 		CAssembly* pAssembly = itAssembly->second;

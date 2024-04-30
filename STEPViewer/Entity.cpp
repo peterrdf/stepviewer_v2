@@ -149,7 +149,7 @@ void CEntity::PostProcessing()
 
 
 // ------------------------------------------------------------------------------------------------
-CEntityProvider::CEntityProvider(int64_t iModel)
+CEntityProvider::CEntityProvider(SdaiModel iModel)
 	: m_iModel(iModel)
 	, m_mapEntities()
 {
@@ -170,17 +170,17 @@ CEntityProvider::CEntityProvider(int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CEntityProvider::Load()
 {
-	int_t iEntitiesCount = engiGetEntityCount(m_iModel);
+	SdaiInteger iEntitiesCount = engiGetEntityCount(m_iModel);
 
 	/*
 	* Retrieve the Entities
 	*/
-	int_t i = 0;
+	SdaiInteger i = 0;
 	while (i < iEntitiesCount)
 	{
-		int_t iEntity = engiGetEntityElement(m_iModel, i);
+		SdaiEntity iEntity = engiGetEntityElement(m_iModel, i);
 		int_t iAttributesCount = engiGetEntityNoArguments(iEntity);
-		int_t iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
+		SdaiInteger iInstancesCount = sdaiGetMemberCount(sdaiGetEntityExtent(m_iModel, iEntity));
 
 		auto pEntity = new CEntity(m_iModel, iEntity, iAttributesCount, iInstancesCount);
 		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());

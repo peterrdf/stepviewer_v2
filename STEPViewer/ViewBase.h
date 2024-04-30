@@ -53,7 +53,7 @@ public: // Methods
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CViewBase* pSender);
 	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender);
-	virtual void OnViewRelations(CViewBase* pSender, int64_t iInstance);
+	virtual void OnViewRelations(CViewBase* pSender, SdaiInstance iInstance);
 	virtual void OnViewRelations(CViewBase* pSender, CEntity* pEntity);
 	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty);
 

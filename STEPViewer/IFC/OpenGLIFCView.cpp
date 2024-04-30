@@ -1114,7 +1114,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-			pPointedInstance = pModel->GetInstanceByID(iInstanceID);
+			pPointedInstance = pModel->GetInstanceByID((int_t)iInstanceID);
 			ASSERT(pPointedInstance != nullptr);
 		}
 

@@ -65,12 +65,12 @@ class CEntityProvider
 
 private: // Members
 
-	int64_t m_iModel;
+	SdaiModel m_iModel;
 	map<int_t, CEntity*> m_mapEntities;
 
 public: // Methods
 
-	CEntityProvider(int64_t iModel);
+	CEntityProvider(SdaiModel iModel);
 	virtual ~CEntityProvider();
 
 	const map<int_t, CEntity*>& GetEntities() const;

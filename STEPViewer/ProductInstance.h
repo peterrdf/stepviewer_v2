@@ -18,7 +18,7 @@ class CProductInstance : public CInstanceBase
 
 private: // Members
 
-	int_t m_iID;
+	int64_t m_iID;
 
 	CProductDefinition* m_pProductDefinition;
 	OGLMATRIX* m_pTransformationMatrix;
@@ -27,7 +27,7 @@ private: // Members
 
 public: // Methods
 	
-	CProductInstance(int_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix);
+	CProductInstance(int64_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix);
 	virtual ~CProductInstance();
 
 	// CInstanceBase
@@ -35,7 +35,7 @@ public: // Methods
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
 	
-	int_t GetID() const;
+	int64_t GetID() const;
 
 	CProductDefinition* GetProductDefinition() const;
 	OGLMATRIX* GetTransformationMatrix() const;

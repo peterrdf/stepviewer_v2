@@ -47,13 +47,13 @@ private: // Classes
 
 	private: // Methods
 		
-		int64_t m_iInstance;
+		SdaiInstance m_iInstance;
 		enumItemType m_enItemType;
 		vector<HTREEITEM> m_vecItems;
 
 	public: // Members
 		
-		CItemData(int64_t iInstance, enumItemType enItemType)
+		CItemData(SdaiInstance iInstance, enumItemType enItemType)
 			: m_iInstance(iInstance)
 			, m_enItemType(enItemType)
 			, m_vecItems()
@@ -61,7 +61,7 @@ private: // Classes
 
 		virtual ~CItemData() {}
 
-		int64_t GetInstance() const { return m_iInstance; }
+		SdaiInstance GetInstance() const { return m_iInstance; }
 		enumItemType GetType() const { return m_enItemType; }
 		vector<HTREEITEM>& Items() { return m_vecItems; }
 	};
@@ -73,7 +73,7 @@ private: // Classes
 
 	public: // Methods
 
-		CInstanceData(int64_t iInstance)
+		CInstanceData(SdaiInstance iInstance)
 			: CItemData(iInstance, enumItemType::Instance)
 		{}
 
@@ -109,8 +109,8 @@ public: // Methods
 private: // Methods
 
 	void ResetView();	
-	void AddInstance(HTREEITEM hParent, int64_t iInstance);
-	void AddProperties(HTREEITEM hParent, int64_t iInstance);
+	void AddInstance(HTREEITEM hParent, SdaiInstance iInstance);
+	void AddProperties(HTREEITEM hParent, SdaiInstance iInstance);
 
 	void Clean();
 

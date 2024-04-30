@@ -696,16 +696,16 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 	/**
 	* Retrieves the vertices
 	*/
-	pInstance->m_pVertexBuffer->data() = new float[pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength()];
-	memset(pInstance->m_pVertexBuffer->data(), 0, pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength() * sizeof(float));
+	pInstance->m_pVertexBuffer->data() = new float[(uint32_t)pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength()];
+	memset(pInstance->m_pVertexBuffer->data(), 0, (uint32_t)pInstance->m_pVertexBuffer->size() * pInstance->m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(iOWLInstance, pInstance->m_pVertexBuffer->data());
 
 	/**
 	* Retrieves the indices
 	*/
-	pInstance->m_pIndexBuffer->data() = new int32_t[pInstance->m_pIndexBuffer->size()];
-	memset(pInstance->m_pIndexBuffer->data(), 0, pInstance->m_pIndexBuffer->size() * sizeof(int32_t));
+	pInstance->m_pIndexBuffer->data() = new int32_t[(uint32_t)pInstance->m_pIndexBuffer->size()];
+	memset(pInstance->m_pIndexBuffer->data(), 0, (uint32_t)pInstance->m_pIndexBuffer->size() * sizeof(int32_t));
 
 	UpdateInstanceIndexBuffer(iOWLInstance, pInstance->m_pIndexBuffer->data());
 
@@ -846,8 +846,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 		{
 			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -857,7 +857,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -881,7 +881,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -930,7 +930,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -964,8 +964,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 
 		for (size_t iFace = 0; iFace < pInstance->m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndex = pInstance->m_vecConcFacePolygons[iFace].startIndex();
-			int_t iIndicesCount = pInstance->m_vecConcFacePolygons[iFace].indicesCount();
+			int64_t iStartIndex = pInstance->m_vecConcFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = pInstance->m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -977,8 +977,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 					pCohort = new _cohort();
 					pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 
-					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndex;
+					int64_t iPreviousIndex = -1;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2;
 						iIndex++)
 					{
@@ -1007,8 +1007,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 					pCohort = new _cohort();
 					pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 
-					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndex;
+					int64_t iPreviousIndex = -1;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -1041,8 +1041,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				pInstance->ConcFacePolygonsCohorts().push_back(pCohort);
 			}
 
-			int_t iPreviousIndex = -1;
-			for (int_t iIndex = iStartIndex;
+			int64_t iPreviousIndex = -1;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -1086,8 +1086,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 
 		for (size_t iFace = 0; iFace < pInstance->m_vecLines.size(); iFace++)
 		{
-			int_t iStartIndex = pInstance->m_vecLines[iFace].startIndex();
-			int_t iIndicesCount = pInstance->m_vecLines[iFace].indicesCount();
+			int64_t iStartIndex = pInstance->m_vecLines[iFace].startIndex();
+			int64_t iIndicesCount = pInstance->m_vecLines[iFace].indicesCount();
 
 			/*
 			* Check the limit
@@ -1098,7 +1098,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				pInstance->LinesCohorts().push_back(pCohort);
 			}
 
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -1108,15 +1108,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				}
 
 				pCohort->indices().push_back(pInstance->m_pIndexBuffer->data()[iIndex]);
-			} // for (int_t iIndex = ...
+			} // for (int64_t iIndex = ...
 		} // for (size_t iFace = ...
-
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < pInstance->LinesCohorts().size(); iCohort++)
-		{
-			ASSERT(pInstance->LinesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
-		}
-#endif
 	} // if (!m_vecLines.empty())		
 
 	/*
@@ -1131,8 +1124,8 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 		{
 			_face& concFace = itMaterial2ConcFacePoints->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1142,7 +1135,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -1166,7 +1159,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -1215,7 +1208,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
