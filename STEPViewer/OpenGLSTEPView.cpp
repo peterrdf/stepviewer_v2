@@ -351,9 +351,9 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		/*
 		* IBO - Conceptual faces
 		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pDefinition->ConcFacesCohorts().size(); iFacesCohort++)
+		for (size_t iFacesCohort = 0; iFacesCohort < pDefinition->concFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pDefinition->ConcFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacesIndicesCount + pDefinition->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -366,16 +366,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecConcFacesCohorts.clear();
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pDefinition->ConcFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pDefinition->ConcFacesCohorts()[iFacesCohort]);
+			iConcFacesIndicesCount += (GLsizei)pDefinition->concFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pDefinition->concFacesCohorts()[iFacesCohort]);
 		}
 
 		/*
 		* IBO - Conceptual face polygons
 		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pDefinition->ConcFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pDefinition->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacePolygonsIndicesCount + pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -388,16 +388,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecConcFacePolygonsCohorts.clear();
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pDefinition->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+			iConcFacePolygonsIndicesCount += (GLsizei)pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
 		}
 
 		/*
 		* IBO - Lines
 		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pDefinition->LinesCohorts().size(); iLinesCohort++)
+		for (size_t iLinesCohort = 0; iLinesCohort < pDefinition->linesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pDefinition->LinesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iLinesIndicesCount + pDefinition->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -410,16 +410,16 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecLinesCohorts.clear();
 			}
 
-			iLinesIndicesCount += (GLsizei)pDefinition->LinesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pDefinition->LinesCohorts()[iLinesCohort]);
+			iLinesIndicesCount += (GLsizei)pDefinition->linesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pDefinition->linesCohorts()[iLinesCohort]);
 		}
 
 		/*
 		* IBO - Points
 		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pDefinition->PointsCohorts().size(); iPointsCohort++)
+		for (size_t iPointsCohort = 0; iPointsCohort < pDefinition->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pDefinition->PointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pDefinition->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
@@ -432,8 +432,8 @@ COpenGLSTEPView::~COpenGLSTEPView()
 				vecPointsCohorts.clear();
 			}
 
-			iPointsIndicesCount += (GLsizei)pDefinition->PointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pDefinition->PointsCohorts()[iPointsCohort]);
+			iPointsIndicesCount += (GLsizei)pDefinition->pointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pDefinition->pointsCohorts()[iPointsCohort]);
 		}
 
 		iVerticesCount += (GLsizei)pDefinition->getVerticesCount();
@@ -755,7 +755,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->ConcFacesCohorts().empty())
+			if (pDefinition->concFacesCohorts().empty())
 			{
 				continue;
 			}
@@ -784,9 +784,9 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
-					auto pCohort = pDefinition->ConcFacesCohorts()[iCohort];
+					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
 
 					const _material* pMaterial =
 						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -882,7 +882,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->ConcFacePolygonsCohorts().empty())
+			if (pDefinition->concFacePolygonsCohorts().empty())
 			{
 				continue;
 			}
@@ -911,9 +911,9 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				
-				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacePolygonsCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->concFacePolygonsCohorts().size(); iCohort++)
 				{
-					_cohort* pCohort = pDefinition->ConcFacePolygonsCohorts()[iCohort];
+					_cohort* pCohort = pDefinition->concFacePolygonsCohorts()[iCohort];
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_LINES,
@@ -978,7 +978,7 @@ void COpenGLSTEPView::DrawLines()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->LinesCohorts().empty())
+			if (pDefinition->linesCohorts().empty())
 			{
 				continue;
 			}
@@ -1007,9 +1007,9 @@ void COpenGLSTEPView::DrawLines()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->LinesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->linesCohorts().size(); iCohort++)
 				{
-					_cohort* pCohort = pDefinition->LinesCohorts()[iCohort];
+					_cohort* pCohort = pDefinition->linesCohorts()[iCohort];
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_LINES,
@@ -1075,7 +1075,7 @@ void COpenGLSTEPView::DrawPoints()
 
 		for (auto pDefinition : itCohort.second)
 		{
-			if (pDefinition->PointsCohorts().empty())
+			if (pDefinition->pointsCohorts().empty())
 			{
 				continue;
 			}
@@ -1103,7 +1103,7 @@ void COpenGLSTEPView::DrawPoints()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (auto pCohort : pDefinition->PointsCohorts())
+				for (auto pCohort : pDefinition->pointsCohorts())
 				{
 					const _material* pMaterial =
 						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -1278,9 +1278,9 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 
-				for (size_t iCohort = 0; iCohort < pDefinition->ConcFacesCohorts().size(); iCohort++)
+				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
-					auto pCohort = pDefinition->ConcFacesCohorts()[iCohort];
+					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
 
 					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetID());
 					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());

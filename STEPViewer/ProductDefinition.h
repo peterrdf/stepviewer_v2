@@ -35,19 +35,7 @@ private: // Members
 	// Geometry
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
 	_indices_i32* m_pIndexBuffer;
-	bool m_bCalculated;	
-
-	// Materials
-	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
-
-	// Cohorts
-	vector<_cohort*> m_vecConcFacePolygonsCohorts;
-	vector<_cohort*> m_vecLinesCohorts;
-	vector<_cohortWithMaterial*> m_vecPointsCohorts;
-
-	// VBO (OpenGL)
-	GLuint m_iVBO;
-	GLsizei m_iVBOOffset;
+	bool m_bCalculated;
 
 public: // Methods
 
@@ -109,18 +97,6 @@ public: // Methods
 	float*  getVertices() const;
 	int64_t getVerticesCount() const;
 	int64_t getVertexLength() const;
-
-	// Materials
-	vector<_cohortWithMaterial*>& ConcFacesCohorts();
-
-	// Cohorts
-	vector<_cohort*>& ConcFacePolygonsCohorts();
-	vector<_cohort*>& LinesCohorts();
-	vector<_cohortWithMaterial*>& PointsCohorts();
-
-	// VBO (OpenGL)
-	GLuint& VBO();
-	GLsizei& VBOOffset();
 
 private: // Methods
 	

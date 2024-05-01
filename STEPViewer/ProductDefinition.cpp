@@ -19,12 +19,6 @@ CProductDefinition::CProductDefinition(SdaiInstance iInstance)
 	, m_pVertexBuffer(nullptr)
 	, m_pIndexBuffer(nullptr)
 	, m_bCalculated(false)
-	, m_vecConcFacesCohorts()
-	, m_vecConcFacePolygonsCohorts()
-	, m_vecLinesCohorts()
-	, m_vecPointsCohorts()
-	, m_iVBO(0)
-	, m_iVBOOffset(0)
 {
 	ASSERT(m_iInstance != 0);
 	ASSERT(m_iExpressID != 0);
@@ -135,9 +129,9 @@ void CProductDefinition::Calculate()
 	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
-
-	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFaces;
+	
+	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 
 	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
@@ -215,6 +209,43 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountLines > 0)
 		{
+			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
+			iIndexValue *= _VERTEX_LENGTH;
+
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
+			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
+			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
+			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
+			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
+			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			/*
+			* Material
+			*/
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				nullptr);
+
+			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
+			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
+			{
+				mapMaterial2ConcFaceLines[material] = vector<_face>{ _face(iConceptualFace, iStartIndexLines, iIndicesCountLines) };
+			}
+			else
+			{
+				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFace, iStartIndexLines, iIndicesCountLines));
+			}
+
 			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
 		}
 
@@ -291,7 +322,7 @@ void CProductDefinition::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					ConcFacesCohorts().push_back(pNewCohort);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -315,7 +346,7 @@ void CProductDefinition::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					ConcFacesCohorts().push_back(pNewCohort);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -336,7 +367,7 @@ void CProductDefinition::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
-				ConcFacesCohorts().push_back(pCohort);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -346,7 +377,7 @@ void CProductDefinition::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
-				ConcFacesCohorts().push_back(pCohort);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -377,7 +408,7 @@ void CProductDefinition::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = ConcFacePolygonsCohorts().empty() ? nullptr : ConcFacePolygonsCohorts()[ConcFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = concFacePolygonsCohorts().empty() ? nullptr : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -385,7 +416,7 @@ void CProductDefinition::Calculate()
 		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
-			ConcFacePolygonsCohorts().push_back(pCohort);
+			concFacePolygonsCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
@@ -401,7 +432,7 @@ void CProductDefinition::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
-					ConcFacePolygonsCohorts().push_back(pCohort);
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex; 
@@ -431,7 +462,7 @@ void CProductDefinition::Calculate()
 				if (iIndicesCount > 0)
 				{
 					pCohort = new _cohort();
-					ConcFacePolygonsCohorts().push_back(pCohort);
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex; 
@@ -464,7 +495,7 @@ void CProductDefinition::Calculate()
 			if ((pCohort->indices().size() + (iIndicesCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				ConcFacePolygonsCohorts().push_back(pCohort);
+				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
 			int64_t iPreviousIndex = -1;
@@ -493,49 +524,140 @@ void CProductDefinition::Calculate()
 	/*
 	* Group the lines
 	*/
-	if (!m_vecLines.empty())
+	// Group the lines
+	auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.begin();
+	for (; itMaterial2ConcFaceLines != mapMaterial2ConcFaceLines.end(); itMaterial2ConcFaceLines++)
 	{
-		/*
-		* Use the last cohort (if any)
-		*/
-		auto pCohort = LinesCohorts().empty() ? nullptr : LinesCohorts()[LinesCohorts().size() - 1];
+		_cohortWithMaterial* pCohort = nullptr;
 
-		/*
-		* Create the cohort
-		*/
-		if (pCohort == nullptr)
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaceLines->second.size(); iConcFace++)
 		{
-			pCohort = new _cohort();
-			LinesCohorts().push_back(pCohort);
-		}
+			_face& concFace = itMaterial2ConcFaceLines->second[iConcFace];
 
-		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
-		{
-			int64_t iStartIndex = m_vecLines[iFace].startIndex();
-			int64_t iIndicesCount = m_vecLines[iFace].indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
-			/*
-			* Check the limit
-			*/
-			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+			// Split the conceptual face - isolated case
+			if (iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _cohort();
-				LinesCohorts().push_back(pCohort);
+				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
+				{
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					linesCohorts().push_back(pNewCohort);
+
+					// Update Conceptual face start index
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+
+					iIndicesCount -= _oglUtils::getIndicesCountLimit();
+					iStartIndex += _oglUtils::getIndicesCountLimit();
+				}
+
+				if (iIndicesCount > 0)
+				{
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					linesCohorts().push_back(pNewCohort);
+
+					// Update Conceptual face start index
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+				}
+
+				continue;
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
+
+			// Create material
+			if (pCohort == nullptr)
+			{
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
+
+				linesCohorts().push_back(pCohort);
 			}
 
-			for (int64_t iIndex = iStartIndex; 
+			// Check the limit
+			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
+
+				linesCohorts().push_back(pCohort);
+			}
+
+			// Update Conceptual face start index
+			concFace.startIndex() = pCohort->indices().size();
+
+			// Add the indices
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				if (m_pIndexBuffer->data()[iIndex] < 0)
-				{
-					continue;
-				}
-
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-			} // for (int_t iIndex = ...
-		} // for (size_t iFace = ...
-	} // if (!m_vecLines.empty())		
+			}
+
+			// Conceptual faces
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
+	} // for (; itMaterial2ConceptualFaces != ...
+	//if (!m_vecLines.empty())
+	//{
+	//	/*
+	//	* Use the last cohort (if any)
+	//	*/
+	//	auto pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
+
+	//	/*
+	//	* Create the cohort
+	//	*/
+	//	if (pCohort == nullptr)
+	//	{
+	//		pCohort = new _cohortWithMaterial();
+	//		linesCohorts().push_back(pCohort);
+	//	}
+
+	//	for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
+	//	{
+	//		int64_t iStartIndex = m_vecLines[iFace].startIndex();
+	//		int64_t iIndicesCount = m_vecLines[iFace].indicesCount();
+
+	//		/*
+	//		* Check the limit
+	//		*/
+	//		if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
+	//		{
+	//			pCohort = new _cohortWithMaterial();
+	//			linesCohorts().push_back(pCohort);
+	//		}
+
+	//		for (int64_t iIndex = iStartIndex; 
+	//			iIndex < iStartIndex + iIndicesCount;
+	//			iIndex++)
+	//		{
+	//			if (m_pIndexBuffer->data()[iIndex] < 0)
+	//			{
+	//				continue;
+	//			}
+
+	//			pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+	//		} // for (int_t iIndex = ...
+	//	} // for (size_t iFace = ...
+	//} // if (!m_vecLines.empty())		
 
 	/*
 	* Group the points
@@ -567,7 +689,7 @@ void CProductDefinition::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					PointsCohorts().push_back(pNewCohort);
+					pointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -591,7 +713,7 @@ void CProductDefinition::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					PointsCohorts().push_back(pNewCohort);
+					pointsCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -612,7 +734,7 @@ void CProductDefinition::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
-				PointsCohorts().push_back(pCohort);
+				pointsCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -622,7 +744,7 @@ void CProductDefinition::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
-				PointsCohorts().push_back(pCohort);
+				pointsCohorts().push_back(pCohort);
 			}
 
 			/*
@@ -1009,41 +1131,6 @@ int64_t CProductDefinition::getVertexLength() const
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<_cohortWithMaterial*>& CProductDefinition::ConcFacesCohorts()
-{
-	return m_vecConcFacesCohorts;
-}
-
-vector<_cohort*>& CProductDefinition::ConcFacePolygonsCohorts()
-{
-	return m_vecConcFacePolygonsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CProductDefinition::LinesCohorts()
-{
-	return m_vecLinesCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohortWithMaterial*>& CProductDefinition::PointsCohorts()
-{
-	return m_vecPointsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLuint& CProductDefinition::VBO()
-{
-	return m_iVBO;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLsizei& CProductDefinition::VBOOffset()
-{
-	return m_iVBOOffset;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::Clean()
 {
 	delete m_pVertexBuffer;
@@ -1060,7 +1147,4 @@ void CProductDefinition::Clean()
 	m_vecPoints.clear();	
 
 	_cohort::clear(m_vecConcFacesCohorts);
-	_cohort::clear(m_vecConcFacePolygonsCohorts);
-	_cohort::clear(m_vecLinesCohorts);
-	_cohort::clear(m_vecPointsCohorts);
 }
