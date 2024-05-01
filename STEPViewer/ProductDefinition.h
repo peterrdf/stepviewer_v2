@@ -31,10 +31,7 @@ private: // Members
 	int_t m_iRelatedProductRefs; // if == 0 then it is a root element
 	vector<CProductInstance*> m_vecProductInstances;
 	int m_iNextProductInstance;
-	
-	// Geometry
-	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
-	_indices_i32* m_pIndexBuffer;
+
 	bool m_bCalculated;
 
 public: // Methods
@@ -94,8 +91,6 @@ public: // Methods
 	
 	int32_t* GetIndices() const;
 	int64_t GetIndicesCount() const;
-	float*  getVertices() const;
-	int64_t getVerticesCount() const;
 	int64_t getVertexLength() const;
 
 private: // Methods

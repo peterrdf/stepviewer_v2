@@ -16,8 +16,6 @@ CProductDefinition::CProductDefinition(SdaiInstance iInstance)
 	, m_iRelatedProductRefs(0)
 	, m_vecProductInstances()
 	, m_iNextProductInstance(-1)
-	, m_pVertexBuffer(nullptr)
-	, m_pIndexBuffer(nullptr)
 	, m_bCalculated(false)
 {
 	ASSERT(m_iInstance != 0);
@@ -1097,28 +1095,6 @@ int64_t CProductDefinition::GetIndicesCount() const
 	if (m_pIndexBuffer != nullptr)
 	{
 		return m_pIndexBuffer->size();
-	}
-
-	return 0;
-}
-
-// ------------------------------------------------------------------------------------------------
-float* CProductDefinition::getVertices() const
-{
-	if (m_pVertexBuffer != nullptr)
-	{
-		return m_pVertexBuffer->data();
-	}
-
-	return nullptr;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CProductDefinition::getVerticesCount() const
-{
-	if (m_pVertexBuffer != nullptr)
-	{
-		return m_pVertexBuffer->size();
 	}
 
 	return 0;
