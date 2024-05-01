@@ -49,9 +49,7 @@ CProductDefinition::CProductDefinition(SdaiInstance iInstance)
 }
 
 /*virtual*/ CProductDefinition::~CProductDefinition()
-{
-	Clean();
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 void CProductDefinition::Calculate()
@@ -862,9 +860,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -893,16 +891,16 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if ((GetIndices()[iIndex] == -1) || (GetIndices()[iIndex] == -2))
+				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
 				{
 					continue;
 				}
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -931,16 +929,16 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if (GetIndices()[iIndex] == -1)
+				if (getIndices()[iIndex] == -1)
 				{
 					continue;
 				}
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -971,9 +969,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
+					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -1080,47 +1078,8 @@ bool CProductDefinition::HasGeometry() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int32_t* CProductDefinition::GetIndices() const
-{
-	if (m_pIndexBuffer != nullptr)
-	{
-		return m_pIndexBuffer->data();
-	}
-
-	return nullptr;
-}
-
-int64_t CProductDefinition::GetIndicesCount() const
-{
-	if (m_pIndexBuffer != nullptr)
-	{
-		return m_pIndexBuffer->size();
-	}
-
-	return 0;
-}
-
-// ------------------------------------------------------------------------------------------------
 int64_t CProductDefinition::getVertexLength() const
 {
 	return _VERTEX_LENGTH;
 }
 
-// ------------------------------------------------------------------------------------------------
-void CProductDefinition::Clean()
-{
-	delete m_pVertexBuffer;
-	m_pVertexBuffer = nullptr;
-
-	delete m_pIndexBuffer;
-	m_pIndexBuffer = nullptr;
-
-	m_iConceptualFacesCount = 0;
-
-	m_vecTriangles.clear();
-	m_vecConcFacePolygons.clear();
-	m_vecLines.clear();
-	m_vecPoints.clear();	
-
-	_cohort::clear(m_vecConcFacesCohorts);
-}

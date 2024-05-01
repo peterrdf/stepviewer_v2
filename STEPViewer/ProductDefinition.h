@@ -89,12 +89,6 @@ public: // Methods
 
 	bool HasGeometry() const;
 	
-	int32_t* GetIndices() const;
-	int64_t GetIndicesCount() const;
 	int64_t getVertexLength() const;
-
-private: // Methods
-	
-	void Clean();
 };
 
