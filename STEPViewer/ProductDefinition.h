@@ -86,8 +86,6 @@ public: // Methods
 	const vector<CProductInstance*>& GetInstances() const { return m_vecProductInstances; }
 
 	int GetNextProductInstance();
-
-	bool HasGeometry() const;
 	
 	int64_t getVertexLength() const;
 };

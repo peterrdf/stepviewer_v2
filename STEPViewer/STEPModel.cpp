@@ -223,7 +223,7 @@ void CSTEPModel::ScaleAndCenter()
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->HasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
@@ -273,7 +273,7 @@ void CSTEPModel::ScaleAndCenter()
 	itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->HasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}
@@ -292,7 +292,7 @@ void CSTEPModel::ScaleAndCenter()
 	itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (!itDefinition->second->HasGeometry())
+		if (!itDefinition->second->hasGeometry())
 		{
 			continue;
 		}

@@ -1072,12 +1072,6 @@ int CProductDefinition::GetNextProductInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CProductDefinition::HasGeometry() const
-{
-	return (m_pVertexBuffer != nullptr) && (m_pVertexBuffer->size() > 0);
-}
-
-// ------------------------------------------------------------------------------------------------
 int64_t CProductDefinition::getVertexLength() const
 {
 	return _VERTEX_LENGTH;

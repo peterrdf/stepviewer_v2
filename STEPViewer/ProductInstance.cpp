@@ -51,7 +51,7 @@ CProductInstance::~CProductInstance()
 /*virtual*/ bool CProductInstance::HasGeometry() const
 {
 	return m_pProductDefinition != nullptr ?
-		m_pProductDefinition->HasGeometry() :
+		m_pProductDefinition->hasGeometry() :
 		false;
 }
 
