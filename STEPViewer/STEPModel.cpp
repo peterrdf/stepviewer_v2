@@ -260,14 +260,14 @@ void CSTEPModel::ScaleAndCenter()
 
 	m_fBoundingSphereDiameter = m_dOriginalBoundingSphereDiameter;
 
-	TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
 		m_fYmin,
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	/* Scale */
 	itDefinition = m_mapExpressID2Definition.begin();
@@ -278,7 +278,7 @@ void CSTEPModel::ScaleAndCenter()
 			continue;
 		}
 
-		itDefinition->second->Scale(m_fBoundingSphereDiameter);
+		itDefinition->second->Scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -332,14 +332,14 @@ void CSTEPModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	TRACE(L"\n*** Scale and Center II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
 		m_fYmin,
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 // ------------------------------------------------------------------------------------------------

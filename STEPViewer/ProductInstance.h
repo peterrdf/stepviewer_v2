@@ -43,6 +43,6 @@ public: // Methods
 	bool GetEnable() const;
 	void SetEnable(bool bEnable);
 
-	void Scale(float fResoltuion);
+	void Scale(float fScaleFactor);
 };
 

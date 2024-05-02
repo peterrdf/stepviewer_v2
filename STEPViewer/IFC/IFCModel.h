@@ -67,7 +67,7 @@ public: // Methods
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 
-	void ScaleAndCenter(); // [-1, 1]
+	void Scale(); // [-1, 1]
 
 	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
 	void Clean();

@@ -108,11 +108,7 @@ public: // Methods
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 
-	void Scale(
-		float fXmin, float fXmax, 
-		float fYmin, float fYmax, 
-		float fZmin, float fZmax, 
-		float fResoltuion);
+	void Scale(float fScaleFactor);
 
 private: // Methods
 

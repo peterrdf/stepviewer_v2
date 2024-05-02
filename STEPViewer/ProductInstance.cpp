@@ -92,14 +92,14 @@ void CProductInstance::SetEnable(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CProductInstance::Scale(float fResoltuion)
+void CProductInstance::Scale(float fScaleFactor)
 {
 	/*
 	* Transformation
 	*/
 
 	// [-1.0 -> 1.0]
-	m_pTransformationMatrix->_41 /= (fResoltuion / 2.0f);
-	m_pTransformationMatrix->_42 /= (fResoltuion / 2.0f);
-	m_pTransformationMatrix->_43 /= (fResoltuion / 2.0f);
+	m_pTransformationMatrix->_41 /= fScaleFactor;
+	m_pTransformationMatrix->_42 /= fScaleFactor;
+	m_pTransformationMatrix->_43 /= fScaleFactor;
 }

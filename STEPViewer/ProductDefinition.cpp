@@ -943,7 +943,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	} // if (!m_vecPoints.empty())
 }
 
-void CProductDefinition::Scale(float fResoltuion)
+void CProductDefinition::Scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -953,15 +953,15 @@ void CProductDefinition::Scale(float fResoltuion)
 	// Vertices [-1.0 -> 1.0]
 	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= fScaleFactor;
 	}
 
 	// Instances
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
 	{
-		m_vecProductInstances[iInstance]->Scale(fResoltuion);
+		m_vecProductInstances[iInstance]->Scale(fScaleFactor);
 	}
 }
 

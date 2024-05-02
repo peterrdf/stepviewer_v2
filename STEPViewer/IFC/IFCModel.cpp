@@ -283,10 +283,9 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	}
 
 	/**
-	* Scale and Center
+	* Scale
 	*/
-
-	ScaleAndCenter();
+	Scale();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -315,7 +314,7 @@ void CIFCModel::Clean()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCModel::ScaleAndCenter()
+void CIFCModel::Scale()
 {
 	/* World */
 	m_dOriginalBoundingSphereDiameter = 2.;
@@ -364,24 +363,20 @@ void CIFCModel::ScaleAndCenter()
 
 	m_fBoundingSphereDiameter = m_dOriginalBoundingSphereDiameter;
 
-	TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
 		m_fYmin,
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/* Scale and Center */
+	/* Scale */
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->Scale(
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter);
+		itIinstance->second->Scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -424,14 +419,14 @@ void CIFCModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	TRACE(L"\n*** Scale and Center II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
 		m_fYmin,
 		m_fYmax,
 		m_fZmin,
 		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_fXTranslation -= m_fXmin;

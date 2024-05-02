@@ -52,7 +52,7 @@ public: // Methods
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax);
-	void Scale(float fResoltuion);
+	void Scale(float fScaleFactor);
 	
 	SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
 	ExpressID GetExpressID() const { return m_iExpressID; }
