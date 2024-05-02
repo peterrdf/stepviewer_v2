@@ -11,8 +11,8 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	, m_szDescription(nullptr)
 	, m_szProductId(nullptr)
 	, m_szProductName(nullptr)
-	, m_iRelatingProductRefs(0)
-	, m_iRelatedProductRefs(0)
+	, m_iRelatingProducts(0)
+	, m_iRelatedProducts(0)
 	, m_vecProductInstances()
 	, m_iNextProductInstance(-1)
 	, m_bCalculated(false)
@@ -764,57 +764,15 @@ void CProductDefinition::Calculate()
 }
 
 void CProductDefinition::CalculateMinMaxTransform(
-	float& fXmin, float& fXmax, 
-	float& fYmin, float& fYmax, 
-	float& fZmin, float& fZmax)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	for (auto pInstance : m_vecProductInstances)
-	{
-		CalculateMinMaxTransform(
-			pInstance,
-			fXmin, fXmax,
-			fYmin, fYmax,
-			fZmin, fZmax);
-	}
-}
-
-void CProductDefinition::CalculateMinMaxTransform(
-	float fXTranslation, float fYTranslation, float fZTranslation,
-	float& fXmin, float& fXmax, 
-	float& fYmin, float& fYmax, 
-	float& fZmin, float& fZmax)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	for (auto pInstance : m_vecProductInstances)
-	{
-		CalculateMinMaxTransform(
-			pInstance,
-			fXTranslation, fYTranslation, fZTranslation,
-			fXmin, fXmax,
-			fYmin, fYmax,
-			fZmin, fZmax);
-	}
-}
-
-void CProductDefinition::CalculateMinMaxTransform(
 	CProductInstance* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
-	double d_41 = pInstance->GetTransformationMatrix()->_41;
-	double d_42 = pInstance->GetTransformationMatrix()->_42;
-	double d_43 = pInstance->GetTransformationMatrix()->_43;
+	double _41 = pInstance->GetTransformationMatrix()->_41;
+	double _42 = pInstance->GetTransformationMatrix()->_42;
+	double _43 = pInstance->GetTransformationMatrix()->_43;
 
 	pInstance->GetTransformationMatrix()->_41 += fXTranslation;
 	pInstance->GetTransformationMatrix()->_42 += fYTranslation;
@@ -826,9 +784,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 		fYmin, fYmax,
 		fZmin, fZmax);
 
-	pInstance->GetTransformationMatrix()->_41 = d_41;
-	pInstance->GetTransformationMatrix()->_42 = d_42;
-	pInstance->GetTransformationMatrix()->_43 = d_43;
+	pInstance->GetTransformationMatrix()->_41 = _41;
+	pInstance->GetTransformationMatrix()->_42 = _42;
+	pInstance->GetTransformationMatrix()->_43 = _43;
 }
 
 void CProductDefinition::CalculateMinMaxTransform(
@@ -985,47 +943,6 @@ void CProductDefinition::CalculateMinMaxTransform(
 	} // if (!m_vecPoints.empty())
 }
 
-void CProductDefinition::ScaleAndCenter(
-	float fXmin, float fXmax, 
-	float fYmin, float fYmax, 
-	float fZmin, float fZmax, 
-	float fResoltuion)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}	
-
-	/**
-	* Vertices
-	*/
-	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
-	{
-		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] -= fXmin;
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] -= fYmin;
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] -= fZmin;
-
-		// center
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] -= ((fXmax - fXmin) / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] -= ((fYmax - fYmin) / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] -= ((fZmax - fZmin) / 2.0f);
-
-		// [-1.0 -> 1.0]
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
-	}	
-
-	/**
-	* Instances
-	*/
-	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
-	{
-		m_vecProductInstances[iInstance]->Scale(fResoltuion);
-	}
-}
-
 void CProductDefinition::Scale(float fResoltuion)
 {
 	if (getVerticesCount() == 0)
@@ -1033,20 +950,15 @@ void CProductDefinition::Scale(float fResoltuion)
 		return;
 	}
 
-	/**
-	* Vertices
-	*/
+	// Vertices [-1.0 -> 1.0]
 	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
-		// [-1.0 -> 1.0]
 		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= (fResoltuion / 2.0f);
 		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= (fResoltuion / 2.0f);
 		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= (fResoltuion / 2.0f);
 	}
 
-	/**
-	* Instances
-	*/
+	// Instances
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
 	{
 		m_vecProductInstances[iInstance]->Scale(fResoltuion);

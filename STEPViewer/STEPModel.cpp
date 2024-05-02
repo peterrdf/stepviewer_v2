@@ -411,9 +411,7 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefin
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
-	auto pDefinition = new CProductDefinition(iProductDefinitionInstance);	
-
-	return pDefinition;
+	return new CProductDefinition(iProductDefinitionInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -426,12 +424,12 @@ CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefini
 	{
 		if (bRelatingProduct)
 		{
-			itDefinition->second->m_iRelatingProductRefs++;
+			itDefinition->second->m_iRelatingProducts++;
 		}
 
 		if (bRelatedProduct)
 		{
-			itDefinition->second->m_iRelatedProductRefs++;
+			itDefinition->second->m_iRelatedProducts++;
 		}
 
 		return itDefinition->second;
@@ -442,12 +440,12 @@ CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefini
 
 	if (bRelatingProduct)
 	{
-		pDefinition->m_iRelatingProductRefs++;
+		pDefinition->m_iRelatingProducts++;
 	}
 
 	if (bRelatedProduct)
 	{
-		pDefinition->m_iRelatedProductRefs++;
+		pDefinition->m_iRelatedProducts++;
 	}
 
 	m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
@@ -519,7 +517,7 @@ void CSTEPModel::LoadGeometry()
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		if (itDefinition->second->GetRelatedProductRefs() == 0)
+		if (itDefinition->second->GetRelatedProducts() == 0)
 		{
 			WalkAssemblyTreeRecursively("", "", itDefinition->second, nullptr);
 		}

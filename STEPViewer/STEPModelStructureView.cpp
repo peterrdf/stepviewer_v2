@@ -996,7 +996,7 @@ void CSTEPModelStructureView::LoadModel()
 	{
 		CProductDefinition* pDefinition = itDefinition->second;
 
-		if (pDefinition->GetRelatedProductRefs() == 0)
+		if (pDefinition->GetRelatedProducts() == 0)
 		{
 			// Load all items in the memory
 			LoadProductDefinitionInMemory(pModel, pDefinition, pModelItemData);
@@ -1020,7 +1020,7 @@ void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProduct
 	/*
 	* Instance
 	*/
-	if (pDefinition->GetRelatingProductRefs() > 0)
+	if (pDefinition->GetRelatingProducts() > 0)
 	{
 		HTREEITEM hProductDefinition = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 		m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
@@ -1085,7 +1085,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 			/*
 			* Instance
 			*/
-			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProductRefs() == 0)
+			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
 				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
 				int iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
@@ -1135,7 +1135,7 @@ void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, 
 	/*
 	* Instance
 	*/
-	if (pDefinition->GetRelatingProductRefs() > 0)
+	if (pDefinition->GetRelatingProducts() > 0)
 	{
 		auto pProductItemData = new CSTEPItemData(pParent, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
 		pParent->children().push_back(pProductItemData);
@@ -1179,7 +1179,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 			/*
 			* Instance
 			*/
-			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProductRefs() == 0)
+			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
 				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
 				int iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
