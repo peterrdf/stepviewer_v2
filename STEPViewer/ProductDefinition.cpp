@@ -6,11 +6,11 @@
 CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	: _instance(-1, iSdaiInstance, true)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
-	, m_strId(L"")
-	, m_strName(L"")
-	, m_strDescription(L"")
-	, m_strProductId(L"")
-	, m_strProductName(L"")
+	, m_szId(nullptr)
+	, m_szName(nullptr)
+	, m_szDescription(nullptr)
+	, m_szProductId(nullptr)
+	, m_szProductName(nullptr)
 	, m_iRelatingProductRefs(0)
 	, m_iRelatedProductRefs(0)
 	, m_vecProductInstances()
@@ -31,17 +31,9 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	//owlBuildInstance(iModel, iSdaiInstance, &m_iInstance);
 	//ASSERT(m_iInstance != 0);
 
-	char* szId = nullptr;
-	sdaiGetAttrBN(iSdaiInstance, "id", sdaiSTRING, &szId);
-	m_strId = szId != nullptr ? CA2W(szId) : L"";
-
-	char* szName = nullptr;
-	sdaiGetAttrBN(iSdaiInstance, "name", sdaiSTRING, &szName);
-	m_strName = szName != nullptr ? CA2W(szName) : L"";
-
-	char* szDescription = nullptr;
-	sdaiGetAttrBN(iSdaiInstance, "description", sdaiSTRING, &szDescription);
-	m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
+	sdaiGetAttrBN(iSdaiInstance, "id", sdaiUNICODE, &m_szId);
+	sdaiGetAttrBN(iSdaiInstance, "name", sdaiUNICODE, &m_szName);
+	sdaiGetAttrBN(iSdaiInstance, "description", sdaiUNICODE, &m_szDescription);
 
 	SdaiInstance iFormationInstance = 0;
 	sdaiGetAttrBN(iSdaiInstance, "formation", sdaiINSTANCE, &iFormationInstance);
@@ -51,11 +43,11 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 
 	char* szProductId = nullptr;
 	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
-	m_strProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
+	m_szProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
 
 	char* szProductName = nullptr;
 	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
-	m_strProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
+	m_szProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
 }
 
 /*virtual*/ CProductDefinition::~CProductDefinition()

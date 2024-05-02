@@ -19,11 +19,11 @@ class CProductDefinition : public _instance
 private: // Members
 
 	ExpressID m_iExpressID;	
-	wstring m_strId;
-	wstring m_strName;
-	wstring m_strDescription;
-	wstring m_strProductId;
-	wstring m_strProductName;
+	wchar_t* m_szId;
+	wchar_t* m_szName;
+	wchar_t* m_szDescription;
+	wchar_t* m_szProductId;
+	wchar_t* m_szProductName;
 	int_t m_iRelatingProductRefs; // if == 0 then it has geometry, otherwise it is a placeholder
 	int_t m_iRelatedProductRefs; // if == 0 then it is a root element
 	vector<CProductInstance*> m_vecProductInstances;
@@ -73,11 +73,11 @@ public: // Methods
 	
 	SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
 	ExpressID GetExpressID() const { return m_iExpressID; }
-	const wchar_t* GetId() const { return m_strId.c_str(); }
-	const wchar_t* GetName() const { return m_strName.c_str(); }
-	const wchar_t* GetDescription() const { return m_strDescription.c_str(); }
-	const wchar_t* GetProductId() const { return m_strProductId.c_str(); }
-	const wchar_t* GetProductName() const { return m_strProductName.c_str(); }
+	const wchar_t* GetId() const { return m_szId; }
+	const wchar_t* GetName() const { return m_szName; }
+	const wchar_t* GetDescription() const { return m_szDescription; }
+	const wchar_t* GetProductId() const { return m_szProductId; }
+	const wchar_t* GetProductName() const { return m_szProductName; }
 	int_t GetRelatingProductRefs() const { return m_iRelatingProductRefs; }
 	int_t GetRelatedProductRefs() const { return m_iRelatedProductRefs; }
 	const vector<CProductInstance*>& GetInstances() const { return m_vecProductInstances; }
