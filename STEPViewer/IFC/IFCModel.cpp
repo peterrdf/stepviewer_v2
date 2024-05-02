@@ -687,7 +687,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiIn
 		return pInstance;
 	}
 
-	int64_t iOWLModel = 0;
+	OwlModel iOWLModel = 0;
 	owlGetModel(m_iModel, &iOWLModel);
 
 	int64_t iOWLInstance = 0;

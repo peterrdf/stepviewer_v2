@@ -3,10 +3,9 @@
 #include "Generic.h"
 
 // ************************************************************************************************
-CProductDefinition::CProductDefinition(SdaiInstance iInstance)
-	: _instance(0, 0, true)
-	, m_iInstance(iInstance)
-	, m_iExpressID(internalGetP21Line(iInstance))
+CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
+	: _instance(-1, iSdaiInstance, true)
+	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_strId(L"")
 	, m_strName(L"")
 	, m_strDescription(L"")
@@ -18,23 +17,34 @@ CProductDefinition::CProductDefinition(SdaiInstance iInstance)
 	, m_iNextProductInstance(-1)
 	, m_bCalculated(false)
 {
-	ASSERT(m_iInstance != 0);
+	ASSERT(iSdaiInstance != 0);
 	ASSERT(m_iExpressID != 0);
 
+	// #test
+	SdaiModel iModel = sdaiGetInstanceModel(iSdaiInstance);
+	ASSERT(iModel != 0);	
+
+	OwlInstance iInstance = 0;
+	owlGetInstance(iModel, iSdaiInstance, &iInstance);
+	ASSERT(iInstance == 0);
+
+	//owlBuildInstance(iModel, iSdaiInstance, &m_iInstance);
+	//ASSERT(m_iInstance != 0);
+
 	char* szId = nullptr;
-	sdaiGetAttrBN(m_iInstance, "id", sdaiSTRING, &szId);
+	sdaiGetAttrBN(iSdaiInstance, "id", sdaiSTRING, &szId);
 	m_strId = szId != nullptr ? CA2W(szId) : L"";
 
 	char* szName = nullptr;
-	sdaiGetAttrBN(m_iInstance, "name", sdaiSTRING, &szName);
+	sdaiGetAttrBN(iSdaiInstance, "name", sdaiSTRING, &szName);
 	m_strName = szName != nullptr ? CA2W(szName) : L"";
 
 	char* szDescription = nullptr;
-	sdaiGetAttrBN(m_iInstance, "description", sdaiSTRING, &szDescription);
+	sdaiGetAttrBN(iSdaiInstance, "description", sdaiSTRING, &szDescription);
 	m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
 
 	SdaiInstance iFormationInstance = 0;
-	sdaiGetAttrBN(m_iInstance, "formation", sdaiINSTANCE, &iFormationInstance);
+	sdaiGetAttrBN(iSdaiInstance, "formation", sdaiINSTANCE, &iFormationInstance);
 
 	SdaiInstance iProductInstance = 0;
 	sdaiGetAttrBN(iFormationInstance, "of_product", sdaiINSTANCE, &iProductInstance);
@@ -51,7 +61,6 @@ CProductDefinition::CProductDefinition(SdaiInstance iInstance)
 /*virtual*/ CProductDefinition::~CProductDefinition()
 {}
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::Calculate()
 {
 	if (m_bCalculated)
@@ -60,8 +69,6 @@ void CProductDefinition::Calculate()
 	}
 
 	m_bCalculated = true;
-
-	OwlModel iModel = GetModel(m_iInstance);
 
 	/*
 	* Set up format
@@ -96,7 +103,7 @@ void CProductDefinition::Calculate()
 	setting += flagbit27;	 //	SPECULAR
 
 	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
-	SetFormat(iModel, setting, mask);
+	SetFormat(getModel(), setting, mask);
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(_VERTEX_LENGTH);
@@ -764,7 +771,6 @@ void CProductDefinition::Calculate()
 	} // for (; itMaterial2ConceptualFaces != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 
@@ -785,7 +791,6 @@ void CProductDefinition::CalculateMinMaxTransform(
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(
 	float fXTranslation, float fYTranslation, float fZTranslation,
 	float& fXmin, float& fXmax, 
@@ -808,7 +813,6 @@ void CProductDefinition::CalculateMinMaxTransform(
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(
 	CProductInstance* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,
@@ -835,7 +839,6 @@ void CProductDefinition::CalculateMinMaxTransform(
 	pInstance->GetTransformationMatrix()->_43 = d_43;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::CalculateMinMaxTransform(
 	CProductInstance* pInstance,
 	float& fXmin, float& fXmax, 
@@ -990,7 +993,6 @@ void CProductDefinition::CalculateMinMaxTransform(
 	} // if (!m_vecPoints.empty())
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::ScaleAndCenter(
 	float fXmin, float fXmax, 
 	float fYmin, float fYmax, 
@@ -1032,7 +1034,6 @@ void CProductDefinition::ScaleAndCenter(
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CProductDefinition::Scale(float fResoltuion)
 {
 	if (getVerticesCount() == 0)
@@ -1060,7 +1061,6 @@ void CProductDefinition::Scale(float fResoltuion)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 int CProductDefinition::GetNextProductInstance()
 {
 	if (++m_iNextProductInstance >= (int)m_vecProductInstances.size())
@@ -1069,11 +1069,5 @@ int CProductDefinition::GetNextProductInstance()
 	}
 
 	return m_iNextProductInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CProductDefinition::getVertexLength() const
-{
-	return _VERTEX_LENGTH;
 }
 
