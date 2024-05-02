@@ -20,17 +20,6 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	ASSERT(iSdaiInstance != 0);
 	ASSERT(m_iExpressID != 0);
 
-	// #test
-	SdaiModel iModel = sdaiGetInstanceModel(iSdaiInstance);
-	ASSERT(iModel != 0);	
-
-	OwlInstance iInstance = 0;
-	owlGetInstance(iModel, iSdaiInstance, &iInstance);
-	ASSERT(iInstance == 0);
-
-	//owlBuildInstance(iModel, iSdaiInstance, &m_iInstance);
-	//ASSERT(m_iInstance != 0);
-
 	sdaiGetAttrBN(iSdaiInstance, "id", sdaiUNICODE, &m_szId);
 	sdaiGetAttrBN(iSdaiInstance, "name", sdaiUNICODE, &m_szName);
 	sdaiGetAttrBN(iSdaiInstance, "description", sdaiUNICODE, &m_szDescription);
@@ -41,13 +30,8 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	SdaiInstance iProductInstance = 0;
 	sdaiGetAttrBN(iFormationInstance, "of_product", sdaiINSTANCE, &iProductInstance);
 
-	char* szProductId = nullptr;
-	sdaiGetAttrBN(iProductInstance, "id", sdaiSTRING, &szProductId);
-	m_szProductId = szProductId != nullptr ? CA2W(szProductId) : L"";
-
-	char* szProductName = nullptr;
-	sdaiGetAttrBN(iProductInstance, "name", sdaiSTRING, &szProductName);
-	m_szProductName = szProductName != nullptr ? CA2W(szProductName) : L"";
+	sdaiGetAttrBN(iProductInstance, "id", sdaiUNICODE, &m_szProductId);
+	sdaiGetAttrBN(iProductInstance, "name", sdaiUNICODE, &m_szProductName);
 }
 
 /*virtual*/ CProductDefinition::~CProductDefinition()
