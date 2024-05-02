@@ -350,40 +350,23 @@ void CIFCInstance::CalculateMinMax(
 }
 
 // ------------------------------------------------------------------------------------------------
-void CIFCInstance::ScaleAndCenter(
+void CIFCInstance::Scale(
 	float fXmin, float fXmax, 
 	float fYmin, float fYmax, 
 	float fZmin, float fZmax, 
-	float fResoltuion,
-	bool bScale)
+	float fResoltuion)
 {
 	if (!HasGeometry())
 	{
 		return;
 	}
 
-	/**
-	* Vertices
-	*/
+	// Vertices [-1.0 -> 1.0]
 	for (int_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
 	{
-		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] - fXmin;
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] - fYmin;
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] - fZmin;
-
-		// center
-		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
-
-		// [-1.0 -> 1.0]
-		if (bScale)
-		{
-			getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-			getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-			getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
-		}
+		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
 }
 

@@ -17,10 +17,9 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCInstance : public CInstanceBase
 {
-	// --------------------------------------------------------------------------------------------
 	friend class CIFCModel;
 
 private: // Members
@@ -109,12 +108,11 @@ public: // Methods
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 
-	void ScaleAndCenter(
+	void Scale(
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax, 
-		float fResoltuion,
-		bool bScale);
+		float fResoltuion);
 
 private: // Methods
 

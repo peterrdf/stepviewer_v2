@@ -377,11 +377,11 @@ void CIFCModel::ScaleAndCenter()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->ScaleAndCenter(
+		itIinstance->second->Scale(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter, true);
+			m_fBoundingSphereDiameter);
 	}
 
 	/* Min/Max */
