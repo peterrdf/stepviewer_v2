@@ -112,7 +112,60 @@ void CController::SaveInstance()
 		return;
 	}
 
-	SaveInstanceTreeW(m_pSelectedInstance->GetInstance(), dlgFile.GetPathName());
+	auto pProductInstance = dynamic_cast<CProductInstance*>(m_pSelectedInstance);
+	if (pProductInstance != nullptr)
+	{
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(m_pSelectedInstance->GetInstance());
+		ASSERT(iSdaiModel != 0);
+
+		OwlModel iOwlModel = 0;
+		owlGetModel(iSdaiModel, &iOwlModel);
+		ASSERT(iOwlModel != 0);
+		
+		OwlInstance	iMatrixInstance = CreateInstance(GetClassByName(iOwlModel, "Matrix"));
+		ASSERT(iMatrixInstance != 0);
+
+		vector<double> vecMatrix
+		{
+			pProductInstance->GetTransformationMatrix()->_11,
+			pProductInstance->GetTransformationMatrix()->_12,
+			pProductInstance->GetTransformationMatrix()->_13,
+			pProductInstance->GetTransformationMatrix()->_21,
+			pProductInstance->GetTransformationMatrix()->_22,
+			pProductInstance->GetTransformationMatrix()->_23,
+			pProductInstance->GetTransformationMatrix()->_31,
+			pProductInstance->GetTransformationMatrix()->_32,
+			pProductInstance->GetTransformationMatrix()->_33,
+			pProductInstance->GetTransformationMatrix()->_41,
+			pProductInstance->GetTransformationMatrix()->_42,
+			pProductInstance->GetTransformationMatrix()->_43,
+		};
+
+		SetDatatypeProperty(
+			iMatrixInstance, 
+			GetPropertyByName(iOwlModel, "coordinates"), 
+			vecMatrix.data(),
+			vecMatrix.size());
+
+		OwlInstance iTransformationInstance = CreateInstance(GetClassByName(iOwlModel, "Transformation"));
+		ASSERT(iTransformationInstance != 0);
+
+		SetObjectProperty(
+			iTransformationInstance,
+			GetPropertyByName(iOwlModel, "object"),
+			m_pSelectedInstance->GetInstance());
+
+		SetObjectProperty(
+			iTransformationInstance, 
+			GetPropertyByName(iOwlModel, "matrix"), 
+			iMatrixInstance);
+
+		SaveInstanceTreeW(iTransformationInstance, dlgFile.GetPathName());
+	}
+	else
+	{
+		SaveInstanceTreeW(m_pSelectedInstance->GetInstance(), dlgFile.GetPathName());
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
