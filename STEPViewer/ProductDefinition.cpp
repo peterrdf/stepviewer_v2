@@ -37,6 +37,18 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 /*virtual*/ CProductDefinition::~CProductDefinition()
 {}
 
+/*virtual*/ OwlModel CProductDefinition::getModel() const /*override*/
+{
+	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
+	ASSERT(iSdaiModel != 0);
+
+	OwlModel iOwlModel = 0;
+	owlGetModel(iSdaiModel, &iOwlModel);
+	ASSERT(iOwlModel != 0);
+
+	return iOwlModel;
+}
+
 void CProductDefinition::Calculate()
 {
 	if (m_bCalculated)
@@ -82,7 +94,7 @@ void CProductDefinition::Calculate()
 	SetFormat(getModel(), setting, mask);
 
 	ASSERT(m_pVertexBuffer == nullptr);
-	m_pVertexBuffer = new _vertices_f(_VERTEX_LENGTH);
+	m_pVertexBuffer = new _vertices_f(getVertexLength());
 
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
@@ -139,7 +151,7 @@ void CProductDefinition::Calculate()
 			* Material
 			*/
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= _VERTEX_LENGTH;
+			iIndexValue *= getVertexLength();
 
 			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -189,7 +201,7 @@ void CProductDefinition::Calculate()
 		if (iIndicesCountLines > 0)
 		{
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
-			iIndexValue *= _VERTEX_LENGTH;
+			iIndexValue *= getVertexLength();
 
 			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -231,7 +243,7 @@ void CProductDefinition::Calculate()
 		if (iIndicesCountPoints > 0)
 		{
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= _VERTEX_LENGTH;
+			iIndexValue *= getVertexLength();
 
 			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
@@ -271,9 +283,7 @@ void CProductDefinition::Calculate()
 		} // if (iIndicesCountPoints > 0)
 	} // for (int64_t iConceptualFace = ...	
 
-	/*
-	* Group the faces
-	*/
+	// Group the faces
 	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
 	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
@@ -379,9 +389,7 @@ void CProductDefinition::Calculate()
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
 
-	/*
-	* Group the polygons
-	*/
+	// Group the polygons
 	if (!m_vecConcFacePolygons.empty())
 	{
 		/*
@@ -500,9 +508,6 @@ void CProductDefinition::Calculate()
 		} // for (size_t iFace = ...
 	} // if (!m_vecConcFacePolygons.empty())
 
-	/*
-	* Group the lines
-	*/
 	// Group the lines
 	auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.begin();
 	for (; itMaterial2ConcFaceLines != mapMaterial2ConcFaceLines.end(); itMaterial2ConcFaceLines++)
@@ -594,53 +599,8 @@ void CProductDefinition::Calculate()
 			pCohort->faces().push_back(concFace);
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
-	//if (!m_vecLines.empty())
-	//{
-	//	/*
-	//	* Use the last cohort (if any)
-	//	*/
-	//	auto pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
 
-	//	/*
-	//	* Create the cohort
-	//	*/
-	//	if (pCohort == nullptr)
-	//	{
-	//		pCohort = new _cohortWithMaterial();
-	//		linesCohorts().push_back(pCohort);
-	//	}
-
-	//	for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
-	//	{
-	//		int64_t iStartIndex = m_vecLines[iFace].startIndex();
-	//		int64_t iIndicesCount = m_vecLines[iFace].indicesCount();
-
-	//		/*
-	//		* Check the limit
-	//		*/
-	//		if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
-	//		{
-	//			pCohort = new _cohortWithMaterial();
-	//			linesCohorts().push_back(pCohort);
-	//		}
-
-	//		for (int64_t iIndex = iStartIndex; 
-	//			iIndex < iStartIndex + iIndicesCount;
-	//			iIndex++)
-	//		{
-	//			if (m_pIndexBuffer->data()[iIndex] < 0)
-	//			{
-	//				continue;
-	//			}
-
-	//			pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-	//		} // for (int_t iIndex = ...
-	//	} // for (size_t iFace = ...
-	//} // if (!m_vecLines.empty())		
-
-	/*
-	* Group the points
-	*/
+	// Group the points
 	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
 	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
 	{
@@ -784,9 +744,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 		return;
 	}
 
-	/*
-	* Triangles
-	*/
+	// Triangles
 	if (!m_vecTriangles.empty())
 	{
 		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
@@ -797,9 +755,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * getVertexLength())],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -817,9 +775,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 		} // for (size_t iTriangle = ...
 	} // if (!m_vecTriangles.empty())	
 
-	/*
-	* Conceptual faces polygons
-	*/
+	// Conceptual faces polygons
 	if (!m_vecConcFacePolygons.empty())
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
@@ -835,9 +791,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * getVertexLength())],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -855,9 +811,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecConcFacePolygons.empty())
 
-	/*
-	* Lines
-	*/
+	// Lines
 	if (!m_vecLines.empty())
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
@@ -873,9 +827,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * getVertexLength())],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -893,9 +847,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecLines.empty())
 
-	/*
-	* Points
-	*/
+	// Points
 	if (!m_vecPoints.empty())
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
@@ -906,9 +858,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH)],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 1],
-					getVertices()[(getIndices()[iIndex] * _VERTEX_LENGTH) + 2]
+					getVertices()[(getIndices()[iIndex] * getVertexLength())],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
+					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -937,9 +889,9 @@ void CProductDefinition::Scale(float fScaleFactor)
 	// Vertices [-1.0 -> 1.0]
 	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * getVertexLength())] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * getVertexLength()) + 1] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * getVertexLength()) + 2] /= fScaleFactor;
 	}
 
 	// Instances

@@ -38,6 +38,9 @@ public: // Methods
 	// ctor/dtor
 	CProductDefinition(SdaiInstance iSdaiInstance);
 	virtual ~CProductDefinition();
+
+	// _instance
+	virtual OwlModel getModel() const override;
 	
 	void Calculate();
 

@@ -529,7 +529,7 @@ public: // Methods
 	int64_t getID() const { return m_iID; }
 	OwlInstance getInstance() const { return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
-	OwlModel getModel() const { return ::GetModel(m_iInstance); }
+	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }
 	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
 	bool getEnable() const { return m_bEnable; }
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
