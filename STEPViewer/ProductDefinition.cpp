@@ -127,7 +127,7 @@ void CProductDefinition::Calculate()
 
 	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
-	for (int64_t iConceptualFace = 0; iConceptualFace < m_iConceptualFacesCount; iConceptualFace++)
+	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx.html
 		int64_t iStartIndexTriangles = 0;
@@ -138,53 +138,76 @@ void CProductDefinition::Calculate()
 		int64_t iIndicesCountPoints = 0;
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
-		GetConceptualFace(m_iInstance, iConceptualFace,
+		ConceptualFace iConceptualFace = GetConceptualFace(
+			m_iInstance, 
+			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,
 			&iStartIndexPoints, &iIndicesCountPoints,
 			0, 0,
 			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
 
+		/* Material */
+
+		uint32_t iAmbientColor = 0;
+		uint32_t iDiffuseColor = 0;
+		uint32_t iEmissiveColor = 0;
+		uint32_t iSpecularColor = 0;
+		float fTransparency = 1.f;
+
+		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
+		if (iMaterialInstance != 0)
+		{
+			int64_t* piInstances = nullptr;
+			int64_t iCard = 0;
+			GetObjectProperty(
+				iMaterialInstance,
+				GetPropertyByName(getModel(), "textures"),
+				&piInstances,
+				&iCard);
+
+			iAmbientColor = GetMaterialColorAmbient(iMaterialInstance);
+			iDiffuseColor = GetMaterialColorDiffuse(iMaterialInstance);
+			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
+			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
+			fTransparency = (float)COLOR_GET_W(iAmbientColor);
+		}
+		else
+		{
+			uint32_t
+				iR = 175,
+				iG = 175,
+				iB = 175,
+				iA = 255;
+			uint32_t iDefaultColor = 256 * 256 * 256 * iR +
+				256 * 256 * iG +
+				256 * iB +
+				iA;
+
+			iAmbientColor = iDefaultColor;
+			iDiffuseColor = iDefaultColor;
+			iEmissiveColor = iDefaultColor;
+			iSpecularColor = iDefaultColor;
+		}
+
+		_material material(
+			iAmbientColor,
+			iDiffuseColor,
+			iEmissiveColor,
+			iSpecularColor,
+			fTransparency,
+			nullptr);
+
 		if (iIndicesCountTriangles > 0)
 		{
-			/*
-			* Material
-			*/
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= getVertexLength();
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 7);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			/*
-			* Material
-			*/
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				nullptr);
-
 			auto itMaterial2ConceptualFaces = mapMaterial2ConcFaces.find(material);
 			if (itMaterial2ConceptualFaces == mapMaterial2ConcFaces.end())
 			{
-				mapMaterial2ConcFaces[material] = vector<_face>{ _face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles) };
+				mapMaterial2ConcFaces[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles) };
 			}
 			else
 			{
-				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles));
+				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles));
 			}
 		}
 
@@ -200,41 +223,14 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountLines > 0)
 		{
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
-			iIndexValue *= getVertexLength();
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			/*
-			* Material
-			*/
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				nullptr);
-
 			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
 			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
 			{
-				mapMaterial2ConcFaceLines[material] = vector<_face>{ _face(iConceptualFace, iStartIndexLines, iIndicesCountLines) };
+				mapMaterial2ConcFaceLines[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines) };
 			}
 			else
 			{
-				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFace, iStartIndexLines, iIndicesCountLines));
+				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines));
 			}
 
 			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
@@ -242,46 +238,19 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountPoints > 0)
 		{
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= getVertexLength();
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 6);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 7);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			/*
-			* Material
-			*/
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				nullptr);
-
 			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
 			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
 			{
-				mapMaterial2ConcFacePoints[material] = vector<_face>{ _face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints) };
+				mapMaterial2ConcFacePoints[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints) };
 			}
 			else
 			{
-				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFace, iStartIndexPoints, iIndicesCountPoints));
+				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints));
 			}
 
 			m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
 		} // if (iIndicesCountPoints > 0)
-	} // for (int64_t iConceptualFace = ...	
+	} // for (int64_t iConceptualFaceIndex = ...	
 
 	// Group the faces
 	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
