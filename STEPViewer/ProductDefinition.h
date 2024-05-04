@@ -29,7 +29,7 @@ private: // Members
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
 	vector<CProductInstance*> m_vecProductInstances;
-	uint32_t m_iNextProductInstance;
+	int32_t m_iNextProductInstance;
 
 	bool m_bCalculated;
 
@@ -69,6 +69,6 @@ public: // Methods
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
 
 	const vector<CProductInstance*>& GetInstances() const { return m_vecProductInstances; }
-	uint32_t GetNextProductInstance();
+	int32_t GetNextProductInstance();
 };
 

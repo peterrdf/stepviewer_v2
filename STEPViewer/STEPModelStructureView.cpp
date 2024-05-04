@@ -1035,7 +1035,7 @@ void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProduct
 	else
 	{
 		auto& vecInstances = pDefinition->GetInstances();
-		uint32_t iInstance = pDefinition->GetNextProductInstance();
+		int32_t iInstance = pDefinition->GetNextProductInstance();
 
 		strName = pDefinition->GetId();
 		strName += ITEM_PRODUCT_INSTANCE;
@@ -1088,7 +1088,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
 				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
-				uint32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
+				int32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
 
 				strName = pAssembly->GetRelatedProductDefinition()->GetId();
 				strName += ITEM_PRODUCT_INSTANCE;
@@ -1147,7 +1147,7 @@ void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, 
 	else
 	{
 		auto& vecInstances = pDefinition->GetInstances();
-		uint32_t iInstance = pDefinition->GetNextProductInstance();
+		int32_t iInstance = pDefinition->GetNextProductInstance();
 
 		auto pProductInstanceData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 		pParent->children().push_back(pProductInstanceData);
@@ -1182,7 +1182,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
 				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
-				uint32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
+				int32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextProductInstance();
 
 				auto pInstanceItemData = new CSTEPItemData(pAssemblyItemData, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 				pAssemblyItemData->children().push_back(pInstanceItemData);
@@ -1205,7 +1205,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 	} // for (; itAssembly != ...	
 
 	auto& vecInstances = pDefinition->GetInstances();
-	uint32_t iInstance = pDefinition->GetNextProductInstance();
+	int32_t iInstance = pDefinition->GetNextProductInstance();
 
 	auto pInstanceItemData = new CSTEPItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 	pParent->children().push_back(pInstanceItemData);

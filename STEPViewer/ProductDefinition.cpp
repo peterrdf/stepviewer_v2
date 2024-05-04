@@ -69,13 +69,8 @@ void CProductDefinition::Calculate()
 	mask += flagbit8;        // TRIANGLES
 	mask += flagbit9;        // LINES
 	mask += flagbit10;       // POINTS
-	mask += flagbit12;       // FACE POLYGON
 	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
-	mask += flagbit24;		 //	AMBIENT
-	mask += flagbit25;		 //	DIFFUSE
-	mask += flagbit26;		 //	EMISSIVE
-	mask += flagbit27;		 //	SPECULAR
-
+	
 	setting += 0;		     // SINGLE PRECISION (float)
 	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
 	setting += flagbit5;     // NORMALS ON
@@ -83,13 +78,8 @@ void CProductDefinition::Calculate()
 	setting += flagbit8;     // TRIANGLES ON
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
-	setting += 0;			 // FACE POLYGON OFF
 	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
-	setting += flagbit24;	 //	AMBIENT
-	setting += flagbit25;	 //	DIFFUSE
-	setting += flagbit26;	 //	EMISSIVE
-	setting += flagbit27;	 //	SPECULAR
-
+	
 	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
 	SetFormat(getModel(), setting, mask);
 
@@ -870,9 +860,9 @@ void CProductDefinition::Scale(float fScaleFactor)
 	}
 }
 
-uint32_t CProductDefinition::GetNextProductInstance()
+int32_t CProductDefinition::GetNextProductInstance()
 {
-	if (++m_iNextProductInstance >= (uint32_t)m_vecProductInstances.size())
+	if (++m_iNextProductInstance >= (int32_t)m_vecProductInstances.size())
 	{
 		m_iNextProductInstance = 0;
 	}
