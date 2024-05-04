@@ -25,7 +25,7 @@ public: // Methods
 	{}
 
 	wstring getPath() const { return m_strPath; }
-	OwlModel getInstance() const { return m_iModel; }
+	virtual OwlModel getInstance() const { return m_iModel; }
 	uint64_t getVertexLength() const { return SetFormat(getInstance()) / sizeof(float); }
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_mvc.h"
 #include "InstanceBase.h"
 #include "Entity.h"
 
@@ -7,7 +8,7 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 enum class enumModelType : int
 {
 	Unknown = -1,
@@ -15,19 +16,16 @@ enum class enumModelType : int
 	IFC = 1
 };
 
-// ------------------------------------------------------------------------------------------------
-class CModel
+// ************************************************************************************************
+class CModel : public _model
 {
 
 protected: // Members
 
-	// --------------------------------------------------------------------------------------------
-	wstring		  m_strFilePath; // Input file	
-	enumModelType m_enModelType;
-	SdaiModel	  m_iModel; // Model
-
-	// Offset
-	float m_dOriginalBoundingSphereDiameter;
+	// Model
+	wstring		  m_strFilePath;
+	SdaiModel	  m_iSdaiModel;
+	enumModelType m_enModelType;	
 
 	// World's dimensions
 	float m_fXmin;
@@ -36,6 +34,7 @@ protected: // Members
 	float m_fYmax;
 	float m_fZmin;
 	float m_fZmax;
+	float m_dOriginalBoundingSphereDiameter;
 	float m_fBoundingSphereDiameter;
 
 	float m_fXTranslation;
@@ -44,40 +43,29 @@ protected: // Members
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	CModel(enumModelType enModelType);
+	virtual ~CModel()
+	{}
 
-	// --------------------------------------------------------------------------------------------
-	virtual ~CModel();
+	// _model
+	virtual OwlModel getInstance() const override;
 
-	// --------------------------------------------------------------------------------------------
-	const wchar_t* GetModelName() const;
-
-	// --------------------------------------------------------------------------------------------	
-	enumModelType GetType() const;
-
-	// --------------------------------------------------------------------------------------------	
-	SdaiModel GetSdaiModel() const;
-
-	// --------------------------------------------------------------------------------------------	
-	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
-	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
-	float GetBoundingSphereDiameter() const;
-
-	// --------------------------------------------------------------------------------------------	
 	virtual CEntityProvider* GetEntityProvider() const PURE;
-
-	// --------------------------------------------------------------------------------------------	
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
-
-	// --------------------------------------------------------------------------------------------
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
-
-	// --------------------------------------------------------------------------------------------
 	virtual void ZoomOut() PURE;
 
-	// --------------------------------------------------------------------------------------------	
+	// Model
+	const wchar_t* GetModelName() const { return m_strFilePath.c_str(); }
+	SdaiModel GetSdaiModel() const { return m_iModel; }
+	enumModelType GetType() const { return m_enModelType; }
+
+	// World's dimensions
+	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
+	float GetBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
+	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;	
+	
 	template<typename T>
 	T* As()
 	{
