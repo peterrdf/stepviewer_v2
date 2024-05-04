@@ -949,9 +949,9 @@ void CProductDefinition::Scale(float fScaleFactor)
 	}
 }
 
-int CProductDefinition::GetNextProductInstance()
+uint32_t CProductDefinition::GetNextProductInstance()
 {
-	if (++m_iNextProductInstance >= (int)m_vecProductInstances.size())
+	if (++m_iNextProductInstance >= (uint32_t)m_vecProductInstances.size())
 	{
 		m_iNextProductInstance = 0;
 	}
