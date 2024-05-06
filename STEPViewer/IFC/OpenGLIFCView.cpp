@@ -319,9 +319,9 @@ COpenGLIFCView::~COpenGLIFCView()
 		/*
 		* IBO - Conceptual faces
 		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->ConcFacesCohorts().size(); iFacesCohort++)
+		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pInstance->ConcFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -334,8 +334,8 @@ COpenGLIFCView::~COpenGLIFCView()
 				vecConcFacesCohorts.clear();
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pInstance->ConcFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pInstance->ConcFacesCohorts()[iFacesCohort]);
+			iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
 		}
 
 		/*
@@ -703,7 +703,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 				continue;
 			}
 
-			for (auto pConcFacesCohort : pInstance->ConcFacesCohorts())
+			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
 				const _material* pMaterial =
 					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -977,7 +977,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 		{
 			auto pInstance = itInstance->second;
 
-			auto& vecTriangles = pInstance->GetTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -1019,7 +1019,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecTriangles = pInstance->GetTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -1033,9 +1033,9 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 				itSelectionColor->second.g(),
 				itSelectionColor->second.b());
 
-			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pInstance->ConcFacesCohorts().size(); iConcFacesCohort++)
+			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pInstance->concFacesCohorts().size(); iConcFacesCohort++)
 			{
-				auto pConcFacesCohort = pInstance->ConcFacesCohorts()[iConcFacesCohort];
+				auto pConcFacesCohort = pInstance->concFacesCohorts()[iConcFacesCohort];
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
 				glDrawElementsBaseVertex(GL_TRIANGLES,

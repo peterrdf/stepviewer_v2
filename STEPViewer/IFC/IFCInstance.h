@@ -34,35 +34,21 @@ private: // Members
 
 public: // Methods
 	
-	CIFCInstance(int64_t iID, SdaiInstance iInstance);
+	CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance);
 	virtual ~CIFCInstance();
 
 	// CInstanceBase
 	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
-	virtual bool HasGeometry() const;
+	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
 	virtual bool IsEnabled() const;
 
 	void Calculate();
 
-	int64_t ExpressID() const;
+	ExpressID ExpressID() const { return m_iExpressID; }
 	
-	float* getVertices();
-	int64_t getVerticesCount();
 	int64_t getVertexLength() const;
-	int32_t* GetIndices() const;
-	int64_t GetIndicesCount() const;
-	int64_t& conceptualFacesCount();
 
-	const vector<_primitives>& GetTriangles() const;
-	const vector<_primitives>& GetLines() const;
-	const vector<_primitives>& GetPoints() const;
-	const vector<_primitives>& GetConcFacesPolygons() const;
-
-	// Materials
-	vector<_cohortWithMaterial*>& ConcFacesCohorts();
-
-	// Cohorts
-	vector<_cohort*>& ConcFacePolygonsCohorts();
+	?????????????????????????
 	vector<_cohortWithMaterial*>& PointsCohorts();
 
 	// State

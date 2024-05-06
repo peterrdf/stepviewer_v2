@@ -5,28 +5,23 @@
 #include <math.h>
 
 // ************************************************************************************************
-CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iInstance)
-	: _geometry(iID, iInstance, true)
+CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
+	: _geometry(iID, iSdaiInstance, true)
 	, CInstanceBase()
-	, m_iExpressID(0)
+	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
 	, m_bEnable(true)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
-	m_iExpressID = internalGetP21Line(m_iInstance);
+	ASSERT(iSdaiInstance != 0);
+	ASSERT(m_iExpressID != 0);
 
 	Calculate();
 }
 
 CIFCInstance::~CIFCInstance()
 {}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CIFCInstance::HasGeometry() const
-{
-	return (m_pVertexBuffer != nullptr) && (m_pVertexBuffer->size() > 0);
-}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCInstance::IsEnabled() const
@@ -220,7 +215,7 @@ void CIFCInstance::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					ConcFacesCohorts().push_back(pNewCohort);
+					m_vecConcFacesCohorts.push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -244,7 +239,7 @@ void CIFCInstance::Calculate()
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
-					ConcFacesCohorts().push_back(pNewCohort);
+					m_vecConcFacesCohorts.push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
@@ -265,7 +260,7 @@ void CIFCInstance::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
-				ConcFacesCohorts().push_back(pCohort);
+				m_vecConcFacesCohorts.push_back(pCohort);
 			}
 
 			/*
@@ -275,7 +270,7 @@ void CIFCInstance::Calculate()
 			{
 				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
-				ConcFacesCohorts().push_back(pCohort);
+				m_vecConcFacesCohorts.push_back(pCohort);
 			}
 
 			/*
@@ -618,95 +613,9 @@ void CIFCInstance::Calculate()
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CIFCInstance::ExpressID() const
-{
-	return m_iExpressID;
-}
-
-// ------------------------------------------------------------------------------------------------
-float* CIFCInstance::getVertices()
-{
-	if (m_pVertexBuffer != nullptr)
-	{
-		return m_pVertexBuffer->data();
-	}
-
-	return nullptr;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CIFCInstance::getVerticesCount()
-{
-	if (m_pVertexBuffer != nullptr)
-	{
-		return m_pVertexBuffer->size();
-	}
-
-	return 0;
-}
-
-// ------------------------------------------------------------------------------------------------
 int64_t CIFCInstance::getVertexLength() const
 {
 	return _VERTEX_LENGTH;
-}
-
-// ------------------------------------------------------------------------------------------------
-int32_t* CIFCInstance::GetIndices() const
-{
-	if (m_pIndexBuffer != nullptr)
-	{
-		return m_pIndexBuffer->data();
-	}
-
-	return nullptr;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CIFCInstance::GetIndicesCount() const
-{
-	if (m_pIndexBuffer != nullptr)
-	{
-		return m_pIndexBuffer->size();
-	}
-
-	return 0;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t& CIFCInstance::conceptualFacesCount()
-{
-	return m_iConceptualFacesCount;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCInstance::GetTriangles() const
-{
-	return m_vecTriangles;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCInstance::GetLines() const
-{
-	return m_vecLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCInstance::GetPoints() const
-{
-	return m_vecPoints;
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<_primitives >& CIFCInstance::GetConcFacesPolygons() const
-{
-	return m_vecConcFacePolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohortWithMaterial*>& CIFCInstance::ConcFacesCohorts()
-{
-	return m_vecConcFacesCohorts;
 }
 
 vector<_cohort*>& CIFCInstance::ConcFacePolygonsCohorts()
@@ -767,20 +676,20 @@ void CIFCInstance::CalculateMinMax(
 	*/
 	if (!m_vecTriangles.empty())
 	{
-		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
+		for (size_t iPrimitive = 0; iPrimitive < m_vecTriangles.size(); iPrimitive++)
 		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
-				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
+			for (int64_t iIndex = m_vecTriangles[iPrimitive].startIndex();
+				iIndex < m_vecTriangles[iPrimitive].startIndex() + m_vecTriangles[iPrimitive].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
-		} // for (size_t iTriangle = ...
+		} // for (size_t iPrimitive = ...
 	} // if (!m_vecTriangles.empty())	
 
 	/*
@@ -788,25 +697,25 @@ void CIFCInstance::CalculateMinMax(
 	*/
 	if (!m_vecConcFacePolygons.empty())
 	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
+		for (size_t iPrimitive = 0; iPrimitive < m_vecConcFacePolygons.size(); iPrimitive++)
 		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
-				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
+			for (int64_t iIndex = m_vecConcFacePolygons[iPrimitive].startIndex();
+				iIndex < m_vecConcFacePolygons[iPrimitive].startIndex() + m_vecConcFacePolygons[iPrimitive].indicesCount();
 				iIndex++)
 			{
-				if ((GetIndices()[iIndex] == -1) || (GetIndices()[iIndex] == -2))
+				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
 				{
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
+		} // for (size_t iPrimitive = ...
 	} // if (!m_vecConcFacePolygons.empty())
 
 	/*
@@ -814,25 +723,25 @@ void CIFCInstance::CalculateMinMax(
 	*/
 	if (!m_vecLines.empty())
 	{
-		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
+		for (size_t iPrimitive = 0; iPrimitive < m_vecLines.size(); iPrimitive++)
 		{
-			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
-				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
+			for (int64_t iIndex = m_vecLines[iPrimitive].startIndex();
+				iIndex < m_vecLines[iPrimitive].startIndex() + m_vecLines[iPrimitive].indicesCount();
 				iIndex++)
 			{
-				if (GetIndices()[iIndex] == -1)
+				if (m_pIndexBuffer->data()[iIndex] == -1)
 				{
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
+		} // for (size_t iPrimitive = ...
 	} // if (!m_vecLines.empty())
 
 	/*
@@ -840,20 +749,20 @@ void CIFCInstance::CalculateMinMax(
 	*/
 	if (!m_vecPoints.empty())
 	{
-		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
+		for (size_t iPrimitive = 0; iPrimitive < m_vecPoints.size(); iPrimitive++)
 		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex();
-				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
+			for (int64_t iIndex = m_vecPoints[iPrimitive].startIndex();
+				iIndex < m_vecPoints[iPrimitive].startIndex() + m_vecPoints[iPrimitive].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(GetIndices()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * _VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
+		} // for (size_t iPrimitive = ...
 	} // if (!m_vecPoints.empty())
 }
 
@@ -868,8 +777,8 @@ void CIFCInstance::Scale(float fScaleFactor)
 	// Vertices [-1.0 -> 1.0]
 	for (int_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
 	{
-		getVertices()[(iVertex * _VERTEX_LENGTH)] = getVertices()[(iVertex * _VERTEX_LENGTH)] / fScaleFactor;
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 1] = getVertices()[(iVertex * _VERTEX_LENGTH) + 1] / fScaleFactor;
-		getVertices()[(iVertex * _VERTEX_LENGTH) + 2] = getVertices()[(iVertex * _VERTEX_LENGTH) + 2] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH)] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 1] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * _VERTEX_LENGTH) + 2] / fScaleFactor;
 	}
 }
