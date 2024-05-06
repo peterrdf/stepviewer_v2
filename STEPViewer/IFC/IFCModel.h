@@ -14,8 +14,6 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
-// Parser for IFC files
 class CIFCModel : public CModel
 {
 
@@ -62,7 +60,7 @@ public: // Methods
 	void PreLoadInstance(SdaiInstance iInstance);
 
 	// CModel
-	virtual CEntityProvider* GetEntityProvider() const override;
+	virtual CEntityProvider* GetEntityProvider() const override { return m_pEntityProvider; }
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
@@ -72,15 +70,15 @@ public: // Methods
 	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
 	void Clean();
 
-	const map<SdaiInstance, CIFCInstance*>& GetInstances() const;
-	CIFCUnitProvider* GetUnitProvider() const;
-	CIFCPropertyProvider* GetPropertyProvider() const;
+	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
+	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
+	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
 	CIFCInstance* GetInstanceByID(int_t iID);	
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods
 	
-	void RetrieveObjects__depth(int_t iParentEntity, int_t iCircleSegments, int_t depth);
+	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiInstance iInstance, int_t iCircleSegments);
 };

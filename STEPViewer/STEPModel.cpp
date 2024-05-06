@@ -375,7 +375,7 @@ void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 	m_iModel = iModel;
 	m_strFilePath = szPath;
 	
-	m_pEntityProvider = new CEntityProvider(m_iModel);
+	m_pEntityProvider = new CEntityProvider(GetSdaiModel());
 
 	LoadProductDefinitions();
 
@@ -389,7 +389,7 @@ void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadProductDefinitions()
 {
-	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(m_iModel, "PRODUCT_DEFINITION");
+	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(GetSdaiModel(), "PRODUCT_DEFINITION");
 
 	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
@@ -456,7 +456,7 @@ CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefini
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadAssemblies()
 {
-	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(m_iModel, "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(GetSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
 	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
 	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
@@ -511,7 +511,7 @@ void CSTEPModel::LoadGeometry()
 		iA;
 	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
 
-	setSegmentation(m_iModel, 16, 0.);
+	setSegmentation(GetSdaiModel(), 16, 0.);
 
 	// Load
 	auto itDefinition = m_mapExpressID2Definition.begin();
@@ -535,7 +535,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		if (pAssembly->m_pRelatingProductDefinition == pDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(m_iModel, internalGetInstanceFromP21Line(m_iModel, pAssembly->GetExpressID()), &owlInstanceMatrix);
+			owlBuildInstance(GetSdaiModel(), internalGetInstanceFromP21Line(GetSdaiModel(), pAssembly->GetExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(GetModel(owlInstanceMatrix), "Transformation")) 
 			{
@@ -573,14 +573,14 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(m_iModel, pDefinition->GetExpressID());
+	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(GetSdaiModel(), pDefinition->GetExpressID());
 
 	int64_t	owlInstanceProductDefinition = 0;
-	owlBuildInstance(m_iModel, myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);	
+	owlBuildInstance(GetSdaiModel(), myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
 
 	pDefinition->Calculate();
 
-	cleanMemory(m_iModel, 0);
+	cleanMemory(GetSdaiModel(), 0);
 
 	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
@@ -593,7 +593,7 @@ void CSTEPModel::Clean()
 {
 	if (m_iModel != 0)
 	{
-		sdaiCloseModel(m_iModel);
+		sdaiCloseModel((SdaiModel)m_iModel);
 		m_iModel = 0;
 	}
 

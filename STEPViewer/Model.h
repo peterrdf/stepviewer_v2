@@ -57,7 +57,7 @@ public: // Methods
 
 	// Model
 	const wchar_t* GetModelName() const { return m_strFilePath.c_str(); }
-	SdaiModel GetSdaiModel() const { return m_iModel; }
+	SdaiModel GetSdaiModel() const { return (SdaiModel)m_iModel; }
 	enumModelType GetType() const { return m_enModelType; }
 
 	// World's dimensions
