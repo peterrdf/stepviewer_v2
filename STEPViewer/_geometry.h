@@ -239,7 +239,7 @@ typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
 
 // ************************************************************************************************
-class _instance
+class _geometry
 {
 
 protected: // Members
@@ -291,7 +291,7 @@ protected: // Members
 
 public: // Methods
 
-	_instance(int64_t iID, OwlInstance iInstance, bool bEnable)
+	_geometry(int64_t iID, OwlInstance iInstance, bool bEnable)
 		: m_iID(iID)
 		, m_iInstance(iInstance)
 		, m_strName(L"NA")
@@ -325,7 +325,7 @@ public: // Methods
 		, m_iVBOOffset(0)
 	{}
 
-	virtual ~_instance()
+	virtual ~_geometry()
 	{
 		clean();
 	}
@@ -629,10 +629,10 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-struct _instancesComparator
+struct _geometryComparator
 {
-	bool operator()(const _instance* i1, const _instance* i2) const
+	bool operator()(const _geometry* pLeft, const _geometry* pRight) const
 	{
-		return wcscmp(i1->getName(), i2->getName()) < 0;
+		return wcscmp(pLeft->getName(), pRight->getName()) < 0;
 	}
 };

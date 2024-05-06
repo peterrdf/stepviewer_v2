@@ -4,7 +4,7 @@
 
 // ************************************************************************************************
 CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
-	: _instance(-1, iSdaiInstance, true)
+	: _geometry(-1, iSdaiInstance, true)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_szId(nullptr)
 	, m_szName(nullptr)

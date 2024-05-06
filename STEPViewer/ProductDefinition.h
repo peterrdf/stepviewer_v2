@@ -12,7 +12,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CProductDefinition : public _instance
+class CProductDefinition : public _geometry
 {
 	friend class CSTEPModel;
 
