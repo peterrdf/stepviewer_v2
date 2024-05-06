@@ -742,7 +742,7 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 	m_pOGLProgram->_enableBlinnPhongModel(true);	
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -869,7 +869,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -965,7 +965,7 @@ void COpenGLSTEPView::DrawLines()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1062,7 +1062,7 @@ void COpenGLSTEPView::DrawPoints()
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1236,7 +1236,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;

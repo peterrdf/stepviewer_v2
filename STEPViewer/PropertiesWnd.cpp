@@ -859,7 +859,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	int_t* propertyDefinitionInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetSdaiModel(), "PROPERTY_DEFINITION"),
+	int_t* propertyDefinitionInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION"),
 		noPropertyDefinitionInstances = sdaiGetMemberCount(propertyDefinitionInstances);
 	for (int_t i = 0; i < noPropertyDefinitionInstances; i++) {
 		int_t propertyDefinitionInstance = 0;
@@ -891,7 +891,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 			//
 			//	Lookup value (not using inverse relations)
 			//
-			int_t* propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetSdaiModel(), "PROPERTY_DEFINITION_REPRESENTATION"),
+			int_t* propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION_REPRESENTATION"),
 				noPropertyDefinitionRepresentationInstances = sdaiGetMemberCount(propertyDefinitionRepresentationInstances);
 			for (int_t j = 0; j < noPropertyDefinitionRepresentationInstances; j++) {
 				int_t propertyDefinitionRepresentationInstance = 0;
@@ -910,7 +910,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 						int_t representationItemInstance = 0;
 						sdaiGetAggrByIndex(aggrItems, k, sdaiINSTANCE, &representationItemInstance);
 
-						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetSdaiModel(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
+						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
 							char* valueDescription = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "description", sdaiSTRING, &valueDescription);
 
@@ -918,7 +918,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 							pProperty->AllowEdit(FALSE);
 							pPropertyGroup->AddSubItem(pProperty);
 						}
-						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetSdaiModel(), "VALUE_REPRESENTATION_ITEM")) {
+						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "VALUE_REPRESENTATION_ITEM")) {
 							int_t* valueComponentADB = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "value_component", sdaiADB, &valueComponentADB);
 
