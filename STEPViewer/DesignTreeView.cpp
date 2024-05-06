@@ -70,7 +70,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	
 	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
 
-	m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 		
-	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->GetModelName(), IMAGE_MODEL, IMAGE_MODEL);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 
 	auto pSelectedInstance = pController->GetSelectedInstance();
 	if (pSelectedInstance == nullptr)

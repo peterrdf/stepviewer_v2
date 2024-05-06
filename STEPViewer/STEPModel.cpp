@@ -373,7 +373,7 @@ void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 	Clean();
 
 	m_iModel = iModel;
-	m_strFilePath = szPath;
+	m_strPath = szPath;
 	
 	m_pEntityProvider = new CEntityProvider(GetInstance());
 

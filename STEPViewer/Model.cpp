@@ -5,7 +5,6 @@
 // ************************************************************************************************
 CModel::CModel(enumModelType enModelType)
 	: _model()
-	, m_strFilePath(L"")
 	, m_enModelType(enModelType)	
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)

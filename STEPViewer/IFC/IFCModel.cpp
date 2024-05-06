@@ -219,7 +219,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	* Model
 	*/
 	m_iModel = iModel;
-	m_strFilePath = szIFCFile;
+	m_strPath = szIFCFile;
 
 	/*
 	* Entities

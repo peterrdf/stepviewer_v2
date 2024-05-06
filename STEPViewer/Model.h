@@ -23,7 +23,6 @@ class CModel : public _model
 protected: // Members
 
 	// Model
-	wstring		  m_strFilePath;
 	enumModelType m_enModelType;	
 
 	// World's dimensions
@@ -52,7 +51,6 @@ public: // Methods
 	virtual void ZoomOut() PURE;
 
 	// Model
-	const wchar_t* GetModelName() const { return m_strFilePath.c_str(); }
 	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
 	enumModelType GetType() const { return m_enModelType; }
 

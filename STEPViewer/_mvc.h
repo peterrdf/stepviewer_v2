@@ -24,7 +24,7 @@ public: // Methods
 	virtual ~_model()
 	{}
 
-	wstring getPath() const { return m_strPath; }
+	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	virtual OwlModel getInstance() const { return m_iModel; }
 	uint64_t getVertexLength() const { return SetFormat(getInstance()) / sizeof(float); }
 };
