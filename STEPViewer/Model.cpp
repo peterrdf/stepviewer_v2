@@ -6,7 +6,6 @@
 CModel::CModel(enumModelType enModelType)
 	: _model()
 	, m_strFilePath(L"")
-	, m_iSdaiModel(0)
 	, m_enModelType(enModelType)	
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -20,17 +19,6 @@ CModel::CModel(enumModelType enModelType)
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
 {}
-
-/*virtual*/ OwlModel CModel::getInstance() const /*override*/
-{
-	ASSERT(m_iSdaiModel != 0);
-
-	OwlModel iOwlModel = 0;
-	owlGetModel(m_iSdaiModel, &iOwlModel);
-	ASSERT(iOwlModel != 0);
-
-	return iOwlModel;
-}
 
 void CModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
 {

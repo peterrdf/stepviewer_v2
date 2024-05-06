@@ -24,7 +24,6 @@ protected: // Members
 
 	// Model
 	wstring		  m_strFilePath;
-	SdaiModel	  m_iSdaiModel;
 	enumModelType m_enModelType;	
 
 	// World's dimensions
@@ -46,9 +45,6 @@ public: // Methods
 	CModel(enumModelType enModelType);
 	virtual ~CModel()
 	{}
-
-	// _model
-	virtual OwlModel getInstance() const override;
 
 	virtual CEntityProvider* GetEntityProvider() const PURE;
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
