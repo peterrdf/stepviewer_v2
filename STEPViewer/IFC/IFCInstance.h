@@ -2,11 +2,7 @@
 #define IFCINSTANCE_H
 
 #include "_oglUtils.h"
-
-#include <glew.h>
-
 #include "InstanceBase.h"
-
 #include "Generic.h"
 
 #include "engine.h"
@@ -14,22 +10,20 @@
 
 #include <cstddef>
 #include <string>
-
 using namespace std;
 
 // ************************************************************************************************
-class CIFCInstance : public CInstanceBase
+class CIFCInstance
+	: public _geometry
+	, public CInstanceBase
 {
 	friend class CIFCModel;
 
 private: // Members
-	
-	CIFCModel* m_pModel;
+
+	// Metadata
 	SdaiInstance m_iInstance;
-	wstring m_strGUID;
-	int64_t m_iExpressID;
-	int64_t m_iParentExpressID;
-	int_t m_iID;
+	ExpressID m_iExpressID;
 	
 	// Geometry
 	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
@@ -60,7 +54,7 @@ private: // Members
 
 public: // Methods
 	
-	CIFCInstance(CIFCModel* pModel, SdaiInstance iInstance, const wchar_t* szGUID);
+	CIFCInstance(int64_t iID, SdaiInstance iInstance);
 	~CIFCInstance();
 
 	// CInstanceBase
@@ -68,12 +62,9 @@ public: // Methods
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
 
-	const wchar_t* GetGUID() const;
-	int64_t ExpressID() const;
-	int64_t ParentExpressID() const;
-	int_t& ID();
+	void Calculate();
 
-	CIFCModel* GetModel() const;
+	int64_t ExpressID() const;
 	
 	float* getVertices();
 	int64_t getVerticesCount();

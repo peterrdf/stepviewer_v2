@@ -80,7 +80,7 @@ private: // Methods
 	
 	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
-	CIFCInstance* RetrieveGeometry(const wchar_t* szInstanceGUIDW, SdaiInstance iInstance, int_t iCircleSegments);
+	CIFCInstance* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
 };
 
 #endif // IFCFILEPARSER_H
