@@ -607,11 +607,11 @@ CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleS
 	/*
 	* Default color
 	*/
-	int32_t	iR = 10,
+	uint32_t iR = 10,
 		iG = 150,
 		iB = 10,
 		iA = 255;
-	int32_t	iDefaultColor = 256 * 256 * 256 * iR +
+	uint32_t	iDefaultColor = 256 * 256 * 256 * iR +
 		256 * 256 * iG +
 		256 * iB +
 		iA;

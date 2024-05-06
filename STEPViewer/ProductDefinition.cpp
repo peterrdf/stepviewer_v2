@@ -110,10 +110,11 @@ void CProductDefinition::Calculate()
 	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
-	
-	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+
+	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFaces;
+	MATERIALS mapMaterial2ConcFaceLines;
+	MATERIALS mapMaterial2ConcFacePoints;
 
 	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
@@ -190,6 +191,8 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountTriangles > 0)
 		{
+			m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
+
 			auto itMaterial2ConceptualFaces = mapMaterial2ConcFaces.find(material);
 			if (itMaterial2ConceptualFaces == mapMaterial2ConcFaces.end())
 			{
@@ -201,11 +204,6 @@ void CProductDefinition::Calculate()
 			}
 		}
 
-		if (iIndicesCountTriangles > 0)
-		{
-			m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
-		}
-
 		if (iIndicesCountConceptualFacePolygons > 0)
 		{
 			m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
@@ -213,6 +211,8 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountLines > 0)
 		{
+			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
+
 			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
 			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
 			{
@@ -222,12 +222,12 @@ void CProductDefinition::Calculate()
 			{
 				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines));
 			}
-
-			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
 		}
 
 		if (iIndicesCountPoints > 0)
 		{
+			m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
+
 			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
 			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
 			{
@@ -237,8 +237,6 @@ void CProductDefinition::Calculate()
 			{
 				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints));
 			}
-
-			m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
 		} // if (iIndicesCountPoints > 0)
 	} // for (int64_t iConceptualFaceIndex = ...	
 

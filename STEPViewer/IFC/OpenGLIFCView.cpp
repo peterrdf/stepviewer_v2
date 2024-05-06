@@ -363,9 +363,9 @@ COpenGLIFCView::~COpenGLIFCView()
 		/*
 		* IBO - Lines
 		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->LinesCohorts().size(); iLinesCohort++)
+		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pInstance->LinesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -378,8 +378,8 @@ COpenGLIFCView::~COpenGLIFCView()
 				vecLinesCohorts.clear();
 			}
 
-			iLinesIndicesCount += (GLsizei)pInstance->LinesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pInstance->LinesCohorts()[iLinesCohort]);
+			iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
 		}
 
 		/*
@@ -836,7 +836,7 @@ void COpenGLIFCView::DrawLines()
 				continue;
 			}
 
-			for (auto pCohort : pInstance->LinesCohorts())
+			for (auto pCohort : pInstance->linesCohorts())
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,

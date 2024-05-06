@@ -22,27 +22,7 @@ class CIFCInstance
 private: // Members
 
 	// Metadata
-	SdaiInstance m_iInstance;
 	ExpressID m_iExpressID;
-	
-	// Geometry
-	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices - [-1, 1]
-	_indices_i32* m_pIndexBuffer;
-	int64_t m_iConceptualFacesCount;
-
-	// Primitives
-	vector<_primitives> m_vecTriangles;
-	vector<_primitives> m_vecConcFacePolygons;
-	vector<_primitives> m_vecLines;
-	vector<_primitives> m_vecPoints;
-
-	// Materials
-	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
-
-	// Cohorts
-	vector<_cohort*> m_vecConcFacePolygonsCohorts;
-	vector<_cohort*> m_vecLinesCohorts;
-	vector<_cohortWithMaterial*> m_vecPointsCohorts;
 	
 	// UI
 	bool m_bReferenced;
@@ -55,10 +35,10 @@ private: // Members
 public: // Methods
 	
 	CIFCInstance(int64_t iID, SdaiInstance iInstance);
-	~CIFCInstance();
+	virtual ~CIFCInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const;
+	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const;
 
@@ -83,7 +63,6 @@ public: // Methods
 
 	// Cohorts
 	vector<_cohort*>& ConcFacePolygonsCohorts();
-	vector<_cohort*>& LinesCohorts();
 	vector<_cohortWithMaterial*>& PointsCohorts();
 
 	// State
@@ -100,10 +79,6 @@ public: // Methods
 		float& fZmin, float& fZmax);
 
 	void Scale(float fScaleFactor);
-
-private: // Methods
-
-	void Clean();
 };
 
 #endif // IFCINSTANCE_H
