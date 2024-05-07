@@ -40,9 +40,9 @@ private: // Members
 	SdaiEntity m_ifcVirtualElementEntity;
 	
 	vector<CIFCInstance*> m_vecInstances;
-	map<SdaiInstance, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
-	map<int64_t, CIFCInstance*> m_mapID2Instance; // ID : Instance
-	map<int64_t, CIFCInstance*> m_mapExpressID2Instance; // Express ID : Instance
+	map<SdaiInstance, CIFCInstance*> m_mapInstances;
+	map<int64_t, CIFCInstance*> m_mapID2Instance;
+	map<ExpressID, CIFCInstance*> m_mapExpressID2Instance;
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
@@ -61,7 +61,7 @@ public: // Methods
 
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override { return m_pEntityProvider; }
-	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
+	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 
