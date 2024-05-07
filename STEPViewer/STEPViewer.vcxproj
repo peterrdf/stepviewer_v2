@@ -208,7 +208,6 @@
   <ItemGroup>
     <ClInclude Include="Assembly.h" />
     <ClInclude Include="DesignTreeView.h" />
-    <ClInclude Include="DesignTreeViewConsts.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
