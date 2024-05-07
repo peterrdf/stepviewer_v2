@@ -5,60 +5,34 @@
 
 using namespace std;
 
-//-------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CProductDefinition;
 
-//-------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CAssembly
 {
-	friend class CSTEPModel;
 
 private: // Members
 
-	//---------------------------------------------------------------------------------------------
+	SdaiInstance m_iInstance;
 	ExpressID m_iExpressID;
-
-	//---------------------------------------------------------------------------------------------
-	wstring m_strId;
-
-	//---------------------------------------------------------------------------------------------
-	wstring m_strName;
-
-	//---------------------------------------------------------------------------------------------
-	wstring m_strDescription;
-
-	//---------------------------------------------------------------------------------------------
+	wchar_t* m_szId;
+	wchar_t* m_szName;
+	wchar_t* m_szDescription;
 	CProductDefinition* m_pRelatingProductDefinition;
-
-	//---------------------------------------------------------------------------------------------
 	CProductDefinition* m_pRelatedProductDefinition;
 
 public: // Methods
 
-	//---------------------------------------------------------------------------------------------
-	// ctor
-	CAssembly();
-
-	//---------------------------------------------------------------------------------------------
-	// ctor
+	CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition);
 	virtual ~CAssembly();
 
-	// --------------------------------------------------------------------------------------------
-	ExpressID GetExpressID() const;
-
-	// --------------------------------------------------------------------------------------------
-	const wchar_t* GetId() const;
-
-	// --------------------------------------------------------------------------------------------
-	const wchar_t* GetName() const;
-
-	// --------------------------------------------------------------------------------------------
-	const wchar_t* GetDescription() const;
-
-	//---------------------------------------------------------------------------------------------
-	CProductDefinition* GetRelatingProductDefinition() const;
-
-	//---------------------------------------------------------------------------------------------
-	CProductDefinition* GetRelatedProductDefinition() const;
+	SdaiInstance GetInstance() const { return m_iInstance; }
+	ExpressID GetExpressID() const { return m_iExpressID; }
+	const wchar_t* GetId() const { return m_szId; }
+	const wchar_t* GetName() const { return m_szName; }
+	const wchar_t* GetDescription() const { return m_szDescription; }
+	CProductDefinition* GetRelatingProductDefinition() const { return m_pRelatingProductDefinition; }
+	CProductDefinition* GetRelatedProductDefinition() const { return m_pRelatedProductDefinition; }
 };
 

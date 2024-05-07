@@ -2,54 +2,26 @@
 #include "Assembly.h"
 #include "ProductDefinition.h"
 
-//-------------------------------------------------------------------------------------------------
-CAssembly::CAssembly()
-	: m_iExpressID(0)
-	, m_strId(L"")
-	, m_strName(L"")
-	, m_strDescription(L"")
-	, m_pRelatingProductDefinition(nullptr)
-	, m_pRelatedProductDefinition(nullptr)
+// ************************************************************************************************
+CAssembly::CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition)
+	: m_iInstance(iInstance)
+	, m_iExpressID(internalGetP21Line(iInstance))
+	, m_szId(nullptr)
+	, m_szName(nullptr)
+	, m_szDescription(nullptr)
+	, m_pRelatingProductDefinition(pRelatingProductDefinition)
+	, m_pRelatedProductDefinition(pRelatedProductDefinition)
 {
+	ASSERT(m_iInstance != 0);
+	ASSERT(m_iExpressID != 0);
+
+	sdaiGetAttrBN(iInstance, "id", sdaiUNICODE, &m_szId);
+	sdaiGetAttrBN(iInstance, "name", sdaiUNICODE, &m_szName);
+	sdaiGetAttrBN(iInstance, "description", sdaiUNICODE, &m_szDescription);
+
+	ASSERT(m_pRelatingProductDefinition != nullptr);
+	ASSERT(m_pRelatedProductDefinition != nullptr);
 }
 
-//-------------------------------------------------------------------------------------------------
 /*virtual*/ CAssembly::~CAssembly()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-ExpressID CAssembly::GetExpressID() const
-{
-	return m_iExpressID;
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::GetId() const
-{
-	return m_strId.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::GetName() const
-{
-	return m_strName.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CAssembly::GetDescription() const
-{
-	return m_strDescription.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-CProductDefinition* CAssembly::GetRelatingProductDefinition() const
-{
-	return m_pRelatingProductDefinition;
-}
-
-// ------------------------------------------------------------------------------------------------
-CProductDefinition* CAssembly::GetRelatedProductDefinition() const
-{
-	return m_pRelatedProductDefinition;
-}
+{}

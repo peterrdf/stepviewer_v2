@@ -464,35 +464,20 @@ void CSTEPModel::LoadAssemblies()
 		SdaiInstance pNextAssemblyUsageOccurrenceInstance = 0;
 		sdaiGetAggrByIndex(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
 
-		CAssembly* pAssembly = new CAssembly();
-
-		pAssembly->m_iExpressID = internalGetP21Line(pNextAssemblyUsageOccurrenceInstance);
-
-		char* szId = nullptr;
-		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "id", sdaiSTRING, &szId);
-		pAssembly->m_strId = szId != nullptr ? CA2W(szId) : L"";
-
-		char* szName = nullptr;
-		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "name", sdaiSTRING, &szName);
-		pAssembly->m_strName = szName != nullptr ? CA2W(szName) : L"";
-
-		char* szDescription = nullptr;
-		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "description", sdaiSTRING, &szDescription);
-		pAssembly->m_strDescription = szDescription != nullptr ? CA2W(szDescription) : L"";
-
 		int_t iRelatingProductDefinition = 0;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "relating_product_definition", sdaiINSTANCE, &iRelatingProductDefinition);
 
-		pAssembly->m_pRelatingProductDefinition = GetProductDefinition(iRelatingProductDefinition, true, false);
+		auto pRelatingProductDefinition = GetProductDefinition(iRelatingProductDefinition, true, false);
 
 		int_t iRelatedProductDefinition = 0;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "related_product_definition", sdaiINSTANCE, &iRelatedProductDefinition);
 
-		pAssembly->m_pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
+		auto pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
 
-		ASSERT(m_mapExpressIDAssembly.find(pAssembly->m_iExpressID) == m_mapExpressIDAssembly.end());
+		auto pAssembly = new CAssembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
+		ASSERT(m_mapExpressIDAssembly.find(pAssembly->GetExpressID()) == m_mapExpressIDAssembly.end());
 
-		m_mapExpressIDAssembly[pAssembly->m_iExpressID] = pAssembly;
+		m_mapExpressIDAssembly[pAssembly->GetExpressID()] = pAssembly;
 	}	
 }
 
@@ -518,7 +503,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	{
 		auto pAssembly = itAssembly->second;
 
-		if (pAssembly->m_pRelatingProductDefinition == pDefinition)
+		if (pAssembly->GetRelatingProductDefinition() == pDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
 			owlBuildInstance(GetInstance(), internalGetInstanceFromP21Line(GetInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
@@ -555,7 +540,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 				MatrixMultiply(&matrix, &matrix, pParentMatrix);
 			}
 
-			WalkAssemblyTreeRecursively(szStepName, szGroupName, pAssembly->m_pRelatedProductDefinition, &matrix);
+			WalkAssemblyTreeRecursively(szStepName, szGroupName, pAssembly->GetRelatedProductDefinition(), &matrix);
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 

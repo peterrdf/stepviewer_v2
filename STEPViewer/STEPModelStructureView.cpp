@@ -1064,7 +1064,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 	auto itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
 	{
-		CAssembly* pAssembly = itAssembly->second;
+		auto pAssembly = itAssembly->second;
 
 		if (pAssembly->GetRelatingProductDefinition() == pDefinition)
 		{
@@ -1247,40 +1247,40 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		int iGeometryImage = IMAGE_NO_GEOMETRY;
 		switch (pChild->getType())
 		{
-		case enumSTEPItemDataType::ProductDefinition:
-		{
-			auto pDefinition = pChild->GetInstance<CProductDefinition>();
+			case enumSTEPItemDataType::ProductDefinition:
+			{
+				auto pDefinition = pChild->GetInstance<CProductDefinition>();
 
-			strName = pDefinition->GetId();
-			strName += ITEM_PRODUCT_DEFINION;
-		}
-		break;
+				strName = pDefinition->GetId();
+				strName += ITEM_PRODUCT_DEFINION;
+			}
+			break;
 
-		case enumSTEPItemDataType::Assembly:
-		{
-			auto pAssembly = pChild->GetInstance<CAssembly>();
+			case enumSTEPItemDataType::Assembly:
+			{
+				auto pAssembly = pChild->GetInstance<CAssembly>();
 
-			strName = pAssembly->GetId();
-			strName += ITEM_ASSEMBLY;
-		}
-		break;
+				strName = pAssembly->GetId();
+				strName += ITEM_ASSEMBLY;
+			}
+			break;
 
-		case enumSTEPItemDataType::ProductInstance:
-		{
-			auto pInstance = pChild->GetInstance<CProductInstance>();
+			case enumSTEPItemDataType::ProductInstance:
+			{
+				auto pInstance = pChild->GetInstance<CProductInstance>();
 
-			strName = pInstance->GetProductDefinition()->GetId();
-			strName += ITEM_PRODUCT_INSTANCE;
+				strName = pInstance->GetProductDefinition()->GetId();
+				strName += ITEM_PRODUCT_INSTANCE;
 
-			iGeometryImage = IMAGE_SELECTED;
-		}
-		break;
+				iGeometryImage = IMAGE_SELECTED;
+			}
+			break;
 
-		default:
-		{
-			ASSERT(FALSE); // Unexpected
-		}
-		break;
+			default:
+			{
+				ASSERT(FALSE); // Unexpected
+			}
+			break;
 		} // switch (pChild->getType())
 
 		TV_INSERTSTRUCT tvInsertStruct;
