@@ -61,16 +61,6 @@ void CIFCInstance::Calculate()
 	setFormat(iSdaiModel, setting, mask);
 	setFilter(iSdaiModel, flagbit1, flagbit1);
 
-	/*uint32_t iR = 10,
-		iG = 150,
-		iB = 10,
-		iA = 255;
-	uint32_t	iDefaultColor = 256 * 256 * 256 * iR +
-		256 * 256 * iG +
-		256 * iB +
-		iA;
-	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
-
 	setSegmentation(GetInstance(), 16, 0.);
 
 	ASSERT(m_pVertexBuffer == nullptr);

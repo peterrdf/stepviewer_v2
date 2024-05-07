@@ -499,20 +499,6 @@ void CSTEPModel::LoadAssemblies()
 // ------------------------------------------------------------------------------------------------
 void CSTEPModel::LoadGeometry()
 {
-	// Defaults
-	uint32_t	
-		iR = 175,
-		iG = 175,
-		iB = 175,
-		iA = 255;
-	uint32_t iDefaultColor = 256 * 256 * 256 * iR +
-		256 * 256 * iG +
-		256 * iB +
-		iA;
-	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
-
-	setSegmentation(GetInstance(), 16, 0.);
-
 	// Load
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)

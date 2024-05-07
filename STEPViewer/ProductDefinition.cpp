@@ -83,6 +83,8 @@ void CProductDefinition::Calculate()
 	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
 	SetFormat(getModel(), setting, mask);
 
+	setSegmentation(getModel(), 16, 0.);
+
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
 
