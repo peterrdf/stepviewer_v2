@@ -34,13 +34,10 @@ CIFCInstance::~CIFCInstance()
 
 void CIFCInstance::Calculate()
 {
-	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
-	ASSERT(iSdaiModel != 0);
-
 	/*
 	* Set up format
 	*/
-	int_t setting = 0, mask = 0;
+	uint64_t mask = 0;
 	mask += flagbit2;        // PRECISION (32/64 bit)
 	mask += flagbit3;        //	INDEX ARRAY (32/64 bit)
 	mask += flagbit5;        // NORMALS
@@ -50,6 +47,7 @@ void CIFCInstance::Calculate()
 	mask += flagbit10;       // POINTS
 	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
 
+	uint64_t setting = 0;
 	setting += 0;		     // SINGLE PRECISION (float)
 	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
 	setting += flagbit5;     // NORMALS ON
@@ -58,10 +56,14 @@ void CIFCInstance::Calculate()
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
 	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
-	setFormat(iSdaiModel, setting, mask);
+	SetFormat(getModel(), setting, mask);
+
+	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
+	ASSERT(iSdaiModel != 0);
+
 	setFilter(iSdaiModel, flagbit1, flagbit1);
 
-	setSegmentation(GetInstance(), 16, 0.);
+	setSegmentation(iSdaiModel, 16, 0.);
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());

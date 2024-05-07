@@ -56,12 +56,12 @@ void CProductDefinition::Calculate()
 		return;
 	}
 
-	m_bCalculated = true;
+	m_bCalculated = true;	
 
 	/*
 	* Set up format
 	*/
-	uint64_t setting = 0, mask = 0;
+	uint64_t mask = 0;
 	mask += flagbit2;        // PRECISION (32/64 bit)
 	mask += flagbit3;        //	INDEX ARRAY (32/64 bit)
 	mask += flagbit5;        // NORMALS
@@ -70,7 +70,8 @@ void CProductDefinition::Calculate()
 	mask += flagbit9;        // LINES
 	mask += flagbit10;       // POINTS
 	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
-	
+
+	uint64_t setting = 0;
 	setting += 0;		     // SINGLE PRECISION (float)
 	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
 	setting += flagbit5;     // NORMALS ON
@@ -79,11 +80,12 @@ void CProductDefinition::Calculate()
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
 	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
-	
-	//	http://rdf.bg/gkdoc/CP64/SetFormat.html
 	SetFormat(getModel(), setting, mask);
 
-	setSegmentation(getModel(), 16, 0.);
+	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
+	ASSERT(iSdaiModel != 0);
+
+	setSegmentation(iSdaiModel, 16, 0.);
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
