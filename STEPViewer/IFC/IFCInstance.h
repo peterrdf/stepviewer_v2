@@ -26,11 +26,6 @@ private: // Members
 	
 	// UI
 	bool m_bReferenced;
-	bool m_bEnable;
-
-	// VBO (OpenGL)
-	GLuint m_iVBO;
-	GLsizei m_iVBOOffset;
 
 public: // Methods
 	
@@ -48,16 +43,8 @@ public: // Methods
 	
 	int64_t getVertexLength() const;
 
-	?????????????????????????
-	vector<_cohortWithMaterial*>& PointsCohorts();
-
 	// State
 	bool& Referenced();
-	bool GetEnable() const;
-	void SetEnable(bool bEnable);
-	
-	GLuint& VBO();
-	GLsizei& VBOOffset();
 	
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 

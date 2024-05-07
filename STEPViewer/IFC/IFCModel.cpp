@@ -158,7 +158,7 @@ void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (!itInstance->second->GetEnable())
+		if (!itInstance->second->getEnable())
 		{
 			continue;
 		}
@@ -378,7 +378,7 @@ void CIFCModel::Scale()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		if (itIinstance->second->GetEnable())
+		if (itIinstance->second->getEnable())
 		{
 			itIinstance->second->CalculateMinMax(
 				m_fXmin, m_fXmax, 
@@ -493,7 +493,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pInstance->SetEnable((strEntity != L"IFCSPACE") && (strEntity != L"IFCRELSPACEBOUNDARY") && (strEntity != L"IFCOPENINGELEMENT"));
+		pInstance->setEnable((strEntity != L"IFCSPACE") && (strEntity != L"IFCRELSPACEBOUNDARY") && (strEntity != L"IFCOPENINGELEMENT"));
 		
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;

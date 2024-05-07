@@ -341,9 +341,9 @@ COpenGLIFCView::~COpenGLIFCView()
 		/*
 		* IBO - Conceptual face polygons
 		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->ConcFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -356,8 +356,8 @@ COpenGLIFCView::~COpenGLIFCView()
 				vecConcFacePolygonsCohorts.clear();
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pInstance->ConcFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
 		}
 
 		/*
@@ -385,9 +385,9 @@ COpenGLIFCView::~COpenGLIFCView()
 		/*
 		* IBO - Points
 		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->PointsCohorts().size(); iPointsCohort++)
+		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pInstance->PointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
@@ -400,8 +400,8 @@ COpenGLIFCView::~COpenGLIFCView()
 				vecPointsCohorts.clear();
 			}
 
-			iPointsIndicesCount += (GLsizei)pInstance->PointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pInstance->PointsCohorts()[iPointsCohort]);
+			iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
 		}
 
 		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
@@ -698,7 +698,7 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
@@ -778,12 +778,12 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (auto pCohort : pInstance->ConcFacePolygonsCohorts())
+			for (auto pCohort : pInstance->concFacePolygonsCohorts())
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
@@ -831,7 +831,7 @@ void COpenGLIFCView::DrawLines()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
@@ -885,14 +885,14 @@ void COpenGLIFCView::DrawPoints()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iPointsCohort = 0; iPointsCohort < pInstance->PointsCohorts().size(); iPointsCohort++)
+			for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 			{
-				auto pCohort = pInstance->PointsCohorts()[iPointsCohort];
+				auto pCohort = pInstance->pointsCohorts()[iPointsCohort];
 
 				const _material* pMaterial =
 					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
@@ -1014,7 +1014,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}

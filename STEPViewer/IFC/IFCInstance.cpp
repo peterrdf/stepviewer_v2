@@ -10,9 +10,6 @@ CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
 	, CInstanceBase()
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
-	, m_bEnable(true)
-	, m_iVBO(0)
-	, m_iVBOOffset(0)
 {
 	ASSERT(iSdaiInstance != 0);
 	ASSERT(m_iExpressID != 0);
@@ -23,10 +20,9 @@ CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
 CIFCInstance::~CIFCInstance()
 {}
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCInstance::IsEnabled() const
 {
-	return GetEnable();
+	return getEnable();
 }
 
 void CIFCInstance::Calculate()
@@ -299,8 +295,8 @@ void CIFCInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = ConcFacePolygonsCohorts().empty() ?
-			nullptr : ConcFacePolygonsCohorts()[ConcFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = m_vecConcFacePolygonsCohorts.empty() ?
+			nullptr : m_vecConcFacePolygonsCohorts[m_vecConcFacePolygonsCohorts.size() - 1];
 
 		/*
 		* Create the cohort
@@ -308,7 +304,7 @@ void CIFCInstance::Calculate()
 		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
-			ConcFacePolygonsCohorts().push_back(pCohort);
+			m_vecConcFacePolygonsCohorts.push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
@@ -324,7 +320,7 @@ void CIFCInstance::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
-					ConcFacePolygonsCohorts().push_back(pCohort);
+					m_vecConcFacePolygonsCohorts.push_back(pCohort);
 
 					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
@@ -354,7 +350,7 @@ void CIFCInstance::Calculate()
 				if (iIndicesCount > 0)
 				{
 					pCohort = new _cohort();
-					ConcFacePolygonsCohorts().push_back(pCohort);
+					m_vecConcFacePolygonsCohorts.push_back(pCohort);
 
 					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
@@ -387,7 +383,7 @@ void CIFCInstance::Calculate()
 			if ((pCohort->indices().size() + (iIndicesCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
-				ConcFacePolygonsCohorts().push_back(pCohort);
+				m_vecConcFacePolygonsCohorts.push_back(pCohort);
 			}
 
 			int64_t iPreviousIndex = -1;
@@ -612,54 +608,16 @@ void CIFCInstance::Calculate()
 	} // for (; itMaterial2ConceptualFaces != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 int64_t CIFCInstance::getVertexLength() const
 {
 	return _VERTEX_LENGTH;
 }
 
-vector<_cohort*>& CIFCInstance::ConcFacePolygonsCohorts()
-{
-	return m_vecConcFacePolygonsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohortWithMaterial*>& CIFCInstance::PointsCohorts()
-{
-	return m_vecPointsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
 bool&  CIFCInstance::Referenced()
 {
 	return m_bReferenced;
 }
 
-// ------------------------------------------------------------------------------------------------
-bool CIFCInstance::GetEnable() const
-{
-	return m_bEnable;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CIFCInstance::SetEnable(bool bEnable)
-{
-	m_bEnable = bEnable;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLuint& CIFCInstance::VBO()
-{
-	return m_iVBO;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLsizei& CIFCInstance::VBOOffset()
-{
-	return m_iVBOOffset;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CIFCInstance::CalculateMinMax(
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 
@@ -766,7 +724,6 @@ void CIFCInstance::CalculateMinMax(
 	} // if (!m_vecPoints.empty())
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCInstance::Scale(float fScaleFactor)
 {
 	if (!HasGeometry())
