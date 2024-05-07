@@ -1245,32 +1245,33 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 
 		CString strName;
 		int iGeometryImage = IMAGE_NO_GEOMETRY;
+
 		switch (pChild->getType())
 		{
 			case enumSTEPItemDataType::ProductDefinition:
 			{
 				auto pDefinition = pChild->GetInstance<CProductDefinition>();
+				ASSERT(pDefinition != nullptr);
 
-				strName = pDefinition->GetId();
-				strName += ITEM_PRODUCT_DEFINION;
+				strName.Format(L"#%s %s %s", pDefinition->GetId(), pDefinition->GetName(), ITEM_PRODUCT_DEFINION);
 			}
 			break;
 
 			case enumSTEPItemDataType::Assembly:
 			{
 				auto pAssembly = pChild->GetInstance<CAssembly>();
+				ASSERT(pAssembly != nullptr);
 
-				strName = pAssembly->GetId();
-				strName += ITEM_ASSEMBLY;
+				strName.Format(L"#%s %s %s", pAssembly->GetId(), pAssembly->GetName(), ITEM_ASSEMBLY);
 			}
 			break;
 
 			case enumSTEPItemDataType::ProductInstance:
 			{
 				auto pInstance = pChild->GetInstance<CProductInstance>();
+				ASSERT(pInstance != nullptr);
 
-				strName = pInstance->GetProductDefinition()->GetId();
-				strName += ITEM_PRODUCT_INSTANCE;
+				strName.Format(L"#%lld %s %s", pInstance->GetID(), pInstance->GetName().c_str(), ITEM_PRODUCT_INSTANCE);
 
 				iGeometryImage = IMAGE_SELECTED;
 			}
