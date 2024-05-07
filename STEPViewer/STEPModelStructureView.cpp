@@ -1253,7 +1253,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 				auto pDefinition = pChild->GetInstance<CProductDefinition>();
 				ASSERT(pDefinition != nullptr);
 
-				strName.Format(L"#%s %s %s", pDefinition->GetId(), pDefinition->GetName(), ITEM_PRODUCT_DEFINION);
+				strName.Format(L"#%s %s %s", pDefinition->GetId(), pDefinition->GetProductName(), ITEM_PRODUCT_DEFINION);
 			}
 			break;
 
@@ -1271,7 +1271,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 				auto pInstance = pChild->GetInstance<CProductInstance>();
 				ASSERT(pInstance != nullptr);
 
-				strName.Format(L"#%lld %s %s", pInstance->GetID(), pInstance->GetName().c_str(), ITEM_PRODUCT_INSTANCE);
+				strName.Format(L"%s %s", pInstance->GetName().c_str(), ITEM_PRODUCT_INSTANCE);
 
 				iGeometryImage = IMAGE_SELECTED;
 			}
