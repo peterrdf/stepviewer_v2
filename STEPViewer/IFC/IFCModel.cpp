@@ -432,7 +432,7 @@ void CIFCModel::Scale()
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-CIFCInstance* CIFCModel::GetInstanceByID(int_t iID)
+CIFCInstance* CIFCModel::GetInstanceByID(int64_t iID)
 {
 	auto itID2Instance = m_mapID2Instance.find(iID);
 	if (itID2Instance != m_mapID2Instance.end())

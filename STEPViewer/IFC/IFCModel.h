@@ -41,7 +41,7 @@ private: // Members
 	
 	vector<CIFCInstance*> m_vecInstances;
 	map<SdaiInstance, CIFCInstance*> m_mapInstances;  // C Instance : C++ Instance
-	map<int_t, CIFCInstance*> m_mapID2Instance; // ID : Instance
+	map<int64_t, CIFCInstance*> m_mapID2Instance; // ID : Instance
 	map<int64_t, CIFCInstance*> m_mapExpressID2Instance; // Express ID : Instance
 
 	CIFCUnitProvider* m_pUnitProvider;
@@ -73,7 +73,7 @@ public: // Methods
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
-	CIFCInstance* GetInstanceByID(int_t iID);	
+	CIFCInstance* GetInstanceByID(int64_t iID);
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods
