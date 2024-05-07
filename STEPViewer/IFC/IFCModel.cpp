@@ -581,12 +581,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleS
 	mask += flagbit8;        // TRIANGLES
 	mask += flagbit9;        // LINES
 	mask += flagbit10;       // POINTS
-	mask += flagbit13;       // CONCEPTUAL FACE POLYGONS
-	mask += flagbit17;       // OPENGL
-	mask += flagbit24;		 //	AMBIENT
-	mask += flagbit25;		 //	DIFFUSE
-	mask += flagbit26;		 //	EMISSIVE
-	mask += flagbit27;		 //	SPECULAR
+	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
 
 	setting += 0;		     // SINGLE PRECISION (float)
 	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
@@ -595,12 +590,7 @@ CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleS
 	setting += flagbit8;     // TRIANGLES ON
 	setting += flagbit9;     // LINES ON
 	setting += flagbit10;    // POINTS ON
-	setting += flagbit13;    // CONCEPTUAL FACE POLYGONS ON
-	setting += 0;		     // OPENGL
-	setting += flagbit24;	 //	AMBIENT
-	setting += flagbit25;	 //	DIFFUSE
-	setting += flagbit26;	 //	EMISSIVE
-	setting += flagbit27;	 //	SPECULAR
+	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
 	setFormat(GetInstance(), setting, mask);
 	setFilter(GetInstance(), flagbit1, flagbit1);
 

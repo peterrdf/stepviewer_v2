@@ -19,14 +19,6 @@ typedef wxRect CRect;
 typedef unsigned int UINT;
 #endif // _LINUX
 
-
-// ----------------------------------------------------------------------------
-/*
-// X, Y, Z, Nx, Ny, Nz, Ambient, Diffuse, Emissive, Specular
-// (Normal vectors - bit 5, Diffuse, Emissive, Specular - bit 25, 26 & 27)
-*/
-#define _VERTEX_LENGTH  10
-
 // ------------------------------------------------------------------------------------------------
 // X, Y, Z, Nx, Ny, Nz
 #define GEOMETRY_VBO_VERTEX_LENGTH  6

@@ -61,7 +61,7 @@ void CProductDefinition::Calculate()
 	/*
 	* Set up format
 	*/
-	int_t setting = 0, mask = 0;
+	uint64_t setting = 0, mask = 0;
 	mask += flagbit2;        // PRECISION (32/64 bit)
 	mask += flagbit3;        //	INDEX ARRAY (32/64 bit)
 	mask += flagbit5;        // NORMALS

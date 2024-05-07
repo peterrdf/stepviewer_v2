@@ -40,7 +40,7 @@ public: // Methods
 	CProductDefinition(SdaiInstance iSdaiInstance);
 	virtual ~CProductDefinition();
 
-	// _instance
+	// _geometry
 	virtual OwlModel getModel() const override;
 	
 	void Calculate();
