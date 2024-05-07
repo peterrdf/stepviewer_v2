@@ -5,13 +5,11 @@
 #include "DesignTreeView.h"
 #include "Resource.h"
 #include "Generic.h"
-#include "DesignTreeViewConsts.h"
 #include "IFCModel.h"
 #include "STEPModel.h"
 #include "ProductDefinition.h"
 
 #include <algorithm>
-
 using namespace std;
 
 #ifdef _DEBUG
@@ -20,9 +18,13 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
+#define IMAGE_MODEL    2
+#define IMAGE_INSTANCE 1
+#define IMAGE_PROPERTY 3
+#define IMAGE_VALUE    5
+
+// ************************************************************************************************
 class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
 {
 
@@ -52,9 +54,7 @@ public:
 
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 /*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
 {
 	ResetView();
@@ -73,7 +73,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
@@ -133,13 +132,11 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
@@ -151,7 +148,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	};
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
@@ -183,7 +179,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL) 
@@ -257,7 +252,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::ResetView()
 {
 	// UI
@@ -268,7 +262,6 @@ void CDesignTreeView::ResetView()
 	Clean();
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 {
 	/*
@@ -305,7 +298,6 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 {
 	if (iInstance == 0)
@@ -484,7 +476,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 	}	
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::Clean()
 {
 	auto itInstance2Data = m_mapInstance2Data.begin();
@@ -495,16 +486,13 @@ void CDesignTreeView::Clean()
 	m_mapInstance2Data.clear();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDesignTreeView
-
+// ************************************************************************************************
 CDesignTreeView::CDesignTreeView()
 	: m_pPropertyProvider(nullptr)
 	, m_mapInstance2Data()
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
-{
-}
+{}
 
 CDesignTreeView::~CDesignTreeView()
 {	
@@ -518,17 +506,12 @@ BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
-	ON_WM_CONTEXTMENU()
-	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_INSTANCE_VIEW, OnSelectedItemChanged)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_INSTANCE_VIEW, OnItemExpanding)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorkspaceBar message handlers
 
 int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -595,10 +578,6 @@ void CDesignTreeView::OnProperties()
 	{
 		m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
-}
-
-void CDesignTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
-{
 }
 
 void CDesignTreeView::AdjustLayout()
@@ -686,11 +665,6 @@ void CDesignTreeView::OnDestroy()
 	__super::OnDestroy();
 
 	delete m_pSearchDialog;
-}
-
-void CDesignTreeView::OnSelectedItemChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
-{
-	*pResult = 0;
 }
 
 void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
