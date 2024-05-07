@@ -34,6 +34,45 @@ CIFCInstance::~CIFCInstance()
 
 void CIFCInstance::Calculate()
 {
+	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
+	ASSERT(iSdaiModel != 0);
+
+	/*
+	* Set up format
+	*/
+	int_t setting = 0, mask = 0;
+	mask += flagbit2;        // PRECISION (32/64 bit)
+	mask += flagbit3;        //	INDEX ARRAY (32/64 bit)
+	mask += flagbit5;        // NORMALS
+	mask += flagbit6;        // TEXTURE
+	mask += flagbit8;        // TRIANGLES
+	mask += flagbit9;        // LINES
+	mask += flagbit10;       // POINTS
+	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
+
+	setting += 0;		     // SINGLE PRECISION (float)
+	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
+	setting += flagbit5;     // NORMALS ON
+	setting += 0;			 // TEXTURE OFF
+	setting += flagbit8;     // TRIANGLES ON
+	setting += flagbit9;     // LINES ON
+	setting += flagbit10;    // POINTS ON
+	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
+	setFormat(iSdaiModel, setting, mask);
+	setFilter(iSdaiModel, flagbit1, flagbit1);
+
+	/*uint32_t iR = 10,
+		iG = 150,
+		iB = 10,
+		iA = 255;
+	uint32_t	iDefaultColor = 256 * 256 * 256 * iR +
+		256 * 256 * iG +
+		256 * iB +
+		iA;
+	SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);*/
+
+	setSegmentation(GetInstance(), 16, 0.);
+
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
 
