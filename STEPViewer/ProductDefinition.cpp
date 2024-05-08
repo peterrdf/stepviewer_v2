@@ -62,24 +62,21 @@ void CProductDefinition::Calculate()
 	* Set up format
 	*/
 	uint64_t mask = 0;
-	mask += flagbit2;        // PRECISION (32/64 bit)
-	mask += flagbit3;        //	INDEX ARRAY (32/64 bit)
-	mask += flagbit5;        // NORMALS
-	mask += flagbit6;        // TEXTURE
-	mask += flagbit8;        // TRIANGLES
-	mask += flagbit9;        // LINES
-	mask += flagbit10;       // POINTS
-	mask += flagbit13;       // CONCEPTUAL FACE POLYGON
+	mask += FORMAT_SIZE_VERTEX_DOUBLE;
+	mask += FORMAT_SIZE_INDEX_INT64;
+	mask += FORMAT_VERTEX_NORMAL;
+	mask += FORMAT_VERTEX_TEXTURE_UV;
+	mask += FORMAT_EXPORT_TRIANGLES;
+	mask += FORMAT_EXPORT_LINES;
+	mask += FORMAT_EXPORT_POINTS;
+	mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
 
 	uint64_t setting = 0;
-	setting += 0;		     // SINGLE PRECISION (float)
-	setting += 0;            // 32 BIT INDEX ARRAY (Int32)
-	setting += flagbit5;     // NORMALS ON
-	setting += 0;			 // TEXTURE OFF
-	setting += flagbit8;     // TRIANGLES ON
-	setting += flagbit9;     // LINES ON
-	setting += flagbit10;    // POINTS ON
-	setting += flagbit13;    // CONCEPTUAL FACE POLYGON ON
+	setting += FORMAT_VERTEX_NORMAL;
+	setting += FORMAT_EXPORT_TRIANGLES;
+	setting += FORMAT_EXPORT_LINES;
+	setting += FORMAT_EXPORT_POINTS;
+	setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
 	SetFormat(getModel(), setting, mask);
 
 	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
