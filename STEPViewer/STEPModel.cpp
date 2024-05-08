@@ -7,17 +7,36 @@
 
 #include <bitset>
 #include <algorithm>
-
 using namespace std;
 
-#ifdef _LINUX
-#include <cfloat>
-#include <wx/wx.h>
-#include <wx/stdpaths.h>
-#include <cwchar>
-#endif // _LINUX
+// ************************************************************************************************
+static double GetDoubleProperty(OwlInstance iInstance, char* szPropertyName)
+{
+	double* pdValues = nullptr;
+	int64_t	iCard = 0;
+	GetDatatypeProperty(
+		iInstance,
+		GetPropertyByName(GetModel(iInstance), szPropertyName),
+		(void**)&pdValues,
+		&iCard);
 
-// ------------------------------------------------------------------------------------------------
+	return (iCard == 1) ? pdValues[0] : 0.;
+}
+
+static int64_t GetObjectProperty(OwlInstance iInstance, char* szPropertyName)
+{
+	int64_t* piValues = nullptr;
+	int64_t	iCard = 0;
+	GetObjectProperty(
+		iInstance,
+		GetPropertyByName(GetModel(iInstance), szPropertyName),
+		&piValues,
+		&iCard);
+
+	return (iCard == 1) ? piValues[0] : 0;
+}
+
+// ************************************************************************************************
 CSTEPModel::CSTEPModel()
 	: CModel(enumModelType::STEP)
 	, m_pEntityProvider(nullptr)
@@ -521,18 +540,18 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 			if (owlInstanceMatrix) 
 			{
 				InferenceInstance(owlInstanceMatrix);
-				matrix._11 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_11");
-				matrix._12 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_12");
-				matrix._13 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_13");
-				matrix._21 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_21");
-				matrix._22 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_22");
-				matrix._23 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_23");
-				matrix._31 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_31");
-				matrix._32 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_32");
-				matrix._33 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_33");
-				matrix._41 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_41");
-				matrix._42 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_42");
-				matrix._43 = GetDatatypeProperty__DOUBLE(owlInstanceMatrix, "_43");
+				matrix._11 = GetDoubleProperty(owlInstanceMatrix, "_11");
+				matrix._12 = GetDoubleProperty(owlInstanceMatrix, "_12");
+				matrix._13 = GetDoubleProperty(owlInstanceMatrix, "_13");
+				matrix._21 = GetDoubleProperty(owlInstanceMatrix, "_21");
+				matrix._22 = GetDoubleProperty(owlInstanceMatrix, "_22");
+				matrix._23 = GetDoubleProperty(owlInstanceMatrix, "_23");
+				matrix._31 = GetDoubleProperty(owlInstanceMatrix, "_31");
+				matrix._32 = GetDoubleProperty(owlInstanceMatrix, "_32");
+				matrix._33 = GetDoubleProperty(owlInstanceMatrix, "_33");
+				matrix._41 = GetDoubleProperty(owlInstanceMatrix, "_41");
+				matrix._42 = GetDoubleProperty(owlInstanceMatrix, "_42");
+				matrix._43 = GetDoubleProperty(owlInstanceMatrix, "_43");
 			}
 
 			if (pParentMatrix) 
