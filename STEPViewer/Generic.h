@@ -23,9 +23,6 @@ typedef unsigned int UINT;
 // X, Y, Z, Nx, Ny, Nz
 #define GEOMETRY_VBO_VERTEX_LENGTH  6
 
-// ------------------------------------------------------------------------------------------------
-#define DEFAULT_CIRCLE_SEGMENTS 36
-
 static  const   int64_t    flagbit0 = 1;                           // 2^^0                          0000.0000..0000.0001
 static  const   int64_t    flagbit1 = 2;                           // 2^^1                          0000.0000..0000.0010
 static  const   int64_t    flagbit2 = 4;                           // 2^^2                          0000.0000..0000.0100
