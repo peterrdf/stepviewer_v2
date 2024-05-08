@@ -569,8 +569,6 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 	int64_t	owlInstanceProductDefinition = 0;
 	owlBuildInstance(GetInstance(), myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
 
-	pDefinition->Calculate();
-
 	cleanMemory(GetInstance(), 0);
 
 	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);

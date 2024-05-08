@@ -31,8 +31,6 @@ private: // Members
 	vector<CProductInstance*> m_vecInstances;
 	int32_t m_iNextInstance;
 
-	bool m_bCalculated;
-
 public: // Methods
 
 	// ctor/dtor
@@ -41,8 +39,6 @@ public: // Methods
 
 	// _geometry
 	virtual OwlModel getModel() const override;
-	
-	void Calculate();
 
 	void CalculateMinMaxTransform(
 		CProductInstance* pInstance, 
@@ -70,5 +66,9 @@ public: // Methods
 
 	const vector<CProductInstance*>& GetInstances() const { return m_vecInstances; }
 	int32_t GetNextInstance();
+
+private: // Methods
+
+	void Calculate();
 };
 
