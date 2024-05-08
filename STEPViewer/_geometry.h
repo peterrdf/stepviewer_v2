@@ -696,6 +696,27 @@ public: // Methods
 
 protected: // Methods
 
+	void setSTEPFormatSettings()
+	{
+		uint64_t mask = 0;
+		mask += FORMAT_SIZE_VERTEX_DOUBLE;
+		mask += FORMAT_SIZE_INDEX_INT64;
+		mask += FORMAT_VERTEX_NORMAL;
+		mask += FORMAT_VERTEX_TEXTURE_UV;
+		mask += FORMAT_EXPORT_TRIANGLES;
+		mask += FORMAT_EXPORT_LINES;
+		mask += FORMAT_EXPORT_POINTS;
+		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+
+		uint64_t setting = 0;
+		setting += FORMAT_VERTEX_NORMAL;
+		setting += FORMAT_EXPORT_TRIANGLES;
+		setting += FORMAT_EXPORT_LINES;
+		setting += FORMAT_EXPORT_POINTS;
+		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		SetFormat(getModel(), setting, mask);
+	}
+
 	virtual void clean()
 	{
 		delete m_pVertexBuffer;

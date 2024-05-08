@@ -16,16 +16,14 @@ public: // Methods
 	virtual bool HasGeometry() const PURE;
 	virtual bool IsEnabled() const PURE;
 
-	wstring GetName() const;
+	wstring GetName() const { return GetName(GetInstance()); }
 	static wstring GetName(SdaiInstance iInstance);
-
-	int64_t GetClass() const;
-	static int64_t GetClass(int64_t iInstance);
-	const wchar_t* GetClassName() const;
-	static const wchar_t* GetClassName(int64_t iInstance);
-
-	SdaiEntity GetEntity() const;
-	static SdaiEntity GetEntity(SdaiInstance iInstance);
-	const wchar_t* GetEntityName() const;
+	OwlClass GetClass() const { return GetClass(GetInstance()); }
+	static OwlClass GetClass(int64_t iInstance) { return GetInstanceClass(iInstance); }
+	const wchar_t* GetClassName() const { return GetClassName(GetInstance()); }
+	static const wchar_t* GetClassName(OwlInstance iInstance);
+	SdaiEntity GetEntity() const { return sdaiGetInstanceType(GetInstance()); }
+	static SdaiEntity GetEntity(SdaiInstance iInstance) { return sdaiGetInstanceType(iInstance); }
+	const wchar_t* GetEntityName() const { return GetEntityName(GetInstance()); }
 	static const wchar_t* GetEntityName(SdaiInstance iInstance);
 };

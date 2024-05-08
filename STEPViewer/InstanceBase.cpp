@@ -2,23 +2,12 @@
 
 #include "InstanceBase.h"
 
-// --------------------------------------------------------------------------------------------
 CInstanceBase::CInstanceBase()
-{
-}
+{}
 
-// --------------------------------------------------------------------------------------------
 /*virtual*/ CInstanceBase::~CInstanceBase()
-{
-}
+{}
 
-// --------------------------------------------------------------------------------------------
-wstring CInstanceBase::GetName() const
-{
-	return GetName(GetInstance());
-}
-
-// --------------------------------------------------------------------------------------------
 /*static*/ wstring CInstanceBase::GetName(SdaiInstance iInstance)
 {
 	wstring strUniqueName;
@@ -61,26 +50,7 @@ wstring CInstanceBase::GetName() const
 	return strUniqueName;
 }
 
-// --------------------------------------------------------------------------------------------
-int64_t CInstanceBase::GetClass() const
-{
-	return GetClass(GetInstance());
-}
-
-// --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstanceBase::GetClass(int64_t iInstance)
-{
-	return GetInstanceClass(iInstance);
-}
-
-// --------------------------------------------------------------------------------------------
-const wchar_t* CInstanceBase::GetClassName() const
-{
-	return GetClassName(GetInstance());
-}
-
-// --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstanceBase::GetClassName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetClassName(OwlInstance iInstance)
 {
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
@@ -88,25 +58,6 @@ const wchar_t* CInstanceBase::GetClassName() const
 	return szClassName;
 }
 
-// --------------------------------------------------------------------------------------------
-SdaiEntity CInstanceBase::GetEntity() const
-{
-	return sdaiGetInstanceType(GetInstance());
-}
-
-// --------------------------------------------------------------------------------------------
-/*static*/ SdaiEntity CInstanceBase::GetEntity(SdaiInstance iInstance)
-{
-	return sdaiGetInstanceType(iInstance);
-}
-
-// --------------------------------------------------------------------------------------------
-const wchar_t* CInstanceBase::GetEntityName() const
-{
-	return GetEntityName(GetInstance());
-}
-
-// --------------------------------------------------------------------------------------------
 /*static*/ const wchar_t* CInstanceBase::GetEntityName(SdaiInstance iInstance)
 {
 	wchar_t* szEntityName = nullptr;

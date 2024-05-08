@@ -45,9 +45,7 @@ void CIFCInstance::CalculateMinMax(
 
 	const uint32_t VERTEX_LENGTH = getVertexLength();
 
-	/*
-	* Triangles
-	*/
+	// Triangles
 	if (!m_vecTriangles.empty())
 	{
 		for (size_t iPrimitive = 0; iPrimitive < m_vecTriangles.size(); iPrimitive++)
@@ -66,9 +64,7 @@ void CIFCInstance::CalculateMinMax(
 		} // for (size_t iPrimitive = ...
 	} // if (!m_vecTriangles.empty())	
 
-	/*
-	* Conceptual faces polygons
-	*/
+	// Conceptual faces polygons
 	if (!m_vecConcFacePolygons.empty())
 	{
 		for (size_t iPrimitive = 0; iPrimitive < m_vecConcFacePolygons.size(); iPrimitive++)
@@ -92,9 +88,7 @@ void CIFCInstance::CalculateMinMax(
 		} // for (size_t iPrimitive = ...
 	} // if (!m_vecConcFacePolygons.empty())
 
-	/*
-	* Lines
-	*/
+	// Lines
 	if (!m_vecLines.empty())
 	{
 		for (size_t iPrimitive = 0; iPrimitive < m_vecLines.size(); iPrimitive++)
@@ -118,9 +112,7 @@ void CIFCInstance::CalculateMinMax(
 		} // for (size_t iPrimitive = ...
 	} // if (!m_vecLines.empty())
 
-	/*
-	* Points
-	*/
+	// Points
 	if (!m_vecPoints.empty())
 	{
 		for (size_t iPrimitive = 0; iPrimitive < m_vecPoints.size(); iPrimitive++)
@@ -147,33 +139,17 @@ void CIFCInstance::Scale(float fScaleFactor)
 
 void CIFCInstance::Calculate()
 {
-	/*
-	* Set up format
-	*/
-	uint64_t mask = 0;
-	mask += FORMAT_SIZE_VERTEX_DOUBLE;
-	mask += FORMAT_SIZE_INDEX_INT64;
-	mask += FORMAT_VERTEX_NORMAL;
-	mask += FORMAT_VERTEX_TEXTURE_UV;
-	mask += FORMAT_EXPORT_TRIANGLES;
-	mask += FORMAT_EXPORT_LINES;
-	mask += FORMAT_EXPORT_POINTS;
-	mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-
-	uint64_t setting = 0;
-	setting += FORMAT_VERTEX_NORMAL;
-	setting += FORMAT_EXPORT_TRIANGLES;
-	setting += FORMAT_EXPORT_LINES;
-	setting += FORMAT_EXPORT_POINTS;
-	setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-	SetFormat(getModel(), setting, mask);
+	//#perf
+	setSTEPFormatSettings();
 
 	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
 	ASSERT(iSdaiModel != 0);
 
+	//????
 	const int_t flagbit1 = 2;
 	setFilter(iSdaiModel, flagbit1, flagbit1);
 
+	//#perf
 	setSegmentation(iSdaiModel, 16, 0.);
 
 	ASSERT(m_pVertexBuffer == nullptr);
