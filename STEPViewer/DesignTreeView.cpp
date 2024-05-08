@@ -68,7 +68,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 	
-	m_pPropertyProvider = new COWLPropertyProvider(pModel->GetInstance());
+	m_pPropertyProvider = new COWLPropertyProvider();
 
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
