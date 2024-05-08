@@ -3,15 +3,15 @@
 #include "ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pDefinition, MATRIX* pTransformationMatrix)
+CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
-	, m_pProductDefinition(pDefinition)
+	, m_pProductDefinition(pProductDefinition)
 	, m_pTransformationMatrix(nullptr)
 	, m_bEnable(true)
 {
 	ASSERT(m_iID != 0);
-	ASSERT(pDefinition != nullptr);
+	ASSERT(m_pProductDefinition != nullptr);
 
 	m_pTransformationMatrix = new OGLMATRIX();
 	OGLMatrixIdentity(m_pTransformationMatrix);
@@ -33,73 +33,29 @@ CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pDefinition,
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 CProductInstance::~CProductInstance()
 {
 	delete m_pTransformationMatrix;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ SdaiInstance CProductInstance::GetInstance() const
 {
-	return m_pProductDefinition != nullptr ?
-		m_pProductDefinition->GetInstance() :
-		0;
+	return m_pProductDefinition->GetInstance();
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CProductInstance::HasGeometry() const
-{
-	return m_pProductDefinition != nullptr ?
-		m_pProductDefinition->hasGeometry() :
-		false;
+/*virtual*/ bool CProductInstance::HasGeometry() const 
+{ 
+	return m_pProductDefinition->hasGeometry();
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CProductInstance::IsEnabled() const
-{
-	return GetEnable();
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CProductInstance::GetID() const
-{
-	return m_iID;
-}
-
-// ------------------------------------------------------------------------------------------------
-CProductDefinition* CProductInstance::GetProductDefinition() const
-{
-	return m_pProductDefinition;
-}
-
-// ------------------------------------------------------------------------------------------------
-OGLMATRIX* CProductInstance::GetTransformationMatrix() const
-{
-	return m_pTransformationMatrix;
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CProductInstance::GetEnable() const
-{
-	return m_bEnable;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CProductInstance::SetEnable(bool bEnable)
-{
-	m_bEnable = bEnable;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CProductInstance::Scale(float fScaleFactor)
 {
-	/*
-	* Transformation
-	*/
-
-	// [-1.0 -> 1.0]
 	m_pTransformationMatrix->_41 /= fScaleFactor;
 	m_pTransformationMatrix->_42 /= fScaleFactor;
 	m_pTransformationMatrix->_43 /= fScaleFactor;
+}
+
+CProductDefinition* CProductInstance::CProductInstance::GetProductDefinition() const 
+{ 
+	return m_pProductDefinition; 
 }
