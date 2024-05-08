@@ -401,7 +401,7 @@ void CProductDefinition::Calculate()
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
-					} // for (int_t iIndex = ...
+					} // for (int64_t iIndex = ...
 
 					iIndicesCount -= _oglUtils::getIndicesCountLimit() / 2;
 					iStartIndex += _oglUtils::getIndicesCountLimit() / 2;
@@ -431,7 +431,7 @@ void CProductDefinition::Calculate()
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
-					} // for (int_t iIndex = ...
+					} // for (int64_t iIndex = ...
 				}
 
 				continue;
@@ -465,7 +465,7 @@ void CProductDefinition::Calculate()
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
-			} // for (int_t iIndex = ...
+			} // for (int64_t iIndex = ...
 		} // for (size_t iFace = ...
 	} // if (!m_vecConcFacePolygons.empty())
 
@@ -705,6 +705,8 @@ void CProductDefinition::CalculateMinMaxTransform(
 		return;
 	}
 
+	const uint32_t VERTEX_LENGTH = getVertexLength();
+
 	// Triangles
 	if (!m_vecTriangles.empty())
 	{
@@ -716,9 +718,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * getVertexLength())],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -745,16 +747,16 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
+				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
 				{
 					continue;
 				}
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * getVertexLength())],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -781,16 +783,16 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if (getIndices()[iIndex] == -1)
+				if (m_pIndexBuffer->data()[iIndex] == -1)
 				{
 					continue;
 				}
 
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * getVertexLength())],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -819,9 +821,9 @@ void CProductDefinition::CalculateMinMaxTransform(
 			{
 				VECTOR3 vecPoint =
 				{
-					getVertices()[(getIndices()[iIndex] * getVertexLength())],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 1],
-					getVertices()[(getIndices()[iIndex] * getVertexLength()) + 2]
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
+					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
 				if (pInstance != nullptr)
@@ -847,12 +849,13 @@ void CProductDefinition::Scale(float fScaleFactor)
 		return;
 	}
 
-	// Vertices [-1.0 -> 1.0]
-	for (int_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
+	const uint32_t VERTEX_LENGTH = getVertexLength();
+
+	for (int64_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
 	{
-		m_pVertexBuffer->data()[(iVertex * getVertexLength())] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * getVertexLength()) + 1] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * getVertexLength()) + 2] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
 	}
 
 	// Instances
