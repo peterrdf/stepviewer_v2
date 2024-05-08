@@ -32,6 +32,119 @@ CIFCInstance::~CIFCInstance()
 	return iOwlModel;
 }
 
+void CIFCInstance::CalculateMinMax(
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
+{
+	
+	if (!HasGeometry())
+	{
+		return;
+	}
+
+	const uint32_t VERTEX_LENGTH = getVertexLength();
+
+	/*
+	* Triangles
+	*/
+	if (!m_vecTriangles.empty())
+	{
+		for (size_t iPrimitive = 0; iPrimitive < m_vecTriangles.size(); iPrimitive++)
+		{
+			for (int64_t iIndex = m_vecTriangles[iPrimitive].startIndex();
+				iIndex < m_vecTriangles[iPrimitive].startIndex() + m_vecTriangles[iPrimitive].indicesCount();
+				iIndex++)
+			{
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+			} // for (size_t iIndex = ...
+		} // for (size_t iPrimitive = ...
+	} // if (!m_vecTriangles.empty())	
+
+	/*
+	* Conceptual faces polygons
+	*/
+	if (!m_vecConcFacePolygons.empty())
+	{
+		for (size_t iPrimitive = 0; iPrimitive < m_vecConcFacePolygons.size(); iPrimitive++)
+		{
+			for (int64_t iIndex = m_vecConcFacePolygons[iPrimitive].startIndex();
+				iIndex < m_vecConcFacePolygons[iPrimitive].startIndex() + m_vecConcFacePolygons[iPrimitive].indicesCount();
+				iIndex++)
+			{
+				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
+				{
+					continue;
+				}
+
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+			} // for (size_t iIndex = ...
+		} // for (size_t iPrimitive = ...
+	} // if (!m_vecConcFacePolygons.empty())
+
+	/*
+	* Lines
+	*/
+	if (!m_vecLines.empty())
+	{
+		for (size_t iPrimitive = 0; iPrimitive < m_vecLines.size(); iPrimitive++)
+		{
+			for (int64_t iIndex = m_vecLines[iPrimitive].startIndex();
+				iIndex < m_vecLines[iPrimitive].startIndex() + m_vecLines[iPrimitive].indicesCount();
+				iIndex++)
+			{
+				if (m_pIndexBuffer->data()[iIndex] == -1)
+				{
+					continue;
+				}
+
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+			} // for (size_t iIndex = ...
+		} // for (size_t iPrimitive = ...
+	} // if (!m_vecLines.empty())
+
+	/*
+	* Points
+	*/
+	if (!m_vecPoints.empty())
+	{
+		for (size_t iPrimitive = 0; iPrimitive < m_vecPoints.size(); iPrimitive++)
+		{
+			for (int64_t iIndex = m_vecPoints[iPrimitive].startIndex();
+				iIndex < m_vecPoints[iPrimitive].startIndex() + m_vecPoints[iPrimitive].indicesCount();
+				iIndex++)
+			{
+				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
+				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
+			} // for (size_t iIndex = ...
+		} // for (size_t iPrimitive = ...
+	} // if (!m_vecPoints.empty())
+}
+
+void CIFCInstance::Scale(float fScaleFactor)
+{
+	_geometry::scale(fScaleFactor);
+}
+
 void CIFCInstance::Calculate()
 {
 	/*
@@ -110,7 +223,7 @@ void CIFCInstance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 		ConceptualFace iConceptualFace = GetConceptualFaceEx(
-			m_iInstance, 
+			m_iInstance,
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,
@@ -642,117 +755,4 @@ void CIFCInstance::Calculate()
 			pCohort->faces().push_back(concFace);
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
-}
-
-void CIFCInstance::CalculateMinMax(
-	float& fXmin, float& fXmax, 
-	float& fYmin, float& fYmax, 
-	float& fZmin, float& fZmax)
-{
-	
-	if (!HasGeometry())
-	{
-		return;
-	}
-
-	const uint32_t VERTEX_LENGTH = getVertexLength();
-
-	/*
-	* Triangles
-	*/
-	if (!m_vecTriangles.empty())
-	{
-		for (size_t iPrimitive = 0; iPrimitive < m_vecTriangles.size(); iPrimitive++)
-		{
-			for (int64_t iIndex = m_vecTriangles[iPrimitive].startIndex();
-				iIndex < m_vecTriangles[iPrimitive].startIndex() + m_vecTriangles[iPrimitive].indicesCount();
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPrimitive = ...
-	} // if (!m_vecTriangles.empty())	
-
-	/*
-	* Conceptual faces polygons
-	*/
-	if (!m_vecConcFacePolygons.empty())
-	{
-		for (size_t iPrimitive = 0; iPrimitive < m_vecConcFacePolygons.size(); iPrimitive++)
-		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPrimitive].startIndex();
-				iIndex < m_vecConcFacePolygons[iPrimitive].startIndex() + m_vecConcFacePolygons[iPrimitive].indicesCount();
-				iIndex++)
-			{
-				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPrimitive = ...
-	} // if (!m_vecConcFacePolygons.empty())
-
-	/*
-	* Lines
-	*/
-	if (!m_vecLines.empty())
-	{
-		for (size_t iPrimitive = 0; iPrimitive < m_vecLines.size(); iPrimitive++)
-		{
-			for (int64_t iIndex = m_vecLines[iPrimitive].startIndex();
-				iIndex < m_vecLines[iPrimitive].startIndex() + m_vecLines[iPrimitive].indicesCount();
-				iIndex++)
-			{
-				if (m_pIndexBuffer->data()[iIndex] == -1)
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPrimitive = ...
-	} // if (!m_vecLines.empty())
-
-	/*
-	* Points
-	*/
-	if (!m_vecPoints.empty())
-	{
-		for (size_t iPrimitive = 0; iPrimitive < m_vecPoints.size(); iPrimitive++)
-		{
-			for (int64_t iIndex = m_vecPoints[iPrimitive].startIndex();
-				iIndex < m_vecPoints[iPrimitive].startIndex() + m_vecPoints[iPrimitive].indicesCount();
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0]);
-				fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPrimitive = ...
-	} // if (!m_vecPoints.empty())
-}
-
-void CIFCInstance::Scale(float fScaleFactor)
-{
-	_geometry::scale(fScaleFactor);
 }

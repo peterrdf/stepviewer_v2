@@ -37,13 +37,8 @@ public: // Methods
 	// CInstanceBase
 	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
 	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
-	virtual bool IsEnabled() const { return getEnable(); }
-
-	void Calculate();
-
+	virtual bool IsEnabled() const { return getEnable(); }	
 	ExpressID ExpressID() const { return m_iExpressID; }
-
-	// State
 	bool& Referenced() { return m_bReferenced; }
 	
 	void CalculateMinMax(
@@ -52,6 +47,10 @@ public: // Methods
 		float& fZmin, float& fZmax);
 
 	void Scale(float fScaleFactor);
+
+private: // Methods
+	
+	void Calculate();
 };
 
 #endif // IFCINSTANCE_H

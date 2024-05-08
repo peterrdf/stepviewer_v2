@@ -537,6 +537,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 
 			_matrix3x4 matrix;
 			_matrix3x4Identity(&matrix);
+
 			if (owlInstanceMatrix) 
 			{
 				InferenceInstance(owlInstanceMatrix);
