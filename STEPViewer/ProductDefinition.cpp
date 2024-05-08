@@ -849,14 +849,8 @@ void CProductDefinition::Scale(float fScaleFactor)
 		return;
 	}
 
-	const uint32_t VERTEX_LENGTH = getVertexLength();
-
-	for (int64_t iVertex = 0; iVertex < getVerticesCount(); iVertex++)
-	{
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
-	}
+	// Geometry
+	_geometry::scale(fScaleFactor);
 
 	// Instances
 	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)

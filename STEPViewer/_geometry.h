@@ -337,14 +337,13 @@ public: // Methods
 			return;
 		}
 
-		const auto iVertexLength = getVertexLength();
+		const auto VERTEX_LENGTH = getVertexLength();
 
-		/* Vertices */
 		for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
 		{
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] / fScaleFactor;
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] / fScaleFactor;
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] / fScaleFactor;
+			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0] /= fScaleFactor;
+			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= fScaleFactor;
+			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
 		}
 	}
 
