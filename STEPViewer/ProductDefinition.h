@@ -29,8 +29,8 @@ private: // Members
 	SdaiInteger m_iRelatingProducts; // if == 0 then it has geometry, otherwise it is a placeholder
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
-	vector<CProductInstance*> m_vecProductInstances;
-	int32_t m_iNextProductInstance;
+	vector<CProductInstance*> m_vecInstances;
+	int32_t m_iNextInstance;
 
 	bool m_bCalculated;
 
@@ -69,7 +69,7 @@ public: // Methods
 	SdaiInteger GetRelatingProducts() const { return m_iRelatingProducts; }
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
 
-	const vector<CProductInstance*>& GetInstances() const { return m_vecProductInstances; }
-	int32_t GetNextProductInstance();
+	const vector<CProductInstance*>& GetInstances() const { return m_vecInstances; }
+	int32_t GetNextInstance();
 };
 

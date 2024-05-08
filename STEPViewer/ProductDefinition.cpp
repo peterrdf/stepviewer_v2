@@ -13,8 +13,8 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	, m_szProductName(nullptr)
 	, m_iRelatingProducts(0)
 	, m_iRelatedProducts(0)
-	, m_vecProductInstances()
-	, m_iNextProductInstance(-1)
+	, m_vecInstances()
+	, m_iNextInstance(-1)
 	, m_bCalculated(false)
 {
 	ASSERT(iSdaiInstance != 0);
@@ -853,19 +853,19 @@ void CProductDefinition::Scale(float fScaleFactor)
 	_geometry::scale(fScaleFactor);
 
 	// Instances
-	for (size_t iInstance = 0; iInstance < m_vecProductInstances.size(); iInstance++)
+	for (size_t iInstance = 0; iInstance < m_vecInstances.size(); iInstance++)
 	{
-		m_vecProductInstances[iInstance]->Scale(fScaleFactor);
+		m_vecInstances[iInstance]->Scale(fScaleFactor);
 	}
 }
 
-int32_t CProductDefinition::GetNextProductInstance()
+int32_t CProductDefinition::GetNextInstance()
 {
-	if (++m_iNextProductInstance >= (int32_t)m_vecProductInstances.size())
+	if (++m_iNextInstance >= (int32_t)m_vecInstances.size())
 	{
-		m_iNextProductInstance = 0;
+		m_iNextInstance = 0;
 	}
 
-	return m_iNextProductInstance;
+	return m_iNextInstance;
 }
 
