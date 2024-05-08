@@ -11,16 +11,7 @@
 
 #include "STEPViewerDoc.h"
 #include "ModelFactory.h"
-
 #include <propkey.h>
-
-#include "Generic.h"
-
-#ifdef _USE_BOOST
-#include <boost/chrono.hpp>
-
-using namespace boost::chrono;
-#endif // _USE_BOOST
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

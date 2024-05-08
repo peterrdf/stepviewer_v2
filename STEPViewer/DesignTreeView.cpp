@@ -4,7 +4,6 @@
 #include "STEPViewer.h"
 #include "DesignTreeView.h"
 #include "Resource.h"
-#include "Generic.h"
 #include "IFCModel.h"
 #include "STEPModel.h"
 #include "ProductDefinition.h"

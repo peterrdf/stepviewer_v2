@@ -1,7 +1,6 @@
 #pragma once
 
 #include "_geometry.h"
-#include "Generic.h"
 #include "InstanceBase.h"
 
 // ************************************************************************************************

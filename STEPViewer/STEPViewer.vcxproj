@@ -235,7 +235,6 @@
     <ClInclude Include="STEPViewerDoc.h" />
     <ClInclude Include="STEPViewerView.h" />
     <ClInclude Include="StructureViewConsts.h" />
-    <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OpenGLSTEPView.h" />
     <ClInclude Include="PropertiesWnd.h" />

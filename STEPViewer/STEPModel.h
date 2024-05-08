@@ -2,10 +2,8 @@
 
 #include "_geometry.h"
 #include "Model.h"
-#include "Generic.h"
 
 #include <map>
-
 using namespace std;
 
 #define EMPTY_INSTANCE L"---<EMPTY>---"

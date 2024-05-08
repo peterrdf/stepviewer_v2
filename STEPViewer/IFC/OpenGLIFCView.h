@@ -1,7 +1,6 @@
 #ifndef _OPEN_GL_IFC_VIEW_H_
 #define _OPEN_GL_IFC_VIEW_H_
 
-#include "Generic.h"
 #include "IFCInstance.h"
 #include "_oglUtils.h"
 #include "OpenGLView.h"

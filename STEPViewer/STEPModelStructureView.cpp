@@ -5,7 +5,6 @@
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "STEPModel.h"
-#include "Generic.h"
 #include "StructureViewConsts.h"
 
 #include <algorithm>

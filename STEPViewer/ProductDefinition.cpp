@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ProductDefinition.h"
-#include "Generic.h"
 
 // ************************************************************************************************
 CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)

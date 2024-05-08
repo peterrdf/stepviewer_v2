@@ -2,7 +2,6 @@
 #define _OPEN_GL_STEP_VIEW_H_
 
 #include "_oglUtils.h"
-#include "Generic.h"
 #include "OpenGLView.h"
 #include "ProductDefinition.h"
 

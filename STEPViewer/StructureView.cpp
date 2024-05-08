@@ -5,7 +5,6 @@
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "STEPModel.h"
-#include "Generic.h"
 #include "IFCModelStructureView.h"
 
 #include <algorithm>
@@ -72,8 +71,7 @@ static char THIS_FILE[]=__FILE__;
 
 CStructureView::CStructureView()
 	: m_pSTEPTreeView(nullptr)
-{
-}
+{}
 
 CStructureView::~CStructureView()
 {	
