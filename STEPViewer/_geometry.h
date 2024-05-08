@@ -14,6 +14,124 @@
 using namespace std;
 
 // ************************************************************************************************
+struct _vector3
+{
+	double x;
+	double y;
+	double z;
+};
+
+// ************************************************************************************************
+struct _matrix3x4
+{
+	double _11, _12, _13;
+	double _21, _22, _23;
+	double _31, _32, _33;
+	double _41, _42, _43;
+};
+
+static void	_matrix3x4Transform(const _vector3* pIn, const _matrix3x4* pM, _vector3* pOut)
+{
+	_vector3 pTmp;
+	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
+	pTmp.y = pIn->x * pM->_12 + pIn->y * pM->_22 + pIn->z * pM->_32 + pM->_42;
+	pTmp.z = pIn->x * pM->_13 + pIn->y * pM->_23 + pIn->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+static void _matrix3x4Identity(_matrix3x4* pM)
+{
+	ASSERT(pM != nullptr);
+
+	memset(pM, 0, sizeof(_matrix3x4));
+
+	pM->_11 = pM->_22 = pM->_33 = 1.;
+}
+
+static void	_matrix3x4Multiply(_matrix3x4* pOut, const _matrix3x4* pM1, const _matrix3x4* pM2)
+{
+	ASSERT((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
+
+	_matrix3x4 pTmp;
+	pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31;
+	pTmp._12 = pM1->_11 * pM2->_12 + pM1->_12 * pM2->_22 + pM1->_13 * pM2->_32;
+	pTmp._13 = pM1->_11 * pM2->_13 + pM1->_12 * pM2->_23 + pM1->_13 * pM2->_33;
+
+	pTmp._21 = pM1->_21 * pM2->_11 + pM1->_22 * pM2->_21 + pM1->_23 * pM2->_31;
+	pTmp._22 = pM1->_21 * pM2->_12 + pM1->_22 * pM2->_22 + pM1->_23 * pM2->_32;
+	pTmp._23 = pM1->_21 * pM2->_13 + pM1->_22 * pM2->_23 + pM1->_23 * pM2->_33;
+
+	pTmp._31 = pM1->_31 * pM2->_11 + pM1->_32 * pM2->_21 + pM1->_33 * pM2->_31;
+	pTmp._32 = pM1->_31 * pM2->_12 + pM1->_32 * pM2->_22 + pM1->_33 * pM2->_32;
+	pTmp._33 = pM1->_31 * pM2->_13 + pM1->_32 * pM2->_23 + pM1->_33 * pM2->_33;
+
+	pTmp._41 = pM1->_41 * pM2->_11 + pM1->_42 * pM2->_21 + pM1->_43 * pM2->_31 + pM2->_41;
+	pTmp._42 = pM1->_41 * pM2->_12 + pM1->_42 * pM2->_22 + pM1->_43 * pM2->_32 + pM2->_42;
+	pTmp._43 = pM1->_41 * pM2->_13 + pM1->_42 * pM2->_23 + pM1->_43 * pM2->_33 + pM2->_43;
+
+	pOut->_11 = pTmp._11;
+	pOut->_12 = pTmp._12;
+	pOut->_13 = pTmp._13;
+
+	pOut->_21 = pTmp._21;
+	pOut->_22 = pTmp._22;
+	pOut->_23 = pTmp._23;
+
+	pOut->_31 = pTmp._31;
+	pOut->_32 = pTmp._32;
+	pOut->_33 = pTmp._33;
+
+	pOut->_41 = pTmp._41;
+	pOut->_42 = pTmp._42;
+	pOut->_43 = pTmp._43;
+}
+
+// ************************************************************************************************
+struct _matrix16x16
+{
+	double _11, _12, _13, _14;
+	double _21, _22, _23, _24;
+	double _31, _32, _33, _34;
+	double _41, _42, _43, _44;
+};
+
+static void _matrix16x16Identity(_matrix16x16* pM)
+{
+	ASSERT(pM != nullptr);
+
+	memset(pM, 0, sizeof(_matrix16x16));
+
+	pM->_11 = pM->_22 = pM->_33 = pM->_44 = 1.;
+}
+
+static void	_matrix16x16Transform(const _vector3* pIn, const _matrix16x16* pM, _vector3* pOut)
+{
+	_vector3 pTmp;
+	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
+	pTmp.y = pIn->x * pM->_12 + pIn->y * pM->_22 + pIn->z * pM->_32 + pM->_42;
+	pTmp.z = pIn->x * pM->_13 + pIn->y * pM->_23 + pIn->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+static void	_transform(const _vector3* pV, const _matrix16x16* pM, _vector3* pOut)
+{
+	_vector3 pTmp;
+	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
+	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
+	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+// ************************************************************************************************
 class _primitives
 {
 

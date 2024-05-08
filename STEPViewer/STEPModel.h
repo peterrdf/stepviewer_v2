@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_geometry.h"
 #include "Model.h"
 #include "Generic.h"
 
@@ -61,7 +62,7 @@ private: // Methods
 	CProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, MATRIX* pParentMatrix);
+	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix3x4* pParentMatrix);
 	void Clean();
 };
 

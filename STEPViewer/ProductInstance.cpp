@@ -3,7 +3,7 @@
 #include "ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix)
+CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix3x4* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)
@@ -13,8 +13,8 @@ CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefi
 	ASSERT(m_iID != 0);
 	ASSERT(m_pProductDefinition != nullptr);
 
-	m_pTransformationMatrix = new OGLMATRIX();
-	OGLMatrixIdentity(m_pTransformationMatrix);
+	m_pTransformationMatrix = new _matrix16x16();
+	_matrix16x16Identity(m_pTransformationMatrix);
 
 	if (pTransformationMatrix != nullptr) 
 	{

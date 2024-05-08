@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_geometry.h"
 #include "Generic.h"
 #include "InstanceBase.h"
 
@@ -16,13 +17,13 @@ private: // Members
 
 	int64_t m_iID;
 	CProductDefinition* m_pProductDefinition;
-	OGLMATRIX* m_pTransformationMatrix;
+	_matrix16x16* m_pTransformationMatrix;
 
 	bool m_bEnable;	
 
 public: // Methods
 	
-	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, MATRIX* pTransformationMatrix);
+	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix3x4* pTransformationMatrix);
 	virtual ~CProductInstance();
 
 	// CInstanceBase
@@ -34,7 +35,7 @@ public: // Methods
 	
 	int64_t GetID() const { return m_iID; }
 	CProductDefinition* GetProductDefinition() const;
-	OGLMATRIX* GetTransformationMatrix() const { return m_pTransformationMatrix; }
+	_matrix16x16* GetTransformationMatrix() const { return m_pTransformationMatrix; }
 	bool GetEnable() const { return m_bEnable; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
 };

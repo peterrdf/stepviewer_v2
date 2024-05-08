@@ -716,7 +716,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
 				iIndex++)
 			{
-				VECTOR3 vecPoint =
+				_vector3 vecPoint =
 				{
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
@@ -725,7 +725,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -752,7 +752,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 					continue;
 				}
 
-				VECTOR3 vecPoint =
+				_vector3 vecPoint =
 				{
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
@@ -761,7 +761,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -788,7 +788,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 					continue;
 				}
 
-				VECTOR3 vecPoint =
+				_vector3 vecPoint =
 				{
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
@@ -797,7 +797,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -819,7 +819,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
 				iIndex++)
 			{
-				VECTOR3 vecPoint =
+				_vector3 vecPoint =
 				{
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
@@ -828,7 +828,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					OGLTransform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
