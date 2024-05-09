@@ -38,6 +38,16 @@ CProductInstance::~CProductInstance()
 	delete m_pTransformationMatrix;
 }
 
+/*virtual*/ SdaiInstance CProductInstance::GetInstance() const 
+{ 
+	return m_pProductDefinition->GetInstance(); 
+}
+
+/*virtual*/  bool CProductInstance::HasGeometry() const 
+{ 
+	return m_pProductDefinition->hasGeometry(); 
+}
+
 void CProductInstance::Scale(float fScaleFactor)
 {
 	m_pTransformationMatrix->_41 /= fScaleFactor;

@@ -26,8 +26,8 @@ public: // Methods
 	virtual ~CProductInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const { return m_pProductDefinition->GetInstance(); }
-	virtual bool HasGeometry() const { return m_pProductDefinition->hasGeometry(); }
+	virtual SdaiInstance GetInstance() const;
+	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const { return GetEnable(); }
 
 	void Scale(float fScaleFactor);
