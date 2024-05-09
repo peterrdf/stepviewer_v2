@@ -765,12 +765,3 @@ protected: // Methods
 		_cohort::clear(m_vecTangentVecsCohorts);
 	}
 };
-
-// ************************************************************************************************
-struct _geometryComparator
-{
-	bool operator()(const _geometry* pLeft, const _geometry* pRight) const
-	{
-		return wcscmp(pLeft->getName(), pRight->getName()) < 0;
-	}
-};

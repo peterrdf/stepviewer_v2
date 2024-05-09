@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ProductDefinition.h"
+#include "STEPModel.h"
 
 // ************************************************************************************************
 CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
@@ -318,10 +319,10 @@ void CProductDefinition::Calculate()
 
 		/* Material */
 
-		uint32_t iAmbientColor = 0;
-		uint32_t iDiffuseColor = 0;
-		uint32_t iEmissiveColor = 0;
-		uint32_t iSpecularColor = 0;
+		uint32_t iAmbientColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iDiffuseColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iEmissiveColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iSpecularColor = CSTEPModel::DEFAULT_COLOR;
 		float fTransparency = 1.f;
 
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
@@ -340,23 +341,6 @@ void CProductDefinition::Calculate()
 			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
 			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
 			fTransparency = (float)COLOR_GET_W(iAmbientColor);
-		}
-		else
-		{
-			uint32_t
-				iR = 175,
-				iG = 175,
-				iB = 175,
-				iA = 255;
-			uint32_t iDefaultColor = 256 * 256 * 256 * iR +
-				256 * 256 * iG +
-				256 * iB +
-				iA;
-
-			iAmbientColor = iDefaultColor;
-			iDiffuseColor = iDefaultColor;
-			iEmissiveColor = iDefaultColor;
-			iSpecularColor = iDefaultColor;
 		}
 
 		_material material(

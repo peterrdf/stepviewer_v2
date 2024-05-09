@@ -37,6 +37,17 @@ static int64_t GetObjectProperty(OwlInstance iInstance, char* szPropertyName)
 }
 
 // ************************************************************************************************
+static uint32_t DEFAULT_COLOR_R = 175;
+static uint32_t DEFAULT_COLOR_G = 175;
+static uint32_t DEFAULT_COLOR_B = 175;
+static uint32_t DEFAULT_COLOR_A = 255;
+/*static*/ uint32_t CSTEPModel::DEFAULT_COLOR =
+	256 * 256 * 256 * DEFAULT_COLOR_R +
+	256 * 256 * DEFAULT_COLOR_G +
+	256 * DEFAULT_COLOR_B +
+	DEFAULT_COLOR_A;
+
+// ************************************************************************************************
 CSTEPModel::CSTEPModel()
 	: CModel(enumModelType::STEP)
 	, m_pEntityProvider(nullptr)
