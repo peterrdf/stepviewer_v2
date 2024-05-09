@@ -353,53 +353,23 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountTriangles > 0)
 		{
-			m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
-
-			auto itMaterial2ConceptualFaces = mapMaterial2ConcFaces.find(material);
-			if (itMaterial2ConceptualFaces == mapMaterial2ConcFaces.end())
-			{
-				mapMaterial2ConcFaces[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles) };
-			}
-			else
-			{
-				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles));
-			}
+			addTriangles(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles, material, mapMaterial2ConcFaces);
 		}
 
 		if (iIndicesCountConceptualFacePolygons > 0)
 		{
-			m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons));
+			addConcFacePolygons(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons);			
 		}
 
 		if (iIndicesCountLines > 0)
 		{
-			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
-
-			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
-			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
-			{
-				mapMaterial2ConcFaceLines[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines) };
-			}
-			else
-			{
-				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines));
-			}
+			addLines(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines, material, mapMaterial2ConcFaceLines);
 		}
 
 		if (iIndicesCountPoints > 0)
 		{
-			m_vecPoints.push_back(_primitives(iStartIndexPoints, iIndicesCountPoints));
-
-			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
-			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
-			{
-				mapMaterial2ConcFacePoints[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints) };
-			}
-			else
-			{
-				itMaterial2ConcFacePoints->second.push_back(_face(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints));
-			}
-		} // if (iIndicesCountPoints > 0)
+			addPoints(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints, material, mapMaterial2ConcFacePoints);
+		}
 	} // for (int64_t iConceptualFaceIndex = ...	
 
 	// Group the faces

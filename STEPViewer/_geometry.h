@@ -717,6 +717,45 @@ protected: // Methods
 		SetFormat(getModel(), setting, mask);
 	}
 
+	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecTriangles.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addConcFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
+	{
+		m_vecConcFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
+	}
+
+	void addLines(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecLines.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addPoints(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecPoints.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		auto itMaterial = mapMaterials.find(material);
+		if (itMaterial == mapMaterials.end())
+		{
+			mapMaterials[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndex, iIndicesCount) };
+		}
+		else
+		{
+			itMaterial->second.push_back(_face(iConceptualFaceIndex, iStartIndex, iIndicesCount));
+		}
+	}
+
 	virtual void clean()
 	{
 		delete m_pVertexBuffer;
