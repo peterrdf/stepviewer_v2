@@ -139,15 +139,17 @@ void CIFCInstance::Scale(float fScaleFactor)
 
 void CIFCInstance::Calculate()
 {
+	// Format
 	setSTEPFormatSettings();
 
+	// Extra settings
 	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
 	ASSERT(iSdaiModel != 0);
-
 	const int_t flagbit1 = 2;
 	setFilter(iSdaiModel, flagbit1, flagbit1);
-
 	setSegmentation(iSdaiModel, 16, 0.);
+
+	/* Geometry */
 
 	ASSERT(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
@@ -155,23 +157,8 @@ void CIFCInstance::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	CalculateInstance(m_iInstance, &m_pVertexBuffer->size(), &m_pIndexBuffer->size(), nullptr);
-	if ((m_pVertexBuffer->size() == 0) || (m_pIndexBuffer->size() == 0))
-	{
-		return;
-	}
+	calculate(m_pVertexBuffer, m_pIndexBuffer);
 
-	m_pVertexBuffer->data() = new float[(uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength()];
-	memset(m_pVertexBuffer->data(), 0, (uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength() * sizeof(float));
-
-	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
-
-	m_pIndexBuffer->data() = new int32_t[(uint32_t)m_pIndexBuffer->size()];
-	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
-
-	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
-
-	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;

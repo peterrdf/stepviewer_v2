@@ -717,6 +717,30 @@ protected: // Methods
 		SetFormat(getModel(), setting, mask);
 	}
 
+	bool calculate(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
+	{
+		ASSERT(pVertexBuffer != nullptr);
+		ASSERT(pIndexBuffer != nullptr);
+
+		CalculateInstance(m_iInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
+		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
+		{
+			return false;
+		}
+
+		pVertexBuffer->data() = new float[(uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength()];
+		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
+
+		UpdateInstanceVertexBuffer(m_iInstance, pVertexBuffer->data());
+
+		pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
+		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
+
+		UpdateInstanceIndexBuffer(m_iInstance, pIndexBuffer->data());
+
+		return true;
+	}
+
 	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
 	{
 		m_vecTriangles.push_back(_primitives(iStartIndex, iIndicesCount));
