@@ -209,10 +209,10 @@ void CIFCInstance::Calculate()
 
 		/* Material */
 
-		uint32_t iAmbientColor = 0;
-		uint32_t iDiffuseColor = 0;
-		uint32_t iEmissiveColor = 0;
-		uint32_t iSpecularColor = 0;
+		uint32_t iAmbientColor = CIFCModel::DEFAULT_COLOR;
+		uint32_t iDiffuseColor = CIFCModel::DEFAULT_COLOR;
+		uint32_t iEmissiveColor = CIFCModel::DEFAULT_COLOR;
+		uint32_t iSpecularColor = CIFCModel::DEFAULT_COLOR;
 		float fTransparency = 1.f;
 
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
@@ -231,22 +231,6 @@ void CIFCInstance::Calculate()
 			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
 			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
 			fTransparency = (float)COLOR_GET_W(iAmbientColor);
-		}
-		else
-		{
-			uint32_t iR = 10,
-				iG = 150,
-				iB = 10,
-				iA = 255;
-			uint32_t iDefaultColor = 256 * 256 * 256 * iR +
-				256 * 256 * iG +
-				256 * iB +
-				iA;
-
-			iAmbientColor = iDefaultColor;
-			iDiffuseColor = iDefaultColor;
-			iEmissiveColor = iDefaultColor;
-			iSpecularColor = iDefaultColor;
 		}
 
 		_material material(

@@ -15,6 +15,17 @@
 /*static*/ int_t CIFCModel::s_iInstanceID = 1;
 
 // ************************************************************************************************
+static uint32_t DEFAULT_COLOR_R = 10;
+static uint32_t DEFAULT_COLOR_G = 150;
+static uint32_t DEFAULT_COLOR_B = 10;
+static uint32_t DEFAULT_COLOR_A = 255;
+/*static*/ uint32_t CIFCModel::DEFAULT_COLOR =
+	256 * 256 * 256 * DEFAULT_COLOR_R +
+	256 * 256 * DEFAULT_COLOR_G +
+	256 * DEFAULT_COLOR_B +
+	DEFAULT_COLOR_A;
+
+// ************************************************************************************************
 CIFCModel::CIFCModel()
 	: CModel(enumModelType::IFC)
 	, m_ifcProjectEntity(0)

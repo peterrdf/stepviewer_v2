@@ -52,6 +52,10 @@ private: // Members
 
 	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
 
+public: // Members
+
+	static uint32_t DEFAULT_COLOR;
+
 public: // Methods
 	
 	CIFCModel();
