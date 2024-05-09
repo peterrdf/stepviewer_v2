@@ -272,17 +272,11 @@ void CProductDefinition::Calculate()
 		return;
 	}
 
-	/**
-	* Retrieves the vertices
-	*/
 	m_pVertexBuffer->data() = new float[(uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength()];
 	memset(m_pVertexBuffer->data(), 0, (uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
 
-	/**
-	* Retrieves the indices
-	*/
 	m_pIndexBuffer->data() = new int32_t[(uint32_t)m_pIndexBuffer->size()];
 	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
 
@@ -293,11 +287,9 @@ void CProductDefinition::Calculate()
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceCnt.html
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
-		//	http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx.html
 		int64_t iStartIndexTriangles = 0;
 		int64_t iIndicesCountTriangles = 0;
 		int64_t iStartIndexLines = 0;
@@ -326,14 +318,6 @@ void CProductDefinition::Calculate()
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
 		if (iMaterialInstance != 0)
 		{
-			int64_t* piInstances = nullptr;
-			int64_t iCard = 0;
-			GetObjectProperty(
-				iMaterialInstance,
-				GetPropertyByName(getModel(), "textures"),
-				&piInstances,
-				&iCard);
-
 			iAmbientColor = GetMaterialColorAmbient(iMaterialInstance);
 			iDiffuseColor = GetMaterialColorDiffuse(iMaterialInstance);
 			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
@@ -356,7 +340,7 @@ void CProductDefinition::Calculate()
 
 		if (iIndicesCountConceptualFacePolygons > 0)
 		{
-			addConcFacePolygons(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons);			
+			addConcFacePolygons(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons);
 		}
 
 		if (iIndicesCountLines > 0)
