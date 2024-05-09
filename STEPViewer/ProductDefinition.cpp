@@ -264,7 +264,10 @@ void CProductDefinition::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	calculate(m_pVertexBuffer, m_pIndexBuffer);
+	if (!calculate(m_pVertexBuffer, m_pIndexBuffer))
+	{
+		return;
+	}
 
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;
