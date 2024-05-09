@@ -139,17 +139,14 @@ void CIFCInstance::Scale(float fScaleFactor)
 
 void CIFCInstance::Calculate()
 {
-	//#perf
 	setSTEPFormatSettings();
 
 	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
 	ASSERT(iSdaiModel != 0);
 
-	//????
 	const int_t flagbit1 = 2;
 	setFilter(iSdaiModel, flagbit1, flagbit1);
 
-	//#perf
 	setSegmentation(iSdaiModel, 16, 0.);
 
 	ASSERT(m_pVertexBuffer == nullptr);
@@ -167,8 +164,8 @@ void CIFCInstance::Calculate()
 	/**
 	* Retrieves the vertices
 	*/
-	m_pVertexBuffer->data() = new float[(uint32_t)m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength()];
-	memset(m_pVertexBuffer->data(), 0, (uint32_t)m_pVertexBuffer->size() * m_pVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertexBuffer->data() = new float[(uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength()];
+	memset(m_pVertexBuffer->data(), 0, (uint32_t)m_pVertexBuffer->size() * (int64_t)m_pVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pVertexBuffer->data());
 
