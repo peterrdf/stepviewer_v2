@@ -26,14 +26,14 @@ public: // Methods
 	virtual ~CProductInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const;
-	virtual bool HasGeometry() const;
+	virtual SdaiInstance GetInstance() const { return m_pProductDefinition->GetInstance(); }
+	virtual bool HasGeometry() const { return m_pProductDefinition->hasGeometry(); }
 	virtual bool IsEnabled() const { return GetEnable(); }
 
 	void Scale(float fScaleFactor);
 	
 	int64_t GetID() const { return m_iID; }
-	CProductDefinition* GetProductDefinition() const;
+	CProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
 	_matrix16x16* GetTransformationMatrix() const { return m_pTransformationMatrix; }
 	bool GetEnable() const { return m_bEnable; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }

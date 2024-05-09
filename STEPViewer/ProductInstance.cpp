@@ -2,7 +2,7 @@
 #include "ProductInstance.h"
 #include "ProductDefinition.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
@@ -38,24 +38,9 @@ CProductInstance::~CProductInstance()
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/ SdaiInstance CProductInstance::GetInstance() const
-{
-	return m_pProductDefinition->GetInstance();
-}
-
-/*virtual*/ bool CProductInstance::HasGeometry() const 
-{ 
-	return m_pProductDefinition->hasGeometry();
-}
-
 void CProductInstance::Scale(float fScaleFactor)
 {
 	m_pTransformationMatrix->_41 /= fScaleFactor;
 	m_pTransformationMatrix->_42 /= fScaleFactor;
 	m_pTransformationMatrix->_43 /= fScaleFactor;
-}
-
-CProductDefinition* CProductInstance::CProductInstance::GetProductDefinition() const 
-{ 
-	return m_pProductDefinition; 
 }
