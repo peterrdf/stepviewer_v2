@@ -575,13 +575,6 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	int_t myProductDefinitionInstanceHandle = internalGetInstanceFromP21Line(GetInstance(), pDefinition->GetExpressID());
-
-	int64_t	owlInstanceProductDefinition = 0;
-	owlBuildInstance(GetInstance(), myProductDefinitionInstanceHandle, &owlInstanceProductDefinition);
-
-	cleanMemory(GetInstance(), 0);
-
 	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
 
