@@ -22,11 +22,8 @@ CIFCInstance::~CIFCInstance()
 
 /*virtual*/ OwlModel CIFCInstance::getModel() const /*override*/
 {
-	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
-	ASSERT(iSdaiModel != 0);
-
 	OwlModel iOwlModel = 0;
-	owlGetModel(iSdaiModel, &iOwlModel);
+	owlGetModel(GetModel(), &iOwlModel);
 	ASSERT(iOwlModel != 0);
 
 	return iOwlModel;
@@ -143,11 +140,9 @@ void CIFCInstance::Calculate()
 	setSTEPFormatSettings();
 
 	// Extra settings
-	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
-	ASSERT(iSdaiModel != 0);
 	const int_t flagbit1 = 2;
-	setFilter(iSdaiModel, flagbit1, flagbit1);
-	setSegmentation(iSdaiModel, 16, 0.);
+	setFilter(GetModel(), flagbit1, flagbit1);
+	setSegmentation(GetModel(), 16, 0.);
 
 	/* Geometry */
 

@@ -54,6 +54,7 @@ public: // Methods
 	void Scale(float fScaleFactor);
 	
 	SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
 	ExpressID GetExpressID() const { return m_iExpressID; }
 	const wchar_t* GetId() const { return m_szId; }
 	const wchar_t* GetName() const { return m_szName; }

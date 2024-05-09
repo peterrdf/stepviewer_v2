@@ -36,6 +36,7 @@ public: // Methods
 
 	// CInstanceBase
 	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
 	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
 	virtual bool IsEnabled() const { return getEnable(); }	
 	ExpressID ExpressID() const { return m_iExpressID; }

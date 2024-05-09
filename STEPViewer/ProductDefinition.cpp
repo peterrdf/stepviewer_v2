@@ -40,11 +40,8 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 
 /*virtual*/ OwlModel CProductDefinition::getModel() const /*override*/
 {
-	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
-	ASSERT(iSdaiModel != 0);
-
 	OwlModel iOwlModel = 0;
-	owlGetModel(iSdaiModel, &iOwlModel);
+	owlGetModel(GetModel(), &iOwlModel);
 	ASSERT(iOwlModel != 0);
 
 	return iOwlModel;
@@ -257,9 +254,7 @@ void CProductDefinition::Calculate()
 	setSTEPFormatSettings();
 
 	// Extra settings
-	SdaiModel iSdaiModel = sdaiGetInstanceModel(GetInstance());
-	ASSERT(iSdaiModel != 0);
-	setSegmentation(iSdaiModel, 16, 0.);
+	setSegmentation(GetModel(), 16, 0.);
 
 	/* Geometry */
 
