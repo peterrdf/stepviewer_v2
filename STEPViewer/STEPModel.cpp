@@ -526,7 +526,7 @@ void CSTEPModel::LoadGeometry()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix3x4* pParentMatrix)
+void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -546,8 +546,8 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 			ASSERT(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Matrix") || 
 				GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "MatrixMultiplication"));
 
-			_matrix3x4 matrix;
-			_matrix3x4Identity(&matrix);
+			_matrix4x3 matrix;
+			_matrix4x3Identity(&matrix);
 
 			if (owlInstanceMatrix) 
 			{
@@ -568,7 +568,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 
 			if (pParentMatrix) 
 			{
-				_matrix3x4Multiply(&matrix, &matrix, pParentMatrix);
+				_matrix4x3Multiply(&matrix, &matrix, pParentMatrix);
 			}
 
 			WalkAssemblyTreeRecursively(szStepName, szGroupName, pAssembly->GetRelatedProductDefinition(), &matrix);

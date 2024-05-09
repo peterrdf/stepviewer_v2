@@ -22,7 +22,7 @@ struct _vector3
 };
 
 // ************************************************************************************************
-struct _matrix3x4
+struct _matrix4x3
 {
 	double _11, _12, _13;
 	double _21, _22, _23;
@@ -30,7 +30,7 @@ struct _matrix3x4
 	double _41, _42, _43;
 };
 
-static void	_matrix3x4Transform(const _vector3* pIn, const _matrix3x4* pM, _vector3* pOut)
+static void	_matrix4x3Transform(const _vector3* pIn, const _matrix4x3* pM, _vector3* pOut)
 {
 	_vector3 pTmp;
 	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
@@ -42,20 +42,40 @@ static void	_matrix3x4Transform(const _vector3* pIn, const _matrix3x4* pM, _vect
 	pOut->z = pTmp.z;
 }
 
-static void _matrix3x4Identity(_matrix3x4* pM)
+static void _matrix4x3Identity(_matrix4x3* pM)
 {
 	ASSERT(pM != nullptr);
 
-	memset(pM, 0, sizeof(_matrix3x4));
+	memset(pM, 0, sizeof(_matrix4x3));
 
 	pM->_11 = pM->_22 = pM->_33 = 1.;
 }
 
-static void	_matrix3x4Multiply(_matrix3x4* pOut, const _matrix3x4* pM1, const _matrix3x4* pM2)
+static double _matrixDeterminant(_matrix4x3* pM)
+{
+	double a = pM->_11 * pM->_22;
+	double b = pM->_12 * pM->_23;
+	double c = pM->_13 * pM->_21;
+	double d = pM->_22 * pM->_31;
+	double e = pM->_21 * pM->_33;
+	double f = pM->_23 * pM->_32;
+
+	double determinant = 
+		a * pM->_33 +
+		b * pM->_31 +
+		c * pM->_32 -
+		pM->_13 * d -
+		pM->_12 * e -
+		pM->_11 * f;
+
+	return determinant;
+}
+
+static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _matrix4x3* pM2)
 {
 	ASSERT((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
 
-	_matrix3x4 pTmp;
+	_matrix4x3 pTmp;
 	pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31;
 	pTmp._12 = pM1->_11 * pM2->_12 + pM1->_12 * pM2->_22 + pM1->_13 * pM2->_32;
 	pTmp._13 = pM1->_11 * pM2->_13 + pM1->_12 * pM2->_23 + pM1->_13 * pM2->_33;

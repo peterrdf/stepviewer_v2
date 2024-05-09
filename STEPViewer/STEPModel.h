@@ -63,7 +63,7 @@ private: // Methods
 	CProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix3x4* pParentMatrix);
+	void WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix4x3* pParentMatrix);
 	void Clean();
 };
 

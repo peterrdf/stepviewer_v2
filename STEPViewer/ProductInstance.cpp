@@ -3,7 +3,7 @@
 #include "ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix3x4* pTransformationMatrix)
+CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)

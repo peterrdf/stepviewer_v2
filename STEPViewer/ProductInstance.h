@@ -22,7 +22,7 @@ private: // Members
 
 public: // Methods
 	
-	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix3x4* pTransformationMatrix);
+	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
 	virtual ~CProductInstance();
 
 	// CInstanceBase
