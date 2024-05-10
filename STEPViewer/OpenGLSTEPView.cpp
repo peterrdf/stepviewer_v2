@@ -33,8 +33,10 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 	, m_pSelectedInstance(nullptr)
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
-	, m_hFont(nullptr)
 {
+	COpenGLView::m_bShowLines = FALSE;
+	COpenGLView::m_bShowPoints = FALSE;
+
 	_initialize(
 		pWnd,
 		16,
@@ -66,25 +68,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 		.33f, .33f, .33f,
 		.66f,
 		nullptr);
-
-	/*
-	* Font
-	*/
-	m_hFont = CreateFont(-12,           // Height Of Font
-		0,                              // Width Of Font
-		0,                              // Angle Of Escapement
-		0,                              // Orientation Angle
-		FW_EXTRALIGHT,                  // Font Weight
-		FALSE,                          // Italic
-		FALSE,                          // Underline
-		FALSE,                          // Strikeout
-		ANSI_CHARSET,                   // Character Set Identifier
-		OUT_TT_PRECIS,                  // Output Precision
-		CLIP_DEFAULT_PRECIS,            // Clipping Precision
-		ANTIALIASED_QUALITY,            // Output Quality
-		FF_DONTCARE | VARIABLE_PITCH,   // Family And Pitch
-		(LPCWSTR)L"Arial");             // Font Name
-	ASSERT(m_hFont != nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------

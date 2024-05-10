@@ -10,7 +10,7 @@ class COpenGLView
 
 protected: // Members
 
-// UI
+	// UI
 	BOOL m_bShowFaces;
 	BOOL m_bShowConceptualFacesPolygons;
 	BOOL m_bShowLines;

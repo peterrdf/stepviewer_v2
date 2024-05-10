@@ -27,10 +27,6 @@ private: // Members
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 
-	// --------------------------------------------------------------------------------------------
-	// Handle
-	HFONT m_hFont;
-
 public: // Methods
 
 	// ctor/dtor
