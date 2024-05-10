@@ -727,6 +727,7 @@ protected: // Methods
 		mask += FORMAT_EXPORT_LINES;
 		mask += FORMAT_EXPORT_POINTS;
 		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
 
 		uint64_t setting = 0;
 		setting += FORMAT_VERTEX_NORMAL;
@@ -734,7 +735,10 @@ protected: // Methods
 		setting += FORMAT_EXPORT_LINES;
 		setting += FORMAT_EXPORT_POINTS;
 		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
 		SetFormat(getModel(), setting, mask);
+		SetBehavior(getModel(), 2048 + 4096, 2048 + 4096);
 	}
 
 	bool calculate(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
@@ -768,6 +772,11 @@ protected: // Methods
 		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
 	}
 
+	void addFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
+	{
+		m_vecFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
+	}
+
 	void addConcFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
 	{
 		m_vecConcFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
@@ -785,6 +794,46 @@ protected: // Methods
 		m_vecPoints.push_back(_primitives(iStartIndex, iIndicesCount));
 
 		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	wstring getConcFaceTexture(ConceptualFace iConceptualFace)
+	{
+		wstring strTexture;
+
+		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
+		if (iMaterialInstance != 0)
+		{
+			int64_t* piInstances = nullptr;
+			int64_t iCard = 0;
+			GetObjectProperty(
+				iMaterialInstance,
+				GetPropertyByName(getModel(), "textures"),
+				&piInstances,
+				&iCard);
+
+			if (iCard == 1)
+			{
+				iCard = 0;
+				char** szValue = nullptr;
+				GetDatatypeProperty(
+					piInstances[0],
+					GetPropertyByName(getModel(), "name"),
+					(void**)&szValue,
+					&iCard);
+
+				if (iCard == 1)
+				{
+					strTexture = CA2W(szValue[0]);
+				}
+
+				if (strTexture.empty())
+				{
+					strTexture = L"default";
+				}
+			} // if (iCard == 1)
+		} // if (iMaterialInstance != 0)
+
+		return strTexture;
 	}
 
 	void addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
@@ -894,6 +943,82 @@ protected: // Methods
 		} // for (; itMaterial != ...
 	}
 
+	void buildFacePolygonsCohorts(GLsizei iIndicesCountLimit)
+	{
+		if (m_vecFacePolygons.empty())
+		{
+			return;
+		}
+
+		// Use the last cohort (if any)
+		_cohort* pCohort = facePolygonsCohorts().empty() ? nullptr : facePolygonsCohorts()[facePolygonsCohorts().size() - 1];
+
+		// Create the cohort
+		if (pCohort == nullptr)
+		{
+			pCohort = new _cohort();
+			facePolygonsCohorts().push_back(pCohort);
+		}
+
+		for (size_t iFace = 0; iFace < m_vecFacePolygons.size(); iFace++)
+		{
+			int64_t iStartIndex = m_vecFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = m_vecFacePolygons[iFace].indicesCount();
+
+			// Split the conceptual face - isolated case
+			if (iIndicesCount > iIndicesCountLimit / 2)
+			{
+				while (iIndicesCount > iIndicesCountLimit / 2)
+				{
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
+
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCountLimit / 2;
+						iIndex += 2)
+					{
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
+
+					iIndicesCount -= iIndicesCountLimit / 2;
+					iStartIndex += iIndicesCountLimit / 2;
+				} // while (iIndicesCount > iIndicesCountLimit / 2)
+
+				if (iIndicesCount > 0)
+				{
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
+
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex += 2)
+					{
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
+				}
+
+				continue;
+			} // if (iIndicesCount > iIndicesCountLimit / 2)
+
+			// Check the limit
+			if ((pCohort->indices().size() + (iIndicesCount * 2)) > iIndicesCountLimit)
+			{
+				pCohort = new _cohort();
+				facePolygonsCohorts().push_back(pCohort);
+			}
+
+			for (int64_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex += 2)
+			{
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+			}
+		} // for (size_t iFace = ...
+	}
+
 	void buildConcFacePolygonsCohorts(GLsizei iIndicesCountLimit)
 	{
 		if (m_vecConcFacePolygons.empty())
@@ -924,26 +1049,13 @@ protected: // Methods
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCountLimit / 2;
-						iIndex++)
+						iIndex += 2)
 					{
-						if (m_pIndexBuffer->data()[iIndex] < 0)
-						{
-							iPreviousIndex = -1;
-
-							continue;
-						}
-
-						if (iPreviousIndex != -1)
-						{
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-						} // if (iPreviousIndex != -1)
-
-						iPreviousIndex = iIndex;
-					} // for (int64_t iIndex = ...
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
 
 					iIndicesCount -= iIndicesCountLimit / 2;
 					iStartIndex += iIndicesCountLimit / 2;
@@ -954,26 +1066,13 @@ protected: // Methods
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
-						iIndex++)
+						iIndex += 2)
 					{
-						if (m_pIndexBuffer->data()[iIndex] < 0)
-						{
-							iPreviousIndex = -1;
-
-							continue;
-						}
-
-						if (iPreviousIndex != -1)
-						{
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-						} // if (iPreviousIndex != -1)
-
-						iPreviousIndex = iIndex;
-					} // for (int64_t iIndex = ...
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
 				}
 
 				continue;
@@ -986,26 +1085,13 @@ protected: // Methods
 				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
-			int64_t iPreviousIndex = -1;
 			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
-				iIndex++)
+				iIndex += 2)
 			{
-				if (m_pIndexBuffer->data()[iIndex] < 0)
-				{
-					iPreviousIndex = -1;
-
-					continue;
-				}
-
-				if (iPreviousIndex != -1)
-				{
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-				} // if (iPreviousIndex != -1)
-
-				iPreviousIndex = iIndex;
-			} // for (int64_t iIndex = ...
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+			}
 		} // for (size_t iFace = ...
 	}
 
@@ -1243,5 +1329,14 @@ protected: // Methods
 		_cohort::clear(m_vecNormalVecsCohorts);
 		_cohort::clear(m_vecBiNormalVecsCohorts);
 		_cohort::clear(m_vecTangentVecsCohorts);
+	}
+};
+
+// ************************************************************************************************
+struct _instancesComparator
+{
+	bool operator()(const _geometry* i1, const _geometry* i2) const
+	{
+		return wcscmp(i1->getName(), i2->getName()) < 0;
 	}
 };

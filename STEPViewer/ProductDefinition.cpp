@@ -344,6 +344,6 @@ void CProductDefinition::Calculate()
 	buildConcFacesCohorts(mapMaterial2ConcFaces, _oglUtils::getIndicesCountLimit());
 	buildConcFacePolygonsCohorts(_oglUtils::getIndicesCountLimit());
 	buildLinesCohorts(mapMaterial2ConcFaceLines, _oglUtils::getIndicesCountLimit());
-	buildPointsCohorts(mapMaterial2ConcFacePoints, _oglUtils::getIndicesCountLimit());	
+	buildPointsCohorts(mapMaterial2ConcFacePoints, _oglUtils::getIndicesCountLimit());
 }
 
