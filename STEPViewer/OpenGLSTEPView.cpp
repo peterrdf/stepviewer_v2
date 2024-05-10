@@ -767,7 +767,9 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				glm::mat4 matNormal = m_matModelView * matTransformation;
-				m_pOGLProgram->_setNormalMatrix(glm::transpose(glm::inverse(matNormal)));
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
@@ -896,7 +898,9 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				glm::mat4 matNormal = m_matModelView * matTransformation;
-				m_pOGLProgram->_setNormalMatrix(glm::transpose(glm::inverse(matNormal)));
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
 				
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacePolygonsCohorts().size(); iCohort++)
 				{
@@ -994,7 +998,9 @@ void COpenGLSTEPView::DrawLines()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				glm::mat4 matNormal = m_matModelView * matTransformation;
-				m_pOGLProgram->_setNormalMatrix(glm::transpose(glm::inverse(matNormal)));
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->linesCohorts().size(); iCohort++)
 				{
@@ -1092,7 +1098,9 @@ void COpenGLSTEPView::DrawPoints()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				glm::mat4 matNormal = m_matModelView * matTransformation;
-				m_pOGLProgram->_setNormalMatrix(glm::transpose(glm::inverse(matNormal)));
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
 
 				for (auto pCohort : pDefinition->pointsCohorts())
 				{
@@ -1269,7 +1277,9 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 				glm::mat4 matNormal = m_matModelView * matTransformation;
-				m_pOGLProgram->_setNormalMatrix(glm::transpose(glm::inverse(matNormal)));
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
 
 				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
 				{
