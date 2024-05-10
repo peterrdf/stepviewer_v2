@@ -6767,7 +6767,7 @@ int_t			DECL STDC	getConceptualFaceEx(
 //
 //				void					returns
 //
-//	This call is deprecated, please use call ... .
+//	This call is deprecated, please use call owlBuildInstance.
 //
 void			DECL STDC	createGeometryConversion(
 									SdaiInstance			instance,
