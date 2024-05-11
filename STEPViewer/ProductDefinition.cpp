@@ -54,6 +54,11 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
+	if (!hasGeometry())
+	{
+		return;
+	}
+
 	double _41 = pInstance->GetTransformationMatrix()->_41;
 	double _42 = pInstance->GetTransformationMatrix()->_42;
 	double _43 = pInstance->GetTransformationMatrix()->_43;
@@ -79,7 +84,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
 {
-	if (getVerticesCount() == 0)
+	if (!hasGeometry())
 	{
 		return;
 	}
