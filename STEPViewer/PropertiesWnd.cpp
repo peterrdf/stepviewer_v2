@@ -106,16 +106,36 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
 		auto pOpenGLView = GetController()->GetView<COpenGLView>();
-		ASSERT(pOpenGLView != nullptr);
+		if (pOpenGLView == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return 0;
+		}
 
 		auto pRendererSettings = GetController()->GetView<_oglRendererSettings>();
-		ASSERT(pRendererSettings != nullptr);
+		if (pRendererSettings == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return 0;
+		}
 
 		auto ioglRender = dynamic_cast<_ioglRenderer*>(pOpenGLView);
-		ASSERT(ioglRender != nullptr);
+		if (ioglRender == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return 0;
+		}
 
 		auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
-		ASSERT(pBlinnPhongProgram != nullptr);
+		if (pBlinnPhongProgram == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return 0;
+		}
 
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
@@ -123,7 +143,12 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 			CString strValue = pApplicationProperty->GetValue();
 
 			auto pData = (CApplicationPropertyData*)pApplicationProperty->GetData();
-			ASSERT(pData != nullptr);
+			if (pData == nullptr)
+			{
+				ASSERT(FALSE);
+
+				return 0;
+			}
 
 			switch (pData->GetType())
 			{
