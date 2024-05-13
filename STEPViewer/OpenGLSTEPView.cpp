@@ -83,6 +83,26 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	delete m_pPointedInstanceMaterial;
 }
 
+/*virtual*/ _controller* COpenGLSTEPView::getController() const /*override*/
+{
+	return GetController();
+}
+
+/*virtual*/ _model* COpenGLSTEPView::getModel() const /*override*/
+{
+	return GetController()->getModel();
+}
+
+/*virtual*/ void COpenGLSTEPView::saveSetting(const string& strName, const string& strValue) /*override*/
+{
+	GetController()->getSettingsStorage()->setSetting(strName, strValue);
+}
+
+/*virtual*/ string COpenGLSTEPView::loadSetting(const string& strName) /*override*/
+{
+	return GetController()->getSettingsStorage()->getSetting(strName);
+}
+
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
 {

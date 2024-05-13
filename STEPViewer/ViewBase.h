@@ -4,20 +4,30 @@
 #include "IFCInstance.h"
 #include "Entity.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CController;
 class CModel;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 enum class enumApplicationProperty : int
 {
 	Projection,
 	View,
 	ShowFaces,
+	CullFaces,
+	ShowFacesWireframes,
 	ShowConceptualFacesWireframes,
 	ShowLines,
 	ShowPoints,
+	ShowNormalVectors,
+	ShowTangenVectors,
+	ShowBiNormalVectors,
+	ScaleVectors,
+	ShowBoundingBoxes,
 	RotationMode,
+	ShowCoordinateSystem,
+	CoordinateSystemType,
+	ShowNavigator,
 	PointLightingLocation,
 	AmbientLightWeighting,
 	SpecularLightWeighting,
@@ -26,9 +36,11 @@ enum class enumApplicationProperty : int
 	Contrast,
 	Brightness,
 	Gamma,
+	VisibleValuesCountLimit,
+	ScalelAndCenter,
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // View - MVC
 class CViewBase
 {

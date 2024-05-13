@@ -108,6 +108,9 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 		auto pOpenGLView = GetController()->GetView<COpenGLView>();
 		ASSERT(pOpenGLView != nullptr);
 
+		auto pRendererSettings = GetController()->GetView<_oglRendererSettings>();
+		ASSERT(pRendererSettings != nullptr);
+
 		auto ioglRender = dynamic_cast<_ioglRenderer*>(pOpenGLView);
 		ASSERT(ioglRender != nullptr);
 
@@ -129,6 +132,14 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 					pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+				}
+				break;
+
+				case enumApplicationProperty::CullFaces:
+				{
+					pRendererSettings->setCullFacesMode(strValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
 				break;
 
@@ -477,6 +488,12 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
+	auto pRendererSettings = GetController()->GetView<_oglRendererSettings>();
+	if (pRendererSettings == nullptr)
+	{
+		return;
+	}
+
 	auto pOpenGLView = GetController()->GetView<COpenGLView>();
 	if (pOpenGLView == nullptr)
 	{
@@ -492,6 +509,21 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		CString strCullFacesMode = pRendererSettings->getCullFacesMode(nullptr);
+
+		auto pProperty = new CApplicationProperty(
+			_T("Cull Faces"),
+			strCullFacesMode == CULL_FACES_FRONT ? CULL_FACES_FRONT : strCullFacesMode == CULL_FACES_BACK ? CULL_FACES_BACK : CULL_FACES_NONE,
+			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CullFaces));
+		pProperty->AddOption(CULL_FACES_NONE);
+		pProperty->AddOption(CULL_FACES_FRONT);
+		pProperty->AddOption(CULL_FACES_BACK);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);

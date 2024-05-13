@@ -63,6 +63,26 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_pPointedInstanceMaterial = nullptr;
 }
 
+/*virtual*/ _controller* COpenGLIFCView::getController() const /*override*/
+{
+	return GetController();
+}
+
+/*virtual*/ _model* COpenGLIFCView::getModel() const /*override*/
+{
+	return GetController()->getModel();
+}
+
+/*virtual*/ void COpenGLIFCView::saveSetting(const string& strName, const string& strValue) /*override*/
+{
+	GetController()->getSettingsStorage()->setSetting(strName, strValue);
+}
+
+/*virtual*/ string COpenGLIFCView::loadSetting(const string& strName) /*override*/
+{
+	return GetController()->getSettingsStorage()->getSetting(strName);
+}
+
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
 {
@@ -162,6 +182,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		case enumApplicationProperty::Projection:
 		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:

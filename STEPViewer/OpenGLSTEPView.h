@@ -33,6 +33,12 @@ public: // Methods
 	COpenGLSTEPView(CWnd* pWnd);
 	virtual ~COpenGLSTEPView();	
 
+	// _oglRendererSettings
+	virtual _controller* getController() const override;
+	virtual _model* getModel() const override;
+	virtual void saveSetting(const string& strName, const string& strValue) override;
+	virtual string loadSetting(const string& strName) override;
+
 	// CViewBase
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CViewBase* pSender) override;

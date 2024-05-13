@@ -3,7 +3,7 @@
 #include "ViewBase.h"
 #include "_oglUtils.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class COpenGLView 
 	: public CViewBase
 {
@@ -22,7 +22,7 @@ public: // Methods
 	
 	// ctor/dtor
 	COpenGLView();
-	virtual ~COpenGLView();	
+	virtual ~COpenGLView();
 
 	// UI
 	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; }

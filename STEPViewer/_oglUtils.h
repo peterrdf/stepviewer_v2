@@ -1934,8 +1934,452 @@ enum class enumMouseEvent : int
 #define GEOMETRY_VBO_VERTEX_LENGTH  6
 
 // ************************************************************************************************
+class _oglRendererSettings
+{
+
+protected: // Members
+
+	BOOL m_bShowFaces;
+	CString m_strCullFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+	BOOL m_bShowBoundingBoxes;
+	BOOL m_bShowNormalVectors;
+	BOOL m_bShowTangenVectors;
+	BOOL m_bShowBiNormalVectors;
+	BOOL m_bScaleVectors;
+	BOOL m_bShowCoordinateSystem;
+	BOOL m_bShowNavigator;
+
+public: // Methods
+
+	_oglRendererSettings()
+		: m_bShowFaces(TRUE)
+		, m_strCullFaces(CULL_FACES_NONE)
+		, m_bShowFacesPolygons(FALSE)
+		, m_bShowConceptualFacesPolygons(TRUE)
+		, m_bShowLines(TRUE)
+		, m_fLineWidth(1.f)
+		, m_bShowPoints(TRUE)
+		, m_fPointSize(1.f)
+		, m_bShowBoundingBoxes(FALSE)
+		, m_bShowNormalVectors(FALSE)
+		, m_bShowTangenVectors(FALSE)
+		, m_bShowBiNormalVectors(FALSE)
+		, m_bScaleVectors(FALSE)
+		, m_bShowCoordinateSystem(TRUE)
+		, m_bShowNavigator(TRUE)
+	{}
+
+	virtual ~_oglRendererSettings()
+	{}
+
+	void setShowFaces(BOOL bValue)
+	{
+		m_bShowFaces = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFaces);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowFaces(_model* pModel)
+	{
+		if ((pModel == nullptr) || (pModel == getModel()))
+		{
+			return m_bShowFaces;
+		}
+
+		return TRUE;
+	}
+
+	void setCullFacesMode(LPCTSTR szMode)
+	{
+		m_strCullFaces = szMode;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_strCullFaces);
+
+		saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
+	}
+
+	LPCTSTR getCullFacesMode(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_strCullFaces;
+		}
+
+		return CULL_FACES_NONE;
+	}
+
+	void setShowFacesPolygons(BOOL bValue)
+	{
+		m_bShowFacesPolygons = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowFacesPolygons(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowFacesPolygons;
+		}
+
+		return FALSE;
+	}
+
+	void setShowConceptualFacesPolygons(BOOL bValue)
+	{
+		m_bShowConceptualFacesPolygons = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowConceptualFacesPolygons(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowConceptualFacesPolygons;
+		}
+
+		return TRUE;
+	}
+
+	void setShowLines(BOOL bValue)
+	{
+		m_bShowLines = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowLines);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowLines(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowLines;
+		}
+
+		return TRUE;
+	}
+
+	void setLineWidth(GLfloat fWidth)
+	{
+		m_fLineWidth = fWidth;
+	}
+
+	GLfloat getLineWidth() const
+	{
+		return m_fLineWidth;
+	}
+
+	void setShowPoints(BOOL bValue)
+	{
+		m_bShowPoints = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowPoints);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowPoints(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowPoints;
+		}
+
+		return TRUE;
+	}
+
+	void setPointSize(GLfloat fSize)
+	{
+		m_fPointSize = fSize;
+	}
+
+	GLfloat getPointSize() const
+	{
+		return m_fPointSize;
+	}
+
+	void setShowBoundingBoxes(BOOL bValue)
+	{
+		m_bShowBoundingBoxes = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowBoundingBoxes(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowBoundingBoxes;
+		}
+
+		return FALSE;
+	}
+
+	void setShowNormalVectors(BOOL bValue)
+	{
+		m_bShowNormalVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowNormalVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowNormalVectors;
+		}
+
+		return FALSE;
+	}
+
+	void setShowTangentVectors(BOOL bValue)
+	{
+		m_bShowTangenVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowTangentVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowTangenVectors;
+		}
+
+		return FALSE;
+	}
+
+	void setShowBiNormalVectors(BOOL bValue)
+	{
+		m_bShowBiNormalVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowBiNormalVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowBiNormalVectors;
+		}
+
+		return FALSE;
+	}
+
+	void setScaleVectors(BOOL bValue)
+	{
+		m_bScaleVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getScaleVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bScaleVectors;
+		}
+
+		return FALSE;
+	}
+
+	void setShowCoordinateSystem(BOOL bValue)
+	{
+		m_bShowCoordinateSystem = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowCoordinateSystem() const
+	{
+		return m_bShowCoordinateSystem;
+	}
+
+	void setShowNavigator(BOOL bValue)
+	{
+		m_bShowNavigator = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowNavigator() const
+	{
+		return m_bShowNavigator;
+	}
+
+protected: // Methods
+
+	virtual _controller* getController() const PURE;
+	virtual _model* getModel() const PURE;
+	virtual void saveSetting(const string& strName, const string& strValue) PURE;
+	virtual string loadSetting(const string& strName) PURE;
+	virtual void loadSettings()
+	{
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowFaces);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowFaces = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_strCullFaces);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_strCullFaces = !strValue.empty() ? CA2W(strValue.c_str()) : CULL_FACES_NONE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowFacesPolygons = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowConceptualFacesPolygons = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowLines);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowLines = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowPoints);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowPoints = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowBoundingBoxes = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowTangenVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowBiNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bScaleVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowCoordinateSystem = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowNavigator = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+	}
+};
+
+// ************************************************************************************************
 template <class Instance>
-class _oglRenderer : public _ioglRenderer
+class _oglRenderer 
+	: public _ioglRenderer
+	, public _oglRendererSettings
 {
 
 protected: // Members
@@ -1997,7 +2441,6 @@ protected: // Members
 	float m_fScaleFactorInterval;
 
 	// UI
-	BOOL m_bShowFaces;
 	CString m_strCullFaces;
 	BOOL m_bShowFacesPolygons;
 	BOOL m_bShowConceptualFacesPolygons;
@@ -2052,7 +2495,6 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
-		, m_bShowFaces(TRUE)
 		, m_strCullFaces(CULL_FACES_NONE)
 		, m_bShowFacesPolygons(FALSE)
 		, m_bShowConceptualFacesPolygons(TRUE)
@@ -2864,8 +3306,37 @@ public: // Methods
 		} // switch (nChar)
 	}
 
-	// UI
-	
+	void _reset()
+	{
+		// Rotation
+		m_fXAngle = 0.f;
+		m_fYAngle = 0.f;
+		m_fZAngle = 0.f;
+		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+		// Translation
+		m_fXTranslation = 0.f;
+		m_fYTranslation = 0.f;
+		m_fZTranslation = -5.f;
+		m_fScaleFactor = 2.f;
+
+		// UI
+		m_bShowFaces = TRUE;
+		m_strCullFaces = CULL_FACES_NONE;
+		m_bShowFacesPolygons = FALSE;
+		m_bShowConceptualFacesPolygons = TRUE;
+		m_bShowLines = TRUE;
+		m_bShowPoints = TRUE;
+		m_bShowBoundingBoxes = FALSE;
+		m_bShowNormalVectors = FALSE;
+		m_bShowTangenVectors = FALSE;
+		m_bShowBiNormalVectors = FALSE;
+		m_bScaleVectors = FALSE;
+		m_bShowCoordinateSystem = TRUE;
+		m_bShowNavigator = TRUE;
+
+		_redraw();
+	}	
 
 private: //  Methods
 

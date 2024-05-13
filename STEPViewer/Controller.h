@@ -1,22 +1,22 @@
 #pragma once
 
+#include "_mvc.h"
 #include "InstanceBase.h"
 #include "Entity.h"
 #include "ProductInstance.h"
 
 #include <set>
 #include <vector>
-
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CModel;
 class CViewBase;
 enum class enumApplicationProperty;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // Controller - MVC
-class CController
+class CController : public _controller
 {
 
 protected: // Members

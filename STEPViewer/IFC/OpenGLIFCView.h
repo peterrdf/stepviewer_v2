@@ -5,10 +5,10 @@
 #include "_oglUtils.h"
 #include "OpenGLView.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CIFCModel;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // Open GL View
 class COpenGLIFCView 
 	: public COpenGLView
@@ -17,7 +17,6 @@ class COpenGLIFCView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
 	// Mouse
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
@@ -35,7 +34,13 @@ public: // Methods
 	
 	// ctor/dtor
 	COpenGLIFCView(CWnd * pWnd);
-	virtual ~COpenGLIFCView();	
+	virtual ~COpenGLIFCView();
+
+	// _oglRendererSettings
+	virtual _controller* getController() const override;
+	virtual _model* getModel() const override;
+	virtual void saveSetting(const string& strName, const string& strValue) override;
+	virtual string loadSetting(const string& strName) override;
 
 	// CViewBase	
 	virtual void OnWorldDimensionsChanged() override;

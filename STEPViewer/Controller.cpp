@@ -5,18 +5,28 @@
 
 // ------------------------------------------------------------------------------------------------
 CController::CController()
-	: m_pModel(nullptr)
+	: _controller()
+	, m_pModel(nullptr)
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
 	, m_bScaleAndCenter(FALSE)
 {
+	wchar_t szAppPath[_MAX_PATH];
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+	fs::path pthExe = szAppPath;
+	auto pthRootFolder = pthExe.parent_path();
+
+	wstring strSettingsFile = pthRootFolder.wstring();
+	strSettingsFile += L"\\STEPViewer.settings";
+
+	m_pSettingsStorage->loadSettings(strSettingsFile);
 }
 
 // ------------------------------------------------------------------------------------------------
 CController::~CController()
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 CModel* CController::GetModel() const
