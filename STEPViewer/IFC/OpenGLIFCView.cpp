@@ -223,6 +223,8 @@ COpenGLIFCView::~COpenGLIFCView()
 			0.4f);
 
 		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+
+		loadSettings();
 	}
 }
 

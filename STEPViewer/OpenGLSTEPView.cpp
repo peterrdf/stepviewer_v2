@@ -239,6 +239,8 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	ASSERT(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
+
+	loadSettings();
 }
 
 // ------------------------------------------------------------------------------------------------
