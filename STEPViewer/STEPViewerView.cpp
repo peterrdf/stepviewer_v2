@@ -136,12 +136,10 @@ END_MESSAGE_MAP()
 
 CMySTEPViewerView::CMySTEPViewerView()
 	: m_pOpenGLView(nullptr)
-{
-}
+{}
 
 CMySTEPViewerView::~CMySTEPViewerView()
-{
-}
+{}
 
 BOOL CMySTEPViewerView::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -544,12 +542,12 @@ void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 	pCmdUI->Enable(bEnable);
 }
 
-
 void CMySTEPViewerView::OnShowFaces()
 {
-	if (m_pOpenGLView != nullptr)
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
 	{
-		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
+		pRendererSettings->setShowFaces(!pRendererSettings->getShowFaces(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 	}
@@ -557,15 +555,21 @@ void CMySTEPViewerView::OnShowFaces()
 
 void CMySTEPViewerView::OnUpdateShowFaces(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreFacesShown());
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
+	{
+		pCmdUI->SetCheck(pRendererSettings->getShowFaces(nullptr));
+	}
+
+	pCmdUI->Enable(pRendererSettings != nullptr);	
 }
 
 void CMySTEPViewerView::OnShowConcFacesWireframes()
 {
-	if (m_pOpenGLView != nullptr)
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
 	{
-		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
+		pRendererSettings->setShowConceptualFacesPolygons(!pRendererSettings->getShowConceptualFacesPolygons(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
@@ -573,15 +577,21 @@ void CMySTEPViewerView::OnShowConcFacesWireframes()
 
 void CMySTEPViewerView::OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreConceptualFacesPolygonsShown());
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
+	{
+		pCmdUI->SetCheck(pRendererSettings->getShowConceptualFacesPolygons(nullptr));
+	}
+
+	pCmdUI->Enable(pRendererSettings != nullptr);
 }
 
 void CMySTEPViewerView::OnShowLines()
 {
-	if (m_pOpenGLView != nullptr)
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
 	{
-		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
+		pRendererSettings->setShowLines(!pRendererSettings->getShowLines(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 	}
@@ -589,15 +599,21 @@ void CMySTEPViewerView::OnShowLines()
 
 void CMySTEPViewerView::OnUpdateShowLines(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreLinesShown());
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
+	{
+		pCmdUI->SetCheck(pRendererSettings->getShowLines(nullptr));
+	}
+
+	pCmdUI->Enable(pRendererSettings != nullptr);
 }
 
 void CMySTEPViewerView::OnShowPoints()
 {
-	if (m_pOpenGLView != nullptr)
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
 	{
-		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
+		pRendererSettings->setShowPoints(!pRendererSettings->getShowPoints(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 	}
@@ -605,6 +621,11 @@ void CMySTEPViewerView::OnShowPoints()
 
 void CMySTEPViewerView::OnUpdateShowPoints(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->ArePointsShown());
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRendererSettings*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
+	{
+		pCmdUI->SetCheck(pRendererSettings->getShowPoints(nullptr));
+	}
+
+	pCmdUI->Enable(pRendererSettings != nullptr);
 }

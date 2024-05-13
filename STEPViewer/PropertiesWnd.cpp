@@ -154,7 +154,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 			{
 				case enumApplicationProperty::ShowFaces:
 				{
-					pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pRendererSettings->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
@@ -170,7 +170,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::ShowConceptualFacesWireframes:
 				{
-					pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pRendererSettings->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
@@ -178,7 +178,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::ShowLines:
 				{
-					pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pRendererSettings->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
@@ -186,7 +186,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::ShowPoints:
 				{
-					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pRendererSettings->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
@@ -513,14 +513,14 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	auto pRendererSettings = GetController()->GetView<_oglRendererSettings>();
-	if (pRendererSettings == nullptr)
+	auto pOpenGLView = GetController()->GetView<COpenGLView>();
+	if (pOpenGLView == nullptr)
 	{
 		return;
 	}
 
-	auto pOpenGLView = GetController()->GetView<COpenGLView>();
-	if (pOpenGLView == nullptr)
+	auto pRendererSettings = GetController()->GetView<_oglRendererSettings>();
+	if (pRendererSettings == nullptr)
 	{
 		return;
 	}
@@ -530,7 +530,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"),
-			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			pRendererSettings->getShowFaces(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -556,7 +556,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"),
-			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pRendererSettings->getShowConceptualFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Conceptual faces wireframes"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -567,7 +567,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Lines"), pRendererSettings->getShowLines(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -578,7 +578,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Points"), pRendererSettings->getShowPoints(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);

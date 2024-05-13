@@ -8,31 +8,12 @@ class COpenGLView
 	: public CViewBase
 {
 
-protected: // Members
-
-	// UI
-	BOOL m_bShowFaces;
-	BOOL m_bShowConceptualFacesPolygons;
-	BOOL m_bShowLines;
-	GLfloat m_fLineWidth;
-	BOOL m_bShowPoints;
-	GLfloat m_fPointSize;
 
 public: // Methods
 	
 	// ctor/dtor
 	COpenGLView();
 	virtual ~COpenGLView();
-
-	// UI
-	void ShowFaces(BOOL bShow) { m_bShowFaces = bShow; }
-	BOOL AreFacesShown() const { return m_bShowFaces; }
-	void ShowConceptualFacesPolygons(BOOL bShow) { m_bShowConceptualFacesPolygons = bShow; }
-	BOOL AreConceptualFacesPolygonsShown() const { return m_bShowConceptualFacesPolygons; }
-	void ShowLines(BOOL bShow) { m_bShowLines = bShow; }
-	BOOL AreLinesShown() const { return m_bShowLines; }
-	void ShowPoints(BOOL bShow) { m_bShowPoints = bShow; }
-	BOOL ArePointsShown() const { return m_bShowPoints; }
 
 	// Load
 	virtual void Load() PURE;
