@@ -19,10 +19,6 @@ enum class enumApplicationProperty;
 class CController : public _controller
 {
 
-protected: // Members
-
-	CModel* m_pModel; // Model - MVC
-
 private: // Members	
 	
 	bool m_bUpdatingModel; // Updating model - disable all notifications	

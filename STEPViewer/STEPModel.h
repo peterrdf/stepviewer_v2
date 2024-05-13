@@ -8,7 +8,7 @@ using namespace std;
 
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CAssembly;
 class CProductDefinition;
 class CProductInstance;

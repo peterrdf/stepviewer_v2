@@ -3,10 +3,9 @@
 #include "Model.h"
 #include "ViewBase.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 CController::CController()
 	: _controller()
-	, m_pModel(nullptr)
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
@@ -24,14 +23,13 @@ CController::CController()
 	m_pSettingsStorage->loadSettings(strSettingsFile);
 }
 
-// ------------------------------------------------------------------------------------------------
-CController::~CController()
+/*virtual*/ CController::~CController()
 {}
 
 // ------------------------------------------------------------------------------------------------
 CModel* CController::GetModel() const
 {
-	return m_pModel;
+	return dynamic_cast<CModel*>(getModel());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -84,7 +82,7 @@ void CController::ZoomToInstance()
 	ASSERT(m_pModel != nullptr);
 	ASSERT(m_pSelectedInstance != nullptr);
 
-	m_pModel->ZoomToInstance(m_pSelectedInstance);
+	GetModel()->ZoomToInstance(m_pSelectedInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -98,7 +96,7 @@ void CController::ZoomOut()
 {
 	ASSERT(m_pModel != nullptr);
 
-	m_pModel->ZoomOut();
+	GetModel()->ZoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

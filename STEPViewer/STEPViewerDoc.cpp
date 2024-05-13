@@ -51,9 +51,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	m_pModel = new CSTEPModel();
-
-	SetModel(m_pModel);
+	SetModel(new CSTEPModel());
 
 	return TRUE;
 }
@@ -155,9 +153,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		m_pModel = nullptr;
 	}
 
-	m_pModel = CModelFactory::Load(lpszPathName);
-
-	SetModel(m_pModel);
+	SetModel(CModelFactory::Load(lpszPathName));
 
 	// Title
 	CString strTitle = AfxGetAppName();
