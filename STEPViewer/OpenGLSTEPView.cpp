@@ -34,8 +34,8 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
 {
-	COpenGLView::m_bShowLines = FALSE;
-	COpenGLView::m_bShowPoints = FALSE;
+	_oglRendererSettings::m_bShowLines = FALSE;
+	_oglRendererSettings::m_bShowPoints = FALSE;
 
 	_initialize(
 		pWnd,
@@ -195,7 +195,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 #endif // _LINUX
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
@@ -208,6 +207,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		case enumApplicationProperty::Projection:
 		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
@@ -682,19 +682,19 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 		true);
 
 	/* Non-transparent faces */
-	DrawFaces(false);
+	DrawFaces(pModel, false);
 
 	/* Transparent faces */
-	DrawFaces(true);
+	DrawFaces(pModel, true);
 
 	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons();
+	DrawConceptualFacesPolygons(pModel);
 
 	/* Lines */
-	DrawLines();
+	DrawLines(pModel);
 
 	/* Points */
-	DrawPoints();
+	DrawPoints(pModel);
 
 	/* End */
 #ifdef _LINUX
@@ -707,19 +707,16 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	DrawInstancesFrameBuffer();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawFaces(bool bTransparent)
+void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 {
-	if (!COpenGLView::m_bShowFaces)
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CSTEPModel>();
-	if (pModel == nullptr)
+	if (!getShowFaces(pModel))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -849,18 +846,16 @@ void COpenGLSTEPView::DrawFaces(bool bTransparent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawConceptualFacesPolygons()
+void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 {
-	if (!COpenGLView::m_bShowConceptualFacesPolygons)
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CSTEPModel>();
-	if (pModel == nullptr)
+	if (!getShowConceptualFacesPolygons(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -949,18 +944,16 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawLines()
+void COpenGLSTEPView::DrawLines(_model* pM)
 {
-	if (!COpenGLView::m_bShowLines)
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CSTEPModel>();
-	if (pModel == nullptr)
+	if (!getShowLines(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -1048,19 +1041,16 @@ void COpenGLSTEPView::DrawLines()
 	TRACE(L"\n*** DrawLines() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLSTEPView::DrawPoints()
+void COpenGLSTEPView::DrawPoints(_model* pM)
 {
-	if (!COpenGLView::m_bShowPoints)
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CSTEPModel>();
-	if (pModel == nullptr)
+	if (!getShowPoints(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

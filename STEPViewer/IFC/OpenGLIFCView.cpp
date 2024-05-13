@@ -661,19 +661,19 @@ COpenGLIFCView::~COpenGLIFCView()
 		true);
 
 	/* Non-transparent faces */
-	DrawFaces(false);
+	DrawFaces(pModel, false);
 
 	/* Transparent faces */
-	DrawFaces(true);
+	DrawFaces(pModel, true);
 
 	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons();
+	DrawConceptualFacesPolygons(pModel);
 
 	/* Lines */
-	DrawLines();
+	DrawLines(pModel);
 
 	/* Points */
-	DrawPoints();
+	DrawPoints(pModel);
 
 	/* End */
 #ifdef _LINUX
@@ -687,20 +687,18 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawFaces(bool bTransparent)
+void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 {
-	if (!COpenGLView::m_bShowFaces)
+	auto pModel = dynamic_cast<CIFCModel*>(pM);
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
+	if (!getShowFaces(pModel))
 	{
-		ASSERT(FALSE);
-
 		return;
-	}	
+	}
 
 	auto begin = std::chrono::steady_clock::now();
 
@@ -772,18 +770,15 @@ void COpenGLIFCView::DrawFaces(bool bTransparent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawConceptualFacesPolygons()
+void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 {
-	if (!COpenGLView::m_bShowConceptualFacesPolygons)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
+	if (!getShowConceptualFacesPolygons(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -824,19 +819,15 @@ void COpenGLIFCView::DrawConceptualFacesPolygons()
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawLines()
+void COpenGLIFCView::DrawLines(_model* pM)
 {
-	if (!COpenGLView::m_bShowLines)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
+	if (!getShowLines(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -877,19 +868,15 @@ void COpenGLIFCView::DrawLines()
 	TRACE(L"\n*** DrawLines() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLIFCView::DrawPoints()
+void COpenGLIFCView::DrawPoints(_model* pM)
 {
-	if (!COpenGLView::m_bShowPoints)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
+	if (!getShowPoints(pM))
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

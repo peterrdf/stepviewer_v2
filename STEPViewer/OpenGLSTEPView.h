@@ -69,10 +69,10 @@ public: // Methods
 private: // Methods
 	
 	// UI
-	void DrawFaces(bool bTransparent);
-	void DrawConceptualFacesPolygons();
-	void DrawLines();
-	void DrawPoints();
+	void DrawFaces(_model* pM, bool bTransparent);
+	void DrawConceptualFacesPolygons(_model* pM);
+	void DrawLines(_model* pM);
+	void DrawPoints(_model* pM);
 
 	// Selection
 	void DrawInstancesFrameBuffer();
