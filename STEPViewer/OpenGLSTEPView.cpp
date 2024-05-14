@@ -537,36 +537,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::SetProjection(enumProjection enProjection) /*override*/
-{
-	_setProjection(enProjection);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ enumProjection COpenGLSTEPView::GetProjection() const /*override*/
-{
-	return _getProjection();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::SetView(enumView enView) /*override*/
-{
-	_setView(enView);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ enumRotationMode COpenGLSTEPView::GetRotationMode() const /*override*/
-{
-	return _getRotationMode();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::SetRotationMode(enumRotationMode enRotationMode) /*override*/
-{
-	_setRotationMode(enRotationMode);
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)

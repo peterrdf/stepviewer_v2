@@ -523,36 +523,6 @@ COpenGLIFCView::~COpenGLIFCView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::SetProjection(enumProjection enProjection) /*override*/
-{
-	_setProjection(enProjection);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ enumProjection COpenGLIFCView::GetProjection() const /*override*/
-{
-	return _getProjection();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::SetView(enumView enView) /*override*/
-{
-	_setView(enView);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ enumRotationMode COpenGLIFCView::GetRotationMode() const /*override*/
-{
-	return _getRotationMode();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::SetRotationMode(enumRotationMode enRotationMode) /*override*/
-{
-	_setRotationMode(enRotationMode);
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)

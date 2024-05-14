@@ -392,7 +392,7 @@ void CMySTEPViewerView::OnProjectionOrthographic()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetProjection(enumProjection::Orthographic);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Orthographic);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
@@ -400,14 +400,14 @@ void CMySTEPViewerView::OnProjectionOrthographic()
 
 void CMySTEPViewerView::OnUpdateProjectionOrthographic(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->GetProjection() == enumProjection::Orthographic));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_getProjection() == enumProjection::Orthographic));
 }
 
 void CMySTEPViewerView::OnProjectionPerspective()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetProjection(enumProjection::Perspective);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Perspective);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
@@ -415,14 +415,14 @@ void CMySTEPViewerView::OnProjectionPerspective()
 
 void CMySTEPViewerView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->GetProjection() == enumProjection::Perspective));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_getProjection() == enumProjection::Perspective));
 }
 
 void CMySTEPViewerView::OnViewFront()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Front);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Front);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -432,7 +432,7 @@ void CMySTEPViewerView::OnViewTop()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Top);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Top);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -442,7 +442,7 @@ void CMySTEPViewerView::OnViewRight()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Right);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Right);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -452,7 +452,7 @@ void CMySTEPViewerView::OnViewBack()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Back);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Back);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -462,7 +462,7 @@ void CMySTEPViewerView::OnViewLeft()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Left);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Left);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -472,7 +472,7 @@ void CMySTEPViewerView::OnViewBottom()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Bottom);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Bottom);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
@@ -482,7 +482,7 @@ void CMySTEPViewerView::OnViewIsometric()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetView(enumView::Isometric);
+		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Isometric);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
