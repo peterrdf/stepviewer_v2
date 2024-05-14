@@ -9,7 +9,7 @@
 // Open GL View
 class COpenGLSTEPView
 	: public COpenGLView
-	, public _oglRenderer<CProductDefinition>
+	, public _oglRenderer
 {
 
 private: // Members	

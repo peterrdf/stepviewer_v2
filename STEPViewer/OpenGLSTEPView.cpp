@@ -307,7 +307,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	// VBO
 	GLuint iVerticesCount = 0;
-	vector<CProductDefinition*> vecProductDefinitionsCohort;
+	vector<_geometry*> vecProductDefinitionsCohort;
 
 	// IBO - Conceptual faces
 	GLuint iConcFacesIndicesCount = 0;
@@ -342,7 +342,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		*/
 		if (((int_t)iVerticesCount + pDefinition->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
+			if (m_oglBuffers.createCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 			{
 				ASSERT(FALSE);
 
@@ -454,7 +454,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	*/
 	if (iVerticesCount > 0)
 	{
-		if (m_oglBuffers.createInstancesCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
+		if (m_oglBuffers.createCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
 		{
 			ASSERT(FALSE);
 
@@ -751,7 +751,7 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -762,7 +762,7 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 				continue;
 			}
 
-			auto& vecInstances = pDefinition->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -880,7 +880,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -891,7 +891,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = pDefinition->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -978,7 +978,7 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -989,7 +989,7 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = pDefinition->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -1076,7 +1076,7 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1087,7 +1087,7 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = pDefinition->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->GetEnable())
@@ -1254,7 +1254,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1265,7 +1265,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = pDefinition->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];

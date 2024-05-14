@@ -293,7 +293,7 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	// VBO
 	GLuint iVerticesCount = 0;
-	vector<CIFCInstance*> vecInstancesCohort;
+	vector<_geometry*> vecInstancesCohort;
 
 	// IBO - Conceptual faces
 	GLuint iConcFacesIndicesCount = 0;
@@ -328,7 +328,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		*/
 		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+			if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
 				ASSERT(FALSE);
 
@@ -440,7 +440,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	*/
 	if (iVerticesCount > 0)
 	{
-		if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+		if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 		{
 			ASSERT(FALSE);
 
@@ -713,7 +713,7 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 
 	m_pOGLProgram->_enableBlinnPhongModel(true);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -790,7 +790,7 @@ void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -839,7 +839,7 @@ void COpenGLIFCView::DrawLines(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -889,7 +889,7 @@ void COpenGLIFCView::DrawPoints(_model* pM)
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1018,7 +1018,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1035,7 +1035,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetInstance());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(

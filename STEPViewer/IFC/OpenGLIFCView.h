@@ -12,7 +12,7 @@ class CIFCModel;
 // Open GL View
 class COpenGLIFCView 
 	: public COpenGLView
-	, public _oglRenderer<CIFCInstance>
+	, public _oglRenderer
 {
 
 private: // Members
