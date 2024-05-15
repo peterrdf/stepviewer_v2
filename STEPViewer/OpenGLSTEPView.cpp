@@ -9,10 +9,10 @@
 
 #include <chrono>
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
@@ -59,7 +59,6 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 		nullptr);
 }
 
-// ------------------------------------------------------------------------------------------------
 COpenGLSTEPView::~COpenGLSTEPView()
 {
 	GetController()->UnRegisterView(this);
@@ -92,136 +91,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
-{
-	auto pModel = GetModel<CSTEPModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CViewBase* pSender)  /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (GetController() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) :
-		nullptr;
-
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_pSelectedInstance = pSelectedInstance;
-
-		_redraw();
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-
-	_redraw();
-}
-
-/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	switch (enApplicationProperty)
-	{
-		case enumApplicationProperty::Projection:
-		case enumApplicationProperty::View:
-		case enumApplicationProperty::ShowFaces:
-		case enumApplicationProperty::CullFaces:
-		case enumApplicationProperty::ShowConceptualFacesWireframes:
-		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::RotationMode:
-		case enumApplicationProperty::PointLightingLocation:
-		case enumApplicationProperty::AmbientLightWeighting:
-		case enumApplicationProperty::SpecularLightWeighting:
-		case enumApplicationProperty::DiffuseLightWeighting:
-		case enumApplicationProperty::MaterialShininess:
-		case enumApplicationProperty::Contrast:
-		case enumApplicationProperty::Brightness:
-		case enumApplicationProperty::Gamma:
-		{
-			_redraw();
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE); // Internal error!
-		}
-		break;
-	} // switch (enApplicationProperty)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
-{
-	ASSERT(GetController() != nullptr);
-
-	GetController()->RegisterView(this);
-
-	loadSettings();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::Load() /*override*/
+/*virtual*/ void COpenGLSTEPView::_load() /*override*/
 {
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -273,7 +143,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();	
+	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
 	// Data
 	auto& mapDefinitions = pModel->GetDefinitions();
@@ -505,64 +375,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	_redraw();
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
-
-				_redraw();
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-	case enumMouseEvent::Move:
-	{
-		OnMouseMoveEvent(nFlags, point);
-	}
-	break;
-
-	case enumMouseEvent::LBtnDown:
-	case enumMouseEvent::MBtnDown:
-	case enumMouseEvent::RBtnDown:
-	{
-		m_ptStartMousePosition = point;
-		m_ptPrevMousePosition = point;
-	}
-	break;
-
-	case enumMouseEvent::LBtnUp:
-	case enumMouseEvent::MBtnUp:
-	case enumMouseEvent::RBtnUp:
-	{
-		m_ptStartMousePosition.x = -1;
-		m_ptStartMousePosition.y = -1;
-		m_ptPrevMousePosition.x = -1;
-		m_ptPrevMousePosition.y = -1;
-	}
-	break;
-
-	default:
-		ASSERT(FALSE);
-		break;
-	} // switch (enEvent)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::Draw(CDC* pDC) /*override*/
+/*virtual*/ void COpenGLSTEPView::_draw(CDC* pDC) /*override*/
 {
 	VERIFY(pDC != nullptr);
 
@@ -622,6 +435,185 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	/* Selection support */
 	DrawInstancesFrameBuffer();
+}
+
+/*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
+{
+	auto pModel = GetModel<CSTEPModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+
+	_redraw();
+}
+
+/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CViewBase* pSender)  /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) :
+		nullptr;
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_pSelectedInstance = pSelectedInstance;
+
+		_redraw();
+	}
+}
+
+/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+
+	_redraw();
+}
+
+/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::RotationMode:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enApplicationProperty)
+}
+
+/*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
+{
+	ASSERT(GetController() != nullptr);
+
+	GetController()->RegisterView(this);
+
+	loadSettings();
+}
+
+/*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+{
+	if (enEvent == enumMouseEvent::LBtnUp)
+	{
+		/*
+		* OnSelectedItemChanged() notification
+		*/
+		if (point == m_ptStartMousePosition)
+		{
+			if (m_pSelectedInstance != m_pPointedInstance)
+			{
+				m_pSelectedInstance = m_pPointedInstance;
+
+				_redraw();
+
+				ASSERT(GetController() != nullptr);
+				GetController()->SelectInstance(this, m_pSelectedInstance);
+			} // if (m_pSelectedInstance != ...
+		}
+	} // if (enEvent == meLBtnDown)
+
+	switch (enEvent)
+	{
+	case enumMouseEvent::Move:
+	{
+		OnMouseMoveEvent(nFlags, point);
+	}
+	break;
+
+	case enumMouseEvent::LBtnDown:
+	case enumMouseEvent::MBtnDown:
+	case enumMouseEvent::RBtnDown:
+	{
+		m_ptStartMousePosition = point;
+		m_ptPrevMousePosition = point;
+	}
+	break;
+
+	case enumMouseEvent::LBtnUp:
+	case enumMouseEvent::MBtnUp:
+	case enumMouseEvent::RBtnUp:
+	{
+		m_ptStartMousePosition.x = -1;
+		m_ptStartMousePosition.y = -1;
+		m_ptPrevMousePosition.x = -1;
+		m_ptPrevMousePosition.y = -1;
+	}
+	break;
+
+	default:
+		ASSERT(FALSE);
+		break;
+	} // switch (enEvent)
 }
 
 void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
@@ -762,7 +754,6 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 {
 	auto pModel = dynamic_cast<CSTEPModel*>(pM);
@@ -860,7 +851,6 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawLines(_model* pM)
 {
 	auto pModel = dynamic_cast<CSTEPModel*>(pM);
@@ -1063,7 +1053,6 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
 	auto pModel = GetModel<CSTEPModel>();
@@ -1234,7 +1223,6 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pModel = GetModel<CSTEPModel>();

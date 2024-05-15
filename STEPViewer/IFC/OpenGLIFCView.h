@@ -41,6 +41,10 @@ public: // Methods
 	virtual void saveSetting(const string& strName, const string& strValue) override;
 	virtual string loadSetting(const string& strName) override;
 
+	// _oglView
+	virtual void _load() override;
+	virtual void _draw(CDC* pDC) override;
+
 	// CViewBase	
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
@@ -52,13 +56,9 @@ protected: // Methods
 	virtual void OnControllerChanged() override;
 
 public: // Methods
-		
-	// COpenGLView
-	virtual void Load();
 
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
-	virtual void Draw(CDC* pDC) override;
 
 private: // Methods
 	

@@ -81,145 +81,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
-{
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	/*
-	* Center
-	*/
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CViewBase* pSender) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (GetController() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
-		nullptr;
-
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_pSelectedInstance = pSelectedInstance;
-
-		_redraw();
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	switch (enApplicationProperty)
-	{
-		case enumApplicationProperty::Projection:
-		case enumApplicationProperty::View:
-		case enumApplicationProperty::ShowFaces:
-		case enumApplicationProperty::CullFaces:
-		case enumApplicationProperty::ShowConceptualFacesWireframes:
-		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::RotationMode:
-		case enumApplicationProperty::PointLightingLocation:
-		case enumApplicationProperty::AmbientLightWeighting:
-		case enumApplicationProperty::SpecularLightWeighting:
-		case enumApplicationProperty::DiffuseLightWeighting:
-		case enumApplicationProperty::MaterialShininess:
-		case enumApplicationProperty::Contrast:
-		case enumApplicationProperty::Brightness:
-		case enumApplicationProperty::Gamma:
-		{
-			_redraw();
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE); // Internal error!
-		}
-		break;
-	} // switch (enApplicationProperty)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
-{
-	auto pController = GetController();
-	if (pController != nullptr)
-	{
-		pController->RegisterView(this);
-
-		// OpenGL
-		m_pOGLProgram->_setAmbientLightWeighting(
-			0.4f,
-			0.4f,
-			0.4f);
-
-		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
-
-		loadSettings();
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::Load() /*override*/
+/*virtual*/ void COpenGLIFCView::_load() /*override*/
 {
 	CWaitCursor waitCursor;
 
@@ -504,63 +366,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
-
-				_redraw();
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-		case enumMouseEvent::Move:
-		{
-			OnMouseMoveEvent(nFlags, point);
-		}
-		break;
-
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
-
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (enEvent)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::Draw(CDC* pDC) /*override*/
+/*virtual*/ void COpenGLIFCView::_draw(CDC* pDC) /*override*/
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
@@ -620,7 +426,193 @@ COpenGLIFCView::~COpenGLIFCView()
 	DrawInstancesFrameBuffer();
 }
 
-// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
+{
+	auto pModel = GetModel<CIFCModel>();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	/*
+	* Center
+	*/
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+
+	_redraw();
+}
+
+/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CViewBase* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
+		nullptr;
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_pSelectedInstance = pSelectedInstance;
+
+		_redraw();
+	}
+}
+
+/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	_redraw();
+}
+
+/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::RotationMode:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enApplicationProperty)
+}
+
+/*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
+{
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->RegisterView(this);
+
+		// OpenGL
+		m_pOGLProgram->_setAmbientLightWeighting(
+			0.4f,
+			0.4f,
+			0.4f);
+
+		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+
+		loadSettings();
+	}
+}
+
+/*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+{
+	if (enEvent == enumMouseEvent::LBtnUp)
+	{
+		/*
+		* OnSelectedItemChanged() notification
+		*/
+		if (point == m_ptStartMousePosition)
+		{
+			if (m_pSelectedInstance != m_pPointedInstance)
+			{
+				m_pSelectedInstance = m_pPointedInstance;
+
+				_redraw();
+
+				ASSERT(GetController() != nullptr);
+				GetController()->SelectInstance(this, m_pSelectedInstance);
+			} // if (m_pSelectedInstance != ...
+		}
+	} // if (enEvent == meLBtnDown)
+
+	switch (enEvent)
+	{
+		case enumMouseEvent::Move:
+		{
+			OnMouseMoveEvent(nFlags, point);
+		}
+		break;
+
+		case enumMouseEvent::LBtnDown:
+		case enumMouseEvent::MBtnDown:
+		case enumMouseEvent::RBtnDown:
+		{
+			m_ptStartMousePosition = point;
+			m_ptPrevMousePosition = point;
+		}
+		break;
+
+		case enumMouseEvent::LBtnUp:
+		case enumMouseEvent::MBtnUp:
+		case enumMouseEvent::RBtnUp:
+		{
+			m_ptStartMousePosition.x = -1;
+			m_ptStartMousePosition.y = -1;
+			m_ptPrevMousePosition.x = -1;
+			m_ptPrevMousePosition.y = -1;
+		}
+		break;
+
+		default:
+			ASSERT(FALSE);
+			break;
+	} // switch (enEvent)
+}
+
 void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 {
 	auto pModel = dynamic_cast<CIFCModel*>(pM);
@@ -703,7 +695,6 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 {
 	if (pM == nullptr)
@@ -866,7 +857,6 @@ void COpenGLIFCView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::DrawInstancesFrameBuffer()
 {
 	auto pModel = GetModel<CIFCModel>();
@@ -989,7 +979,6 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pModel = GetModel<CIFCModel>();

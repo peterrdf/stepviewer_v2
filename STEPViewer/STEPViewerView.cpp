@@ -62,7 +62,7 @@ CController* CMySTEPViewerView::GetController()
 		{
 			m_pOpenGLView = new COpenGLSTEPView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->Load();
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -70,7 +70,7 @@ CController* CMySTEPViewerView::GetController()
 		{
 			m_pOpenGLView = new COpenGLIFCView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->Load();
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -156,7 +156,7 @@ void CMySTEPViewerView::OnDraw(CDC* pDC)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->Draw(pDC);
+		m_pOpenGLView->_draw(pDC);
 	}
 }
 

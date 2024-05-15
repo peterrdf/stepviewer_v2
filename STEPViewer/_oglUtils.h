@@ -3370,4 +3370,7 @@ public: // Methods
 
 	virtual ~_oglView()
 	{}
+
+	virtual void _load() PURE;
+	virtual void _draw(CDC* pDC) PURE;
 };
