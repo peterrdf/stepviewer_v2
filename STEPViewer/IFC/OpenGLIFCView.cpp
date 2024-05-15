@@ -120,11 +120,7 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
 	_redraw();
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -150,11 +146,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		m_pSelectedInstance = pSelectedInstance;
 
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
 		_redraw();
-#endif // _LINUX
 	}
 }
 
@@ -233,12 +225,8 @@ COpenGLIFCView::~COpenGLIFCView()
 {
 	CWaitCursor waitCursor;
 
-#ifdef _LINUX
-	m_pOGLContext->SetCurrent(*m_pWnd);
-#else
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
-#endif // _LINUX
 
 	// OpenGL buffers
 	m_oglBuffers.clear();
@@ -515,11 +503,7 @@ COpenGLIFCView::~COpenGLIFCView()
 		vecPointsCohorts.clear();
 	}
 
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
 	_redraw();
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -535,11 +519,8 @@ COpenGLIFCView::~COpenGLIFCView()
 			if (m_pSelectedInstance != m_pPointedInstance)
 			{
 				m_pSelectedInstance = m_pPointedInstance;
-#ifdef _LINUX
-				m_pWnd->Refresh(false);
-#else
+
 				_redraw();
-#endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
 				GetController()->SelectInstance(this, m_pSelectedInstance);
@@ -648,11 +629,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	DrawPoints(pModel);
 
 	/* End */
-#ifdef _LINUX
-	m_pWnd->SwapBuffers();
-#else
 	SwapBuffers(*pDC);
-#endif // _LINUX
 
 	/* Selection support */
 	DrawInstancesFrameBuffer();
@@ -921,18 +898,11 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	int iWidth = 0;
 	int iHeight = 0;
 
-#ifdef _LINUX
-	const wxSize szClient = m_pWnd->GetClientSize();
-
-	iWidth = szClient.GetWidth();
-	iHeight = szClient.GetHeight();
-#else
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
 	iWidth = rcClient.Width();
 	iHeight = rcClient.Height();
-#endif // _LINUX
 
 	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
@@ -1054,14 +1024,6 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		int iWidth = 0;
 		int iHeight = 0;
 
-#ifdef _LINUX
-		m_pOGLContext->SetCurrent(*m_pWnd);
-
-		const wxSize szClient = m_pWnd->GetClientSize();
-
-		iWidth = szClient.GetWidth();
-		iHeight = szClient.GetHeight();
-#else
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -1070,7 +1032,6 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		iWidth = rcClient.Width();
 		iHeight = rcClient.Height();
-#endif // _LINUX
 
 		GLubyte arPixels[4];
 		memset(arPixels, 0, sizeof(GLubyte) * 4);
@@ -1102,11 +1063,7 @@ void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		{
 			m_pPointedInstance = pPointedInstance;
 
-#ifdef _LINUX
-			m_pWnd->Refresh(false);
-#else
 			_redraw();
-#endif // _LINUX
 		}
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
