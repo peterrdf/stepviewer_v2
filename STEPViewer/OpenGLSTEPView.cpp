@@ -9,21 +9,11 @@
 
 #include <chrono>
 
-#ifdef _LINUX
-#include <cfloat>
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif // _LINUX
-
 // ------------------------------------------------------------------------------------------------
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
-#ifdef _LINUX
-COpenGLSTEPView::COpenGLSTEPView(wxGLCanvas * pWnd)
-#else
 COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
-#endif // _LINUX
 	: COpenGLView()	
 	, _oglRenderer()
 	, m_ptStartMousePosition(-1, -1)
@@ -137,11 +127,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
 	_redraw();
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -167,11 +153,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	{
 		m_pSelectedInstance = pSelectedInstance;
 
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
 		_redraw();
-#endif // _LINUX
 	}
 }
 
@@ -188,11 +170,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	*/
 	OnInstanceSelected(nullptr);
 
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
 	_redraw();
-#endif // _LINUX
 }
 
 /*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
@@ -246,12 +224,8 @@ COpenGLSTEPView::~COpenGLSTEPView()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLSTEPView::Load() /*override*/
 {
-#ifdef _LINUX
-	m_pOGLContext->SetCurrent(*m_pWnd);
-#else
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
-#endif // _LINUX
 
 	// OpenGL buffers
 	m_oglBuffers.clear();
@@ -529,11 +503,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		vecPointsCohorts.clear();
 	}
 
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
 	_redraw();
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -550,11 +520,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 			{
 				m_pSelectedInstance = m_pPointedInstance;
 
-#ifdef _LINUX
-				m_pWnd->Refresh(false);
-#else
 				_redraw();
-#endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
 				GetController()->SelectInstance(this, m_pSelectedInstance);
@@ -609,11 +575,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 }
 
 // ------------------------------------------------------------------------------------------------
-#ifdef _LINUX
-void COpenGLSTEPView::Draw(wxPaintDC * pDC)
-#else
 /*virtual*/ void COpenGLSTEPView::Draw(CDC* pDC) /*override*/
-#endif // _LINUX
 {
 	VERIFY(pDC != nullptr);
 
@@ -669,11 +631,7 @@ void COpenGLSTEPView::Draw(wxPaintDC * pDC)
 	DrawPoints(pModel);
 
 	/* End */
-#ifdef _LINUX
-	m_pWnd->SwapBuffers();
-#else
 	SwapBuffers(*pDC);
-#endif // _LINUX	
 
 	/* Selection support */
 	DrawInstancesFrameBuffer();
@@ -1140,18 +1098,11 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	int iWidth = 0;
 	int iHeight = 0;
 
-#ifdef _LINUX
-	const wxSize szClient = m_pWnd->GetClientSize();
-
-	iWidth = szClient.GetWidth();
-	iHeight = szClient.GetHeight();
-#else
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
 	iWidth = rcClient.Width();
 	iHeight = rcClient.Height();
-#endif // _LINUX
 
 	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
@@ -1316,14 +1267,6 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		int iWidth = 0;
 		int iHeight = 0;
 
-#ifdef _LINUX
-		m_pOGLContext->SetCurrent(*m_pWnd);
-
-		const wxSize szClient = m_pWnd->GetClientSize();
-
-		iWidth = szClient.GetWidth();
-		iHeight = szClient.GetHeight();
-#else
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -1332,7 +1275,6 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		iWidth = rcClient.Width();
 		iHeight = rcClient.Height();
-#endif // _LINUX
 
 		GLubyte arPixels[4];
 		memset(arPixels, 0, sizeof(GLubyte) * 4);
@@ -1364,11 +1306,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		{
 			m_pPointedInstance = pPointedInstance;
 
-#ifdef _LINUX
-			m_pWnd->Refresh(false);
-#else
 			_redraw();
-#endif // _LINUX
 		}
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
