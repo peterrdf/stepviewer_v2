@@ -2779,10 +2779,7 @@ public: // Methods
 
 	_oglProgram* _getOGLProgram() const { return m_pOGLProgram; }
 	template<class Program>
-	Program* _getOGLProgramAs() const
-	{
-		return dynamic_cast<Program*>(_getOGLProgram());
-	}
+	Program* _getOGLProgramAs() const { return dynamic_cast<Program*>(_getOGLProgram()); }
 
 	enumProjection _getProjection() const { return m_enProjection; }
 	void _setProjection(enumProjection enProjection) 
@@ -3360,4 +3357,17 @@ private: //  Methods
 			_redraw();
 		}
 	}
+};
+
+// ************************************************************************************************
+class _oglView : public _oglRenderer
+{
+
+public: // Methods
+
+	_oglView()
+	{}
+
+	virtual ~_oglView()
+	{}
 };

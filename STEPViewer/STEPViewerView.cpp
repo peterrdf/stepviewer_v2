@@ -374,7 +374,7 @@ BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
+		m_pOpenGLView->_onMouseWheel(nFlags, zDelta, pt);
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
@@ -384,7 +384,7 @@ void CMySTEPViewerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
+		m_pOpenGLView->_onKeyUp(nChar, nRepCnt, nFlags);
 	}
 }
 

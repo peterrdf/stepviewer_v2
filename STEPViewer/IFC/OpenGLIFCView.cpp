@@ -7,13 +7,12 @@
 
 #include <chrono>
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
-	:  COpenGLView()
-	, _oglRenderer()
+	: COpenGLView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -49,7 +48,6 @@ COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 		nullptr);
 }
 
-// ------------------------------------------------------------------------------------------------
 COpenGLIFCView::~COpenGLIFCView()
 {
 	GetController()->UnRegisterView(this);	
@@ -506,7 +504,6 @@ COpenGLIFCView::~COpenGLIFCView()
 	_redraw();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
@@ -530,48 +527,36 @@ COpenGLIFCView::~COpenGLIFCView()
 
 	switch (enEvent)
 	{
-	case enumMouseEvent::Move:
-	{
-		OnMouseMoveEvent(nFlags, point);
-	}
-	break;
-
-	case enumMouseEvent::LBtnDown:
-	case enumMouseEvent::MBtnDown:
-	case enumMouseEvent::RBtnDown:
-	{
-		m_ptStartMousePosition = point;
-		m_ptPrevMousePosition = point;
-	}
-	break;
-
-	case enumMouseEvent::LBtnUp:
-	case enumMouseEvent::MBtnUp:
-	case enumMouseEvent::RBtnUp:
-	{
-		m_ptStartMousePosition.x = -1;
-		m_ptStartMousePosition.y = -1;
-		m_ptPrevMousePosition.x = -1;
-		m_ptPrevMousePosition.y = -1;
-	}
-	break;
-
-	default:
-		ASSERT(FALSE);
+		case enumMouseEvent::Move:
+		{
+			OnMouseMoveEvent(nFlags, point);
+		}
 		break;
+
+		case enumMouseEvent::LBtnDown:
+		case enumMouseEvent::MBtnDown:
+		case enumMouseEvent::RBtnDown:
+		{
+			m_ptStartMousePosition = point;
+			m_ptPrevMousePosition = point;
+		}
+		break;
+
+		case enumMouseEvent::LBtnUp:
+		case enumMouseEvent::MBtnUp:
+		case enumMouseEvent::RBtnUp:
+		{
+			m_ptStartMousePosition.x = -1;
+			m_ptStartMousePosition.y = -1;
+			m_ptPrevMousePosition.x = -1;
+			m_ptPrevMousePosition.y = -1;
+		}
+		break;
+
+		default:
+			ASSERT(FALSE);
+			break;
 	} // switch (enEvent)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) /*override*/
-{
-	_onMouseWheel(nFlags, zDelta, pt);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLIFCView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
-{
-	_onKeyUp(nChar, nRepCnt, nFlags);
 }
 
 // ------------------------------------------------------------------------------------------------

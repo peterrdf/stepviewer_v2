@@ -5,7 +5,8 @@
 
 // ************************************************************************************************
 class COpenGLView 
-	: public CViewBase
+	: public _oglView
+	, public CViewBase
 {
 
 
@@ -20,9 +21,7 @@ public: // Methods
 		
 	// Events
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) PURE;
-	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) PURE;
-	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) PURE;
-
+	
 	// Draw
 	virtual void Draw(CDC* pDC) PURE;
 };

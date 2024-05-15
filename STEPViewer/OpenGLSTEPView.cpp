@@ -15,7 +15,6 @@ static const int MIN_VIEW_PORT_LENGTH = 100;
 // ------------------------------------------------------------------------------------------------
 COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 	: COpenGLView()	
-	, _oglRenderer()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -560,18 +559,6 @@ COpenGLSTEPView::~COpenGLSTEPView()
 		ASSERT(FALSE);
 		break;
 	} // switch (enEvent)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) /*override*/
-{
-	_onMouseWheel(nFlags, zDelta, pt);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLSTEPView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
-{
-	_onKeyUp(nChar, nRepCnt, nFlags);
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -12,7 +12,6 @@ class CIFCModel;
 // Open GL View
 class COpenGLIFCView 
 	: public COpenGLView
-	, public _oglRenderer
 {
 
 private: // Members
@@ -59,8 +58,6 @@ public: // Methods
 
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
-	virtual void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) override;
-	virtual void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) override;
 	virtual void Draw(CDC* pDC) override;
 
 private: // Methods
