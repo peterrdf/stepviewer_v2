@@ -1860,20 +1860,6 @@ enum class enumRotationMode : int
 };
 
 // ************************************************************************************************
-struct _ioglRenderer
-{
-	virtual _oglProgram* _getOGLProgram() const PURE;
-
-	template<class Program>
-	Program* _getOGLProgramAs() const
-	{
-		return dynamic_cast<Program*>(_getOGLProgram());
-	}
-
-	virtual void _redraw() PURE;
-};
-
-// ************************************************************************************************
 const float DEFAULT_TRANSLATION = -5.f;
 
 const float ZOOM_SPEED_MOUSE = 0.01f;
@@ -2355,8 +2341,7 @@ protected: // Methods
 
 // ************************************************************************************************
 class _oglRenderer 
-	: public _ioglRenderer
-	, public _oglRendererSettings
+	: public _oglRendererSettings
 {
 
 protected: // Members
@@ -2462,15 +2447,6 @@ public: // Methods
 
 	virtual ~_oglRenderer()
 	{}
-
-	// _ioglRenderer
-	virtual _oglProgram* _getOGLProgram() const override { return m_pOGLProgram; }
-	
-	// _ioglRenderer
-	virtual void _redraw() override
-	{
-		m_pWnd->RedrawWindow();
-	}
 
 	void _initialize(CWnd* pWnd,
 		int iSamples, 
@@ -2748,6 +2724,8 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
+	void _redraw() { m_pWnd->RedrawWindow(); }
+
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 	{
 		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
@@ -2797,6 +2775,13 @@ public: // Methods
 		{
 			m_toolTipCtrl.DelTool(m_pWnd, 0);
 		}
+	}
+
+	_oglProgram* _getOGLProgram() const { return m_pOGLProgram; }
+	template<class Program>
+	Program* _getOGLProgramAs() const
+	{
+		return dynamic_cast<Program*>(_getOGLProgram());
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }
