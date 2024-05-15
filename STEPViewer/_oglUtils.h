@@ -1903,6 +1903,21 @@ class _oglRendererSettings
 
 protected: // Members
 
+	// Mode
+	enumProjection m_enProjection;
+
+	// Rotation
+	enumRotationMode m_enRotationMode;
+
+	// 2D Rotation
+	float m_fXAngle;
+	float m_fYAngle;
+	float m_fZAngle;
+
+	// 3D Rotation
+	_quaterniond m_rotation;
+
+	// View
 	BOOL m_bShowFaces;
 	CString m_strCullFaces;
 	BOOL m_bShowFacesPolygons;
@@ -1922,7 +1937,13 @@ protected: // Members
 public: // Methods
 
 	_oglRendererSettings()
-		: m_bShowFaces(TRUE)
+		: m_enProjection(enumProjection::Perspective)
+		, m_enRotationMode(enumRotationMode::XYZ)
+		, m_fXAngle(0.f)
+		, m_fYAngle(0.f)
+		, m_fZAngle(0.f)
+		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+		, m_bShowFaces(TRUE)
 		, m_strCullFaces(CULL_FACES_NONE)
 		, m_bShowFacesPolygons(FALSE)
 		, m_bShowConceptualFacesPolygons(TRUE)
@@ -1941,6 +1962,300 @@ public: // Methods
 
 	virtual ~_oglRendererSettings()
 	{}
+
+	enumProjection _getProjection() const { return m_enProjection; }
+	void _setProjection(enumProjection enProjection)
+	{
+		m_enProjection = enProjection;
+
+		_setView(enumView::Isometric);
+	}
+
+	enumRotationMode _getRotationMode() const { return m_enRotationMode; }
+	void _setRotationMode(enumRotationMode enRotationMode)
+	{
+		m_enRotationMode = enRotationMode;
+
+		_setView(enumView::Isometric);
+	}
+
+	void _setView(enumView enView)
+	{
+		// Note: OpenGL/Quaternions - CW/CCW
+
+		m_fXAngle = 0.f;
+		m_fYAngle = 0.f;
+		m_fZAngle = 0.f;
+		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+		switch (enView)
+		{
+			case enumView::Front:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 270.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::Back:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 90.f;
+					m_fYAngle = 180.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::Left:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 270.f;
+					m_fZAngle = 90.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::Right:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 270.f;
+					m_fZAngle = 270.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::Top:
+			{
+				m_fXAngle = 0.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 0.f;
+			}
+			break;
+
+			case enumView::Bottom:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fYAngle = 180.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontTopLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontTopRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fZAngle = 315.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontBottomLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 225.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontBottomRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 225.f;
+					m_fZAngle = 315.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackTopLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fZAngle = 225.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackTopRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fZAngle = 135.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackBottomLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 225.f;
+					m_fZAngle = 225.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackBottomRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 225.f;
+					m_fZAngle = 135.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::Isometric:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (enView)
+	}
 
 	void setShowFaces(BOOL bValue)
 	{
@@ -2354,23 +2669,11 @@ protected: // Members
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
-	_oglShader* m_pFragmentShader;
-	enumProjection m_enProjection;
+	_oglShader* m_pFragmentShader;	
 	glm::mat4 m_matModelView;	
 
 	// Cache
-	_oglBuffers m_oglBuffers;
-
-	// Rotation
-	enumRotationMode m_enRotationMode;
-
-	// 2D Rotation
-	float m_fXAngle;
-	float m_fYAngle;
-	float m_fZAngle;
-
-	// 3D Rotation
-	_quaterniond m_rotation;
+	_oglBuffers m_oglBuffers;	
 
 	// World
 	float m_fXmin;
@@ -2411,14 +2714,8 @@ public: // Methods
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
 		, m_pFragmentShader(nullptr)
-		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
-		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XYZ)
-		, m_fXAngle(0.f)
-		, m_fYAngle(0.f)
-		, m_fZAngle(0.f)
-		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+		, m_oglBuffers()		
 		, m_fXmin(-1.f)
 		, m_fXmax(1.f)
 		, m_fYmin(-1.f)
@@ -2781,300 +3078,6 @@ public: // Methods
 	template<class Program>
 	Program* _getOGLProgramAs() const { return dynamic_cast<Program*>(_getOGLProgram()); }
 
-	enumProjection _getProjection() const { return m_enProjection; }
-	void _setProjection(enumProjection enProjection) 
-	{
-		m_enProjection = enProjection;
-
-		_setView(enumView::Isometric);
-	}
-
-	enumRotationMode _getRotationMode() const { return m_enRotationMode; }
-	void _setRotationMode(enumRotationMode enRotationMode)
-	{
-		m_enRotationMode = enRotationMode;
-
-		_setView(enumView::Isometric);
-	}
-
-	void _setView(enumView enView)
-	{
-		// Note: OpenGL/Quaternions - CW/CCW
-
-		m_fXAngle = 0.f;
-		m_fYAngle = 0.f;
-		m_fZAngle = 0.f;
-		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
-
-		switch (enView)
-		{
-			case enumView::Front:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}				
-			}
-			break;
-
-			case enumView::Back:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 90.f;
-					m_fYAngle = 180.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;			
-
-			case enumView::Left:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-					m_fZAngle = 90.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::Right:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-					m_fZAngle = 270.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}				
-			}
-			break;
-
-			case enumView::Top:
-			{
-				m_fXAngle = 0.f;
-				m_fYAngle = 0.f;
-				m_fZAngle = 0.f;
-			}
-			break;
-
-			case enumView::Bottom:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fYAngle = 180.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::FrontTopLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::FrontTopRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 315.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::FrontBottomLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::FrontBottomRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 315.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::BackTopLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 225.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::BackTopRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 135.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::BackBottomLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 225.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::BackBottomRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 135.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
-
-			case enumView::Isometric:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fYAngle = 0.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;			
-
-			default:
-			{
-				ASSERT(FALSE);
-			}
-			break;
-		} // switch (enView)
-	}		
-
 	void _rotateMouseLButton(float fXAngle, float fYAngle)
 	{
 		if (m_enRotationMode == enumRotationMode::XY)
@@ -3233,7 +3236,11 @@ public: // Methods
 
 	void _reset()
 	{
+		// Projection
+		m_enProjection = enumProjection::Perspective;
+
 		// Rotation
+		m_enRotationMode = enumRotationMode::XYZ;
 		m_fXAngle = 0.f;
 		m_fYAngle = 0.f;
 		m_fZAngle = 0.f;
