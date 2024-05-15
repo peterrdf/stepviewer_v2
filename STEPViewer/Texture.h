@@ -16,13 +16,6 @@
 #include <fstream>
 #include <GL/gl.h>
 
-#ifdef _LINUX
-typedef int BOOLEAN;
-typedef const char * LPCTSTR;
-typedef unsigned char BYTE;
-#endif // _LINUX
-
-
 class CTexture
 {
 public:

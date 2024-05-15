@@ -12,8 +12,6 @@
 #pragma warning (disable : 4512)	// assignment operator could not be generated
 #pragma warning (disable : 4714)	// marked as __forceinline not inlined
 
-#ifndef _LINUX
-
 #include "log.hpp"
 
 
@@ -55,8 +53,6 @@
 
 #include "glew.h"
 #include "wglew.h"
-
-#endif // _LINUX
 
 #include <GL/gl.h>
 #include <GL/glu.h>

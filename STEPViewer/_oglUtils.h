@@ -55,26 +55,19 @@ public: // Methods
 			// so check that we get a different error than the last time
 			if (err == errLast)
 			{
-#ifdef _LINUX
-				wxLogError(wxT("OpenGL error state couldn't be reset."));
-#else
 				::MessageBox(
-					::AfxGetMainWnd()->GetSafeHwnd(), 
-					_T("OpenGL error state couldn't be reset."), 
-					_T("OpenGL"), 
+					::AfxGetMainWnd()->GetSafeHwnd(),
+					_T("OpenGL error state couldn't be reset."),
+					_T("OpenGL"),
 					MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
-#endif // _LINUX
 
 				return;
 			}
 
 			errLast = err;
 
-#ifdef _LINUX
-			wxLogError(wxT("OpenGL error %d"), err);
-#else
 #ifdef UNICODE
 			::MessageBoxW(
 				::AfxGetMainWnd()->GetSafeHwnd(),
@@ -89,7 +82,6 @@ public: // Methods
 				MB_ICONERROR | MB_OK);
 #endif
 			PostQuitMessage(0);
-#endif // _LINUX
 		}
 	}
 };
@@ -2477,11 +2469,7 @@ public: // Methods
 	// _ioglRenderer
 	virtual void _redraw() override
 	{
-#ifdef _LINUX
-		m_pWnd->Refresh(false);
-#else
 		m_pWnd->RedrawWindow();
-#endif // _LINUX		
 	}
 
 	void _initialize(CWnd* pWnd,
