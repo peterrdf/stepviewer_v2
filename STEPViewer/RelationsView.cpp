@@ -24,7 +24,7 @@ static char THIS_FILE[]=__FILE__;
 #define ITEM_PENDING_LOAD		L"***..........***"
 
 #define MAX_LABEL_SIZE			50
-#define LOAD_ATTRIBUTES_LIMIT	10
+#define LOAD_ATTRIBUTES_LIMIT	50
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CRelationsView

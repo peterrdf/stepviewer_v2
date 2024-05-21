@@ -56,10 +56,21 @@ CController* CMySTEPViewerView::GetController()
 		return;
 	}
 
+	wchar_t szAppPath[_MAX_PATH];
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+	fs::path pthExe = szAppPath;
+	auto pthRootFolder = pthExe.parent_path();
+
+	wstring strSettingsFile = pthRootFolder.wstring();
+
 	switch (pModel->GetType())
 	{
 		case enumModelType::STEP:
 		{
+			strSettingsFile += L"\\STEPViewer_STEP.settings";
+			pController->getSettingsStorage()->loadSettings(strSettingsFile);
+
 			m_pOpenGLView = new COpenGLSTEPView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
@@ -68,6 +79,9 @@ CController* CMySTEPViewerView::GetController()
 
 		case enumModelType::IFC:
 		{
+			strSettingsFile += L"\\STEPViewer_IFC.settings";
+			pController->getSettingsStorage()->loadSettings(strSettingsFile);
+
 			m_pOpenGLView = new COpenGLIFCView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
