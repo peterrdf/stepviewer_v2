@@ -17,3 +17,5 @@
 /Win32/Release/STEPViewer.exe
 /x64/Debug/STEPViewer.settings
 /x64/Release/STEPViewer.settings
+/x64/Debug/STEPViewer_STEP.settings
+/x64/Debug/STEPViewer_IFC.settings

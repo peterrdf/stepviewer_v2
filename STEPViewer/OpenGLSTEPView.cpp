@@ -636,6 +636,8 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+	CString strCullFaces = getCullFacesMode(pModel);
+
 	if (bTransparent)
 	{
 		glEnable(GL_BLEND);
@@ -644,8 +646,11 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 	}
 	else
 	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
+		}
 	}
 
 	m_pOGLProgram->_enableBlinnPhongModel(true);	
@@ -742,7 +747,10 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 	}
 	else
 	{
-		glDisable(GL_CULL_FACE);
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+		{
+			glDisable(GL_CULL_FACE);
+		}
 	}
 
 	// Restore Model-View Matrix

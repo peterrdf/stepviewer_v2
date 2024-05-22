@@ -628,11 +628,21 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 
 	auto begin = std::chrono::steady_clock::now();
 
+	CString strCullFaces = getCullFacesMode(pModel);
+
 	if (bTransparent)
 	{
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	else
+	{
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
+		}
 	}
 
 	m_pOGLProgram->_enableBlinnPhongModel(true);
@@ -687,6 +697,13 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 	if (bTransparent)
 	{
 		glDisable(GL_BLEND);
+	}
+	else
+	{
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+		{
+			glDisable(GL_CULL_FACE);
+		}
 	}
 
 	_oglUtils::checkForErrors();
