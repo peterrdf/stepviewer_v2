@@ -1277,7 +1277,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 
 				strName.Format(L"%s %s", pInstance->GetName().c_str(), ITEM_PRODUCT_INSTANCE);
 
-				iGeometryImage = IMAGE_SELECTED;
+				iGeometryImage = pInstance->GetProductDefinition()->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			}
 			break;
 
