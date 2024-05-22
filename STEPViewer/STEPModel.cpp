@@ -276,9 +276,10 @@ void CSTEPModel::ScaleAndCenter()
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		::MessageBox(
+		// TODO: new status bar for geometry
+		/*::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);*/
 
 		return;
 	}
