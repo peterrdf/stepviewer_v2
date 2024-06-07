@@ -523,6 +523,15 @@ void CIFCModel::GetObjectsReferencedState()
 		GetObjectsReferencedStateIsDecomposedBy(iProjectInstance);
 		GetObjectsReferencedStateIsNestedBy(iProjectInstance);
 		GetObjectsReferencedStateContainsElements(iProjectInstance);
+
+		// Disable Unreferenced instances
+		for (auto itInstance : m_mapInstances)
+		{
+			if (!itInstance.second->Referenced())
+			{
+				itInstance.second->setEnable(false);
+			}
+		}
 	} // if (iIFCProjectInstancesCount > 0)
 }
 
@@ -538,7 +547,7 @@ void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance iInstance)
 		GetObjectsReferencedStateIsDecomposedBy(iInstance);
 		GetObjectsReferencedStateIsNestedBy(iInstance);
 		GetObjectsReferencedStateContainsElements(iInstance);
-	} // if (itInstance != ...
+	}
 	else
 	{
 		ASSERT(FALSE);
