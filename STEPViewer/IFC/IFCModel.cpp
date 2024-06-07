@@ -258,7 +258,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	* Retrieve the objects recursively
 	*/
 	RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-	//#test
 	RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 	RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
@@ -543,30 +542,7 @@ void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSeg
 		engiGetEntityName(iParentEntity, sdaiSTRING, (const char**)&szParenEntityName);
 
 		wchar_t* szParentEntityNameW = CEntity::GetName(iParentEntity);
-
 		RetrieveObjects(szParenEntityName, szParentEntityNameW, iCircleSegments);
-
-		//#test
-		///*if (iParentEntity == m_ifcProjectEntity) {
-		//	for (int_t i = 0; i < iIntancesCount; i++) {
-		//		SdaiInstance iInstance = 0;
-		//		engiGetAggrElement(piInstances, i, sdaiINSTANCE, &iInstance);
-
-		//		wchar_t* szInstanceGUIDW = nullptr;
-		//		sdaiGetAttrBN(iInstance, "GlobalId", sdaiUNICODE, &szInstanceGUIDW);
-
-		//		CIFCInstance * pInstance = RetrieveGeometry(szInstanceGUIDW, iInstance, iCircleSegments);
-		//		pInstance->ID() = s_iInstanceID++;
-
-		//		CString strEntity = szParentEntityNameW;
-		//		strEntity.MakeUpper();
-
-		//		pInstance->SetEnable((strEntity != "IFCSPACE") && (strEntity != "IFCRELSPACEBOUNDARY") && (strEntity != "IFCOPENINGELEMENT"));
-
-		//		m_vecInstances.push_back(pInstance);
-		//		m_mapInstances[iInstance] = pInstance;
-		//	}
-		//}*/
 	} // if (iIntancesCount != 0)
 
 	iIntancesCount = engiGetEntityCount(GetInstance());
