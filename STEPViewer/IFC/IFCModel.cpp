@@ -496,7 +496,14 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pInstance->setEnable((strEntity != L"IFCSPACE") && (strEntity != L"IFCRELSPACEBOUNDARY") && (strEntity != L"IFCOPENINGELEMENT"));
+		pInstance->setEnable(
+			(strEntity == L"IFCSPACE") || 
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ||
+			(strEntity == L"IFCALIGNMENTVERTICAL") ||
+			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+			(strEntity == L"IFCALIGNMENTSEGMENT") ||
+			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
 		
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;

@@ -1240,7 +1240,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstanc
 	auto itInstance = mapInstances.find(iInstance);
 	if (itInstance != mapInstances.end())
 	{
-		itInstance->second->Referenced() = true;		
+		ASSERT(itInstance->second->Referenced());		
 
 		wstring strItem = CInstanceBase::GetName(iInstance);
 
