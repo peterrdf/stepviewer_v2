@@ -218,7 +218,6 @@ void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-
 void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 {
 	ASSERT(szIFCFile != nullptr);
@@ -254,40 +253,31 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	m_ifcTransportElementEntity = sdaiGetEntity(GetInstance(), "IFCTRANSPORTELEMENT");
 	m_ifcVirtualElementEntity = sdaiGetEntity(GetInstance(), "IFCVIRTUALELEMENT");
 
-	/*
-	* Retrieve the objects recursively
-	*/
+	// Objects
 	RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 	RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 	RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
-	/*
-	* Units
-	*/
+	// Unreferenced
+	GetObjectsReferencedState();
+
+	// Units
 	m_pUnitProvider = new CIFCUnitProvider(GetInstance());
 
-	/*
-	* Properties
-	*/
+	// Properties
 	m_pPropertyProvider = new CIFCPropertyProvider(GetInstance(), m_pUnitProvider);
 
-	/*
-	* Entities
-	*/
+	// Entities
 	m_pEntityProvider = new CEntityProvider(GetInstance());
 
-	/*
-	* Helper data structures
-	*/
+	// Helper data structures
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->getID()] = pInstance;
 		m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
 	}
 
-	/**
-	* Scale
-	*/
+	// Scale
 	Scale();
 }
 
@@ -511,6 +501,156 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;
 	}
+}
+
+void CIFCModel::GetObjectsReferencedState()
+{
+	SdaiAggr pAggr = sdaiGetEntityExtentBN(m_iModel, (char*)"IFCPROJECT");
+
+	SdaiInteger iMembersCount = sdaiGetMemberCount(pAggr);
+	if (iMembersCount > 0)
+	{
+		SdaiInstance iProjectInstance = 0;
+		engiGetAggrElement(pAggr, 0, sdaiINSTANCE, &iProjectInstance);
+
+		GetObjectsReferencedStateIsDecomposedBy(iProjectInstance);
+		GetObjectsReferencedStateIsNestedBy(iProjectInstance);
+		GetObjectsReferencedStateContainsElements(iProjectInstance);
+	} // if (iIFCProjectInstancesCount > 0)
+}
+
+void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	auto itInstance = m_mapInstances.find(iInstance);
+	if (itInstance != m_mapInstances.end())
+	{
+		itInstance->second->Referenced() = true;
+
+		GetObjectsReferencedStateIsDecomposedBy(iInstance);
+		GetObjectsReferencedStateIsNestedBy(iInstance);
+		GetObjectsReferencedStateContainsElements(iInstance);
+	} // if (itInstance != ...
+	else
+	{
+		ASSERT(FALSE);
+	}
+}
+
+void CIFCModel::GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
+{
+	SdaiAggr piIsDecomposedByInstances = nullptr;
+	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &piIsDecomposedByInstances);
+
+	if (piIsDecomposedByInstances == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(m_iModel, "IFCRELAGGREGATES");
+
+	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	{
+		SdaiInstance iIFCIsDecomposedByInstance = 0;
+		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+
+		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelAggregatesEntity)
+		{
+			continue;
+		}
+
+		SdaiAggr piIFCRelatedObjectsInstances = 0;
+		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
+
+		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		{
+			SdaiInstance iRelatedObjectsInstance = 0;
+			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iRelatedObjectsInstance);
+
+			GetObjectsReferencedStateRecursively(iRelatedObjectsInstance);
+		} // for (int_t j = ...
+	} // for (int64_t i = ...
+}
+
+void CIFCModel::GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	SdaiAggr piIsDecomposedByInstances = nullptr;
+	sdaiGetAttrBN(iInstance, "IsNestedBy", sdaiAGGR, &piIsDecomposedByInstances);
+
+	if (piIsDecomposedByInstances == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(m_iModel, "IFCRELNESTS");
+
+	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	{
+		SdaiInstance iIFCIsDecomposedByInstance = 0;
+		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+
+		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelNestsEntity)
+		{
+			continue;
+		}
+
+		SdaiAggr piIFCRelatedObjectsInstances = 0;
+		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
+
+		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		{
+			SdaiInstance iIFCRelatedObjectsInstance = 0;
+			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+
+			GetObjectsReferencedStateRecursively(iIFCRelatedObjectsInstance);
+		} // for (int_t j = ...
+	} // for (int64_t i = ...
+}
+
+void CIFCModel::GetObjectsReferencedStateContainsElements(SdaiInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	SdaiAggr piContainsElementsInstances = nullptr;
+	sdaiGetAttrBN(iInstance, "ContainsElements", sdaiAGGR, &piContainsElementsInstances);
+
+	if (piContainsElementsInstances == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(m_iModel, "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+
+	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
+	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
+	{
+		SdaiInstance iIFCContainsElementsInstance = 0;
+		engiGetAggrElement(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
+
+		if (sdaiGetInstanceType(iIFCContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity)
+		{
+			continue;
+		}
+
+		SdaiAggr piIFCRelatedElementsInstances = 0;
+		sdaiGetAttrBN(iIFCContainsElementsInstance, "RelatedElements", sdaiAGGR, &piIFCRelatedElementsInstances);
+
+		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(piIFCRelatedElementsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j)
+		{
+			SdaiInstance iIFCRelatedElementsInstance = 0;
+			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
+
+			GetObjectsReferencedStateRecursively(iIFCRelatedElementsInstance);
+		} // for (int_t j = ...
+	} // for (int64_t i = ...
 }
 
 void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments)

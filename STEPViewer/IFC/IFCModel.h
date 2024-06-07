@@ -82,6 +82,12 @@ public: // Methods
 
 private: // Methods
 	
+	void GetObjectsReferencedState();	
+	void GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance);
+	void GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance);
+	void GetObjectsReferencedStateContainsElements(SdaiInstance iInstance);
+	void GetObjectsReferencedStateRecursively(SdaiInstance iInstance);
+
 	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
