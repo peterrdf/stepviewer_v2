@@ -71,6 +71,7 @@ private: // Methods
 	void LoadHeader(CIFCModel* pModel, HTREEITEM hModel);
 	void LoadProject(CIFCModel* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance);
 	void LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadIsNestedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadContainsElements(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadObject(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel);

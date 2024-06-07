@@ -1066,13 +1066,13 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		* decomposition/contains
 		*/
 		LoadIsDecomposedBy(pModel, iIFCProjectInstance, hProject);
+		LoadIsNestedBy(pModel, iIFCProjectInstance, hProject);
 		LoadContainsElements(pModel, iIFCProjectInstance, hProject);
 
 		m_pTreeCtrl->Expand(hProject, TVE_EXPAND);
 	} // if (itInstance != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
@@ -1094,6 +1094,58 @@ void CIFCModelStructureView::LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance 
 		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelAggregatesEntity)
+		{
+			continue;
+		}
+
+		/*
+		* decomposition
+		*/
+		TV_INSERTSTRUCT tvInsertStruct;
+		tvInsertStruct.hParent = hParent;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+		tvInsertStruct.item.pszText = ITEM_DECOMPOSITION;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+		tvInsertStruct.item.lParam = NULL;
+
+		HTREEITEM hDecomposition = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		SdaiAggr piIFCRelatedObjectsInstances = 0;
+		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
+
+		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
+		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		{
+			SdaiInstance iIFCRelatedObjectsInstance = 0;
+			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+
+			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
+		} // for (int_t j = ...
+	} // for (int64_t i = ...	
+}
+
+void CIFCModelStructureView::LoadIsNestedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+{
+	ASSERT(pModel != nullptr);
+
+	SdaiAggr piIsDecomposedByInstances = nullptr;
+	sdaiGetAttrBN(iInstance, "IsNestedBy", sdaiAGGR, &piIsDecomposedByInstances);
+
+	if (piIsDecomposedByInstances == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(pModel->GetInstance(), "IFCRELNESTS");
+
+	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
+	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	{
+		SdaiInstance iIFCIsDecomposedByInstance = 0;
+		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+
+		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelNestsEntity)
 		{
 			continue;
 		}
@@ -1222,9 +1274,10 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstanc
 		m_mapInstance2GeometryItem[itInstance->second] = hGeometry;
 
 		/*
-		* decomposition/contains
+		* decomposition/nest/contains
 		*/
 		LoadIsDecomposedBy(pModel, iInstance, hObject);
+		LoadIsNestedBy(pModel, iInstance, hObject);
 		LoadContainsElements(pModel, iInstance, hObject);
 	} // if (itInstance != ...
 	else
