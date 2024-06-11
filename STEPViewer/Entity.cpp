@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Entity.h"
-#include "stepengine.h"
 
 #include <algorithm>
 

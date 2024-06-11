@@ -2,7 +2,6 @@
 #define IFCUNIT_H
 
 #include "engine.h"
-#include "stepengine.h"
 
 #include <string>
 #include <map>
