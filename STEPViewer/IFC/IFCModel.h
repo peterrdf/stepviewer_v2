@@ -7,6 +7,7 @@
 #include "IFCUnit.h"
 #include "IFCProperty.h"
 #include "Entity.h"
+#include "IFCAttribute.h"
 
 #include <string>
 #include <map>
@@ -22,6 +23,9 @@ private: // Classes
 	friend class CIFCController;
 
 private: // Members
+
+	// Load
+	bool m_bLoadInstancesOnDemand;
 
 	// Entities
 	SdaiEntity m_ifcProjectEntity;
@@ -47,6 +51,7 @@ private: // Members
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
 	CEntityProvider* m_pEntityProvider;
+	CIFCAttributeProvider* m_pAttributeProvider;
 
 	static int_t s_iInstanceID;
 
@@ -58,7 +63,7 @@ public: // Members
 
 public: // Methods
 	
-	CIFCModel();
+	CIFCModel(bool bLoadInstancesOnDemand = false);
 	virtual ~CIFCModel();
 
 	void PreLoadInstance(SdaiInstance iInstance);
@@ -72,11 +77,13 @@ public: // Methods
 	void Scale(); // [-1, 1]
 
 	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
+	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
 	CIFCInstance* GetInstanceByID(int64_t iID);
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 

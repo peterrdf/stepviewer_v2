@@ -26,8 +26,9 @@ static uint32_t DEFAULT_COLOR_A = 255;
 	DEFAULT_COLOR_A;
 
 // ************************************************************************************************
-CIFCModel::CIFCModel()
+CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	: CModel(enumModelType::IFC)
+	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_ifcProjectEntity(0)
 	, m_ifcSpaceEntity(0)
 	, m_ifcOpeningElementEntity(0)
@@ -49,9 +50,10 @@ CIFCModel::CIFCModel()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pEntityProvider(nullptr)
+	, m_pAttributeProvider(nullptr)
 	, m_bUpdteVertexBuffers(true)
-{
-}
+{}
+
 
 CIFCModel::~CIFCModel()
 {
@@ -253,13 +255,16 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	m_ifcTransportElementEntity = sdaiGetEntity(GetInstance(), "IFCTRANSPORTELEMENT");
 	m_ifcVirtualElementEntity = sdaiGetEntity(GetInstance(), "IFCVIRTUALELEMENT");
 
-	// Objects
-	RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-	RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-	RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+	// Objects & Unreferenced
+	if (!m_bLoadInstancesOnDemand)
+	{
+		RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 
-	// Unreferenced
-	GetObjectsReferencedState();
+		RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+
+		GetObjectsReferencedState();
+	}	
 
 	// Units
 	m_pUnitProvider = new CIFCUnitProvider(GetInstance());
@@ -270,6 +275,9 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	// Entities
 	m_pEntityProvider = new CEntityProvider(GetInstance());
 
+	// Attributes
+	m_pAttributeProvider = new CIFCAttributeProvider();
+
 	// Helper data structures
 	for (auto pInstance : m_vecInstances)
 	{
@@ -279,6 +287,38 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 
 	// Scale
 	Scale();
+}
+
+/*virtual*/ CInstanceBase* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
+{
+	ASSERT(iInstance != 0);
+
+	m_bUpdteVertexBuffers = true;
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+
+	m_mapInstances.clear();
+	m_mapID2Instance.clear();
+	m_mapExpressID2Instance.clear();
+
+	auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+	pInstance->setEnable(true);
+
+	m_vecInstances.push_back(pInstance);
+	m_mapInstances[iInstance] = pInstance;
+
+	// Helper data structures
+	m_mapID2Instance[pInstance->getID()] = pInstance;
+	m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+
+	// Scale
+	Scale();
+
+	return pInstance;
 }
 
 void CIFCModel::Clean()
