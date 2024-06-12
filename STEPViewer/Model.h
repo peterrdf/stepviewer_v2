@@ -49,6 +49,7 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 	virtual void ZoomOut() PURE;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) PURE;
 
 	// Model
 	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
@@ -58,7 +59,7 @@ public: // Methods
 	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float GetBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;	
+	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 	
 	template<typename T>
 	T* As()

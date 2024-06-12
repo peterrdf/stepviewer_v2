@@ -209,6 +209,7 @@
     <ClInclude Include="Assembly.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="ModelCheckDlg.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="Assembly.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />

@@ -39,11 +39,12 @@ public: // Methods
 
 	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
 
-	// CModel
+	// CModel	
 	virtual CEntityProvider* GetEntityProvider() const override;
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override { ASSERT(FALSE); return nullptr; };
 
 	const map<ExpressID, CProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
 	const map<int64_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }
