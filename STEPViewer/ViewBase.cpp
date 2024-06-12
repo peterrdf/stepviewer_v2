@@ -25,48 +25,48 @@ void CViewBase::SetController(CController* pController)
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnModelChanged()
-{
-}
+{}
+
+/*virtual*/ void CViewBase::OnModelUpdated()
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnWorldDimensionsChanged()
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnShowMetaInformation()
-{
-}
+{}
+
+/*virtual*/ void CViewBase::OnTargetInstanceChanged(CViewBase* pSender)
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnInstanceSelected(CViewBase* /*pSender*/)
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnInstancesEnabledStateChanged(CViewBase* /*pSender*/)
-{
-}
+{}
+
+/*virtual*/ void CViewBase::OnInstanceAttributeEdited(CViewBase* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnViewRelations(CViewBase* /*pSender*/, SdaiInstance /*iInstance*/)
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnViewRelations(CViewBase* /*pSender*/, CEntity* /*pEntity*/)
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnApplicationPropertyChanged(CViewBase* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/)
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CViewBase::OnControllerChanged()
-{
-}
+{}
 
 // ------------------------------------------------------------------------------------------------
 CController* CViewBase::GetController() const

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ProductInstance.h"
 #include "IFCInstance.h"
 #include "Entity.h"
 
@@ -61,10 +60,13 @@ public: // Methods
 
 	// Events
 	virtual void OnModelChanged();
+	virtual void OnModelUpdated();
 	virtual void OnWorldDimensionsChanged();	
 	virtual void OnShowMetaInformation();
+	virtual void OnTargetInstanceChanged(CViewBase* pSender);
 	virtual void OnInstanceSelected(CViewBase* pSender);
 	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender);
+	virtual void OnInstanceAttributeEdited(CViewBase* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
 	virtual void OnViewRelations(CViewBase* pSender, SdaiInstance iInstance);
 	virtual void OnViewRelations(CViewBase* pSender, CEntity* pEntity);
 	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty);

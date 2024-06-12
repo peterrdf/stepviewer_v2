@@ -3,7 +3,6 @@
 #include "_mvc.h"
 #include "InstanceBase.h"
 #include "Entity.h"
-#include "ProductInstance.h"
 
 #include <set>
 #include <vector>
@@ -25,6 +24,9 @@ private: // Members
 	
 	set<CViewBase*> m_setViews; // Views - MVC	
 	
+	// Target
+	CInstanceBase* m_pTargetInstance;
+
 	// Selection
 	CInstanceBase* m_pSelectedInstance;
 	
@@ -38,6 +40,7 @@ public: // Methods
 	
 	CModel* GetModel() const;
 	void SetModel(CModel* pModel);
+	CInstanceBase* LoadInstance(OwlInstance iInstance);
 
 	// Events
 	void RegisterView(CViewBase* pView);
@@ -65,13 +68,16 @@ public: // Methods
 	void ZoomOut();
 
 	// Save
-	void SaveInstance();
+	virtual void SaveInstance() PURE;
+	void SaveInstance(OwlInstance iInstance);
 	
 	// [-1, 1]
 	void ScaleAndCenter();
 	
 	// Events
 	void ShowMetaInformation(CInstanceBase* pInstance);
+	void SetTargetInstance(CViewBase* pSender, CInstanceBase* pInstance);
+	CInstanceBase* GetTargetInstance() const;
 	void SelectInstance(CViewBase* pSender, CInstanceBase* pInstance);
 	CInstanceBase* GetSelectedInstance() const;
 
@@ -84,6 +90,7 @@ public: // Methods
 	void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty);
 	void OnViewRelations(CViewBase* pSender, SdaiInstance iInstance);
 	void OnViewRelations(CViewBase* pSender, CEntity* pEntity);
+	void OnInstanceAttributeEdited(CViewBase* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
 };
 
 

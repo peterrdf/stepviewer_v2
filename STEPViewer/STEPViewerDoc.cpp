@@ -11,11 +11,82 @@
 
 #include "STEPViewerDoc.h"
 #include "ModelFactory.h"
+#include "ProductInstance.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+/*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
+{
+	ASSERT(m_pModel != nullptr);
+	ASSERT(GetSelectedInstance() != nullptr);
+
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("bin"), GetSelectedInstance()->GetName().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	auto pProductInstance = dynamic_cast<CProductInstance*>(GetSelectedInstance());
+	if (pProductInstance != nullptr)
+	{
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());
+		ASSERT(iSdaiModel != 0);
+
+		OwlModel iOwlModel = 0;
+		owlGetModel(iSdaiModel, &iOwlModel);
+		ASSERT(iOwlModel != 0);
+
+		OwlInstance	iMatrixInstance = CreateInstance(GetClassByName(iOwlModel, "Matrix"));
+		ASSERT(iMatrixInstance != 0);
+
+		vector<double> vecMatrix
+		{
+			pProductInstance->GetTransformationMatrix()->_11,
+			pProductInstance->GetTransformationMatrix()->_12,
+			pProductInstance->GetTransformationMatrix()->_13,
+			pProductInstance->GetTransformationMatrix()->_21,
+			pProductInstance->GetTransformationMatrix()->_22,
+			pProductInstance->GetTransformationMatrix()->_23,
+			pProductInstance->GetTransformationMatrix()->_31,
+			pProductInstance->GetTransformationMatrix()->_32,
+			pProductInstance->GetTransformationMatrix()->_33,
+			pProductInstance->GetTransformationMatrix()->_41,
+			pProductInstance->GetTransformationMatrix()->_42,
+			pProductInstance->GetTransformationMatrix()->_43,
+		};
+
+		SetDatatypeProperty(
+			iMatrixInstance,
+			GetPropertyByName(iOwlModel, "coordinates"),
+			vecMatrix.data(),
+			vecMatrix.size());
+
+		OwlInstance iTransformationInstance = CreateInstance(GetClassByName(iOwlModel, "Transformation"));
+		ASSERT(iTransformationInstance != 0);
+
+		SetObjectProperty(
+			iTransformationInstance,
+			GetPropertyByName(iOwlModel, "object"),
+			GetSelectedInstance()->GetInstance());
+
+		SetObjectProperty(
+			iTransformationInstance,
+			GetPropertyByName(iOwlModel, "matrix"),
+			iMatrixInstance);
+
+		SaveInstanceTreeW(iTransformationInstance, dlgFile.GetPathName());
+	}
+	else
+	{
+		SaveInstanceTreeW(GetSelectedInstance()->GetInstance(), dlgFile.GetPathName());
+	}
+}
 
 // CMySTEPViewerDoc
 

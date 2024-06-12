@@ -52,6 +52,35 @@ void CController::SetModel(CModel* pModel)
 	m_bUpdatingModel = false;
 }
 
+CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+	ASSERT(m_pModel != nullptr);
+
+	m_pSelectedInstance = nullptr;
+
+	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->GetInstance() == iInstance))
+	{
+		return nullptr;
+	}
+
+	m_pTargetInstance = nullptr;
+
+	m_bUpdatingModel = true;
+
+	auto pInstance = dynamic_cast<CModel*>(m_pModel)->LoadInstance(iInstance);
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnModelUpdated();
+	}
+
+	m_bUpdatingModel = false;
+
+	return pInstance;
+}
+
 // ------------------------------------------------------------------------------------------------
 void CController::RegisterView(CViewBase* pView)
 {
@@ -105,14 +134,16 @@ void CController::ZoomOut()
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-void CController::SaveInstance()
+void CController::SaveInstance(OwlInstance iInstance)
 {
-	ASSERT(m_pModel != nullptr);
-	ASSERT(m_pSelectedInstance != nullptr);
+	ASSERT(iInstance != 0);
+
+	wstring strName;
+	wstring strUniqueName;
+	CInstanceBase::BuildInstanceNames(m_pModel->getInstance(), iInstance, strName, strUniqueName);
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), m_pSelectedInstance->GetName().c_str(),
+	CFileDialog dlgFile(FALSE, _T("bin"), strUniqueName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
@@ -120,60 +151,7 @@ void CController::SaveInstance()
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CProductInstance*>(m_pSelectedInstance);
-	if (pProductInstance != nullptr)
-	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(m_pSelectedInstance->GetInstance());
-		ASSERT(iSdaiModel != 0);
-
-		OwlModel iOwlModel = 0;
-		owlGetModel(iSdaiModel, &iOwlModel);
-		ASSERT(iOwlModel != 0);
-		
-		OwlInstance	iMatrixInstance = CreateInstance(GetClassByName(iOwlModel, "Matrix"));
-		ASSERT(iMatrixInstance != 0);
-
-		vector<double> vecMatrix
-		{
-			pProductInstance->GetTransformationMatrix()->_11,
-			pProductInstance->GetTransformationMatrix()->_12,
-			pProductInstance->GetTransformationMatrix()->_13,
-			pProductInstance->GetTransformationMatrix()->_21,
-			pProductInstance->GetTransformationMatrix()->_22,
-			pProductInstance->GetTransformationMatrix()->_23,
-			pProductInstance->GetTransformationMatrix()->_31,
-			pProductInstance->GetTransformationMatrix()->_32,
-			pProductInstance->GetTransformationMatrix()->_33,
-			pProductInstance->GetTransformationMatrix()->_41,
-			pProductInstance->GetTransformationMatrix()->_42,
-			pProductInstance->GetTransformationMatrix()->_43,
-		};
-
-		SetDatatypeProperty(
-			iMatrixInstance, 
-			GetPropertyByName(iOwlModel, "coordinates"), 
-			vecMatrix.data(),
-			vecMatrix.size());
-
-		OwlInstance iTransformationInstance = CreateInstance(GetClassByName(iOwlModel, "Transformation"));
-		ASSERT(iTransformationInstance != 0);
-
-		SetObjectProperty(
-			iTransformationInstance,
-			GetPropertyByName(iOwlModel, "object"),
-			m_pSelectedInstance->GetInstance());
-
-		SetObjectProperty(
-			iTransformationInstance, 
-			GetPropertyByName(iOwlModel, "matrix"), 
-			iMatrixInstance);
-
-		SaveInstanceTreeW(iTransformationInstance, dlgFile.GetPathName());
-	}
-	else
-	{
-		SaveInstanceTreeW(m_pSelectedInstance->GetInstance(), dlgFile.GetPathName());
-	}
+	SaveInstanceTreeW(iInstance, dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -196,6 +174,34 @@ void CController::ShowMetaInformation(CInstanceBase* /*pInstance*/)
 }
 
 // ------------------------------------------------------------------------------------------------
+void CController::SetTargetInstance(CViewBase* pSender, CInstanceBase* pInstance)
+{
+	if (m_bUpdatingModel)
+	{
+		return;
+	}
+
+	if (m_pTargetInstance == pInstance)
+	{
+		return;
+	}
+
+	m_pTargetInstance = pInstance;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnTargetInstanceChanged(pSender);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+CInstanceBase* CController::GetTargetInstance() const
+{
+	return m_pTargetInstance;
+}
+
+
 void CController::SelectInstance(CViewBase* pSender, CInstanceBase* pInstance)
 {
 	if (m_bUpdatingModel)
@@ -263,9 +269,21 @@ void CController::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance)
 // ------------------------------------------------------------------------------------------------
 void CController::OnViewRelations(CViewBase* pSender, CEntity* pEntity)
 {
+	m_pTargetInstance = nullptr;
+
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnViewRelations(pSender, pEntity);
+	}
+}
+
+
+void CController::OnInstanceAttributeEdited(CViewBase* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnInstanceAttributeEdited(pSender, iInstance, pAttribute);
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+
 using namespace std;
 
 // ************************************************************************************************
@@ -12,18 +13,22 @@ public: // Methods
 	CInstanceBase();
 	virtual ~CInstanceBase();
 
-	virtual SdaiInstance GetInstance() const PURE;
+	virtual int64_t GetInstance() const PURE;
 	virtual bool HasGeometry() const PURE;
 	virtual bool IsEnabled() const PURE;
 
-	wstring GetName() const { return GetName(GetInstance()); }
-	static wstring GetName(SdaiInstance iInstance);
-	OwlClass GetClass() const { return GetClass(GetInstance()); }
-	static OwlClass GetClass(int64_t iInstance) { return GetInstanceClass(iInstance); }
-	const wchar_t* GetClassName() const { return GetClassName(GetInstance()); }
-	static const wchar_t* GetClassName(OwlInstance iInstance);
-	SdaiEntity GetEntity() const { return sdaiGetInstanceType(GetInstance()); }
-	static SdaiEntity GetEntity(SdaiInstance iInstance) { return sdaiGetInstanceType(iInstance); }
-	const wchar_t* GetEntityName() const { return GetEntityName(GetInstance()); }
-	static const wchar_t* GetEntityName(SdaiInstance iInstance);
+	wstring GetName() const;
+	static wstring GetName(int64_t iInstance);
+
+	int64_t GetClass() const;
+	static int64_t GetClass(int64_t iInstance);
+	const wchar_t* GetClassName() const;
+	static const wchar_t* GetClassName(int64_t iInstance);
+
+	int64_t GetEntity() const;
+	static int64_t GetEntity(int64_t iInstance);
+	const wchar_t* GetEntityName() const;
+	static const wchar_t* GetEntityName(int64_t iInstance);
+
+	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName);
 };
