@@ -77,11 +77,11 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	vector<int_t> vecInstances;
+	vector<SdaiInstance> vecInstances;
 	vecInstances.push_back(iInstance);
 
 	LoadProperties(
-		CInstanceBase::GetEntity(iInstance),
+		(SdaiInstance)CInstanceBase::GetEntity(iInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
@@ -316,7 +316,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	for (auto iInstance : vecInstances)
 	{
 		LoadInstance(
-			CInstanceBase::GetEntity(iInstance),
+			(SdaiInstance)CInstanceBase::GetEntity(iInstance),
 			iInstance, 
 			hModel);
 	}

@@ -38,7 +38,7 @@ void CViewBase::SetController(CController* pController)
 /*virtual*/ void CViewBase::OnShowMetaInformation()
 {}
 
-/*virtual*/ void CViewBase::OnTargetInstanceChanged(CViewBase* pSender)
+/*virtual*/ void CViewBase::OnTargetInstanceChanged(CViewBase* /*pSender*/)
 {}
 
 // ------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ void CViewBase::SetController(CController* pController)
 /*virtual*/ void CViewBase::OnInstancesEnabledStateChanged(CViewBase* /*pSender*/)
 {}
 
-/*virtual*/ void CViewBase::OnInstanceAttributeEdited(CViewBase* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
+/*virtual*/ void CViewBase::OnInstanceAttributeEdited(CViewBase* /*pSender*/, SdaiInstance /*iInstance*/, SdaiAttr /*pAttribute*/)
 {}
 
 // ------------------------------------------------------------------------------------------------

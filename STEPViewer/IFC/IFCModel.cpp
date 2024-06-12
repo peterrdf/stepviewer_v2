@@ -305,11 +305,11 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	m_mapID2Instance.clear();
 	m_mapExpressID2Instance.clear();
 
-	auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
 	pInstance->setEnable(true);
 
 	m_vecInstances.push_back(pInstance);
-	m_mapInstances[iInstance] = pInstance;
+	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
 
 	// Helper data structures
 	m_mapID2Instance[pInstance->getID()] = pInstance;
@@ -552,7 +552,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 
 void CIFCModel::GetObjectsReferencedState()
 {
-	SdaiAggr pAggr = sdaiGetEntityExtentBN(m_iModel, (char*)"IFCPROJECT");
+	SdaiAggr pAggr = sdaiGetEntityExtentBN((SdaiModel)m_iModel, (char*)"IFCPROJECT");
 
 	SdaiInteger iMembersCount = sdaiGetMemberCount(pAggr);
 	if (iMembersCount > 0)
@@ -604,7 +604,7 @@ void CIFCModel::GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 		return;
 	}
 
-	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(m_iModel, "IFCRELAGGREGATES");
+	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity((SdaiModel)m_iModel, "IFCRELAGGREGATES");
 
 	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
@@ -643,7 +643,7 @@ void CIFCModel::GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 		return;
 	}
 
-	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(m_iModel, "IFCRELNESTS");
+	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity((SdaiModel)m_iModel, "IFCRELNESTS");
 
 	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
@@ -682,7 +682,7 @@ void CIFCModel::GetObjectsReferencedStateContainsElements(SdaiInstance iInstance
 		return;
 	}
 
-	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(m_iModel, "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity((SdaiModel)m_iModel, "IFCRELCONTAINEDINSPATIALSTRUCTURE");
 
 	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
 	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)

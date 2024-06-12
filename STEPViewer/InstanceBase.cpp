@@ -19,11 +19,11 @@ wstring CInstanceBase::GetName() const
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ wstring CInstanceBase::GetName(int64_t iInstance)
+/*static*/ wstring CInstanceBase::GetName(SdaiInstance iInstance)
 {
 	wstring strUniqueName;
 
-	int64_t iExpressID = internalGetP21Line(iInstance);	
+	int64_t iExpressID = internalGetP21Line(iInstance);
 	if (iExpressID != 0)
 	{
 		CString strID;
@@ -39,7 +39,7 @@ wstring CInstanceBase::GetName() const
 	}	
 
 	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iInstance, "Name", sdaiUNICODE, &szName);
+	sdaiGetAttrBN((SdaiInstance)iInstance, "Name", sdaiUNICODE, &szName);
 
 	if ((szName != nullptr) && (wcslen(szName) > 0))
 	{
@@ -49,7 +49,7 @@ wstring CInstanceBase::GetName() const
 	}
 
 	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iInstance, "Description", sdaiUNICODE, &szDescription);
+	sdaiGetAttrBN((SdaiInstance)iInstance, "Description", sdaiUNICODE, &szDescription);
 
 	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 	{
@@ -62,13 +62,13 @@ wstring CInstanceBase::GetName() const
 }
 
 // --------------------------------------------------------------------------------------------
-int64_t CInstanceBase::GetClass() const
+OwlClass CInstanceBase::GetClass() const
 {
 	return GetClass(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstanceBase::GetClass(int64_t iInstance)
+/*static*/ OwlClass CInstanceBase::GetClass(OwlInstance iInstance)
 {
 	return GetInstanceClass(iInstance);
 }
@@ -80,7 +80,7 @@ const wchar_t* CInstanceBase::GetClassName() const
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstanceBase::GetClassName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetClassName(OwlInstance iInstance)
 {
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
@@ -89,13 +89,13 @@ const wchar_t* CInstanceBase::GetClassName() const
 }
 
 // --------------------------------------------------------------------------------------------
-int64_t CInstanceBase::GetEntity() const
+SdaiEntity CInstanceBase::GetEntity() const
 {
 	return sdaiGetInstanceType(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ int64_t CInstanceBase::GetEntity(int64_t iInstance)
+/*static*/ SdaiEntity CInstanceBase::GetEntity(SdaiInstance iInstance)
 {
 	return sdaiGetInstanceType(iInstance);
 }
@@ -107,7 +107,7 @@ const wchar_t* CInstanceBase::GetEntityName() const
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstanceBase::GetEntityName(int64_t iInstance)
+/*static*/ const wchar_t* CInstanceBase::GetEntityName(SdaiInstance iInstance)
 {
 	wchar_t* szEntityName = nullptr;
 	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (const char**)&szEntityName);
@@ -121,7 +121,7 @@ const wchar_t* CInstanceBase::GetEntityName() const
 	ASSERT(iModel != 0);
 	ASSERT(iInstance != 0);
 
-	int64_t iClassInstance = GetInstanceClass(iInstance);
+	OwlClass iClassInstance = GetInstanceClass(iInstance);
 	ASSERT(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
