@@ -142,14 +142,27 @@ void CController::SaveInstance(OwlInstance iInstance)
 	wstring strUniqueName;
 	CInstanceBase::BuildInstanceNames(m_pModel->getInstance(), iInstance, strName, strUniqueName);
 
+	CString strValidPath = strUniqueName.c_str();
+	strValidPath.Replace(_T("\\"), _T("-"));
+	strValidPath.Replace(_T("/"), _T("-"));
+	strValidPath.Replace(_T(":"), _T("-"));
+	strValidPath.Replace(_T("*"), _T("-"));
+	strValidPath.Replace(_T("?"), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("<"), _T("-"));
+	strValidPath.Replace(_T(">"), _T("-"));
+	strValidPath.Replace(_T("|"), _T("-"));
+
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), strUniqueName.c_str(),
+	CFileDialog dlgFile(FALSE, _T("bin"), strValidPath,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
-	}
+	}	
 
 	SaveInstanceTreeW(iInstance, dlgFile.GetPathName());
 }

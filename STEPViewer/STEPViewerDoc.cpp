@@ -21,10 +21,27 @@
 /*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
 {
 	ASSERT(m_pModel != nullptr);
-	ASSERT(GetSelectedInstance() != nullptr);
+
+	if (GetSelectedInstance() == nullptr)
+	{
+		return;
+	} 
+
+	CString strValidPath = GetSelectedInstance()->GetName().c_str();
+	strValidPath.Replace(_T("\\"), _T("-"));
+	strValidPath.Replace(_T("/"), _T("-"));
+	strValidPath.Replace(_T(":"), _T("-"));
+	strValidPath.Replace(_T("*"), _T("-"));
+	strValidPath.Replace(_T("?"), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("\""), _T("-"));
+	strValidPath.Replace(_T("<"), _T("-"));
+	strValidPath.Replace(_T(">"), _T("-"));
+	strValidPath.Replace(_T("|"), _T("-"));
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), GetSelectedInstance()->GetName().c_str(),
+	CFileDialog dlgFile(FALSE, _T("bin"), strValidPath,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
