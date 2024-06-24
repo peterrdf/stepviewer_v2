@@ -993,14 +993,15 @@ void CSTEPModelStructureView::LoadModel()
 	auto itDefinition = mapDefinitions.begin();
 	for (; itDefinition != mapDefinitions.end(); itDefinition++)
 	{
-		CProductDefinition* pDefinition = itDefinition->second;
+		auto pDefinition = itDefinition->second;
 
 		if (pDefinition->GetRelatedProducts() == 0)
 		{
-			// Load all items in the memory
-			LoadProductDefinitionInMemory(pModel, pDefinition, pModelItemData);
+			LoadProductDefinitionsInMemory(pModel, pDefinition, pModelItemData);
 		}
 	}
+
+	SearchForDescendantWithGeometry();
 
 	m_pTreeCtrl->InsertItem(ITEM_PENDING_LOAD, IMAGE_SELECTED, IMAGE_SELECTED, hModel);
 
@@ -1008,51 +1009,6 @@ void CSTEPModelStructureView::LoadModel()
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** CSTEPModelStructureView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
-{
-	CString strName = pDefinition->GetId();
-	strName += ITEM_PRODUCT_DEFINION;
-
-	/*
-	* Instance
-	*/
-	if (pDefinition->GetRelatingProducts() > 0)
-	{
-		HTREEITEM hProductDefinition = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
-		m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
-
-		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)pDefinition, enumSTEPItemDataType::ProductDefinition);
-		m_vecItemData.push_back(pItemData);
-
-		m_pTreeCtrl->SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
-
-		WalkAssemblyTreeRecursively(pModel, pDefinition, hProductDefinition);
-	} // if (pDefinition->GetRelatingProductRefs() > 0)
-	else
-	{
-		auto& vecInstances = pDefinition->GetInstances();
-		int32_t iInstance = pDefinition->GetNextInstance();
-
-		strName = pDefinition->GetId();
-		strName += ITEM_PRODUCT_INSTANCE;
-
-		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
-
-		auto pItemData = new CSTEPItemData(nullptr, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
-		m_vecItemData.push_back(pItemData);
-
-		m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
-
-		int iImage = vecInstances[iInstance]->GetEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hInstance);
-		m_pTreeCtrl->SetItemData(hGeometry, (DWORD_PTR)pItemData);
-
-		ASSERT(m_mapInstance2Item.find(vecInstances[iInstance]) == m_mapInstance2Item.end());
-		m_mapInstance2Item[vecInstances[iInstance]] = hInstance;
-	} // else if (pDefinition->GetRelatingProductRefs() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1129,7 +1085,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CSTEPModel* pModel, CP
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CSTEPModelStructureView::LoadProductDefinitionsInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	/*
 	* Instance
@@ -1210,6 +1166,69 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pM
 	pParent->children().push_back(pInstanceItemData);
 
 	m_vecItemData.push_back(pInstanceItemData);
+}
+
+void CSTEPModelStructureView::SearchForDescendantWithGeometry()
+{
+	for (auto pItemData : m_vecItemData)
+	{
+		bool bHasDescendantWithGeometry = false;
+
+		if (pItemData->getType() == enumSTEPItemDataType::ProductInstance)
+		{
+			auto pProductInstance = pItemData->GetInstance<CProductInstance>();
+
+			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+		}
+		
+		if (!bHasDescendantWithGeometry)
+		{
+			for (auto pChildItemData : pItemData->children())
+			{
+				if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
+				{
+					auto pProductInstance = pChildItemData->GetInstance<CProductInstance>();
+
+					bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+					if (bHasDescendantWithGeometry)
+					{
+						break;
+					}
+				}
+
+				SearchForDescendantWithGeometryRecursively(pChildItemData, bHasDescendantWithGeometry);
+				if (bHasDescendantWithGeometry)
+				{
+					break;
+				}
+			} // for (auto pChildItemData : ...
+		} // if (!bHasDescendantWithGeometry)		
+
+		pItemData->hasDescendantWithGeometry() = bHasDescendantWithGeometry;
+	} // for (auto pItemData : ...
+}
+
+void CSTEPModelStructureView::SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry)
+{
+	for (auto pChildItemData : pItemData->children())
+	{
+		if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
+		{
+			auto pProductInstance = pChildItemData->GetInstance<CProductInstance>();
+
+			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+			if (bHasDescendantWithGeometry)
+			{
+				break;
+			}
+		}
+
+		SearchForDescendantWithGeometryRecursively(pChildItemData, bHasDescendantWithGeometry);
+		if (bHasDescendantWithGeometry)
+		{
+			break;
+		}
+	} // for (auto pChildItemData : ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1293,7 +1312,8 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvInsertStruct.item.pszText = strName.GetBuffer();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
+			pItemData->hasDescendantWithGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.cChildren = 1;
 		tvInsertStruct.item.lParam = (LPARAM)pChild;
 

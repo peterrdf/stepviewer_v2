@@ -69,10 +69,11 @@ private: // Methods
 	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
 
-	void LoadProductDefinition(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
 	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void LoadProductDefinitionsInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void SearchForDescendantWithGeometry();
+	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
 	CSTEPItemData* FindItemData(CProductInstance* pInstance);
 	void LoadItemChildren(CSTEPItemData* pItemData);
 	void LoadInstanceAncestors(CProductInstance* pInstance);

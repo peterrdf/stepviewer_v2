@@ -8,6 +8,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTE
 	, m_enSTEPItemDataType(enItemDataType)
 	, m_hItem(nullptr)
 	, m_vecChildren()
+	, m_bHasDescendantWithGeometry()
 {
 	ASSERT(m_pInstance != nullptr);
 	ASSERT(m_enSTEPItemDataType != enumSTEPItemDataType::Unknown);

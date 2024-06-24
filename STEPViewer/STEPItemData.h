@@ -40,6 +40,10 @@ private: // Members
 	// Children
 	vector<CSTEPItemData*> m_vecChildren;
 
+	// --------------------------------------------------------------------------------------------
+	// Geometry
+	bool m_bHasDescendantWithGeometry;
+
 public: // Members
 
 	// --------------------------------------------------------------------------------------------
@@ -73,5 +77,9 @@ public: // Members
 	// --------------------------------------------------------------------------------------------
 	// Accessor
 	vector<CSTEPItemData*>& children();
+
+	// --------------------------------------------------------------------------------------------
+	// Accessor
+	bool& hasDescendantWithGeometry() { return m_bHasDescendantWithGeometry; }
 };
 
