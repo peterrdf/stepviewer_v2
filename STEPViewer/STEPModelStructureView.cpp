@@ -1001,7 +1001,26 @@ void CSTEPModelStructureView::LoadModel()
 		}
 	}
 
+	// Check for descendants with Geometry
 	SearchForDescendantWithGeometry();
+
+	/* Update Model */
+
+	bool bHasDescendantWithGeometry = false;
+	for (auto pItemData : m_vecItemData)
+	{
+		if (pItemData->hasDescendantWithGeometry())
+		{
+			bHasDescendantWithGeometry = true;
+
+			break;
+		}
+	}
+
+	if (!bHasDescendantWithGeometry)
+	{
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+	}
 
 	m_pTreeCtrl->InsertItem(ITEM_PENDING_LOAD, IMAGE_SELECTED, IMAGE_SELECTED, hModel);
 
