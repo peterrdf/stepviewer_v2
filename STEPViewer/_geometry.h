@@ -748,7 +748,12 @@ protected: // Methods
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);
 
-		CalculateInstance(m_iInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(m_iInstance);
+
+		int64_t iOwlInstance = 0;
+		owlBuildInstance(iSdaiModel, m_iInstance, &iOwlInstance);
+
+		CalculateInstance(iOwlInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
@@ -757,12 +762,12 @@ protected: // Methods
 		pVertexBuffer->data() = new float[(uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength()];
 		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
 
-		UpdateInstanceVertexBuffer(m_iInstance, pVertexBuffer->data());
+		UpdateInstanceVertexBuffer(iOwlInstance, pVertexBuffer->data());
 
 		pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
 		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
-		UpdateInstanceIndexBuffer(m_iInstance, pIndexBuffer->data());
+		UpdateInstanceIndexBuffer(iOwlInstance, pIndexBuffer->data());
 
 		return true;
 	}
