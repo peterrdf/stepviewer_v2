@@ -748,10 +748,10 @@ protected: // Methods
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);
 
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(m_iInstance);
+		SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
 
 		int64_t iOwlInstance = 0;
-		owlBuildInstance(iSdaiModel, m_iInstance, &iOwlInstance);
+		owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
 
 		CalculateInstance(iOwlInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
