@@ -265,7 +265,7 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	TCHAR szFilters[] = _T("STEP Files (*.stp;*.step)|*.stp;*.step|IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
+	TCHAR szFilters[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
