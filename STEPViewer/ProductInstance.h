@@ -16,7 +16,7 @@ private: // Members
 
 	int64_t m_iID;
 	CProductDefinition* m_pProductDefinition;
-	_matrix16x16* m_pTransformationMatrix;
+	_matrix4x4* m_pTransformationMatrix;
 
 	bool m_bEnable;	
 
@@ -34,7 +34,7 @@ public: // Methods
 	
 	int64_t GetID() const { return m_iID; }
 	CProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
-	_matrix16x16* GetTransformationMatrix() const { return m_pTransformationMatrix; }
+	_matrix4x4* GetTransformationMatrix() const { return m_pTransformationMatrix; }
 	bool GetEnable() const { return m_bEnable; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
 };

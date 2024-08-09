@@ -112,7 +112,7 @@ static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _m
 }
 
 // ************************************************************************************************
-struct _matrix16x16
+struct _matrix4x4
 {
 	double _11, _12, _13, _14;
 	double _21, _22, _23, _24;
@@ -120,28 +120,16 @@ struct _matrix16x16
 	double _41, _42, _43, _44;
 };
 
-static void _matrix16x16Identity(_matrix16x16* pM)
+static void _matrix4x4Identity(_matrix4x4* pM)
 {
 	assert(pM != nullptr);
 
-	memset(pM, 0, sizeof(_matrix16x16));
+	memset(pM, 0, sizeof(_matrix4x4));
 
 	pM->_11 = pM->_22 = pM->_33 = pM->_44 = 1.;
 }
 
-static void	_matrix16x16Transform(const _vector3* pIn, const _matrix16x16* pM, _vector3* pOut)
-{
-	_vector3 pTmp;
-	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
-	pTmp.y = pIn->x * pM->_12 + pIn->y * pM->_22 + pIn->z * pM->_32 + pM->_42;
-	pTmp.z = pIn->x * pM->_13 + pIn->y * pM->_23 + pIn->z * pM->_33 + pM->_43;
-
-	pOut->x = pTmp.x;
-	pOut->y = pTmp.y;
-	pOut->z = pTmp.z;
-}
-
-static void	_transform(const _vector3* pV, const _matrix16x16* pM, _vector3* pOut)
+static void	_transform(const _vector3* pV, const _matrix4x4* pM, _vector3* pOut)
 {
 	_vector3 pTmp;
 	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;

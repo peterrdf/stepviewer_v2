@@ -13,8 +13,8 @@ CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefi
 	ASSERT(m_iID != 0);
 	ASSERT(m_pProductDefinition != nullptr);
 
-	m_pTransformationMatrix = new _matrix16x16();
-	_matrix16x16Identity(m_pTransformationMatrix);
+	m_pTransformationMatrix = new _matrix4x4();
+	_matrix4x4Identity(m_pTransformationMatrix);
 
 	if (pTransformationMatrix != nullptr) 
 	{

@@ -232,7 +232,7 @@ CProductInstance* CSTEPModel::getProductInstanceByID(int64_t iID) const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::ScaleAndCenter()
+void CSTEPModel::Scale()
 {
 	/* World */
 	m_dOriginalBoundingSphereDiameter = 2.;
@@ -414,7 +414,7 @@ void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 
 	LoadGeometry();
 
-	ScaleAndCenter();
+	Scale();
 }
 
 // ------------------------------------------------------------------------------------------------

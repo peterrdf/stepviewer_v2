@@ -51,7 +51,7 @@ public: // Methods
 	const map<ExpressID, CAssembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
 	CProductInstance* getProductInstanceByID(int64_t iID) const;
 
-	void ScaleAndCenter(); // [-1, 1]
+	void Scale(); // [-1, 1]
 
 	void Save(const wchar_t * szPath);
 	void Load(const wchar_t * szPath);

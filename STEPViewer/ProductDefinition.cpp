@@ -110,7 +110,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -146,7 +146,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -182,7 +182,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -213,7 +213,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_matrix16x16Transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
