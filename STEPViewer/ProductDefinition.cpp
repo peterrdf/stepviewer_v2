@@ -25,6 +25,7 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 
 	SdaiInstance iFormationInstance = 0;
 	sdaiGetAttrBN(iSdaiInstance, "formation", sdaiINSTANCE, &iFormationInstance);
+	ASSERT(iFormationInstance != 0);
 
 	SdaiInstance iProductInstance = 0;
 	sdaiGetAttrBN(iFormationInstance, "of_product", sdaiINSTANCE, &iProductInstance);

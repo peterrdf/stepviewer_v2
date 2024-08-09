@@ -521,13 +521,13 @@ void CSTEPModel::LoadGeometry()
 	{
 		if (itDefinition->second->GetRelatedProducts() == 0)
 		{
-			WalkAssemblyTreeRecursively("", "", itDefinition->second, nullptr);
+			WalkAssemblyTreeRecursively(itDefinition->second, nullptr);
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char* szGroupName, CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
+void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -572,7 +572,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(const char* szStepName, const char*
 				_matrix4x3Multiply(&matrix, &matrix, pParentMatrix);
 			}
 
-			WalkAssemblyTreeRecursively(szStepName, szGroupName, pAssembly->GetRelatedProductDefinition(), &matrix);
+			WalkAssemblyTreeRecursively(pAssembly->GetRelatedProductDefinition(), &matrix);
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
