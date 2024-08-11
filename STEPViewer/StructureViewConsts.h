@@ -2,7 +2,7 @@
 #pragma once
 
 #define ITEM_GEOMETRY L"geometry"
-#define ITEM_PRODUCT_DEFINION L"(definition)"
+#define ITEM_PRODUCT_DEFINION L"(product)"
 #define ITEM_PRODUCT_INSTANCE L"(instance)"
 #define ITEM_ASSEMBLY L"(assembly)"
 #define ITEM_PENDING_LOAD L"***..........***"

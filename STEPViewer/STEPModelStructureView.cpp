@@ -1292,7 +1292,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 				ASSERT(pDefinition->GetId() != nullptr);
 				ASSERT(pDefinition->GetProductName() != nullptr);
 
-				strName.Format(L"#%s %s %s", pDefinition->GetId(), pDefinition->GetProductName(), ITEM_PRODUCT_DEFINION);
+				strName.Format(L"#%lld %s %s", pDefinition->GetExpressID(), pDefinition->GetProductName(), ITEM_PRODUCT_DEFINION);
 			}
 			break;
 
@@ -1303,7 +1303,7 @@ void CSTEPModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 				ASSERT(pAssembly->GetId() != nullptr);
 				ASSERT(pAssembly->GetName() != nullptr);
 
-				strName.Format(L"#%s %s %s", pAssembly->GetId(), pAssembly->GetName(), ITEM_ASSEMBLY);
+				strName.Format(L"#%lld %s %s", pAssembly->GetExpressID(), pAssembly->GetName(), ITEM_ASSEMBLY);
 			}
 			break;
 
