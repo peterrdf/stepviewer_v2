@@ -71,7 +71,7 @@ typedef		int64_t										ConceptualFace;
 
 //control vertex data
 #define		FORMAT_VERTEX_POINT							FLAGBIT(4)		//	Vertex contains 3D point info
-#define		FORMAT_VERTEX_NORMAL						FLAGBIT(5)		//	Vertex contains normat info
+#define		FORMAT_VERTEX_NORMAL						FLAGBIT(5)		//	Vertex contains normal info
 #define		FORMAT_VERTEX_TEXTURE_UV					FLAGBIT(6)		//	Vertex contains first 2D texture info
 #define		FORMAT_VERTEX_TEXTURE_TANGENT				FLAGBIT(28)		//	Vertex does contain tangent vector for first texture
 #define		FORMAT_VERTEX_TEXTURE_BINORMAL				FLAGBIT(29)		//	Vertex does contain binormal vector for first texture
