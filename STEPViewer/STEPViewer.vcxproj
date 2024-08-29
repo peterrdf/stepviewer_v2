@@ -332,6 +332,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\MySTEPViewer.rc2" />
+    <None Include="res\Shader.frag">
+      <FileType>Text</FileType>
+    </None>
+    <None Include="res\Shader.vert">
+      <FileType>Text</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

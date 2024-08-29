@@ -370,5 +370,7 @@
     <None Include="res\MySTEPViewer.rc2">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\Shader.frag" />
+    <None Include="res\Shader.vert" />
   </ItemGroup>
 </Project>

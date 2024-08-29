@@ -24,8 +24,13 @@ COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 	_initialize(
 		pWnd,
 		16,
+#ifdef _BLINN_PHONG_SHADERS
 		IDR_TEXTFILE_VERTEX_SHADER2,
 		IDR_TEXTFILE_FRAGMENT_SHADER2,
+#else
+		IDR_TEXTFILE_VERTEX_SHADER3,
+		IDR_TEXTFILE_FRAGMENT_SHADER3,
+#endif
 		TEXTFILE,
 		false);
 
@@ -546,12 +551,12 @@ COpenGLIFCView::~COpenGLIFCView()
 	{
 		pController->RegisterView(this);
 
-		// OpenGL
+#ifdef _BLINN_PHONG_SHADERS
 		m_pOGLProgram->_setAmbientLightWeighting(
 			0.4f,
 			0.4f,
 			0.4f);
-
+#endif
 		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 
 		loadSettings();
@@ -645,7 +650,11 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 		}
 	}
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(true);
+#else
+	m_pOGLProgram->_enableLighting(true);
+#endif
 
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
@@ -726,7 +735,11 @@ void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -775,7 +788,11 @@ void COpenGLIFCView::DrawLines(_model* pM)
 
 	auto begin = std::chrono::steady_clock::now();
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -826,7 +843,11 @@ void COpenGLIFCView::DrawPoints(_model* pM)
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.cohorts())
@@ -947,7 +968,11 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.cohorts())
