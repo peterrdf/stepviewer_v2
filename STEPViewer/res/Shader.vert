@@ -5,7 +5,7 @@ in vec3 Normal;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
-uniform mat3 NormalsMatrix;
+uniform mat3 NormalMatrix;
 uniform vec3 DiffuseMaterial;
 uniform float EnableLighting = 1;
 
@@ -17,7 +17,7 @@ void main()
 {
     if (EnableLighting > 0.5)
     {
-        EyespaceNormal = NormalsMatrix * Normal;    
+        EyespaceNormal = NormalMatrix * Normal;    
         Diffuse = DiffuseMaterial;
     }
 

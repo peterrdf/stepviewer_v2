@@ -999,7 +999,7 @@ private: // Members
 	// Uniforms
 	GLint m_iProjectionMatrix;
 	GLint m_iModelViewMatrix;
-	GLint m_iNormalsMatrix;
+	GLint m_iNormalMatrix;
 	GLint m_iDiffuseMaterial;
 	GLint m_iEnableLighting;
 
@@ -1023,7 +1023,7 @@ public: // Methods
 		, m_iVertexNormal(-1)		
 		, m_iProjectionMatrix(-1)
 		, m_iModelViewMatrix(-1)
-		, m_iNormalsMatrix(-1)
+		, m_iNormalMatrix(-1)
 		, m_iDiffuseMaterial(-1)
 		, m_iEnableLighting(-1)
 		, m_iLightPosition(-1)
@@ -1058,8 +1058,8 @@ public: // Methods
 		m_iModelViewMatrix = glGetUniformLocation(_getID(), "ModelViewMatrix");
 		assert(m_iModelViewMatrix >= 0);
 
-		m_iNormalsMatrix = glGetUniformLocation(_getID(), "NormalsMatrix");
-		assert(m_iNormalsMatrix >= 0);
+		m_iNormalMatrix = glGetUniformLocation(_getID(), "NormalMatrix");
+		assert(m_iNormalMatrix >= 0);
 
 		m_iDiffuseMaterial = glGetUniformLocation(_getID(), "DiffuseMaterial");
 		assert(m_iDiffuseMaterial >= 0);
@@ -1115,12 +1115,12 @@ public: // Methods
 			value_ptr(matModelView));
 	}
 
-	void _setNormalsMatrix(glm::mat4& matModelView) const
+	void _setNormalMatrix(glm::mat4& matModelView) const
 	{
 		glm::mat3 matNormal = matModelView;
 		glProgramUniformMatrix3fv(
 			_getID(),
-			m_iNormalsMatrix,
+			m_iNormalMatrix,
 			1,
 			false,
 			value_ptr(matNormal));
@@ -3314,7 +3314,7 @@ public: // Methods
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 #else
-		m_pOGLProgram->_setNormalsMatrix(m_matModelView);
+		m_pOGLProgram->_setNormalMatrix(m_matModelView);
 
 		// Model
 		m_pOGLProgram->_enableLighting(true);
