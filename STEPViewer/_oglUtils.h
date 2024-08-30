@@ -788,9 +788,15 @@ public: // Methods
 
 		_setUniform3f(
 			m_iMaterialDiffuseColor,
+#ifdef _BLINN_PHONG_SHADERS
 			pMaterial->getDiffuseColor().r() / 2.f,
 			pMaterial->getDiffuseColor().g() / 2.f,
 			pMaterial->getDiffuseColor().b() / 2.f);
+#else
+			pMaterial->getDiffuseColor().r(),
+			pMaterial->getDiffuseColor().g(),
+			pMaterial->getDiffuseColor().b());
+#endif
 	}
 
 	void _setSpecularColor(const _material* pMaterial)
@@ -799,9 +805,15 @@ public: // Methods
 
 		_setUniform3f(
 			m_iMaterialSpecularColor,
+#ifdef _BLINN_PHONG_SHADERS
 			pMaterial->getSpecularColor().r() / 2.f,
 			pMaterial->getSpecularColor().g() / 2.f,
 			pMaterial->getSpecularColor().b() / 2.f);
+#else
+			pMaterial->getSpecularColor().r(),
+			pMaterial->getSpecularColor().g(),
+			pMaterial->getSpecularColor().b());
+#endif
 	}
 
 	void _setEmissiveColor(const _material* pMaterial)
@@ -1103,9 +1115,10 @@ public: // Methods
 			value_ptr(matModelView));
 	}
 
-	void _setNormalsMatrix(glm::mat4& matNormal) const
+	void _setNormalsMatrix(glm::mat4& matModelView) const
 	{
-		glProgramUniformMatrix4fv(
+		glm::mat3 matNormal = matModelView;
+		glProgramUniformMatrix3fv(
 			_getID(),
 			m_iNormalsMatrix,
 			1,
@@ -1119,9 +1132,9 @@ public: // Methods
 
 		_setUniform3f(
 			m_iDiffuseMaterial,
-			pMaterial->getDiffuseColor().r() / 2.f,
-			pMaterial->getDiffuseColor().g() / 2.f,
-			pMaterial->getDiffuseColor().b() / 2.f);
+			pMaterial->getDiffuseColor().r(),
+			pMaterial->getDiffuseColor().g(),
+			pMaterial->getDiffuseColor().b());
 	}
 
 	void _enableLighting(bool bEnable)
@@ -1165,9 +1178,15 @@ public: // Methods
 
 		_setUniform3f(
 			m_iSpecularMaterial,
+#ifdef _BLINN_PHONG_SHADERS
 			pMaterial->getSpecularColor().r() / 2.f,
 			pMaterial->getSpecularColor().g() / 2.f,
 			pMaterial->getSpecularColor().b() / 2.f);
+#else
+			pMaterial->getSpecularColor().r(),
+			pMaterial->getSpecularColor().g(),
+			pMaterial->getSpecularColor().b());
+#endif
 	}
 
 	void _setTransparency(float fA)
@@ -3285,19 +3304,17 @@ public: // Methods
 		}
 
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
-
-		// Normal Matrix
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);		
+#ifdef _BLINN_PHONG_SHADERS
 		glm::mat4 matNormal = m_matModelView;
 		matNormal = glm::inverse(matNormal);
 		matNormal = glm::transpose(matNormal);
-#ifdef _BLINN_PHONG_SHADERS
 		m_pOGLProgram->_setNormalMatrix(matNormal);
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 #else
-		m_pOGLProgram->_setNormalsMatrix(matNormal);
+		m_pOGLProgram->_setNormalsMatrix(m_matModelView);
 
 		// Model
 		m_pOGLProgram->_enableLighting(true);
