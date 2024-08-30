@@ -114,13 +114,6 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 		}
 
 		auto pBlinnPhongProgram = pRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
-		if (pBlinnPhongProgram == nullptr)
-		{
-			ASSERT(FALSE);
-
-			return 0;
-		}
-
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
 		{
@@ -186,6 +179,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::PointLightingLocation:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -209,6 +204,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::AmbientLightWeighting:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -232,6 +229,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::DiffuseLightWeighting:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -255,6 +254,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::SpecularLightWeighting:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -278,6 +279,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::MaterialShininess:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
@@ -288,6 +291,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::Contrast:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setContrast(fValue);
@@ -298,6 +303,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::Brightness:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setBrightness(fValue);
@@ -308,6 +315,8 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 				case enumApplicationProperty::Gamma:
 				{
+					ASSERT(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setGamma(fValue);
