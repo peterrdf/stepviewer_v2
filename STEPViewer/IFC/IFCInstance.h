@@ -32,6 +32,7 @@ public: // Methods
 
 	// _geometry
 	virtual OwlModel getModel() const override;
+	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
 	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }

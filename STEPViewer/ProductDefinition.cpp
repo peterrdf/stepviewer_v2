@@ -48,6 +48,23 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	return iOwlModel;
 }
 
+/*virtual*/ int64_t CProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
+{
+	assert(piVertexBufferSize != nullptr);
+	assert(piIndexBufferSize != nullptr);
+
+	*piVertexBufferSize = *piIndexBufferSize = 0;
+
+	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
+
+	int64_t iOwlInstance = 0;
+	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
+
+	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
+
+	return iOwlInstance;
+}
+
 void CProductDefinition::CalculateMinMaxTransform(
 	CProductInstance* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,

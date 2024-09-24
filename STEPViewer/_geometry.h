@@ -735,13 +735,8 @@ protected: // Methods
 	{
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);
-
-		SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
-
-		int64_t iOwlInstance = 0;
-		owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
-
-		CalculateInstance(iOwlInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
+		
+		int64_t iOwlInstance = calculateInstance(&pVertexBuffer->size(), &pIndexBuffer->size());
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
@@ -758,6 +753,18 @@ protected: // Methods
 		UpdateInstanceIndexBuffer(iOwlInstance, pIndexBuffer->data());
 
 		return true;
+	}
+
+	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize)
+	{
+		assert(piVertexBufferSize != nullptr);
+		assert(piIndexBufferSize != nullptr);
+
+		*piVertexBufferSize = *piIndexBufferSize = 0;
+
+		CalculateInstance(m_iInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
+
+		return m_iInstance;
 	}
 
 	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
