@@ -563,6 +563,7 @@ void CIFCModel::GetObjectsReferencedState()
 		GetObjectsReferencedStateIsDecomposedBy(iProjectInstance);
 		GetObjectsReferencedStateIsNestedBy(iProjectInstance);
 		GetObjectsReferencedStateContainsElements(iProjectInstance);
+		GetObjectsReferencedStateHasAssignments(iProjectInstance);
 
 		// Disable Unreferenced instances
 		for (auto itInstance : m_mapInstances)
@@ -587,6 +588,7 @@ void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance iInstance)
 		GetObjectsReferencedStateIsDecomposedBy(iInstance);
 		GetObjectsReferencedStateIsNestedBy(iInstance);
 		GetObjectsReferencedStateContainsElements(iInstance);
+		GetObjectsReferencedStateHasAssignments(iInstance);
 	}
 	else
 	{
@@ -706,6 +708,39 @@ void CIFCModel::GetObjectsReferencedStateContainsElements(SdaiInstance iInstance
 
 			GetObjectsReferencedStateRecursively(iIFCRelatedElementsInstance);
 		} // for (int_t j = ...
+	} // for (int64_t i = ...
+}
+
+void CIFCModel::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	SdaiAggr piContainsElementsInstances = nullptr;
+	sdaiGetAttrBN(iInstance, "HasAssignments", sdaiAGGR, &piContainsElementsInstances);
+
+	if (piContainsElementsInstances == nullptr)
+	{
+		return;
+	}
+
+//	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity((SdaiModel)m_iModel, "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+
+	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
+	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
+	{
+		SdaiInstance iIFCContainsElementsInstance = 0;
+		engiGetAggrElement(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
+
+//		if (sdaiGetInstanceType(iIFCContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity)
+//		{
+//			continue;
+//		}
+
+		SdaiInstance iIFCRelatingProductInstance = 0;
+		sdaiGetAttrBN(iIFCContainsElementsInstance, "RelatingProduct", sdaiINSTANCE, &iIFCRelatingProductInstance);
+
+		if (sdaiIsKindOfBN(iIFCRelatingProductInstance, "IFCPRODUCT"))
+			GetObjectsReferencedStateRecursively(iIFCRelatingProductInstance);
 	} // for (int64_t i = ...
 }
 

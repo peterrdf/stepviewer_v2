@@ -93,6 +93,7 @@ private: // Methods
 	void GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance);
 	void GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance);
 	void GetObjectsReferencedStateContainsElements(SdaiInstance iInstance);
+	void GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance);
 	void GetObjectsReferencedStateRecursively(SdaiInstance iInstance);
 
 	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
