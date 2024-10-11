@@ -207,6 +207,19 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\engdef.h" />
+    <ClInclude Include="..\include\engine.h" />
+    <ClInclude Include="..\include\glext.h" />
+    <ClInclude Include="..\include\log.hpp" />
+    <ClInclude Include="..\include\stepengine.h" />
+    <ClInclude Include="..\include\wglext.h" />
+    <ClInclude Include="..\include\_3DUtils.h" />
+    <ClInclude Include="..\include\_geometry.h" />
+    <ClInclude Include="..\include\_material.h" />
+    <ClInclude Include="..\include\_mvc.h" />
+    <ClInclude Include="..\include\_oglUtils.h" />
+    <ClInclude Include="..\include\_quaterniond.h" />
+    <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="AP242\Assembly.h" />
     <ClInclude Include="AP242\DesignTreeView.h" />
     <ClInclude Include="AP242\OpenGLSTEPView.h" />
@@ -248,10 +261,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TreeCtrlEx.h" />
-    <ClInclude Include="_geometry.h" />
-    <ClInclude Include="_material.h" />
-    <ClInclude Include="_oglUtils.h" />
-    <ClInclude Include="_quaterniond.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AP242\Assembly.cpp" />

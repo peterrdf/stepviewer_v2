@@ -22,13 +22,23 @@
     <Filter Include="CIS2">
       <UniqueIdentifier>{d9ec8e66-6ad6-498e-b591-3e472df994a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{0d1797b7-09c2-402a-a806-a11cfd26efa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{267c8570-e195-4a20-a677-44a28b597ec6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="res\vertex_shader2.txt" />
-    <Text Include="res\fragment_shader2.txt" />
     <Text Include="CIS2\todo.txt">
       <Filter>CIS2</Filter>
+    </Text>
+    <Text Include="res\fragment_shader2.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\vertex_shader2.txt">
+      <Filter>res</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -95,15 +105,6 @@
     <ClInclude Include="TreeViewBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_oglUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -123,9 +124,6 @@
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="SearchTreeCtrlDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_quaterniond.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModelCheckDlg.h">
@@ -166,6 +164,45 @@
     </ClInclude>
     <ClInclude Include="AP242\DesignTreeView.h">
       <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_3DUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_material.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_oglUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_quaterniond.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_settings_storage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\engdef.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\engine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\glext.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\log.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stepengine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\wglext.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -379,7 +416,11 @@
     <None Include="res\MySTEPViewer.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\Shader.frag" />
-    <None Include="res\Shader.vert" />
+    <None Include="res\Shader.frag">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\Shader.vert">
+      <Filter>res</Filter>
+    </None>
   </ItemGroup>
 </Project>
