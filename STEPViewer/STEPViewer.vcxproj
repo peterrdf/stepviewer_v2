@@ -201,6 +201,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="CIS2\todo.txt" />
     <Text Include="ReadMe.txt" />
     <Text Include="res\fragment_shader2.txt" />
     <Text Include="res\vertex_shader2.txt" />

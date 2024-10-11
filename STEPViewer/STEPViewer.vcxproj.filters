@@ -19,11 +19,17 @@
     <Filter Include="AP242">
       <UniqueIdentifier>{816011c2-4f42-4693-8a38-7441419df7f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CIS2">
+      <UniqueIdentifier>{d9ec8e66-6ad6-498e-b591-3e472df994a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="res\vertex_shader2.txt" />
     <Text Include="res\fragment_shader2.txt" />
+    <Text Include="CIS2\todo.txt">
+      <Filter>CIS2</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="STEPViewer.h">
