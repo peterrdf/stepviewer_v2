@@ -11,8 +11,9 @@
 
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
-#include "OpenGLIFCView.h"
 #include "OpenGLSTEPView.h"
+#include "OpenGLIFCView.h"
+#include "OpenGLCIS2View.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -93,7 +94,7 @@ CController* CMySTEPViewerView::GetController()
 			strSettingsFile += L"\\STEPViewer_CIS2.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new COpenGLIFCView(this);
+			m_pOpenGLView = new COpenGLCIS2View(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}

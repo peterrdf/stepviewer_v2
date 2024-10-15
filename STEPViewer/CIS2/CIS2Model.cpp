@@ -3,12 +3,30 @@
 #include <_3DUtils.h>
 
 // ************************************************************************************************
+static uint32_t DEFAULT_COLOR_R = 10;
+static uint32_t DEFAULT_COLOR_G = 150;
+static uint32_t DEFAULT_COLOR_B = 10;
+static uint32_t DEFAULT_COLOR_A = 255;
+/*static*/ uint32_t CCIS2Model::DEFAULT_COLOR =
+256 * 256 * 256 * DEFAULT_COLOR_R +
+256 * 256 * DEFAULT_COLOR_G +
+256 * DEFAULT_COLOR_B +
+DEFAULT_COLOR_A;
+
+// ************************************************************************************************
 CCIS2Model::CCIS2Model()
 	: CModel(enumModelType::CIS2)
+	, m_vecInstances()
+	, m_mapInstances()
+	, m_mapID2Instance()
+	, m_mapExpressID2Instance()
+	, m_pEntityProvider(nullptr)
 {}
 
 /*virtual*/ CCIS2Model::~CCIS2Model()
-{}
+{
+	Clean();
+}
 
 /*virtual*/ CInstanceBase* CCIS2Model::GetInstanceByExpressID(ExpressID iExpressID) const /*override*/
 {
@@ -273,6 +291,29 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 
 void CCIS2Model::Clean()
 {
+	if (m_iModel != 0)
+	{
+		sdaiCloseModel((SdaiModel)m_iModel);
+		m_iModel = 0;
+	}
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+
 	delete m_pEntityProvider;
 	m_pEntityProvider = nullptr;
+}
+
+CCIS2Representation* CCIS2Model::GetInstanceByID(int64_t iID)
+{
+	auto itID2Instance = m_mapID2Instance.find(iID);
+	if (itID2Instance != m_mapID2Instance.end())
+	{
+		return itID2Instance->second;
+	}
+
+	return nullptr;
 }

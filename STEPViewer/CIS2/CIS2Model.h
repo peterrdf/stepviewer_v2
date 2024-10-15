@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "CIS2Representation.h"
 
 #include <string>
 #include <map>
@@ -13,7 +14,16 @@ class CCIS2Model : public CModel
 
 private: // Members
 
+	vector<CCIS2Representation*> m_vecInstances;
+	map<SdaiInstance, CCIS2Representation*> m_mapInstances;
+	map<int64_t, CCIS2Representation*> m_mapID2Instance;
+	map<ExpressID, CCIS2Representation*> m_mapExpressID2Instance;
+
 	CEntityProvider* m_pEntityProvider;
+
+public: // Members
+
+	static uint32_t DEFAULT_COLOR;
 
 public: // Methods
 
@@ -29,5 +39,8 @@ public: // Methods
 
 	void Load(const wchar_t* szCIS2File, SdaiModel iModel);
 	void Clean();
+
+	const map<SdaiInstance, CCIS2Representation*>& GetInstances() const { return m_mapInstances; }
+	CCIS2Representation* GetInstanceByID(int64_t iID);
 };
 

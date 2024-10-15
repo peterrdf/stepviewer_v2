@@ -204,6 +204,12 @@
     <ClInclude Include="CIS2\CIS2Model.h">
       <Filter>CIS2</Filter>
     </ClInclude>
+    <ClInclude Include="CIS2\OpenGLCIS2View.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Representation.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -309,6 +315,12 @@
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Model.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\OpenGLCIS2View.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Representation.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
   </ItemGroup>
