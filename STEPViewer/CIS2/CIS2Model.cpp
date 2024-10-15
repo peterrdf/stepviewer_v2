@@ -244,19 +244,6 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 
 				m_vecInstances.push_back(pInstance);
 				m_mapInstances[iInstance] = pInstance;
-
-				_vector3d vecOriginalBBMin;
-				_vector3d vecOriginalBBMax;
-				if (GetInstanceGeometryClass(iInstance) &&
-					GetBoundingBox(
-						iInstance,
-						(double*)&vecOriginalBBMin,
-						(double*)&vecOriginalBBMax))
-				{
-					TRACE(L"\n*** REPRESENTATION *** => MIN/MAX (x/y/z): %.16f, %.16f, %.16f - %.16f, %.16f, %.16f",
-						vecOriginalBBMin.x, vecOriginalBBMin.y, vecOriginalBBMin.z,
-						vecOriginalBBMax.x, vecOriginalBBMax.y, vecOriginalBBMax.z);
-				}
 			}
 		} // // Physical model (Representation)
 
