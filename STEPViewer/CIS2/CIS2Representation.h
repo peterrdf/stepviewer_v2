@@ -15,7 +15,6 @@ class CCIS2Representation
 	: public _geometry
 	, public CInstanceBase
 {
-	friend class CIFCModel;
 
 private: // Members
 
