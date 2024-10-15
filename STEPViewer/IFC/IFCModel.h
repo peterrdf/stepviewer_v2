@@ -66,8 +66,6 @@ public: // Methods
 	CIFCModel(bool bLoadInstancesOnDemand = false);
 	virtual ~CIFCModel();
 
-	void PreLoadInstance(SdaiInstance iInstance);
-
 	// CModel
 	virtual CEntityProvider* GetEntityProvider() const override { return m_pEntityProvider; }
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
@@ -77,7 +75,8 @@ public: // Methods
 
 	void Scale(); // [-1, 1]
 
-	void Load(const wchar_t* szIFCFile, SdaiModel iModel);	
+	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
+	void PreLoadInstance(SdaiInstance iInstance);
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }

@@ -21,6 +21,10 @@ private: // Members
 
 	CEntityProvider* m_pEntityProvider;
 
+	static int_t s_iInstanceID;
+
+	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
+
 public: // Members
 
 	static uint32_t DEFAULT_COLOR;
@@ -38,9 +42,16 @@ public: // Methods
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
 	void Load(const wchar_t* szCIS2File, SdaiModel iModel);
+	void PreLoadInstance(SdaiInstance iInstance);
 	void Clean();
+
+	void Scale(); // [-1, 1]
 
 	const map<SdaiInstance, CCIS2Representation*>& GetInstances() const { return m_mapInstances; }
 	CCIS2Representation* GetInstanceByID(int64_t iID);
+
+private: // Methods
+
+	CCIS2Representation* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
 };
 

@@ -60,38 +60,6 @@ CIFCModel::~CIFCModel()
 	Clean();
 }
 
-void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
-{
-	if (m_bUpdteVertexBuffers)
-	{
-		_vector3d vecOriginalBBMin;
-		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(iInstance) &&
-			GetBoundingBox(
-				iInstance,
-				(double*)&vecOriginalBBMin,
-				(double*)&vecOriginalBBMax))
-		{
-			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-			SetVertexBufferOffset(
-				m_iModel,
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-			ClearedExternalBuffers(m_iModel);
-
-			m_bUpdteVertexBuffers = false;
-		}
-	} // if (m_bUpdteVertexBuffers)
-}
-
 /*virtual*/ void CIFCModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
 {
 	ASSERT(pInstance != nullptr);
@@ -321,6 +289,38 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	Scale();
 }
 
+void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
+{
+	if (m_bUpdteVertexBuffers)
+	{
+		_vector3d vecOriginalBBMin;
+		_vector3d vecOriginalBBMax;
+		if (GetInstanceGeometryClass(iInstance) &&
+			GetBoundingBox(
+				iInstance,
+				(double*)&vecOriginalBBMin,
+				(double*)&vecOriginalBBMax))
+		{
+			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+			SetVertexBufferOffset(
+				m_iModel,
+				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
+				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
+				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
+
+			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+			ClearedExternalBuffers(m_iModel);
+
+			m_bUpdteVertexBuffers = false;
+		}
+	} // if (m_bUpdteVertexBuffers)
+}
+
 void CIFCModel::Clean()
 {
 	if (m_iModel != 0)
@@ -334,6 +334,10 @@ void CIFCModel::Clean()
 		delete pInstance;
 	}
 	m_vecInstances.clear();
+
+	m_mapInstances.clear();
+	m_mapID2Instance.clear();
+	m_mapExpressID2Instance.clear();
 
 	delete m_pUnitProvider;
 	m_pUnitProvider = nullptr;
