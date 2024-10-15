@@ -14,6 +14,9 @@ class CCIS2Model : public CModel
 
 private: // Members
 
+	// Load
+	bool m_bLoadInstancesOnDemand;
+
 	vector<CCIS2Representation*> m_vecInstances;
 	map<SdaiInstance, CCIS2Representation*> m_mapInstances;
 	map<int64_t, CCIS2Representation*> m_mapID2Instance;
@@ -31,7 +34,7 @@ public: // Members
 
 public: // Methods
 
-	CCIS2Model();
+	CCIS2Model(bool bLoadInstancesOnDemand = false);
 	virtual ~CCIS2Model();
 
 	// CModel

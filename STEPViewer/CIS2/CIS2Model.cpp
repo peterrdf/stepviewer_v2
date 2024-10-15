@@ -3,6 +3,7 @@
 #include <_3DUtils.h>
 
 // ************************************************************************************************
+//#todo???
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
@@ -20,8 +21,9 @@ static uint32_t DEFAULT_COLOR_A = 255;
 DEFAULT_COLOR_A;
 
 // ************************************************************************************************
-CCIS2Model::CCIS2Model()
+CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: CModel(enumModelType::CIS2)
+	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_vecInstances()
 	, m_mapInstances()
 	, m_mapID2Instance()
@@ -177,7 +179,7 @@ CCIS2Model::CCIS2Model()
 /*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance iInstance) /*override*/
 {
 	ASSERT(iInstance != 0);
-	ASSERT(FALSE); //#todo
+
 	m_bUpdteVertexBuffers = true;
 
 	for (auto pInstance : m_vecInstances)
@@ -222,15 +224,58 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	m_iModel = iModel;
 	m_strPath = szCIS2File;
 
+	// Objects & Unreferenced
+	if (!m_bLoadInstancesOnDemand)
+	{
+		//
+		// Physical model (Representation)
+		//
+		{
+			int_t* piInstances = sdaiGetEntityExtentBN(iModel, "REPRESENTATION");
+			int_t iInstancesCount = sdaiGetMemberCount(piInstances);
+			for (int_t i = 0; i < iInstancesCount; i++)
+			{
+				SdaiInstance iInstance = 0;
+				sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
+				ASSERT(iInstance != 0);
+
+				auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+				pInstance->setEnable(true);
+
+				m_vecInstances.push_back(pInstance);
+				m_mapInstances[iInstance] = pInstance;
+
+				_vector3d vecOriginalBBMin;
+				_vector3d vecOriginalBBMax;
+				if (GetInstanceGeometryClass(iInstance) &&
+					GetBoundingBox(
+						iInstance,
+						(double*)&vecOriginalBBMin,
+						(double*)&vecOriginalBBMax))
+				{
+					TRACE(L"\n*** REPRESENTATION *** => MIN/MAX (x/y/z): %.16f, %.16f, %.16f - %.16f, %.16f, %.16f",
+						vecOriginalBBMin.x, vecOriginalBBMin.y, vecOriginalBBMin.z,
+						vecOriginalBBMax.x, vecOriginalBBMax.y, vecOriginalBBMax.z);
+				}
+			}
+		} // // Physical model (Representation)
+
+		//GetObjectsReferencedState(); #todo
+	} // if (!m_bLoadInstancesOnDemand)
+
+	
+
 	// TEST
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iModel, "ANALYSIS_MODEL_3D"),
 		noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
+	ASSERT(noCis2AnalysisModel3DInstances == 0); //#todo
 
 	//
 	//	Physical model (Design Part)
 	//
 	{
+		//#todo
 		int_t* cis2DesignPartInstances = sdaiGetEntityExtentBN(iModel, "DESIGN_PART"),
 			noCis2DesignPartInstances = sdaiGetMemberCount(cis2DesignPartInstances);
 
@@ -256,40 +301,21 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 		}
 	}
 
-	//
-	//	Physical model (Representation)
-	//
-	{
-		int_t* cis2RepresentationInstances = sdaiGetEntityExtentBN(iModel, "REPRESENTATION"),
-			noCis2RepresentationInstances = sdaiGetMemberCount(cis2RepresentationInstances);
-		for (int_t i = 0; i < noCis2RepresentationInstances; i++)
-		{
-			SdaiInstance iProductDefinitionInstance = 0;
-			sdaiGetAggrByIndex(cis2RepresentationInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
-
-			ASSERT(iProductDefinitionInstance != 0);
-
-			_vector3d vecOriginalBBMin;
-			_vector3d vecOriginalBBMax;
-			if (GetInstanceGeometryClass(iProductDefinitionInstance) &&
-				GetBoundingBox(
-					iProductDefinitionInstance,
-					(double*)&vecOriginalBBMin,
-					(double*)&vecOriginalBBMax))
-			{
-				TRACE(L"\n*** REPRESENTATION *** => MIN/MAX (x/y/z): %.16f, %.16f, %.16f - %.16f, %.16f, %.16f",
-					vecOriginalBBMin.x, vecOriginalBBMin.y, vecOriginalBBMin.z,
-					vecOriginalBBMax.x, vecOriginalBBMax.y, vecOriginalBBMax.z);
-			}
-		}
-	}
-
-
 	TRACE(L"");
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Entities
 	m_pEntityProvider = new CEntityProvider(GetInstance());
+
+	// Helper data structures
+	for (auto pInstance : m_vecInstances)
+	{
+		m_mapID2Instance[pInstance->getID()] = pInstance;
+		m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+	}
+
+	// Scale
+	Scale();
 }
 
 void CCIS2Model::PreLoadInstance(SdaiInstance iInstance)
