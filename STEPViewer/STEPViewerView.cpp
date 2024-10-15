@@ -88,6 +88,16 @@ CController* CMySTEPViewerView::GetController()
 		}
 		break;
 
+		case enumModelType::CIS2:
+		{
+			strSettingsFile += L"\\STEPViewer_CIS2.settings";
+			pController->getSettingsStorage()->loadSettings(strSettingsFile);
+
+			m_pOpenGLView = new COpenGLIFCView(this);
+			m_pOpenGLView->SetController(pController);
+			m_pOpenGLView->_load();
+		}
+		break;
 
 		default:
 		{

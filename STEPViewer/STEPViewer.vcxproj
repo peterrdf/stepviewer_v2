@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,7 +118,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -148,7 +148,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,7 +178,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./IFC;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -201,7 +201,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="CIS2\todo.txt" />
     <Text Include="ReadMe.txt" />
     <Text Include="res\fragment_shader2.txt" />
     <Text Include="res\vertex_shader2.txt" />
@@ -231,6 +230,7 @@
     <ClInclude Include="AP242\STEPModelStructureView.h" />
     <ClInclude Include="AP242\StructureView.h" />
     <ClInclude Include="AP242\StructureViewConsts.h" />
+    <ClInclude Include="CIS2\CIS2Model.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
@@ -273,6 +273,7 @@
     <ClCompile Include="AP242\STEPModel.cpp" />
     <ClCompile Include="AP242\STEPModelStructureView.cpp" />
     <ClCompile Include="AP242\StructureView.cpp" />
+    <ClCompile Include="CIS2\CIS2Model.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />

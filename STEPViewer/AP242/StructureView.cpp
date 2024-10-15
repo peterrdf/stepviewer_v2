@@ -58,6 +58,15 @@ static char THIS_FILE[]=__FILE__;
 		}
 		break;
 
+		case enumModelType::CIS2:
+		{
+			//#todo
+			/*m_pSTEPTreeView = new CIFCModelStructureView(&m_treeCtrl);
+			m_pSTEPTreeView->SetController(pController);
+			m_pSTEPTreeView->Load();*/
+		}
+		break;
+
 		default:
 		{
 			ASSERT(FALSE); // Unknown

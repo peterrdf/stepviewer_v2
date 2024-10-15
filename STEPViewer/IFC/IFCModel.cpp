@@ -220,6 +220,38 @@ void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
+/*virtual*/ CInstanceBase* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
+{
+	ASSERT(iInstance != 0);
+
+	m_bUpdteVertexBuffers = true;
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+
+	m_mapInstances.clear();
+	m_mapID2Instance.clear();
+	m_mapExpressID2Instance.clear();
+
+	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
+	pInstance->setEnable(true);
+
+	m_vecInstances.push_back(pInstance);
+	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
+
+	// Helper data structures
+	m_mapID2Instance[pInstance->getID()] = pInstance;
+	m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+
+	// Scale
+	Scale();
+
+	return pInstance;
+}
+
 void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 {
 	ASSERT(szIFCFile != nullptr);
@@ -287,38 +319,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 
 	// Scale
 	Scale();
-}
-
-/*virtual*/ CInstanceBase* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
-{
-	ASSERT(iInstance != 0);
-
-	m_bUpdteVertexBuffers = true;
-
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
-
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
-
-	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	pInstance->setEnable(true);
-
-	m_vecInstances.push_back(pInstance);
-	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
-
-	// Helper data structures
-	m_mapID2Instance[pInstance->getID()] = pInstance;
-	m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
-
-	// Scale
-	Scale();
-
-	return pInstance;
 }
 
 void CIFCModel::Clean()

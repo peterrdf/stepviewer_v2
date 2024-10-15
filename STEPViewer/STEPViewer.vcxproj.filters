@@ -31,9 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="CIS2\todo.txt">
-      <Filter>CIS2</Filter>
-    </Text>
     <Text Include="res\fragment_shader2.txt">
       <Filter>res</Filter>
     </Text>
@@ -204,6 +201,9 @@
     <ClInclude Include="..\include\wglext.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="CIS2\CIS2Model.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -307,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="AP242\DesignTreeView.cpp">
       <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Model.cpp">
+      <Filter>CIS2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

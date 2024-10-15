@@ -2,6 +2,7 @@
 
 #include "IFCModel.h"
 #include "STEPModel.h"
+#include "CIS2Model.h"
 
 
 // ------------------------------------------------------------------------------------------------
@@ -70,7 +71,10 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
-			ASSERT(FALSE); // TODO
+			auto pModel = new CCIS2Model();
+			pModel->Load(szPath, iModel);
+
+			return pModel;
 		}
 
 		return nullptr;

@@ -73,11 +73,11 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
 	void Scale(); // [-1, 1]
 
-	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
+	void Load(const wchar_t* szIFCFile, SdaiModel iModel);	
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
