@@ -73,7 +73,7 @@ private: // Methods
 	void LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadContainsElements(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadObject(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadInstance(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
 	void LoadUnreferencedItems(CCIS2Model* pModel, HTREEITEM hModel);
 	void LoadTree_UpdateItems(HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);

@@ -8,6 +8,7 @@
 #include "OpenGLSTEPView.h"
 #include "STEPModel.h"
 #include "IFCModel.h"
+#include <CIS2Model.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -857,6 +858,12 @@ void CPropertiesWnd::LoadInstanceProperties()
 		}
 		break;
 
+		case enumModelType::CIS2:
+		{
+			LoadCIS2InstanceProperties();
+		}
+		break;
+
 		default:
 		{
 			ASSERT(FALSE); // Unknown
@@ -1083,6 +1090,72 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	m_wndPropList.AddProperty(pInstanceGridGroup);
 
+}
+
+void CPropertiesWnd::LoadCIS2InstanceProperties()
+{
+	auto pContoller = GetController();
+	if (pContoller == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pContoller->GetModel();
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pCIS2Model = dynamic_cast<CCIS2Model*>(pModel);
+	if (pCIS2Model == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}	
+
+	auto pInstance = dynamic_cast<CCIS2Instance*>(GetController()->GetSelectedInstance());
+	if (pInstance == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	//#todo
+	//auto pPropertyProvider = pCIS2Model->GetPropertyProvider();
+
+	//auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->GetInstance());
+	//if (pPropertySetCollection == nullptr)
+	//{
+	//	return;
+	//}
+
+	//auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->GetName().c_str());
+
+	//for (auto pPropertySet : pPropertySetCollection->PropertySets())
+	//{
+	//	auto pPropertySetGroup = new CMFCPropertyGridProperty(pPropertySet->GetName().c_str());
+
+	//	pInstanceGridGroup->AddSubItem(pPropertySetGroup);
+
+	//	for (auto pProperty : pPropertySet->Properties())
+	//	{
+	//		auto pGridProperty = new CMFCPropertyGridProperty(
+	//			pProperty->GetName().c_str(),
+	//			(_variant_t)pProperty->GetValue().c_str(),
+	//			L""); // Description
+	//		pGridProperty->AllowEdit(FALSE);
+
+	//		pPropertySetGroup->AddSubItem(pGridProperty);
+	//	}
+	//}
+
+	//m_wndPropList.AddProperty(pInstanceGridGroup);
 }
 
 void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)

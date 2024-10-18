@@ -692,30 +692,17 @@ void CCIS2ModelStructureView::LoadModel(CCIS2Model* pModel)
 	*/
 	LoadHeader(pModel, hModel);
 
-	/**********************************************************************************************
-	* Project/Units/Unreferenced
-	*/
-	SdaiAggr iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->GetInstance(), (char*)"IFCPROJECT");
+	//
+	// Design Parts & Representations
+	// 
 
-	SdaiInteger iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
-	if (iIFCProjectInstancesCount > 0)
+	auto& mapInstances = pModel->GetInstances();
+	for (auto& itInstance : mapInstances)
 	{
-		SdaiInstance iIFCProjectInstance = 0;
-		engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
+		LoadInstance(pModel, itInstance.first, hModel);
+	}
 
-		/*
-		* Project
-		*/
-		LoadProject(pModel, hModel, iIFCProjectInstance);
-
-		/*
-		* Unreferenced
-		*/
-		LoadUnreferencedItems(pModel, hModel);
-
-		LoadTree_UpdateItems(hModel);
-	} // if (iIFCProjectInstancesCount > 0)
-	//*********************************************************************************************
+	//LoadTree_UpdateItems(hModel); //#todo?
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 }
@@ -1119,7 +1106,7 @@ void CCIS2ModelStructureView::LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstanc
 			SdaiInstance iIFCRelatedObjectsInstance = 0;
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
-			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
+			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...	
 }
@@ -1171,7 +1158,7 @@ void CCIS2ModelStructureView::LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iI
 			SdaiInstance iIFCRelatedObjectsInstance = 0;
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
-			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
+			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...
 }
@@ -1224,13 +1211,13 @@ void CCIS2ModelStructureView::LoadContainsElements(CCIS2Model* pModel, SdaiInsta
 			SdaiInstance iIFCRelatedElementsInstance = 0;
 			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
 
-			LoadObject(pModel, iIFCRelatedElementsInstance, hContains);
+			LoadInstance(pModel, iIFCRelatedElementsInstance, hContains);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...
 }
 
 // ------------------------------------------------------------------------------------------------
-void CCIS2ModelStructureView::LoadObject(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+void CCIS2ModelStructureView::LoadInstance(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
@@ -1239,8 +1226,6 @@ void CCIS2ModelStructureView::LoadObject(CCIS2Model* pModel, SdaiInstance iInsta
 	auto itInstance = mapInstances.find(iInstance);
 	if (itInstance != mapInstances.end())
 	{
-		ASSERT(itInstance->second->Referenced());		
-
 		wstring strItem = CInstanceBase::GetName(iInstance);
 
 		/*
@@ -1251,7 +1236,10 @@ void CCIS2ModelStructureView::LoadObject(CCIS2Model* pModel, SdaiInstance iInsta
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
+			itInstance->second->HasGeometry() ?
+			(itInstance->second->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+			IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = NULL;
 
 		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
