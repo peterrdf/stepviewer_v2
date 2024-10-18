@@ -233,6 +233,7 @@
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Instance.h" />
     <ClInclude Include="CIS2\CIS2Model.h" />
+    <ClInclude Include="CIS2\CIS2ModelStructureView.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\OpenGLCIS2View.h" />
     <ClInclude Include="Entity.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="CIS2\CIS2DesignPart.cpp" />
     <ClCompile Include="CIS2\CIS2Instance.cpp" />
     <ClCompile Include="CIS2\CIS2Model.cpp" />
+    <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\OpenGLCIS2View.cpp" />
     <ClCompile Include="Entity.cpp" />

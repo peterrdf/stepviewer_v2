@@ -6,6 +6,7 @@
 #include "STEPViewer.h"
 #include "STEPModel.h"
 #include "IFCModelStructureView.h"
+#include "CIS2ModelStructureView.h"
 
 #include <algorithm>
 #include <chrono>
@@ -60,10 +61,9 @@ static char THIS_FILE[]=__FILE__;
 
 		case enumModelType::CIS2:
 		{
-			//#todo
-			/*m_pSTEPTreeView = new CIFCModelStructureView(&m_treeCtrl);
+			m_pSTEPTreeView = new CCIS2ModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
-			m_pSTEPTreeView->Load();*/
+			m_pSTEPTreeView->Load();
 		}
 		break;
 
