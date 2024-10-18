@@ -25,6 +25,8 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: CModel(enumModelType::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_vecInstances()
+	, m_mapDesignParts()
+	, m_mapRepresentations()	
 	, m_mapInstances()
 	, m_mapID2Instance()
 	, m_mapExpressID2Instance()
@@ -188,6 +190,8 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	}
 	m_vecInstances.clear();
 
+	m_mapDesignParts.clear();
+	m_mapRepresentations.clear();
 	m_mapInstances.clear();
 	m_mapID2Instance.clear();
 	m_mapExpressID2Instance.clear();
@@ -227,69 +231,25 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
+		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iModel, "ANALYSIS_MODEL_3D"),
+			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
+		if (noCis2AnalysisModel3DInstances > 0)
+		{
+			ASSERT(FALSE); //#todo
+		}
+
+		//
+		//	Physical model (Design Part)
+		//
+		LodDesignParts();
+
 		//
 		// Physical model (Representation)
 		//
-		{
-			int_t* piInstances = sdaiGetEntityExtentBN(iModel, "REPRESENTATION");
-			int_t iInstancesCount = sdaiGetMemberCount(piInstances);
-			for (int_t i = 0; i < iInstancesCount; i++)
-			{
-				SdaiInstance iInstance = 0;
-				sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
-				ASSERT(iInstance != 0);
+		LoadRepresentations();
 
-				auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
-				pInstance->setEnable(true);
-
-				m_vecInstances.push_back(pInstance);
-				m_mapInstances[iInstance] = pInstance;
-			}
-		} // // Physical model (Representation)
-
-		//GetObjectsReferencedState(); #todo
+		//GetObjectsReferencedState(); #todo?
 	} // if (!m_bLoadInstancesOnDemand)
-
-	
-
-	// TEST
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iModel, "ANALYSIS_MODEL_3D"),
-		noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
-	ASSERT(noCis2AnalysisModel3DInstances == 0); //#todo
-
-	//
-	//	Physical model (Design Part)
-	//
-	{
-		//#todo
-		int_t* cis2DesignPartInstances = sdaiGetEntityExtentBN(iModel, "DESIGN_PART"),
-			noCis2DesignPartInstances = sdaiGetMemberCount(cis2DesignPartInstances);
-
-		for (int_t i = 0; i < noCis2DesignPartInstances; i++)
-		{
-			SdaiInstance iProductDefinitionInstance = 0;
-			sdaiGetAggrByIndex(cis2DesignPartInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
-
-			ASSERT(iProductDefinitionInstance != 0);
-
-			_vector3d vecOriginalBBMin;
-			_vector3d vecOriginalBBMax;
-			if (GetInstanceGeometryClass(iProductDefinitionInstance) &&
-				GetBoundingBox(
-					iProductDefinitionInstance,
-					(double*)&vecOriginalBBMin,
-					(double*)&vecOriginalBBMax))
-			{
-				TRACE(L"\n*** DESIGN_PART *** => MIN/MAX (x/y/z): %.16f, %.16f, %.16f - %.16f, %.16f, %.16f",
-					vecOriginalBBMin.x, vecOriginalBBMin.y, vecOriginalBBMin.z,
-					vecOriginalBBMax.x, vecOriginalBBMax.y, vecOriginalBBMax.z);
-			}
-		}
-	}
-
-	TRACE(L"");
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Entities
 	m_pEntityProvider = new CEntityProvider(GetInstance());
@@ -498,6 +458,42 @@ CCIS2Representation* CCIS2Model::GetInstanceByID(int64_t iID)
 	}
 
 	return nullptr;
+}
+
+void CCIS2Model::LodDesignParts()
+{
+	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "DESIGN_PART");
+	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
+	for (int_t i = 0; i < iInstancesCount; i++)
+	{
+		SdaiInstance iInstance = 0;
+		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
+		ASSERT(iInstance != 0);
+
+		auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+		pInstance->setEnable(true);
+
+		m_vecInstances.push_back(pInstance);
+		m_mapInstances[iInstance] = pInstance;
+	}
+}
+
+void CCIS2Model::LoadRepresentations()
+{
+	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "REPRESENTATION");
+	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
+	for (int_t i = 0; i < iInstancesCount; i++)
+	{
+		SdaiInstance iInstance = 0;
+		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
+		ASSERT(iInstance != 0);
+
+		auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+		pInstance->setEnable(true);
+
+		m_vecInstances.push_back(pInstance);
+		m_mapInstances[iInstance] = pInstance;
+	}
 }
 
 CCIS2Representation* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments)

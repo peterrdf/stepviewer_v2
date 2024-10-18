@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "CIS2DesignPart.h"
 #include "CIS2Representation.h"
 
 #include <string>
@@ -18,6 +19,8 @@ private: // Members
 	bool m_bLoadInstancesOnDemand;
 
 	vector<CCIS2Representation*> m_vecInstances;
+	map<SdaiInstance, CCIS2DesignPart*> m_mapDesignParts;
+	map<SdaiInstance, CCIS2Representation*> m_mapRepresentations;
 	map<SdaiInstance, CCIS2Representation*> m_mapInstances;
 	map<int64_t, CCIS2Representation*> m_mapID2Instance;
 	map<ExpressID, CCIS2Representation*> m_mapExpressID2Instance;
@@ -55,6 +58,8 @@ public: // Methods
 
 private: // Methods
 
+	void LodDesignParts();
+	void LoadRepresentations();
 	CCIS2Representation* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
 };
 
