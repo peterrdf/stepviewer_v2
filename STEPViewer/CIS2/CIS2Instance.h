@@ -11,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-enum class enumCISInstanceType
+enum class enumCIS2InstanceType
 {
 	Instance = 0,
 	DesignPart = 1,
@@ -26,7 +26,7 @@ class CCIS2Instance
 
 private: // Members
 
-	enumCISInstanceType m_enCISInstanceType;
+	enumCIS2InstanceType m_enCIS2InstanceType;
 
 	// Metadata
 	ExpressID m_iExpressID;
@@ -36,8 +36,10 @@ private: // Members
 
 public: // Methods
 	
-	CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCISInstanceType enCISInstanceType);
+	CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2InstanceType enCIS2InstanceType);
 	virtual ~CCIS2Instance();
+
+	enumCIS2InstanceType getType() const { return m_enCIS2InstanceType; }
 
 	// _geometry
 	virtual OwlModel getModel() const override;

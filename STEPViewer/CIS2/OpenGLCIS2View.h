@@ -22,8 +22,8 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CCIS2Representation* m_pPointedInstance;
-	CCIS2Representation* m_pSelectedInstance;
+	CCIS2Instance* m_pPointedInstance;
+	CCIS2Instance* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;

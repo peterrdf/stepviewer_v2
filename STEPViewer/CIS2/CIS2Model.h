@@ -18,12 +18,10 @@ private: // Members
 	// Load
 	bool m_bLoadInstancesOnDemand;
 
-	vector<CCIS2Representation*> m_vecInstances;
-	map<SdaiInstance, CCIS2DesignPart*> m_mapDesignParts;
-	map<SdaiInstance, CCIS2Representation*> m_mapRepresentations;
-	map<SdaiInstance, CCIS2Representation*> m_mapInstances;
-	map<int64_t, CCIS2Representation*> m_mapID2Instance;
-	map<ExpressID, CCIS2Representation*> m_mapExpressID2Instance;
+	vector<CCIS2Instance*> m_vecInstances;
+	map<SdaiInstance, CCIS2Instance*> m_mapInstances;
+	map<int64_t, CCIS2Instance*> m_mapID2Instance;
+	map<ExpressID, CCIS2Instance*> m_mapExpressID2Instance;
 
 	CEntityProvider* m_pEntityProvider;
 
@@ -53,13 +51,13 @@ public: // Methods
 
 	void Scale(); // [-1, 1]
 
-	const map<SdaiInstance, CCIS2Representation*>& GetInstances() const { return m_mapInstances; }
-	CCIS2Representation* GetInstanceByID(int64_t iID);
+	const map<SdaiInstance, CCIS2Instance*>& GetInstances() const { return m_mapInstances; }
+	CCIS2Instance* GetInstanceByID(int64_t iID);
 
 private: // Methods
 
 	void LodDesignParts();
 	void LoadRepresentations();
-	CCIS2Representation* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
+	CCIS2Instance* RetrieveGeometry(SdaiInstance iInstance, enumCIS2InstanceType enCIS2InstanceType, int_t iCircleSegments);
 };
 

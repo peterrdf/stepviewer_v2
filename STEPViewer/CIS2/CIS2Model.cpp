@@ -24,9 +24,7 @@ DEFAULT_COLOR_A;
 CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: CModel(enumModelType::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
-	, m_vecInstances()
-	, m_mapDesignParts()
-	, m_mapRepresentations()	
+	, m_vecInstances()	
 	, m_mapInstances()
 	, m_mapID2Instance()
 	, m_mapExpressID2Instance()
@@ -182,34 +180,37 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 {
 	ASSERT(iInstance != 0);
 
-	m_bUpdteVertexBuffers = true;
+	ASSERT(FALSE); //#todo
+	return nullptr;
 
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
+	//m_bUpdteVertexBuffers = true;
 
-	m_mapDesignParts.clear();
-	m_mapRepresentations.clear();
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
+	//for (auto pInstance : m_vecInstances)
+	//{
+	//	delete pInstance;
+	//}
+	//m_vecInstances.clear();
 
-	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	pInstance->setEnable(true);
+	//m_mapDesignParts.clear();
+	//m_mapRepresentations.clear();
+	//m_mapInstances.clear();
+	//m_mapID2Instance.clear();
+	//m_mapExpressID2Instance.clear();
 
-	m_vecInstances.push_back(pInstance);
-	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
+	//auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
+	//pInstance->setEnable(true);
 
-	// Helper data structures
-	m_mapID2Instance[pInstance->getID()] = pInstance;
-	m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+	//m_vecInstances.push_back(pInstance);
+	//m_mapInstances[(SdaiInstance)iInstance] = pInstance;
 
-	// Scale
-	Scale();
+	//// Helper data structures
+	//m_mapID2Instance[pInstance->getID()] = pInstance;
+	//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
 
-	return pInstance;
+	//// Scale
+	//Scale();
+
+	//return pInstance;
 }
 
 void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
@@ -449,7 +450,7 @@ void CCIS2Model::Scale()
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-CCIS2Representation* CCIS2Model::GetInstanceByID(int64_t iID)
+CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
 {
 	auto itID2Instance = m_mapID2Instance.find(iID);
 	if (itID2Instance != m_mapID2Instance.end())
@@ -470,7 +471,7 @@ void CCIS2Model::LodDesignParts()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::DesignPart, DEFAULT_CIRCLE_SEGMENTS);
 		pInstance->setEnable(true);
 
 		m_vecInstances.push_back(pInstance);
@@ -488,7 +489,7 @@ void CCIS2Model::LoadRepresentations()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		auto pInstance = RetrieveGeometry(iInstance, DEFAULT_CIRCLE_SEGMENTS);
+		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::Reperesentation, DEFAULT_CIRCLE_SEGMENTS);
 		pInstance->setEnable(true);
 
 		m_vecInstances.push_back(pInstance);
@@ -496,7 +497,7 @@ void CCIS2Model::LoadRepresentations()
 	}
 }
 
-CCIS2Representation* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments)
+CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2InstanceType enCIS2InstanceType, int_t iCircleSegments)
 {
 	PreLoadInstance(iInstance);
 
@@ -506,7 +507,27 @@ CCIS2Representation* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, int_t 
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pInstance = new CCIS2Representation(s_iInstanceID++, iInstance);
+	CCIS2Instance* pInstance = nullptr;
+	switch (enCIS2InstanceType)
+	{
+		case enumCIS2InstanceType::DesignPart:
+		{
+			pInstance = new CCIS2DesignPart(s_iInstanceID++, iInstance);
+		}
+		break;
+
+		case enumCIS2InstanceType::Reperesentation:
+		{
+			pInstance = new CCIS2Representation(s_iInstanceID++, iInstance);
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+	}
 
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
