@@ -18,7 +18,7 @@ CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCISIns
 	Calculate();
 }
 
-CCIS2Instance::~CCIS2Instance()
+/*virtual*/ CCIS2Instance::~CCIS2Instance()
 {}
 
 /*virtual*/ OwlModel CCIS2Instance::getModel() const /*override*/

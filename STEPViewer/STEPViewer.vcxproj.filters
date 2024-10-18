@@ -213,6 +213,9 @@
     <ClInclude Include="CIS2\CIS2Instance.h">
       <Filter>CIS2</Filter>
     </ClInclude>
+    <ClInclude Include="CIS2\CIS2DesignPart.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -327,6 +330,9 @@
       <Filter>CIS2</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Instance.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2DesignPart.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
   </ItemGroup>
