@@ -230,6 +230,7 @@
     <ClInclude Include="AP242\STEPModelStructureView.h" />
     <ClInclude Include="AP242\StructureView.h" />
     <ClInclude Include="AP242\StructureViewConsts.h" />
+    <ClInclude Include="CIS2\CIS2Instance.h" />
     <ClInclude Include="CIS2\CIS2Model.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\OpenGLCIS2View.h" />
@@ -275,6 +276,7 @@
     <ClCompile Include="AP242\STEPModel.cpp" />
     <ClCompile Include="AP242\STEPModelStructureView.cpp" />
     <ClCompile Include="AP242\StructureView.cpp" />
+    <ClCompile Include="CIS2\CIS2Instance.cpp" />
     <ClCompile Include="CIS2\CIS2Model.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\OpenGLCIS2View.cpp" />
