@@ -83,7 +83,7 @@ public: // Methods
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
 	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
-	CIFCInstance* GetInstanceByID(int64_t iID);
+	CIFCInstance* GetInstanceByID(ExpressID iID);
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods
@@ -95,7 +95,7 @@ private: // Methods
 	void GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance);
 	void GetObjectsReferencedStateRecursively(SdaiInstance iInstance);
 
-	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
+	void RetrieveObjectsRecursively(SdaiEntity iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
 };

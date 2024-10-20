@@ -454,7 +454,7 @@ void CCIS2Model::Scale()
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
+CCIS2Instance* CCIS2Model::GetInstanceByID(ExpressID iID)
 {
 	auto itID2Instance = m_mapID2Instance.find(iID);
 	if (itID2Instance != m_mapID2Instance.end())
@@ -467,9 +467,9 @@ CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
 
 void CCIS2Model::LodDesignParts()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "DESIGN_PART");
-	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
-	for (int_t i = 0; i < iInstancesCount; i++)
+	SdaiAggr piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "DESIGN_PART");
+	SdaiInteger iInstancesCount = sdaiGetMemberCount(piInstances);
+	for (SdaiInteger i = 0; i < iInstancesCount; i++)
 	{
 		SdaiInstance iInstance = 0;
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
@@ -485,9 +485,9 @@ void CCIS2Model::LodDesignParts()
 
 void CCIS2Model::LoadRepresentations()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "REPRESENTATION");
-	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
-	for (int_t i = 0; i < iInstancesCount; i++)
+	SdaiAggr piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "REPRESENTATION");
+	SdaiInteger iInstancesCount = sdaiGetMemberCount(piInstances);
+	for (SdaiInteger i = 0; i < iInstancesCount; i++)
 	{
 		SdaiInstance iInstance = 0;
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);

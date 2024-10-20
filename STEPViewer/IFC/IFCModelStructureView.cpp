@@ -162,7 +162,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 		ASSERT(iImage == iSelectedImage);
 
-		CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+		CIFCInstance* pInstance = (CIFCInstance*) m_pTreeCtrl->GetItemData(hItem);
 
 		switch (iImage)
 		{
