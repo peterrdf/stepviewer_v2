@@ -52,7 +52,7 @@ public: // Methods
 	void Scale(); // [-1, 1]
 
 	const map<SdaiInstance, CCIS2Instance*>& GetInstances() const { return m_mapInstances; }
-	CCIS2Instance* GetInstanceByID(int64_t iID);
+	CCIS2Instance* GetInstanceByID(ExpressID iID);
 
 private: // Methods
 
