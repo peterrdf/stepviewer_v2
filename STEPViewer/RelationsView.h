@@ -68,24 +68,24 @@ private: // Classes
 
 	private: // Members
 
-		int_t m_iInstance;
-		int_t m_iEntity;
+		SdaiInstance m_iSdaiInstance;
+		SdaiEntity m_iSdaiEntity;
 
 	public: // Methods
 
-		CItemData(int_t iInstance, int_t iEntity)
-			: m_iInstance(iInstance)
-			, m_iEntity(iEntity)
+		CItemData(SdaiInstance iSdaiInstance, SdaiEntity iSdaiEntity)
+			: m_iSdaiInstance(iSdaiInstance)
+			, m_iSdaiEntity(iSdaiEntity)
 		{
-			ASSERT(m_iInstance != 0);
-			ASSERT(m_iEntity != 0);
+			ASSERT(m_iSdaiInstance != 0);
+			ASSERT(m_iSdaiEntity != 0);
 		}
 
 		virtual ~CItemData() {}
 
-		int_t GetInstance() const { return m_iInstance; }
-		int_t GetEntity() const { return m_iEntity; }
-		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iEntity); }
+		SdaiInstance GetInstance() const { return m_iSdaiInstance; }
+		SdaiEntity GetEntity() const { return m_iSdaiEntity; }
+		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iSdaiEntity); }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ private: // Classes
 
 	public: // Methods
 
-		CInstanceData(int_t iInstance, int_t iEntity)
+		CInstanceData(SdaiInstance iInstance, SdaiEntity iEntity)
 			: CItemData(iInstance, iEntity)
 		{}
 
@@ -111,7 +111,7 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeData(int_t iInstance, int_t iEntity, const char* szName)
+		CAttributeData(SdaiInstance iInstance, SdaiEntity iEntity, const char* szName)
 			: CItemData(iInstance, iEntity)
 			, m_srtName(szName)
 		{}
@@ -131,7 +131,7 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeSet(int_t iInstance, int_t iEntity)
+		CAttributeSet(SdaiInstance iInstance, SdaiEntity iEntity)
 			: CItemData(iInstance, iEntity)
 			, m_vecAttributes()
 		{}
@@ -178,11 +178,11 @@ private: // Methods
 
 	CModel* GetModel() const;
 	
-	void LoadInstances(const vector<int_t>& vecInstances);
-	void LoadProperties(int_t iEntity, const vector<int_t>& vecInstances);
-	void LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hParent);
-	int_t GetInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
-	void LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void LoadInstances(const vector<SdaiInstance>& vecInstances);
+	void LoadProperties(SdaiEntity iEntity, const vector<SdaiInstance>& vecInstances);
+	void LoadInstance(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent);
+	int_t GetInstanceAttributes(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	void LoadInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 
 	void CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel);

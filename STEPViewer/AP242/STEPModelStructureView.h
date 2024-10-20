@@ -6,7 +6,7 @@
 #include "SearchTreeCtrlDialog.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPModelStructureView 
+class CAP242ModelStructureView
 	: public CTreeViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
@@ -40,8 +40,8 @@ private: // Members
 
 public: // Methods
 
-	CSTEPModelStructureView(CTreeCtrlEx* pTreeView);
-	virtual ~CSTEPModelStructureView();	
+	CAP242ModelStructureView(CTreeCtrlEx* pTreeView);
+	virtual ~CAP242ModelStructureView();
 
 	// CViewBase
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
@@ -69,9 +69,9 @@ private: // Methods
 	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
 
-	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionsInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
-	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursively(CAP242Model* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
+	void LoadProductDefinitionsInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void SearchForDescendantWithGeometry();
 	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
 	CSTEPItemData* FindItemData(CProductInstance* pInstance);

@@ -11,8 +11,8 @@
 
 struct IssueData
 {
-	int_t stepId = -1;
-	std::set<int_t> relatingInstances;
+	ExpressID stepId = -1;
+	std::set<SdaiInstance> relatingInstances;
 	bool relatingInstancesCollected = false;
 };
 
@@ -22,7 +22,7 @@ struct ReferencingInstancesCollector
 	/// <summary>
 	/// 
 	/// </summary>
-	ReferencingInstancesCollector(std::set<int_t>& referencingInstances, int_t* searchEntities)
+	ReferencingInstancesCollector(std::set<SdaiInstance>& referencingInstances, SdaiEntity * searchEntities)
 		: m_referencingInstances(referencingInstances)
 		, m_searchEntities(searchEntities)
 	{}
@@ -50,7 +50,7 @@ struct ReferencingInstancesCollector
 		auto allInst = xxxxGetAllInstances(model);
 		auto NInst = sdaiGetMemberCount(allInst);
 		for (int i = 0; i < NInst; i++) {
-			int_t instance = 0;
+			SdaiInstance instance = 0;
 			sdaiGetAggrByIndex(allInst, i, sdaiINSTANCE, &instance);
 			if (instance) {
 				VisitInstance(instance);
@@ -77,9 +77,9 @@ private:
 		auto referencedInstance = m_referenceStack.back();
 
 		bool referencing = false;
-		auto thisEntity = sdaiGetInstanceType(thisInstance);
-		auto NArg = engiGetEntityNoAttributesEx(thisEntity, true, false);
-		for (int_t i = 0; i < NArg && !referencing; i++) {
+		SdaiEntity thisEntity = sdaiGetInstanceType(thisInstance);
+		SdaiInteger NArg = engiGetEntityNoAttributesEx(thisEntity, true, false);
+		for (SdaiInteger i = 0; i < NArg && !referencing; i++) {
 			SdaiAttr attr = engiGetEntityAttributeByIndex(thisEntity, i, true, false);
 			referencing = DoArgumentsReferenceTo(thisInstance, attr, referencedInstance);
 		}
@@ -111,8 +111,8 @@ private:
 				bool refers = false;
 				SdaiAggr aggr = 0;
 				sdaiGetAttr(thisInstance, attr, sdaiAGGR, &aggr);
-				auto cnt = sdaiGetMemberCount(aggr);
-				for (int_t i = 0; i < cnt && !refers; i++) {
+				SdaiInteger cnt = sdaiGetMemberCount(aggr);
+				for (SdaiInteger i = 0; i < cnt && !refers; i++) {
 					SdaiInstance inst = 0;
 					sdaiGetAggrByIndex(aggr, i, sdaiINSTANCE, &inst);
 					refers = (inst == referencedInstance);
@@ -125,7 +125,7 @@ private:
 	}
 
 private:
-	std::set<int_t>& m_referencingInstances;
+	std::set<SdaiInstance>& m_referencingInstances;
 	SdaiEntity* m_searchEntities;
 	std::list<SdaiInstance> m_referenceStack;
 };
@@ -176,7 +176,7 @@ static int_t GetAttrIndex(ValidationIssue issue)
 	}
 }
 
-static int64_t GetStepId(ValidationIssue issue)
+static ExpressID GetStepId(ValidationIssue issue)
 {
 	auto inst = validateGetInstance(issue);
 	if (inst) {
@@ -410,7 +410,7 @@ void CModelCheckDlg::AddIssue(ValidationIssue issue, int rWidth[4])
 	rWidth[3] = max(rWidth[3], m_wndIssueList.GetStringWidth(attr));
 
 	auto data = new IssueData();
-	data->stepId = (int_t)GetStepId (issue);
+	data->stepId = GetStepId (issue);
 	m_wndIssueList.SetItemData(item, (DWORD_PTR)data);
 }
 
@@ -487,12 +487,12 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 				auto instance = internalGetInstanceFromP21Line(GetActiveSdaiModel(), p->stepId);
 				if (instance) {
 
-					int_t searchEntities[3] = {
+					SdaiEntity searchEntities[3] = {
 					sdaiGetEntity(GetActiveSdaiModel(), "IfcProduct"),
 					sdaiGetEntity(GetActiveSdaiModel(), "IfcProject"),
 					0 };
 
-					if (pModel && pModel->GetType() == enumModelType::STEP) {
+					if (pModel && pModel->GetType() == enumModelType::AP242) {
 						searchEntities[0] = sdaiGetEntity(GetActiveSdaiModel(), "PRODUCT_DEFINITION");
 						searchEntities[1] = 0;
 					}
@@ -545,7 +545,7 @@ void CModelCheckDlg::OnClickedViewAllIssues()
 SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 {
 	if (auto pModel = GetActiveModel()) {
-		return pModel->GetInstance();
+		return pModel->GetSdaiModel();
 	}
 	return NULL;
 }

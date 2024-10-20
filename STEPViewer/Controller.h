@@ -40,7 +40,7 @@ public: // Methods
 	
 	CModel* GetModel() const;
 	void SetModel(CModel* pModel);
-	CInstanceBase* LoadInstance(OwlInstance iInstance);
+	CInstanceBase* LoadInstance(SdaiInstance iSdaiInstance);
 
 	// Events
 	void RegisterView(CViewBase* pView);
@@ -68,8 +68,8 @@ public: // Methods
 	void ZoomOut();
 
 	// Save
-	virtual void SaveInstance() PURE;
-	void SaveInstance(OwlInstance iInstance);
+	virtual void SaveOwlInstance() PURE;
+	void SaveOwlInstance(OwlInstance iOwlInstance);
 	
 	// [-1, 1]
 	void ScaleAndCenter();

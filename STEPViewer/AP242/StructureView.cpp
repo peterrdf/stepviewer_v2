@@ -43,9 +43,9 @@ static char THIS_FILE[]=__FILE__;
 
 	switch (pModel->GetType())
 	{
-		case enumModelType::STEP:
+		case enumModelType::AP242:
 		{
-			m_pSTEPTreeView = new CSTEPModelStructureView(&m_treeCtrl);
+			m_pSTEPTreeView = new CAP242ModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}

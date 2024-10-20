@@ -14,7 +14,7 @@ class CAssembly
 
 private: // Members
 
-	SdaiInstance m_iInstance;
+	SdaiInstance m_iSdaiInstance;
 	ExpressID m_iExpressID;
 	wchar_t* m_szId;
 	wchar_t* m_szName;
@@ -27,7 +27,7 @@ public: // Methods
 	CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition);
 	virtual ~CAssembly();
 
-	SdaiInstance GetInstance() const { return m_iInstance; }
+	SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
 	ExpressID GetExpressID() const { return m_iExpressID; }
 	const wchar_t* GetId() const { return m_szId; }
 	const wchar_t* GetName() const { return m_szName; }

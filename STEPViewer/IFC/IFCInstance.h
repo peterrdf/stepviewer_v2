@@ -20,6 +20,7 @@ class CIFCInstance
 private: // Members
 
 	// Metadata
+	SdaiInstance m_iSdaiInstance;
 	ExpressID m_iExpressID;
 	
 	// UI
@@ -31,12 +32,12 @@ public: // Methods
 	virtual ~CIFCInstance();
 
 	// _geometry
-	virtual OwlModel getModel() const override;
-	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
+	virtual OwlModel getOwlModel() const override;
+///	virtual void calculateFillBuffer(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
-	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
+	virtual SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
+	SdaiModel GetSdaiModel() const { return sdaiGetInstanceModel(GetSdaiInstance()); }
 	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
 	virtual bool IsEnabled() const { return getEnable(); }	
 	ExpressID ExpressID() const { return m_iExpressID; }

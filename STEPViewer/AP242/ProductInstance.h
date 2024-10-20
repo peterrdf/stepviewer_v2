@@ -26,7 +26,7 @@ public: // Methods
 	virtual ~CProductInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const;
+	virtual SdaiInstance GetSdaiInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const { return GetEnable(); }
 
