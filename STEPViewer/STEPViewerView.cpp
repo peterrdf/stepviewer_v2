@@ -67,12 +67,12 @@ CController* CMySTEPViewerView::GetController()
 
 	switch (pModel->GetType())
 	{
-		case enumModelType::STEP:
+		case enumModelType::AP242:
 		{
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new COpenGLSTEPView(this);
+			m_pOpenGLView = new COpenGLAP242View(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -518,7 +518,7 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->SaveInstance();
+	pDocument->SaveOwlInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)

@@ -13,21 +13,23 @@ class _model
 protected: // Members
 
 	wstring m_strPath;
-	OwlModel m_iModel;
+	SdaiModel m_iSdaiModel;
+	OwlModel m_iOwlModel;
 
 public: // Methods
 
 	_model()
 		: m_strPath(L"")
-		, m_iModel(0)
+		, m_iSdaiModel(0)
+		, m_iOwlModel(0)
 	{}
 
 	virtual ~_model()
 	{}
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	virtual OwlModel getInstance() const { return m_iModel; }
-	uint64_t getVertexLength() const { return SetFormat(getInstance()) / sizeof(float); }
+	virtual OwlModel getOwlModel() const { return m_iOwlModel; }
+	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 };
 
 // ************************************************************************************************

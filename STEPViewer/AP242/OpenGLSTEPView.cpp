@@ -13,7 +13,7 @@
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
-COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
+COpenGLAP242View::COpenGLAP242View(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -64,7 +64,7 @@ COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 		nullptr);
 }
 
-COpenGLSTEPView::~COpenGLSTEPView()
+COpenGLAP242View::~COpenGLAP242View()
 {
 	GetController()->UnRegisterView(this);
 
@@ -76,27 +76,27 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	delete m_pPointedInstanceMaterial;
 }
 
-/*virtual*/ _controller* COpenGLSTEPView::getController() const /*override*/
+/*virtual*/ _controller* COpenGLAP242View::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* COpenGLSTEPView::getModel() const /*override*/
+/*virtual*/ _model* COpenGLAP242View::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void COpenGLSTEPView::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void COpenGLAP242View::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string COpenGLSTEPView::loadSetting(const string& strName) /*override*/
+/*virtual*/ string COpenGLAP242View::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void COpenGLSTEPView::_load() /*override*/
+/*virtual*/ void COpenGLAP242View::_load() /*override*/
 {
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -108,7 +108,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -380,11 +380,11 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLSTEPView::_draw(CDC* pDC) /*override*/
+/*virtual*/ void COpenGLAP242View::_draw(CDC* pDC) /*override*/
 {
 	VERIFY(pDC != nullptr);
 
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -442,9 +442,9 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
+/*virtual*/ void COpenGLAP242View::OnWorldDimensionsChanged()  /*override*/
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -478,7 +478,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CViewBase* pSender)  /*override*/
+/*virtual*/ void COpenGLAP242View::OnInstanceSelected(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -504,7 +504,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	}
 }
 
-/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
+/*virtual*/ void COpenGLAP242View::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -519,7 +519,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void COpenGLAP242View::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -557,7 +557,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
+/*virtual*/ void COpenGLAP242View::OnControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);
 
@@ -566,7 +566,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	loadSettings();
 }
 
-/*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+/*virtual*/ void COpenGLAP242View::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -621,9 +621,9 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	} // switch (enEvent)
 }
 
-void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
+void COpenGLAP242View::DrawFaces(_model* pM, bool bTransparent)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -665,7 +665,7 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 #endif	
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -775,9 +775,9 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
+void COpenGLAP242View::DrawConceptualFacesPolygons(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -804,7 +804,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -880,9 +880,9 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLSTEPView::DrawLines(_model* pM)
+void COpenGLAP242View::DrawLines(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -909,7 +909,7 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -985,9 +985,9 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLSTEPView::DrawPoints(_model* pM)
+void COpenGLAP242View::DrawPoints(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1015,7 +1015,7 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1098,9 +1098,9 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLSTEPView::DrawInstancesFrameBuffer()
+void COpenGLAP242View::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1193,7 +1193,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1276,9 +1276,9 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void COpenGLAP242View::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		return;

@@ -38,9 +38,9 @@ CProductInstance::~CProductInstance()
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/ SdaiInstance CProductInstance::GetInstance() const 
+/*virtual*/ SdaiInstance CProductInstance::GetSdaiInstance() const 
 { 
-	return m_pProductDefinition->GetInstance(); 
+	return m_pProductDefinition->GetSdaiInstance(); 
 }
 
 /*virtual*/  bool CProductInstance::HasGeometry() const 

@@ -4,6 +4,12 @@
 
 using namespace std;
 
+// ************************************************************************************************
+class CAssembly;
+class CAP242Model;
+class CProductDefinition;
+class CProductInstance;
+
 // ------------------------------------------------------------------------------------------------
 enum class enumSTEPItemDataType : int
 {
@@ -26,7 +32,19 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Instance - C++ wrapper class
-	int64_t* m_pInstance;
+	SdaiInstance m_pSdaiInstance;
+
+	// --------------------------------------------------------------------------------------------
+	CAssembly* m_pAssembly;
+
+	// --------------------------------------------------------------------------------------------
+	CAP242Model* m_pAP242Model;
+
+	// --------------------------------------------------------------------------------------------
+	CProductDefinition* m_pProductDefinition;
+
+	// --------------------------------------------------------------------------------------------
+	CProductInstance* m_pProductInstance;
 
 	// --------------------------------------------------------------------------------------------
 	// Type
@@ -48,7 +66,23 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTEPItemDataType enItemDataType);
+	CSTEPItemData(CSTEPItemData* pParent, SdaiInstance pSdaiInstance, enumSTEPItemDataType enItemDataType);
+
+	// --------------------------------------------------------------------------------------------
+	// ctor
+	CSTEPItemData(CSTEPItemData* pParent, CAssembly* pAssembly, enumSTEPItemDataType enItemDataType);
+
+	// --------------------------------------------------------------------------------------------
+	// ctor
+	CSTEPItemData(CSTEPItemData* pParent, CAP242Model* pAP242Model, enumSTEPItemDataType enItemDataType);
+
+	// --------------------------------------------------------------------------------------------
+	// ctor
+	CSTEPItemData(CSTEPItemData* pParent, CProductDefinition* pProductDefinition, enumSTEPItemDataType enItemDataType);
+
+	// --------------------------------------------------------------------------------------------
+	// ctor
+	CSTEPItemData(CSTEPItemData* pParent, CProductInstance* pProductInstance, enumSTEPItemDataType enItemDataType);
 
 	// --------------------------------------------------------------------------------------------
 	// dtor
@@ -60,10 +94,26 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	template<typename T>
-	T* GetInstance() const
+	///template<typename T>
+	///T* GetSdaiInstance() const
+	SdaiInstance GetSdaiInstance__() const
 	{
-		return (T*)m_pInstance;
+		return m_pSdaiInstance;
+	}
+
+	CAssembly* GetAssembly() const
+	{
+		return m_pAssembly;
+	}
+
+	CProductInstance* GetProductInstance() const
+	{
+		return m_pProductInstance;
+	}
+
+	CProductDefinition* GetProductDefinition() const
+	{
+		return m_pProductDefinition;
 	}
 
 	// --------------------------------------------------------------------------------------------

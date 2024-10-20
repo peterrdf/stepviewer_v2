@@ -49,7 +49,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
-			auto pModel = new CSTEPModel();
+			auto pModel = new CAP242Model();
 			pModel->Load(szPath, iModel);
 
 			return pModel;

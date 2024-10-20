@@ -60,7 +60,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pCIS2Representation->GetInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pCIS2Representation->GetSdaiInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 
@@ -176,9 +176,9 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-/*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance iInstance) /*override*/
+/*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(SdaiInstance /*iSdaiInstance*/) /*override*/
 {
-	ASSERT(iInstance != 0);
+//	ASSERT(iSdaiInstance != 0);
 
 	ASSERT(FALSE); //#todo
 	return nullptr;
@@ -213,10 +213,10 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	//return pInstance;
 }
 
-void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
+void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iSdaiModel)
 {
 	ASSERT(szCIS2File != nullptr);
-	ASSERT(iModel != 0);
+	ASSERT(iSdaiModel != 0);
 
 	/*
 	* Memory
@@ -226,14 +226,15 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	/*
 	* Model
 	*/
-	m_iModel = iModel;
+	m_iSdaiModel = iSdaiModel;
+
 	m_strPath = szCIS2File;
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
-		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iModel, "ANALYSIS_MODEL_3D"),
-			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
+		SdaiAggr	cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iSdaiModel, "ANALYSIS_MODEL_3D");
+		SdaiInteger	noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
 		if (noCis2AnalysisModel3DInstances > 0)
 		{
 			ASSERT(FALSE); //#todo
@@ -253,7 +254,7 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	} // if (!m_bLoadInstancesOnDemand)
 
 	// Entities
-	m_pEntityProvider = new CEntityProvider(GetInstance());
+	m_pEntityProvider = new CEntityProvider(GetSdaiModel());
 
 	// Helper data structures
 	for (auto pInstance : m_vecInstances)
@@ -266,15 +267,18 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	Scale();
 }
 
-void CCIS2Model::PreLoadInstance(SdaiInstance iInstance)
+void CCIS2Model::PreLoadInstance(SdaiInstance iSdaiInstance)
 {
 	if (m_bUpdteVertexBuffers)
 	{
+		OwlInstance iOwlInstance = 0;
+		owlGetInstance(sdaiGetInstanceType(iSdaiInstance), iSdaiInstance, &iOwlInstance);
+
 		_vector3d vecOriginalBBMin;
 		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(iInstance) &&
+		if (GetInstanceGeometryClass(iOwlInstance) &&
 			GetBoundingBox(
-				iInstance,
+				iOwlInstance,
 				(double*)&vecOriginalBBMin,
 				(double*)&vecOriginalBBMax))
 		{
@@ -285,13 +289,13 @@ void CCIS2Model::PreLoadInstance(SdaiInstance iInstance)
 
 			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 			SetVertexBufferOffset(
-				m_iModel,
+				getOwlModel(),
 				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
 				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
 				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
 
 			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-			ClearedExternalBuffers(m_iModel);
+			ClearedExternalBuffers(getOwlModel());
 
 			m_bUpdteVertexBuffers = false;
 		}
@@ -300,10 +304,10 @@ void CCIS2Model::PreLoadInstance(SdaiInstance iInstance)
 
 void CCIS2Model::Clean()
 {
-	if (m_iModel != 0)
+	if (m_iSdaiModel != 0)
 	{
-		sdaiCloseModel((SdaiModel)m_iModel);
-		m_iModel = 0;
+		sdaiCloseModel(m_iSdaiModel);
+		m_iSdaiModel = 0;
 	}
 
 	for (auto pInstance : m_vecInstances)
@@ -463,7 +467,7 @@ CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
 
 void CCIS2Model::LodDesignParts()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "DESIGN_PART");
+	int_t* piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "DESIGN_PART");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
@@ -481,7 +485,7 @@ void CCIS2Model::LodDesignParts()
 
 void CCIS2Model::LoadRepresentations()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "REPRESENTATION");
+	int_t* piInstances = sdaiGetEntityExtentBN(m_iSdaiModel, "REPRESENTATION");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
@@ -497,9 +501,9 @@ void CCIS2Model::LoadRepresentations()
 	}
 }
 
-CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2InstanceType enCIS2InstanceType, int_t iCircleSegments)
+CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iSdaiInstance, enumCIS2InstanceType enCIS2InstanceType, int_t iCircleSegments)
 {
-	PreLoadInstance(iInstance);
+	PreLoadInstance(iSdaiInstance);
 
 	// Set up circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -512,13 +516,13 @@ CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2Inst
 	{
 		case enumCIS2InstanceType::DesignPart:
 		{
-			pInstance = new CCIS2DesignPart(s_iInstanceID++, iInstance);
+			pInstance = new CCIS2DesignPart(s_iInstanceID++, iSdaiInstance);
 		}
 		break;
 
 		case enumCIS2InstanceType::Reperesentation:
 		{
-			pInstance = new CCIS2Representation(s_iInstanceID++, iInstance);
+			pInstance = new CCIS2Representation(s_iInstanceID++, iSdaiInstance);
 		}
 		break;
 
@@ -535,7 +539,8 @@ CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2Inst
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
-	cleanMemory(GetInstance(), 0);
+	cleanMemory(GetSdaiModel(), 0);
+	pInstance->cleanOwlInstance();
 
 	return pInstance;
 }

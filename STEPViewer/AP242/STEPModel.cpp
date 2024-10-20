@@ -41,15 +41,15 @@ static uint32_t DEFAULT_COLOR_R = 175;
 static uint32_t DEFAULT_COLOR_G = 175;
 static uint32_t DEFAULT_COLOR_B = 175;
 static uint32_t DEFAULT_COLOR_A = 255;
-/*static*/ uint32_t CSTEPModel::DEFAULT_COLOR =
+/*static*/ uint32_t CAP242Model::DEFAULT_COLOR =
 	256 * 256 * 256 * DEFAULT_COLOR_R +
 	256 * 256 * DEFAULT_COLOR_G +
 	256 * DEFAULT_COLOR_B +
 	DEFAULT_COLOR_A;
 
 // ************************************************************************************************
-CSTEPModel::CSTEPModel()
-	: CModel(enumModelType::STEP)
+CAP242Model::CAP242Model()
+	: CModel(enumModelType::AP242)
 	, m_pEntityProvider(nullptr)
 	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
@@ -60,12 +60,12 @@ CSTEPModel::CSTEPModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPModel::~CSTEPModel()
+CAP242Model::~CAP242Model()
 {
 	Clean();
 }
 
-void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	if (m_bUpdteVertexBuffers)
 	{
@@ -84,13 +84,13 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 
 			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 			SetVertexBufferOffset(
-				m_iModel,
+				getOwlModel(),
 				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
 				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
 				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
 
 			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-			ClearedExternalBuffers(m_iModel);
+			ClearedExternalBuffers(getOwlModel());
 
 			m_bUpdteVertexBuffers = false;
 		}
@@ -98,13 +98,13 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CEntityProvider* CSTEPModel::GetEntityProvider() const /*override*/
+/*virtual*/ CEntityProvider* CAP242Model::GetEntityProvider() const /*override*/
 {
 	return m_pEntityProvider;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CInstanceBase* CSTEPModel::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
+/*virtual*/ CInstanceBase* CAP242Model::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
 {
 	for (auto& item : m_mapID2Instance) {
 		if (auto pDef = item.second->GetProductDefinition()) {
@@ -117,7 +117,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // --------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
+/*virtual*/ void CAP242Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
 {	
 	ASSERT(pInstance != nullptr);
 
@@ -166,7 +166,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModel::ZoomOut() /*override*/
+/*virtual*/ void CAP242Model::ZoomOut() /*override*/
 {
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -218,7 +218,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance* CSTEPModel::getProductInstanceByID(int64_t iID) const
+CProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
 	if (itInstance == m_mapID2Instance.end())
@@ -232,7 +232,7 @@ CProductInstance* CSTEPModel::getProductInstanceByID(int64_t iID) const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Scale()
+void CAP242Model::Scale()
 {
 	/* World */
 	m_dOriginalBoundingSphereDiameter = 2.;
@@ -374,7 +374,7 @@ void CSTEPModel::Scale()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Save(const wchar_t * /*szPath*/)
+void CAP242Model::Save(const wchar_t * /*szPath*/)
 {
 	ASSERT(0); // todo
 	//m_pModel->saveModelW(szPath);
@@ -383,7 +383,7 @@ void CSTEPModel::Save(const wchar_t * /*szPath*/)
 // ------------------------------------------------------------------------------------------------
 // Loads a model
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Load(const wchar_t * szPath)
+void CAP242Model::Load(const wchar_t * szPath)
 {
 	Clean();
 
@@ -399,14 +399,15 @@ void CSTEPModel::Load(const wchar_t * szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
+void CAP242Model::Load(const wchar_t* szPath, SdaiModel iSdaiModel)
 {
 	Clean();
 
-	m_iModel = iModel;
+	m_iSdaiModel = iSdaiModel;
+	
 	m_strPath = szPath;
 	
-	m_pEntityProvider = new CEntityProvider(GetInstance());
+	m_pEntityProvider = new CEntityProvider(GetSdaiModel());
 
 	LoadProductDefinitions();
 
@@ -418,9 +419,9 @@ void CSTEPModel::Load(const wchar_t* szPath, SdaiModel iModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::LoadProductDefinitions()
+void CAP242Model::LoadProductDefinitions()
 {
-	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(GetInstance(), "PRODUCT_DEFINITION");
+	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(GetSdaiModel(), "PRODUCT_DEFINITION");
 
 	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
@@ -438,7 +439,7 @@ void CSTEPModel::LoadProductDefinitions()
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+CProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
@@ -446,7 +447,7 @@ CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefin
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+CProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
@@ -485,12 +486,12 @@ CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefini
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::LoadAssemblies()
+void CAP242Model::LoadAssemblies()
 {
-	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(GetInstance(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(GetSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
-	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
-	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
+	SdaiInteger noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
+	for (SdaiInteger i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
 	{
 		SdaiInstance pNextAssemblyUsageOccurrenceInstance = 0;
 		sdaiGetAggrByIndex(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
@@ -513,7 +514,7 @@ void CSTEPModel::LoadAssemblies()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::LoadGeometry()
+void CAP242Model::LoadGeometry()
 {
 	// Load
 	auto itDefinition = m_mapExpressID2Definition.begin();
@@ -527,7 +528,7 @@ void CSTEPModel::LoadGeometry()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -536,8 +537,8 @@ void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _m
 
 		if (pAssembly->GetRelatingProductDefinition() == pDefinition)
 		{
-			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(GetInstance(), internalGetInstanceFromP21Line(GetInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
+			OwlInstance	owlInstanceMatrix = 0;
+			owlBuildInstance(GetSdaiModel(), internalGetInstanceFromP21Line(GetSdaiModel(), pAssembly->GetExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) 
 			{
@@ -583,12 +584,12 @@ void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _m
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::Clean()
+void CAP242Model::Clean()
 {
-	if (m_iModel != 0)
+	if (m_iSdaiModel != 0)
 	{
-		sdaiCloseModel((SdaiModel)m_iModel);
-		m_iModel = 0;
+		sdaiCloseModel(m_iSdaiModel);
+		m_iSdaiModel = 0;
 	}
 
 	delete m_pEntityProvider;

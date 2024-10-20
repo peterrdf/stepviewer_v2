@@ -52,14 +52,14 @@ void CController::SetModel(CModel* pModel)
 	m_bUpdatingModel = false;
 }
 
-CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
+CInstanceBase* CController::LoadInstance(SdaiInstance iSdaiInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(iSdaiInstance != 0);
 	ASSERT(m_pModel != nullptr);
 
 	m_pSelectedInstance = nullptr;
 
-	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->GetInstance() == iInstance))
+	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->GetSdaiInstance() == iSdaiInstance))
 	{
 		return nullptr;
 	}
@@ -68,7 +68,7 @@ CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
 
 	m_bUpdatingModel = true;
 
-	auto pInstance = dynamic_cast<CModel*>(m_pModel)->LoadInstance(iInstance);
+	auto pInstance = dynamic_cast<CModel*>(m_pModel)->LoadInstance(iSdaiInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -134,13 +134,13 @@ void CController::ZoomOut()
 	}
 }
 
-void CController::SaveInstance(OwlInstance iInstance)
+void CController::SaveOwlInstance(OwlInstance iOwlInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(iOwlInstance != 0);
 
 	wstring strName;
 	wstring strUniqueName;
-	CInstanceBase::BuildInstanceNames(m_pModel->getInstance(), iInstance, strName, strUniqueName);
+	CInstanceBase::BuildOwlInstanceName(iOwlInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
@@ -164,7 +164,7 @@ void CController::SaveInstance(OwlInstance iInstance)
 		return;
 	}	
 
-	SaveInstanceTreeW(iInstance, dlgFile.GetPathName());
+	SaveInstanceTreeW(iOwlInstance, dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------

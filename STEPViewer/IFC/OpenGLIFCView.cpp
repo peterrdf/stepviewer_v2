@@ -949,7 +949,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 			float fR, fG, fB;
 			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetInstance()] = _color(fR, fG, fB);
+			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getOwlInstance__()] = _color(fR, fG, fB);
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
@@ -992,7 +992,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getOwlInstance__());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(

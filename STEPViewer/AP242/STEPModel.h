@@ -14,7 +14,7 @@ class CProductDefinition;
 class CProductInstance;
 
 // ************************************************************************************************
-class CSTEPModel : public CModel
+class CAP242Model : public CModel
 {
 
 private: // Members
@@ -34,8 +34,8 @@ public: // Members
 
 public: // Methods
 	
-	CSTEPModel();
-	virtual ~CSTEPModel();
+	CAP242Model();
+	virtual ~CAP242Model();
 
 	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
 
@@ -44,7 +44,7 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
+	virtual CInstanceBase* LoadInstance(SdaiInstance /*iSdaiInstance*/) override { ASSERT(FALSE); return nullptr; };
 
 	const map<ExpressID, CProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
 	const map<int64_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }

@@ -14,11 +14,12 @@ using namespace std;
 class CProductDefinition
 	: public _geometry
 {
-	friend class CSTEPModel;
+	friend class CAP242Model;
 
 private: // Members
 
-	ExpressID m_iExpressID;	
+	SdaiInstance m_iSdaiInstance;
+	ExpressID m_iExpressID;
 	wchar_t* m_szId;
 	wchar_t* m_szName;
 	wchar_t* m_szDescription;
@@ -38,8 +39,8 @@ public: // Methods
 	virtual ~CProductDefinition();
 
 	// _geometry
-	virtual OwlModel getModel() const override;
-	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
+	virtual OwlModel getOwlModel() const override;
+//	virtual void calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	void CalculateMinMaxTransform(
 		CProductInstance* pInstance, 
@@ -54,8 +55,8 @@ public: // Methods
 		float& fZmin, float& fZmax);
 	void Scale(float fScaleFactor);
 	
-	SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
-	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
+	SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
+	SdaiModel GetSdaiModel() const { return sdaiGetInstanceModel(GetSdaiInstance()); }
 	ExpressID GetExpressID() const { return m_iExpressID; }
 	const wchar_t* GetId() const { return m_szId; }
 	const wchar_t* GetName() const { return m_szName; }

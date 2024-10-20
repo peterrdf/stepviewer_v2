@@ -18,7 +18,7 @@
 #define new DEBUG_NEW
 #endif
 
-/*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::SaveOwlInstance() /*override*/
 {
 	ASSERT(m_pModel != nullptr);
 
@@ -52,7 +52,7 @@
 	auto pProductInstance = dynamic_cast<CProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetSdaiInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;
@@ -90,7 +90,7 @@
 		SetObjectProperty(
 			iTransformationInstance,
 			GetPropertyByName(iOwlModel, "object"),
-			GetSelectedInstance()->GetInstance());
+			GetSelectedInstance()->GetSdaiInstance());
 
 		SetObjectProperty(
 			iTransformationInstance,
@@ -101,7 +101,7 @@
 	}
 	else
 	{
-		SaveInstanceTreeW(GetSelectedInstance()->GetInstance(), dlgFile.GetPathName());
+		SaveInstanceTreeW(GetSelectedInstance()->GetSdaiInstance(), dlgFile.GetPathName());
 	}
 }
 
@@ -139,7 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	SetModel(new CSTEPModel());
+	SetModel(new CAP242Model());
 
 	return TRUE;
 }
