@@ -226,7 +226,7 @@
     <ClInclude Include="AP242\AP242ProductDefinition.h" />
     <ClInclude Include="AP242\AP242ProductInstance.h" />
     <ClInclude Include="AP242\STEPItemData.h" />
-    <ClInclude Include="AP242\STEPModel.h" />
+    <ClInclude Include="AP242\AP242Model.h" />
     <ClInclude Include="AP242\STEPModelStructureView.h" />
     <ClInclude Include="AP242\StructureView.h" />
     <ClInclude Include="AP242\StructureViewConsts.h" />
@@ -275,7 +275,7 @@
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
     <ClCompile Include="AP242\AP242ProductInstance.cpp" />
     <ClCompile Include="AP242\STEPItemData.cpp" />
-    <ClCompile Include="AP242\STEPModel.cpp" />
+    <ClCompile Include="AP242\AP242Model.cpp" />
     <ClCompile Include="AP242\STEPModelStructureView.cpp" />
     <ClCompile Include="AP242\StructureView.cpp" />
     <ClCompile Include="CIS2\CIS2DesignPart.cpp" />

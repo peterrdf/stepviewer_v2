@@ -4,7 +4,7 @@
 #include "AP242ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "StructureViewConsts.h"
 
 #include <algorithm>

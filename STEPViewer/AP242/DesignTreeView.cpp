@@ -5,7 +5,7 @@
 #include "DesignTreeView.h"
 #include "Resource.h"
 #include "IFCModel.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "AP242ProductDefinition.h"
 
 #include <algorithm>

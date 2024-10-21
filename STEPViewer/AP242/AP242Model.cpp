@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "AP242ProductDefinition.h"
 #include "AP242Assembly.h"
 #include "_3DUtils.h"

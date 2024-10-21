@@ -6,7 +6,7 @@
 #include "MainFrm.h"
 #include "STEPViewer.h"
 #include "OpenGLSTEPView.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "IFCModel.h"
 #include <CIS2Model.h>
 

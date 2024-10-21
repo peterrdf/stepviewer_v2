@@ -1,9 +1,8 @@
 #pragma once
 
 #include "IFCModel.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "CIS2Model.h"
-
 
 // ------------------------------------------------------------------------------------------------
 class CModelFactory
