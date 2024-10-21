@@ -129,7 +129,7 @@
     <ClInclude Include="IFC\IFCAttribute.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\Assembly.h">
+    <ClInclude Include="AP242\AP242Assembly.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\OpenGLSTEPView.h">
@@ -293,7 +293,7 @@
     <ClCompile Include="IFC\IFCAttribute.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\Assembly.cpp">
+    <ClCompile Include="AP242\AP242Assembly.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\OpenGLSTEPView.cpp">

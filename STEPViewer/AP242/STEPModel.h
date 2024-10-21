@@ -9,7 +9,7 @@ using namespace std;
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
 // ************************************************************************************************
-class CAssembly;
+class CAP242Assembly;
 class CProductDefinition;
 class CProductInstance;
 
@@ -22,7 +22,7 @@ private: // Members
 	CEntityProvider* m_pEntityProvider;
 	map<ExpressID, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
 	map<int64_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
-	map<ExpressID, CAssembly*> m_mapExpressIDAssembly; // Express ID : Assembly
+	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 	int64_t m_iID;
 
@@ -48,7 +48,7 @@ public: // Methods
 
 	const map<ExpressID, CProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
 	const map<int64_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }
-	const map<ExpressID, CAssembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
+	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
 	CProductInstance* getProductInstanceByID(int64_t iID) const;
 
 	void Scale(); // [-1, 1]

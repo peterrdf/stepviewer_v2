@@ -5,7 +5,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CAssembly;
+class CAP242Assembly;
 class CAP242Model;
 class CProductDefinition;
 class CProductInstance;
@@ -35,7 +35,7 @@ private: // Members
 	SdaiInstance m_pSdaiInstance;
 
 	// --------------------------------------------------------------------------------------------
-	CAssembly* m_pAssembly;
+	CAP242Assembly* m_pAssembly;
 
 	// --------------------------------------------------------------------------------------------
 	CAP242Model* m_pAP242Model;
@@ -70,7 +70,7 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CSTEPItemData(CSTEPItemData* pParent, CAssembly* pAssembly, enumSTEPItemDataType enItemDataType);
+	CSTEPItemData(CSTEPItemData* pParent, CAP242Assembly* pAssembly, enumSTEPItemDataType enItemDataType);
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
@@ -101,7 +101,7 @@ public: // Members
 		return m_pSdaiInstance;
 	}
 
-	CAssembly* GetAssembly() const
+	CAP242Assembly* GetAssembly() const
 	{
 		return m_pAssembly;
 	}

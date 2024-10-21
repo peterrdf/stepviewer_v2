@@ -19,7 +19,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, SdaiInstance pSdaiInstance,
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAssembly* pAssembly, enumSTEPItemDataType enItemDataType)
+CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242Assembly* pAssembly, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance()
 	, m_pAssembly(pAssembly)
