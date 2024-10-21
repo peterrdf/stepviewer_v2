@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "AP242ProductDefinition.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 
 // ************************************************************************************************
 CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)

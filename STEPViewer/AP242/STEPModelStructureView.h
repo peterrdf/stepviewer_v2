@@ -2,7 +2,7 @@
 
 #include "TreeViewBase.h"
 #include "STEPItemData.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ------------------------------------------------------------------------------------------------
