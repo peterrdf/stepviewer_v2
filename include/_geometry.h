@@ -375,6 +375,7 @@ protected: // Members
 	// Metadata
 	int64_t m_iID; // ID (1-based index)
 	OwlInstance m_iOwlInstance;
+	OwlInstance m_iOwlInstance_II;
 	wstring m_strName;
 	wstring m_strUniqueName;
 	bool m_bEnable;
@@ -419,9 +420,10 @@ protected: // Members
 
 public: // Methods
 
-	_geometry(int64_t iID, OwlInstance iOwlInstance, bool bEnable)
+	_geometry(int64_t iID, bool bEnable)
 		: m_iID(iID)
-		, m_iOwlInstance(iOwlInstance)
+		, m_iOwlInstance()
+		, m_iOwlInstance_II()
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
 		, m_bEnable(bEnable)
@@ -654,7 +656,8 @@ public: // Methods
 
 	// Metadata
 	int64_t getID() const { return m_iID; }
-	OwlInstance getOwlInstance() const { return m_iOwlInstance; }
+	OwlInstance getOwlInstanceR() const { return m_iOwlInstance; }
+	OwlInstance getOwlInstance__() const { return m_iOwlInstance_II; }
 	OwlClass getOwlClassInstance() const { return GetInstanceClass(m_iOwlInstance); }
 	virtual OwlModel getOwlModel() const { return ::GetModel(m_iOwlInstance); }
 	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iOwlInstance, 0) != 0; }
@@ -662,6 +665,7 @@ public: // Methods
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
+	void cleanOwlInstance() { assert(m_iOwlInstance_II == 0); m_iOwlInstance_II = m_iOwlInstance; m_iOwlInstance = 0; }
 
 	// Geometry
 	int32_t* getIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
@@ -731,40 +735,38 @@ protected: // Methods
 		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
 	}
 
-	bool calculate(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
+	bool calculateFillBuffer(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
 	{
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);
 		
-		OwlInstance iOwlInstance = calculateInstance(&pVertexBuffer->size(), &pIndexBuffer->size());
+		calculateGetBufferSize(&pVertexBuffer->size(), &pIndexBuffer->size());
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
 		}
 
-		pVertexBuffer->data() = new float[(uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength()];
-		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
+		pVertexBuffer->data() = new float[(int_t) pVertexBuffer->size() * (int_t) pVertexBuffer->getVertexLength()];
+//		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
 
-		UpdateInstanceVertexBuffer(iOwlInstance, pVertexBuffer->data());
+		UpdateInstanceVertexBuffer(m_iOwlInstance, pVertexBuffer->data());
 
-		pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
-		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
+		pIndexBuffer->data() = new int32_t[(int_t) pIndexBuffer->size()];
+//		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
-		UpdateInstanceIndexBuffer(iOwlInstance, pIndexBuffer->data());
+		UpdateInstanceIndexBuffer(m_iOwlInstance, pIndexBuffer->data());
 
 		return true;
 	}
 
-	virtual OwlInstance calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize)
+	virtual void calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize)
 	{
 		assert(piVertexBufferSize != nullptr);
 		assert(piIndexBufferSize != nullptr);
 
 		*piVertexBufferSize = *piIndexBufferSize = 0;
 
-		CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
-
-		return m_iOwlInstance;
+		CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize);
 	}
 
 	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
