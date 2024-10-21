@@ -375,7 +375,6 @@ protected: // Members
 	// Metadata
 	int64_t m_iID; // ID (1-based index)
 	OwlInstance m_iOwlInstance;
-	OwlInstance m_iOwlInstance_II;
 	wstring m_strName;
 	wstring m_strUniqueName;
 	bool m_bEnable;
@@ -423,7 +422,6 @@ public: // Methods
 	_geometry(int64_t iID, bool bEnable)
 		: m_iID(iID)
 		, m_iOwlInstance()
-		, m_iOwlInstance_II()
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
 		, m_bEnable(bEnable)
@@ -657,7 +655,6 @@ public: // Methods
 	// Metadata
 	int64_t getID() const { return m_iID; }
 	OwlInstance getOwlInstanceR() const { return m_iOwlInstance; }
-	OwlInstance getOwlInstance__() const { return m_iOwlInstance_II; }
 	OwlClass getOwlClassInstance() const { return GetInstanceClass(m_iOwlInstance); }
 	virtual OwlModel getOwlModel() const { return ::GetModel(m_iOwlInstance); }
 	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iOwlInstance, 0) != 0; }
@@ -665,7 +662,7 @@ public: // Methods
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
-	void cleanOwlInstance() { assert(m_iOwlInstance_II == 0); m_iOwlInstance_II = m_iOwlInstance; m_iOwlInstance = 0; }
+	void cleanOwlInstance() { m_iOwlInstance = 0; }
 
 	// Geometry
 	int32_t* getIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
