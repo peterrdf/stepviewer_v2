@@ -69,9 +69,9 @@ private: // Methods
 	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
 
-	void WalkAssemblyTreeRecursively(CAP242Model* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionsInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
-	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent);
+	void LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void SearchForDescendantWithGeometry();
 	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
 	CSTEPItemData* FindItemData(CProductInstance* pInstance);

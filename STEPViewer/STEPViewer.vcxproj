@@ -223,7 +223,7 @@
     <ClInclude Include="AP242\DesignTreeView.h" />
     <ClInclude Include="AP242\OpenGLSTEPView.h" />
     <ClInclude Include="AP242\OWLProperty.h" />
-    <ClInclude Include="AP242\ProductDefinition.h" />
+    <ClInclude Include="AP242\AP242ProductDefinition.h" />
     <ClInclude Include="AP242\ProductInstance.h" />
     <ClInclude Include="AP242\STEPItemData.h" />
     <ClInclude Include="AP242\STEPModel.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="AP242\DesignTreeView.cpp" />
     <ClCompile Include="AP242\OpenGLSTEPView.cpp" />
     <ClCompile Include="AP242\OWLProperty.cpp" />
-    <ClCompile Include="AP242\ProductDefinition.cpp" />
+    <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
     <ClCompile Include="AP242\ProductInstance.cpp" />
     <ClCompile Include="AP242\STEPItemData.cpp" />
     <ClCompile Include="AP242\STEPModel.cpp" />

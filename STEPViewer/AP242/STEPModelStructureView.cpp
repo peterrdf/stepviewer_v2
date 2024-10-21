@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "mainfrm.h"
 #include "STEPModelStructureView.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "STEPModel.h"
@@ -1031,7 +1031,7 @@ void CAP242ModelStructureView::LoadModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, CProductDefinition* pDefinition, HTREEITEM hParent)
+void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent)
 {
 	const auto& mapAssemblies = pModel->GetAssemblies();
 
@@ -1104,7 +1104,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	/*
 	* Instance
@@ -1131,7 +1131,7 @@ void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pMode
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent)
 {
 	const auto& mapAssemblies = pModel->GetAssemblies();
 
@@ -1287,7 +1287,7 @@ void CAP242ModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 		{
 			case enumSTEPItemDataType::ProductDefinition:
 			{
-				CProductDefinition* pDefinition = pChild->GetProductDefinition();
+				CAP242ProductDefinition* pDefinition = pChild->GetProductDefinition();
 				ASSERT(pDefinition != nullptr);
 				ASSERT(pDefinition->GetId() != nullptr);
 				ASSERT(pDefinition->GetProductName() != nullptr);

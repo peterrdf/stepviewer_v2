@@ -6,7 +6,7 @@
 #include "Resource.h"
 #include "IFCModel.h"
 #include "STEPModel.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 
 #include <algorithm>
 using namespace std;
