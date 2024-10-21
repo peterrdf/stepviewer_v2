@@ -141,7 +141,7 @@
     <ClInclude Include="AP242\AP242ProductDefinition.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\ProductInstance.h">
+    <ClInclude Include="AP242\AP242ProductInstance.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\STEPItemData.h">
@@ -305,7 +305,7 @@
     <ClCompile Include="AP242\AP242ProductDefinition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\ProductInstance.cpp">
+    <ClCompile Include="AP242\AP242ProductInstance.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\STEPItemData.cpp">

@@ -19,8 +19,8 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CProductInstance* m_pPointedInstance;
-	CProductInstance* m_pSelectedInstance;
+	CAP242ProductInstance* m_pPointedInstance;
+	CAP242ProductInstance* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;

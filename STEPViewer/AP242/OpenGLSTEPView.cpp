@@ -493,7 +493,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -1322,7 +1322,7 @@ void COpenGLAP242View::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CProductInstance* pPointedInstance = nullptr;
+		CAP242ProductInstance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);

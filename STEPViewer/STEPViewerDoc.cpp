@@ -11,7 +11,7 @@
 
 #include "STEPViewerDoc.h"
 #include "ModelFactory.h"
-#include "ProductInstance.h"
+#include "AP242ProductInstance.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -49,7 +49,7 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CProductInstance*>(GetSelectedInstance());
+	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
 		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetSdaiInstance());

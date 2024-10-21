@@ -28,7 +28,7 @@ private: // Members
 
 	// Cache
 	vector<CSTEPItemData*> m_vecItemData;
-	map<CProductInstance*, HTREEITEM> m_mapInstance2Item;
+	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
@@ -74,9 +74,9 @@ private: // Methods
 	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void SearchForDescendantWithGeometry();
 	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
-	CSTEPItemData* FindItemData(CProductInstance* pInstance);
+	CSTEPItemData* FindItemData(CAP242ProductInstance* pInstance);
 	void LoadItemChildren(CSTEPItemData* pItemData);
-	void LoadInstanceAncestors(CProductInstance* pInstance);
+	void LoadInstanceAncestors(CAP242ProductInstance* pInstance);
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void UpdateChildren(HTREEITEM hParent);
