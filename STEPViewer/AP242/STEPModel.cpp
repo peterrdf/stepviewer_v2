@@ -121,7 +121,7 @@ void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstan
 {	
 	ASSERT(pInstance != nullptr);
 
-	auto pProductInstance = dynamic_cast<CProductInstance*>(pInstance);
+	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(pInstance);
 	if ((pProductInstance == nullptr) || (pProductInstance->GetProductDefinition() == nullptr))
 	{
 		ASSERT(FALSE);
@@ -218,7 +218,7 @@ void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstan
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
+CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
 	if (itInstance == m_mapID2Instance.end())
@@ -577,7 +577,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefiniti
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
+	auto pInstance = new CAP242ProductInstance(m_iID++, pDefinition, pParentMatrix);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
 
 	pDefinition->m_vecInstances.push_back(pInstance);

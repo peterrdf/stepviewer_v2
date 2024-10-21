@@ -11,7 +11,7 @@ using namespace std;
 // ************************************************************************************************
 class CAP242Assembly;
 class CAP242ProductDefinition;
-class CProductInstance;
+class CAP242ProductInstance;
 
 // ************************************************************************************************
 class CAP242Model : public CModel
@@ -21,7 +21,7 @@ private: // Members
 	
 	CEntityProvider* m_pEntityProvider;
 	map<ExpressID, CAP242ProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
-	map<int64_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
+	map<int64_t, CAP242ProductInstance*> m_mapID2Instance; // ID : Product Instance
 	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 	int64_t m_iID;
@@ -47,9 +47,9 @@ public: // Methods
 	virtual CInstanceBase* LoadInstance(SdaiInstance /*iSdaiInstance*/) override { ASSERT(FALSE); return nullptr; };
 
 	const map<ExpressID, CAP242ProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
-	const map<int64_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }
+	const map<int64_t, CAP242ProductInstance*>& GetInstances() const { return m_mapID2Instance; }
 	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
-	CProductInstance* getProductInstanceByID(int64_t iID) const;
+	CAP242ProductInstance* getProductInstanceByID(int64_t iID) const;
 
 	void Scale(); // [-1, 1]
 

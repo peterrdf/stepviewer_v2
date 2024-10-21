@@ -102,7 +102,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
 	if (pSelectedInstance == nullptr)
 	{
 		/*
@@ -496,7 +496,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 	auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
-		CProductInstance * pInstance = pItemData->GetProductInstance();
+		CAP242ProductInstance * pInstance = pItemData->GetProductInstance();
 
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -1206,7 +1206,7 @@ void CAP242ModelStructureView::SearchForDescendantWithGeometry()
 			{
 				if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
 				{
-					CProductInstance* pProductInstance = pChildItemData->GetProductInstance();
+					CAP242ProductInstance* pProductInstance = pChildItemData->GetProductInstance();
 
 					bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
 					if (bHasDescendantWithGeometry)
@@ -1233,7 +1233,7 @@ void CAP242ModelStructureView::SearchForDescendantWithGeometryRecursively(CSTEPI
 	{
 		if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
 		{
-			CProductInstance* pProductInstance = pChildItemData->GetProductInstance();
+			CAP242ProductInstance* pProductInstance = pChildItemData->GetProductInstance();
 
 			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
 			if (bHasDescendantWithGeometry)
@@ -1251,7 +1251,7 @@ void CAP242ModelStructureView::SearchForDescendantWithGeometryRecursively(CSTEPI
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData* CAP242ModelStructureView::FindItemData(CProductInstance* pInstance)
+CSTEPItemData* CAP242ModelStructureView::FindItemData(CAP242ProductInstance* pInstance)
 {
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
 	{
@@ -1309,7 +1309,7 @@ void CAP242ModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 
 			case enumSTEPItemDataType::ProductInstance:
 			{
-				CProductInstance* pInstance = pChild->GetProductInstance();
+				CAP242ProductInstance* pInstance = pChild->GetProductInstance();
 				ASSERT(pInstance != nullptr);
 				ASSERT(pInstance->GetName() != L"");
 
@@ -1357,7 +1357,7 @@ void CAP242ModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::LoadInstanceAncestors(CProductInstance* pInstance)
+void CAP242ModelStructureView::LoadInstanceAncestors(CAP242ProductInstance* pInstance)
 {
 	if (pInstance == nullptr)
 	{
