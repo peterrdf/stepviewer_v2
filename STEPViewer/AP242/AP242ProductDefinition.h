@@ -11,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CProductDefinition
+class CAP242ProductDefinition
 	: public _geometry
 {
 	friend class CAP242Model;
@@ -35,8 +35,8 @@ private: // Members
 public: // Methods
 
 	// ctor/dtor
-	CProductDefinition(SdaiInstance iSdaiInstance);
-	virtual ~CProductDefinition();
+	CAP242ProductDefinition(SdaiInstance iSdaiInstance);
+	virtual ~CAP242ProductDefinition();
 
 	// _geometry
 	virtual OwlModel getOwlModel() const override;

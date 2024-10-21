@@ -7,7 +7,7 @@ using namespace std;
 // ************************************************************************************************
 class CAP242Assembly;
 class CAP242Model;
-class CProductDefinition;
+class CAP242ProductDefinition;
 class CProductInstance;
 
 // ------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ private: // Members
 	CAP242Model* m_pAP242Model;
 
 	// --------------------------------------------------------------------------------------------
-	CProductDefinition* m_pProductDefinition;
+	CAP242ProductDefinition* m_pProductDefinition;
 
 	// --------------------------------------------------------------------------------------------
 	CProductInstance* m_pProductInstance;
@@ -78,7 +78,7 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CSTEPItemData(CSTEPItemData* pParent, CProductDefinition* pProductDefinition, enumSTEPItemDataType enItemDataType);
+	CSTEPItemData(CSTEPItemData* pParent, CAP242ProductDefinition* pProductDefinition, enumSTEPItemDataType enItemDataType);
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
@@ -111,7 +111,7 @@ public: // Members
 		return m_pProductInstance;
 	}
 
-	CProductDefinition* GetProductDefinition() const
+	CAP242ProductDefinition* GetProductDefinition() const
 	{
 		return m_pProductDefinition;
 	}

@@ -3,7 +3,7 @@
 
 #include "_oglUtils.h"
 #include "OpenGLView.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
 // Open GL View

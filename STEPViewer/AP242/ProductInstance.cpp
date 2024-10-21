@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "ProductInstance.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
+CProductInstance::CProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)

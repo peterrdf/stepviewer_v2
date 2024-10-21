@@ -6,7 +6,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CProductDefinition;
+class CAP242ProductDefinition;
 
 // ************************************************************************************************
 class CAP242Assembly
@@ -19,12 +19,12 @@ private: // Members
 	wchar_t* m_szId;
 	wchar_t* m_szName;
 	wchar_t* m_szDescription;
-	CProductDefinition* m_pRelatingProductDefinition;
-	CProductDefinition* m_pRelatedProductDefinition;
+	CAP242ProductDefinition* m_pRelatingProductDefinition;
+	CAP242ProductDefinition* m_pRelatedProductDefinition;
 
 public: // Methods
 
-	CAP242Assembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition);
+	CAP242Assembly(SdaiInstance iInstance, CAP242ProductDefinition* pRelatingProductDefinition, CAP242ProductDefinition* pRelatedProductDefinition);
 	virtual ~CAP242Assembly();
 
 	SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
@@ -32,7 +32,7 @@ public: // Methods
 	const wchar_t* GetId() const { return m_szId; }
 	const wchar_t* GetName() const { return m_szName; }
 	const wchar_t* GetDescription() const { return m_szDescription; }
-	CProductDefinition* GetRelatingProductDefinition() const { return m_pRelatingProductDefinition; }
-	CProductDefinition* GetRelatedProductDefinition() const { return m_pRelatedProductDefinition; }
+	CAP242ProductDefinition* GetRelatingProductDefinition() const { return m_pRelatingProductDefinition; }
+	CAP242ProductDefinition* GetRelatedProductDefinition() const { return m_pRelatedProductDefinition; }
 };
 

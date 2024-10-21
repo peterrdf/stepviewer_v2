@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "STEPModel.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 #include "AP242Assembly.h"
 #include "_3DUtils.h"
 
@@ -439,15 +439,15 @@ void CAP242Model::LoadProductDefinitions()
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
-	return new CProductDefinition(iProductDefinitionInstance);
+	return new CAP242ProductDefinition(iProductDefinitionInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
@@ -528,7 +528,7 @@ void CAP242Model::LoadGeometry()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242Model::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)

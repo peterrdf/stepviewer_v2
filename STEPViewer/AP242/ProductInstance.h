@@ -4,25 +4,25 @@
 #include "InstanceBase.h"
 
 // ************************************************************************************************
-class CProductDefinition;
+class CAP242ProductDefinition;
 
 // ************************************************************************************************
 class CProductInstance 
 	: public CInstanceBase
 {
-	friend class CProductDefinition;
+	friend class CAP242ProductDefinition;
 
 private: // Members
 
 	int64_t m_iID;
-	CProductDefinition* m_pProductDefinition;
+	CAP242ProductDefinition* m_pProductDefinition;
 	_matrix4x4* m_pTransformationMatrix;
 
 	bool m_bEnable;	
 
 public: // Methods
 	
-	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
+	CProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
 	virtual ~CProductInstance();
 
 	// CInstanceBase
@@ -33,7 +33,7 @@ public: // Methods
 	void Scale(float fScaleFactor);
 	
 	int64_t GetID() const { return m_iID; }
-	CProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
+	CAP242ProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
 	_matrix4x4* GetTransformationMatrix() const { return m_pTransformationMatrix; }
 	bool GetEnable() const { return m_bEnable; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }

@@ -138,7 +138,7 @@
     <ClInclude Include="AP242\OWLProperty.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\ProductDefinition.h">
+    <ClInclude Include="AP242\AP242ProductDefinition.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\ProductInstance.h">
@@ -302,7 +302,7 @@
     <ClCompile Include="AP242\OWLProperty.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\ProductDefinition.cpp">
+    <ClCompile Include="AP242\AP242ProductDefinition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\ProductInstance.cpp">

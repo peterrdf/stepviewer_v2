@@ -683,7 +683,7 @@ void COpenGLAP242View::DrawFaces(_model* pM, bool bTransparent)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -822,7 +822,7 @@ void COpenGLAP242View::DrawConceptualFacesPolygons(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -927,7 +927,7 @@ void COpenGLAP242View::DrawLines(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -1033,7 +1033,7 @@ void COpenGLAP242View::DrawPoints(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->GetEnable())
@@ -1211,7 +1211,7 @@ void COpenGLAP242View::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
