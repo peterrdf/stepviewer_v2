@@ -1138,7 +1138,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* 
 	auto itAssembly = mapAssemblies.begin();
 	for (; itAssembly != mapAssemblies.end(); itAssembly++)
 	{
-		CAssembly* pAssembly = itAssembly->second;
+		auto pAssembly = itAssembly->second;
 
 		if (pAssembly->GetRelatingProductDefinition() == pDefinition)
 		{
@@ -1298,7 +1298,7 @@ void CAP242ModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
 
 			case enumSTEPItemDataType::Assembly:
 			{
-				CAssembly* pAssembly = pChild->GetAssembly();
+				auto pAssembly = pChild->GetAssembly();
 				ASSERT(pAssembly != nullptr);
 				ASSERT(pAssembly->GetId() != nullptr);
 				ASSERT(pAssembly->GetName() != nullptr);

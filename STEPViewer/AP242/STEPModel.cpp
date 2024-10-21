@@ -2,7 +2,7 @@
 
 #include "STEPModel.h"
 #include "ProductDefinition.h"
-#include "Assembly.h"
+#include "AP242Assembly.h"
 #include "_3DUtils.h"
 
 #include <bitset>
@@ -506,7 +506,7 @@ void CAP242Model::LoadAssemblies()
 
 		auto pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
 
-		auto pAssembly = new CAssembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
+		auto pAssembly = new CAP242Assembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
 		ASSERT(m_mapExpressIDAssembly.find(pAssembly->GetExpressID()) == m_mapExpressIDAssembly.end());
 
 		m_mapExpressIDAssembly[pAssembly->GetExpressID()] = pAssembly;

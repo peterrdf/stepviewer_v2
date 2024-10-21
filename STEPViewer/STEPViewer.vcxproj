@@ -219,7 +219,7 @@
     <ClInclude Include="..\include\_oglUtils.h" />
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
-    <ClInclude Include="AP242\Assembly.h" />
+    <ClInclude Include="AP242\AP242Assembly.h" />
     <ClInclude Include="AP242\DesignTreeView.h" />
     <ClInclude Include="AP242\OpenGLSTEPView.h" />
     <ClInclude Include="AP242\OWLProperty.h" />
@@ -268,7 +268,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AP242\Assembly.cpp" />
+    <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\DesignTreeView.cpp" />
     <ClCompile Include="AP242\OpenGLSTEPView.cpp" />
     <ClCompile Include="AP242\OWLProperty.cpp" />

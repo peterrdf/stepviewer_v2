@@ -9,7 +9,7 @@ using namespace std;
 class CProductDefinition;
 
 // ************************************************************************************************
-class CAssembly
+class CAP242Assembly
 {
 
 private: // Members
@@ -24,8 +24,8 @@ private: // Members
 
 public: // Methods
 
-	CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition);
-	virtual ~CAssembly();
+	CAP242Assembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition);
+	virtual ~CAP242Assembly();
 
 	SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
 	ExpressID GetExpressID() const { return m_iExpressID; }
