@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "OpenGLSTEPView.h"
+#include "AP242OpenGLView.h"
 #include "Controller.h"
 #include "AP242Model.h"
 #include "_3DUtils.h"
@@ -13,7 +13,7 @@
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
-COpenGLAP242View::COpenGLAP242View(CWnd* pWnd)
+CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -64,7 +64,7 @@ COpenGLAP242View::COpenGLAP242View(CWnd* pWnd)
 		nullptr);
 }
 
-COpenGLAP242View::~COpenGLAP242View()
+CAP242OpenGLView::~CAP242OpenGLView()
 {
 	GetController()->UnRegisterView(this);
 
@@ -76,27 +76,27 @@ COpenGLAP242View::~COpenGLAP242View()
 	delete m_pPointedInstanceMaterial;
 }
 
-/*virtual*/ _controller* COpenGLAP242View::getController() const /*override*/
+/*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* COpenGLAP242View::getModel() const /*override*/
+/*virtual*/ _model* CAP242OpenGLView::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void COpenGLAP242View::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void CAP242OpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string COpenGLAP242View::loadSetting(const string& strName) /*override*/
+/*virtual*/ string CAP242OpenGLView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void COpenGLAP242View::_load() /*override*/
+/*virtual*/ void CAP242OpenGLView::_load() /*override*/
 {
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -380,7 +380,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLAP242View::_draw(CDC* pDC) /*override*/
+/*virtual*/ void CAP242OpenGLView::_draw(CDC* pDC) /*override*/
 {
 	VERIFY(pDC != nullptr);
 
@@ -442,7 +442,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void COpenGLAP242View::OnWorldDimensionsChanged()  /*override*/
+/*virtual*/ void CAP242OpenGLView::OnWorldDimensionsChanged()  /*override*/
 {
 	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
@@ -478,7 +478,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLAP242View::OnInstanceSelected(CViewBase* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::OnInstanceSelected(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -504,7 +504,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	}
 }
 
-/*virtual*/ void COpenGLAP242View::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -519,7 +519,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLAP242View::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CAP242OpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -557,7 +557,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void COpenGLAP242View::OnControllerChanged() /*override*/
+/*virtual*/ void CAP242OpenGLView::OnControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);
 
@@ -566,7 +566,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	loadSettings();
 }
 
-/*virtual*/ void COpenGLAP242View::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+/*virtual*/ void CAP242OpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -621,7 +621,7 @@ COpenGLAP242View::~COpenGLAP242View()
 	} // switch (enEvent)
 }
 
-void COpenGLAP242View::DrawFaces(_model* pM, bool bTransparent)
+void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 {
 	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
@@ -775,7 +775,7 @@ void COpenGLAP242View::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void COpenGLAP242View::DrawConceptualFacesPolygons(_model* pM)
+void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 {
 	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
@@ -880,7 +880,7 @@ void COpenGLAP242View::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLAP242View::DrawLines(_model* pM)
+void CAP242OpenGLView::DrawLines(_model* pM)
 {
 	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
@@ -985,7 +985,7 @@ void COpenGLAP242View::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLAP242View::DrawPoints(_model* pM)
+void CAP242OpenGLView::DrawPoints(_model* pM)
 {
 	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
@@ -1098,7 +1098,7 @@ void COpenGLAP242View::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLAP242View::DrawInstancesFrameBuffer()
+void CAP242OpenGLView::DrawInstancesFrameBuffer()
 {
 	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
@@ -1276,7 +1276,7 @@ void COpenGLAP242View::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLAP242View::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void CAP242OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
