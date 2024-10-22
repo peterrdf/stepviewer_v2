@@ -709,24 +709,15 @@ protected: // Methods
 
 	void setSTEPFormatSettings()
 	{
-		uint64_t mask = 0;
-		mask += FORMAT_SIZE_VERTEX_DOUBLE;
-		mask += FORMAT_SIZE_INDEX_INT64;
-		mask += FORMAT_VERTEX_NORMAL;
-		mask += FORMAT_VERTEX_TEXTURE_UV;
-		mask += FORMAT_EXPORT_TRIANGLES;
-		mask += FORMAT_EXPORT_LINES;
-		mask += FORMAT_EXPORT_POINTS;
-		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-		mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
-
-		uint64_t setting = 0;
-		setting += FORMAT_VERTEX_NORMAL;
-		setting += FORMAT_EXPORT_TRIANGLES;
-		setting += FORMAT_EXPORT_LINES;
-		setting += FORMAT_EXPORT_POINTS;
-		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+		uint64_t	mask = GetFormat(0),
+					setting =
+						FORMAT_VERTEX_POINT					   +
+						FORMAT_VERTEX_NORMAL				   +
+						FORMAT_EXPORT_TRIANGLES				   +
+						FORMAT_EXPORT_LINES					   +
+						FORMAT_EXPORT_POINTS				   +
+						FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS +
+						FORMAT_EXPORT_POLYGONS_AS_TUPLES;
 
 		SetFormat(getOwlModel(), setting, mask);
 		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
