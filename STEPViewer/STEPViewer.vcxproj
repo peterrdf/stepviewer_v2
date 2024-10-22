@@ -251,8 +251,8 @@
     <ClInclude Include="InstanceBase.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
-    <ClInclude Include="StructureView.h" />
-    <ClInclude Include="StructureViewConsts.h" />
+    <ClInclude Include="STEPStructureView.h" />
+    <ClInclude Include="STEPStructureViewConsts.h" />
     <ClInclude Include="TreeViewBase.h" />
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
@@ -304,7 +304,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="StructureView.cpp" />
+    <ClCompile Include="STEPStructureView.cpp" />
     <ClCompile Include="ViewBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

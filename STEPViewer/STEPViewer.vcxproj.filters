@@ -207,10 +207,10 @@
     <ClInclude Include="CIS2\CIS2ModelStructureView.h">
       <Filter>CIS2</Filter>
     </ClInclude>
-    <ClInclude Include="StructureView.h">
+    <ClInclude Include="STEPStructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StructureViewConsts.h">
+    <ClInclude Include="STEPStructureViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="STEPDesignTreeView.h">
@@ -332,7 +332,7 @@
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
-    <ClCompile Include="StructureView.cpp">
+    <ClCompile Include="STEPStructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="STEPDesignTreeView.cpp">

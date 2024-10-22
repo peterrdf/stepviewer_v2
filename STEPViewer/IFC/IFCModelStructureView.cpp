@@ -4,7 +4,7 @@
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "IFCModel.h"
-#include "StructureViewConsts.h"
+#include "STEPStructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>
