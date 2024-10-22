@@ -27,7 +27,7 @@ class CStructureViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-class CStructureView
+class CSTEPStructureView
 	: public CDockablePane
 	, public CViewBase
 {
@@ -43,7 +43,7 @@ public: // Methods
 
 // Construction
 public:
-	CStructureView();
+	CSTEPStructureView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -58,7 +58,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CStructureView();
+	virtual ~CSTEPStructureView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -5,7 +5,7 @@
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "AP242Model.h"
-#include "StructureViewConsts.h"
+#include "STEPStructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>

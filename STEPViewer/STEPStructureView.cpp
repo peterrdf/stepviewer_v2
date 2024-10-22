@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "StructureView.h"
+#include "STEPStructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "AP242Model.h"
@@ -20,7 +20,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CStructureView::OnModelChanged()
+/*virtual*/ void CSTEPStructureView::OnModelChanged()
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -76,18 +76,18 @@ static char THIS_FILE[]=__FILE__;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CStructureView
+// CSTEPStructureView
 
-CStructureView::CStructureView()
+CSTEPStructureView::CSTEPStructureView()
 	: m_pSTEPTreeView(nullptr)
 {}
 
-CStructureView::~CStructureView()
+CSTEPStructureView::~CSTEPStructureView()
 {	
 	delete m_pSTEPTreeView;
 }
 
-BEGIN_MESSAGE_MAP(CStructureView, CDockablePane)
+BEGIN_MESSAGE_MAP(CSTEPStructureView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
@@ -104,7 +104,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CSTEPStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -154,13 +154,13 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CStructureView::OnSize(UINT nType, int cx, int cy)
+void CSTEPStructureView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CStructureView::OnProperties()
+void CSTEPStructureView::OnProperties()
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -168,7 +168,7 @@ void CStructureView::OnProperties()
 	}	
 }
 
-void CStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CSTEPStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -176,7 +176,7 @@ void CStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 }
 
-void CStructureView::AdjustLayout()
+void CSTEPStructureView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -204,7 +204,7 @@ void CStructureView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CStructureView::OnPaint()
+void CSTEPStructureView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -216,14 +216,14 @@ void CStructureView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CStructureView::OnSetFocus(CWnd* pOldWnd)
+void CSTEPStructureView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CStructureView::OnChangeVisualStyle()
+void CSTEPStructureView::OnChangeVisualStyle()
 {
 	UINT uiBmpId = theApp.m_bHiColorIcons ? IDB_CLASS_VIEW_24 : IDB_CLASS_VIEW;
 
@@ -250,7 +250,7 @@ void CStructureView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CStructureView::OnDestroy()
+void CSTEPStructureView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -258,7 +258,7 @@ void CStructureView::OnDestroy()
 	__super::OnDestroy();
 }
 
-void CStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
+void CSTEPStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -268,7 +268,7 @@ void CStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
+void CSTEPStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;	
 
@@ -278,7 +278,7 @@ void CStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CSTEPStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 
