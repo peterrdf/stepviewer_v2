@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "RelationsView.h"
+#include "STEPRelationsView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "IFCModel.h"
@@ -27,16 +27,16 @@ static char THIS_FILE[]=__FILE__;
 #define LOAD_ATTRIBUTES_LIMIT	50
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// CRelationsView
+// CSTEPRelationsView
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnModelChanged() /*override*/
+/*virtual*/ void CSTEPRelationsView::OnModelChanged() /*override*/
 {
 	LoadProperties(0, vector<int_t>());
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CSTEPRelationsView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -63,7 +63,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) /*override*/
+/*virtual*/ void CSTEPRelationsView::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) /*override*/
 {
 	if (pSender == this)
 	{
@@ -88,7 +88,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, CEntity* pEntity) /*override*/
+/*virtual*/ void CSTEPRelationsView::OnViewRelations(CViewBase* pSender, CEntity* pEntity) /*override*/
 {
 	if (pSender == this)
 	{
@@ -103,13 +103,13 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CTreeCtrlEx* CRelationsView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CSTEPRelationsView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<CString> CRelationsView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CSTEPRelationsView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
 	{
@@ -119,7 +119,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CString CRelationsView::GetSearchFilterType(const CString& strFilter) /*override*/
+/*virtual*/ CString CSTEPRelationsView::GetSearchFilterType(const CString& strFilter) /*override*/
 {
 	if (strFilter == _T("Express ID"))
 	{
@@ -130,7 +130,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CSTEPRelationsView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -170,7 +170,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ BOOL CRelationsView::ProcessSearch(int iFilter, const CString& strSearchText) /*override*/
+/*virtual*/ BOOL CSTEPRelationsView::ProcessSearch(int iFilter, const CString& strSearchText) /*override*/
 {
 	// ExpressID
 	if (iFilter == (int)enumSearchFilter::ExpressID)
@@ -242,7 +242,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ BOOL CRelationsView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+/*virtual*/ BOOL CSTEPRelationsView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	UNREFERENCED_PARAMETER(iFilter);
 
@@ -266,7 +266,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-CModel* CRelationsView::GetModel() const
+CModel* CSTEPRelationsView::GetModel() const
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -288,7 +288,7 @@ CModel* CRelationsView::GetModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances)
+void CSTEPRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances)
 {
 	ResetView();
 
@@ -326,7 +326,7 @@ void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadProperties(SdaiEntity iEntity, const vector<SdaiInstance>& vecInstances)
+void CSTEPRelationsView::LoadProperties(SdaiEntity iEntity, const vector<SdaiInstance>& vecInstances)
 {
 	ResetView();
 
@@ -361,7 +361,7 @@ void CRelationsView::LoadProperties(SdaiEntity iEntity, const vector<SdaiInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadInstance(SdaiEntity iSdaiEntity, SdaiInstance iSdaiInstance, HTREEITEM hParent)
+void CSTEPRelationsView::LoadInstance(SdaiEntity iSdaiEntity, SdaiInstance iSdaiInstance, HTREEITEM hParent)
 {	
 	ASSERT(iSdaiEntity != 0);
 	ASSERT(iSdaiInstance != 0);	
@@ -463,7 +463,7 @@ void CRelationsView::LoadInstance(SdaiEntity iSdaiEntity, SdaiInstance iSdaiInst
 }
 
 // ------------------------------------------------------------------------------------------------
-int_t CRelationsView::GetInstanceAttributes(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet)
+int_t CSTEPRelationsView::GetInstanceAttributes(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet)
 {
 	if (iEntity == 0)
 	{
@@ -496,7 +496,7 @@ int_t CRelationsView::GetInstanceAttributes(SdaiEntity iEntity, SdaiInstance iIn
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::LoadInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
+void CSTEPRelationsView::LoadInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
 {
 	if ((iEntity == 0) || (iInstance == 0))
 	{
@@ -539,7 +539,7 @@ void CRelationsView::LoadInstanceAttribute(SdaiEntity iEntity, SdaiInstance iIns
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
+void CSTEPRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter)
 {
 	wstring strLabel;
 	bool bInverse = false;
@@ -587,7 +587,7 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInst
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel)
 {
     ASSERT(iInstance != 0);
 
@@ -599,13 +599,13 @@ void CRelationsView::CreateAttributeLabelInstance(SdaiInstance iInstance, wstrin
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelBoolean(bool bValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelBoolean(bool bValue, wstring& strLabel)
 {
 	strLabel += bValue ? L".T." : L".F.";
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelLogical(char* szValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelLogical(char* szValue, wstring& strLabel)
 {
 	strLabel += L".";
 	strLabel += CA2W(szValue);
@@ -613,7 +613,7 @@ void CRelationsView::CreateAttributeLabelLogical(char* szValue, wstring& strLabe
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel)
 {
 	strLabel += L".";
 	strLabel += CA2W(szValue);
@@ -621,7 +621,7 @@ void CRelationsView::CreateAttributeLabelEnumeration(char* szValue, wstring& str
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelReal(double dValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelReal(double dValue, wstring& strLabel)
 {
 	CString strValue;
 	strValue.Format(_T("%f"), dValue);
@@ -630,7 +630,7 @@ void CRelationsView::CreateAttributeLabelReal(double dValue, wstring& strLabel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelInteger(int_t iValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelInteger(int_t iValue, wstring& strLabel)
 {
 	CString strValue;
 	strValue.Format(_T("%lld"), (int64_t)iValue);
@@ -639,7 +639,7 @@ void CRelationsView::CreateAttributeLabelInteger(int_t iValue, wstring& strLabel
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel)
+void CSTEPRelationsView::CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel)
 {
 	if (szValue != nullptr) 
 	{
@@ -654,7 +654,7 @@ void CRelationsView::CreateAttributeLabelString(wchar_t* szValue, wstring& strLa
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel)
+bool CSTEPRelationsView::CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel)
 {
 	bool bHasChildren = false;
 
@@ -816,7 +816,7 @@ bool CRelationsView::CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel)
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel)
+bool CSTEPRelationsView::CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel)
 {
 	bool bHasChildren = false;
 
@@ -973,7 +973,7 @@ bool CRelationsView::CreateAttributeLabelAggregationElement(SdaiAggr aggregation
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabelAggregation(SdaiAggr sdaiAggregation, wstring& strLabel)
+bool CSTEPRelationsView::CreateAttributeLabelAggregation(SdaiAggr sdaiAggregation, wstring& strLabel)
 {
 	bool bHasChildren = false;
 
@@ -1000,7 +1000,7 @@ bool CRelationsView::CreateAttributeLabelAggregation(SdaiAggr sdaiAggregation, w
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttribute, wstring& strLabel)
+bool CSTEPRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttribute, wstring& strLabel)
 {	
 	strLabel = _T("");
 	bool bHasChildren = false;
@@ -1186,7 +1186,7 @@ bool CRelationsView::CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttr
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent)
+void CSTEPRelationsView::GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent)
 {
     switch (sdaiGetADBType(ADB)) 
 	{
@@ -1258,7 +1258,7 @@ void CRelationsView::GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, HTREEITEM hParent)
+void CSTEPRelationsView::GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, HTREEITEM hParent)
 {
     switch (iAggrType)
 	{
@@ -1329,7 +1329,7 @@ void CRelationsView::GetAttributeReferencesAggregationElement(SdaiAggr aggregati
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent)
+void CSTEPRelationsView::GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent)
 {
     SdaiInteger iMemberCount = sdaiGetMemberCount(aggregation);
 	if (iMemberCount == 0)
@@ -1350,7 +1350,7 @@ void CRelationsView::GetAttributeReferencesAggregation(SdaiAggr aggregation, HTR
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, HTREEITEM hParent)
+void CSTEPRelationsView::GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, HTREEITEM hParent)
 {
     int_t iAttrType = engiGetAttrType(iAttribute);
     if (iAttrType & engiTypeFlagAggr ||
@@ -1431,7 +1431,7 @@ void CRelationsView::GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAt
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const
+void CSTEPRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const
 {
 	ASSERT(iEntity != 0);
 
@@ -1459,7 +1459,7 @@ void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHiera
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::Clean()
+void CSTEPRelationsView::Clean()
 {
 	for (auto pInstanceData : m_vecItemDataCache)
 	{
@@ -1469,7 +1469,7 @@ void CRelationsView::Clean()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::ResetView()
+void CSTEPRelationsView::ResetView()
 {
 	// UI
 	m_treeCtrl.DeleteAllItems();
@@ -1480,19 +1480,19 @@ void CRelationsView::ResetView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CSTEPRelationsView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CSTEPRelationsView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
+void CSTEPRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
@@ -1563,7 +1563,7 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+void CSTEPRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -1629,7 +1629,7 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-CRelationsView::CRelationsView()
+CSTEPRelationsView::CSTEPRelationsView()
 	: m_enMode(enumRelationsViewMode::Flat)
 	, m_vecItemDataCache()
 	, m_pSearchDialog(nullptr)
@@ -1638,22 +1638,22 @@ CRelationsView::CRelationsView()
 }
 
 // ------------------------------------------------------------------------------------------------
-CRelationsView::~CRelationsView()
+CSTEPRelationsView::~CSTEPRelationsView()
 {
 	Clean();
 }
 
-BEGIN_MESSAGE_MAP(CRelationsView, CDockablePane)
+BEGIN_MESSAGE_MAP(CSTEPRelationsView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
 	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CRelationsView::OnNMClickTree)
-	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CRelationsView::OnNMRClickTree)
-	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CRelationsView::OnTVNItemexpandingTree)
-	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_IFC, &CRelationsView::OnTVNGetInfoTip)
+	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CSTEPRelationsView::OnNMClickTree)
+	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CSTEPRelationsView::OnNMRClickTree)
+	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CSTEPRelationsView::OnTVNItemexpandingTree)
+	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_IFC, &CSTEPRelationsView::OnTVNGetInfoTip)
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -1661,7 +1661,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CSTEPRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -1712,13 +1712,13 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CRelationsView::OnSize(UINT nType, int cx, int cy)
+void CSTEPRelationsView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CRelationsView::AdjustLayout()
+void CSTEPRelationsView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -1746,7 +1746,7 @@ void CRelationsView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CRelationsView::OnProperties()
+void CSTEPRelationsView::OnProperties()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -1758,11 +1758,11 @@ void CRelationsView::OnProperties()
 	}
 }
 
-void CRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+void CSTEPRelationsView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {	
 }
 
-void CRelationsView::OnPaint()
+void CSTEPRelationsView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -1774,14 +1774,14 @@ void CRelationsView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CRelationsView::OnSetFocus(CWnd* pOldWnd)
+void CSTEPRelationsView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CRelationsView::OnChangeVisualStyle()
+void CSTEPRelationsView::OnChangeVisualStyle()
 {
 	m_imageList.DeleteImageList();
 
@@ -1811,7 +1811,7 @@ void CRelationsView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CRelationsView::OnDestroy()
+void CSTEPRelationsView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -1821,7 +1821,7 @@ void CRelationsView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CRelationsView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CSTEPRelationsView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

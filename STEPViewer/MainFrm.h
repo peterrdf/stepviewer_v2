@@ -6,10 +6,10 @@
 
 #include "Controller.h"
 #include "STEPStructureView.h"
-#include "PropertiesWnd.h"
+#include "STEPPropertiesWnd.h"
 #include "STEPDesignTreeView.h"
-#include "SchemaView.h"
-#include "RelationsView.h"
+#include "STEPSchemaView.h"
+#include "STEPRelationsView.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -51,9 +51,9 @@ protected:  // control bar embedded members
 	CMFCToolBarImages		m_userImages;
 	CSTEPStructureView		m_structureView;
 	CSTEPDesignTreeView		m_designTreeView;
-	CSchemaView				m_schemaView;
-	CRelationsView			m_relationsView;
-	CPropertiesWnd			m_propertiesView;
+	CSTEPSchemaView			m_schemaView;
+	CSTEPRelationsView		m_relationsView;
+	CSTEPPropertiesWnd		m_propertiesView;
 
 
 // Generated message map functions

@@ -13,7 +13,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSchemaViewToolBar : public CMFCToolBar
+class CSTEPSchemaViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -30,7 +30,7 @@ class CSchemaViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSchemaView 
+class CSTEPSchemaView 
 	: public CDockablePane
 	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
@@ -69,7 +69,7 @@ private: // Methods
 
 // Construction
 public:
-	CSchemaView();
+	CSTEPSchemaView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -79,14 +79,14 @@ protected:
 
 	CTreeCtrlEx m_treeCtrl;
 	CImageList m_imageList;
-	CSchemaViewToolBar m_toolBar;
+	CSTEPSchemaViewToolBar m_toolBar;
 
 protected:
 	void ResetView();
 
 // Implementation
 public:
-	virtual ~CSchemaView();
+	virtual ~CSTEPSchemaView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
