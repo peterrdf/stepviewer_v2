@@ -232,7 +232,7 @@
     <ClInclude Include="CIS2\CIS2Model.h" />
     <ClInclude Include="CIS2\CIS2ModelStructureView.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
-    <ClInclude Include="CIS2\OpenGLCIS2View.h" />
+    <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
@@ -246,7 +246,7 @@
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
-    <ClInclude Include="IFC\OpenGLIFCView.h" />
+    <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="InstanceBase.h" />
     <ClInclude Include="Model.h" />
@@ -281,7 +281,7 @@
     <ClCompile Include="CIS2\CIS2Model.cpp" />
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
-    <ClCompile Include="CIS2\OpenGLCIS2View.cpp" />
+    <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />
@@ -294,7 +294,7 @@
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
-    <ClCompile Include="IFC\OpenGLIFCView.cpp" />
+    <ClCompile Include="IFC\IFCOpenGLView.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="InstanceBase.cpp" />
     <ClCompile Include="Model.cpp" />

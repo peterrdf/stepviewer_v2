@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "OpenGLIFCView.h"
+#include "IFCOpenGLView.h"
 #include "Controller.h"
 #include "IFCModel.h"
 #include "resource.h"
@@ -11,7 +11,7 @@
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
-COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
+CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 	: COpenGLView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -53,7 +53,7 @@ COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 		nullptr);
 }
 
-COpenGLIFCView::~COpenGLIFCView()
+CIFCOpenGLView::~CIFCOpenGLView()
 {
 	GetController()->UnRegisterView(this);	
 
@@ -66,27 +66,27 @@ COpenGLIFCView::~COpenGLIFCView()
 	m_pPointedInstanceMaterial = nullptr;
 }
 
-/*virtual*/ _controller* COpenGLIFCView::getController() const /*override*/
+/*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* COpenGLIFCView::getModel() const /*override*/
+/*virtual*/ _model* CIFCOpenGLView::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void COpenGLIFCView::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void CIFCOpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string COpenGLIFCView::loadSetting(const string& strName) /*override*/
+/*virtual*/ string CIFCOpenGLView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void COpenGLIFCView::_load() /*override*/
+/*virtual*/ void CIFCOpenGLView::_load() /*override*/
 {
 	CWaitCursor waitCursor;
 
@@ -371,7 +371,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLIFCView::_draw(CDC* pDC) /*override*/
+/*virtual*/ void CIFCOpenGLView::_draw(CDC* pDC) /*override*/
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
@@ -431,7 +431,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
+/*virtual*/ void CIFCOpenGLView::OnWorldDimensionsChanged() /*override*/
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
@@ -470,7 +470,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -496,7 +496,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	}
 }
 
-/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -506,7 +506,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	_redraw();
 }
 
-/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -544,7 +544,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
+/*virtual*/ void CIFCOpenGLView::OnControllerChanged() /*override*/
 {
 	auto pController = GetController();
 	if (pController != nullptr)
@@ -563,7 +563,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	}
 }
 
-/*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -618,7 +618,7 @@ COpenGLIFCView::~COpenGLIFCView()
 	} // switch (enEvent)
 }
 
-void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
+void CIFCOpenGLView::DrawFaces(_model* pM, bool bTransparent)
 {
 	auto pModel = dynamic_cast<CIFCModel*>(pM);
 	if (pModel == nullptr)
@@ -721,7 +721,7 @@ void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
+void CIFCOpenGLView::DrawConceptualFacesPolygons(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -774,7 +774,7 @@ void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLIFCView::DrawLines(_model* pM)
+void CIFCOpenGLView::DrawLines(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -827,7 +827,7 @@ void COpenGLIFCView::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLIFCView::DrawPoints(_model* pM)
+void CIFCOpenGLView::DrawPoints(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -895,7 +895,7 @@ void COpenGLIFCView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLIFCView::DrawInstancesFrameBuffer()
+void CIFCOpenGLView::DrawInstancesFrameBuffer()
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
@@ -1021,7 +1021,7 @@ void COpenGLIFCView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void CIFCOpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
