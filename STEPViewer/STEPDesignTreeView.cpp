@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "MainFrm.h"
 #include "STEPViewer.h"
-#include "DesignTreeView.h"
+#include "STEPDesignTreeView.h"
 #include "Resource.h"
 #include "IFCModel.h"
 #include "AP242Model.h"
@@ -24,13 +24,13 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGE_VALUE    5
 
 // ************************************************************************************************
-class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
+class CSTEPDesignTreeViewMenuButton : public CMFCToolBarMenuButton
 {
 
-	DECLARE_SERIAL(CDesignTreeViewMenuButton)
+	DECLARE_SERIAL(CSTEPDesignTreeViewMenuButton)
 
 public:
-	CDesignTreeViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CSTEPDesignTreeViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -51,10 +51,10 @@ public:
 	}
 };
 
-IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
+IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
+/*virtual*/ void CSTEPDesignTreeView::OnModelChanged() /*override*/
 {
 	ResetView();
 
@@ -72,7 +72,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
-/*virtual*/ void CDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CSTEPDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -131,12 +131,12 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-/*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CSTEPDesignTreeView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-/*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CSTEPDesignTreeView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
 	{
@@ -147,7 +147,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	};
 }
 
-/*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CSTEPDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -178,7 +178,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 }
 
-/*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+/*virtual*/ BOOL CSTEPDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL) 
 	{
@@ -251,7 +251,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-void CDesignTreeView::ResetView()
+void CSTEPDesignTreeView::ResetView()
 {
 	// UI
 	m_treeCtrl.DeleteAllItems();
@@ -261,7 +261,7 @@ void CDesignTreeView::ResetView()
 	Clean();
 }
 
-void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
+void CSTEPDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -297,7 +297,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	}
 }
 
-void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
+void CSTEPDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 {
 	if (iInstance == 0)
 	{
@@ -475,7 +475,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 	}	
 }
 
-void CDesignTreeView::Clean()
+void CSTEPDesignTreeView::Clean()
 {
 	auto itInstance2Data = m_mapInstance2Data.begin();
 	for (; itInstance2Data != m_mapInstance2Data.end(); itInstance2Data++)
@@ -486,14 +486,14 @@ void CDesignTreeView::Clean()
 }
 
 // ************************************************************************************************
-CDesignTreeView::CDesignTreeView()
+CSTEPDesignTreeView::CSTEPDesignTreeView()
 	: m_pPropertyProvider(nullptr)
 	, m_mapInstance2Data()
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
 {}
 
-CDesignTreeView::~CDesignTreeView()
+CSTEPDesignTreeView::~CSTEPDesignTreeView()
 {	
 	Clean();
 
@@ -501,7 +501,7 @@ CDesignTreeView::~CDesignTreeView()
 	m_pPropertyProvider = nullptr;
 }
 
-BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
+BEGIN_MESSAGE_MAP(CSTEPDesignTreeView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
@@ -512,7 +512,7 @@ BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
-int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CSTEPDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -561,13 +561,13 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CDesignTreeView::OnSize(UINT nType, int cx, int cy)
+void CSTEPDesignTreeView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CDesignTreeView::OnProperties()
+void CSTEPDesignTreeView::OnProperties()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -579,7 +579,7 @@ void CDesignTreeView::OnProperties()
 	}
 }
 
-void CDesignTreeView::AdjustLayout()
+void CSTEPDesignTreeView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -607,7 +607,7 @@ void CDesignTreeView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CDesignTreeView::OnPaint()
+void CSTEPDesignTreeView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -619,14 +619,14 @@ void CDesignTreeView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CDesignTreeView::OnSetFocus(CWnd* pOldWnd)
+void CSTEPDesignTreeView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CDesignTreeView::OnChangeVisualStyle()
+void CSTEPDesignTreeView::OnChangeVisualStyle()
 {
 	m_images.DeleteImageList();
 
@@ -656,7 +656,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CDesignTreeView::OnDestroy()
+void CSTEPDesignTreeView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -666,7 +666,7 @@ void CDesignTreeView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
+void CSTEPDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 
@@ -688,7 +688,7 @@ void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 	}
 }
 
-void CDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CSTEPDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

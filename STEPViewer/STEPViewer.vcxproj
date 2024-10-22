@@ -221,7 +221,6 @@
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="AP242\AP242Assembly.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
-    <ClInclude Include="AP242\OWLProperty.h" />
     <ClInclude Include="AP242\AP242ProductDefinition.h" />
     <ClInclude Include="AP242\AP242ProductInstance.h" />
     <ClInclude Include="AP242\AP242ItemData.h" />
@@ -233,12 +232,13 @@
     <ClInclude Include="CIS2\CIS2ModelStructureView.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\CIS2OpenGLView.h" />
-    <ClInclude Include="DesignTreeView.h" />
+    <ClInclude Include="STEPDesignTreeView.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="ModelCheckDlg.h" />
+    <ClInclude Include="OWLProperty.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
@@ -270,7 +270,6 @@
   <ItemGroup>
     <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
-    <ClCompile Include="AP242\OWLProperty.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
     <ClCompile Include="AP242\AP242ProductInstance.cpp" />
     <ClCompile Include="AP242\AP242ItemData.cpp" />
@@ -282,12 +281,13 @@
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
-    <ClCompile Include="DesignTreeView.cpp" />
+    <ClCompile Include="STEPDesignTreeView.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
+    <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />

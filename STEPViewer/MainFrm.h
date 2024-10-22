@@ -7,7 +7,7 @@
 #include "Controller.h"
 #include "StructureView.h"
 #include "PropertiesWnd.h"
-#include "DesignTreeView.h"
+#include "STEPDesignTreeView.h"
 #include "SchemaView.h"
 #include "RelationsView.h"
 
@@ -45,15 +45,15 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar         m_menuBar;
-	CMFCToolBar         m_toolBar;
-	CMFCStatusBar       m_statusBar;
-	CMFCToolBarImages   m_userImages;
-	CStructureView      m_structureView;
-	CDesignTreeView		m_designTreeView;
-	CSchemaView			m_schemaView;
-	CRelationsView		m_relationsView;
-	CPropertiesWnd      m_propertiesView;
+	CMFCMenuBar				m_menuBar;
+	CMFCToolBar				m_toolBar;
+	CMFCStatusBar			m_statusBar;
+	CMFCToolBarImages		m_userImages;
+	CStructureView			m_structureView;
+	CSTEPDesignTreeView		m_designTreeView;
+	CSchemaView				m_schemaView;
+	CRelationsView			m_relationsView;
+	CPropertiesWnd			m_propertiesView;
 
 
 // Generated message map functions

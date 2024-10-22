@@ -135,9 +135,6 @@
     <ClInclude Include="AP242\AP242OpenGLView.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\OWLProperty.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
     <ClInclude Include="AP242\AP242ProductDefinition.h">
       <Filter>AP242</Filter>
     </ClInclude>
@@ -216,7 +213,10 @@
     <ClInclude Include="StructureViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DesignTreeView.h">
+    <ClInclude Include="STEPDesignTreeView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OWLProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -299,9 +299,6 @@
     <ClCompile Include="AP242\AP242OpenGLView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\OWLProperty.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
     <ClCompile Include="AP242\AP242ProductDefinition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
@@ -338,7 +335,10 @@
     <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DesignTreeView.cpp">
+    <ClCompile Include="STEPDesignTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OWLProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
