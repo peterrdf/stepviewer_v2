@@ -210,7 +210,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
 			{
-				auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);
+				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
 					pItemData->GetProductInstance()->SetEnable(false);
@@ -229,7 +229,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case IMAGE_NOT_SELECTED:
 			{
-				auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);
+				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
 					pItemData->GetProductInstance()->SetEnable(true);
@@ -270,7 +270,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 		m_pTreeCtrl->SetItemState(hItem, TVIS_BOLD, TVIS_BOLD);
 		m_hSelectedItem = hItem;
 
-		auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);
+		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::ProductInstance))
 		{
 			GetController()->SelectInstance(this, nullptr);
@@ -314,7 +314,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 
 		m_pTreeCtrl->DeleteItem(hChild);
 
-		auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
+		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
 		if (pItemData == nullptr)
 		{
 			ASSERT(FALSE); // Internal error
@@ -413,7 +413,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 	CString strTextLower = strText;
 	strTextLower.MakeLower();
 
-	CSTEPItemData* pItemData = (CSTEPItemData*)GetTreeView()->GetItemData(hItem);
+	CAP242ItemData* pItemData = (CAP242ItemData*)GetTreeView()->GetItemData(hItem);
 
 	// Product Definition
 	if (iFilter == (int)enumSearchFilter::ProductDefitions)
@@ -493,7 +493,7 @@ CAP242ModelStructureView::CAP242ModelStructureView(CTreeCtrlEx* pTreeView)
 	/*
 	* Instances
 	*/
-	auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hItem);
+	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
 		CAP242ProductInstance * pInstance = pItemData->GetProductInstance();
@@ -972,7 +972,7 @@ void CAP242ModelStructureView::LoadModel()
 	/*
 	* Model
 	*/
-	auto pModelItemData = new CSTEPItemData(nullptr, pModel, enumSTEPItemDataType::Model);
+	auto pModelItemData = new CAP242ItemData(nullptr, pModel, enumSTEPItemDataType::Model);
 	m_vecItemData.push_back(pModelItemData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -1051,7 +1051,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, 
 			HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hAssembly);
 
-			auto pItemData = new CSTEPItemData(nullptr, pAssembly, enumSTEPItemDataType::Assembly);
+			auto pItemData = new CAP242ItemData(nullptr, pAssembly, enumSTEPItemDataType::Assembly);
 			m_vecItemData.push_back(pItemData);
 
 			m_pTreeCtrl->SetItemData(hAssembly, (DWORD_PTR)pItemData);
@@ -1069,7 +1069,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, 
 
 				HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hAssembly);
 
-				pItemData = new CSTEPItemData(nullptr, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
+				pItemData = new CAP242ItemData(nullptr, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 				m_vecItemData.push_back(pItemData);
 
 				m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
@@ -1092,7 +1092,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, 
 				HTREEITEM hProductDefinition = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hAssembly);
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hProductDefinition);
 
-				pItemData = new CSTEPItemData(nullptr, pDefinition, enumSTEPItemDataType::ProductDefinition);
+				pItemData = new CAP242ItemData(nullptr, pDefinition, enumSTEPItemDataType::ProductDefinition);
 				m_vecItemData.push_back(pItemData);
 
 				m_pTreeCtrl->SetItemData(hProductDefinition, (DWORD_PTR)pItemData);
@@ -1104,14 +1104,14 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
 {
 	/*
 	* Instance
 	*/
 	if (pDefinition->GetRelatingProducts() > 0)
 	{
-		auto pProductItemData = new CSTEPItemData(pParent, pDefinition, enumSTEPItemDataType::ProductDefinition);
+		auto pProductItemData = new CAP242ItemData(pParent, pDefinition, enumSTEPItemDataType::ProductDefinition);
 		pParent->children().push_back(pProductItemData);
 
 		m_vecItemData.push_back(pProductItemData);
@@ -1123,7 +1123,7 @@ void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pMode
 		auto& vecInstances = pDefinition->GetInstances();
 		int32_t iInstance = pDefinition->GetNextInstance();
 
-		auto pProductInstanceData = new CSTEPItemData(pParent, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
+		auto pProductInstanceData = new CAP242ItemData(pParent, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 		pParent->children().push_back(pProductInstanceData);
 
 		m_vecItemData.push_back(pProductInstanceData);
@@ -1131,7 +1131,7 @@ void CAP242ModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pMode
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent)
+void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
 {
 	const auto& mapAssemblies = pModel->GetAssemblies();
 
@@ -1145,7 +1145,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* 
 			/*
 			* Assembly
 			*/
-			auto pAssemblyItemData = new CSTEPItemData(pParent, pAssembly, enumSTEPItemDataType::Assembly);
+			auto pAssemblyItemData = new CAP242ItemData(pParent, pAssembly, enumSTEPItemDataType::Assembly);
 			pParent->children().push_back(pAssemblyItemData);
 
 			m_vecItemData.push_back(pAssemblyItemData);
@@ -1158,7 +1158,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* 
 				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
 				int32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextInstance();
 
-				auto pInstanceItemData = new CSTEPItemData(pAssemblyItemData, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
+				auto pInstanceItemData = new CAP242ItemData(pAssemblyItemData, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 				pAssemblyItemData->children().push_back(pInstanceItemData);
 
 				m_vecItemData.push_back(pInstanceItemData);
@@ -1168,7 +1168,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* 
 				/*
 				* Product
 				*/
-				auto pProductItemData = new CSTEPItemData(pAssemblyItemData, pDefinition, enumSTEPItemDataType::ProductDefinition);
+				auto pProductItemData = new CAP242ItemData(pAssemblyItemData, pDefinition, enumSTEPItemDataType::ProductDefinition);
 				pAssemblyItemData->children().push_back(pProductItemData);
 
 				m_vecItemData.push_back(pProductItemData);
@@ -1181,7 +1181,7 @@ void CAP242ModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* 
 	auto& vecInstances = pDefinition->GetInstances();
 	int32_t iInstance = pDefinition->GetNextInstance();
 
-	auto pInstanceItemData = new CSTEPItemData(pParent, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
+	auto pInstanceItemData = new CAP242ItemData(pParent, vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
 	pParent->children().push_back(pInstanceItemData);
 
 	m_vecItemData.push_back(pInstanceItemData);
@@ -1227,7 +1227,7 @@ void CAP242ModelStructureView::SearchForDescendantWithGeometry()
 	} // for (auto pItemData : ...
 }
 
-void CAP242ModelStructureView::SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry)
+void CAP242ModelStructureView::SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry)
 {
 	for (auto pChildItemData : pItemData->children())
 	{
@@ -1251,7 +1251,7 @@ void CAP242ModelStructureView::SearchForDescendantWithGeometryRecursively(CSTEPI
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData* CAP242ModelStructureView::FindItemData(CAP242ProductInstance* pInstance)
+CAP242ItemData* CAP242ModelStructureView::FindItemData(CAP242ProductInstance* pInstance)
 {
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
 	{
@@ -1265,7 +1265,7 @@ CSTEPItemData* CAP242ModelStructureView::FindItemData(CAP242ProductInstance* pIn
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::LoadItemChildren(CSTEPItemData* pItemData)
+void CAP242ModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 {
 	if ((pItemData == nullptr) || (pItemData->treeItem() == nullptr) || pItemData->children().empty())
 	{
@@ -1376,7 +1376,7 @@ void CAP242ModelStructureView::LoadInstanceAncestors(CAP242ProductInstance* pIns
 
 	pItemData = pItemData->getParent();
 
-	vector<CSTEPItemData*> vecAncestors;
+	vector<CAP242ItemData*> vecAncestors;
 	vecAncestors.push_back(pItemData);
 
 	while (pItemData->treeItem() == nullptr)
@@ -1488,7 +1488,7 @@ void CAP242ModelStructureView::UpdateChildren(HTREEITEM hParent)
 		m_pTreeCtrl->SetItemImage(hChild, iParentImage, iParentImage);
 
 #ifdef _DEBUG
-		auto pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hChild);
+		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hChild);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED))
@@ -1509,7 +1509,7 @@ void CAP242ModelStructureView::UpdateChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242ModelStructureView::UpdateChildrenInMemory(CSTEPItemData* pParent, bool bEnable)
+void CAP242ModelStructureView::UpdateChildrenInMemory(CAP242ItemData* pParent, bool bEnable)
 {
 	if (pParent == nullptr)
 	{
@@ -1596,7 +1596,7 @@ void CAP242ModelStructureView::UpdateParent(HTREEITEM hParent)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
+		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->GetProductInstance()->SetEnable(true);
@@ -1611,7 +1611,7 @@ void CAP242ModelStructureView::UpdateParent(HTREEITEM hParent)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
+		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->GetProductInstance()->SetEnable(false);
@@ -1626,7 +1626,7 @@ void CAP242ModelStructureView::UpdateParent(HTREEITEM hParent)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
-		CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
+		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
 			pItemData->GetProductInstance()->SetEnable(true);
@@ -1639,7 +1639,7 @@ void CAP242ModelStructureView::UpdateParent(HTREEITEM hParent)
 
 	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-	CSTEPItemData* pItemData = (CSTEPItemData*)m_pTreeCtrl->GetItemData(hParent);
+	CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
 		pItemData->GetProductInstance()->SetEnable(true);
