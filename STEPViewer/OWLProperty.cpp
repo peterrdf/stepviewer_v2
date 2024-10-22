@@ -97,7 +97,7 @@ wchar_t* COWLProperty::GetName() const
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
-			int64_t* piInstances = nullptr;
+			OwlInstance* piInstances = nullptr;
 			GetObjectProperty(iInstance, iPropertyInstance, &piInstances, &iCard);
 		}
 		break;

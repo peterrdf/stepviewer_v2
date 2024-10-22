@@ -30,18 +30,6 @@ CIFCInstance::~CIFCInstance()
 	return iOwlModel;
 }
 
-/*virtual* / OwlInstance CIFCInstance::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override* /
-{
-	assert(piVertexBufferSize != nullptr);
-	assert(piIndexBufferSize != nullptr);
-
-	*piVertexBufferSize = *piIndexBufferSize = 0;
-
-	CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
-
-	return m_iOwlInstance;
-}	//	*/
-
 void CIFCInstance::CalculateMinMax(
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 

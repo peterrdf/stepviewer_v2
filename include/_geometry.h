@@ -737,33 +737,23 @@ protected: // Methods
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);
 		
-		calculateGetBufferSize(&pVertexBuffer->size(), &pIndexBuffer->size());
+		pVertexBuffer->size() = pIndexBuffer->size() = 0;
+
+		CalculateInstance(m_iOwlInstance, &pVertexBuffer->size(), &pIndexBuffer->size());
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
 		}
 
 		pVertexBuffer->data() = new float[(int_t) pVertexBuffer->size() * (int_t) pVertexBuffer->getVertexLength()];
-//		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
 
 		UpdateInstanceVertexBuffer(m_iOwlInstance, pVertexBuffer->data());
 
 		pIndexBuffer->data() = new int32_t[(int_t) pIndexBuffer->size()];
-//		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
 		UpdateInstanceIndexBuffer(m_iOwlInstance, pIndexBuffer->data());
 
 		return true;
-	}
-
-	virtual void calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize)
-	{
-		assert(piVertexBufferSize != nullptr);
-		assert(piIndexBufferSize != nullptr);
-
-		*piVertexBufferSize = *piIndexBufferSize = 0;
-
-		CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize);
 	}
 
 	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
