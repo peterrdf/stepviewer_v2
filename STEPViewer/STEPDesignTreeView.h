@@ -11,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CDesignTreeViewToolBar : public CMFCToolBar
+class CSTEPDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -22,7 +22,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 };
 
 // ************************************************************************************************
-class CDesignTreeView
+class CSTEPDesignTreeView
 	: public CDockablePane
 	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
@@ -109,7 +109,7 @@ private: // Methods
 
 // Construction
 public:
-	CDesignTreeView();
+	CSTEPDesignTreeView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -119,13 +119,13 @@ protected:
 
 	CTreeCtrlEx m_treeCtrl;
 	CImageList m_images;
-	CDesignTreeViewToolBar m_toolBar;
+	CSTEPDesignTreeViewToolBar m_toolBar;
 
 protected:
 
 // Implementation
 public:
-	virtual ~CDesignTreeView();
+	virtual ~CSTEPDesignTreeView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
