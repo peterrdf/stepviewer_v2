@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "STEPItemData.h"
+#include "AP242ItemData.h"
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, SdaiInstance pSdaiInstance, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, SdaiInstance pSdaiInstance, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance(pSdaiInstance)
 	, m_pAssembly()
@@ -19,7 +19,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, SdaiInstance pSdaiInstance,
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242Assembly* pAssembly, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, CAP242Assembly* pAssembly, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance()
 	, m_pAssembly(pAssembly)
@@ -36,7 +36,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242Assembly* pAssembly, 
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242Model* pAP242Model, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, CAP242Model* pAP242Model, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance()
 	, m_pAssembly()
@@ -53,7 +53,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242Model* pAP242Model, e
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242ProductDefinition* pProductDefinition, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, CAP242ProductDefinition* pProductDefinition, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance()
 	, m_pAssembly()
@@ -70,7 +70,7 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242ProductDefinition* pP
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242ProductInstance* pProductInstance, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, CAP242ProductInstance* pProductInstance, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pSdaiInstance()
 	, m_pAssembly()
@@ -87,30 +87,30 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, CAP242ProductInstance* pPro
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::~CSTEPItemData()
+CAP242ItemData::~CAP242ItemData()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData* CSTEPItemData::getParent()
+CAP242ItemData* CAP242ItemData::getParent()
 {
 	return m_pParent;
 }
 
 // ------------------------------------------------------------------------------------------------
-enumSTEPItemDataType CSTEPItemData::getType() const
+enumSTEPItemDataType CAP242ItemData::getType() const
 {
 	return m_enSTEPItemDataType;
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM& CSTEPItemData::treeItem()
+HTREEITEM& CAP242ItemData::treeItem()
 {
 	return m_hItem;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CSTEPItemData*>& CSTEPItemData::children()
+vector<CAP242ItemData*>& CAP242ItemData::children()
 {
 	return m_vecChildren;
 }
