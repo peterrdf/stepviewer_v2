@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "STEPModelStructureView.h"
+#include "AP242ModelStructureView.h"
 #include "AP242ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"

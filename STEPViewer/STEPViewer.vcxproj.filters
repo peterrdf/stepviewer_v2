@@ -150,7 +150,7 @@
     <ClInclude Include="AP242\AP242Model.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\STEPModelStructureView.h">
+    <ClInclude Include="AP242\AP242ModelStructureView.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_3DUtils.h">
@@ -314,7 +314,7 @@
     <ClCompile Include="AP242\AP242Model.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\STEPModelStructureView.cpp">
+    <ClCompile Include="AP242\AP242ModelStructureView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Model.cpp">
