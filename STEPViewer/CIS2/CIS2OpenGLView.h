@@ -1,16 +1,16 @@
-#ifndef _OPEN_GL_IFC_VIEW_H_
-#define _OPEN_GL_IFC_VIEW_H_
+#ifndef _OPEN_GL_CIS2_VIEW_H_
+#define _OPEN_GL_CIS2_VIEW_H_
 
-#include "IFCInstance.h"
+#include "CIS2Representation.h"
 #include "_oglUtils.h"
 #include "OpenGLView.h"
 
 // ************************************************************************************************
-class CIFCModel;
+class CCIS2Model;
 
 // ************************************************************************************************
 // Open GL View
-class COpenGLIFCView 
+class CCIS2OpenGLView 
 	: public COpenGLView
 {
 
@@ -22,8 +22,8 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CIFCInstance* m_pPointedInstance;
-	CIFCInstance* m_pSelectedInstance;
+	CCIS2Instance* m_pPointedInstance;
+	CCIS2Instance* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
@@ -32,8 +32,8 @@ private: // Members
 public: // Methods
 	
 	// ctor/dtor
-	COpenGLIFCView(CWnd * pWnd);
-	virtual ~COpenGLIFCView();
+	CCIS2OpenGLView(CWnd * pWnd);
+	virtual ~CCIS2OpenGLView();
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
@@ -75,4 +75,4 @@ private: // Methods
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 };
 
-#endif // _OPEN_GL_IFC_VIEW_H_
+#endif // _OPEN_GL_CIS2_VIEW_H_
