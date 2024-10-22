@@ -33,10 +33,16 @@ wstring CInstanceBase::GetName() const
 		strUniqueName += L" ";
 		strUniqueName += GetEntityName(iSdaiInstance);
 	}
-//	else
-//	{
-//		strUniqueName = GetClassName(iSdaiInstance);
-//	}	
+	else
+	{
+		//strUniqueName = GetClassName(iSdaiInstance);
+
+		//#tbd
+		wchar_t* szClassName = nullptr;
+		GetNameOfClassW(GetInstanceClass((OwlInstance)iSdaiInstance), &szClassName);
+		
+		return szClassName;
+	}	
 
 	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(iSdaiInstance, "Name", sdaiUNICODE, &szName);
