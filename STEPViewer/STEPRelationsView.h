@@ -11,7 +11,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CRelationsViewToolBar : public CMFCToolBar
+class CSTEPRelationsViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -54,7 +54,7 @@ enum class enumRelationsViewMode : int
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CRelationsView 
+class CSTEPRelationsView 
 	: public CDockablePane
 	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
@@ -212,7 +212,7 @@ private: // Methods
 
 // Construction
 public:
-	CRelationsView();
+	CSTEPRelationsView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -223,13 +223,13 @@ protected:
 	CTreeCtrlEx m_treeCtrl;	
 	wstring m_strTooltip;
 	CImageList m_imageList;
-	CRelationsViewToolBar m_toolBar;
+	CSTEPRelationsViewToolBar m_toolBar;
 
 protected:	
 
 // Implementation
 public:
-	virtual ~CRelationsView();
+	virtual ~CSTEPRelationsView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

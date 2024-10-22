@@ -239,9 +239,9 @@
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="ModelCheckDlg.h" />
     <ClInclude Include="OWLProperty.h" />
-    <ClInclude Include="RelationsView.h" />
-    <ClInclude Include="SchemaView.h" />
-    <ClInclude Include="SchemaViewConsts.h" />
+    <ClInclude Include="STEPRelationsView.h" />
+    <ClInclude Include="STEPSchemaView.h" />
+    <ClInclude Include="STEPSchemaViewConsts.h" />
     <ClInclude Include="SearchTreeCtrlDialog.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
@@ -258,7 +258,7 @@
     <ClInclude Include="STEPViewerDoc.h" />
     <ClInclude Include="STEPViewerView.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="PropertiesWnd.h" />
+    <ClInclude Include="STEPPropertiesWnd.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ViewBase.h" />
     <ClInclude Include="Resource.h" />
@@ -288,8 +288,8 @@
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
     <ClCompile Include="OWLProperty.cpp" />
-    <ClCompile Include="RelationsView.cpp" />
-    <ClCompile Include="SchemaView.cpp" />
+    <ClCompile Include="STEPRelationsView.cpp" />
+    <ClCompile Include="STEPSchemaView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
@@ -302,7 +302,7 @@
     <ClCompile Include="STEPViewerDoc.cpp" />
     <ClCompile Include="STEPViewerView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
-    <ClCompile Include="PropertiesWnd.cpp" />
+    <ClCompile Include="STEPPropertiesWnd.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="STEPStructureView.cpp" />
     <ClCompile Include="ViewBase.cpp" />

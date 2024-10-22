@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-#include "PropertiesWnd.h"
+#include "STEPPropertiesWnd.h"
 #include "Resource.h"
 #include "MainFrm.h"
 #include "STEPViewer.h"
@@ -55,7 +55,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnModelChanged()
+/*virtual*/ void CSTEPPropertiesWnd::OnModelChanged()
 {
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 
@@ -63,7 +63,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnShowMetaInformation()
+/*virtual*/ void CSTEPPropertiesWnd::OnShowMetaInformation()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -71,7 +71,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
+/*virtual*/ void CSTEPPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -79,7 +79,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CSTEPPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{
@@ -93,7 +93,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
+/*afx_msg*/ LRESULT CSTEPPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -339,16 +339,16 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 	return 0;
 }
 
-CPropertiesWnd::CPropertiesWnd()
+CSTEPPropertiesWnd::CSTEPPropertiesWnd()
 {
 	m_nComboHeight = 0;
 }
 
-CPropertiesWnd::~CPropertiesWnd()
+CSTEPPropertiesWnd::~CSTEPPropertiesWnd()
 {
 }
 
-BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CSTEPPropertiesWnd, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_EXPAND_ALL, OnExpandAllProperties)
@@ -369,7 +369,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CResourceViewBar message handlers
 
-void CPropertiesWnd::AdjustLayout()
+void CSTEPPropertiesWnd::AdjustLayout()
 {
 	if (GetSafeHwnd () == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 	{
@@ -386,7 +386,7 @@ void CPropertiesWnd::AdjustLayout()
 	m_wndPropList.SetWindowPos(nullptr, rectClient.left, rectClient.top + m_nComboHeight + cyTlb, rectClient.Width(), rectClient.Height() -(m_nComboHeight+cyTlb), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CSTEPPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -441,53 +441,53 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CPropertiesWnd::OnSize(UINT nType, int cx, int cy)
+void CSTEPPropertiesWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CPropertiesWnd::OnExpandAllProperties()
+void CSTEPPropertiesWnd::OnExpandAllProperties()
 {
 	m_wndPropList.ExpandAll();
 }
 
-void CPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
+void CSTEPPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
 {
 }
 
-void CPropertiesWnd::OnSortProperties()
+void CSTEPPropertiesWnd::OnSortProperties()
 {
 	m_wndPropList.SetAlphabeticMode(!m_wndPropList.IsAlphabeticMode());
 }
 
-void CPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
+void CSTEPPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_wndPropList.IsAlphabeticMode());
 }
 
-void CPropertiesWnd::OnProperties1()
+void CSTEPPropertiesWnd::OnProperties1()
 {
 	// TODO: Add your command handler code here
 }
 
-void CPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
+void CSTEPPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
 {
 	// TODO: Add your command update UI handler code here
 }
 
-void CPropertiesWnd::OnProperties2()
+void CSTEPPropertiesWnd::OnProperties2()
 {
 	// TODO: Add your command handler code here
 }
 
-void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
+void CSTEPPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
 {
 	// TODO: Add your command update UI handler code here
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::LoadApplicationProperties()
+void CSTEPPropertiesWnd::LoadApplicationProperties()
 {
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
@@ -811,7 +811,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::LoadInstanceProperties()
+void CSTEPPropertiesWnd::LoadInstanceProperties()
 {
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
@@ -873,7 +873,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::LoadSTEPInstanceProperties()
+void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -1026,7 +1026,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::LoadIFCInstanceProperties()
+void CSTEPPropertiesWnd::LoadIFCInstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -1092,7 +1092,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 }
 
-void CPropertiesWnd::LoadCIS2InstanceProperties()
+void CSTEPPropertiesWnd::LoadCIS2InstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -1158,19 +1158,19 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 	//m_wndPropList.AddProperty(pInstanceGridGroup);
 }
 
-void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
+void CSTEPPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndPropList.SetFocus();
 }
 
-void CPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
+void CSTEPPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CDockablePane::OnSettingChange(uFlags, lpszSection);
 	SetPropListFont();
 }
 
-void CPropertiesWnd::OnViewModeChanged()
+void CSTEPPropertiesWnd::OnViewModeChanged()
 {
 	switch (m_wndObjectCombo.GetCurSel())
 	{
@@ -1194,7 +1194,7 @@ void CPropertiesWnd::OnViewModeChanged()
 	}
 }
 
-void CPropertiesWnd::SetPropListFont()
+void CSTEPPropertiesWnd::SetPropListFont()
 {
 	::DeleteObject(m_fntPropList.Detach());
 
@@ -1217,7 +1217,7 @@ void CPropertiesWnd::SetPropListFont()
 }
 
 
-void CPropertiesWnd::OnDestroy()
+void CSTEPPropertiesWnd::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);

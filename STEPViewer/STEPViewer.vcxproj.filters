@@ -63,7 +63,7 @@
     <ClInclude Include="TreeCtrlEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertiesWnd.h">
+    <ClInclude Include="STEPPropertiesWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -105,13 +105,13 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RelationsView.h">
+    <ClInclude Include="STEPRelationsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SchemaView.h">
+    <ClInclude Include="STEPSchemaView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SchemaViewConsts.h">
+    <ClInclude Include="STEPSchemaViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFC\IFCModelStructureView.h">
@@ -239,7 +239,7 @@
     <ClCompile Include="TreeCtrlEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PropertiesWnd.cpp">
+    <ClCompile Include="STEPPropertiesWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ViewBase.cpp">
@@ -272,10 +272,10 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SchemaView.cpp">
+    <ClCompile Include="STEPSchemaView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RelationsView.cpp">
+    <ClCompile Include="STEPRelationsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCModelStructureView.cpp">
