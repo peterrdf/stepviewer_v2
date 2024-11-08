@@ -176,9 +176,9 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
-/*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance iInstance) /*override*/
+/*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance /*iInstance*/) /*override*/
 {
-	ASSERT(iInstance != 0);
+	//ASSERT(iInstance != 0);
 
 	ASSERT(FALSE); //#todo
 	return nullptr;
@@ -463,7 +463,7 @@ CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
 
 void CCIS2Model::LodDesignParts()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "DESIGN_PART");
+	int_t* piInstances = sdaiGetEntityExtentBN((SdaiModel)m_iModel, "DESIGN_PART");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
