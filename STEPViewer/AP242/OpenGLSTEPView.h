@@ -1,20 +1,17 @@
-#ifndef _OPEN_GL_CIS2_VIEW_H_
-#define _OPEN_GL_CIS2_VIEW_H_
+#ifndef _OPEN_GL_STEP_VIEW_H_
+#define _OPEN_GL_STEP_VIEW_H_
 
-#include "CIS2Representation.h"
 #include "_oglUtils.h"
 #include "OpenGLView.h"
+#include "ProductDefinition.h"
 
-// ************************************************************************************************
-class CCIS2Model;
-
-// ************************************************************************************************
+// ------------------------------------------------------------------------------------------------
 // Open GL View
-class CCIS2OpenGLView 
+class COpenGLSTEPView
 	: public COpenGLView
 {
 
-private: // Members
+private: // Members	
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
@@ -22,18 +19,18 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CCIS2Instance* m_pPointedInstance;
-	CCIS2Instance* m_pSelectedInstance;
+	CProductInstance* m_pPointedInstance;
+	CProductInstance* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 
 public: // Methods
-	
+
 	// ctor/dtor
-	CCIS2OpenGLView(CWnd * pWnd);
-	virtual ~CCIS2OpenGLView();
+	COpenGLSTEPView(CWnd* pWnd);
+	virtual ~COpenGLSTEPView();	
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
@@ -45,7 +42,7 @@ public: // Methods
 	virtual void _load() override;
 	virtual void _draw(CDC* pDC) override;
 
-	// CViewBase	
+	// CViewBase
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
 	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender) override;
@@ -53,6 +50,7 @@ public: // Methods
 
 protected: // Methods
 
+	// CViewBase
 	virtual void OnControllerChanged() override;
 
 public: // Methods
@@ -67,12 +65,12 @@ private: // Methods
 	void DrawConceptualFacesPolygons(_model* pM);
 	void DrawLines(_model* pM);
 	void DrawPoints(_model* pM);
-	
+
 	// Selection
 	void DrawInstancesFrameBuffer();
-	
+
 	// Mouse
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 };
 
-#endif // _OPEN_GL_CIS2_VIEW_H_
+#endif // _OPEN_GL_STEP_VIEW_H_

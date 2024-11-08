@@ -1,8 +1,9 @@
 #pragma once
 
 #include "IFCModel.h"
-#include "AP242Model.h"
+#include "STEPModel.h"
 #include "CIS2Model.h"
+
 
 // ------------------------------------------------------------------------------------------------
 class CModelFactory
@@ -48,7 +49,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
-			auto pModel = new CAP242Model();
+			auto pModel = new CSTEPModel();
 			pModel->Load(szPath, iModel);
 
 			return pModel;

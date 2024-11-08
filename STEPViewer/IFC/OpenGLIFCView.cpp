@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "CIS2OpenGLView.h"
+#include "OpenGLIFCView.h"
 #include "Controller.h"
-#include "CIS2Model.h"
+#include "IFCModel.h"
 #include "resource.h"
 
 #include <chrono>
@@ -11,7 +11,7 @@
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
-CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
+COpenGLIFCView::COpenGLIFCView(CWnd* pWnd)
 	: COpenGLView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -53,7 +53,7 @@ CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
 		nullptr);
 }
 
-CCIS2OpenGLView::~CCIS2OpenGLView()
+COpenGLIFCView::~COpenGLIFCView()
 {
 	GetController()->UnRegisterView(this);	
 
@@ -66,27 +66,27 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	m_pPointedInstanceMaterial = nullptr;
 }
 
-/*virtual*/ _controller* CCIS2OpenGLView::getController() const /*override*/
+/*virtual*/ _controller* COpenGLIFCView::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* CCIS2OpenGLView::getModel() const /*override*/
+/*virtual*/ _model* COpenGLIFCView::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void CCIS2OpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void COpenGLIFCView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string CCIS2OpenGLView::loadSetting(const string& strName) /*override*/
+/*virtual*/ string COpenGLIFCView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CCIS2OpenGLView::_load() /*override*/
+/*virtual*/ void COpenGLIFCView::_load() /*override*/
 {
 	CWaitCursor waitCursor;
 
@@ -100,7 +100,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -371,9 +371,9 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::_draw(CDC* pDC) /*override*/
+/*virtual*/ void COpenGLIFCView::_draw(CDC* pDC) /*override*/
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -431,9 +431,9 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnWorldDimensionsChanged() /*override*/
+/*virtual*/ void COpenGLIFCView::OnWorldDimensionsChanged() /*override*/
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -470,7 +470,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void COpenGLIFCView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -485,7 +485,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CCIS2Representation*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -496,7 +496,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	}
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
+/*virtual*/ void COpenGLIFCView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -506,7 +506,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void COpenGLIFCView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -544,7 +544,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnControllerChanged() /*override*/
+/*virtual*/ void COpenGLIFCView::OnControllerChanged() /*override*/
 {
 	auto pController = GetController();
 	if (pController != nullptr)
@@ -563,7 +563,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	}
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+/*virtual*/ void COpenGLIFCView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -618,9 +618,9 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	} // switch (enEvent)
 }
 
-void CCIS2OpenGLView::DrawFaces(_model* pM, bool bTransparent)
+void COpenGLIFCView::DrawFaces(_model* pM, bool bTransparent)
 {
-	auto pModel = dynamic_cast<CCIS2Model*>(pM);
+	auto pModel = dynamic_cast<CIFCModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -721,7 +721,7 @@ void CCIS2OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CCIS2OpenGLView::DrawConceptualFacesPolygons(_model* pM)
+void COpenGLIFCView::DrawConceptualFacesPolygons(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -774,7 +774,7 @@ void CCIS2OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CCIS2OpenGLView::DrawLines(_model* pM)
+void COpenGLIFCView::DrawLines(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -827,7 +827,7 @@ void CCIS2OpenGLView::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CCIS2OpenGLView::DrawPoints(_model* pM)
+void COpenGLIFCView::DrawPoints(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -895,9 +895,9 @@ void CCIS2OpenGLView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CCIS2OpenGLView::DrawInstancesFrameBuffer()
+void COpenGLIFCView::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -949,7 +949,7 @@ void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 			float fR, fG, fB;
 			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetInstance()] = _color(fR, fG, fB);
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
@@ -992,7 +992,7 @@ void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(
@@ -1021,9 +1021,9 @@ void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-void CCIS2OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void COpenGLIFCView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1067,7 +1067,7 @@ void CCIS2OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CCIS2Instance* pPointedInstance = nullptr;
+		CIFCInstance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);

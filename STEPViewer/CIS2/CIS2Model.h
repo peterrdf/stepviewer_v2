@@ -43,16 +43,16 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(SdaiInstance iSdaiInstance) override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
 	void Load(const wchar_t* szCIS2File, SdaiModel iModel);
-	void PreLoadInstance(SdaiInstance iSdaiInstance);
+	void PreLoadInstance(SdaiInstance iInstance);
 	void Clean();
 
 	void Scale(); // [-1, 1]
 
 	const map<SdaiInstance, CCIS2Instance*>& GetInstances() const { return m_mapInstances; }
-	CCIS2Instance* GetInstanceByID(ExpressID iID);
+	CCIS2Instance* GetInstanceByID(int64_t iID);
 
 private: // Methods
 

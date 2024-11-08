@@ -6,9 +6,8 @@
 
 // ************************************************************************************************
 CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
-	: _geometry(iID, true)
+	: _geometry(iID, iSdaiInstance, true)
 	, CInstanceBase()
-	, m_iSdaiInstance(iSdaiInstance)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
 {
@@ -21,13 +20,30 @@ CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
 CIFCInstance::~CIFCInstance()
 {}
 
-/*virtual*/ OwlModel CIFCInstance::getOwlModel() const /*override*/
+/*virtual*/ OwlModel CIFCInstance::getModel() const /*override*/
 {
 	OwlModel iOwlModel = 0;
-	owlGetModel(GetSdaiModel(), &iOwlModel);
-	ASSERT(m_iOwlInstance == 0 || iOwlModel == GetModel(m_iOwlInstance));
+	owlGetModel(GetModel(), &iOwlModel);
+	ASSERT(iOwlModel != 0);
 
 	return iOwlModel;
+}
+
+/*virtual*/ int64_t CIFCInstance::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
+{
+	assert(piVertexBufferSize != nullptr);
+	assert(piIndexBufferSize != nullptr);
+
+	*piVertexBufferSize = *piIndexBufferSize = 0;
+
+	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
+
+	int64_t iOwlInstance = 0;
+	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
+
+	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
+
+	return iOwlInstance;
 }
 
 void CIFCInstance::CalculateMinMax(
@@ -142,8 +158,8 @@ void CIFCInstance::Calculate()
 
 	// Extra settings
 	const int_t flagbit1 = 2;
-	setFilter(GetSdaiModel(), flagbit1, flagbit1);
-	setSegmentation(GetSdaiModel(), 16, 0.);
+	setFilter(GetModel(), flagbit1, flagbit1);
+	setSegmentation(GetModel(), 16, 0.);
 
 	/* Geometry */
 
@@ -153,22 +169,13 @@ void CIFCInstance::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	OwlInstance iOwlInstance = 0;
-	owlBuildInstance(GetSdaiModel(), m_iSdaiInstance, &iOwlInstance);
-
-	assert(m_iOwlInstance == 0 || m_iOwlInstance == iOwlInstance);
-	m_iOwlInstance = iOwlInstance;
-
-	if (!calculateFillBuffer(m_pVertexBuffer, m_pIndexBuffer))
-	{
-		return;
-	}
+	calculate(m_pVertexBuffer, m_pIndexBuffer);
 
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iOwlInstance);
+	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		int64_t iStartIndexTriangles = 0;
@@ -180,7 +187,7 @@ void CIFCInstance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 		ConceptualFace iConceptualFace = GetConceptualFaceEx(
-			m_iOwlInstance,
+			m_iInstance,
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,

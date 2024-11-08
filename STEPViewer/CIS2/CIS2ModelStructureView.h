@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TreeViewBase.h"
+#include "STEPItemData.h"
 #include "CIS2Model.h"
 #include "CIS2Instance.h"
 #include "SearchTreeCtrlDialog.h"

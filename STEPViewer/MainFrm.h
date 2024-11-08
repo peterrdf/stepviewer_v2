@@ -5,11 +5,11 @@
 #pragma once
 
 #include "Controller.h"
-#include "STEPStructureView.h"
-#include "STEPPropertiesWnd.h"
-#include "STEPDesignTreeView.h"
-#include "STEPSchemaView.h"
-#include "STEPRelationsView.h"
+#include "StructureView.h"
+#include "PropertiesWnd.h"
+#include "DesignTreeView.h"
+#include "SchemaView.h"
+#include "RelationsView.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -45,15 +45,15 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar				m_menuBar;
-	CMFCToolBar				m_toolBar;
-	CMFCStatusBar			m_statusBar;
-	CMFCToolBarImages		m_userImages;
-	CSTEPStructureView		m_structureView;
-	CSTEPDesignTreeView		m_designTreeView;
-	CSTEPSchemaView			m_schemaView;
-	CSTEPRelationsView		m_relationsView;
-	CSTEPPropertiesWnd		m_propertiesView;
+	CMFCMenuBar         m_menuBar;
+	CMFCToolBar         m_toolBar;
+	CMFCStatusBar       m_statusBar;
+	CMFCToolBarImages   m_userImages;
+	CStructureView      m_structureView;
+	CDesignTreeView		m_designTreeView;
+	CSchemaView			m_schemaView;
+	CRelationsView		m_relationsView;
+	CPropertiesWnd      m_propertiesView;
 
 
 // Generated message map functions

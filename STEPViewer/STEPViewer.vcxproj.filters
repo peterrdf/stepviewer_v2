@@ -63,7 +63,7 @@
     <ClInclude Include="TreeCtrlEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPPropertiesWnd.h">
+    <ClInclude Include="PropertiesWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -90,7 +90,7 @@
     <ClInclude Include="InstanceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCOpenGLView.h">
+    <ClInclude Include="IFC\OpenGLIFCView.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
@@ -105,13 +105,13 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPRelationsView.h">
+    <ClInclude Include="RelationsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPSchemaView.h">
+    <ClInclude Include="SchemaView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STEPSchemaViewConsts.h">
+    <ClInclude Include="SchemaViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFC\IFCModelStructureView.h">
@@ -129,25 +129,37 @@
     <ClInclude Include="IFC\IFCAttribute.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242Assembly.h">
+    <ClInclude Include="AP242\Assembly.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242OpenGLView.h">
+    <ClInclude Include="AP242\OpenGLSTEPView.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242ProductDefinition.h">
+    <ClInclude Include="AP242\OWLProperty.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242ProductInstance.h">
+    <ClInclude Include="AP242\ProductDefinition.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242ItemData.h">
+    <ClInclude Include="AP242\ProductInstance.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242Model.h">
+    <ClInclude Include="AP242\STEPItemData.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242ModelStructureView.h">
+    <ClInclude Include="AP242\STEPModel.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\STEPModelStructureView.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\StructureView.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\StructureViewConsts.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\DesignTreeView.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_3DUtils.h">
@@ -192,7 +204,7 @@
     <ClInclude Include="CIS2\CIS2Model.h">
       <Filter>CIS2</Filter>
     </ClInclude>
-    <ClInclude Include="CIS2\CIS2OpenGLView.h">
+    <ClInclude Include="CIS2\OpenGLCIS2View.h">
       <Filter>CIS2</Filter>
     </ClInclude>
     <ClInclude Include="CIS2\CIS2Representation.h">
@@ -206,18 +218,6 @@
     </ClInclude>
     <ClInclude Include="CIS2\CIS2ModelStructureView.h">
       <Filter>CIS2</Filter>
-    </ClInclude>
-    <ClInclude Include="STEPStructureView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STEPStructureViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STEPDesignTreeView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OWLProperty.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,7 +239,7 @@
     <ClCompile Include="TreeCtrlEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPPropertiesWnd.cpp">
+    <ClCompile Include="PropertiesWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ViewBase.cpp">
@@ -263,7 +263,7 @@
     <ClCompile Include="InstanceBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCOpenGLView.cpp">
+    <ClCompile Include="IFC\OpenGLIFCView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLView.cpp">
@@ -272,10 +272,10 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPSchemaView.cpp">
+    <ClCompile Include="SchemaView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STEPRelationsView.cpp">
+    <ClCompile Include="RelationsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCModelStructureView.cpp">
@@ -293,31 +293,40 @@
     <ClCompile Include="IFC\IFCAttribute.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242Assembly.cpp">
+    <ClCompile Include="AP242\Assembly.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242OpenGLView.cpp">
+    <ClCompile Include="AP242\OpenGLSTEPView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242ProductDefinition.cpp">
+    <ClCompile Include="AP242\OWLProperty.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242ProductInstance.cpp">
+    <ClCompile Include="AP242\ProductDefinition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242ItemData.cpp">
+    <ClCompile Include="AP242\ProductInstance.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242Model.cpp">
+    <ClCompile Include="AP242\STEPItemData.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242ModelStructureView.cpp">
+    <ClCompile Include="AP242\STEPModel.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="AP242\STEPModelStructureView.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="AP242\StructureView.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="AP242\DesignTreeView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Model.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
-    <ClCompile Include="CIS2\CIS2OpenGLView.cpp">
+    <ClCompile Include="CIS2\OpenGLCIS2View.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Representation.cpp">
@@ -331,15 +340,6 @@
     </ClCompile>
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp">
       <Filter>CIS2</Filter>
-    </ClCompile>
-    <ClCompile Include="STEPStructureView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="STEPDesignTreeView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OWLProperty.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

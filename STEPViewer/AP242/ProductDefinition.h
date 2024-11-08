@@ -2,7 +2,7 @@
 
 #include "_oglUtils.h"
 
-#include "AP242ProductInstance.h"
+#include "ProductInstance.h"
 #include "InstanceBase.h"
 
 #include <string>
@@ -11,15 +11,14 @@
 using namespace std;
 
 // ************************************************************************************************
-class CAP242ProductDefinition
+class CProductDefinition
 	: public _geometry
 {
-	friend class CAP242Model;
+	friend class CSTEPModel;
 
 private: // Members
 
-	SdaiInstance m_iSdaiInstance;
-	ExpressID m_iExpressID;
+	ExpressID m_iExpressID;	
 	wchar_t* m_szId;
 	wchar_t* m_szName;
 	wchar_t* m_szDescription;
@@ -29,34 +28,34 @@ private: // Members
 	SdaiInteger m_iRelatingProducts; // if == 0 then it has geometry, otherwise it is a placeholder
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
-	vector<CAP242ProductInstance*> m_vecInstances;
+	vector<CProductInstance*> m_vecInstances;
 	int32_t m_iNextInstance;
 
 public: // Methods
 
 	// ctor/dtor
-	CAP242ProductDefinition(SdaiInstance iSdaiInstance);
-	virtual ~CAP242ProductDefinition();
+	CProductDefinition(SdaiInstance iSdaiInstance);
+	virtual ~CProductDefinition();
 
 	// _geometry
-	virtual OwlModel getOwlModel() const override;
-//	virtual void calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
+	virtual OwlModel getModel() const override;
+	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	void CalculateMinMaxTransform(
-		CAP242ProductInstance* pInstance, 
+		CProductInstance* pInstance, 
 		float& fXmin, float& fXmax, 
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 	void CalculateMinMaxTransform(
-		CAP242ProductInstance* pInstance,
+		CProductInstance* pInstance,
 		float fXTranslation, float fYTranslation, float fZTranslation,
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax);
 	void Scale(float fScaleFactor);
 	
-	SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
-	SdaiModel GetSdaiModel() const { return sdaiGetInstanceModel(GetSdaiInstance()); }
+	SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
 	ExpressID GetExpressID() const { return m_iExpressID; }
 	const wchar_t* GetId() const { return m_szId; }
 	const wchar_t* GetName() const { return m_szName; }
@@ -67,7 +66,7 @@ public: // Methods
 	SdaiInteger GetRelatingProducts() const { return m_iRelatingProducts; }
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
 
-	const vector<CAP242ProductInstance*>& GetInstances() const { return m_vecInstances; }
+	const vector<CProductInstance*>& GetInstances() const { return m_vecInstances; }
 	int32_t GetNextInstance();
 
 private: // Methods

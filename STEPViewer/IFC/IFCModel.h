@@ -71,19 +71,19 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(SdaiInstance iSdaiInstance) override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
 	void Scale(); // [-1, 1]
 
 	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
-	void PreLoadInstance(SdaiInstance iSdaiInstance);
+	void PreLoadInstance(SdaiInstance iInstance);
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
 	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
-	CIFCInstance* GetInstanceByID(ExpressID iID);
+	CIFCInstance* GetInstanceByID(int64_t iID);
 	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
 
 private: // Methods
@@ -95,7 +95,7 @@ private: // Methods
 	void GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance);
 	void GetObjectsReferencedStateRecursively(SdaiInstance iInstance);
 
-	void RetrieveObjectsRecursively(SdaiEntity iParentEntity, int_t iCircleSegments);
+	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	CIFCInstance* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
 };

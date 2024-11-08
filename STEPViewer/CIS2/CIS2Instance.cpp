@@ -6,10 +6,9 @@
 
 // ************************************************************************************************
 CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2InstanceType enCIS2InstanceType)
-	: _geometry(iID, true)
+	: _geometry(iID, iSdaiInstance, true)
 	, CInstanceBase()
 	, m_enCIS2InstanceType(enCIS2InstanceType)
-	, m_iSdaiInstance(iSdaiInstance)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
 {
@@ -22,24 +21,31 @@ CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2In
 /*virtual*/ CCIS2Instance::~CCIS2Instance()
 {}
 
-/*virtual*/ OwlModel CCIS2Instance::getOwlModel() const /*override*/
+/*virtual*/ OwlModel CCIS2Instance::getModel() const /*override*/
 {
 	OwlModel iOwlModel = 0;
-	owlGetModel(GetSdaiModel(), &iOwlModel);
-	ASSERT(m_iOwlInstance == 0 || iOwlModel == GetModel(m_iOwlInstance));
+	owlGetModel(GetModel(), &iOwlModel);
+	ASSERT(iOwlModel != 0);
 
 	return iOwlModel;
 }
 
-/*virtual* / void CCIS2Instance::calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override* /
+/*virtual*/ int64_t CCIS2Instance::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
 {
 	assert(piVertexBufferSize != nullptr);
 	assert(piIndexBufferSize != nullptr);
 
 	*piVertexBufferSize = *piIndexBufferSize = 0;
 
-	CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize);
-}	//	*/
+	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
+
+	int64_t iOwlInstance = 0;
+	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
+
+	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
+
+	return iOwlInstance;
+}
 
 void CCIS2Instance::CalculateMinMax(
 	float& fXmin, float& fXmax, 
@@ -153,8 +159,8 @@ void CCIS2Instance::Calculate()
 
 	// Extra settings
 	const int_t flagbit1 = 2;
-	setFilter(GetSdaiModel(), flagbit1, flagbit1);
-	setSegmentation(GetSdaiModel(), 16, 0.);
+	setFilter(GetModel(), flagbit1, flagbit1);
+	setSegmentation(GetModel(), 16, 0.);
 
 	/* Geometry */
 
@@ -164,22 +170,13 @@ void CCIS2Instance::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	OwlInstance iOwlInstance = 0;
-	owlBuildInstance(GetSdaiModel(), m_iSdaiInstance, &iOwlInstance);	
-
-	assert(m_iOwlInstance == 0 || m_iOwlInstance == iOwlInstance);
-	m_iOwlInstance = iOwlInstance;
-
-	if (!calculateFillBuffer(m_pVertexBuffer, m_pIndexBuffer))
-	{
-		return;
-	}
+	calculate(m_pVertexBuffer, m_pIndexBuffer);
 
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iOwlInstance);
+	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		int64_t iStartIndexTriangles = 0;
@@ -191,7 +188,7 @@ void CCIS2Instance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 		ConceptualFace iConceptualFace = GetConceptualFaceEx(
-			m_iOwlInstance,
+			m_iInstance,
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,

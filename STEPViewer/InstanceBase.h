@@ -13,23 +13,22 @@ public: // Methods
 	CInstanceBase();
 	virtual ~CInstanceBase();
 
-	virtual SdaiInstance GetSdaiInstance() const PURE;
+	virtual SdaiInstance GetInstance() const PURE;
 	virtual bool HasGeometry() const PURE;
 	virtual bool IsEnabled() const PURE;
 
 	wstring GetName() const;
-	static wstring GetName(SdaiInstance iSdaiInstance);
+	static wstring GetName(SdaiInstance iInstance);
 
-//	OwlClass GetOwlClass() const;
-//	static OwlClass GetOwlClass(OwlInstance iInstance);
-//	const wchar_t* GetClassName() const;
-//	static const wchar_t* GetClassName(OwlInstance iInstance);
+	OwlClass GetClass() const;
+	static OwlClass GetClass(OwlInstance iInstance);
+	const wchar_t* GetClassName() const;
+	static const wchar_t* GetClassName(OwlInstance iInstance);
 
-	SdaiModel GetSdaiModel() const;
 	SdaiEntity GetEntity() const;
-	static SdaiEntity GetEntity(SdaiInstance iSdaiInstance);
+	static SdaiEntity GetEntity(SdaiInstance iInstance);
 	const wchar_t* GetEntityName() const;
-	static const wchar_t* GetEntityName(SdaiEntity iSdaiEntity);
+	static const wchar_t* GetEntityName(SdaiInstance iInstance);
 
-	static void BuildOwlInstanceName(OwlInstance iOwlInstance, wstring& strName, wstring& strUniqueName);
+	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName);
 };

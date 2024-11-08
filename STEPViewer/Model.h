@@ -12,7 +12,7 @@ using namespace std;
 enum class enumModelType : int
 {
 	Unknown = -1,
-	AP242 = 0,
+	STEP = 0,
 	IFC = 1,
 	CIS2 = 2,
 };
@@ -50,10 +50,10 @@ public: // Methods
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 	virtual void ZoomOut() PURE;
-	virtual CInstanceBase* LoadInstance(SdaiInstance iSdaiInstance) PURE;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) PURE;
 
 	// Model
-	SdaiModel GetSdaiModel() const { return m_iSdaiModel; }
+	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
 	enumModelType GetType() const { return m_enModelType; }
 
 	// World's dimensions

@@ -1,12 +1,12 @@
 
 #include "stdafx.h"
 
-#include "STEPPropertiesWnd.h"
+#include "PropertiesWnd.h"
 #include "Resource.h"
 #include "MainFrm.h"
 #include "STEPViewer.h"
-#include "AP242OpenGLView.h"
-#include "AP242Model.h"
+#include "OpenGLSTEPView.h"
+#include "STEPModel.h"
 #include "IFCModel.h"
 #include <CIS2Model.h>
 
@@ -55,7 +55,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPPropertiesWnd::OnModelChanged()
+/*virtual*/ void CPropertiesWnd::OnModelChanged()
 {
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 
@@ -63,7 +63,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPPropertiesWnd::OnShowMetaInformation()
+/*virtual*/ void CPropertiesWnd::OnShowMetaInformation()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -71,7 +71,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
+/*virtual*/ void CPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -79,7 +79,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{
@@ -93,7 +93,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*afx_msg*/ LRESULT CSTEPPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
+/*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -339,16 +339,16 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 	return 0;
 }
 
-CSTEPPropertiesWnd::CSTEPPropertiesWnd()
+CPropertiesWnd::CPropertiesWnd()
 {
 	m_nComboHeight = 0;
 }
 
-CSTEPPropertiesWnd::~CSTEPPropertiesWnd()
+CPropertiesWnd::~CPropertiesWnd()
 {
 }
 
-BEGIN_MESSAGE_MAP(CSTEPPropertiesWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_EXPAND_ALL, OnExpandAllProperties)
@@ -369,7 +369,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CResourceViewBar message handlers
 
-void CSTEPPropertiesWnd::AdjustLayout()
+void CPropertiesWnd::AdjustLayout()
 {
 	if (GetSafeHwnd () == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 	{
@@ -386,7 +386,7 @@ void CSTEPPropertiesWnd::AdjustLayout()
 	m_wndPropList.SetWindowPos(nullptr, rectClient.left, rectClient.top + m_nComboHeight + cyTlb, rectClient.Width(), rectClient.Height() -(m_nComboHeight+cyTlb), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int CSTEPPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -441,53 +441,53 @@ int CSTEPPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CSTEPPropertiesWnd::OnSize(UINT nType, int cx, int cy)
+void CPropertiesWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CSTEPPropertiesWnd::OnExpandAllProperties()
+void CPropertiesWnd::OnExpandAllProperties()
 {
 	m_wndPropList.ExpandAll();
 }
 
-void CSTEPPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
+void CPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
 {
 }
 
-void CSTEPPropertiesWnd::OnSortProperties()
+void CPropertiesWnd::OnSortProperties()
 {
 	m_wndPropList.SetAlphabeticMode(!m_wndPropList.IsAlphabeticMode());
 }
 
-void CSTEPPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
+void CPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_wndPropList.IsAlphabeticMode());
 }
 
-void CSTEPPropertiesWnd::OnProperties1()
+void CPropertiesWnd::OnProperties1()
 {
 	// TODO: Add your command handler code here
 }
 
-void CSTEPPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
+void CPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
 {
 	// TODO: Add your command update UI handler code here
 }
 
-void CSTEPPropertiesWnd::OnProperties2()
+void CPropertiesWnd::OnProperties2()
 {
 	// TODO: Add your command handler code here
 }
 
-void CSTEPPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
+void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
 {
 	// TODO: Add your command update UI handler code here
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPPropertiesWnd::LoadApplicationProperties()
+void CPropertiesWnd::LoadApplicationProperties()
 {
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
@@ -811,7 +811,7 @@ void CSTEPPropertiesWnd::LoadApplicationProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPPropertiesWnd::LoadInstanceProperties()
+void CPropertiesWnd::LoadInstanceProperties()
 {
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
@@ -846,7 +846,7 @@ void CSTEPPropertiesWnd::LoadInstanceProperties()
 
 	switch (pModel->GetType())
 	{
-		case enumModelType::AP242:
+		case enumModelType::STEP:
 		{
 			LoadSTEPInstanceProperties();
 		}
@@ -873,7 +873,7 @@ void CSTEPPropertiesWnd::LoadInstanceProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
+void CPropertiesWnd::LoadSTEPInstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -891,7 +891,7 @@ void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance());
+	auto pSelectedInstance = dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -907,15 +907,15 @@ void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	SdaiAggr	propertyDefinitionInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetSdaiModel(), "PROPERTY_DEFINITION");
-	SdaiInteger	noPropertyDefinitionInstances = sdaiGetMemberCount(propertyDefinitionInstances);
-	for (SdaiInteger i = 0; i < noPropertyDefinitionInstances; i++) {
-		SdaiInstance propertyDefinitionInstance = 0;
+	int_t* propertyDefinitionInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION"),
+		noPropertyDefinitionInstances = sdaiGetMemberCount(propertyDefinitionInstances);
+	for (int_t i = 0; i < noPropertyDefinitionInstances; i++) {
+		int_t propertyDefinitionInstance = 0;
 		sdaiGetAggrByIndex(propertyDefinitionInstances, i, sdaiINSTANCE, &propertyDefinitionInstance);
 
-		SdaiInstance definitionInstance = 0;
+		int_t definitionInstance = 0;
 		sdaiGetAttrBN(propertyDefinitionInstance, "definition", sdaiINSTANCE, &definitionInstance);
-		if (definitionInstance == pSelectedInstance->GetProductDefinition()->GetSdaiInstance()) {
+		if (definitionInstance == pSelectedInstance->GetProductDefinition()->GetInstance()) {
 			CString strValue;
 			strValue.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(propertyDefinitionInstance));
 
@@ -939,26 +939,26 @@ void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 			//
 			//	Lookup value (not using inverse relations)
 			//
-			SdaiAggr	propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetSdaiModel(), "PROPERTY_DEFINITION_REPRESENTATION");
-			SdaiInteger	noPropertyDefinitionRepresentationInstances = sdaiGetMemberCount(propertyDefinitionRepresentationInstances);
-			for (SdaiInteger j = 0; j < noPropertyDefinitionRepresentationInstances; j++) {
+			int_t* propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION_REPRESENTATION"),
+				noPropertyDefinitionRepresentationInstances = sdaiGetMemberCount(propertyDefinitionRepresentationInstances);
+			for (int_t j = 0; j < noPropertyDefinitionRepresentationInstances; j++) {
 				int_t propertyDefinitionRepresentationInstance = 0;
 				sdaiGetAggrByIndex(propertyDefinitionRepresentationInstances, j, sdaiINSTANCE, &propertyDefinitionRepresentationInstance);
 
-				SdaiInstance PDR_definitionInstance = 0;
+				int_t PDR_definitionInstance = 0;
 				sdaiGetAttrBN(propertyDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &PDR_definitionInstance);
 				if (PDR_definitionInstance == propertyDefinitionInstance) {
-					SdaiInstance representationInstance = 0;
+					int_t representationInstance = 0;
 					sdaiGetAttrBN(propertyDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &representationInstance);
 
-					SdaiAggr	aggrItems = nullptr;
+					int_t* aggrItems = nullptr;
 					sdaiGetAttrBN(representationInstance, "items", sdaiAGGR, &aggrItems);
-					SdaiInteger	noAggrItems = sdaiGetMemberCount(aggrItems);
-					for (SdaiInteger k = 0; k < noAggrItems; k++) {
-						SdaiInstance representationItemInstance = 0;
+					int_t	noAggrItems = sdaiGetMemberCount(aggrItems);
+					for (int_t k = 0; k < noAggrItems; k++) {
+						int_t representationItemInstance = 0;
 						sdaiGetAggrByIndex(aggrItems, k, sdaiINSTANCE, &representationItemInstance);
 
-						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetSdaiModel(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
+						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
 							char* valueDescription = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "description", sdaiSTRING, &valueDescription);
 
@@ -966,7 +966,7 @@ void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 							pProperty->AllowEdit(FALSE);
 							pPropertyGroup->AddSubItem(pProperty);
 						}
-						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetSdaiModel(), "VALUE_REPRESENTATION_ITEM")) {
+						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "VALUE_REPRESENTATION_ITEM")) {
 							int_t* valueComponentADB = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "value_component", sdaiADB, &valueComponentADB);
 
@@ -1026,7 +1026,7 @@ void CSTEPPropertiesWnd::LoadSTEPInstanceProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPPropertiesWnd::LoadIFCInstanceProperties()
+void CPropertiesWnd::LoadIFCInstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -1062,7 +1062,7 @@ void CSTEPPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->GetSdaiInstance());
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->GetInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;
@@ -1092,7 +1092,7 @@ void CSTEPPropertiesWnd::LoadIFCInstanceProperties()
 
 }
 
-void CSTEPPropertiesWnd::LoadCIS2InstanceProperties()
+void CPropertiesWnd::LoadCIS2InstanceProperties()
 {
 	auto pContoller = GetController();
 	if (pContoller == nullptr)
@@ -1158,19 +1158,19 @@ void CSTEPPropertiesWnd::LoadCIS2InstanceProperties()
 	//m_wndPropList.AddProperty(pInstanceGridGroup);
 }
 
-void CSTEPPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
+void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndPropList.SetFocus();
 }
 
-void CSTEPPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
+void CPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CDockablePane::OnSettingChange(uFlags, lpszSection);
 	SetPropListFont();
 }
 
-void CSTEPPropertiesWnd::OnViewModeChanged()
+void CPropertiesWnd::OnViewModeChanged()
 {
 	switch (m_wndObjectCombo.GetCurSel())
 	{
@@ -1194,7 +1194,7 @@ void CSTEPPropertiesWnd::OnViewModeChanged()
 	}
 }
 
-void CSTEPPropertiesWnd::SetPropListFont()
+void CPropertiesWnd::SetPropListFont()
 {
 	::DeleteObject(m_fntPropList.Detach());
 
@@ -1217,7 +1217,7 @@ void CSTEPPropertiesWnd::SetPropListFont()
 }
 
 
-void CSTEPPropertiesWnd::OnDestroy()
+void CPropertiesWnd::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);

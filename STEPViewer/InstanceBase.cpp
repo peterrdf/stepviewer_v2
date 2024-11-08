@@ -15,15 +15,15 @@ CInstanceBase::CInstanceBase()
 // --------------------------------------------------------------------------------------------
 wstring CInstanceBase::GetName() const
 {
-	return GetName(GetSdaiInstance());
+	return GetName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ wstring CInstanceBase::GetName(SdaiInstance iSdaiInstance)
+/*static*/ wstring CInstanceBase::GetName(SdaiInstance iInstance)
 {
 	wstring strUniqueName;
 
-	int64_t iExpressID = internalGetP21Line(iSdaiInstance);
+	int64_t iExpressID = internalGetP21Line(iInstance);
 	if (iExpressID != 0)
 	{
 		CString strID;
@@ -31,21 +31,15 @@ wstring CInstanceBase::GetName() const
 
 		strUniqueName = strID;
 		strUniqueName += L" ";
-		strUniqueName += GetEntityName(iSdaiInstance);
+		strUniqueName += GetEntityName(iInstance);
 	}
 	else
 	{
-		//strUniqueName = GetClassName(iSdaiInstance);
-
-		//#tbd
-		wchar_t* szClassName = nullptr;
-		GetNameOfClassW(GetInstanceClass((OwlInstance)iSdaiInstance), &szClassName);
-		
-		return szClassName;
+		strUniqueName = GetClassName(iInstance);
 	}	
 
 	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iSdaiInstance, "Name", sdaiUNICODE, &szName);
+	sdaiGetAttrBN((SdaiInstance)iInstance, "Name", sdaiUNICODE, &szName);
 
 	if ((szName != nullptr) && (wcslen(szName) > 0))
 	{
@@ -55,7 +49,7 @@ wstring CInstanceBase::GetName() const
 	}
 
 	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iSdaiInstance, "Description", sdaiUNICODE, &szDescription);
+	sdaiGetAttrBN((SdaiInstance)iInstance, "Description", sdaiUNICODE, &szDescription);
 
 	if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 	{
@@ -67,99 +61,92 @@ wstring CInstanceBase::GetName() const
 	return strUniqueName;
 }
 
-SdaiModel CInstanceBase::GetSdaiModel() const
+// --------------------------------------------------------------------------------------------
+OwlClass CInstanceBase::GetClass() const
 {
-	return sdaiGetInstanceModel(GetSdaiInstance());
+	return GetClass(GetInstance());
+}
+
+// --------------------------------------------------------------------------------------------
+/*static*/ OwlClass CInstanceBase::GetClass(OwlInstance iInstance)
+{
+	return GetInstanceClass(iInstance);
+}
+
+// --------------------------------------------------------------------------------------------
+const wchar_t* CInstanceBase::GetClassName() const
+{
+	return GetClassName(GetInstance());
+}
+
+// --------------------------------------------------------------------------------------------
+/*static*/ const wchar_t* CInstanceBase::GetClassName(OwlInstance iInstance)
+{
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
+
+	return szClassName;
 }
 
 // --------------------------------------------------------------------------------------------
 SdaiEntity CInstanceBase::GetEntity() const
 {
-	return GetEntity(GetSdaiInstance());
+	return sdaiGetInstanceType(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ SdaiEntity CInstanceBase::GetEntity(SdaiInstance iSdaiInstance)
+/*static*/ SdaiEntity CInstanceBase::GetEntity(SdaiInstance iInstance)
 {
-	return sdaiGetInstanceType(iSdaiInstance);
+	return sdaiGetInstanceType(iInstance);
 }
-
-// --------------------------------------------------------------------------------------------
-//const wchar_t* CInstanceBase::GetClassName() const
-//{
-//	return GetClassName(GetInstance());
-//}
-
-// --------------------------------------------------------------------------------------------
-// *static*/ const wchar_t* CInstanceBase::GetClassName(OwlInstance iInstance)
-//{
-//	wchar_t* szClassName = nullptr;
-//	GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
-//
-//	return szClassName;
-//}
-/*
-// --------------------------------------------------------------------------------------------
-SdaiEntity CInstanceBase::GetEntity() const
-{
-	return sdaiGetInstanceType(GetSdaiInstance());
-}
-
-// --------------------------------------------------------------------------------------------
-/*static* / SdaiEntity CInstanceBase::GetEntity(SdaiInstance iSdaiInstance)
-{
-	return sdaiGetInstanceType(iSdaiInstance);
-}	//	*/
 
 // --------------------------------------------------------------------------------------------
 const wchar_t* CInstanceBase::GetEntityName() const
 {
-	return GetEntityName(GetSdaiInstance());
+	return GetEntityName(GetInstance());
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ const wchar_t* CInstanceBase::GetEntityName(SdaiEntity iSdaiEntity)
+/*static*/ const wchar_t* CInstanceBase::GetEntityName(SdaiInstance iInstance)
 {
-	wchar_t	* szEntityName = nullptr;
-	engiGetEntityName(iSdaiEntity, sdaiUNICODE, (const char**) &szEntityName);
+	wchar_t* szEntityName = nullptr;
+	engiGetEntityName(GetEntity(iInstance), sdaiUNICODE, (const char**)&szEntityName);
 
 	return szEntityName != nullptr ? szEntityName : L"";
 }
 
 // --------------------------------------------------------------------------------------------
-/*static*/ void CInstanceBase::BuildOwlInstanceName(OwlInstance iOwlInstance, wstring& strName, wstring& strUniqueName)
+/*static*/ void CInstanceBase::BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName)
 {
-	OwlModel iOwlModel = GetModel(iOwlInstance);
+	ASSERT(iModel != 0);
+	ASSERT(iInstance != 0);
 
-	ASSERT(iOwlModel != 0);
-	ASSERT(iOwlInstance != 0);
-
-	OwlClass iClassInstance = GetInstanceClass(iOwlInstance);
+	OwlClass iClassInstance = GetInstanceClass(iInstance);
 	ASSERT(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(iClassInstance, &szClassName);
 
 	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(iOwlInstance, &szName);
+	GetNameOfInstanceW(iInstance, &szName);
 
 	if (szName == nullptr)
 	{
-		RdfProperty iTagProperty = GetPropertyByName(iOwlModel, "tag");
+		RdfProperty iTagProperty = GetPropertyByName(iModel, "tag");
 		if (iTagProperty != 0)
 		{
-			SetCharacterSerialization(iOwlModel, 0, 0, false);
+			SetCharacterSerialization(iModel, 0, 0, false);
 
 			int64_t iCard = 0;
-			wchar_t	** szValue = nullptr;
-			GetDatatypeProperty(iOwlInstance, iTagProperty, (void**) &szValue, &iCard);
+			wchar_t** szValue = nullptr;
+			GetDatatypeProperty(iInstance, iTagProperty, (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
 				szName = szValue[0];
 			}
 
-			SetCharacterSerialization(iOwlModel, 0, 0, true);
+			SetCharacterSerialization(iModel, 0, 0, true);
 		}
 	} // if (szName == nullptr)
 
@@ -173,7 +160,7 @@ const wchar_t* CInstanceBase::GetEntityName() const
 	else
 	{
 		strName = szClassName;
-		swprintf(szUniqueName, 200, L"#%lld (%s)", iOwlInstance, szClassName);
+		swprintf(szUniqueName, 200, L"#%lld (%s)", iInstance, szClassName);
 	}
 
 	strUniqueName = szUniqueName;

@@ -11,7 +11,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSTEPRelationsViewToolBar : public CMFCToolBar
+class CRelationsViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -54,7 +54,7 @@ enum class enumRelationsViewMode : int
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class CSTEPRelationsView 
+class CRelationsView 
 	: public CDockablePane
 	, public CViewBase
 	, public CSearchTreeCtrlDialogSite
@@ -68,24 +68,24 @@ private: // Classes
 
 	private: // Members
 
-		SdaiInstance m_iSdaiInstance;
-		SdaiEntity m_iSdaiEntity;
+		int_t m_iInstance;
+		int_t m_iEntity;
 
 	public: // Methods
 
-		CItemData(SdaiInstance iSdaiInstance, SdaiEntity iSdaiEntity)
-			: m_iSdaiInstance(iSdaiInstance)
-			, m_iSdaiEntity(iSdaiEntity)
+		CItemData(int_t iInstance, int_t iEntity)
+			: m_iInstance(iInstance)
+			, m_iEntity(iEntity)
 		{
-			ASSERT(m_iSdaiInstance != 0);
-			ASSERT(m_iSdaiEntity != 0);
+			ASSERT(m_iInstance != 0);
+			ASSERT(m_iEntity != 0);
 		}
 
 		virtual ~CItemData() {}
 
-		SdaiInstance GetInstance() const { return m_iSdaiInstance; }
-		SdaiEntity GetEntity() const { return m_iSdaiEntity; }
-		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iSdaiEntity); }
+		int_t GetInstance() const { return m_iInstance; }
+		int_t GetEntity() const { return m_iEntity; }
+		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iEntity); }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ private: // Classes
 
 	public: // Methods
 
-		CInstanceData(SdaiInstance iInstance, SdaiEntity iEntity)
+		CInstanceData(int_t iInstance, int_t iEntity)
 			: CItemData(iInstance, iEntity)
 		{}
 
@@ -111,7 +111,7 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeData(SdaiInstance iInstance, SdaiEntity iEntity, const char* szName)
+		CAttributeData(int_t iInstance, int_t iEntity, const char* szName)
 			: CItemData(iInstance, iEntity)
 			, m_srtName(szName)
 		{}
@@ -131,7 +131,7 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeSet(SdaiInstance iInstance, SdaiEntity iEntity)
+		CAttributeSet(int_t iInstance, int_t iEntity)
 			: CItemData(iInstance, iEntity)
 			, m_vecAttributes()
 		{}
@@ -178,11 +178,11 @@ private: // Methods
 
 	CModel* GetModel() const;
 	
-	void LoadInstances(const vector<SdaiInstance>& vecInstances);
-	void LoadProperties(SdaiEntity iEntity, const vector<SdaiInstance>& vecInstances);
-	void LoadInstance(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent);
-	int_t GetInstanceAttributes(SdaiEntity iEntity, SdaiInstance iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
-	void LoadInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void LoadInstances(const vector<int_t>& vecInstances);
+	void LoadProperties(int_t iEntity, const vector<int_t>& vecInstances);
+	void LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hParent);
+	int_t GetInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	void LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 
 	void CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel);
@@ -212,7 +212,7 @@ private: // Methods
 
 // Construction
 public:
-	CSTEPRelationsView();
+	CRelationsView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -223,13 +223,13 @@ protected:
 	CTreeCtrlEx m_treeCtrl;	
 	wstring m_strTooltip;
 	CImageList m_imageList;
-	CSTEPRelationsViewToolBar m_toolBar;
+	CRelationsViewToolBar m_toolBar;
 
 protected:	
 
 // Implementation
 public:
-	virtual ~CSTEPRelationsView();
+	virtual ~CRelationsView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

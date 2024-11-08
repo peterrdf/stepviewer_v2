@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "AP242Model.h"
+#include "STEPModel.h"
 #include "Controller.h"
 #include "ModelCheckDlg.h"
 
@@ -18,7 +18,7 @@ class CMySTEPViewerDoc
 public: // Methods
 
 	// CController
-	virtual void SaveOwlInstance() override;
+	virtual void SaveInstance() override;
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();

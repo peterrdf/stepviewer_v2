@@ -3,8 +3,9 @@
 
 #include "TreeCtrlEx.h"
 #include "ViewBase.h"
-#include "AP242Assembly.h"
-#include "AP242ModelStructureView.h"
+#include "Assembly.h"
+#include "STEPItemData.h"
+#include "STEPModelStructureView.h"
 
 #include <map>
 
@@ -27,7 +28,7 @@ class CStructureViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPStructureView
+class CStructureView
 	: public CDockablePane
 	, public CViewBase
 {
@@ -43,7 +44,7 @@ public: // Methods
 
 // Construction
 public:
-	CSTEPStructureView();
+	CStructureView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -58,7 +59,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CSTEPStructureView();
+	virtual ~CStructureView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -29,7 +29,6 @@ private: // Members
 	enumCIS2InstanceType m_enCIS2InstanceType;
 
 	// Metadata
-	SdaiInstance m_iSdaiInstance;
 	ExpressID m_iExpressID;
 	
 	// UI
@@ -43,12 +42,12 @@ public: // Methods
 	enumCIS2InstanceType getType() const { return m_enCIS2InstanceType; }
 
 	// _geometry
-	virtual OwlModel getOwlModel() const override;
-//	virtual void calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
+	virtual OwlModel getModel() const override;
+	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
-	virtual SdaiInstance GetSdaiInstance() const { return m_iSdaiInstance; }
-	SdaiModel GetSdaiModel() const { return sdaiGetInstanceModel(GetSdaiInstance()); }
+	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
 	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
 	virtual bool IsEnabled() const { return getEnable(); }	
 	ExpressID ExpressID() const { return m_iExpressID; }

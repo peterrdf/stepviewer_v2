@@ -11,14 +11,14 @@
 
 #include "STEPViewerDoc.h"
 #include "ModelFactory.h"
-#include "AP242ProductInstance.h"
+#include "ProductInstance.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-/*virtual*/ void CMySTEPViewerDoc::SaveOwlInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
 {
 	ASSERT(m_pModel != nullptr);
 
@@ -49,10 +49,10 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
+	auto pProductInstance = dynamic_cast<CProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetSdaiInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;
@@ -90,7 +90,7 @@
 		SetObjectProperty(
 			iTransformationInstance,
 			GetPropertyByName(iOwlModel, "object"),
-			GetSelectedInstance()->GetSdaiInstance());
+			GetSelectedInstance()->GetInstance());
 
 		SetObjectProperty(
 			iTransformationInstance,
@@ -101,7 +101,7 @@
 	}
 	else
 	{
-		SaveInstanceTreeW(GetSelectedInstance()->GetSdaiInstance(), dlgFile.GetPathName());
+		SaveInstanceTreeW(GetSelectedInstance()->GetInstance(), dlgFile.GetPathName());
 	}
 }
 
@@ -139,7 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	SetModel(new CAP242Model());
+	SetModel(new CSTEPModel());
 
 	return TRUE;
 }

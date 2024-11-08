@@ -11,9 +11,9 @@
 
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
-#include "AP242OpenGLView.h"
-#include "IFCOpenGLView.h"
-#include "CIS2OpenGLView.h"
+#include "OpenGLSTEPView.h"
+#include "OpenGLIFCView.h"
+#include "OpenGLCIS2View.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,12 +67,12 @@ CController* CMySTEPViewerView::GetController()
 
 	switch (pModel->GetType())
 	{
-		case enumModelType::AP242:
+		case enumModelType::STEP:
 		{
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new CAP242OpenGLView(this);
+			m_pOpenGLView = new COpenGLSTEPView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -83,7 +83,7 @@ CController* CMySTEPViewerView::GetController()
 			strSettingsFile += L"\\STEPViewer_IFC.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new CIFCOpenGLView(this);
+			m_pOpenGLView = new COpenGLIFCView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -94,7 +94,7 @@ CController* CMySTEPViewerView::GetController()
 			strSettingsFile += L"\\STEPViewer_CIS2.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new CCIS2OpenGLView(this);
+			m_pOpenGLView = new COpenGLCIS2View(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -518,7 +518,7 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->SaveOwlInstance();
+	pDocument->SaveInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)

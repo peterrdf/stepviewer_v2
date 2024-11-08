@@ -4,36 +4,36 @@
 #include "InstanceBase.h"
 
 // ************************************************************************************************
-class CAP242ProductDefinition;
+class CProductDefinition;
 
 // ************************************************************************************************
-class CAP242ProductInstance 
+class CProductInstance 
 	: public CInstanceBase
 {
-	friend class CAP242ProductDefinition;
+	friend class CProductDefinition;
 
 private: // Members
 
 	int64_t m_iID;
-	CAP242ProductDefinition* m_pProductDefinition;
+	CProductDefinition* m_pProductDefinition;
 	_matrix4x4* m_pTransformationMatrix;
 
 	bool m_bEnable;	
 
 public: // Methods
 	
-	CAP242ProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
-	virtual ~CAP242ProductInstance();
+	CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
+	virtual ~CProductInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetSdaiInstance() const;
+	virtual SdaiInstance GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const { return GetEnable(); }
 
 	void Scale(float fScaleFactor);
 	
 	int64_t GetID() const { return m_iID; }
-	CAP242ProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
+	CProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
 	_matrix4x4* GetTransformationMatrix() const { return m_pTransformationMatrix; }
 	bool GetEnable() const { return m_bEnable; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }

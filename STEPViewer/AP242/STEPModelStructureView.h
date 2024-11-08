@@ -1,12 +1,12 @@
 #pragma once
 
 #include "TreeViewBase.h"
-#include "AP242ItemData.h"
-#include "AP242Model.h"
+#include "STEPItemData.h"
+#include "STEPModel.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ------------------------------------------------------------------------------------------------
-class CAP242ModelStructureView
+class CSTEPModelStructureView 
 	: public CTreeViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
@@ -27,8 +27,8 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	vector<CAP242ItemData*> m_vecItemData;
-	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
+	vector<CSTEPItemData*> m_vecItemData;
+	map<CProductInstance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
@@ -40,8 +40,8 @@ private: // Members
 
 public: // Methods
 
-	CAP242ModelStructureView(CTreeCtrlEx* pTreeView);
-	virtual ~CAP242ModelStructureView();
+	CSTEPModelStructureView(CTreeCtrlEx* pTreeView);
+	virtual ~CSTEPModelStructureView();	
 
 	// CViewBase
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
@@ -69,18 +69,18 @@ private: // Methods
 	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
 
-	void WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent);
-	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent);
+	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
+	void LoadProductDefinitionsInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void SearchForDescendantWithGeometry();
-	void SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry);
-	CAP242ItemData* FindItemData(CAP242ProductInstance* pInstance);
-	void LoadItemChildren(CAP242ItemData* pItemData);
-	void LoadInstanceAncestors(CAP242ProductInstance* pInstance);
+	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
+	CSTEPItemData* FindItemData(CProductInstance* pInstance);
+	void LoadItemChildren(CSTEPItemData* pItemData);
+	void LoadInstanceAncestors(CProductInstance* pInstance);
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void UpdateChildren(HTREEITEM hParent);
-	void UpdateChildrenInMemory(CAP242ItemData* pParent, bool bEnable);
+	void UpdateChildrenInMemory(CSTEPItemData* pParent, bool bEnable);
 	void UpdateParent(HTREEITEM hParent);
 	void ResetView();
 };

@@ -1,10 +1,10 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "STEPSchemaView.h"
+#include "SchemaView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "STEPSchemaViewConsts.h"
+#include "SchemaViewConsts.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -13,19 +13,19 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPSchemaView::OnModelChanged() /*override*/
+/*virtual*/ void CSchemaView::OnModelChanged() /*override*/
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CTreeCtrlEx* CSTEPSchemaView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CSchemaView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<CString> CSTEPSchemaView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CSchemaView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
 		{
@@ -36,12 +36,12 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPSchemaView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+/*virtual*/ void CSchemaView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ BOOL CSTEPSchemaView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+/*virtual*/ BOOL CSchemaView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -97,7 +97,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPSchemaView::LoadModel(CModel* pModel)
+void CSchemaView::LoadModel(CModel* pModel)
 {
 	if (pModel == nullptr)
 	{
@@ -150,7 +150,7 @@ void CSTEPSchemaView::LoadModel(CModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
+void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 {
 	if (pEntity->GetAttributes().size() == 0)
 	{
@@ -191,7 +191,7 @@ void CSTEPSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
+void CSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 {
 	/*
 	* Entity
@@ -235,7 +235,7 @@ void CSTEPSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-pair<int, int> CSTEPSchemaView::GetInstancesCount(CEntity* pEntity) const
+pair<int, int> CSchemaView::GetInstancesCount(CEntity* pEntity) const
 {
 	int iInstancesCount = (int)pEntity->GetInstances().size();
 
@@ -251,13 +251,13 @@ pair<int, int> CSTEPSchemaView::GetInstancesCount(CEntity* pEntity) const
 }
 
 // ----------------------------------------------------------------------------
-void CSTEPSchemaView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT * pResult)
+void CSchemaView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT * pResult)
 {
 	*pResult = 0;
 }
 
 // ----------------------------------------------------------------------------
-void CSTEPSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 1;
 
@@ -308,30 +308,30 @@ void CSTEPSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 }
 
 // ----------------------------------------------------------------------------
-void CSTEPSchemaView::OnTVNItemexpandingTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CSchemaView::OnTVNItemexpandingTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 }
 
-CSTEPSchemaView::CSTEPSchemaView()
+CSchemaView::CSchemaView()
 	: m_pSearchDialog(nullptr)
 {
 }
 
-CSTEPSchemaView::~CSTEPSchemaView()
+CSchemaView::~CSchemaView()
 {
 }
 
-BEGIN_MESSAGE_MAP(CSTEPSchemaView, CDockablePane)
+BEGIN_MESSAGE_MAP(CSchemaView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
 	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CSTEPSchemaView::OnNMClickTree)
-	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CSTEPSchemaView::OnNMRClickTree)
-	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CSTEPSchemaView::OnTVNItemexpandingTree)
+	ON_NOTIFY(NM_CLICK, IDC_TREE_IFC, &CSchemaView::OnNMClickTree)
+	ON_NOTIFY(NM_RCLICK, IDC_TREE_IFC, &CSchemaView::OnNMRClickTree)
+	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_IFC, &CSchemaView::OnTVNItemexpandingTree)
 	ON_WM_DESTROY()
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -339,7 +339,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CSTEPSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -389,13 +389,13 @@ int CSTEPSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CSTEPSchemaView::OnSize(UINT nType, int cx, int cy)
+void CSchemaView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CSTEPSchemaView::ResetView()
+void CSchemaView::ResetView()
 {
 	m_treeCtrl.DeleteAllItems();	
 
@@ -418,7 +418,7 @@ void CSTEPSchemaView::ResetView()
 	LoadModel(pModel);
 }
 
-void CSTEPSchemaView::AdjustLayout()
+void CSchemaView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -447,7 +447,7 @@ void CSTEPSchemaView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CSTEPSchemaView::OnProperties()
+void CSchemaView::OnProperties()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -459,11 +459,11 @@ void CSTEPSchemaView::OnProperties()
 	}
 }
 
-void CSTEPSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+void CSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
 }
 
-void CSTEPSchemaView::OnPaint()
+void CSchemaView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -475,14 +475,14 @@ void CSTEPSchemaView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CSTEPSchemaView::OnSetFocus(CWnd* pOldWnd)
+void CSchemaView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CSTEPSchemaView::OnChangeVisualStyle()
+void CSchemaView::OnChangeVisualStyle()
 {
 	m_imageList.DeleteImageList();
 
@@ -512,7 +512,7 @@ void CSTEPSchemaView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CSTEPSchemaView::OnDestroy()
+void CSchemaView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -522,7 +522,7 @@ void CSTEPSchemaView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CSTEPSchemaView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CSchemaView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

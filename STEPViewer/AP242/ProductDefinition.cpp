@@ -1,11 +1,10 @@
 #include "stdafx.h"
-#include "AP242ProductDefinition.h"
-#include "AP242Model.h"
+#include "ProductDefinition.h"
+#include "STEPModel.h"
 
 // ************************************************************************************************
-CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
-	: _geometry(-1, true)
-	, m_iSdaiInstance(iSdaiInstance)
+CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
+	: _geometry(-1, iSdaiInstance, true)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_szId(nullptr)
 	, m_szName(nullptr)
@@ -37,30 +36,37 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 	Calculate();
 }
 
-/*virtual*/ CAP242ProductDefinition::~CAP242ProductDefinition()
+/*virtual*/ CProductDefinition::~CProductDefinition()
 {}
 
-/*virtual*/ OwlModel CAP242ProductDefinition::getOwlModel() const /*override*/
+/*virtual*/ OwlModel CProductDefinition::getModel() const /*override*/
 {
 	OwlModel iOwlModel = 0;
-	owlGetModel(GetSdaiModel(), &iOwlModel);
-	ASSERT(m_iOwlInstance == 0 || iOwlModel == GetModel(m_iOwlInstance));
+	owlGetModel(GetModel(), &iOwlModel);
+	ASSERT(iOwlModel != 0);
 
 	return iOwlModel;
 }
 
-/*virtual* / void CAP242ProductDefinition::calculateGetBufferSize(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override* /
+/*virtual*/ int64_t CProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
 {
 	assert(piVertexBufferSize != nullptr);
 	assert(piIndexBufferSize != nullptr);
 
 	*piVertexBufferSize = *piIndexBufferSize = 0;
 
-	CalculateInstance(m_iOwlInstance, piVertexBufferSize, piIndexBufferSize);
-}	//	*/
+	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
 
-void CAP242ProductDefinition::CalculateMinMaxTransform(
-	CAP242ProductInstance* pInstance,
+	int64_t iOwlInstance = 0;
+	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
+
+	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
+
+	return iOwlInstance;
+}
+
+void CProductDefinition::CalculateMinMaxTransform(
+	CProductInstance* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
@@ -90,8 +96,8 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 	pInstance->GetTransformationMatrix()->_43 = _43;
 }
 
-void CAP242ProductDefinition::CalculateMinMaxTransform(
-	CAP242ProductInstance* pInstance,
+void CProductDefinition::CalculateMinMaxTransform(
+	CProductInstance* pInstance,
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
@@ -238,7 +244,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 	} // if (!m_vecPoints.empty())
 }
 
-void CAP242ProductDefinition::Scale(float fScaleFactor)
+void CProductDefinition::Scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -255,7 +261,7 @@ void CAP242ProductDefinition::Scale(float fScaleFactor)
 	}
 }
 
-int32_t CAP242ProductDefinition::GetNextInstance()
+int32_t CProductDefinition::GetNextInstance()
 {
 	if (++m_iNextInstance >= (int32_t)m_vecInstances.size())
 	{
@@ -265,13 +271,13 @@ int32_t CAP242ProductDefinition::GetNextInstance()
 	return m_iNextInstance;
 }
 
-void CAP242ProductDefinition::Calculate()
+void CProductDefinition::Calculate()
 {
 	// Format
 	setSTEPFormatSettings();
 
 	// Extra settings
-	setSegmentation(GetSdaiModel(), 16, 0.);
+	setSegmentation(GetModel(), 16, 0.);
 
 	/* Geometry */
 
@@ -281,13 +287,7 @@ void CAP242ProductDefinition::Calculate()
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
-	OwlInstance iOwlInstance = 0;
-	owlBuildInstance(GetSdaiModel(), m_iSdaiInstance, &iOwlInstance);
-
-	assert(m_iOwlInstance == 0 || m_iOwlInstance == iOwlInstance);
-	m_iOwlInstance = iOwlInstance;
-
-	if (!calculateFillBuffer(m_pVertexBuffer, m_pIndexBuffer))
+	if (!calculate(m_pVertexBuffer, m_pIndexBuffer))
 	{
 		return;
 	}
@@ -296,7 +296,7 @@ void CAP242ProductDefinition::Calculate()
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iOwlInstance);
+	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		int64_t iStartIndexTriangles = 0;
@@ -308,7 +308,7 @@ void CAP242ProductDefinition::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 		ConceptualFace iConceptualFace = GetConceptualFace(
-			m_iOwlInstance,
+			m_iInstance,
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,
@@ -318,10 +318,10 @@ void CAP242ProductDefinition::Calculate()
 
 		/* Material */
 
-		uint32_t iAmbientColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iDiffuseColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iEmissiveColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iSpecularColor = CAP242Model::DEFAULT_COLOR;
+		uint32_t iAmbientColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iDiffuseColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iEmissiveColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iSpecularColor = CSTEPModel::DEFAULT_COLOR;
 		float fTransparency = 1.f;
 
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);

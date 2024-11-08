@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "AP242OpenGLView.h"
+#include "OpenGLSTEPView.h"
 #include "Controller.h"
-#include "AP242Model.h"
+#include "STEPModel.h"
 #include "_3DUtils.h"
 
 #include "Resource.h"
@@ -13,7 +13,7 @@
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
-CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
+COpenGLSTEPView::COpenGLSTEPView(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -64,7 +64,7 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 		nullptr);
 }
 
-CAP242OpenGLView::~CAP242OpenGLView()
+COpenGLSTEPView::~COpenGLSTEPView()
 {
 	GetController()->UnRegisterView(this);
 
@@ -76,27 +76,27 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	delete m_pPointedInstanceMaterial;
 }
 
-/*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
+/*virtual*/ _controller* COpenGLSTEPView::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* CAP242OpenGLView::getModel() const /*override*/
+/*virtual*/ _model* COpenGLSTEPView::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void CAP242OpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void COpenGLSTEPView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string CAP242OpenGLView::loadSetting(const string& strName) /*override*/
+/*virtual*/ string COpenGLSTEPView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CAP242OpenGLView::_load() /*override*/
+/*virtual*/ void COpenGLSTEPView::_load() /*override*/
 {
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -108,7 +108,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -380,11 +380,11 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::_draw(CDC* pDC) /*override*/
+/*virtual*/ void COpenGLSTEPView::_draw(CDC* pDC) /*override*/
 {
 	VERIFY(pDC != nullptr);
 
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -442,9 +442,9 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnWorldDimensionsChanged()  /*override*/
+/*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
 {
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -478,7 +478,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstanceSelected(CViewBase* pSender)  /*override*/
+/*virtual*/ void COpenGLSTEPView::OnInstanceSelected(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -493,7 +493,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -504,7 +504,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	}
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
+/*virtual*/ void COpenGLSTEPView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -519,7 +519,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void COpenGLSTEPView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -557,7 +557,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CAP242OpenGLView::OnControllerChanged() /*override*/
+/*virtual*/ void COpenGLSTEPView::OnControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);
 
@@ -566,7 +566,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	loadSettings();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
+/*virtual*/ void COpenGLSTEPView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -621,9 +621,9 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	} // switch (enEvent)
 }
 
-void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
+void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 {
-	auto pModel = dynamic_cast<CAP242Model*>(pM);
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -665,7 +665,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 #endif	
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -683,7 +683,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -775,9 +775,9 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
+void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 {
-	auto pModel = dynamic_cast<CAP242Model*>(pM);
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -804,7 +804,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -822,7 +822,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -880,9 +880,9 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CAP242OpenGLView::DrawLines(_model* pM)
+void COpenGLSTEPView::DrawLines(_model* pM)
 {
-	auto pModel = dynamic_cast<CAP242Model*>(pM);
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -909,7 +909,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -927,7 +927,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -985,9 +985,9 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CAP242OpenGLView::DrawPoints(_model* pM)
+void COpenGLSTEPView::DrawPoints(_model* pM)
 {
-	auto pModel = dynamic_cast<CAP242Model*>(pM);
+	auto pModel = dynamic_cast<CSTEPModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1015,7 +1015,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1033,7 +1033,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->GetEnable())
@@ -1098,9 +1098,9 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void CAP242OpenGLView::DrawInstancesFrameBuffer()
+void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1193,7 +1193,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetSdaiModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -1211,7 +1211,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -1276,9 +1276,9 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-void CAP242OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = GetModel<CSTEPModel>();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1322,7 +1322,7 @@ void CAP242OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CAP242ProductInstance* pPointedInstance = nullptr;
+		CProductInstance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);

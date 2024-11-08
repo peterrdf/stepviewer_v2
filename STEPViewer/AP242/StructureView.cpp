@@ -1,10 +1,10 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "STEPStructureView.h"
+#include "StructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "AP242Model.h"
+#include "STEPModel.h"
 #include "IFCModelStructureView.h"
 #include "CIS2ModelStructureView.h"
 
@@ -20,7 +20,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPStructureView::OnModelChanged()
+/*virtual*/ void CStructureView::OnModelChanged()
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -43,9 +43,9 @@ static char THIS_FILE[]=__FILE__;
 
 	switch (pModel->GetType())
 	{
-		case enumModelType::AP242:
+		case enumModelType::STEP:
 		{
-			m_pSTEPTreeView = new CAP242ModelStructureView(&m_treeCtrl);
+			m_pSTEPTreeView = new CSTEPModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
 			m_pSTEPTreeView->Load();
 		}
@@ -76,18 +76,18 @@ static char THIS_FILE[]=__FILE__;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSTEPStructureView
+// CStructureView
 
-CSTEPStructureView::CSTEPStructureView()
+CStructureView::CStructureView()
 	: m_pSTEPTreeView(nullptr)
 {}
 
-CSTEPStructureView::~CSTEPStructureView()
+CStructureView::~CStructureView()
 {	
 	delete m_pSTEPTreeView;
 }
 
-BEGIN_MESSAGE_MAP(CSTEPStructureView, CDockablePane)
+BEGIN_MESSAGE_MAP(CStructureView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
@@ -104,7 +104,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CSTEPStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -154,13 +154,13 @@ int CSTEPStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CSTEPStructureView::OnSize(UINT nType, int cx, int cy)
+void CStructureView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CSTEPStructureView::OnProperties()
+void CStructureView::OnProperties()
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -168,7 +168,7 @@ void CSTEPStructureView::OnProperties()
 	}	
 }
 
-void CSTEPStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (m_pSTEPTreeView != nullptr)
 	{
@@ -176,7 +176,7 @@ void CSTEPStructureView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 }
 
-void CSTEPStructureView::AdjustLayout()
+void CStructureView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -204,7 +204,7 @@ void CSTEPStructureView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CSTEPStructureView::OnPaint()
+void CStructureView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -216,14 +216,14 @@ void CSTEPStructureView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CSTEPStructureView::OnSetFocus(CWnd* pOldWnd)
+void CStructureView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CSTEPStructureView::OnChangeVisualStyle()
+void CStructureView::OnChangeVisualStyle()
 {
 	UINT uiBmpId = theApp.m_bHiColorIcons ? IDB_CLASS_VIEW_24 : IDB_CLASS_VIEW;
 
@@ -250,7 +250,7 @@ void CSTEPStructureView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CSTEPStructureView::OnDestroy()
+void CStructureView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -258,7 +258,7 @@ void CSTEPStructureView::OnDestroy()
 	__super::OnDestroy();
 }
 
-void CSTEPStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
+void CStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -268,7 +268,7 @@ void CSTEPStructureView::OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CSTEPStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
+void CStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;	
 
@@ -278,7 +278,7 @@ void CSTEPStructureView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CSTEPStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CStructureView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

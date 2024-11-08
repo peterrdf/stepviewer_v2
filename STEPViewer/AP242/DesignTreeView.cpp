@@ -2,11 +2,11 @@
 #include "stdafx.h"
 #include "MainFrm.h"
 #include "STEPViewer.h"
-#include "STEPDesignTreeView.h"
+#include "DesignTreeView.h"
 #include "Resource.h"
 #include "IFCModel.h"
-#include "AP242Model.h"
-#include "AP242ProductDefinition.h"
+#include "STEPModel.h"
+#include "ProductDefinition.h"
 
 #include <algorithm>
 using namespace std;
@@ -24,13 +24,13 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGE_VALUE    5
 
 // ************************************************************************************************
-class CSTEPDesignTreeViewMenuButton : public CMFCToolBarMenuButton
+class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
 {
 
-	DECLARE_SERIAL(CSTEPDesignTreeViewMenuButton)
+	DECLARE_SERIAL(CDesignTreeViewMenuButton)
 
 public:
-	CSTEPDesignTreeViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CDesignTreeViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -51,10 +51,10 @@ public:
 	}
 };
 
-IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
+IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CSTEPDesignTreeView::OnModelChanged() /*override*/
+/*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
 {
 	ResetView();
 
@@ -62,7 +62,7 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_pPropertyProvider = nullptr;
 
 	auto pModel = GetModel<CModel>();
-	if ((pModel == nullptr) || (pModel->GetSdaiModel() == 0))
+	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
 	{
 		return;
 	}
@@ -72,7 +72,7 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
-/*virtual*/ void CSTEPDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -108,14 +108,14 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->GetSdaiModel(), pSelectedInstance->GetSdaiInstance(), &iInstance);
+	owlBuildInstance(pModel->GetInstance(), pSelectedInstance->GetInstance(), &iInstance);
 
 	if (iInstance == 0)
 	{
-		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetSdaiInstance());
+		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
 		if (iExpressID != 0)
 		{
-			iInstance = internalGetInstanceFromP21Line(pModel->GetSdaiModel(), iExpressID);
+			iInstance = internalGetInstanceFromP21Line(pModel->GetInstance(), iExpressID);
 		}
 	}
 
@@ -131,12 +131,12 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-/*virtual*/ CTreeCtrlEx* CSTEPDesignTreeView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-/*virtual*/ vector<CString> CSTEPDesignTreeView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
 	{
@@ -147,7 +147,7 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	};
 }
 
-/*virtual*/ void CSTEPDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -178,7 +178,7 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 }
 
-/*virtual*/ BOOL CSTEPDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+/*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL) 
 	{
@@ -251,7 +251,7 @@ IMPLEMENT_SERIAL(CSTEPDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-void CSTEPDesignTreeView::ResetView()
+void CDesignTreeView::ResetView()
 {
 	// UI
 	m_treeCtrl.DeleteAllItems();
@@ -261,7 +261,7 @@ void CSTEPDesignTreeView::ResetView()
 	Clean();
 }
 
-void CSTEPDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -297,7 +297,7 @@ void CSTEPDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	}
 }
 
-void CSTEPDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 {
 	if (iInstance == 0)
 	{
@@ -475,7 +475,7 @@ void CSTEPDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance
 	}	
 }
 
-void CSTEPDesignTreeView::Clean()
+void CDesignTreeView::Clean()
 {
 	auto itInstance2Data = m_mapInstance2Data.begin();
 	for (; itInstance2Data != m_mapInstance2Data.end(); itInstance2Data++)
@@ -486,14 +486,14 @@ void CSTEPDesignTreeView::Clean()
 }
 
 // ************************************************************************************************
-CSTEPDesignTreeView::CSTEPDesignTreeView()
+CDesignTreeView::CDesignTreeView()
 	: m_pPropertyProvider(nullptr)
 	, m_mapInstance2Data()
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
 {}
 
-CSTEPDesignTreeView::~CSTEPDesignTreeView()
+CDesignTreeView::~CDesignTreeView()
 {	
 	Clean();
 
@@ -501,7 +501,7 @@ CSTEPDesignTreeView::~CSTEPDesignTreeView()
 	m_pPropertyProvider = nullptr;
 }
 
-BEGIN_MESSAGE_MAP(CSTEPDesignTreeView, CDockablePane)
+BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
@@ -512,7 +512,7 @@ BEGIN_MESSAGE_MAP(CSTEPDesignTreeView, CDockablePane)
 	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
-int CSTEPDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -561,13 +561,13 @@ int CSTEPDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CSTEPDesignTreeView::OnSize(UINT nType, int cx, int cy)
+void CDesignTreeView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CSTEPDesignTreeView::OnProperties()
+void CDesignTreeView::OnProperties()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -579,7 +579,7 @@ void CSTEPDesignTreeView::OnProperties()
 	}
 }
 
-void CSTEPDesignTreeView::AdjustLayout()
+void CDesignTreeView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -607,7 +607,7 @@ void CSTEPDesignTreeView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CSTEPDesignTreeView::OnPaint()
+void CDesignTreeView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -619,14 +619,14 @@ void CSTEPDesignTreeView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CSTEPDesignTreeView::OnSetFocus(CWnd* pOldWnd)
+void CDesignTreeView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_treeCtrl.SetFocus();
 }
 
-void CSTEPDesignTreeView::OnChangeVisualStyle()
+void CDesignTreeView::OnChangeVisualStyle()
 {
 	m_images.DeleteImageList();
 
@@ -656,7 +656,7 @@ void CSTEPDesignTreeView::OnChangeVisualStyle()
 	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
 }
 
-void CSTEPDesignTreeView::OnDestroy()
+void CDesignTreeView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -666,7 +666,7 @@ void CSTEPDesignTreeView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CSTEPDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
+void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 
@@ -688,7 +688,7 @@ void CSTEPDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 	}
 }
 
-void CSTEPDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

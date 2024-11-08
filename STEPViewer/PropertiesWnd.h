@@ -59,7 +59,7 @@ public: // Methods
 	virtual ~CApplicationProperty();
 };
 
-class CSTEPPropertiesWnd
+class CPropertiesWnd
 	: public CDockablePane
 	, public CViewBase
 {
@@ -83,7 +83,7 @@ private: // Methods
 
 // Construction
 public:
-	CSTEPPropertiesWnd();
+	CPropertiesWnd();
 
 	void AdjustLayout();
 
@@ -103,7 +103,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CSTEPPropertiesWnd();
+	virtual ~CPropertiesWnd();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
