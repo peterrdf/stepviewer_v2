@@ -481,7 +481,7 @@ void CCIS2Model::LodDesignParts()
 
 void CCIS2Model::LoadRepresentations()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(m_iModel, "REPRESENTATION");
+	int_t* piInstances = sdaiGetEntityExtentBN((SdaiModel)m_iModel, "REPRESENTATION");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
