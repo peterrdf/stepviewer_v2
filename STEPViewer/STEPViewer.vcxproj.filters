@@ -135,9 +135,6 @@
     <ClInclude Include="AP242\AP242OpenGLView.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\OWLProperty.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
     <ClInclude Include="AP242\AP242ProductDefinition.h">
       <Filter>AP242</Filter>
     </ClInclude>
@@ -151,15 +148,6 @@
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\AP242PModelStructureView.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
-    <ClInclude Include="AP242\StructureView.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
-    <ClInclude Include="AP242\StructureViewConsts.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
-    <ClInclude Include="AP242\DesignTreeView.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_3DUtils.h">
@@ -218,6 +206,12 @@
     </ClInclude>
     <ClInclude Include="CIS2\CIS2ModelStructureView.h">
       <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="DesignTreeView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OWLProperty.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,9 +293,6 @@
     <ClCompile Include="AP242\AP242OpenGLView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\OWLProperty.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
     <ClCompile Include="AP242\AP242ProductDefinition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
@@ -315,12 +306,6 @@
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\AP242PModelStructureView.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
-    <ClCompile Include="AP242\StructureView.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
-    <ClCompile Include="AP242\DesignTreeView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Model.cpp">
@@ -340,6 +325,15 @@
     </ClCompile>
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp">
       <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="DesignTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OWLProperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StructureView.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

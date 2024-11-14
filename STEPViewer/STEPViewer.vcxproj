@@ -220,27 +220,25 @@
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="AP242\AP242Assembly.h" />
-    <ClInclude Include="AP242\DesignTreeView.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
-    <ClInclude Include="AP242\OWLProperty.h" />
     <ClInclude Include="AP242\AP242ProductDefinition.h" />
     <ClInclude Include="AP242\AP242ProductInstance.h" />
     <ClInclude Include="AP242\AP242ItemData.h" />
     <ClInclude Include="AP242\AP242Model.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
-    <ClInclude Include="AP242\StructureView.h" />
-    <ClInclude Include="AP242\StructureViewConsts.h" />
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Instance.h" />
     <ClInclude Include="CIS2\CIS2Model.h" />
     <ClInclude Include="CIS2\CIS2ModelStructureView.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\OpenGLCIS2View.h" />
+    <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="ModelCheckDlg.h" />
+    <ClInclude Include="OWLProperty.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
@@ -269,26 +267,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AP242\AP242Assembly.cpp" />
-    <ClCompile Include="AP242\DesignTreeView.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
-    <ClCompile Include="AP242\OWLProperty.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
     <ClCompile Include="AP242\AP242ProductInstance.cpp" />
     <ClCompile Include="AP242\AP242ItemData.cpp" />
     <ClCompile Include="AP242\AP242Model.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />
-    <ClCompile Include="AP242\StructureView.cpp" />
     <ClCompile Include="CIS2\CIS2DesignPart.cpp" />
     <ClCompile Include="CIS2\CIS2Instance.cpp" />
     <ClCompile Include="CIS2\CIS2Model.cpp" />
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\OpenGLCIS2View.cpp" />
+    <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
+    <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />
@@ -305,6 +302,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="StructureView.cpp" />
     <ClCompile Include="ViewBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
