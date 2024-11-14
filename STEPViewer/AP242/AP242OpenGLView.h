@@ -7,7 +7,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // Open GL View
-class COpenGLSTEPView
+class CAP242OpenGLView
 	: public COpenGLView
 {
 
@@ -29,8 +29,8 @@ private: // Members
 public: // Methods
 
 	// ctor/dtor
-	COpenGLSTEPView(CWnd* pWnd);
-	virtual ~COpenGLSTEPView();	
+	CAP242OpenGLView(CWnd* pWnd);
+	virtual ~CAP242OpenGLView();	
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;

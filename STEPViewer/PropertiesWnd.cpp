@@ -5,7 +5,7 @@
 #include "Resource.h"
 #include "MainFrm.h"
 #include "STEPViewer.h"
-#include "OpenGLSTEPView.h"
+#include "AP242OpenGLView.h"
 #include "AP242Model.h"
 #include "IFCModel.h"
 #include <CIS2Model.h>

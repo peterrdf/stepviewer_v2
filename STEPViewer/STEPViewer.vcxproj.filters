@@ -132,7 +132,7 @@
     <ClInclude Include="AP242\AP242Assembly.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\OpenGLSTEPView.h">
+    <ClInclude Include="AP242\AP242OpenGLView.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\OWLProperty.h">
@@ -296,7 +296,7 @@
     <ClCompile Include="AP242\AP242Assembly.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\OpenGLSTEPView.cpp">
+    <ClCompile Include="AP242\AP242OpenGLView.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\OWLProperty.cpp">

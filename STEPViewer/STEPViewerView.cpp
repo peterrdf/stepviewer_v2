@@ -11,7 +11,7 @@
 
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
-#include "OpenGLSTEPView.h"
+#include "AP242OpenGLView.h"
 #include "OpenGLIFCView.h"
 #include "OpenGLCIS2View.h"
 
@@ -72,7 +72,7 @@ CController* CMySTEPViewerView::GetController()
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new COpenGLSTEPView(this);
+			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}
