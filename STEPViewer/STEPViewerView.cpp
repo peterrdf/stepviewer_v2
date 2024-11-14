@@ -12,7 +12,7 @@
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
 #include "AP242OpenGLView.h"
-#include "OpenGLIFCView.h"
+#include "IFCOpenGLView.h"
 #include "CIS2OpenGLView.h"
 
 #ifdef _DEBUG
@@ -83,7 +83,7 @@ CController* CMySTEPViewerView::GetController()
 			strSettingsFile += L"\\STEPViewer_IFC.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
-			m_pOpenGLView = new COpenGLIFCView(this);
+			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->SetController(pController);
 			m_pOpenGLView->_load();
 		}

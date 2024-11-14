@@ -90,7 +90,7 @@
     <ClInclude Include="InstanceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\OpenGLIFCView.h">
+    <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
@@ -257,7 +257,7 @@
     <ClCompile Include="InstanceBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\OpenGLIFCView.cpp">
+    <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLView.cpp">

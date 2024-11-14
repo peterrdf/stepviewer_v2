@@ -246,7 +246,7 @@
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
-    <ClInclude Include="IFC\OpenGLIFCView.h" />
+    <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="InstanceBase.h" />
     <ClInclude Include="Model.h" />
@@ -292,7 +292,7 @@
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
-    <ClCompile Include="IFC\OpenGLIFCView.cpp" />
+    <ClCompile Include="IFC\IFCOpenGLView.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="InstanceBase.cpp" />
     <ClCompile Include="Model.cpp" />

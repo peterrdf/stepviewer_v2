@@ -10,7 +10,7 @@ class CIFCModel;
 
 // ************************************************************************************************
 // Open GL View
-class COpenGLIFCView 
+class CIFCOpenGLView 
 	: public COpenGLView
 {
 
@@ -32,8 +32,8 @@ private: // Members
 public: // Methods
 	
 	// ctor/dtor
-	COpenGLIFCView(CWnd * pWnd);
-	virtual ~COpenGLIFCView();
+	CIFCOpenGLView(CWnd * pWnd);
+	virtual ~CIFCOpenGLView();
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
