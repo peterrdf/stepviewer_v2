@@ -28,7 +28,7 @@ private: // Members
 	SdaiInteger m_iRelatingProducts; // if == 0 then it has geometry, otherwise it is a placeholder
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
-	vector<CAP242*> m_vecInstances;
+	vector<CAP242ProductInstance*> m_vecInstances;
 	int32_t m_iNextInstance;
 
 public: // Methods
@@ -42,12 +42,12 @@ public: // Methods
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	void CalculateMinMaxTransform(
-		CAP242* pInstance, 
+		CAP242ProductInstance* pInstance, 
 		float& fXmin, float& fXmax, 
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 	void CalculateMinMaxTransform(
-		CAP242* pInstance,
+		CAP242ProductInstance* pInstance,
 		float fXTranslation, float fYTranslation, float fZTranslation,
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
@@ -66,7 +66,7 @@ public: // Methods
 	SdaiInteger GetRelatingProducts() const { return m_iRelatingProducts; }
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
 
-	const vector<CAP242*>& GetInstances() const { return m_vecInstances; }
+	const vector<CAP242ProductInstance*>& GetInstances() const { return m_vecInstances; }
 	int32_t GetNextInstance();
 
 private: // Methods

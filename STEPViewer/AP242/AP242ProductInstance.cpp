@@ -3,7 +3,7 @@
 #include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CAP242::CAP242(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
+CAP242ProductInstance::CAP242ProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)
@@ -33,22 +33,22 @@ CAP242::CAP242(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix
 	}
 }
 
-CAP242::~CAP242()
+CAP242ProductInstance::~CAP242ProductInstance()
 {
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/ SdaiInstance CAP242::GetInstance() const 
+/*virtual*/ SdaiInstance CAP242ProductInstance::GetInstance() const 
 { 
 	return m_pProductDefinition->GetInstance(); 
 }
 
-/*virtual*/  bool CAP242::HasGeometry() const 
+/*virtual*/  bool CAP242ProductInstance::HasGeometry() const 
 { 
 	return m_pProductDefinition->hasGeometry(); 
 }
 
-void CAP242::Scale(float fScaleFactor)
+void CAP242ProductInstance::Scale(float fScaleFactor)
 {
 	m_pTransformationMatrix->_41 /= fScaleFactor;
 	m_pTransformationMatrix->_42 /= fScaleFactor;

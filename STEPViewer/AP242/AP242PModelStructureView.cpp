@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "STEPModelStructureView.h"
+#include "AP242PModelStructureView.h"
 #include "AP242ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
@@ -17,7 +17,7 @@ using namespace std;
 // ************************************************************************************************
 
 // ------------------------------------------------------------------------------------------------
-CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
+CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
 	, m_pImageList(nullptr)
@@ -64,7 +64,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CSTEPModelStructureView::~CSTEPModelStructureView()
+/*virtual*/ CAP242PModelStructureView::~CAP242PModelStructureView()
 {
 	m_pTreeCtrl->SetImageList(nullptr, TVSIL_NORMAL);
 
@@ -81,7 +81,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -102,7 +102,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
 	if (pSelectedInstance == nullptr)
 	{
 		/*
@@ -148,19 +148,19 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::Load() /*override*/
+/*virtual*/ void CAP242PModelStructureView::Load() /*override*/
 {
 	ResetView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CImageList* CSTEPModelStructureView::GetImageList() const /*override*/
+/*virtual*/ CImageList* CAP242PModelStructureView::GetImageList() const /*override*/
 {
 	return m_pImageList;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/) /*override*/
 {
 	if (!bShow)
 	{
@@ -169,7 +169,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 
@@ -213,7 +213,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
-					pItemData->GetInstance<CAP242>()->SetEnable(false);
+					pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(false);
 				}
 				
 				UpdateChildrenInMemory(pItemData, false);
@@ -232,7 +232,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 				{
-					pItemData->GetInstance<CAP242>()->SetEnable(true);
+					pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(true);
 				}
 
 				UpdateChildrenInMemory(pItemData, true);
@@ -278,7 +278,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 			return;
 		}
 
-		auto pInstance = pItemData->GetInstance<CAP242>();
+		auto pInstance = pItemData->GetInstance<CAP242ProductInstance>();
 		ASSERT(pInstance != nullptr);
 
 		GetController()->SelectInstance(this, pInstance);
@@ -286,7 +286,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 
@@ -332,7 +332,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CSTEPModelStructureView::IsSelected(HTREEITEM /*hItem*/)
+/*virtual*/ bool CAP242PModelStructureView::IsSelected(HTREEITEM /*hItem*/)
 {
 	ASSERT(FALSE); // TODO
 
@@ -340,13 +340,13 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CTreeCtrlEx* CSTEPModelStructureView::GetTreeView() /*override*/
+/*virtual*/ CTreeCtrlEx* CAP242PModelStructureView::GetTreeView() /*override*/
 {
 	return m_pTreeCtrl;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ vector<CString> CSTEPModelStructureView::GetSearchFilters() /*override*/
+/*virtual*/ vector<CString> CAP242PModelStructureView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
 		{
@@ -358,7 +358,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CAP242PModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -398,7 +398,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ BOOL CSTEPModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+/*virtual*/ BOOL CAP242PModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
 	{
@@ -453,7 +453,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
 {
 	if (point == CPoint(-1, -1))
 	{
@@ -496,7 +496,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
-		auto pInstance = pItemData->GetInstance<CAP242>();
+		auto pInstance = pItemData->GetInstance<CAP242ProductInstance>();
 
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -657,7 +657,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSTEPModelStructureView::OnSearch() /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnSearch() /*override*/
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -670,7 +670,7 @@ CSTEPModelStructureView::CSTEPModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
+void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 {
 	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
@@ -943,7 +943,7 @@ void CSTEPModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadModel()
+void CAP242PModelStructureView::LoadModel()
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -1027,11 +1027,11 @@ void CSTEPModelStructureView::LoadModel()
 	m_bInitInProgress = false;
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** CSTEPModelStructureView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** CAP242PModelStructureView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent)
+void CAP242PModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent)
 {
 	const auto& mapAssemblies = pModel->GetAssemblies();
 
@@ -1104,7 +1104,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel, C
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
+void CAP242PModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
 {
 	/*
 	* Instance
@@ -1131,7 +1131,7 @@ void CSTEPModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pModel
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
+void CAP242PModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent)
 {
 	const auto& mapAssemblies = pModel->GetAssemblies();
 
@@ -1187,7 +1187,7 @@ void CSTEPModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model* p
 	m_vecItemData.push_back(pInstanceItemData);
 }
 
-void CSTEPModelStructureView::SearchForDescendantWithGeometry()
+void CAP242PModelStructureView::SearchForDescendantWithGeometry()
 {
 	for (auto pItemData : m_vecItemData)
 	{
@@ -1195,7 +1195,7 @@ void CSTEPModelStructureView::SearchForDescendantWithGeometry()
 
 		if (pItemData->getType() == enumSTEPItemDataType::ProductInstance)
 		{
-			auto pProductInstance = pItemData->GetInstance<CAP242>();
+			auto pProductInstance = pItemData->GetInstance<CAP242ProductInstance>();
 
 			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
 		}
@@ -1206,7 +1206,7 @@ void CSTEPModelStructureView::SearchForDescendantWithGeometry()
 			{
 				if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
 				{
-					auto pProductInstance = pChildItemData->GetInstance<CAP242>();
+					auto pProductInstance = pChildItemData->GetInstance<CAP242ProductInstance>();
 
 					bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
 					if (bHasDescendantWithGeometry)
@@ -1227,13 +1227,13 @@ void CSTEPModelStructureView::SearchForDescendantWithGeometry()
 	} // for (auto pItemData : ...
 }
 
-void CSTEPModelStructureView::SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry)
+void CAP242PModelStructureView::SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry)
 {
 	for (auto pChildItemData : pItemData->children())
 	{
 		if (pChildItemData->getType() == enumSTEPItemDataType::ProductInstance)
 		{
-			auto pProductInstance = pChildItemData->GetInstance<CAP242>();
+			auto pProductInstance = pChildItemData->GetInstance<CAP242ProductInstance>();
 
 			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
 			if (bHasDescendantWithGeometry)
@@ -1251,11 +1251,11 @@ void CSTEPModelStructureView::SearchForDescendantWithGeometryRecursively(CAP242I
 }
 
 // ------------------------------------------------------------------------------------------------
-CAP242ItemData* CSTEPModelStructureView::FindItemData(CAP242* pInstance)
+CAP242ItemData* CAP242PModelStructureView::FindItemData(CAP242ProductInstance* pInstance)
 {
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
 	{
-		if (m_vecItemData[iItemData]->GetInstance<CAP242>() == pInstance)
+		if (m_vecItemData[iItemData]->GetInstance<CAP242ProductInstance>() == pInstance)
 		{
 			return m_vecItemData[iItemData];
 		}
@@ -1265,7 +1265,7 @@ CAP242ItemData* CSTEPModelStructureView::FindItemData(CAP242* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
+void CAP242PModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 {
 	if ((pItemData == nullptr) || (pItemData->treeItem() == nullptr) || pItemData->children().empty())
 	{
@@ -1309,7 +1309,7 @@ void CSTEPModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 
 			case enumSTEPItemDataType::ProductInstance:
 			{
-				auto pInstance = pChild->GetInstance<CAP242>();
+				auto pInstance = pChild->GetInstance<CAP242ProductInstance>();
 				ASSERT(pInstance != nullptr);
 				ASSERT(pInstance->GetName() != L"");
 
@@ -1350,14 +1350,14 @@ void CSTEPModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 		{
 			m_pTreeCtrl->SetItemData(hGeometry, (DWORD_PTR)pChild);
 
-			ASSERT(m_mapInstance2Item.find(pChild->GetInstance<CAP242>()) == m_mapInstance2Item.end());
-			m_mapInstance2Item[pChild->GetInstance<CAP242>()] = hChild;
+			ASSERT(m_mapInstance2Item.find(pChild->GetInstance<CAP242ProductInstance>()) == m_mapInstance2Item.end());
+			m_mapInstance2Item[pChild->GetInstance<CAP242ProductInstance>()] = hChild;
 		}
 	} // for (size_t iChild = ...
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::LoadInstanceAncestors(CAP242* pInstance)
+void CAP242PModelStructureView::LoadInstanceAncestors(CAP242ProductInstance* pInstance)
 {
 	if (pInstance == nullptr)
 	{
@@ -1393,7 +1393,7 @@ void CSTEPModelStructureView::LoadInstanceAncestors(CAP242* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::ResetTree(bool bEnable)
+void CAP242PModelStructureView::ResetTree(bool bEnable)
 {
 	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
 	while (hRoot != nullptr)
@@ -1418,7 +1418,7 @@ void CSTEPModelStructureView::ResetTree(bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
+void CAP242PModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
 {
 	if (hParent == nullptr)
 	{
@@ -1449,7 +1449,7 @@ void CSTEPModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::UpdateChildren(HTREEITEM hParent)
+void CAP242PModelStructureView::UpdateChildren(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1493,11 +1493,11 @@ void CSTEPModelStructureView::UpdateChildren(HTREEITEM hParent)
 		{
 			if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED))
 			{
-				ASSERT(pItemData->GetInstance<CAP242>()->GetEnable());
+				ASSERT(pItemData->GetInstance<CAP242ProductInstance>()->GetEnable());
 			}
 			else
 			{
-				ASSERT(!pItemData->GetInstance<CAP242>()->GetEnable());
+				ASSERT(!pItemData->GetInstance<CAP242ProductInstance>()->GetEnable());
 			}
 		}
 #endif
@@ -1509,7 +1509,7 @@ void CSTEPModelStructureView::UpdateChildren(HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::UpdateChildrenInMemory(CAP242ItemData* pParent, bool bEnable)
+void CAP242PModelStructureView::UpdateChildrenInMemory(CAP242ItemData* pParent, bool bEnable)
 {
 	if (pParent == nullptr)
 	{
@@ -1523,7 +1523,7 @@ void CSTEPModelStructureView::UpdateChildrenInMemory(CAP242ItemData* pParent, bo
 		auto pChild = pParent->children()[iChild];
 		if (pChild->getType() == enumSTEPItemDataType::ProductInstance)
 		{
-			pChild->GetInstance<CAP242>()->SetEnable(bEnable);
+			pChild->GetInstance<CAP242ProductInstance>()->SetEnable(bEnable);
 		}
 
 		UpdateChildrenInMemory(pChild, bEnable);
@@ -1531,7 +1531,7 @@ void CSTEPModelStructureView::UpdateChildrenInMemory(CAP242ItemData* pParent, bo
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
+void CAP242PModelStructureView::UpdateParent(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1599,7 +1599,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
-			pItemData->GetInstance<CAP242>()->SetEnable(true);
+			pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(true);
 		}
 
 		UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
@@ -1614,7 +1614,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
-			pItemData->GetInstance<CAP242>()->SetEnable(false);
+			pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(false);
 		}
 
 		UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
@@ -1629,7 +1629,7 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 		CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 		{
-			pItemData->GetInstance<CAP242>()->SetEnable(true);
+			pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(true);
 		}
 
 		UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
@@ -1642,14 +1642,14 @@ void CSTEPModelStructureView::UpdateParent(HTREEITEM hParent)
 	CAP242ItemData* pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
-		pItemData->GetInstance<CAP242>()->SetEnable(true);
+		pItemData->GetInstance<CAP242ProductInstance>()->SetEnable(true);
 	}
 
 	UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModelStructureView::ResetView()
+void CAP242PModelStructureView::ResetView()
 {
 	m_pTreeCtrl->DeleteAllItems();
 

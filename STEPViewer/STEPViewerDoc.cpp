@@ -49,7 +49,7 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CAP242*>(GetSelectedInstance());
+	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
 		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());

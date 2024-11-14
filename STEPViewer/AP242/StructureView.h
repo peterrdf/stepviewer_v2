@@ -5,7 +5,7 @@
 #include "ViewBase.h"
 #include "AP242Assembly.h"
 #include "AP242ItemData.h"
-#include "STEPModelStructureView.h"
+#include "AP242PModelStructureView.h"
 
 #include <map>
 

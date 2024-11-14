@@ -66,7 +66,7 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 }
 
 void CAP242ProductDefinition::CalculateMinMaxTransform(
-	CAP242* pInstance,
+	CAP242ProductInstance* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
@@ -97,7 +97,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 }
 
 void CAP242ProductDefinition::CalculateMinMaxTransform(
-	CAP242* pInstance,
+	CAP242ProductInstance* pInstance,
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)

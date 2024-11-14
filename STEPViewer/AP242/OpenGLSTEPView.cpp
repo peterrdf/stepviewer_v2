@@ -493,7 +493,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CAP242*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -1322,7 +1322,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CAP242* pPointedInstance = nullptr;
+		CAP242ProductInstance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);

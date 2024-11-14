@@ -6,7 +6,7 @@
 #include "SearchTreeCtrlDialog.h"
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPModelStructureView 
+class CAP242PModelStructureView 
 	: public CTreeViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
@@ -28,7 +28,7 @@ private: // Members
 
 	// Cache
 	vector<CAP242ItemData*> m_vecItemData;
-	map<CAP242*, HTREEITEM> m_mapInstance2Item;
+	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
@@ -40,8 +40,8 @@ private: // Members
 
 public: // Methods
 
-	CSTEPModelStructureView(CTreeCtrlEx* pTreeView);
-	virtual ~CSTEPModelStructureView();	
+	CAP242PModelStructureView(CTreeCtrlEx* pTreeView);
+	virtual ~CAP242PModelStructureView();	
 
 	// CViewBase
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
@@ -74,9 +74,9 @@ private: // Methods
 	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent);
 	void SearchForDescendantWithGeometry();
 	void SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry);
-	CAP242ItemData* FindItemData(CAP242* pInstance);
+	CAP242ItemData* FindItemData(CAP242ProductInstance* pInstance);
 	void LoadItemChildren(CAP242ItemData* pItemData);
-	void LoadInstanceAncestors(CAP242* pInstance);
+	void LoadInstanceAncestors(CAP242ProductInstance* pInstance);
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void UpdateChildren(HTREEITEM hParent);
