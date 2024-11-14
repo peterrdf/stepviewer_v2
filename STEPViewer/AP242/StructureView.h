@@ -4,7 +4,7 @@
 #include "TreeCtrlEx.h"
 #include "ViewBase.h"
 #include "AP242Assembly.h"
-#include "STEPItemData.h"
+#include "AP242ItemData.h"
 #include "STEPModelStructureView.h"
 
 #include <map>

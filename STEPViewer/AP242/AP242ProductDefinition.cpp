@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "AP242ProductDefinition.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 
 // ************************************************************************************************
 CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
@@ -318,10 +318,10 @@ void CAP242ProductDefinition::Calculate()
 
 		/* Material */
 
-		uint32_t iAmbientColor = CSTEPModel::DEFAULT_COLOR;
-		uint32_t iDiffuseColor = CSTEPModel::DEFAULT_COLOR;
-		uint32_t iEmissiveColor = CSTEPModel::DEFAULT_COLOR;
-		uint32_t iSpecularColor = CSTEPModel::DEFAULT_COLOR;
+		uint32_t iAmbientColor = CAP242Model::DEFAULT_COLOR;
+		uint32_t iDiffuseColor = CAP242Model::DEFAULT_COLOR;
+		uint32_t iEmissiveColor = CAP242Model::DEFAULT_COLOR;
+		uint32_t iSpecularColor = CAP242Model::DEFAULT_COLOR;
 		float fTransparency = 1.f;
 
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "TreeViewBase.h"
-#include "STEPItemData.h"
-#include "STEPModel.h"
 #include "IFCInstance.h"
 #include "SearchTreeCtrlDialog.h"
 #include <map>

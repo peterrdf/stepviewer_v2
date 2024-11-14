@@ -14,7 +14,7 @@ class CAP242ProductDefinition;
 class CAP242;
 
 // ************************************************************************************************
-class CSTEPModel : public CModel
+class CAP242Model : public CModel
 {
 
 private: // Members
@@ -34,8 +34,8 @@ public: // Members
 
 public: // Methods
 	
-	CSTEPModel();
-	virtual ~CSTEPModel();
+	CAP242Model();
+	virtual ~CAP242Model();
 
 	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
 

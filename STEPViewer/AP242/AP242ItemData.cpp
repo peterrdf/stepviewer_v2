@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "STEPItemData.h"
+#include "AP242ItemData.h"
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTEPItemDataType enItemDataType)
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumSTEPItemDataType enItemDataType)
 	: m_pParent(pParent)
 	, m_pInstance(pInstance)
 	, m_enSTEPItemDataType(enItemDataType)
@@ -15,30 +15,30 @@ CSTEPItemData::CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTE
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData::~CSTEPItemData()
+CAP242ItemData::~CAP242ItemData()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-CSTEPItemData* CSTEPItemData::getParent()
+CAP242ItemData* CAP242ItemData::getParent()
 {
 	return m_pParent;
 }
 
 // ------------------------------------------------------------------------------------------------
-enumSTEPItemDataType CSTEPItemData::getType() const
+enumSTEPItemDataType CAP242ItemData::getType() const
 {
 	return m_enSTEPItemDataType;
 }
 
 // ------------------------------------------------------------------------------------------------
-HTREEITEM& CSTEPItemData::treeItem()
+HTREEITEM& CAP242ItemData::treeItem()
 {
 	return m_hItem;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CSTEPItemData*>& CSTEPItemData::children()
+vector<CAP242ItemData*>& CAP242ItemData::children()
 {
 	return m_vecChildren;
 }

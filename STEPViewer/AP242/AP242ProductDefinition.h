@@ -14,7 +14,7 @@ using namespace std;
 class CAP242ProductDefinition
 	: public _geometry
 {
-	friend class CSTEPModel;
+	friend class CAP242Model;
 
 private: // Members
 

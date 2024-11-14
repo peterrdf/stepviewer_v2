@@ -15,14 +15,14 @@ enum class enumSTEPItemDataType : int
 };
 
 // ------------------------------------------------------------------------------------------------
-class CSTEPItemData
+class CAP242ItemData
 {
 
 private: // Members	
 
 	// --------------------------------------------------------------------------------------------
 	// Parent
-	CSTEPItemData* m_pParent;
+	CAP242ItemData* m_pParent;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance - C++ wrapper class
@@ -38,7 +38,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Children
-	vector<CSTEPItemData*> m_vecChildren;
+	vector<CAP242ItemData*> m_vecChildren;
 
 	// --------------------------------------------------------------------------------------------
 	// Geometry
@@ -48,15 +48,15 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CSTEPItemData(CSTEPItemData* pParent, int64_t* pInstance, enumSTEPItemDataType enItemDataType);
+	CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumSTEPItemDataType enItemDataType);
 
 	// --------------------------------------------------------------------------------------------
 	// dtor
-	virtual ~CSTEPItemData();
+	virtual ~CAP242ItemData();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CSTEPItemData* getParent();
+	CAP242ItemData* getParent();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -76,7 +76,7 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor
-	vector<CSTEPItemData*>& children();
+	vector<CAP242ItemData*>& children();
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor

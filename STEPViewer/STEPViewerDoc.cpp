@@ -139,7 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	SetModel(new CSTEPModel());
+	SetModel(new CAP242Model());
 
 	return TRUE;
 }

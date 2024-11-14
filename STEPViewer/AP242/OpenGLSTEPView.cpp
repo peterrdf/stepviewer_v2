@@ -2,7 +2,7 @@
 
 #include "OpenGLSTEPView.h"
 #include "Controller.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "_3DUtils.h"
 
 #include "Resource.h"
@@ -108,7 +108,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -384,7 +384,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 {
 	VERIFY(pDC != nullptr);
 
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -444,7 +444,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 /*virtual*/ void COpenGLSTEPView::OnWorldDimensionsChanged()  /*override*/
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -623,7 +623,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 
 void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -777,7 +777,7 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 
 void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -882,7 +882,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 
 void COpenGLSTEPView::DrawLines(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -987,7 +987,7 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 
 void COpenGLSTEPView::DrawPoints(_model* pM)
 {
-	auto pModel = dynamic_cast<CSTEPModel*>(pM);
+	auto pModel = dynamic_cast<CAP242Model*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1100,7 +1100,7 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 
 void COpenGLSTEPView::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1278,7 +1278,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 
 void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pModel = GetModel<CSTEPModel>();
+	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		return;

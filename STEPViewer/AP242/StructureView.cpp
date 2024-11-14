@@ -4,7 +4,7 @@
 #include "StructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "STEPModel.h"
+#include "AP242Model.h"
 #include "IFCModelStructureView.h"
 #include "CIS2ModelStructureView.h"
 
