@@ -3,7 +3,7 @@
 
 #include "_oglUtils.h"
 #include "OpenGLView.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 
 // ------------------------------------------------------------------------------------------------
 // Open GL View
@@ -19,8 +19,8 @@ private: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CProductInstance* m_pPointedInstance;
-	CProductInstance* m_pSelectedInstance;
+	CAP242* m_pPointedInstance;
+	CAP242* m_pSelectedInstance;
 
 	// Materials
 	_material* m_pSelectedInstanceMaterial;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
 #include "CIS2ModelStructureView.h"
-#include "ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "IFCModel.h"

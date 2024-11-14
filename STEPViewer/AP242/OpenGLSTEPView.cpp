@@ -493,7 +493,7 @@ COpenGLSTEPView::~COpenGLSTEPView()
 	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CProductInstance*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CAP242*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -683,7 +683,7 @@ void COpenGLSTEPView::DrawFaces(_model* pM, bool bTransparent)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -822,7 +822,7 @@ void COpenGLSTEPView::DrawConceptualFacesPolygons(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -927,7 +927,7 @@ void COpenGLSTEPView::DrawLines(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -1033,7 +1033,7 @@ void COpenGLSTEPView::DrawPoints(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->GetEnable())
@@ -1211,7 +1211,7 @@ void COpenGLSTEPView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -1322,7 +1322,7 @@ void COpenGLSTEPView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CProductInstance* pPointedInstance = nullptr;
+		CAP242* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);

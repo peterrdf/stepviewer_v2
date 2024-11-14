@@ -4,9 +4,6 @@
 #include "STEPViewer.h"
 #include "DesignTreeView.h"
 #include "Resource.h"
-#include "IFCModel.h"
-#include "STEPModel.h"
-#include "ProductDefinition.h"
 
 #include <algorithm>
 using namespace std;

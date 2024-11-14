@@ -3,7 +3,7 @@
 
 #include "TreeCtrlEx.h"
 #include "ViewBase.h"
-#include "Assembly.h"
+#include "AP242Assembly.h"
 #include "STEPItemData.h"
 #include "STEPModelStructureView.h"
 

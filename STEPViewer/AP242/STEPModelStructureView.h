@@ -28,7 +28,7 @@ private: // Members
 
 	// Cache
 	vector<CSTEPItemData*> m_vecItemData;
-	map<CProductInstance*, HTREEITEM> m_mapInstance2Item;
+	map<CAP242*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
@@ -69,14 +69,14 @@ private: // Methods
 	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
 
-	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionsInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
-	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursively(CSTEPModel* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent);
+	void LoadProductDefinitionsInMemory(CSTEPModel* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent);
+	void WalkAssemblyTreeRecursivelyInMemory(CSTEPModel* pModel, CAP242ProductDefinition* pDefinition, CSTEPItemData* pParent);
 	void SearchForDescendantWithGeometry();
 	void SearchForDescendantWithGeometryRecursively(CSTEPItemData* pItemData, bool& bHasDescendantWithGeometry);
-	CSTEPItemData* FindItemData(CProductInstance* pInstance);
+	CSTEPItemData* FindItemData(CAP242* pInstance);
 	void LoadItemChildren(CSTEPItemData* pItemData);
-	void LoadInstanceAncestors(CProductInstance* pInstance);
+	void LoadInstanceAncestors(CAP242* pInstance);
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void UpdateChildren(HTREEITEM hParent);

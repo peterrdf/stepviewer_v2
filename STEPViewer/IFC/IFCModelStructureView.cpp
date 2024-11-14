@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "mainfrm.h"
 #include "IFCModelStructureView.h"
-#include "ProductDefinition.h"
 #include "Resource.h"
 #include "STEPViewer.h"
 #include "IFCModel.h"

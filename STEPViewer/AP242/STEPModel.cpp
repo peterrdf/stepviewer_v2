@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
 #include "STEPModel.h"
-#include "ProductDefinition.h"
-#include "Assembly.h"
+#include "AP242ProductDefinition.h"
+#include "AP242Assembly.h"
 #include "_3DUtils.h"
 
 #include <bitset>
@@ -121,7 +121,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 {	
 	ASSERT(pInstance != nullptr);
 
-	auto pProductInstance = dynamic_cast<CProductInstance*>(pInstance);
+	auto pProductInstance = dynamic_cast<CAP242*>(pInstance);
 	if ((pProductInstance == nullptr) || (pProductInstance->GetProductDefinition() == nullptr))
 	{
 		ASSERT(FALSE);
@@ -218,7 +218,7 @@ void CSTEPModel::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstanc
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductInstance* CSTEPModel::getProductInstanceByID(int64_t iID) const
+CAP242* CSTEPModel::getProductInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
 	if (itInstance == m_mapID2Instance.end())
@@ -438,15 +438,15 @@ void CSTEPModel::LoadProductDefinitions()
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+CAP242ProductDefinition* CSTEPModel::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
-	return new CProductDefinition(iProductDefinitionInstance);
+	return new CAP242ProductDefinition(iProductDefinitionInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
-CProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+CAP242ProductDefinition* CSTEPModel::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
@@ -505,7 +505,7 @@ void CSTEPModel::LoadAssemblies()
 
 		auto pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
 
-		auto pAssembly = new CAssembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
+		auto pAssembly = new CAP242Assembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
 		ASSERT(m_mapExpressIDAssembly.find(pAssembly->GetExpressID()) == m_mapExpressIDAssembly.end());
 
 		m_mapExpressIDAssembly[pAssembly->GetExpressID()] = pAssembly;
@@ -527,7 +527,7 @@ void CSTEPModel::LoadGeometry()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
+void CSTEPModel::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -576,7 +576,7 @@ void CSTEPModel::WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _m
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	auto pInstance = new CProductInstance(m_iID++, pDefinition, pParentMatrix);
+	auto pInstance = new CAP242(m_iID++, pDefinition, pParentMatrix);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
 
 	pDefinition->m_vecInstances.push_back(pInstance);

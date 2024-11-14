@@ -9,9 +9,9 @@ using namespace std;
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
 // ************************************************************************************************
-class CAssembly;
-class CProductDefinition;
-class CProductInstance;
+class CAP242Assembly;
+class CAP242ProductDefinition;
+class CAP242;
 
 // ************************************************************************************************
 class CSTEPModel : public CModel
@@ -20,9 +20,9 @@ class CSTEPModel : public CModel
 private: // Members
 	
 	CEntityProvider* m_pEntityProvider;
-	map<ExpressID, CProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
-	map<int64_t, CProductInstance*> m_mapID2Instance; // ID : Product Instance
-	map<ExpressID, CAssembly*> m_mapExpressIDAssembly; // Express ID : Assembly
+	map<ExpressID, CAP242ProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
+	map<int64_t, CAP242*> m_mapID2Instance; // ID : Product Instance
+	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 	int64_t m_iID;
 
@@ -46,10 +46,10 @@ public: // Methods
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
 
-	const map<ExpressID, CProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
-	const map<int64_t, CProductInstance*>& GetInstances() const { return m_mapID2Instance; }
-	const map<ExpressID, CAssembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
-	CProductInstance* getProductInstanceByID(int64_t iID) const;
+	const map<ExpressID, CAP242ProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
+	const map<int64_t, CAP242*>& GetInstances() const { return m_mapID2Instance; }
+	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
+	CAP242* getProductInstanceByID(int64_t iID) const;
 
 	void Scale(); // [-1, 1]
 
@@ -60,11 +60,11 @@ public: // Methods
 private: // Methods
 	
 	void LoadProductDefinitions();
-	CProductDefinition* LoadProductDefinition(SdaiInstance iProductDefinitionInstance);
-	CProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
+	CAP242ProductDefinition* LoadProductDefinition(SdaiInstance iProductDefinitionInstance);
+	CAP242ProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(CProductDefinition* pDefinition, _matrix4x3* pParentMatrix);
+	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefinition, _matrix4x3* pParentMatrix);
 	void Clean();
 };
 

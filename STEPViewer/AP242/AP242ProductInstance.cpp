@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "ProductInstance.h"
-#include "ProductDefinition.h"
+#include "AP242ProductInstance.h"
+#include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
+CAP242::CAP242(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
 	, m_iID(iID)
 	, m_pProductDefinition(pProductDefinition)
@@ -33,22 +33,22 @@ CProductInstance::CProductInstance(int64_t iID, CProductDefinition* pProductDefi
 	}
 }
 
-CProductInstance::~CProductInstance()
+CAP242::~CAP242()
 {
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/ SdaiInstance CProductInstance::GetInstance() const 
+/*virtual*/ SdaiInstance CAP242::GetInstance() const 
 { 
 	return m_pProductDefinition->GetInstance(); 
 }
 
-/*virtual*/  bool CProductInstance::HasGeometry() const 
+/*virtual*/  bool CAP242::HasGeometry() const 
 { 
 	return m_pProductDefinition->hasGeometry(); 
 }
 
-void CProductInstance::Scale(float fScaleFactor)
+void CAP242::Scale(float fScaleFactor)
 {
 	m_pTransformationMatrix->_41 /= fScaleFactor;
 	m_pTransformationMatrix->_42 /= fScaleFactor;

@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "ProductDefinition.h"
+#include "AP242ProductDefinition.h"
 #include "STEPModel.h"
 
 // ************************************************************************************************
-CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
+CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 	: _geometry(-1, iSdaiInstance, true)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_szId(nullptr)
@@ -36,10 +36,10 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	Calculate();
 }
 
-/*virtual*/ CProductDefinition::~CProductDefinition()
+/*virtual*/ CAP242ProductDefinition::~CAP242ProductDefinition()
 {}
 
-/*virtual*/ OwlModel CProductDefinition::getModel() const /*override*/
+/*virtual*/ OwlModel CAP242ProductDefinition::getModel() const /*override*/
 {
 	OwlModel iOwlModel = 0;
 	owlGetModel(GetModel(), &iOwlModel);
@@ -48,7 +48,7 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	return iOwlModel;
 }
 
-/*virtual*/ int64_t CProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
+/*virtual*/ int64_t CAP242ProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
 {
 	assert(piVertexBufferSize != nullptr);
 	assert(piIndexBufferSize != nullptr);
@@ -65,8 +65,8 @@ CProductDefinition::CProductDefinition(SdaiInstance iSdaiInstance)
 	return iOwlInstance;
 }
 
-void CProductDefinition::CalculateMinMaxTransform(
-	CProductInstance* pInstance,
+void CAP242ProductDefinition::CalculateMinMaxTransform(
+	CAP242* pInstance,
 	float fXTranslation, float fYTranslation, float fZTranslation,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
@@ -96,8 +96,8 @@ void CProductDefinition::CalculateMinMaxTransform(
 	pInstance->GetTransformationMatrix()->_43 = _43;
 }
 
-void CProductDefinition::CalculateMinMaxTransform(
-	CProductInstance* pInstance,
+void CAP242ProductDefinition::CalculateMinMaxTransform(
+	CAP242* pInstance,
 	float& fXmin, float& fXmax, 
 	float& fYmin, float& fYmax, 
 	float& fZmin, float& fZmax)
@@ -244,7 +244,7 @@ void CProductDefinition::CalculateMinMaxTransform(
 	} // if (!m_vecPoints.empty())
 }
 
-void CProductDefinition::Scale(float fScaleFactor)
+void CAP242ProductDefinition::Scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -261,7 +261,7 @@ void CProductDefinition::Scale(float fScaleFactor)
 	}
 }
 
-int32_t CProductDefinition::GetNextInstance()
+int32_t CAP242ProductDefinition::GetNextInstance()
 {
 	if (++m_iNextInstance >= (int32_t)m_vecInstances.size())
 	{
@@ -271,7 +271,7 @@ int32_t CProductDefinition::GetNextInstance()
 	return m_iNextInstance;
 }
 
-void CProductDefinition::Calculate()
+void CAP242ProductDefinition::Calculate()
 {
 	// Format
 	setSTEPFormatSettings();

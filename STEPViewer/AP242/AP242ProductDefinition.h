@@ -2,7 +2,7 @@
 
 #include "_oglUtils.h"
 
-#include "ProductInstance.h"
+#include "AP242ProductInstance.h"
 #include "InstanceBase.h"
 
 #include <string>
@@ -11,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CProductDefinition
+class CAP242ProductDefinition
 	: public _geometry
 {
 	friend class CSTEPModel;
@@ -28,26 +28,26 @@ private: // Members
 	SdaiInteger m_iRelatingProducts; // if == 0 then it has geometry, otherwise it is a placeholder
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
-	vector<CProductInstance*> m_vecInstances;
+	vector<CAP242*> m_vecInstances;
 	int32_t m_iNextInstance;
 
 public: // Methods
 
 	// ctor/dtor
-	CProductDefinition(SdaiInstance iSdaiInstance);
-	virtual ~CProductDefinition();
+	CAP242ProductDefinition(SdaiInstance iSdaiInstance);
+	virtual ~CAP242ProductDefinition();
 
 	// _geometry
 	virtual OwlModel getModel() const override;
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	void CalculateMinMaxTransform(
-		CProductInstance* pInstance, 
+		CAP242* pInstance, 
 		float& fXmin, float& fXmax, 
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 	void CalculateMinMaxTransform(
-		CProductInstance* pInstance,
+		CAP242* pInstance,
 		float fXTranslation, float fYTranslation, float fZTranslation,
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
@@ -66,7 +66,7 @@ public: // Methods
 	SdaiInteger GetRelatingProducts() const { return m_iRelatingProducts; }
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
 
-	const vector<CProductInstance*>& GetInstances() const { return m_vecInstances; }
+	const vector<CAP242*>& GetInstances() const { return m_vecInstances; }
 	int32_t GetNextInstance();
 
 private: // Methods

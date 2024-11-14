@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "Assembly.h"
-#include "ProductDefinition.h"
+#include "AP242Assembly.h"
+#include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CAssembly::CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProductDefinition, CProductDefinition* pRelatedProductDefinition)
+CAP242Assembly::CAP242Assembly(SdaiInstance iInstance, CAP242ProductDefinition* pRelatingProductDefinition, CAP242ProductDefinition* pRelatedProductDefinition)
 	: m_iInstance(iInstance)
 	, m_iExpressID(internalGetP21Line(iInstance))
 	, m_szId(nullptr)
@@ -23,5 +23,5 @@ CAssembly::CAssembly(SdaiInstance iInstance, CProductDefinition* pRelatingProduc
 	ASSERT(m_pRelatedProductDefinition != nullptr);
 }
 
-/*virtual*/ CAssembly::~CAssembly()
+/*virtual*/ CAP242Assembly::~CAP242Assembly()
 {}
