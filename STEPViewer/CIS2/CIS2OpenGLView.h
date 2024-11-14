@@ -10,7 +10,7 @@ class CCIS2Model;
 
 // ************************************************************************************************
 // Open GL View
-class COpenGLCIS2View 
+class CCIS2OpenGLView 
 	: public COpenGLView
 {
 
@@ -32,8 +32,8 @@ private: // Members
 public: // Methods
 	
 	// ctor/dtor
-	COpenGLCIS2View(CWnd * pWnd);
-	virtual ~COpenGLCIS2View();
+	CCIS2OpenGLView(CWnd * pWnd);
+	virtual ~CCIS2OpenGLView();
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;

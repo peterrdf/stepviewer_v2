@@ -231,7 +231,7 @@
     <ClInclude Include="CIS2\CIS2Model.h" />
     <ClInclude Include="CIS2\CIS2ModelStructureView.h" />
     <ClInclude Include="CIS2\CIS2Representation.h" />
-    <ClInclude Include="CIS2\OpenGLCIS2View.h" />
+    <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
@@ -278,7 +278,7 @@
     <ClCompile Include="CIS2\CIS2Model.cpp" />
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
-    <ClCompile Include="CIS2\OpenGLCIS2View.cpp" />
+    <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />

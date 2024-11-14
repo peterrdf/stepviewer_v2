@@ -192,7 +192,7 @@
     <ClInclude Include="CIS2\CIS2Model.h">
       <Filter>CIS2</Filter>
     </ClInclude>
-    <ClInclude Include="CIS2\OpenGLCIS2View.h">
+    <ClInclude Include="CIS2\CIS2OpenGLView.h">
       <Filter>CIS2</Filter>
     </ClInclude>
     <ClInclude Include="CIS2\CIS2Representation.h">
@@ -311,7 +311,7 @@
     <ClCompile Include="CIS2\CIS2Model.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
-    <ClCompile Include="CIS2\OpenGLCIS2View.cpp">
+    <ClCompile Include="CIS2\CIS2OpenGLView.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
     <ClCompile Include="CIS2\CIS2Representation.cpp">
