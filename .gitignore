@@ -6,7 +6,6 @@
 /STEPViewer/x64
 /x64/Debug/STEPViewer.exe
 /x64/Debug/STEPViewer.pdb
-/x64/Release/STEPViewer.exe
 /x64/Release/STEPViewer.pdb
 /STEPViewer/STEPViewer.aps
 /STEPViewer/Debug
@@ -14,7 +13,6 @@
 /Win32/Debug/STEPViewer.pdb
 /Win32/Debug/STEPViewer.exe
 /Win32/Release/STEPViewer.pdb
-/Win32/Release/STEPViewer.exe
 /x64/Debug/STEPViewer.settings
 /x64/Release/STEPViewer.settings
 /x64/Debug/STEPViewer_STEP.settings
