@@ -20,9 +20,13 @@
 /x64/Release/STEPViewer_IFC.settings
 /STEPViewer/Debug_ifcengine
 /STEPViewer/Release_ifcengine
-/Win32/Debug_ifcengine/IFCViewer.exe.exe
 /Win32/Debug_ifcengine/IFCViewer.exe.pdb
 /Win32/Release_ifcengine/IFCViewer.exe.pdb
-/x64/Debug_ifcengine/IFCViewer.exe.exe
 /x64/Debug_ifcengine/IFCViewer.exe.pdb
 /x64/Release_ifcengine/IFCViewer.exe.pdb
+/Win32/Debug_ifcengine/IFCViewer.exe
+/Win32/Debug_ifcengine/IFCViewer.pdb
+/Win32/Release_ifcengine/IFCViewer.pdb
+/x64/Debug_ifcengine/IFCViewer.exe
+/x64/Debug_ifcengine/IFCViewer.pdb
+/x64/Release_ifcengine/IFCViewer.pdb
