@@ -105,7 +105,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "STEPViewer, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2020",IDC_STATIC,42,26,114,8
+    LTEXT           "Copyright (C) 2024",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
@@ -694,11 +694,13 @@ END
 // 312
 //
 
-IDR_TEXTFILE_VERTEX_SHADER2   312                   "res\\vertex_shader2.txt"
-IDR_TEXTFILE_FRAGMENT_SHADER2 312                   "res\\fragment_shader2.txt"
+IDR_TEXTFILE_VERTEX_SHADER2 312                     "res\\vertex_shader2.txt"
 
-IDR_TEXTFILE_VERTEX_SHADER3   312                   "res\\Shader.vert"
-IDR_TEXTFILE_FRAGMENT_SHADER3 312                   "res\\Shader.frag"
+IDR_TEXTFILE_FRAGMENT_SHADER2 312                     "res\\fragment_shader2.txt"
+
+IDR_TEXTFILE_VERTEX_SHADER3 312                     "res\\Shader.vert"
+
+IDR_TEXTFILE_FRAGMENT_SHADER3 312                     "res\\Shader.frag"
 
 
 /////////////////////////////////////////////////////////////////////////////
