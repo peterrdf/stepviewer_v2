@@ -42,3 +42,11 @@
 /x64/Debug_ifcengine/IFCViewerCGL.pdb
 /x64/Release/STEPViewerCGL.pdb
 /x64/Release_ifcengine/IFCViewerCGL.pdb
+/STEPViewer/Debug_cis2engine
+/STEPViewer/Release_cis2engine
+/Win32/Debug_cis2engine/CIS2ViewerCGL.exe
+/Win32/Debug_cis2engine/CIS2ViewerCGL.pdb
+/Win32/Release_cis2engine/CIS2ViewerCGL.pdb
+/x64/Debug_cis2engine/CIS2ViewerCGL.exe
+/x64/Debug_cis2engine/CIS2ViewerCGL.pdb
+/x64/Release_cis2engine/CIS2ViewerCGL.pdb
