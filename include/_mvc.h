@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine.h"
+#include "_geometry.h"
 #include "_settings_storage.h"
 
 #include <string>
@@ -14,16 +14,32 @@ protected: // Members
 
 	wstring m_strPath;
 	OwlModel m_iModel;
+	
+	vector<_geometry*> m_vecGeometries;
+	// 1...*
+	vector<_instance*> m_vecInstances;
 
 public: // Methods
 
 	_model()
 		: m_strPath(L"")
 		, m_iModel(0)
+		, m_vecGeometries()
+		, m_vecInstances()
 	{}
 
 	virtual ~_model()
-	{}
+	{
+		/*for (auto pGeometry : m_vecGeometries)
+		{
+			delete pGeometry;
+		}*/
+
+		for (auto pInstance : m_vecInstances)
+		{
+			delete pInstance;
+		}
+	}
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	virtual OwlModel getInstance() const { return m_iModel; }

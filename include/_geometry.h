@@ -372,20 +372,49 @@ class _geometry;
 // ************************************************************************************************
 class _instance
 {
+
 private: // Members
 
+	int64_t m_iID;
 	_geometry* m_pGeometry;
+	_matrix4x4* m_pTransformationMatrix;
 
 public:  // Methods
 
-	_instance(_geometry* pGeometry)
-		: m_pGeometry(pGeometry)
+	_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+		: m_iID(iID)
+		, m_pGeometry(pGeometry)
+		, m_pTransformationMatrix(nullptr)
 	{
+		assert(m_iID > 0);
+		assert(m_pGeometry != nullptr);
+
+		m_pTransformationMatrix = new _matrix4x4();
+		_matrix4x4Identity(m_pTransformationMatrix);
+
+		if (pTransformationMatrix != nullptr)
+		{
+			m_pTransformationMatrix->_11 = pTransformationMatrix->_11;
+			m_pTransformationMatrix->_12 = pTransformationMatrix->_12;
+			m_pTransformationMatrix->_13 = pTransformationMatrix->_13;
+			m_pTransformationMatrix->_21 = pTransformationMatrix->_21;
+			m_pTransformationMatrix->_22 = pTransformationMatrix->_22;
+			m_pTransformationMatrix->_23 = pTransformationMatrix->_23;
+			m_pTransformationMatrix->_31 = pTransformationMatrix->_31;
+			m_pTransformationMatrix->_32 = pTransformationMatrix->_32;
+			m_pTransformationMatrix->_33 = pTransformationMatrix->_33;
+			m_pTransformationMatrix->_41 = pTransformationMatrix->_41;
+			m_pTransformationMatrix->_42 = pTransformationMatrix->_42;
+			m_pTransformationMatrix->_43 = pTransformationMatrix->_43;
+		}
 	}
 
 	virtual ~_instance()
 	{
+		delete m_pTransformationMatrix;
 	}
+
+	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 };
 
 // ************************************************************************************************
@@ -474,6 +503,7 @@ public: // Methods
 		, m_vecNormalVecsCohorts()
 		, m_vecBiNormalVecsCohorts()
 		, m_vecTangentVecsCohorts()
+		, m_vecInstances()
 		, m_iVBO(0)
 		, m_iVBOOffset(0)
 	{}
@@ -1356,12 +1386,6 @@ protected: // Methods
 		_cohort::clear(m_vecNormalVecsCohorts);
 		_cohort::clear(m_vecBiNormalVecsCohorts);
 		_cohort::clear(m_vecTangentVecsCohorts);
-
-		for (auto pInstance : m_vecInstances)
-		{
-			delete pInstance;
-		}
-		m_vecInstances.clear();
 	}
 };
 
@@ -1373,5 +1397,3 @@ struct _geometriesComparator
 		return wcscmp(g1->getName(), g2->getName()) < 0;
 	}
 };
-
-// ************************************************************************************************

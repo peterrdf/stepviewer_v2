@@ -521,20 +521,20 @@ void CAP242Model::LoadGeometry()
 	{
 		if (itDefinition->second->GetRelatedProducts() == 0)
 		{
-			WalkAssemblyTreeRecursively(itDefinition->second, nullptr);
+			WalkAssemblyTreeRecursively(itDefinition->second, nullptr, nullptr);
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefinition, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
 	{
 		auto pAssembly = itAssembly->second;
 
-		if (pAssembly->GetRelatingProductDefinition() == pDefinition)
+		if (pAssembly->GetRelatingProductDefinition() == pProductDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
 			owlBuildInstance(GetInstance(), internalGetInstanceFromP21Line(GetInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
@@ -572,14 +572,20 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefiniti
 				_matrix4x3Multiply(&matrix, &matrix, pParentMatrix);
 			}
 
-			WalkAssemblyTreeRecursively(pAssembly->GetRelatedProductDefinition(), &matrix);
+			WalkAssemblyTreeRecursively(pAssembly->GetRelatedProductDefinition(), pAssembly, &matrix);
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	auto pInstance = new CAP242ProductInstance(m_iID++, pDefinition, pParentMatrix);
+	m_vecInstances.push_back(new _ap_instance(
+		m_iID++,
+		pProductDefinition,
+		pParentAssembly != nullptr ? pParentAssembly->GetInstance() : pProductDefinition->GetInstance(),
+		pParentMatrix));
+
+	auto pInstance = new CAP242ProductInstance(m_iID, pProductDefinition, pParentMatrix);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
 
-	pDefinition->m_vecInstances.push_back(pInstance);
+	pProductDefinition->m_vecInstances.push_back(pInstance);
 }
 
 // ------------------------------------------------------------------------------------------------
