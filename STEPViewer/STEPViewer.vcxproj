@@ -592,11 +592,8 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\engdef.h" />
-    <ClInclude Include="..\include\engine.h" />
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\log.hpp" />
-    <ClInclude Include="..\include\stepengine.h" />
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_geometry.h" />

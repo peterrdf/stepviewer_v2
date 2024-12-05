@@ -171,19 +171,10 @@
     <ClInclude Include="..\include\_settings_storage.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\engdef.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\engine.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\glext.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\stepengine.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\wglext.h">

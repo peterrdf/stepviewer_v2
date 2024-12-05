@@ -367,6 +367,28 @@ typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
 
 // ************************************************************************************************
+class _geometry;
+
+// ************************************************************************************************
+class _instance
+{
+private: // Members
+
+	_geometry* m_pGeometry;
+
+public:  // Methods
+
+	_instance(_geometry* pGeometry)
+		: m_pGeometry(pGeometry)
+	{
+	}
+
+	virtual ~_instance()
+	{
+	}
+};
+
+// ************************************************************************************************
 class _geometry
 {
 
@@ -412,6 +434,9 @@ protected: // Members
 	vector<_cohort*> m_vecNormalVecsCohorts;
 	vector<_cohort*> m_vecBiNormalVecsCohorts;
 	vector<_cohort*> m_vecTangentVecsCohorts;
+
+	// Instances
+	vector<_instance*> m_vecInstances;
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -1331,14 +1356,22 @@ protected: // Methods
 		_cohort::clear(m_vecNormalVecsCohorts);
 		_cohort::clear(m_vecBiNormalVecsCohorts);
 		_cohort::clear(m_vecTangentVecsCohorts);
+
+		for (auto pInstance : m_vecInstances)
+		{
+			delete pInstance;
+		}
+		m_vecInstances.clear();
 	}
 };
 
 // ************************************************************************************************
-struct _instancesComparator
+struct _geometriesComparator
 {
-	bool operator()(const _geometry* i1, const _geometry* i2) const
+	bool operator()(const _geometry* g1, const _geometry* g2) const
 	{
-		return wcscmp(i1->getName(), i2->getName()) < 0;
+		return wcscmp(g1->getName(), g2->getName()) < 0;
 	}
 };
+
+// ************************************************************************************************
