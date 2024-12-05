@@ -434,6 +434,9 @@ void CAP242Model::LoadProductDefinitions()
 		ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
 
 		m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
+
+		ASSERT(m_mapExpressID2Geometry.find(pDefinition->GetExpressID()) == m_mapExpressID2Geometry.end());
+		m_mapExpressID2Geometry[pDefinition->GetExpressID()] = pDefinition;
 	}	
 }
 
@@ -600,11 +603,13 @@ void CAP242Model::Clean()
 	delete m_pEntityProvider;
 	m_pEntityProvider = nullptr;
 
-	auto itDefinition = m_mapExpressID2Definition.begin();
+	_model::clean();
+
+	/*auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
 		delete itDefinition->second;
-	}
+	}*/
 	m_mapExpressID2Definition.clear();
 
 	auto itInstance = m_mapID2Instance.begin();

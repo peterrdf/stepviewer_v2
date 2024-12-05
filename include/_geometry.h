@@ -414,6 +414,8 @@ public:  // Methods
 		delete m_pTransformationMatrix;
 	}
 
+	int64_t getID() const { return m_iID; }
+	_geometry* getGeometry() const { return m_pGeometry; }
 	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 };
 

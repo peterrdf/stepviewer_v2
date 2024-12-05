@@ -74,7 +74,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->_load(pModel);
 		}
 		break;
 
@@ -85,7 +85,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->_load(pModel);
 		}
 		break;
 
@@ -96,7 +96,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CCIS2OpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->_load(pModel);
 		}
 		break;
 

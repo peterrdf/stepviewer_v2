@@ -96,7 +96,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CAP242OpenGLView::_load() /*override*/
+/*virtual*/ void CAP242OpenGLView::_load(_model* pModel) /*override*/
 {
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -108,8 +108,8 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CAP242Model>();
-	if (pModel == nullptr)
+	auto pAP242Model = GetModel<CAP242Model>();
+	if (pAP242Model == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -122,7 +122,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pAP242Model->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	/*
 	* Bounding sphere diameter
@@ -142,242 +142,11 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (pAP242Model->GetBoundingSphereDiameter() * 2.f);
 
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+	m_fScaleFactor = pAP242Model->GetBoundingSphereDiameter();
 
-	// Limits
-	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
-
-	// Data
-	auto& mapDefinitions = pModel->GetDefinitions();
-
-	// VBO
-	GLuint iVerticesCount = 0;
-	vector<_geometry*> vecProductDefinitionsCohort;
-
-	// IBO - Conceptual faces
-	GLuint iConcFacesIndicesCount = 0;
-	vector<_cohort*> vecConcFacesCohorts;
-
-	// IBO - Conceptual face polygons
-	GLuint iConcFacePolygonsIndicesCount = 0;
-	vector<_cohort*> vecConcFacePolygonsCohorts;
-
-	// IBO - Lines
-	GLuint iLinesIndicesCount = 0;
-	vector<_cohort*> vecLinesCohorts;
-
-	// IBO - Points
-	GLuint iPointsIndicesCount = 0;
-	vector<_cohort*> vecPointsCohorts;
-
-	for (auto itProductDefinitions = mapDefinitions.begin(); itProductDefinitions != mapDefinitions.end(); itProductDefinitions++)
-	{
-		auto pDefinition = itProductDefinitions->second;
-		if (pDefinition->getVerticesCount() == 0)
-		{
-			continue;
-		}
-
-		/******************************************************************************************
-		* Geometry
-		*/
-
-		/**
-		* VBO - Conceptual faces, polygons, etc.
-		*/
-		if (((int_t)iVerticesCount + pDefinition->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
-		{
-			if (m_oglBuffers.createCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
-			{
-				ASSERT(FALSE);
-
-				return;
-			}
-
-			iVerticesCount = 0;
-			vecProductDefinitionsCohort.clear();
-		}
-
-		/*
-		* IBO - Conceptual faces
-		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pDefinition->concFacesCohorts().size(); iFacesCohort++)
-		{
-			if ((int_t)(iConcFacesIndicesCount + pDefinition->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-				{
-					ASSERT(FALSE);
-
-					return;
-				}
-
-				iConcFacesIndicesCount = 0;
-				vecConcFacesCohorts.clear();
-			}
-
-			iConcFacesIndicesCount += (GLsizei)pDefinition->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pDefinition->concFacesCohorts()[iFacesCohort]);
-		}
-
-		/*
-		* IBO - Conceptual face polygons
-		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pDefinition->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
-		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-				{
-					ASSERT(FALSE);
-
-					return;
-				}
-
-				iConcFacePolygonsIndicesCount = 0;
-				vecConcFacePolygonsCohorts.clear();
-			}
-
-			iConcFacePolygonsIndicesCount += (GLsizei)pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pDefinition->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
-		}
-
-		/*
-		* IBO - Lines
-		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pDefinition->linesCohorts().size(); iLinesCohort++)
-		{
-			if ((int_t)(iLinesIndicesCount + pDefinition->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-				{
-					ASSERT(FALSE);
-
-					return;
-				}
-
-				iLinesIndicesCount = 0;
-				vecLinesCohorts.clear();
-			}
-
-			iLinesIndicesCount += (GLsizei)pDefinition->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pDefinition->linesCohorts()[iLinesCohort]);
-		}
-
-		/*
-		* IBO - Points
-		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pDefinition->pointsCohorts().size(); iPointsCohort++)
-		{
-			if ((int_t)(iPointsIndicesCount + pDefinition->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-				{
-					ASSERT(FALSE);
-
-					return;
-				}
-
-				iPointsIndicesCount = 0;
-				vecPointsCohorts.clear();
-			}
-
-			iPointsIndicesCount += (GLsizei)pDefinition->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pDefinition->pointsCohorts()[iPointsCohort]);
-		}
-
-		iVerticesCount += (GLsizei)pDefinition->getVerticesCount();
-		vecProductDefinitionsCohort.push_back(pDefinition);
-	} // for (auto itProductDefinitions = ...
-
-	/******************************************************************************************
-	* Geometry
-	*/
-
-	/*
-	* VBO - Conceptual faces, polygons, etc.
-	*/
-	if (iVerticesCount > 0)
-	{
-		if (m_oglBuffers.createCohort(vecProductDefinitionsCohort, m_pOGLProgram) != iVerticesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iVerticesCount = 0;
-		vecProductDefinitionsCohort.clear();
-	} // if (iVerticesCount > 0)	
-
-	/*
-	* IBO - Conceptual faces
-	*/
-	if (iConcFacesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iConcFacesIndicesCount = 0;
-		vecConcFacesCohorts.clear();
-	}
-
-	/*
-	* IBO - Conceptual face polygons
-	*/
-	if (iConcFacePolygonsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iConcFacePolygonsIndicesCount = 0;
-		vecConcFacePolygonsCohorts.clear();
-	}
-
-	/*
-	* IBO - Lines
-	*/
-	if (iLinesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iLinesIndicesCount = 0;
-		vecLinesCohorts.clear();
-	}
-
-	/*
-	* IBO - Points
-	*/
-	if (iPointsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iPointsIndicesCount = 0;
-		vecPointsCohorts.clear();
-	}
-
-	_redraw();
+	_oglView::_load(pModel);
 }
 
 /*virtual*/ void CAP242OpenGLView::_draw(CDC* pDC) /*override*/

@@ -86,7 +86,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CIFCOpenGLView::_load() /*override*/
+/*virtual*/ void CIFCOpenGLView::_load(_model* pModel2) /*override*/
 {
 	CWaitCursor waitCursor;
 

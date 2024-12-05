@@ -18,7 +18,7 @@ public:  // Methods
 		, m_sdaiInstance(sdaiInstance)
 		, m_expressID(internalGetP21Line(m_sdaiInstance))
 	{
-		assert(sdaiInstance != 0);
+		assert(m_sdaiInstance != 0);
 		assert(m_expressID != 0);
 	}
 

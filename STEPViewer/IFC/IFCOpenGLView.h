@@ -42,7 +42,7 @@ public: // Methods
 	virtual string loadSetting(const string& strName) override;
 
 	// _oglView
-	virtual void _load() override;
+	virtual void _load(_model* pModel) override;
 	virtual void _draw(CDC* pDC) override;
 
 	// CViewBase	
