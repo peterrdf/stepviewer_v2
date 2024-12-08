@@ -24,10 +24,6 @@ protected: // Members
 	float m_dOriginalBoundingSphereDiameter;
 	float m_fBoundingSphereDiameter;
 
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
-
 public: // Methods
 
 	CModel(enumAPModelType enType);
@@ -47,8 +43,7 @@ public: // Methods
 	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float GetBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
-	
+		
 	template<typename T>
 	T* As()
 	{

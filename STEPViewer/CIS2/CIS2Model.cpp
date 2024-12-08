@@ -64,10 +64,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
-
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -95,30 +91,11 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXTranslation -= m_fXmin;
-	m_fYTranslation -= m_fYmin;
-	m_fZTranslation -= m_fZmin;
-
-	// center
-	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
-
-	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 /*virtual*/ void CCIS2Model::ZoomOut() /*override*/
 {
 	m_fBoundingSphereDiameter = 0.f;
-
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -159,21 +136,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXTranslation -= m_fXmin;
-	m_fYTranslation -= m_fYmin;
-	m_fZTranslation -= m_fZmin;
-
-	// center
-	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
-
-	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 /*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance /*iInstance*/) /*override*/
@@ -326,10 +288,6 @@ void CCIS2Model::Scale()
 	m_dOriginalBoundingSphereDiameter = 2.;
 	m_fBoundingSphereDiameter = 2.f;
 
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
-
 	/* Min/Max */
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -433,21 +391,6 @@ void CCIS2Model::Scale()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
-
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXTranslation -= m_fXmin;
-	m_fYTranslation -= m_fYmin;
-	m_fZTranslation -= m_fZmin;
-
-	// center
-	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
-
-	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)

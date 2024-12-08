@@ -140,7 +140,7 @@ void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstan
 
 	pProductInstance->GetProductDefinition()->CalculateMinMaxTransform(
 		pProductInstance,
-		m_fXTranslation, m_fYTranslation, m_fZTranslation,
+		0., 0., 0.,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,
 		m_fZmin, m_fZmax);
@@ -190,7 +190,7 @@ void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstan
 
 			itDefinition->second->CalculateMinMaxTransform(
 				pInstance,
-				m_fXTranslation, m_fYTranslation, m_fZTranslation,
+				0., 0., 0.,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
 				m_fZmin, m_fZmax);
@@ -237,10 +237,6 @@ void CAP242Model::Scale()
 	/* World */
 	m_dOriginalBoundingSphereDiameter = 2.;
 	m_fBoundingSphereDiameter = 2.f;
-
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
 
 	/* Min/Max */
 	m_fXmin = FLT_MAX;
