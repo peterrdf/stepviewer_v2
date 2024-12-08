@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_mvc.h"
+#include "_ap_mvc.h"
 #include "InstanceBase.h"
 #include "Entity.h"
 
@@ -9,22 +9,10 @@
 using namespace std;
 
 // ************************************************************************************************
-enum class enumModelType : int
-{
-	Unknown = -1,
-	STEP = 0,
-	IFC = 1,
-	CIS2 = 2,
-};
-
-// ************************************************************************************************
-class CModel : public _model
+class CModel : public _ap_model
 {
 
 protected: // Members
-
-	// Model
-	enumModelType m_enModelType;	
 
 	// World's dimensions
 	float m_fXmin;
@@ -42,7 +30,7 @@ protected: // Members
 
 public: // Methods
 
-	CModel(enumModelType enModelType);
+	CModel(enumAPModelType enType);
 	virtual ~CModel()
 	{}
 
@@ -54,7 +42,6 @@ public: // Methods
 
 	// Model
 	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
-	enumModelType GetType() const { return m_enModelType; }
 
 	// World's dimensions
 	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }

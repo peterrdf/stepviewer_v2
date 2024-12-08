@@ -3736,7 +3736,7 @@ public: // Methods
 		GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
 		// Data
-		auto& mapExpressID2Geometry = pModel->getExpressID2Geometry();
+		auto& vecGeometries = pModel->getGeometries();
 
 		// VBO
 		GLuint iVerticesCount = 0;
@@ -3758,9 +3758,8 @@ public: // Methods
 		GLuint iPointsIndicesCount = 0;
 		vector<_cohort*> vecPointsCohorts;
 
-		for (auto& itExpressID2Geometry : mapExpressID2Geometry)
+		for (auto pGeometry : vecGeometries)
 		{
-			auto pGeometry = itExpressID2Geometry.second;
 			if (pGeometry->getVerticesCount() == 0)
 			{
 				continue;
@@ -3862,7 +3861,7 @@ public: // Methods
 
 			iVerticesCount += (GLsizei)pGeometry->getVerticesCount();
 			vecGeometriesCohort.push_back(pGeometry);
-		} // for (auto& itExpressID2Geometry : ...
+		} // for (auto pGeometry : vecGeometries)
 
 		//  VBO - Conceptual faces, polygons, etc.
 		if (iVerticesCount > 0)
@@ -3878,9 +3877,6 @@ public: // Methods
 			vecGeometriesCohort.clear();
 		} // if (iVerticesCount > 0)	
 
-		/*
-		*
-		*/
 		//  IBO - Conceptual faces
 		if (iConcFacesIndicesCount > 0)
 		{

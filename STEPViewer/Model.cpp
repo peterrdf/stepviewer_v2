@@ -3,9 +3,8 @@
 #include "Model.h"
 
 // ************************************************************************************************
-CModel::CModel(enumModelType enModelType)
-	: _model()
-	, m_enModelType(enModelType)	
+CModel::CModel(enumAPModelType enType)
+	: _ap_model(enType)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
 	, m_fYmin(-1.f)

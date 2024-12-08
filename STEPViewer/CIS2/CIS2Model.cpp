@@ -22,7 +22,7 @@ DEFAULT_COLOR_A;
 
 // ************************************************************************************************
 CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
-	: CModel(enumModelType::CIS2)
+	: CModel(enumAPModelType::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_vecInstances()	
 	, m_mapInstances()

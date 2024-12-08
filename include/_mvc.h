@@ -19,8 +19,6 @@ protected: // Members
 	// 1...*
 	vector<_instance*> m_vecInstances;
 
-	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
-
 public: // Methods
 
 	_model()
@@ -28,7 +26,6 @@ public: // Methods
 		, m_iModel(0)
 		, m_vecGeometries()
 		, m_vecInstances()
-		, m_mapExpressID2Geometry()
 	{}
 
 	virtual ~_model()
@@ -38,29 +35,23 @@ public: // Methods
 
 protected: // Methods
 
-	void clean()
+	virtual void clean()
 	{
-		for (auto& itGeometry : m_mapExpressID2Geometry)
-		{
-			delete itGeometry.second;
-		}
-		m_mapExpressID2Geometry.clear();
-
 		for (auto pInstance : m_vecInstances)
 		{
 			delete pInstance;
 		}
+		m_vecInstances.clear();
 	}
-
-public: // Methods
-
-	const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; } 
 
 public: // Properties
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	virtual OwlModel getInstance() const { return m_iModel; }
 	uint64_t getVertexLength() const { return SetFormat(getInstance()) / sizeof(float); }
+
+	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
+	const vector<_instance*>& getInstances() const { return m_vecInstances; }
 };
 
 // ************************************************************************************************

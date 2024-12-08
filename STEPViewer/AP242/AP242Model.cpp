@@ -49,7 +49,7 @@ static uint32_t DEFAULT_COLOR_A = 255;
 
 // ************************************************************************************************
 CAP242Model::CAP242Model()
-	: CModel(enumModelType::STEP)
+	: CModel(enumAPModelType::STEP)
 	, m_pEntityProvider(nullptr)
 	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
@@ -445,7 +445,10 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 {
 	PreLoadProductDefinition(iProductDefinitionInstance);
 
-	return new CAP242ProductDefinition(iProductDefinitionInstance);
+	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
+	m_vecGeometries.push_back(pGeometry);
+
+	return pGeometry;
 }
 
 // ------------------------------------------------------------------------------------------------

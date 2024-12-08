@@ -65,9 +65,9 @@ CController* CMySTEPViewerView::GetController()
 
 	wstring strSettingsFile = pthRootFolder.wstring();
 
-	switch (pModel->GetType())
+	switch (pModel->getType())
 	{
-		case enumModelType::STEP:
+		case enumAPModelType::STEP:
 		{
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
@@ -78,7 +78,7 @@ CController* CMySTEPViewerView::GetController()
 		}
 		break;
 
-		case enumModelType::IFC:
+		case enumAPModelType::IFC:
 		{
 			strSettingsFile += L"\\STEPViewer_IFC.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
@@ -89,7 +89,7 @@ CController* CMySTEPViewerView::GetController()
 		}
 		break;
 
-		case enumModelType::CIS2:
+		case enumAPModelType::CIS2:
 		{
 			strSettingsFile += L"\\STEPViewer_CIS2.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
