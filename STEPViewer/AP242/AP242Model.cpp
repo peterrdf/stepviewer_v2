@@ -532,12 +532,6 @@ void CAP242Model::Clean()
 	_ap_model::clean();
 
 	m_mapExpressID2Definition.clear();
-
-	auto itInstance = m_mapID2Instance.begin();
-	for (; itInstance != m_mapID2Instance.end(); itInstance++)
-	{
-		delete itInstance->second;
-	}
 	m_mapID2Instance.clear();
 
 	auto itAssembly = m_mapExpressIDAssembly.begin();
