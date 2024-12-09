@@ -61,7 +61,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new CIFCModel();
-			pModel->Load(szPath, iModel);
+			pModel->Attach(szPath, iModel);
 
 			return pModel;
 		}

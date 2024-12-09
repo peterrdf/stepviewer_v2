@@ -71,7 +71,7 @@ public: // Methods
 
 	void Scale(); // [-1, 1]
 
-	void Load(const wchar_t* szIFCFile, SdaiModel iModel);
+	void Attach(const wchar_t* szPath, SdaiModel iModel);
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
