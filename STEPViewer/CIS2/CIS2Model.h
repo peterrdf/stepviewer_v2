@@ -46,7 +46,6 @@ public: // Methods
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
 	void Load(const wchar_t* szCIS2File, SdaiModel iModel);
-	void PreLoadInstance(SdaiInstance iInstance);
 	void Clean();
 
 	void Scale(); // [-1, 1]

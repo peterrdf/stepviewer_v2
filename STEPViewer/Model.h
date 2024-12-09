@@ -12,18 +12,6 @@ using namespace std;
 class CModel : public _ap_model
 {
 
-protected: // Members
-
-	// World's dimensions
-	float m_fXmin;
-	float m_fXmax;
-	float m_fYmin;
-	float m_fYmax;
-	float m_fZmin;
-	float m_fZmax;
-	float m_dOriginalBoundingSphereDiameter;
-	float m_fBoundingSphereDiameter;
-
 public: // Methods
 
 	CModel(enumAPModelType enType);

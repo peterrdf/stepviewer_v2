@@ -19,6 +19,22 @@ protected: // Members
 	// 1...*
 	vector<_instance*> m_vecInstances;
 
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	bool m_bUpdteVertexBuffers;
+	double m_dVertexBuffersOffsetX;
+	double m_dVertexBuffersOffsetY;
+	double m_dVertexBuffersOffsetZ;
+	double m_dOriginalBoundingSphereDiameter;	
+
+	// World's dimensions
+	float m_fXmin;
+	float m_fXmax;
+	float m_fYmin;
+	float m_fYmax;
+	float m_fZmin;
+	float m_fZmax;
+	float m_fBoundingSphereDiameter;
+
 public: // Methods
 
 	_model()
@@ -26,6 +42,18 @@ public: // Methods
 		, m_iModel(0)
 		, m_vecGeometries()
 		, m_vecInstances()
+		, m_bUpdteVertexBuffers(true)
+		, m_dVertexBuffersOffsetX(0.)
+		, m_dVertexBuffersOffsetY(0.)
+		, m_dVertexBuffersOffsetZ(0.)
+		, m_dOriginalBoundingSphereDiameter(2.)
+		, m_fXmin(-1.f)
+		, m_fXmax(1.f)
+		, m_fYmin(-1.f)
+		, m_fYmax(1.f)
+		, m_fZmin(-1.f)
+		, m_fZmax(1.f)
+		, m_fBoundingSphereDiameter(2.f)
 	{}
 
 	virtual ~_model()
@@ -42,6 +70,22 @@ protected: // Methods
 			delete pInstance;
 		}
 		m_vecInstances.clear();
+
+		for (auto pGeometry : m_vecGeometries)
+		{
+			delete pGeometry;
+		}
+		m_vecGeometries.clear();
+	}
+
+
+public: // Methods
+
+	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
+	{
+		dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
+		dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
+		dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
 	}
 
 public: // Properties

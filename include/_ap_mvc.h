@@ -44,14 +44,50 @@ public: // Properties
 
 protected: // Methods
 
+	void preLoadInstance(SdaiInstance sdaiInstance)
+	{
+		if (m_bUpdteVertexBuffers)
+		{
+			m_dVertexBuffersOffsetX = 0.;
+			m_dVertexBuffersOffsetY = 0.;
+			m_dVertexBuffersOffsetZ = 0.;
+
+			_vector3d vecOriginalBBMin;
+			_vector3d vecOriginalBBMax;
+			if (GetInstanceGeometryClass(sdaiInstance) &&
+				GetBoundingBox(
+					sdaiInstance,
+					(double*)&vecOriginalBBMin,
+					(double*)&vecOriginalBBMax))
+			{
+				m_dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
+				m_dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
+				m_dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
+
+				TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+					m_dVertexBuffersOffsetX,
+					m_dVertexBuffersOffsetY,
+					m_dVertexBuffersOffsetZ);
+
+				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+				SetVertexBufferOffset(
+					m_iModel,
+					m_dVertexBuffersOffsetX,
+					m_dVertexBuffersOffsetY,
+					m_dVertexBuffersOffsetZ);
+
+				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+				ClearedExternalBuffers(m_iModel);
+
+				m_bUpdteVertexBuffers = false;
+			}
+		} // if (m_bUpdteVertexBuffers)
+	}
+
 	virtual void clean() override
 	{
 		_model::clean();
 
-		for (auto& itGeometry : m_mapExpressID2Geometry)
-		{
-			delete itGeometry.second;
-		}
 		m_mapExpressID2Geometry.clear();
 	}
 

@@ -55,7 +55,6 @@ CAP242Model::CAP242Model()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()
 	, m_iID(1)
-	, m_bUpdteVertexBuffers(true)
 {
 }
 
@@ -63,38 +62,6 @@ CAP242Model::CAP242Model()
 CAP242Model::~CAP242Model()
 {
 	Clean();
-}
-
-void CAP242Model::PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance)
-{
-	if (m_bUpdteVertexBuffers)
-	{
-		_vector3d vecOriginalBBMin;
-		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(iProductDefinitionInstance) &&
-			GetBoundingBox(
-				iProductDefinitionInstance,
-				(double*)&vecOriginalBBMin,
-				(double*)&vecOriginalBBMax))
-		{
-			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-			SetVertexBufferOffset(
-				m_iModel,
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-			ClearedExternalBuffers(m_iModel);
-
-			m_bUpdteVertexBuffers = false;
-		}
-	} // if (m_bUpdteVertexBuffers)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -281,11 +248,11 @@ void CAP242Model::Scale()
 	}
 
 	/* World */
-	m_dOriginalBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	m_fBoundingSphereDiameter = m_dOriginalBoundingSphereDiameter;
+	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
 	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
@@ -439,7 +406,7 @@ void CAP242Model::LoadProductDefinitions()
 // ------------------------------------------------------------------------------------------------
 CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
-	PreLoadProductDefinition(iProductDefinitionInstance);
+	preLoadInstance(iProductDefinitionInstance);
 
 	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
 	m_vecGeometries.push_back(pGeometry);

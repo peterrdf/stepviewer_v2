@@ -251,38 +251,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	Scale();
 }
 
-void CIFCModel::PreLoadInstance(SdaiInstance iInstance)
-{
-	if (m_bUpdteVertexBuffers)
-	{
-		_vector3d vecOriginalBBMin;
-		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(iInstance) &&
-			GetBoundingBox(
-				iInstance,
-				(double*)&vecOriginalBBMin,
-				(double*)&vecOriginalBBMax))
-		{
-			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-			SetVertexBufferOffset(
-				m_iModel,
-				-(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.,
-				-(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.,
-				-(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.);
-
-			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-			ClearedExternalBuffers(m_iModel);
-
-			m_bUpdteVertexBuffers = false;
-		}
-	} // if (m_bUpdteVertexBuffers)
-}
-
 void CIFCModel::Clean()
 {
 	if (m_iModel != 0)
@@ -350,11 +318,11 @@ void CIFCModel::Scale()
 	}
 
 	/* World */
-	m_dOriginalBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	m_fBoundingSphereDiameter = m_dOriginalBoundingSphereDiameter;
+	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
 	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
@@ -736,7 +704,7 @@ void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSeg
 
 CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments)
 {
-	PreLoadInstance(iInstance);		
+	preLoadInstance(iInstance);		
 
 	// Set up circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)

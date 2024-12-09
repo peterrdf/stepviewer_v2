@@ -26,8 +26,6 @@ private: // Members
 
 	int64_t m_iID;
 
-	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
-
 public: // Members
 
 	static uint32_t DEFAULT_COLOR;
@@ -36,8 +34,6 @@ public: // Methods
 	
 	CAP242Model();
 	virtual ~CAP242Model();
-
-	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
 
 	// CModel	
 	virtual CEntityProvider* GetEntityProvider() const override;
