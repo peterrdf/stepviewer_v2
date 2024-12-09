@@ -107,8 +107,8 @@ public: // Methods
 public: // Properties
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	virtual OwlModel getInstance() const { return m_iModel; }
-	uint64_t getVertexLength() const { return SetFormat(getInstance()) / sizeof(float); }
+	virtual OwlModel getOwlModel() const PURE;
+	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }

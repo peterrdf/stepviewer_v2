@@ -360,7 +360,7 @@ void CAP242Model::Load(const wchar_t* szPath, SdaiModel iModel)
 {
 	Clean();
 
-	m_iModel = iModel;
+	m_sdaiModel = iModel;
 	m_strPath = szPath;
 
 	LoadProductDefinitions();
@@ -552,22 +552,8 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 // ------------------------------------------------------------------------------------------------
 void CAP242Model::Clean()
 {
-	if (m_iModel != 0)
-	{
-		sdaiCloseModel((SdaiModel)m_iModel);
-		m_iModel = 0;
-	}
+	_ap_model::clean();
 
-	delete m_pEntityProvider;
-	m_pEntityProvider = nullptr;
-
-	_model::clean();
-
-	/*auto itDefinition = m_mapExpressID2Definition.begin();
-	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
-	{
-		delete itDefinition->second;
-	}*/
 	m_mapExpressID2Definition.clear();
 
 	auto itInstance = m_mapID2Instance.begin();

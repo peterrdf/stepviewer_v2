@@ -80,13 +80,13 @@ protected: // Methods
 
 				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 				SetVertexBufferOffset(
-					m_iModel,
+					getOwlModel(),
 					m_dVertexBuffersOffsetX,
 					m_dVertexBuffersOffsetY,
 					m_dVertexBuffersOffsetZ);
 
 				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-				ClearedExternalBuffers(m_iModel);
+				ClearedExternalBuffers(getOwlModel());
 
 				m_bUpdteVertexBuffers = false;
 			}
@@ -103,8 +103,6 @@ protected: // Methods
 			m_sdaiModel = 0;
 		}
 
-		m_enAP = enumAP::Unknown;
-
 		m_mapExpressID2Geometry.clear();
 
 		delete m_pEntityProvider;
@@ -113,8 +111,20 @@ protected: // Methods
 
 public: // Properties
 
+	// _model
+	virtual OwlModel getOwlModel() const override
+	{
+		assert(m_sdaiModel != 0);
+
+		OwlModel iOwlModel = 0;
+		owlGetModel(m_sdaiModel, &iOwlModel);
+		assert(iOwlModel != 0);
+
+		return iOwlModel;
+	}
+
 	// Model
-	SdaiModel getSdaiInstance() const { return (SdaiModel)m_iModel; }
+	SdaiModel getSdaiInstance() const { return m_sdaiModel; }
 	enumAP getAP() const { return m_enAP; }
 
 	// Cache	

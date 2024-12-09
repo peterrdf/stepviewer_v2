@@ -140,7 +140,7 @@ void CController::SaveInstance(OwlInstance iInstance)
 
 	wstring strName;
 	wstring strUniqueName;
-	CInstanceBase::BuildInstanceNames(m_pModel->getInstance(), iInstance, strName, strUniqueName);
+	CInstanceBase::BuildInstanceNames(m_pModel->getOwlModel(), iInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
