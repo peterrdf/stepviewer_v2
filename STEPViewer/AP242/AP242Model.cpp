@@ -366,13 +366,9 @@ void CAP242Model::LoadProductDefinitions()
 	{
 		SdaiInstance iProductDefinitionInstance = 0;
 		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
-
 		ASSERT(iProductDefinitionInstance != 0);
 
-		auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-		ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
-
-		m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
+		LoadProductDefinition(iProductDefinitionInstance);
 	}	
 }
 
@@ -386,6 +382,9 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 
 	ASSERT(m_mapExpressID2Geometry.find(pGeometry->GetExpressID()) == m_mapExpressID2Geometry.end());
 	m_mapExpressID2Geometry[pGeometry->GetExpressID()] = pGeometry;
+
+	ASSERT(m_mapExpressID2Definition.find(pGeometry->GetExpressID()) == m_mapExpressID2Definition.end());
+	m_mapExpressID2Definition[pGeometry->GetExpressID()] = pGeometry;
 
 	return pGeometry;
 }
@@ -412,8 +411,6 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 	}
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
-	ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
-
 	if (bRelatingProduct)
 	{
 		pDefinition->m_iRelatingProducts++;
@@ -423,8 +420,6 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 	{
 		pDefinition->m_iRelatedProducts++;
 	}
-
-	m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
 
 	return pDefinition;
 }
