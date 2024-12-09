@@ -341,11 +341,11 @@ void CAP242Model::Load(const wchar_t * szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242Model::Attach(const wchar_t* szPath, SdaiModel iModel)
+void CAP242Model::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
 {
 	Clean();
 
-	attachModel(szPath, iModel);
+	attachModel(szPath, sdaiModel);
 
 	LoadProductDefinitions();
 

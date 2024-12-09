@@ -131,16 +131,16 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	return nullptr;
 }
 
-void CCIS2Model::Attach(const wchar_t* szPath, SdaiModel iModel)
+void CCIS2Model::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
 {
 	Clean();
 
-	attachModel(szPath, iModel);
+	attachModel(szPath, sdaiModel);
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
-		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(iModel, "ANALYSIS_MODEL_3D"),
+		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(sdaiModel, "ANALYSIS_MODEL_3D"),
 			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
 		if (noCis2AnalysisModel3DInstances > 0)
 		{

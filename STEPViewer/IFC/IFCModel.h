@@ -71,7 +71,7 @@ public: // Methods
 
 	void Scale(); // [-1, 1]
 
-	void Attach(const wchar_t* szPath, SdaiModel iModel);
+	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);
 	void Clean();
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }

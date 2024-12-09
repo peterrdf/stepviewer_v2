@@ -180,11 +180,11 @@ CIFCModel::~CIFCModel()
 	return pInstance;
 }
 
-void CIFCModel::Attach(const wchar_t* szPath, SdaiModel iModel)
+void CIFCModel::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
 {
 	Clean();
 
-	attachModel(szPath, iModel);
+	attachModel(szPath, sdaiModel);
 
 	// Entities
 	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCOBJECT");
