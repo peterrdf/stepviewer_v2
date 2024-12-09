@@ -13,8 +13,7 @@ class _model
 protected: // Members
 
 	wstring m_strPath;
-	OwlModel m_iModel;
-	
+
 	vector<_geometry*> m_vecGeometries;
 	// 1...*
 	vector<_instance*> m_vecInstances;
@@ -39,7 +38,6 @@ public: // Methods
 
 	_model()
 		: m_strPath(L"")
-		, m_iModel(0)
 		, m_vecGeometries()
 		, m_vecInstances()
 		, m_bUpdteVertexBuffers(true)
