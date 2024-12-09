@@ -46,11 +46,9 @@ private: // Members
 	vector<CIFCInstance*> m_vecInstances;
 	map<SdaiInstance, CIFCInstance*> m_mapInstances;
 	map<int64_t, CIFCInstance*> m_mapID2Instance;
-	map<ExpressID, CIFCInstance*> m_mapExpressID2Instance;
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
-	CEntityProvider* m_pEntityProvider;
 	CIFCAttributeProvider* m_pAttributeProvider;
 
 	static int_t s_iInstanceID;
@@ -67,7 +65,6 @@ public: // Methods
 	virtual ~CIFCModel();
 
 	// CModel
-	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;

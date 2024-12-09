@@ -50,7 +50,6 @@ static uint32_t DEFAULT_COLOR_A = 255;
 // ************************************************************************************************
 CAP242Model::CAP242Model()
 	: CModel(enumAP::STEP)
-	, m_pEntityProvider(nullptr)
 	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()
@@ -62,19 +61,6 @@ CAP242Model::CAP242Model()
 CAP242Model::~CAP242Model()
 {
 	Clean();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ CInstanceBase* CAP242Model::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
-{
-	for (auto& item : m_mapID2Instance) {
-		if (auto pDef = item.second->GetProductDefinition()) {
-			if (pDef->GetExpressID() == iExpressID) {
-				return item.second;
-			}
-		}
-	}
-	return nullptr;
 }
 
 // --------------------------------------------------------------------------------------------
@@ -387,9 +373,6 @@ void CAP242Model::LoadProductDefinitions()
 		ASSERT(m_mapExpressID2Definition.find(pDefinition->GetExpressID()) == m_mapExpressID2Definition.end());
 
 		m_mapExpressID2Definition[pDefinition->GetExpressID()] = pDefinition;
-
-		ASSERT(m_mapExpressID2Geometry.find(pDefinition->GetExpressID()) == m_mapExpressID2Geometry.end());
-		m_mapExpressID2Geometry[pDefinition->GetExpressID()] = pDefinition;
 	}	
 }
 
@@ -400,6 +383,9 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 
 	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
 	m_vecGeometries.push_back(pGeometry);
+
+	ASSERT(m_mapExpressID2Geometry.find(pGeometry->GetExpressID()) == m_mapExpressID2Geometry.end());
+	m_mapExpressID2Geometry[pGeometry->GetExpressID()] = pGeometry;
 
 	return pGeometry;
 }
@@ -535,15 +521,13 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
-	m_vecInstances.push_back(new _ap_instance(
+	auto pInstance = new CAP242ProductInstance(
 		m_iID++,
 		pProductDefinition,
 		pParentAssembly != nullptr ? pParentAssembly->GetInstance() : pProductDefinition->GetInstance(),
-		pParentMatrix));
-
-	auto pInstance = new CAP242ProductInstance(m_iID, pProductDefinition, pParentMatrix);
+		pParentMatrix);
+	m_vecInstances.push_back(pInstance);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
-
 	pProductDefinition->m_vecInstances.push_back(pInstance);
 }
 

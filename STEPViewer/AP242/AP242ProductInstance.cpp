@@ -3,10 +3,11 @@
 #include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CAP242ProductInstance::CAP242ProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix)
+CAP242ProductInstance::CAP242ProductInstance(int64_t iID, _geometry* pGeometry, SdaiInstance sdaiInstance, _matrix4x3* pTransformationMatrix)
 	: CInstanceBase()
+	, _ap_instance(iID, pGeometry, sdaiInstance, pTransformationMatrix)
 	, m_iID(iID)
-	, m_pProductDefinition(pProductDefinition)
+	, m_pProductDefinition((CAP242ProductDefinition*)pGeometry)
 	, m_pTransformationMatrix(nullptr)
 	, m_bEnable(true)
 {

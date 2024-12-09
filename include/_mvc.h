@@ -65,17 +65,17 @@ protected: // Methods
 
 	virtual void clean()
 	{
-		for (auto pInstance : m_vecInstances)
-		{
-			delete pInstance;
-		}
-		m_vecInstances.clear();
-
 		for (auto pGeometry : m_vecGeometries)
 		{
 			delete pGeometry;
 		}
 		m_vecGeometries.clear();
+
+		for (auto pInstance : m_vecInstances)
+		{
+			delete pInstance;
+		}
+		m_vecInstances.clear();
 	}
 
 

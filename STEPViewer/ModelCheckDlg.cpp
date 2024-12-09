@@ -508,10 +508,10 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 
 			for (auto inst : p->relatingInstances) {
 				if (auto stepId = internalGetP21Line(inst)) {
-					if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {
-						pDoc->SelectInstance(NULL, pInst);
-						return; //>>>>
-					}
+					//if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {#todo
+					//	pDoc->SelectInstance(NULL, pInst);
+					//	return; //>>>>
+					//}
 				}
 			}
 		}

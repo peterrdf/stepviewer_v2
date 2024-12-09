@@ -18,7 +18,6 @@ public: // Methods
 	virtual ~CModel()
 	{}
 	
-	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 	virtual void ZoomOut() PURE;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) PURE;

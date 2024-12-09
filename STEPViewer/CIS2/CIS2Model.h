@@ -21,7 +21,6 @@ private: // Members
 	vector<CCIS2Instance*> m_vecInstances;
 	map<SdaiInstance, CCIS2Instance*> m_mapInstances;
 	map<int64_t, CCIS2Instance*> m_mapID2Instance;
-	map<ExpressID, CCIS2Instance*> m_mapExpressID2Instance;
 
 	static int_t s_iInstanceID;
 
@@ -37,7 +36,6 @@ public: // Methods
 	virtual ~CCIS2Model();
 
 	// CModel
-	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;

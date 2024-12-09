@@ -1,7 +1,7 @@
 #pragma once
 
 #include "_mvc.h"
-#include "_settings_storage.h"
+#include "_ap_instance.h"
 
 #include "Entity.h"
 
@@ -28,13 +28,14 @@ private: // Members
 	SdaiModel m_sdaiModel;
 	enumAP m_enAP;
 
+	// Helpers
+	CEntityProvider* m_pEntityProvider;
+
 protected: // Members
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
-
-	// Helpers
-	CEntityProvider* m_pEntityProvider;
+	map<ExpressID, _ap_instance*> m_mapExpressID2Instance;
 
 public: // Methods
 
@@ -42,8 +43,9 @@ public: // Methods
 		: _model()
 		, m_sdaiModel(0)
 		, m_enAP(enAP)
-		, m_mapExpressID2Geometry()
 		, m_pEntityProvider(nullptr)
+		, m_mapExpressID2Geometry()
+		, m_mapExpressID2Instance()
 	{}
 
 	virtual ~_ap_model()
@@ -70,6 +72,33 @@ public: // Methods
 
 		m_strPath = szPath;
 		m_sdaiModel = sdaiModel;
+	}
+
+	_ap_instance* getInstanceByExpressID(int64_t iExpressID) const
+	{
+		assert(iExpressID != 0);
+
+		auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
+		if (itExpressID2Instance != m_mapExpressID2Instance.end())
+		{
+			return itExpressID2Instance->second;
+		}
+
+		return nullptr;
+	}
+
+	template<typename T>
+	T* getInstanceByExpressIDAs(int64_t iExpressID) const
+	{
+		assert(iExpressID != 0);
+
+		auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
+		if (itExpressID2Instance != m_mapExpressID2Instance.end())
+		{
+			return dynamic_cast<T*>(itExpressID2Instance->second);
+		}
+
+		return nullptr;
 	}
 
 protected: // Methods
@@ -127,6 +156,7 @@ protected: // Methods
 		}
 
 		m_mapExpressID2Geometry.clear();
+		m_mapExpressID2Instance.clear();
 
 		delete m_pEntityProvider;
 		m_pEntityProvider = nullptr;

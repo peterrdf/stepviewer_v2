@@ -27,23 +27,11 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	, m_vecInstances()	
 	, m_mapInstances()
 	, m_mapID2Instance()
-	, m_mapExpressID2Instance()
 {}
 
 /*virtual*/ CCIS2Model::~CCIS2Model()
 {
 	Clean();
-}
-
-/*virtual*/ CInstanceBase* CCIS2Model::GetInstanceByExpressID(ExpressID iExpressID) const /*override*/
-{
-	auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
-	if (itExpressID2Instance != m_mapExpressID2Instance.end())
-	{
-		return itExpressID2Instance->second;
-	}
-
-	return nullptr;
 }
 
 /*virtual*/ void CCIS2Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
@@ -138,39 +126,9 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 
 /*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance /*iInstance*/) /*override*/
 {
-	//ASSERT(iInstance != 0);
-
 	ASSERT(FALSE); //#todo
+
 	return nullptr;
-
-	//m_bUpdteVertexBuffers = true;
-
-	//for (auto pInstance : m_vecInstances)
-	//{
-	//	delete pInstance;
-	//}
-	//m_vecInstances.clear();
-
-	//m_mapDesignParts.clear();
-	//m_mapRepresentations.clear();
-	//m_mapInstances.clear();
-	//m_mapID2Instance.clear();
-	//m_mapExpressID2Instance.clear();
-
-	//auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	//pInstance->setEnable(true);
-
-	//m_vecInstances.push_back(pInstance);
-	//m_mapInstances[(SdaiInstance)iInstance] = pInstance;
-
-	//// Helper data structures
-	//m_mapID2Instance[pInstance->getID()] = pInstance;
-	//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
-
-	//// Scale
-	//Scale();
-
-	//return pInstance;
 }
 
 void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
@@ -218,7 +176,7 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->getID()] = pInstance;
-		m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 	}
 
 	// Scale
@@ -242,9 +200,6 @@ void CCIS2Model::Clean()
 	m_mapInstances.clear();
 	m_mapID2Instance.clear();
 	m_mapExpressID2Instance.clear();
-
-	delete m_pEntityProvider;
-	m_pEntityProvider = nullptr;
 }
 
 void CCIS2Model::Scale()

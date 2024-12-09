@@ -9,6 +9,7 @@ class CAP242ProductDefinition;
 // ************************************************************************************************
 class CAP242ProductInstance 
 	: public CInstanceBase
+	, public _ap_instance
 {
 	friend class CAP242ProductDefinition;
 
@@ -22,7 +23,7 @@ private: // Members
 
 public: // Methods
 	
-	CAP242ProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
+	CAP242ProductInstance(int64_t iID, _geometry* pGeometry, SdaiInstance sdaiInstance, _matrix4x3* pTransformationMatrix);
 	virtual ~CAP242ProductInstance();
 
 	// CInstanceBase

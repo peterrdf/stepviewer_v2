@@ -46,10 +46,8 @@ CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	, m_vecInstances()
 	, m_mapInstances()
 	, m_mapID2Instance()
-	, m_mapExpressID2Instance()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
-	, m_pEntityProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
 	, m_bUpdteVertexBuffers(true)
 {}
@@ -174,7 +172,7 @@ CIFCModel::~CIFCModel()
 
 	// Helper data structures
 	m_mapID2Instance[pInstance->getID()] = pInstance;
-	m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+	//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 
 	// Scale
 	Scale();
@@ -241,7 +239,7 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->getID()] = pInstance;
-		m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;
+		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 	}
 
 	// Scale
@@ -271,9 +269,6 @@ void CIFCModel::Clean()
 
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
-
-	delete m_pEntityProvider;
-	m_pEntityProvider = nullptr;
 }
 
 void CIFCModel::Scale()
@@ -393,17 +388,6 @@ CIFCInstance* CIFCModel::GetInstanceByID(int64_t iID)
 	if (itID2Instance != m_mapID2Instance.end())
 	{
 		return itID2Instance->second;
-	}
-
-	return nullptr;
-}
-
-/*virtual*/ CInstanceBase* CIFCModel::GetInstanceByExpressID(ExpressID iExpressID) const /*override*/
-{
-	auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
-	if (itExpressID2Instance != m_mapExpressID2Instance.end())
-	{
-		return itExpressID2Instance->second;
 	}
 
 	return nullptr;

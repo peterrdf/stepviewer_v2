@@ -204,7 +204,7 @@ static char THIS_FILE[]=__FILE__;
 				auto pIFCmodel = pController->GetModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
-				auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);
+				auto pInstance = nullptr;// pIFCmodel->getInstanceByExpressID(iExpressID);#todo
 				if (pInstance != nullptr)
 				{
 					pController->SelectInstance(

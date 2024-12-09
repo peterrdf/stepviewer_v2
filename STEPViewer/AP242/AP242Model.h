@@ -19,7 +19,6 @@ class CAP242Model : public CModel
 
 private: // Members
 	
-	CEntityProvider* m_pEntityProvider;
 	map<ExpressID, CAP242ProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
 	map<int64_t, CAP242ProductInstance*> m_mapID2Instance; // ID : Product Instance
 	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
@@ -36,7 +35,6 @@ public: // Methods
 	virtual ~CAP242Model();
 
 	// CModel
-	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
