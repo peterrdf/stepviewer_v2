@@ -344,24 +344,22 @@ void CAP242Model::Load(const wchar_t * szPath)
 {
 	Clean();
 
-	SdaiModel iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
-	if (iModel == 0)
+	if (!openModel(szPath))
 	{
 		MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
 
-	Load(szPath, iModel);
+	Attach(szPath, getSdaiInstance());
 }
 
 // ------------------------------------------------------------------------------------------------
-void CAP242Model::Load(const wchar_t* szPath, SdaiModel iModel)
+void CAP242Model::Attach(const wchar_t* szPath, SdaiModel iModel)
 {
 	Clean();
 
-	m_sdaiModel = iModel;
-	m_strPath = szPath;
+	attachModel(szPath, iModel);
 
 	LoadProductDefinitions();
 

@@ -50,7 +50,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP242") == 0))
 		{
 			auto pModel = new CAP242Model();
-			pModel->Load(szPath, iModel);
+			pModel->Attach(szPath, iModel);
 
 			return pModel;
 		}

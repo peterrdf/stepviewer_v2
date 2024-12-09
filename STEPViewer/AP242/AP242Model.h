@@ -50,7 +50,7 @@ public: // Methods
 
 	void Save(const wchar_t * szPath);
 	void Load(const wchar_t * szPath);
-	void Load(const wchar_t* szPath, SdaiModel iModel);
+	void Attach(const wchar_t* szPath, SdaiModel iModel);
 
 private: // Methods
 	

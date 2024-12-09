@@ -22,11 +22,13 @@ enum class enumAP : int
 class _ap_model : public _model
 {
 
-protected: // Members
+private: // Members
 
 	// Model
 	SdaiModel m_sdaiModel;
 	enumAP m_enAP;
+
+protected: // Members
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
@@ -50,6 +52,25 @@ public: // Methods
 	}
 
 public: // Methods
+
+	bool openModel(const wchar_t* szPath)
+	{
+		assert((szPath != nullptr) && (wcslen(szPath) > 0));
+
+		m_strPath = szPath;
+		m_sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");		
+
+		return m_sdaiModel != 0;
+	}
+
+	void attachModel(const wchar_t* szPath, SdaiModel sdaiModel)
+	{
+		assert((szPath != nullptr) && (wcslen(szPath) > 0));
+		assert(sdaiModel != 0);
+
+		m_strPath = szPath;
+		m_sdaiModel = sdaiModel;
+	}
 
 protected: // Methods
 
@@ -96,6 +117,8 @@ protected: // Methods
 	virtual void clean() override
 	{
 		_model::clean();
+
+		m_strPath = L"";
 
 		if (m_sdaiModel != 0)
 		{
