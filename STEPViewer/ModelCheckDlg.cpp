@@ -547,7 +547,7 @@ void CModelCheckDlg::OnClickedViewAllIssues()
 SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 {
 	if (auto pModel = GetActiveModel()) {
-		return pModel->GetInstance();
+		return pModel->getSdaiInstance();
 	}
 	return NULL;
 }

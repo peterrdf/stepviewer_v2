@@ -443,7 +443,7 @@ CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2Inst
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
-	cleanMemory(GetInstance(), 0);
+	cleanMemory(getSdaiInstance(), 0);
 
 	return pInstance;
 }

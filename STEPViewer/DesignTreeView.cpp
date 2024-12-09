@@ -59,7 +59,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_pPropertyProvider = nullptr;
 
 	auto pModel = GetModel<CModel>();
-	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
+	if ((pModel == nullptr) || (pModel->getSdaiInstance() == 0))
 	{
 		return;
 	}
@@ -105,14 +105,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->GetInstance(), pSelectedInstance->GetInstance(), &iInstance);
+	owlBuildInstance(pModel->getSdaiInstance(), pSelectedInstance->GetInstance(), &iInstance);
 
 	if (iInstance == 0)
 	{
 		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
 		if (iExpressID != 0)
 		{
-			iInstance = internalGetInstanceFromP21Line(pModel->GetInstance(), iExpressID);
+			iInstance = internalGetInstanceFromP21Line(pModel->getSdaiInstance(), iExpressID);
 		}
 	}
 

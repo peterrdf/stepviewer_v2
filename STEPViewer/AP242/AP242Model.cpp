@@ -375,7 +375,7 @@ void CAP242Model::Load(const wchar_t* szPath, SdaiModel iModel)
 // ------------------------------------------------------------------------------------------------
 void CAP242Model::LoadProductDefinitions()
 {
-	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(GetInstance(), "PRODUCT_DEFINITION");
+	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "PRODUCT_DEFINITION");
 
 	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
@@ -448,7 +448,7 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 // ------------------------------------------------------------------------------------------------
 void CAP242Model::LoadAssemblies()
 {
-	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(GetInstance(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
 	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
 	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
@@ -498,7 +498,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		if (pAssembly->GetRelatingProductDefinition() == pProductDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(GetInstance(), internalGetInstanceFromP21Line(GetInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
+			owlBuildInstance(getSdaiInstance(), internalGetInstanceFromP21Line(getSdaiInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) 
 			{

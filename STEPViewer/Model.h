@@ -22,11 +22,6 @@ public: // Methods
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 	virtual void ZoomOut() PURE;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) PURE;
-
-	// Model
-	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
-
-	
 		
 	
 };

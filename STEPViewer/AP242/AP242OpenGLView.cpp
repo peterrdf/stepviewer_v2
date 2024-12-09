@@ -434,7 +434,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 #endif	
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -573,7 +573,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -678,7 +678,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -784,7 +784,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -962,7 +962,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;

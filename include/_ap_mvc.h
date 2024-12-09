@@ -9,6 +9,7 @@
 using namespace std;
 
 // ************************************************************************************************
+// Application Protocol
 enum class enumAP : int
 {
 	Unknown = -1,
@@ -47,6 +48,8 @@ public: // Methods
 	{
 		clean();
 	}
+
+public: // Methods
 
 protected: // Methods
 
@@ -90,18 +93,6 @@ protected: // Methods
 		} // if (m_bUpdteVertexBuffers)
 	}
 
-public: // Methods
-
-	CEntityProvider* getEntityProvider()
-	{
-		if ((m_pEntityProvider == nullptr) && (m_sdaiModel != 0))
-		{
-			m_pEntityProvider = new CEntityProvider(m_sdaiModel);
-		}
-
-		return m_pEntityProvider;
-	}
-
 	virtual void clean() override
 	{
 		_model::clean();
@@ -122,8 +113,23 @@ public: // Methods
 
 public: // Properties
 
+	// Model
+	SdaiModel getSdaiInstance() const { return (SdaiModel)m_iModel; }
 	enumAP getAP() const { return m_enAP; }
+
+	// Cache	
 	const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }
+
+	// Helpers
+	CEntityProvider* getEntityProvider()
+	{
+		if ((m_pEntityProvider == nullptr) && (m_sdaiModel != 0))
+		{
+			m_pEntityProvider = new CEntityProvider(m_sdaiModel);
+		}
+
+		return m_pEntityProvider;
+	}
 };
 
 // ************************************************************************************************

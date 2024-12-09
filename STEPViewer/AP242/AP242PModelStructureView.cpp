@@ -697,9 +697,9 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->GetInstance(), 0, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 0, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->GetInstance(), 0, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 0, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -720,7 +720,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* ImplementationLevel
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 1, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 1, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"ImplementationLevel";
 		strItem += L" = '";
@@ -741,7 +741,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* Name
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 2, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 2, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Name";
 		strItem += L" = '";
@@ -762,7 +762,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* TimeStamp
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 3, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 3, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"TimeStamp";
 		strItem += L" = '";
@@ -793,9 +793,9 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->GetInstance(), 4, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 4, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->GetInstance(), 4, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 4, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -826,9 +826,9 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->GetInstance(), 5, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 5, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->GetInstance(), 5, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 5, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -849,7 +849,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* PreprocessorVersion
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 6, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 6, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"PreprocessorVersion";
 		strItem += L" = '";
@@ -870,7 +870,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* OriginatingSystem
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 7, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 7, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"OriginatingSystem";
 		strItem += L" = '";
@@ -891,7 +891,7 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 	* Authorization
 	*/
 	{
-		GetSPFFHeaderItem(pModel->GetInstance(), 8, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiInstance(), 8, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Authorization";
 		strItem += L" = '";
@@ -922,9 +922,9 @@ void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->GetInstance(), 9, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 9, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->GetInstance(), 9, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 9, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
