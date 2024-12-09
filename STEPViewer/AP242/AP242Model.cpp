@@ -65,12 +65,6 @@ CAP242Model::~CAP242Model()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ CEntityProvider* CAP242Model::GetEntityProvider() const /*override*/
-{
-	return m_pEntityProvider;
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CInstanceBase* CAP242Model::GetInstanceByExpressID(int64_t iExpressID) const /*override*/
 {
 	for (auto& item : m_mapID2Instance) {
@@ -368,8 +362,6 @@ void CAP242Model::Load(const wchar_t* szPath, SdaiModel iModel)
 
 	m_iModel = iModel;
 	m_strPath = szPath;
-	
-	m_pEntityProvider = new CEntityProvider(GetInstance());
 
 	LoadProductDefinitions();
 

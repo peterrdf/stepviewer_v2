@@ -3,6 +3,8 @@
 #include "_mvc.h"
 #include "_settings_storage.h"
 
+#include "Entity.h"
+
 #include <string>
 using namespace std;
 
@@ -23,7 +25,12 @@ protected: // Members
 
 	// Model
 	enumAPModelType m_enType;
+
+	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
+
+	// Helpers
+	CEntityProvider* m_pEntityProvider;
 
 public: // Methods
 
@@ -31,16 +38,13 @@ public: // Methods
 		: _model()
 		, m_enType(enType)
 		, m_mapExpressID2Geometry()
+		, m_pEntityProvider(nullptr)
 	{}
 
 	virtual ~_ap_model()
 	{
 		clean();
 	}
-
-public: // Properties
-
-	enumAPModelType getType() const { return m_enType; }
 
 protected: // Methods
 
@@ -84,15 +88,31 @@ protected: // Methods
 		} // if (m_bUpdteVertexBuffers)
 	}
 
+public: // Methods
+
+	CEntityProvider* getEntityProvider()
+	{
+		if (m_pEntityProvider == nullptr)
+		{
+			m_pEntityProvider = new CEntityProvider((SdaiModel)m_iModel);
+		}
+
+		return m_pEntityProvider;
+	}
+
 	virtual void clean() override
 	{
 		_model::clean();
 
 		m_mapExpressID2Geometry.clear();
+
+		delete m_pEntityProvider;
+		m_pEntityProvider = nullptr;
 	}
 
 public: // Properties
 
+	enumAPModelType getType() const { return m_enType; }
 	const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }
 };
 

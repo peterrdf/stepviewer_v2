@@ -35,8 +35,7 @@ public: // Methods
 	CAP242Model();
 	virtual ~CAP242Model();
 
-	// CModel	
-	virtual CEntityProvider* GetEntityProvider() const override;
+	// CModel
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;

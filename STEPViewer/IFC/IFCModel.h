@@ -67,7 +67,6 @@ public: // Methods
 	virtual ~CIFCModel();
 
 	// CModel
-	virtual CEntityProvider* GetEntityProvider() const override { return m_pEntityProvider; }
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;

@@ -234,9 +234,6 @@ void CIFCModel::Load(const wchar_t* szIFCFile, SdaiModel iModel)
 	// Properties
 	m_pPropertyProvider = new CIFCPropertyProvider(GetInstance(), m_pUnitProvider);
 
-	// Entities
-	m_pEntityProvider = new CEntityProvider(GetInstance());
-
 	// Attributes
 	m_pAttributeProvider = new CIFCAttributeProvider();
 

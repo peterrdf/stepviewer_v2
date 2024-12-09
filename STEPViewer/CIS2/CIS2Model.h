@@ -23,8 +23,6 @@ private: // Members
 	map<int64_t, CCIS2Instance*> m_mapID2Instance;
 	map<ExpressID, CCIS2Instance*> m_mapExpressID2Instance;
 
-	CEntityProvider* m_pEntityProvider;
-
 	static int_t s_iInstanceID;
 
 	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
@@ -39,7 +37,6 @@ public: // Methods
 	virtual ~CCIS2Model();
 
 	// CModel
-	virtual CEntityProvider* GetEntityProvider() const override { return m_pEntityProvider; }
 	virtual CInstanceBase* GetInstanceByExpressID(ExpressID iExpressID) const override;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;

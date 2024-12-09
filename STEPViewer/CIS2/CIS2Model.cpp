@@ -28,8 +28,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	, m_mapInstances()
 	, m_mapID2Instance()
 	, m_mapExpressID2Instance()
-	, m_pEntityProvider(nullptr)
-	, m_bUpdteVertexBuffers(true)
 {}
 
 /*virtual*/ CCIS2Model::~CCIS2Model()
@@ -214,8 +212,7 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 		//GetObjectsReferencedState(); #todo?
 	} // if (!m_bLoadInstancesOnDemand)
 
-	// Entities
-	m_pEntityProvider = new CEntityProvider(GetInstance());
+	
 
 	// Helper data structures
 	for (auto pInstance : m_vecInstances)

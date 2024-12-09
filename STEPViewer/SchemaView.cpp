@@ -121,7 +121,7 @@ void CSchemaView::LoadModel(CModel* pModel)
 	//*********************************************************************************************
 
 	// Roots **************************************************************************************
-	auto pEntityProvider = pModel->GetEntityProvider();
+	auto pEntityProvider = pModel->getEntityProvider();
 	if ((pEntityProvider == nullptr) || pEntityProvider->GetEntities().empty())
 	{
 		return;

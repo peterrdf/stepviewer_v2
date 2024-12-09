@@ -17,8 +17,7 @@ public: // Methods
 	CModel(enumAPModelType enType);
 	virtual ~CModel()
 	{}
-
-	virtual CEntityProvider* GetEntityProvider() const PURE;
+	
 	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const PURE;
 	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
 	virtual void ZoomOut() PURE;
