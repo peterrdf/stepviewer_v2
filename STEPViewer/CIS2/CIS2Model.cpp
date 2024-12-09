@@ -131,21 +131,11 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	return nullptr;
 }
 
-void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
+void CCIS2Model::Attach(const wchar_t* szPath, SdaiModel iModel)
 {
-	ASSERT(szCIS2File != nullptr);
-	ASSERT(iModel != 0);
-
-	/*
-	* Memory
-	*/
 	Clean();
 
-	/*
-	* Model
-	*/
-	m_iModel = iModel;
-	m_strPath = szCIS2File;
+	attachModel(szPath, iModel);
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
@@ -185,12 +175,6 @@ void CCIS2Model::Load(const wchar_t* szCIS2File, SdaiModel iModel)
 
 void CCIS2Model::Clean()
 {
-	if (m_iModel != 0)
-	{
-		sdaiCloseModel((SdaiModel)m_iModel);
-		m_iModel = 0;
-	}
-
 	for (auto pInstance : m_vecInstances)
 	{
 		delete pInstance;
@@ -326,7 +310,7 @@ CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
 
 void CCIS2Model::LodDesignParts()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN((SdaiModel)m_iModel, "DESIGN_PART");
+	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "DESIGN_PART");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
@@ -344,7 +328,7 @@ void CCIS2Model::LodDesignParts()
 
 void CCIS2Model::LoadRepresentations()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN((SdaiModel)m_iModel, "REPRESENTATION");
+	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "REPRESENTATION");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{

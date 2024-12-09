@@ -40,7 +40,7 @@ public: // Methods
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 
-	void Load(const wchar_t* szCIS2File, SdaiModel iModel);
+	void Attach(const wchar_t* szPath, SdaiModel iModel);
 	void Clean();
 
 	void Scale(); // [-1, 1]
