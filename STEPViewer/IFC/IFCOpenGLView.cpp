@@ -114,7 +114,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	/*
 	* Bounding sphere diameter
@@ -134,9 +134,9 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
 
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+	m_fScaleFactor = pModel->getBoundingSphereDiameter();
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
@@ -398,7 +398,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
 		0, 0,
@@ -450,7 +450,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	m_fXTranslation = fXmin;
 	m_fXTranslation += (fXmax - fXmin) / 2.f;
@@ -463,9 +463,9 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
 
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+	m_fScaleFactor = pModel->getBoundingSphereDiameter();
 
 	_redraw();
 }

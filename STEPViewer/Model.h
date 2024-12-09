@@ -27,15 +27,8 @@ public: // Methods
 	// Model
 	SdaiModel GetInstance() const { return (SdaiModel)m_iModel; }
 
-	// World's dimensions
-	double GetOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
-	float GetBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
-	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	
 		
-	template<typename T>
-	T* As()
-	{
-		return dynamic_cast<T*>(this);
-	}
+	
 };
 

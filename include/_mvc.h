@@ -81,11 +81,27 @@ protected: // Methods
 
 public: // Methods
 
-	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
+	void getVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
 	{
 		dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
 		dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
 		dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
+	}
+
+	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
+	{
+		fXmin = m_fXmin;
+		fXmax = m_fXmax;
+		fYmin = m_fYmin;
+		fYmax = m_fYmax;
+		fZmin = m_fZmin;
+		fZmax = m_fZmax;
+	}
+
+	template<typename T>
+	T* as()
+	{
+		return dynamic_cast<T*>(this);
 	}
 
 public: // Properties
@@ -96,6 +112,9 @@ public: // Properties
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }
+
+	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
+	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }	
 };
 
 // ************************************************************************************************

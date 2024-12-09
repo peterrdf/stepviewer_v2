@@ -108,7 +108,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pAP242Model = GetModel<CAP242Model>();
+	auto pAP242Model = GetModel<_model>();
 	if (pAP242Model == nullptr)
 	{
 		ASSERT(FALSE);
@@ -122,7 +122,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pAP242Model->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pAP242Model->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	/*
 	* Bounding sphere diameter
@@ -142,9 +142,9 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pAP242Model->GetBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (pAP242Model->getBoundingSphereDiameter() * 2.f);
 
-	m_fScaleFactor = pAP242Model->GetBoundingSphereDiameter();
+	m_fScaleFactor = pAP242Model->getBoundingSphereDiameter();
 
 	_oglView::_load(pModel);
 }
@@ -178,7 +178,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
 		0, 0,
@@ -227,7 +227,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	float fYmax = 1.f;
 	float fZmin = -1.f;
 	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	m_fXTranslation = fXmin;
 	m_fXTranslation += (fXmax - fXmin) / 2.f;
@@ -240,9 +240,9 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
 
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+	m_fScaleFactor = pModel->getBoundingSphereDiameter();
 
 	_redraw();
 }
@@ -436,7 +436,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
@@ -575,7 +575,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
@@ -680,7 +680,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
@@ -786,7 +786,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
@@ -964,7 +964,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->GetInstance(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel->GetOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;

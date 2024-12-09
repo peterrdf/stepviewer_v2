@@ -201,7 +201,7 @@ static char THIS_FILE[]=__FILE__;
 
 			case enumAPModelType::IFC:
 			{
-				auto pIFCmodel = pController->GetModel()->As<CIFCModel>();
+				auto pIFCmodel = pController->GetModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
 				auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);

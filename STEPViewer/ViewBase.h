@@ -89,7 +89,7 @@ protected: // Methods
 			return nullptr;
 		}
 
-		return pController->GetModel()->As<Model>();
+		return pController->GetModel()->as<Model>();
 	}
 };
 
