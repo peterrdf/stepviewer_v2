@@ -494,7 +494,7 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 					sdaiGetEntity(GetActiveSdaiModel(), "IfcProject"),
 					0 };
 
-					if (pModel && pModel->getType() == enumAPModelType::STEP) {
+					if (pModel && pModel->getAP() == enumAP::STEP) {
 						searchEntities[0] = sdaiGetEntity(GetActiveSdaiModel(), "PRODUCT_DEFINITION");
 						searchEntities[1] = 0;
 					}

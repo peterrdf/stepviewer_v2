@@ -3,7 +3,7 @@
 #include "Model.h"
 
 // ************************************************************************************************
-CModel::CModel(enumAPModelType enType)
-	: _ap_model(enType)	
+CModel::CModel(enumAP enAP)
+	: _ap_model(enAP)
 {}
 

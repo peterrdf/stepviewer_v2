@@ -844,21 +844,21 @@ void CPropertiesWnd::LoadInstanceProperties()
 		return;
 	}
 
-	switch (pModel->getType())
+	switch (pModel->getAP())
 	{
-		case enumAPModelType::STEP:
+		case enumAP::STEP:
 		{
 			LoadSTEPInstanceProperties();
 		}
 		break;
 
-		case enumAPModelType::IFC:
+		case enumAP::IFC:
 		{
 			LoadIFCInstanceProperties();
 		}
 		break;
 
-		case enumAPModelType::CIS2:
+		case enumAP::CIS2:
 		{
 			LoadCIS2InstanceProperties();
 		}

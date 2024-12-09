@@ -41,9 +41,9 @@ static char THIS_FILE[]=__FILE__;
 	delete m_pSTEPTreeView;
 	m_pSTEPTreeView = nullptr;
 
-	switch (pModel->getType())
+	switch (pModel->getAP())
 	{
-		case enumAPModelType::STEP:
+		case enumAP::STEP:
 		{
 			m_pSTEPTreeView = new CAP242PModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
@@ -51,7 +51,7 @@ static char THIS_FILE[]=__FILE__;
 		}
 		break;
 
-		case enumAPModelType::IFC:
+		case enumAP::IFC:
 		{
 			m_pSTEPTreeView = new CIFCModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);
@@ -59,7 +59,7 @@ static char THIS_FILE[]=__FILE__;
 		}
 		break;
 
-		case enumAPModelType::CIS2:
+		case enumAP::CIS2:
 		{
 			m_pSTEPTreeView = new CCIS2ModelStructureView(&m_treeCtrl);
 			m_pSTEPTreeView->SetController(pController);

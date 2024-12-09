@@ -9,7 +9,7 @@
 using namespace std;
 
 // ************************************************************************************************
-enum class enumAPModelType : int
+enum class enumAP : int
 {
 	Unknown = -1,
 	STEP = 0,
@@ -24,7 +24,8 @@ class _ap_model : public _model
 protected: // Members
 
 	// Model
-	enumAPModelType m_enType;
+	SdaiModel m_sdaiModel;
+	enumAP m_enAP;
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
@@ -34,9 +35,10 @@ protected: // Members
 
 public: // Methods
 
-	_ap_model(enumAPModelType enType)
+	_ap_model(enumAP enAP)
 		: _model()
-		, m_enType(enType)
+		, m_sdaiModel(0)
+		, m_enAP(enAP)
 		, m_mapExpressID2Geometry()
 		, m_pEntityProvider(nullptr)
 	{}
@@ -92,9 +94,9 @@ public: // Methods
 
 	CEntityProvider* getEntityProvider()
 	{
-		if (m_pEntityProvider == nullptr)
+		if ((m_pEntityProvider == nullptr) && (m_sdaiModel != 0))
 		{
-			m_pEntityProvider = new CEntityProvider((SdaiModel)m_iModel);
+			m_pEntityProvider = new CEntityProvider(m_sdaiModel);
 		}
 
 		return m_pEntityProvider;
@@ -104,6 +106,14 @@ public: // Methods
 	{
 		_model::clean();
 
+		if (m_sdaiModel != 0)
+		{
+			sdaiCloseModel(m_sdaiModel);
+			m_sdaiModel = 0;
+		}
+
+		m_enAP = enumAP::Unknown;
+
 		m_mapExpressID2Geometry.clear();
 
 		delete m_pEntityProvider;
@@ -112,7 +122,7 @@ public: // Methods
 
 public: // Properties
 
-	enumAPModelType getType() const { return m_enType; }
+	enumAP getAP() const { return m_enAP; }
 	const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }
 };
 

@@ -191,15 +191,15 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		switch (pModel->getType())
+		switch (pModel->getAP())
 		{
-			case enumAPModelType::STEP:
+			case enumAP::STEP:
 			{
 				ASSERT(FALSE); // TODO
 			}
 			break;
 
-			case enumAPModelType::IFC:
+			case enumAP::IFC:
 			{
 				auto pIFCmodel = pController->GetModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);

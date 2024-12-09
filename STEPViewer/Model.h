@@ -14,7 +14,7 @@ class CModel : public _ap_model
 
 public: // Methods
 
-	CModel(enumAPModelType enType);
+	CModel(enumAP enAP);
 	virtual ~CModel()
 	{}
 	
