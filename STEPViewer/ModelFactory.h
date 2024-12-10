@@ -50,7 +50,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP242") == 0))
 		{
 			auto pModel = new CAP242Model();
-			pModel->Attach(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}
@@ -61,7 +61,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new CIFCModel();
-			pModel->Attach(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}
@@ -72,7 +72,7 @@ public: // Methods
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
 			auto pModel = new CCIS2Model();
-			pModel->Attach(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}

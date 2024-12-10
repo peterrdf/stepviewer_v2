@@ -31,7 +31,60 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 
 /*virtual*/ CCIS2Model::~CCIS2Model()
 {
-	Clean();
+	clean();
+}
+
+/*virtual*/ void CCIS2Model::attachModelCore() /*override*/
+{
+	// Objects & Unreferenced
+	if (!m_bLoadInstancesOnDemand)
+	{
+		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "ANALYSIS_MODEL_3D"),
+			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
+		if (noCis2AnalysisModel3DInstances > 0)
+		{
+			ASSERT(FALSE); //#todo
+		}
+
+		//
+		//	Physical model (Design Part)
+		//
+		LodDesignParts();
+
+		//
+		// Physical model (Representation)
+		//
+		LoadRepresentations();
+
+		//GetObjectsReferencedState(); #todo?
+	} // if (!m_bLoadInstancesOnDemand)
+
+
+
+	// Helper data structures
+	for (auto pInstance : m_vecInstances)
+	{
+		m_mapID2Instance[pInstance->getID()] = pInstance;
+		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
+	}
+
+	// Scale
+	Scale();
+}
+
+/*virtual*/ void CCIS2Model::clean() /*override*/
+{
+	_ap_model::clean();
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+
+	m_mapInstances.clear();
+	m_mapID2Instance.clear();
+	m_mapExpressID2Instance.clear();
 }
 
 /*virtual*/ void CCIS2Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
@@ -129,61 +182,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	ASSERT(FALSE); //#todo
 
 	return nullptr;
-}
-
-void CCIS2Model::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
-{
-	Clean();
-
-	attachModel(szPath, sdaiModel);
-
-	// Objects & Unreferenced
-	if (!m_bLoadInstancesOnDemand)
-	{
-		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(sdaiModel, "ANALYSIS_MODEL_3D"),
-			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
-		if (noCis2AnalysisModel3DInstances > 0)
-		{
-			ASSERT(FALSE); //#todo
-		}
-
-		//
-		//	Physical model (Design Part)
-		//
-		LodDesignParts();
-
-		//
-		// Physical model (Representation)
-		//
-		LoadRepresentations();
-
-		//GetObjectsReferencedState(); #todo?
-	} // if (!m_bLoadInstancesOnDemand)
-
-	
-
-	// Helper data structures
-	for (auto pInstance : m_vecInstances)
-	{
-		m_mapID2Instance[pInstance->getID()] = pInstance;
-		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
-	}
-
-	// Scale
-	Scale();
-}
-
-void CCIS2Model::Clean()
-{
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
-
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
 }
 
 void CCIS2Model::Scale()

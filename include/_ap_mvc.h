@@ -59,10 +59,16 @@ public: // Methods
 	{
 		assert((szPath != nullptr) && (wcslen(szPath) > 0));
 
-		m_strPath = szPath;
-		m_sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");		
 
-		return m_sdaiModel != 0;
+		SdaiModel sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
+		if (m_sdaiModel == 0)
+		{
+			return false;
+		}
+
+		attachModel(szPath, sdaiModel);
+
+		return true;
 	}
 
 	void attachModel(const wchar_t* szPath, SdaiModel sdaiModel)
@@ -70,8 +76,12 @@ public: // Methods
 		assert((szPath != nullptr) && (wcslen(szPath) > 0));
 		assert(sdaiModel != 0);
 
+		clean();
+
 		m_strPath = szPath;
 		m_sdaiModel = sdaiModel;
+
+		attachModelCore();
 	}
 
 	_ap_instance* getInstanceByExpressID(int64_t iExpressID) const
@@ -102,6 +112,8 @@ public: // Methods
 	}
 
 protected: // Methods
+
+	virtual void attachModelCore() PURE;
 
 	void preLoadInstance(SdaiInstance sdaiInstance)
 	{

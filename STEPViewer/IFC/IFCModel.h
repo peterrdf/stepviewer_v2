@@ -64,6 +64,14 @@ public: // Methods
 	CIFCModel(bool bLoadInstancesOnDemand = false);
 	virtual ~CIFCModel();
 
+protected: // Methods
+
+	// _ap_model
+	virtual void attachModelCore() override;
+	virtual void clean() override;
+
+public: // Methods
+
 	// CModel
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
@@ -71,8 +79,7 @@ public: // Methods
 
 	void Scale(); // [-1, 1]
 
-	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);
-	void Clean();
+	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);	
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }

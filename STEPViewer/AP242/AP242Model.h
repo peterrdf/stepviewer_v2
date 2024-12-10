@@ -34,6 +34,14 @@ public: // Methods
 	CAP242Model();
 	virtual ~CAP242Model();
 
+protected: // Methods
+
+	// _ap_model
+	virtual void attachModelCore() override;
+	virtual void clean() override;
+
+public: // Methods
+
 	// CModel
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
@@ -47,8 +55,6 @@ public: // Methods
 	void Scale(); // [-1, 1]
 
 	void Save(const wchar_t * szPath);
-	void Load(const wchar_t * szPath);
-	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);
 
 private: // Methods
 	
@@ -57,7 +63,6 @@ private: // Methods
 	CAP242ProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix);
-	void Clean();
+	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix);	
 };
 

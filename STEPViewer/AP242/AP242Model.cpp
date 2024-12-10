@@ -57,13 +57,39 @@ CAP242Model::CAP242Model()
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 CAP242Model::~CAP242Model()
 {
-	Clean();
+	clean();
 }
 
-// --------------------------------------------------------------------------------------------
+/*virtual*/ void CAP242Model::attachModelCore() /*override*/
+{
+	LoadProductDefinitions();
+
+	LoadAssemblies();
+
+	LoadGeometry();
+
+	Scale();
+}
+
+/*virtual*/ void CAP242Model::clean() /*override*/
+{
+	_ap_model::clean();
+
+	m_mapExpressID2Definition.clear();
+	m_mapID2Instance.clear();
+
+	auto itAssembly = m_mapExpressIDAssembly.begin();
+	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
+	{
+		delete itAssembly->second;
+	}
+	m_mapExpressIDAssembly.clear();
+
+	m_iID = 1;
+}
+
 /*virtual*/ void CAP242Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
 {	
 	ASSERT(pInstance != nullptr);
@@ -112,7 +138,6 @@ CAP242Model::~CAP242Model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CAP242Model::ZoomOut() /*override*/
 {
 	m_fXmin = FLT_MAX;
@@ -164,7 +189,6 @@ CAP242Model::~CAP242Model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-// ------------------------------------------------------------------------------------------------
 CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
@@ -178,7 +202,6 @@ CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
 	return itInstance->second;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::Scale()
 {
 	/* World */
@@ -316,47 +339,12 @@ void CAP242Model::Scale()
 	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::Save(const wchar_t * /*szPath*/)
 {
 	ASSERT(0); // todo
 	//m_pModel->saveModelW(szPath);
 }
 
-// ------------------------------------------------------------------------------------------------
-// Loads a model
-// ------------------------------------------------------------------------------------------------
-void CAP242Model::Load(const wchar_t * szPath)
-{
-	Clean();
-
-	if (!openModel(szPath))
-	{
-		MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-
-	Attach(szPath, getSdaiInstance());
-}
-
-// ------------------------------------------------------------------------------------------------
-void CAP242Model::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
-{
-	Clean();
-
-	attachModel(szPath, sdaiModel);
-
-	LoadProductDefinitions();
-
-	LoadAssemblies();
-
-	LoadGeometry();
-
-	Scale();
-}
-
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::LoadProductDefinitions()
 {
 	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "PRODUCT_DEFINITION");
@@ -372,7 +360,6 @@ void CAP242Model::LoadProductDefinitions()
 	}	
 }
 
-// ------------------------------------------------------------------------------------------------
 CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	preLoadInstance(iProductDefinitionInstance);
@@ -389,7 +376,6 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 	return pGeometry;
 }
 
-// ------------------------------------------------------------------------------------------------
 CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
@@ -424,7 +410,6 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 	return pDefinition;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::LoadAssemblies()
 {
 	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
@@ -452,7 +437,6 @@ void CAP242Model::LoadAssemblies()
 	}	
 }
 
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::LoadGeometry()
 {
 	// Load
@@ -466,7 +450,6 @@ void CAP242Model::LoadGeometry()
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
@@ -524,22 +507,4 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 	m_vecInstances.push_back(pInstance);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;
 	pProductDefinition->m_vecInstances.push_back(pInstance);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CAP242Model::Clean()
-{
-	_ap_model::clean();
-
-	m_mapExpressID2Definition.clear();
-	m_mapID2Instance.clear();
-
-	auto itAssembly = m_mapExpressIDAssembly.begin();
-	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
-	{
-		delete itAssembly->second;
-	}
-	m_mapExpressIDAssembly.clear();
-
-	m_iID = 1;
 }

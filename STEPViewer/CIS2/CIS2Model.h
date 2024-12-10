@@ -35,14 +35,19 @@ public: // Methods
 	CCIS2Model(bool bLoadInstancesOnDemand = false);
 	virtual ~CCIS2Model();
 
+protected: // Methods
+
+	// _ap_model
+	virtual void attachModelCore() override;
+	virtual void clean() override;
+
+public: // Methods
+
 	// CModel
 	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
 	virtual void ZoomOut() override;
 	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
-
-	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);
-	void Clean();
-
+	
 	void Scale(); // [-1, 1]
 
 	const map<SdaiInstance, CCIS2Instance*>& GetInstances() const { return m_mapInstances; }

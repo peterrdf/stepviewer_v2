@@ -52,10 +52,80 @@ CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	, m_bUpdteVertexBuffers(true)
 {}
 
-
 CIFCModel::~CIFCModel()
 {
-	Clean();
+	clean();
+}
+
+/*virtual*/ void CIFCModel::attachModelCore() /*override*/
+{
+	// Entities
+	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCOBJECT");
+	m_ifcProjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCPROJECT");
+	m_ifcSpaceEntity = sdaiGetEntity(getSdaiInstance(), "IFCSPACE");
+	m_ifcOpeningElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCOPENINGELEMENT");
+	m_ifcDistributionElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCDISTRIBUTIONELEMENT");
+	m_ifcElectricalElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCELECTRICALELEMENT");
+	m_ifcElementAssemblyEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTASSEMBLY");
+	m_ifcElementComponentEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTCOMPONENT");
+	m_ifcEquipmentElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCEQUIPMENTELEMENT");
+	m_ifcFeatureElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENT");
+	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENTSUBTRACTION");
+	m_ifcFurnishingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFURNISHINGELEMENT");
+	m_ifcReinforcingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCREINFORCINGELEMENT");
+	m_ifcTransportElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCTRANSPORTELEMENT");
+	m_ifcVirtualElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCVIRTUALELEMENT");
+
+	// Objects & Unreferenced
+	if (!m_bLoadInstancesOnDemand)
+	{
+		RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
+
+		RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+
+		GetObjectsReferencedState();
+	}
+
+	// Units
+	m_pUnitProvider = new CIFCUnitProvider(getSdaiInstance());
+
+	// Properties
+	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiInstance(), m_pUnitProvider);
+
+	// Attributes
+	m_pAttributeProvider = new CIFCAttributeProvider();
+
+	// Helper data structures
+	for (auto pInstance : m_vecInstances)
+	{
+		m_mapID2Instance[pInstance->getID()] = pInstance;
+		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
+	}
+
+	// Scale
+	Scale();
+}
+
+/*virtual*/ void CIFCModel::clean() /*override*/
+{
+	_ap_model::clean();
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+
+	m_mapInstances.clear();
+	m_mapID2Instance.clear();
+	m_mapExpressID2Instance.clear();
+
+	delete m_pUnitProvider;
+	m_pUnitProvider = nullptr;
+
+	delete m_pPropertyProvider;
+	m_pPropertyProvider = nullptr;
 }
 
 /*virtual*/ void CIFCModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
@@ -178,79 +248,6 @@ CIFCModel::~CIFCModel()
 	Scale();
 
 	return pInstance;
-}
-
-void CIFCModel::Attach(const wchar_t* szPath, SdaiModel sdaiModel)
-{
-	Clean();
-
-	attachModel(szPath, sdaiModel);
-
-	// Entities
-	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCOBJECT");
-	m_ifcProjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCPROJECT");
-	m_ifcSpaceEntity = sdaiGetEntity(getSdaiInstance(), "IFCSPACE");
-	m_ifcOpeningElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCOPENINGELEMENT");
-	m_ifcDistributionElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCDISTRIBUTIONELEMENT");
-	m_ifcElectricalElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCELECTRICALELEMENT");
-	m_ifcElementAssemblyEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTASSEMBLY");
-	m_ifcElementComponentEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTCOMPONENT");
-	m_ifcEquipmentElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCEQUIPMENTELEMENT");
-	m_ifcFeatureElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENT");
-	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENTSUBTRACTION");
-	m_ifcFurnishingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFURNISHINGELEMENT");
-	m_ifcReinforcingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCREINFORCINGELEMENT");
-	m_ifcTransportElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCTRANSPORTELEMENT");
-	m_ifcVirtualElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCVIRTUALELEMENT");
-
-	// Objects & Unreferenced
-	if (!m_bLoadInstancesOnDemand)
-	{
-		RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-
-		RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-		RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
-
-		GetObjectsReferencedState();
-	}	
-
-	// Units
-	m_pUnitProvider = new CIFCUnitProvider(getSdaiInstance());
-
-	// Properties
-	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiInstance(), m_pUnitProvider);
-
-	// Attributes
-	m_pAttributeProvider = new CIFCAttributeProvider();
-
-	// Helper data structures
-	for (auto pInstance : m_vecInstances)
-	{
-		m_mapID2Instance[pInstance->getID()] = pInstance;
-		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
-	}
-
-	// Scale
-	Scale();
-}
-
-void CIFCModel::Clean()
-{
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
-
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
-
-	delete m_pUnitProvider;
-	m_pUnitProvider = nullptr;
-
-	delete m_pPropertyProvider;
-	m_pPropertyProvider = nullptr;
 }
 
 void CIFCModel::Scale()
