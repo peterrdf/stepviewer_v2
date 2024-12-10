@@ -1197,7 +1197,7 @@ void CAP242PModelStructureView::SearchForDescendantWithGeometry()
 		{
 			auto pProductInstance = pItemData->GetInstance<CAP242ProductInstance>();
 
-			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+			bHasDescendantWithGeometry |= pProductInstance->hasGeometry();
 		}
 		
 		if (!bHasDescendantWithGeometry)
@@ -1208,7 +1208,7 @@ void CAP242PModelStructureView::SearchForDescendantWithGeometry()
 				{
 					auto pProductInstance = pChildItemData->GetInstance<CAP242ProductInstance>();
 
-					bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+					bHasDescendantWithGeometry |= pProductInstance->hasGeometry();
 					if (bHasDescendantWithGeometry)
 					{
 						break;
@@ -1235,7 +1235,7 @@ void CAP242PModelStructureView::SearchForDescendantWithGeometryRecursively(CAP24
 		{
 			auto pProductInstance = pChildItemData->GetInstance<CAP242ProductInstance>();
 
-			bHasDescendantWithGeometry |= pProductInstance->HasGeometry();
+			bHasDescendantWithGeometry |= pProductInstance->hasGeometry();
 			if (bHasDescendantWithGeometry)
 			{
 				break;

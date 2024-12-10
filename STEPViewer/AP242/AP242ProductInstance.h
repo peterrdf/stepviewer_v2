@@ -25,10 +25,6 @@ public: // Methods
 	CAP242ProductInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CAP242ProductInstance();
 
-	// CInstanceBase
-	virtual bool HasGeometry() const;
-	virtual bool IsEnabled() const { return GetEnable(); }
-
 	void Scale(float fScaleFactor);
 	
 	int64_t GetID() const { return m_iID; }

@@ -146,7 +146,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (!itInstance->second->getEnable())
+		if (!itInstance->second->_instance::getEnable())
 		{
 			continue;
 		}
@@ -256,7 +256,7 @@ void CCIS2Model::Scale()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		if (itIinstance->second->getEnable())
+		if (itIinstance->second->_instance::getEnable())
 		{
 			itIinstance->second->CalculateMinMax(
 				m_fXmin, m_fXmax,

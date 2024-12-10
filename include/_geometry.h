@@ -367,59 +367,7 @@ typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
 
 // ************************************************************************************************
-class _geometry;
-
-// ************************************************************************************************
-class _instance
-{
-
-private: // Members
-
-	int64_t m_iID;
-	_geometry* m_pGeometry;
-	_matrix4x4* m_pTransformationMatrix;
-
-public:  // Methods
-
-	_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
-		: m_iID(iID)
-		, m_pGeometry(pGeometry)
-		, m_pTransformationMatrix(nullptr)
-	{
-		assert(m_iID > 0);
-		assert(m_pGeometry != nullptr);
-
-		m_pTransformationMatrix = new _matrix4x4();
-		_matrix4x4Identity(m_pTransformationMatrix);
-
-		if (pTransformationMatrix != nullptr)
-		{
-			m_pTransformationMatrix->_11 = pTransformationMatrix->_11;
-			m_pTransformationMatrix->_12 = pTransformationMatrix->_12;
-			m_pTransformationMatrix->_13 = pTransformationMatrix->_13;
-			m_pTransformationMatrix->_21 = pTransformationMatrix->_21;
-			m_pTransformationMatrix->_22 = pTransformationMatrix->_22;
-			m_pTransformationMatrix->_23 = pTransformationMatrix->_23;
-			m_pTransformationMatrix->_31 = pTransformationMatrix->_31;
-			m_pTransformationMatrix->_32 = pTransformationMatrix->_32;
-			m_pTransformationMatrix->_33 = pTransformationMatrix->_33;
-			m_pTransformationMatrix->_41 = pTransformationMatrix->_41;
-			m_pTransformationMatrix->_42 = pTransformationMatrix->_42;
-			m_pTransformationMatrix->_43 = pTransformationMatrix->_43;
-		}
-	}
-
-	virtual ~_instance()
-	{
-		delete m_pTransformationMatrix;
-	}
-
-	int64_t getID() const { return m_iID; }
-	_geometry* getGeometry() const { return m_pGeometry; }
-	template<typename T>
-	T* getGeometryAs() const { return dynamic_cast<T*>(m_pGeometry); }
-	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
-};
+class _instance;
 
 // ************************************************************************************************
 class _geometry
@@ -1397,4 +1345,60 @@ struct _geometriesComparator
 	{
 		return wcscmp(g1->getName(), g2->getName()) < 0;
 	}
+};
+
+// ************************************************************************************************
+class _instance
+{
+
+private: // Members
+
+	int64_t m_iID;
+	_geometry* m_pGeometry;	
+	_matrix4x4* m_pTransformationMatrix;
+	bool m_bEnable;
+
+public:  // Methods
+
+	_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+		: m_iID(iID)
+		, m_pGeometry(pGeometry)
+		, m_pTransformationMatrix(nullptr)
+		, m_bEnable(true)
+	{
+		assert(m_iID > 0);
+		assert(m_pGeometry != nullptr);
+
+		m_pTransformationMatrix = new _matrix4x4();
+		_matrix4x4Identity(m_pTransformationMatrix);
+
+		if (pTransformationMatrix != nullptr)
+		{
+			m_pTransformationMatrix->_11 = pTransformationMatrix->_11;
+			m_pTransformationMatrix->_12 = pTransformationMatrix->_12;
+			m_pTransformationMatrix->_13 = pTransformationMatrix->_13;
+			m_pTransformationMatrix->_21 = pTransformationMatrix->_21;
+			m_pTransformationMatrix->_22 = pTransformationMatrix->_22;
+			m_pTransformationMatrix->_23 = pTransformationMatrix->_23;
+			m_pTransformationMatrix->_31 = pTransformationMatrix->_31;
+			m_pTransformationMatrix->_32 = pTransformationMatrix->_32;
+			m_pTransformationMatrix->_33 = pTransformationMatrix->_33;
+			m_pTransformationMatrix->_41 = pTransformationMatrix->_41;
+			m_pTransformationMatrix->_42 = pTransformationMatrix->_42;
+			m_pTransformationMatrix->_43 = pTransformationMatrix->_43;
+		}
+	}
+
+	virtual ~_instance()
+	{
+		delete m_pTransformationMatrix;
+	}
+
+	int64_t getID() const { return m_iID; }
+	_geometry* getGeometry() const { return m_pGeometry; }
+	template<typename T>
+	T* getGeometryAs() const { return dynamic_cast<T*>(m_pGeometry); }
+	bool hasGeometry() const { return m_pGeometry->hasGeometry(); }
+	bool getEnable() const { return m_bEnable; }
+	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 };

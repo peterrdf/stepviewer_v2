@@ -14,9 +14,6 @@ public: // Methods
 	CInstanceBase(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CInstanceBase();
 
-	virtual bool HasGeometry() const PURE;
-	virtual bool IsEnabled() const PURE;
-
 	wstring GetName() const;
 	static wstring GetName(SdaiInstance iInstance);
 

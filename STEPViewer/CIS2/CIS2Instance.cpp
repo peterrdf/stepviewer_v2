@@ -53,7 +53,7 @@ void CCIS2Instance::CalculateMinMax(
 	float& fZmin, float& fZmax)
 {
 	
-	if (!HasGeometry())
+	if (!_instance::hasGeometry())
 	{
 		return;
 	}

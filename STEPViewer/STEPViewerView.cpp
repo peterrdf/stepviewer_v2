@@ -531,8 +531,8 @@ void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 	if ((pDocument != nullptr) && 
 		(pDocument->GetModel() != nullptr) &&
 		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->HasGeometry() &&
-		pDocument->GetSelectedInstance()->IsEnabled())
+		pDocument->GetSelectedInstance()->hasGeometry() &&
+		pDocument->GetSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}
@@ -558,8 +558,8 @@ void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 	if ((pDocument != nullptr) &&
 		(pDocument->GetModel() != nullptr) &&
 		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->HasGeometry() &&
-		pDocument->GetSelectedInstance()->IsEnabled())
+		pDocument->GetSelectedInstance()->hasGeometry() &&
+		pDocument->GetSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}

@@ -38,11 +38,6 @@ CAP242ProductInstance::~CAP242ProductInstance()
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/  bool CAP242ProductInstance::HasGeometry() const 
-{ 
-	return m_pProductDefinition->hasGeometry(); 
-}
-
 void CAP242ProductInstance::Scale(float fScaleFactor)
 {
 	m_pTransformationMatrix->_41 /= fScaleFactor;
