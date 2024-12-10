@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_ap_geometry.h"
 #include "_oglUtils.h"
 
 #include "AP242ProductInstance.h"
@@ -12,7 +13,7 @@ using namespace std;
 
 // ************************************************************************************************
 class CAP242ProductDefinition
-	: public _geometry
+	: public _ap_geometry
 {
 	friend class CAP242Model;
 
@@ -38,7 +39,6 @@ public: // Methods
 	virtual ~CAP242ProductDefinition();
 
 	// _geometry
-	virtual OwlModel getModel() const override;
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	void CalculateMinMaxTransform(

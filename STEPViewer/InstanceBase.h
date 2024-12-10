@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-
 using namespace std;
+
+#include "_ap_instance.h"
 
 // ************************************************************************************************
 class CInstanceBase

@@ -96,7 +96,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 
-	auto pSelectedInstance = pController->GetSelectedInstance();
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->GetSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{	
 		m_treeCtrl.SelectItem(hModel);
@@ -105,16 +105,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->getSdaiInstance(), pSelectedInstance->GetInstance(), &iInstance);
-
-	if (iInstance == 0)
-	{
-		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
-		if (iExpressID != 0)
-		{
-			iInstance = internalGetInstanceFromP21Line(pModel->getSdaiInstance(), iExpressID);
-		}
-	}
+	owlBuildInstance(pModel->getSdaiInstance(), pSelectedInstance->getSdaiInstance(), &iInstance);
 
 	if (iInstance == 0)
 	{

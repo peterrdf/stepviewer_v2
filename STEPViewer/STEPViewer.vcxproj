@@ -597,6 +597,7 @@
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_ap242_instance.h" />
+    <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
     <ClInclude Include="..\include\_cis2_instance.h" />

@@ -4,7 +4,7 @@
 
 // ************************************************************************************************
 CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
-	: _geometry(-1, iSdaiInstance, true)
+	: _ap_geometry(iSdaiInstance)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_szId(nullptr)
 	, m_szName(nullptr)
@@ -39,15 +39,6 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 /*virtual*/ CAP242ProductDefinition::~CAP242ProductDefinition()
 {}
 
-/*virtual*/ OwlModel CAP242ProductDefinition::getModel() const /*override*/
-{
-	OwlModel iOwlModel = 0;
-	owlGetModel(GetModel(), &iOwlModel);
-	ASSERT(iOwlModel != 0);
-
-	return iOwlModel;
-}
-
 /*virtual*/ int64_t CAP242ProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
 {
 	assert(piVertexBufferSize != nullptr);
@@ -55,14 +46,9 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 
 	*piVertexBufferSize = *piIndexBufferSize = 0;
 
-	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
+	CalculateInstance(m_iInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
 
-	int64_t iOwlInstance = 0;
-	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
-
-	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
-
-	return iOwlInstance;
+	return m_iInstance;
 }
 
 void CAP242ProductDefinition::CalculateMinMaxTransform(

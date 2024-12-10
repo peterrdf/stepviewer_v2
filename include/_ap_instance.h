@@ -26,6 +26,6 @@ public:  // Methods
 	{
 	}
 
-	SdaiInstance getSDAIInstance() const { return m_sdaiInstance; } 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; } 
 	ExpressID getExpressID() const { return m_expressID; }
 };

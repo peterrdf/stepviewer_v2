@@ -53,10 +53,10 @@ static char THIS_FILE[]=__FILE__;
 
 	vector<int_t> vecInstances;
 
-	auto pInstance = GetController()->GetSelectedInstance();
+	auto pInstance = dynamic_cast<_ap_instance*>(pController->GetSelectedInstance());
 	if (pInstance != nullptr)
 	{
-		vecInstances.push_back(pInstance->GetInstance());
+		vecInstances.push_back(pInstance->getSdaiInstance());
 	}
 	
 	LoadInstances(vecInstances);

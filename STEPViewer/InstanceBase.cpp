@@ -15,7 +15,7 @@ CInstanceBase::CInstanceBase()
 // --------------------------------------------------------------------------------------------
 wstring CInstanceBase::GetName() const
 {
-	return GetName(GetInstance());
+	return GetName(dynamic_cast<const _ap_instance*>(this)->getSdaiInstance());
 }
 
 // --------------------------------------------------------------------------------------------
