@@ -1,7 +1,6 @@
 #pragma once
 
-#include "_mvc.h"
-#include "InstanceBase.h"
+#include "_ap_mvc.h"
 #include "Entity.h"
 
 #include <set>
@@ -9,7 +8,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CModel;
+class _model;
 class CViewBase;
 enum class enumApplicationProperty;
 
@@ -38,8 +37,8 @@ public: // Methods
 	CController();	
 	virtual ~CController();
 	
-	CModel* GetModel() const;
-	void SetModel(CModel* pModel);
+	_ap_model* GetModel() const;
+	void SetModel(_ap_model* pModel);
 	CInstanceBase* LoadInstance(OwlInstance iInstance);
 
 	// Events

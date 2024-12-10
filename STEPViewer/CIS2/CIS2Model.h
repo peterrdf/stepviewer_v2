@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Model.h"
+#include "InstanceBase.h"
+#include "_ap_mvc.h"
 #include "CIS2DesignPart.h"
 #include "CIS2Representation.h"
 
@@ -10,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CCIS2Model : public CModel
+class CCIS2Model : public _ap_model
 {
 
 private: // Members
@@ -35,6 +36,11 @@ public: // Methods
 	CCIS2Model(bool bLoadInstancesOnDemand = false);
 	virtual ~CCIS2Model();
 
+	// _model
+	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomOut() override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
+
 protected: // Methods
 
 	// _ap_model
@@ -42,11 +48,6 @@ protected: // Methods
 	virtual void clean() override;
 
 public: // Methods
-
-	// CModel
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
-	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
 	
 	void Scale(); // [-1, 1]
 

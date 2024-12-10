@@ -49,7 +49,7 @@ static uint32_t DEFAULT_COLOR_A = 255;
 
 // ************************************************************************************************
 CAP242Model::CAP242Model()
-	: CModel(enumAP::STEP)
+	: _ap_model(enumAP::STEP)
 	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()

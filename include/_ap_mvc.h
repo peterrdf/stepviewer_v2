@@ -59,7 +59,6 @@ public: // Methods
 	{
 		assert((szPath != nullptr) && (wcslen(szPath) > 0));
 
-
 		SdaiModel sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (m_sdaiModel == 0)
 		{

@@ -1,7 +1,8 @@
 #ifndef IFCFILEPARSER_H
 #define IFCFILEPARSER_H
 
-#include "Model.h"
+#include "InstanceBase.h"
+#include "_ap_mvc.h"
 #include "IFCInstance.h"
 #include "Texture.h"
 #include "IFCUnit.h"
@@ -15,7 +16,7 @@
 
 using namespace std;
 
-class CIFCModel : public CModel
+class CIFCModel : public _ap_model
 {
 
 private: // Classes
@@ -64,6 +65,11 @@ public: // Methods
 	CIFCModel(bool bLoadInstancesOnDemand = false);
 	virtual ~CIFCModel();
 
+	// _model
+	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomOut() override;
+	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
+
 protected: // Methods
 
 	// _ap_model
@@ -72,14 +78,7 @@ protected: // Methods
 
 public: // Methods
 
-	// CModel
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
-	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
-
-	void Scale(); // [-1, 1]
-
-	void Attach(const wchar_t* szPath, SdaiModel sdaiModel);	
+	void Scale(); // [-1, 1]	
 
 	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }

@@ -12,7 +12,7 @@ class CModelFactory
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	static CModel* Load(const wchar_t* szPath)
+	static _ap_model* Load(const wchar_t* szPath)
 	{
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (sdaiModel == 0)

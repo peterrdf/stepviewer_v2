@@ -30,7 +30,7 @@ public:
 
 private:
 	CMySTEPViewerDoc* GetActiveDoc();
-	CModel* GetActiveModel();
+	_ap_model* GetActiveModel();
 	SdaiModel GetActiveSdaiModel();
 	void FormatIssueList();
 	void FillIssueList(bool all);

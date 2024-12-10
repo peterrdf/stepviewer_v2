@@ -97,7 +97,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSchemaView::LoadModel(CModel* pModel)
+void CSchemaView::LoadModel(_ap_model* pModel)
 {
 	if (pModel == nullptr)
 	{

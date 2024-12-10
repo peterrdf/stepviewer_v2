@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Controller.h"
-#include "Model.h"
+#include "InstanceBase.h"
+#include "_mvc.h"
 #include "ViewBase.h"
 
 // ************************************************************************************************
@@ -27,13 +28,13 @@ CController::CController()
 {}
 
 // ------------------------------------------------------------------------------------------------
-CModel* CController::GetModel() const
+_ap_model* CController::GetModel() const
 {
-	return dynamic_cast<CModel*>(getModel());
+	return dynamic_cast<_ap_model*>(getModel());
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::SetModel(CModel* pModel)
+void CController::SetModel(_ap_model* pModel)
 {
 	ASSERT(pModel != nullptr);
 
@@ -68,7 +69,7 @@ CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
 
 	m_bUpdatingModel = true;
 
-	auto pInstance = dynamic_cast<CModel*>(m_pModel)->LoadInstance(iInstance);
+	auto pInstance = dynamic_cast<_model*>(m_pModel)->LoadInstance(iInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

@@ -176,7 +176,7 @@ public: // Methods
 
 private: // Methods
 
-	CModel* GetModel() const;
+	_model* GetModel() const;
 	
 	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const vector<int_t>& vecInstances);

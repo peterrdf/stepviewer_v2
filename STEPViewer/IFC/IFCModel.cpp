@@ -27,7 +27,7 @@ static uint32_t DEFAULT_COLOR_A = 255;
 
 // ************************************************************************************************
 CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
-	: CModel(enumAP::IFC)
+	: _ap_model(enumAP::IFC)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_ifcProjectEntity(0)
 	, m_ifcSpaceEntity(0)

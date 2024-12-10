@@ -638,7 +638,6 @@
     <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="InstanceBase.h" />
-    <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="TreeViewBase.h" />
     <ClInclude Include="STEPViewer.h" />
@@ -684,7 +683,6 @@
     <ClCompile Include="IFC\IFCOpenGLView.cpp" />
     <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="InstanceBase.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />
     <ClCompile Include="STEPViewerView.cpp" />

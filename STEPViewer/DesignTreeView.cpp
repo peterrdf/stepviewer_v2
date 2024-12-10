@@ -58,7 +58,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
 
-	auto pModel = GetModel<CModel>();
+	auto pModel = GetModel<_ap_model>();
 	if ((pModel == nullptr) || (pModel->getSdaiInstance() == 0))
 	{
 		return;
@@ -86,7 +86,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = GetModel<_ap_model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "_geometry.h"
-#include "Model.h"
+#include "_ap_mvc.h"
 
 #include <map>
 using namespace std;
@@ -14,7 +13,7 @@ class CAP242ProductDefinition;
 class CAP242ProductInstance;
 
 // ************************************************************************************************
-class CAP242Model : public CModel
+class CAP242Model : public _ap_model
 {
 
 private: // Members
@@ -34,6 +33,11 @@ public: // Methods
 	CAP242Model();
 	virtual ~CAP242Model();
 
+	// _model
+	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomOut() override;
+	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
+
 protected: // Methods
 
 	// _ap_model
@@ -41,11 +45,6 @@ protected: // Methods
 	virtual void clean() override;
 
 public: // Methods
-
-	// CModel
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
-	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
 
 	const map<ExpressID, CAP242ProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
 	const map<int64_t, CAP242ProductInstance*>& GetInstances() const { return m_mapID2Instance; }

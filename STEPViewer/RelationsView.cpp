@@ -266,7 +266,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-CModel* CRelationsView::GetModel() const
+_model* CRelationsView::GetModel() const
 {
 	auto pController = GetController();
 	if (pController == nullptr)
