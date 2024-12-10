@@ -99,7 +99,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pCIS2Representation->GetInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pCIS2Representation->getSdaiInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 

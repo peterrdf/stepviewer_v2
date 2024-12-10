@@ -60,7 +60,7 @@ CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
 
 	m_pSelectedInstance = nullptr;
 
-	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->GetInstance() == iInstance))
+	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->getSdaiInstance() == iInstance))
 	{
 		return nullptr;
 	}

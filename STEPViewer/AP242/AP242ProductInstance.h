@@ -26,7 +26,6 @@ public: // Methods
 	virtual ~CAP242ProductInstance();
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const;
 	virtual bool HasGeometry() const;
 	virtual bool IsEnabled() const { return GetEnable(); }
 

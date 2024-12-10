@@ -615,7 +615,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case IDS_VIEW_IFC_RELATIONS:
 			{
-				pController->OnViewRelations(this, pInstance->GetInstance());
+				pController->OnViewRelations(this, pInstance->getSdaiInstance());
 			}
 			break;
 

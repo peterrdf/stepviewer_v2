@@ -52,7 +52,7 @@
 	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->getSdaiInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;
@@ -90,7 +90,7 @@
 		SetObjectProperty(
 			iTransformationInstance,
 			GetPropertyByName(iOwlModel, "object"),
-			GetSelectedInstance()->GetInstance());
+			GetSelectedInstance()->getOwlInstance());
 
 		SetObjectProperty(
 			iTransformationInstance,
@@ -101,7 +101,7 @@
 	}
 	else
 	{
-		SaveInstanceTreeW(GetSelectedInstance()->GetInstance(), dlgFile.GetPathName());
+		SaveInstanceTreeW(GetSelectedInstance()->getOwlInstance(), dlgFile.GetPathName());
 	}
 }
 

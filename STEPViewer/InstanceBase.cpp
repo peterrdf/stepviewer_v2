@@ -65,7 +65,7 @@ wstring CInstanceBase::GetName() const
 // --------------------------------------------------------------------------------------------
 OwlClass CInstanceBase::GetClass() const
 {
-	return GetClass(GetInstance());
+	return GetClass(getOwlInstance());
 }
 
 // --------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ OwlClass CInstanceBase::GetClass() const
 // --------------------------------------------------------------------------------------------
 const wchar_t* CInstanceBase::GetClassName() const
 {
-	return GetClassName(GetInstance());
+	return GetClassName(getOwlInstance());
 }
 
 // --------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ const wchar_t* CInstanceBase::GetClassName() const
 // --------------------------------------------------------------------------------------------
 SdaiEntity CInstanceBase::GetEntity() const
 {
-	return sdaiGetInstanceType(GetInstance());
+	return sdaiGetInstanceType(getSdaiInstance());
 }
 
 // --------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ SdaiEntity CInstanceBase::GetEntity() const
 // --------------------------------------------------------------------------------------------
 const wchar_t* CInstanceBase::GetEntityName() const
 {
-	return GetEntityName(GetInstance());
+	return GetEntityName(getOwlInstance());
 }
 
 // --------------------------------------------------------------------------------------------

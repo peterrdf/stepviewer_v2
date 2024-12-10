@@ -949,7 +949,7 @@ void CIFCOpenGLView::DrawInstancesFrameBuffer()
 			float fR, fG, fB;
 			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetInstance()] = _color(fR, fG, fB);
+			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 

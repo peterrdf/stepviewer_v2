@@ -38,11 +38,6 @@ CAP242ProductInstance::~CAP242ProductInstance()
 	delete m_pTransformationMatrix;
 }
 
-/*virtual*/ SdaiInstance CAP242ProductInstance::GetInstance() const 
-{ 
-	return m_pProductDefinition->GetInstance(); 
-}
-
 /*virtual*/  bool CAP242ProductInstance::HasGeometry() const 
 { 
 	return m_pProductDefinition->hasGeometry(); 

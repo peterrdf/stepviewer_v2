@@ -14,7 +14,6 @@ public: // Methods
 	CInstanceBase(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CInstanceBase();
 
-	virtual SdaiInstance GetInstance() const PURE;
 	virtual bool HasGeometry() const PURE;
 	virtual bool IsEnabled() const PURE;
 

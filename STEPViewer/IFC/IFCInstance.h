@@ -35,8 +35,7 @@ public: // Methods
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
-	virtual SdaiInstance GetInstance() const { return (SdaiInstance)m_iInstance; }
-	SdaiModel GetModel() const { return sdaiGetInstanceModel(GetInstance()); }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(getSdaiInstance()); }
 	virtual bool HasGeometry() const { return _geometry::hasGeometry(); }
 	virtual bool IsEnabled() const { return getEnable(); }	
 	ExpressID ExpressID() const { return m_iExpressID; }

@@ -19,4 +19,5 @@ public:  // Methods
 
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
 	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getEnable(); }
+	OwlInstance getOwlInstance() const { return getGeometryAs<_ap_geometry>()->getInstance(); }
 };

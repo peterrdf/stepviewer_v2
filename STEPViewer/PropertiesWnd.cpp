@@ -1062,7 +1062,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->GetInstance());
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->getSdaiInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;

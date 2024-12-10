@@ -542,7 +542,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->GetInstance());
+					pController->OnViewRelations(this, pInstance->getSdaiInstance());
 				}
 				break;
 
@@ -565,7 +565,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->GetInstance());
+					pController->OnViewRelations(this, pInstance->getSdaiInstance());
 				}
 				break;
 
@@ -1345,7 +1345,7 @@ void CCIS2ModelStructureView::LoadUnreferencedItems(CCIS2Model* pModel, HTREEITE
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = CInstanceBase::GetName(pInstance->GetInstance());
+			wstring strItem = CInstanceBase::GetName(pInstance->getSdaiInstance());
 
 			/*
 			* Object
