@@ -13,19 +13,4 @@ public: // Methods
 	
 	CInstanceBase(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CInstanceBase();
-
-	wstring GetName() const;
-	static wstring GetName(SdaiInstance iInstance);
-
-	OwlClass GetClass() const;
-	static OwlClass GetClass(OwlInstance iInstance);
-	const wchar_t* GetClassName() const;
-	static const wchar_t* GetClassName(OwlInstance iInstance);
-
-	SdaiEntity GetEntity() const;
-	static SdaiEntity GetEntity(SdaiInstance iInstance);
-	const wchar_t* GetEntityName() const;
-	static const wchar_t* GetEntityName(SdaiInstance iInstance);
-
-	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName);
 };

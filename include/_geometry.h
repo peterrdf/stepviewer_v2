@@ -1358,7 +1358,7 @@ private: // Members
 	_matrix4x4* m_pTransformationMatrix;
 	bool m_bEnable;
 
-public:  // Methods
+public: // Methods
 
 	_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
 		: m_iID(iID)
@@ -1393,6 +1393,58 @@ public:  // Methods
 	{
 		delete m_pTransformationMatrix;
 	}
+
+	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName)
+	{
+		ASSERT(iModel != 0);
+		ASSERT(iInstance != 0);
+
+		OwlClass iClassInstance = GetInstanceClass(iInstance);
+		ASSERT(iClassInstance != 0);
+
+		wchar_t* szClassName = nullptr;
+		GetNameOfClassW(iClassInstance, &szClassName);
+
+		wchar_t* szName = nullptr;
+		GetNameOfInstanceW(iInstance, &szName);
+
+		if (szName == nullptr)
+		{
+			RdfProperty iTagProperty = GetPropertyByName(iModel, "tag");
+			if (iTagProperty != 0)
+			{
+				SetCharacterSerialization(iModel, 0, 0, false);
+
+				int64_t iCard = 0;
+				wchar_t** szValue = nullptr;
+				GetDatatypeProperty(iInstance, iTagProperty, (void**)&szValue, &iCard);
+
+				if (iCard == 1)
+				{
+					szName = szValue[0];
+				}
+
+				SetCharacterSerialization(iModel, 0, 0, true);
+			}
+		} // if (szName == nullptr)
+
+		wchar_t szUniqueName[200];
+
+		if (szName != nullptr)
+		{
+			strName = szName;
+			swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
+		}
+		else
+		{
+			strName = szClassName;
+			swprintf(szUniqueName, 200, L"#%lld (%s)", iInstance, szClassName);
+		}
+
+		strUniqueName = szUniqueName;
+	}
+
+public: // Properties
 
 	int64_t getID() const { return m_iID; }
 	_geometry* getGeometry() const { return m_pGeometry; }
