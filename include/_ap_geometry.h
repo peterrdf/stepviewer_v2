@@ -36,5 +36,6 @@ public: // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	SdaiModel getSdaiModel() const { return sdaiGetInstanceModel(m_sdaiInstance); }
 };

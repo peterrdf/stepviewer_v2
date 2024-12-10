@@ -416,6 +416,8 @@ public:  // Methods
 
 	int64_t getID() const { return m_iID; }
 	_geometry* getGeometry() const { return m_pGeometry; }
+	template<typename T>
+	T* getGeometryAs() const { return dynamic_cast<T*>(m_pGeometry); }
 	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 };
 
