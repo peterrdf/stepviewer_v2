@@ -428,7 +428,6 @@ class _geometry
 protected: // Members
 
 	// Metadata
-	int64_t m_iID; // ID (1-based index)
 	OwlInstance m_iInstance;
 	wstring m_strName;
 	wstring m_strUniqueName;
@@ -477,9 +476,8 @@ protected: // Members
 
 public: // Methods
 
-	_geometry(int64_t iID, OwlInstance iInstance, bool bEnable)
-		: m_iID(iID)
-		, m_iInstance(iInstance)
+	_geometry(OwlInstance iInstance, bool bEnable)
+		: m_iInstance(iInstance)
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
 		, m_bEnable(bEnable)
@@ -712,7 +710,6 @@ public: // Methods
 	}
 
 	// Metadata
-	int64_t getID() const { return m_iID; }
 	OwlInstance getInstance() const { return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
 	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }

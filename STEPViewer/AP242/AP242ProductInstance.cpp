@@ -3,9 +3,8 @@
 #include "AP242ProductDefinition.h"
 
 // ************************************************************************************************
-CAP242ProductInstance::CAP242ProductInstance(int64_t iID, _geometry* pGeometry, SdaiInstance sdaiInstance, _matrix4x3* pTransformationMatrix)
-	: CInstanceBase()
-	, _ap_instance(iID, pGeometry, sdaiInstance, pTransformationMatrix)
+CAP242ProductInstance::CAP242ProductInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+	: CInstanceBase(iID, pGeometry, pTransformationMatrix)
 	, m_iID(iID)
 	, m_pProductDefinition((CAP242ProductDefinition*)pGeometry)
 	, m_pTransformationMatrix(nullptr)

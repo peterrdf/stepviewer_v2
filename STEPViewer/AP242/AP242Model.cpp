@@ -502,7 +502,6 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 	auto pInstance = new CAP242ProductInstance(
 		m_iID++,
 		pProductDefinition,
-		pParentAssembly != nullptr ? pParentAssembly->GetInstance() : pProductDefinition->getSdaiInstance(),
 		pParentMatrix);
 	m_vecInstances.push_back(pInstance);
 	m_mapID2Instance[pInstance->GetID()] = pInstance;

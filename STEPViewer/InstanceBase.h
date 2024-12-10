@@ -6,12 +6,12 @@ using namespace std;
 #include "_ap_instance.h"
 
 // ************************************************************************************************
-class CInstanceBase
+class CInstanceBase : public _ap_instance
 {
 
 public: // Methods
 	
-	CInstanceBase();
+	CInstanceBase(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CInstanceBase();
 
 	virtual SdaiInstance GetInstance() const PURE;

@@ -12,7 +12,7 @@ private: // Members
 public: // Methods
 
 	_ap_geometry(SdaiInstance sdaiInstance)
-		: _geometry(-1, 0, true)
+		: _geometry(0, true)
 		, m_sdaiInstance(sdaiInstance)
 	{
 		assert(m_sdaiInstance != 0);
