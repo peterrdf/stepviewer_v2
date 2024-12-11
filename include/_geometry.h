@@ -711,7 +711,7 @@ public: // Methods
 
 protected: // Methods
 
-	void setSTEPFormatSettings()
+	void setAPFormatSettings() const
 	{
 		uint64_t mask = 0;
 		mask += FORMAT_SIZE_VERTEX_DOUBLE;

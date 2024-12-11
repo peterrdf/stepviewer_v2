@@ -31,7 +31,7 @@ private: // Members
 public: // Methods
 
 	// ctor/dtor
-	CAP242ProductDefinition(SdaiInstance sdaiSdaiInstance);
+	CAP242ProductDefinition(SdaiInstance sdaiInstance);
 	virtual ~CAP242ProductDefinition();
 
 protected: // Methods

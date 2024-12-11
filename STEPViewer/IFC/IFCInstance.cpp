@@ -19,7 +19,7 @@ CIFCInstance::~CIFCInstance()
 /*virtual*/ void CIFCInstance::preCalculate() /*override*/
 {
 	// Format
-	setSTEPFormatSettings();
+	setAPFormatSettings();
 
 	// Extra settings
 	const int_t flagbit1 = 2;

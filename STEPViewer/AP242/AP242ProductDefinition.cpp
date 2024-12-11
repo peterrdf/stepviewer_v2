@@ -37,7 +37,7 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance sdaiInstance)
 /*virtual*/ void CAP242ProductDefinition::preCalculate() /*override*/
 {
 	// Format
-	setSTEPFormatSettings();
+	setAPFormatSettings();
 
 	// Extra settings
 	setSegmentation(getSdaiModel(), 16, 0.);
