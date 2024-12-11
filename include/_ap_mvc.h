@@ -180,11 +180,11 @@ public: // Properties
 	{
 		assert(m_sdaiModel != 0);
 
-		OwlModel iOwlModel = 0;
-		owlGetModel(m_sdaiModel, &iOwlModel);
-		assert(iOwlModel != 0);
+		OwlModel owlModel = 0;
+		owlGetModel(m_sdaiModel, &owlModel);
+		assert(owlModel != 0);
 
-		return iOwlModel;
+		return owlModel;
 	}
 
 	// Model
