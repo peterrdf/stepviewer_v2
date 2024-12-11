@@ -26,10 +26,6 @@ public: // Methods
 public: // Properties
 
 	bool& Referenced() { return m_bReferenced; }
-
-private: // Methods
-	
-	void Calculate();
 };
 
 #endif // IFC_GEOMETRY_H

@@ -11,8 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CAP242ProductDefinition
-	: public _ap_geometry
+class CAP242ProductDefinition : public _ap_geometry
 {
 	friend class CAP242Model;
 
@@ -37,8 +36,13 @@ public: // Methods
 	CAP242ProductDefinition(SdaiInstance iSdaiInstance);
 	virtual ~CAP242ProductDefinition();
 
+protected: // Methods
+
 	// _geometry
-	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
+	virtual void preCalculate() override;
+	virtual void postCalculate() override;
+
+public: // Methods
 
 	void CalculateMinMaxTransform(
 		CAP242ProductInstance* pInstance, 
@@ -67,9 +71,5 @@ public: // Methods
 
 	const vector<CAP242ProductInstance*>& GetInstances() const { return m_vecInstances; }
 	int32_t GetNextInstance();
-
-private: // Methods
-
-	void Calculate();
 };
 

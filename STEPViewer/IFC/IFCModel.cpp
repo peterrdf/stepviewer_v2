@@ -149,7 +149,7 @@ CIFCModel::~CIFCModel()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	pIFCInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	pIFCInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -190,7 +190,7 @@ CIFCModel::~CIFCModel()
 			continue;
 		}
 
-		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -263,7 +263,7 @@ void CIFCModel::Scale()
 	auto itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->CalculateMinMax(
+		itIinstance->second->calculateMinMax(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax);
@@ -320,7 +320,7 @@ void CIFCModel::Scale()
 	{
 		if (itIinstance->second->_instance::getEnable())
 		{
-			itIinstance->second->CalculateMinMax(
+			itIinstance->second->calculateMinMax(
 				m_fXmin, m_fXmax, 
 				m_fYmin, m_fYmax, 
 				m_fZmin, m_fZmax);

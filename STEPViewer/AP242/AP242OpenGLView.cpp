@@ -403,7 +403,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
@@ -411,7 +411,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -542,7 +542,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
@@ -550,7 +550,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -647,7 +647,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
@@ -655,7 +655,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -752,7 +752,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
 			for (auto pInstance : vecInstances)
 			{
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
@@ -760,7 +760,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -873,15 +873,15 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
 
 				float fR, fG, fB;
-				_i64RGBCoder::encode(pInstance->GetID(), fR, fG, fB);
+				_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-				m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetID()] = _color(fR, fG, fB);
+				m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 			}
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
@@ -931,7 +931,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->GetEnable())
+				if (!pInstance->getEnable())
 				{
 					continue;
 				}
@@ -939,7 +939,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 				/*
 				* Transformation Matrix
 				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->GetTransformationMatrix());
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
 
 				/*
 				* Model-View Matrix
@@ -963,7 +963,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 				{
 					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
 
-					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetID());
+					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
 					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 					m_pOGLProgram->_setAmbientColor(

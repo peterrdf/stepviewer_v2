@@ -108,7 +108,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	pCIS2Representation->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	pCIS2Representation->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -149,7 +149,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 			continue;
 		}
 
-		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -199,7 +199,7 @@ void CCIS2Model::Scale()
 	auto itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->CalculateMinMax(
+		itIinstance->second->calculateMinMax(
 			m_fXmin, m_fXmax,
 			m_fYmin, m_fYmax,
 			m_fZmin, m_fZmax);
@@ -240,7 +240,7 @@ void CCIS2Model::Scale()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->Scale(m_fBoundingSphereDiameter / 2.f);
+		itIinstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -256,7 +256,7 @@ void CCIS2Model::Scale()
 	{
 		if (itIinstance->second->_instance::getEnable())
 		{
-			itIinstance->second->CalculateMinMax(
+			itIinstance->second->calculateMinMax(
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
 				m_fZmin, m_fZmax);

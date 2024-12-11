@@ -16,7 +16,6 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 	, m_vecInstances()
 	, m_iNextInstance(-1)
 {
-	ASSERT(iSdaiInstance != 0);
 	ASSERT(m_iExpressID != 0);
 
 	sdaiGetAttrBN(iSdaiInstance, "id", sdaiUNICODE, &m_szId);
@@ -33,22 +32,23 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance iSdaiInstance)
 	sdaiGetAttrBN(iProductInstance, "id", sdaiUNICODE, &m_szProductId);
 	sdaiGetAttrBN(iProductInstance, "name", sdaiUNICODE, &m_szProductName);
 
-	Calculate();
+	calculate();
 }
 
 /*virtual*/ CAP242ProductDefinition::~CAP242ProductDefinition()
 {}
 
-/*virtual*/ int64_t CAP242ProductDefinition::calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) /*override*/
+/*virtual*/ void CAP242ProductDefinition::preCalculate() /*override*/
 {
-	assert(piVertexBufferSize != nullptr);
-	assert(piIndexBufferSize != nullptr);
+	// Format
+	setSTEPFormatSettings();
 
-	*piVertexBufferSize = *piIndexBufferSize = 0;
+	// Extra settings
+	setSegmentation(GetModel(), 16, 0.);
+}
 
-	CalculateInstance(m_iInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
-
-	return m_iInstance;
+/*virtual*/ void CAP242ProductDefinition::postCalculate() /*override*/
+{
 }
 
 void CAP242ProductDefinition::CalculateMinMaxTransform(
@@ -63,13 +63,13 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 		return;
 	}
 
-	double _41 = pInstance->GetTransformationMatrix()->_41;
-	double _42 = pInstance->GetTransformationMatrix()->_42;
-	double _43 = pInstance->GetTransformationMatrix()->_43;
+	double _41 = pInstance->getTransformationMatrix()->_41;
+	double _42 = pInstance->getTransformationMatrix()->_42;
+	double _43 = pInstance->getTransformationMatrix()->_43;
 
-	pInstance->GetTransformationMatrix()->_41 += fXTranslation;
-	pInstance->GetTransformationMatrix()->_42 += fYTranslation;
-	pInstance->GetTransformationMatrix()->_43 += fZTranslation;
+	pInstance->getTransformationMatrix()->_41 += fXTranslation;
+	pInstance->getTransformationMatrix()->_42 += fYTranslation;
+	pInstance->getTransformationMatrix()->_43 += fZTranslation;
 
 	CalculateMinMaxTransform(
 		pInstance,
@@ -77,9 +77,9 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 		fYmin, fYmax,
 		fZmin, fZmax);
 
-	pInstance->GetTransformationMatrix()->_41 = _41;
-	pInstance->GetTransformationMatrix()->_42 = _42;
-	pInstance->GetTransformationMatrix()->_43 = _43;
+	pInstance->getTransformationMatrix()->_41 = _41;
+	pInstance->getTransformationMatrix()->_42 = _42;
+	pInstance->getTransformationMatrix()->_43 = _43;
 }
 
 void CAP242ProductDefinition::CalculateMinMaxTransform(
@@ -113,7 +113,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -149,7 +149,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -185,7 +185,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -216,7 +216,7 @@ void CAP242ProductDefinition::CalculateMinMaxTransform(
 
 				if (pInstance != nullptr)
 				{
-					_transform(&vecPoint, pInstance->GetTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
 				}				
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -243,7 +243,7 @@ void CAP242ProductDefinition::Scale(float fScaleFactor)
 	// Instances
 	for (size_t iInstance = 0; iInstance < m_vecInstances.size(); iInstance++)
 	{
-		m_vecInstances[iInstance]->Scale(fScaleFactor);
+		m_vecInstances[iInstance]->scale(fScaleFactor);
 	}
 }
 
@@ -256,103 +256,3 @@ int32_t CAP242ProductDefinition::GetNextInstance()
 
 	return m_iNextInstance;
 }
-
-void CAP242ProductDefinition::Calculate()
-{
-	// Format
-	setSTEPFormatSettings();
-
-	// Extra settings
-	setSegmentation(GetModel(), 16, 0.);
-
-	/* Geometry */
-
-	ASSERT(m_pVertexBuffer == nullptr);
-	m_pVertexBuffer = new _vertices_f(getVertexLength());
-
-	ASSERT(m_pIndexBuffer == nullptr);
-	m_pIndexBuffer = new _indices_i32();
-
-	if (!calculate(m_pVertexBuffer, m_pIndexBuffer))
-	{
-		return;
-	}
-
-	MATERIALS mapMaterial2ConcFaces;
-	MATERIALS mapMaterial2ConcFaceLines;
-	MATERIALS mapMaterial2ConcFacePoints;
-
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
-	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
-	{
-		int64_t iStartIndexTriangles = 0;
-		int64_t iIndicesCountTriangles = 0;
-		int64_t iStartIndexLines = 0;
-		int64_t iIndicesCountLines = 0;
-		int64_t iStartIndexPoints = 0;
-		int64_t iIndicesCountPoints = 0;
-		int64_t iStartIndexConceptualFacePolygons = 0;
-		int64_t iIndicesCountConceptualFacePolygons = 0;
-		ConceptualFace iConceptualFace = GetConceptualFace(
-			m_iInstance,
-			iConceptualFaceIndex,
-			&iStartIndexTriangles, &iIndicesCountTriangles,
-			&iStartIndexLines, &iIndicesCountLines,
-			&iStartIndexPoints, &iIndicesCountPoints,
-			0, 0,
-			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
-
-		/* Material */
-
-		uint32_t iAmbientColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iDiffuseColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iEmissiveColor = CAP242Model::DEFAULT_COLOR;
-		uint32_t iSpecularColor = CAP242Model::DEFAULT_COLOR;
-		float fTransparency = 1.f;
-
-		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
-		if (iMaterialInstance != 0)
-		{
-			iAmbientColor = GetMaterialColorAmbient(iMaterialInstance);
-			iDiffuseColor = GetMaterialColorDiffuse(iMaterialInstance);
-			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
-			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
-			fTransparency = (float)COLOR_GET_W(iAmbientColor);
-		}
-
-		_material material(
-			iAmbientColor,
-			iDiffuseColor,
-			iEmissiveColor,
-			iSpecularColor,
-			fTransparency,
-			nullptr);
-
-		if (iIndicesCountTriangles > 0)
-		{
-			addTriangles(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles, material, mapMaterial2ConcFaces);
-		}
-
-		if (iIndicesCountConceptualFacePolygons > 0)
-		{
-			addConcFacePolygons(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons);
-		}
-
-		if (iIndicesCountLines > 0)
-		{
-			addLines(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines, material, mapMaterial2ConcFaceLines);
-		}
-
-		if (iIndicesCountPoints > 0)
-		{
-			addPoints(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints, material, mapMaterial2ConcFacePoints);
-		}
-	} // for (int64_t iConceptualFaceIndex = ...	
-
-	// Build the cohorts
-	buildConcFacesCohorts(mapMaterial2ConcFaces, _oglUtils::getIndicesCountLimit());
-	buildConcFacePolygonsCohorts(_oglUtils::getIndicesCountLimit());
-	buildLinesCohorts(mapMaterial2ConcFaceLines, _oglUtils::getIndicesCountLimit());
-	buildPointsCohorts(mapMaterial2ConcFacePoints, _oglUtils::getIndicesCountLimit());
-}
-

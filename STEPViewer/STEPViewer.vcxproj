@@ -654,6 +654,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\_geometry.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />

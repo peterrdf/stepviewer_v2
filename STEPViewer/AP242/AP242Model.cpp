@@ -155,7 +155,7 @@ CAP242Model::~CAP242Model()
 		auto& vecInstances = itDefinition->second->GetInstances();
 		for (auto pInstance : vecInstances)
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
@@ -297,7 +297,7 @@ void CAP242Model::Scale()
 		auto itInstance = itDefinition->second->GetInstances();
 		for (auto pInstance : itDefinition->second->GetInstances())
 		{
-			if (!pInstance->GetEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
@@ -504,6 +504,6 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		pProductDefinition,
 		pParentMatrix);
 	m_vecInstances.push_back(pInstance);
-	m_mapID2Instance[pInstance->GetID()] = pInstance;
+	m_mapID2Instance[pInstance->getID()] = pInstance;
 	pProductDefinition->m_vecInstances.push_back(pInstance);
 }

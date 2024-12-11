@@ -43,23 +43,11 @@ public: // Methods
 
 	// _geometry
 	virtual OwlModel getModel() const override;
-	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
 	SdaiModel GetModel() const { return sdaiGetInstanceModel(_ap_geometry::getSdaiInstance()); }
 	ExpressID ExpressID() const { return m_iExpressID; }
 	bool& Referenced() { return m_bReferenced; }
-	
-	void CalculateMinMax(
-		float& fXmin, float& fXmax, 
-		float& fYmin, float& fYmax, 
-		float& fZmin, float& fZmax);
-
-	void Scale(float fScaleFactor);
-
-private: // Methods
-	
-	void Calculate();
 };
 
 #endif // CIS2_INSTANCE_H

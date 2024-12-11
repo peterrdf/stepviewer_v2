@@ -64,18 +64,18 @@
 
 		vector<double> vecMatrix
 		{
-			pProductInstance->GetTransformationMatrix()->_11,
-			pProductInstance->GetTransformationMatrix()->_12,
-			pProductInstance->GetTransformationMatrix()->_13,
-			pProductInstance->GetTransformationMatrix()->_21,
-			pProductInstance->GetTransformationMatrix()->_22,
-			pProductInstance->GetTransformationMatrix()->_23,
-			pProductInstance->GetTransformationMatrix()->_31,
-			pProductInstance->GetTransformationMatrix()->_32,
-			pProductInstance->GetTransformationMatrix()->_33,
-			pProductInstance->GetTransformationMatrix()->_41,
-			pProductInstance->GetTransformationMatrix()->_42,
-			pProductInstance->GetTransformationMatrix()->_43,
+			pProductInstance->getTransformationMatrix()->_11,
+			pProductInstance->getTransformationMatrix()->_12,
+			pProductInstance->getTransformationMatrix()->_13,
+			pProductInstance->getTransformationMatrix()->_21,
+			pProductInstance->getTransformationMatrix()->_22,
+			pProductInstance->getTransformationMatrix()->_23,
+			pProductInstance->getTransformationMatrix()->_31,
+			pProductInstance->getTransformationMatrix()->_32,
+			pProductInstance->getTransformationMatrix()->_33,
+			pProductInstance->getTransformationMatrix()->_41,
+			pProductInstance->getTransformationMatrix()->_42,
+			pProductInstance->getTransformationMatrix()->_43,
 		};
 
 		SetDatatypeProperty(
