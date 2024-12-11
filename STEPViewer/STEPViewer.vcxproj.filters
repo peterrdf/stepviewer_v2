@@ -216,6 +216,9 @@
     <ClInclude Include="..\include\_ap_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="IFC\IFCGeometry.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -331,6 +334,9 @@
     </ClCompile>
     <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCGeometry.cpp">
+      <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

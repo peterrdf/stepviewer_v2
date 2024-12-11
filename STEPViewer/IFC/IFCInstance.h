@@ -1,5 +1,5 @@
-#ifndef IFCINSTANCE_H
-#define IFCINSTANCE_H
+#ifndef IFC_INSTANCE_H
+#define IFC_INSTANCE_H
 
 #include "_oglUtils.h"
 #include "_ap_mvc.h"
@@ -44,11 +44,9 @@ public: // Methods
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
 
-	void Scale(float fScaleFactor);
-
 private: // Methods
 	
 	void Calculate();
 };
 
-#endif // IFCINSTANCE_H
+#endif // IFC_INSTANCE_H

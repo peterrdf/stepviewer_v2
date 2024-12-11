@@ -308,7 +308,7 @@ void CIFCModel::Scale()
 	itIinstance = m_mapInstances.begin();
 	for (; itIinstance != m_mapInstances.end(); itIinstance++)
 	{
-		itIinstance->second->Scale(m_fBoundingSphereDiameter / 2.f);
+		itIinstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */

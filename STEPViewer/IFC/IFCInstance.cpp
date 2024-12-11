@@ -141,11 +141,6 @@ void CIFCInstance::CalculateMinMax(
 	} // if (!m_vecPoints.empty())
 }
 
-void CIFCInstance::Scale(float fScaleFactor)
-{
-	_geometry::scale(fScaleFactor);
-}
-
 void CIFCInstance::Calculate()
 {
 	// Format
