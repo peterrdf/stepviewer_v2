@@ -155,9 +155,7 @@ static const char* GetAttrName(ValidationIssue issue)
 	auto attr = validateGetAttr(issue);
 	if (attr) {
 		const char* name = 0;
-		// cis2engine => ModelCheckDlg.obj : error LNK2019: 
-		// unresolved external symbol __imp__engiGetAttributeTraits@32 referenced in function "char const * __cdecl GetAttrName(void *)" (?GetAttrName@@YAPBDPAX@Z)
-		//engiGetAttributeTraits(attr, &name, 0, 0, 0, 0, 0, 0);
+		engiGetAttributeTraits(attr, &name, 0, 0, 0, 0, 0, 0);
 		return name;
 	}
 	else {
