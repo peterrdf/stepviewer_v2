@@ -171,7 +171,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->setEnable(false);
+					pInstance->_instance::setEnable(false);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -185,7 +185,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->setEnable(true);
+					pInstance->_instance::setEnable(true);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -496,7 +496,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case ID_INSTANCES_ENABLE:
 				{
-					pInstance->setEnable(!pInstance->_instance::getEnable());
+					pInstance->_instance::setEnable(!pInstance->_instance::getEnable());
 
 					int iImage = pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
@@ -514,7 +514,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 						itInstance != mapInstances.end(); 
 						itInstance++)
 					{
-						itInstance->second->setEnable(itInstance->second == pInstance);
+						itInstance->second->_instance::setEnable(itInstance->second == pInstance);
 					}
 
 					ResetView();
@@ -530,7 +530,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 						itInstance != mapInstances.end(); 
 						itInstance++)
 					{
-						itInstance->second->setEnable(true);
+						itInstance->second->_instance::setEnable(true);
 					}
 
 					ResetView();
@@ -625,7 +625,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 			if (pInstance->GetEntityName() == itCommand2Entity->second)
 			{
-				pInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+				pInstance->_instance::setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
 				auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pInstance);
 				ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
@@ -1538,7 +1538,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
 		{
-			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
+			pInstance->_instance::setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
 		}
 
 		ClickItem_UpdateChildren(hChild);
@@ -1616,7 +1616,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->setEnable(true);
+			pInstance->_instance::setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1634,7 +1634,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->setEnable(false);
+			pInstance->_instance::setEnable(false);
 		}
 
 		if (bRecursive)
@@ -1652,7 +1652,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->setEnable(true);
+			pInstance->_instance::setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1668,7 +1668,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 	CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 	if (pInstance != nullptr)
 	{
-		pInstance->setEnable(true);
+		pInstance->_instance::setEnable(true);
 	}
 
 	if (bRecursive)

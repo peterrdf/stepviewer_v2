@@ -235,7 +235,7 @@ CIFCModel::~CIFCModel()
 	m_mapExpressID2Instance.clear();
 
 	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	pInstance->setEnable(true);
+	pInstance->_instance::setEnable(true);
 
 	m_vecInstances.push_back(pInstance);
 	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
@@ -411,7 +411,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		CString strEntity = szEntityNameW;
 		strEntity.MakeUpper();
 
-		pInstance->setEnable(
+		pInstance->_instance::setEnable(
 			(strEntity == L"IFCSPACE") || 
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ||
@@ -445,7 +445,7 @@ void CIFCModel::GetObjectsReferencedState()
 		{
 			if (!itInstance.second->Referenced())
 			{
-				itInstance.second->setEnable(false);
+				itInstance.second->_instance::setEnable(false);
 			}
 		}
 	} // if (iIFCProjectInstancesCount > 0)

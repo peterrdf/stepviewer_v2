@@ -1453,5 +1453,6 @@ public: // Properties
 	T* getGeometryAs() const { return dynamic_cast<T*>(m_pGeometry); }
 	bool hasGeometry() const { return m_pGeometry->hasGeometry(); }
 	bool getEnable() const { return m_bEnable; }
+	void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	const _matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 };

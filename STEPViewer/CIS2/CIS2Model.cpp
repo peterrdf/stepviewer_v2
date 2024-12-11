@@ -317,7 +317,7 @@ void CCIS2Model::LodDesignParts()
 		ASSERT(iInstance != 0);
 
 		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::DesignPart, DEFAULT_CIRCLE_SEGMENTS);
-		pInstance->setEnable(true);
+		pInstance->_instance::setEnable(true);
 
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;
@@ -335,7 +335,7 @@ void CCIS2Model::LoadRepresentations()
 		ASSERT(iInstance != 0);
 
 		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::Reperesentation, DEFAULT_CIRCLE_SEGMENTS);
-		pInstance->setEnable(true);
+		pInstance->_instance::setEnable(true);
 
 		m_vecInstances.push_back(pInstance);
 		m_mapInstances[iInstance] = pInstance;
