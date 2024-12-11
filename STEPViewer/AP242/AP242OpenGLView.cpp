@@ -16,10 +16,7 @@ static const int MIN_VIEW_PORT_LENGTH = 100;
 CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
-	, m_ptPrevMousePosition(-1, -1)
-	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pPointedInstance(nullptr)
-	, m_pSelectedInstance(nullptr)
+	, m_ptPrevMousePosition(-1, -1)	
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
 {
@@ -68,8 +65,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 {
 	GetController()->UnRegisterView(this);
 
-	delete m_pInstanceSelectionFrameBuffer;
-
 	_destroy();
 
 	delete m_pSelectedInstanceMaterial;
@@ -98,54 +93,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 /*virtual*/ void CAP242OpenGLView::_load(_model* pModel) /*override*/
 {
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-	// OpenGL buffers
-	m_oglBuffers.clear();
-
-	m_pInstanceSelectionFrameBuffer->encoding().clear();
-	m_pPointedInstance = nullptr;
-	m_pSelectedInstance = nullptr;
-
-	auto pAP242Model = GetModel<_model>();
-	if (pAP242Model == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pAP242Model->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	/*
-	* Bounding sphere diameter
-	*/
-	float fBoundingSphereDiameter = fXmax - fXmin;
-	fBoundingSphereDiameter = fmaxf(fBoundingSphereDiameter, fYmax - fYmin);
-	fBoundingSphereDiameter = fmaxf(fBoundingSphereDiameter, fZmax - fZmin);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pAP242Model->getBoundingSphereDiameter() * 2.f);
-
-	m_fScaleFactor = pAP242Model->getBoundingSphereDiameter();
-
 	_oglView::_load(pModel);
 }
 

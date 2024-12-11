@@ -17,11 +17,6 @@ private: // Members
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
 
-	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CAP242ProductInstance* m_pPointedInstance;
-	CAP242ProductInstance* m_pSelectedInstance;
-
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;

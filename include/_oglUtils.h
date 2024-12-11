@@ -3714,22 +3714,68 @@ private: //  Methods
 
 // ************************************************************************************************
 class _model;
+class _instance;
 
 // ************************************************************************************************
 class _oglView : public _oglRenderer
 {
 
+protected: // Members
+
+	// Selection
+	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
+	_instance* m_pPointedInstance;
+	_instance* m_pSelectedInstance;
+
 public: // Methods
 
 	_oglView()
+		: m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
+		, m_pPointedInstance(nullptr)
+		, m_pSelectedInstance(nullptr)
 	{}
 
 	virtual ~_oglView()
-	{}
+	{
+		delete m_pInstanceSelectionFrameBuffer;
+	}
 
 	virtual void _load(_model* pModel)
 	{
 		assert(pModel != nullptr);
+
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		// OpenGL buffers
+		m_oglBuffers.clear();
+
+		m_pInstanceSelectionFrameBuffer->encoding().clear();
+		m_pPointedInstance = nullptr;
+		m_pSelectedInstance = nullptr;
+
+		float fXmin = -1.f;
+		float fXmax = 1.f;
+		float fYmin = -1.f;
+		float fYmax = 1.f;
+		float fZmin = -1.f;
+		float fZmax = 1.f;
+		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		m_fXTranslation = fXmin;
+		m_fXTranslation += (fXmax - fXmin) / 2.f;
+		m_fXTranslation = -m_fXTranslation;
+
+		m_fYTranslation = fYmin;
+		m_fYTranslation += (fYmax - fYmin) / 2.f;
+		m_fYTranslation = -m_fYTranslation;
+
+		m_fZTranslation = fZmin;
+		m_fZTranslation += (fZmax - fZmin) / 2.f;
+		m_fZTranslation = -m_fZTranslation;
+		m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
+
+		m_fScaleFactor = pModel->getBoundingSphereDiameter();
 
 		// Limits
 		GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
