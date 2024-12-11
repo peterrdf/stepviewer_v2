@@ -992,7 +992,7 @@ void CIFCOpenGLView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(dynamic_cast<_instance*>(pInstance)->getID());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(

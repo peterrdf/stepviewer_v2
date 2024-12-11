@@ -37,14 +37,9 @@ CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2In
 
 	*piVertexBufferSize = *piIndexBufferSize = 0;
 
-	SdaiModel iSdaiModel = sdaiGetInstanceModel((int_t)m_iInstance);
+	CalculateInstance(m_iInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
 
-	int64_t iOwlInstance = 0;
-	owlBuildInstance(iSdaiModel, (int_t)m_iInstance, &iOwlInstance);
-
-	CalculateInstance(iOwlInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
-
-	return iOwlInstance;
+	return m_iInstance;
 }
 
 void CCIS2Instance::CalculateMinMax(
