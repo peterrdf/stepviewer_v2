@@ -65,7 +65,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->getID()] = pInstance;
-		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 	}
 
 	// Scale
@@ -84,7 +83,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 
 	m_mapInstances.clear();
 	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
 }
 
 /*virtual*/ void CCIS2Model::ZoomToInstance(_instance* pInstance) /*override*/

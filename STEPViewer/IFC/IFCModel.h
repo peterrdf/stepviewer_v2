@@ -2,11 +2,12 @@
 #define IFCFILEPARSER_H
 
 #include "_ap_mvc.h"
+#include "Entity.h"
+
+#include "IFCGeometry.h"
 #include "IFCInstance.h"
-#include "Texture.h"
 #include "IFCUnit.h"
 #include "IFCProperty.h"
-#include "Entity.h"
 #include "IFCAttribute.h"
 
 #include <string>

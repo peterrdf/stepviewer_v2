@@ -35,7 +35,6 @@ protected: // Members
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
-	map<ExpressID, _ap_instance*> m_mapExpressID2Instance;
 
 public: // Methods
 
@@ -45,7 +44,6 @@ public: // Methods
 		, m_enAP(enAP)
 		, m_pEntityProvider(nullptr)
 		, m_mapExpressID2Geometry()
-		, m_mapExpressID2Instance()
 	{}
 
 	virtual ~_ap_model()
@@ -83,28 +81,28 @@ public: // Methods
 		attachModelCore();
 	}
 
-	_ap_instance* getInstanceByExpressID(int64_t iExpressID) const
+	_geometry* getGeometryByExpressID(int64_t iExpressID) const
 	{
 		assert(iExpressID != 0);
 
-		auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
-		if (itExpressID2Instance != m_mapExpressID2Instance.end())
+		auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
+		if (itExpressID2Geometry != m_mapExpressID2Geometry.end())
 		{
-			return itExpressID2Instance->second;
+			return itExpressID2Geometry->second;
 		}
 
 		return nullptr;
 	}
 
 	template<typename T>
-	T* getInstanceByExpressIDAs(int64_t iExpressID) const
+	T* getGeometryByExpressIDAs(int64_t iExpressID) const
 	{
 		assert(iExpressID != 0);
 
-		auto itExpressID2Instance = m_mapExpressID2Instance.find(iExpressID);
-		if (itExpressID2Instance != m_mapExpressID2Instance.end())
+		auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
+		if (itExpressID2Geometry != m_mapExpressID2Geometry.end())
 		{
-			return dynamic_cast<T*>(itExpressID2Instance->second);
+			return dynamic_cast<T*>(itExpressID2Geometry->second);
 		}
 
 		return nullptr;
@@ -167,7 +165,6 @@ protected: // Methods
 		}
 
 		m_mapExpressID2Geometry.clear();
-		m_mapExpressID2Instance.clear();
 
 		delete m_pEntityProvider;
 		m_pEntityProvider = nullptr;

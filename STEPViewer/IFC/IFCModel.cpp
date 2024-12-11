@@ -100,7 +100,6 @@ CIFCModel::~CIFCModel()
 	for (auto pInstance : m_vecInstances)
 	{
 		m_mapID2Instance[pInstance->getID()] = pInstance;
-		//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 	}
 
 	// Scale
@@ -119,7 +118,6 @@ CIFCModel::~CIFCModel()
 
 	m_mapInstances.clear();
 	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
 
 	delete m_pUnitProvider;
 	m_pUnitProvider = nullptr;
@@ -232,7 +230,6 @@ CIFCModel::~CIFCModel()
 
 	m_mapInstances.clear();
 	m_mapID2Instance.clear();
-	m_mapExpressID2Instance.clear();
 
 	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
 	pInstance->_instance::setEnable(true);
@@ -242,7 +239,6 @@ CIFCModel::~CIFCModel()
 
 	// Helper data structures
 	m_mapID2Instance[pInstance->getID()] = pInstance;
-	//m_mapExpressID2Instance[pInstance->ExpressID()] = pInstance;#todo
 
 	// Scale
 	Scale();
