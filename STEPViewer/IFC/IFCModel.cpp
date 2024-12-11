@@ -128,7 +128,7 @@ CIFCModel::~CIFCModel()
 	m_pPropertyProvider = nullptr;
 }
 
-/*virtual*/ void CIFCModel::ZoomToInstance(CInstanceBase* pInstance) /*override*/
+/*virtual*/ void CIFCModel::ZoomToInstance(_instance* pInstance) /*override*/
 {
 	ASSERT(pInstance != nullptr);
 
@@ -140,7 +140,7 @@ CIFCModel::~CIFCModel()
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pIFCInstance->getSdaiInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pIFCInstance->_ap_geometry::getSdaiInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 
@@ -218,7 +218,7 @@ CIFCModel::~CIFCModel()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-/*virtual*/ CInstanceBase* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
+/*virtual*/ _instance* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
 {
 	ASSERT(iInstance != 0);
 

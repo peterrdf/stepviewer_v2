@@ -1,6 +1,5 @@
 #pragma once
 
-#include "InstanceBase.h"
 #include "_ap_mvc.h"
 #include "CIS2DesignPart.h"
 #include "CIS2Representation.h"
@@ -37,9 +36,9 @@ public: // Methods
 	virtual ~CCIS2Model();
 
 	// _model
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomToInstance(_instance* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
+	virtual _instance* LoadInstance(OwlInstance iInstance) override;
 
 protected: // Methods
 

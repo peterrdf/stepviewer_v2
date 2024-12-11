@@ -3,7 +3,6 @@
 
 #include "TreeCtrlEx.h"
 #include "ViewBase.h"
-#include "InstanceBase.h"
 #include "OWLProperty.h"
 
 #include <map>

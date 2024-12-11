@@ -1446,6 +1446,7 @@ public: // Methods
 
 public: // Properties
 
+	OwlInstance getOwlInstance() const { return getGeometry()->getInstance(); }
 	int64_t getID() const { return m_iID; }
 	_geometry* getGeometry() const { return m_pGeometry; }
 	template<typename T>

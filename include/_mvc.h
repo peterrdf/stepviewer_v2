@@ -1,6 +1,5 @@
 #pragma once
 
-#include "InstanceBase.h"
 #include "_geometry.h"
 #include "_settings_storage.h"
 
@@ -60,9 +59,9 @@ public: // Methods
 		clean();
 	}
 
-	virtual void ZoomToInstance(CInstanceBase* pInstance) PURE;
+	virtual void ZoomToInstance(_instance* pInstance) PURE;
 	virtual void ZoomOut() PURE;
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) PURE;
+	virtual _instance* LoadInstance(OwlInstance iInstance) PURE;
 
 protected: // Methods
 

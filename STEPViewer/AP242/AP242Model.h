@@ -34,9 +34,9 @@ public: // Methods
 	virtual ~CAP242Model();
 
 	// _model
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomToInstance(_instance* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
+	virtual _instance* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
 
 protected: // Methods
 

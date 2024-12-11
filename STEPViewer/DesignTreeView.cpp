@@ -254,7 +254,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = CInstanceBase::GetName((SdaiInstance)iInstance);
+	wstring strItem = _ap_instance::GetName((SdaiInstance)iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;

@@ -90,7 +90,7 @@ CAP242Model::~CAP242Model()
 	m_iID = 1;
 }
 
-/*virtual*/ void CAP242Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
+/*virtual*/ void CAP242Model::ZoomToInstance(_instance* pInstance) /*override*/
 {	
 	ASSERT(pInstance != nullptr);
 

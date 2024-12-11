@@ -1,7 +1,5 @@
 #pragma once
 
-#include "InstanceBase.h"
-
 #include "engdef.h"
 
 #include <vector>

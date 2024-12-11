@@ -4,7 +4,6 @@
 #include "_oglUtils.h"
 
 #include "AP242ProductInstance.h"
-#include "InstanceBase.h"
 
 #include <string>
 #include <vector>

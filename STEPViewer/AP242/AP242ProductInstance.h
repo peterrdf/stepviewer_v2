@@ -1,14 +1,13 @@
 #pragma once
 
 #include "_ap_instance.h"
-#include "InstanceBase.h"
 
 // ************************************************************************************************
 class CAP242ProductDefinition;
 
 // ************************************************************************************************
 class CAP242ProductInstance 
-	: public CInstanceBase	
+	: public _ap_instance
 {
 	friend class CAP242ProductDefinition;
 

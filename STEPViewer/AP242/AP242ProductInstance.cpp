@@ -4,7 +4,7 @@
 
 // ************************************************************************************************
 CAP242ProductInstance::CAP242ProductInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
-	: CInstanceBase(iID, pGeometry, pTransformationMatrix)
+	: _ap_instance(iID, pGeometry, pTransformationMatrix)
 	, m_iID(iID)
 	, m_pProductDefinition((CAP242ProductDefinition*)pGeometry)
 	, m_pTransformationMatrix(nullptr)

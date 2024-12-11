@@ -87,7 +87,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_mapExpressID2Instance.clear();
 }
 
-/*virtual*/ void CCIS2Model::ZoomToInstance(CInstanceBase* pInstance) /*override*/
+/*virtual*/ void CCIS2Model::ZoomToInstance(_instance* pInstance) /*override*/
 {
 	ASSERT(pInstance != nullptr);
 	
@@ -99,7 +99,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pCIS2Representation->getSdaiInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pCIS2Representation->_ap_geometry::getSdaiInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 
@@ -177,7 +177,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-/*virtual*/ CInstanceBase* CCIS2Model::LoadInstance(OwlInstance /*iInstance*/) /*override*/
+/*virtual*/ _instance* CCIS2Model::LoadInstance(OwlInstance /*iInstance*/) /*override*/
 {
 	ASSERT(FALSE); //#todo
 

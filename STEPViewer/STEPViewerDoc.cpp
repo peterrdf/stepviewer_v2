@@ -27,7 +27,7 @@
 		return;
 	} 
 
-	CString strValidPath = GetSelectedInstance()->GetName().c_str();
+	CString strValidPath = dynamic_cast<_ap_instance*>(GetSelectedInstance())->GetName().c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
 	strValidPath.Replace(_T("/"), _T("-"));
 	strValidPath.Replace(_T(":"), _T("-"));
@@ -52,7 +52,7 @@
 	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->getSdaiInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(dynamic_cast<_ap_instance*>(GetSelectedInstance())->getSdaiInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;

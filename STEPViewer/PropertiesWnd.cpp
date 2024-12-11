@@ -1062,7 +1062,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->getSdaiInstance());
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->_ap_geometry::getSdaiInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;

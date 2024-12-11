@@ -2,7 +2,7 @@
 #define IFCINSTANCE_H
 
 #include "_oglUtils.h"
-#include "InstanceBase.h"
+#include "_ap_mvc.h"
 
 #include "engine.h"
 
@@ -12,8 +12,8 @@ using namespace std;
 
 // ************************************************************************************************
 class CIFCInstance
-	: public _geometry
-	, public CInstanceBase
+	: public _ap_geometry
+	, public _ap_instance
 {
 	friend class CIFCModel;
 
@@ -35,7 +35,7 @@ public: // Methods
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
-	SdaiModel GetModel() const { return sdaiGetInstanceModel(getSdaiInstance()); }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(_ap_geometry::getSdaiInstance()); }
 	ExpressID ExpressID() const { return m_iExpressID; }
 	bool& Referenced() { return m_bReferenced; }
 	

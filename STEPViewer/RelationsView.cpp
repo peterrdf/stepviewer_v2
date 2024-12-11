@@ -81,7 +81,7 @@ static char THIS_FILE[]=__FILE__;
 	vecInstances.push_back(iInstance);
 
 	LoadProperties(
-		(SdaiInstance)CInstanceBase::GetEntity(iInstance),
+		(SdaiInstance)_ap_instance::GetEntity(iInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
@@ -316,7 +316,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	for (auto iInstance : vecInstances)
 	{
 		LoadInstance(
-			(SdaiInstance)CInstanceBase::GetEntity(iInstance),
+			(SdaiInstance)_ap_instance::GetEntity(iInstance),
 			iInstance, 
 			hModel);
 	}
@@ -375,7 +375,7 @@ void CRelationsView::LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hPar
 	/*
 	* Instance
 	*/
-	wstring strItem = CInstanceBase::GetName(iInstance);
+	wstring strItem = _ap_instance::GetName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;

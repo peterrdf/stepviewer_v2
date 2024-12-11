@@ -542,7 +542,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -565,7 +565,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -1225,7 +1225,7 @@ void CCIS2ModelStructureView::LoadInstance(CCIS2Model* pModel, SdaiInstance iIns
 	auto itInstance = mapInstances.find(iInstance);
 	if (itInstance != mapInstances.end())
 	{
-		wstring strItem = CInstanceBase::GetName(iInstance);
+		wstring strItem = _ap_instance::GetName(iInstance);
 
 		/*
 		* Object
@@ -1345,7 +1345,7 @@ void CCIS2ModelStructureView::LoadUnreferencedItems(CCIS2Model* pModel, HTREEITE
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = CInstanceBase::GetName(pInstance->getSdaiInstance());
+			wstring strItem = _ap_instance::GetName(pInstance->_ap_geometry::getSdaiInstance());
 
 			/*
 			* Object

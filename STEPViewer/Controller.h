@@ -24,10 +24,10 @@ private: // Members
 	set<CViewBase*> m_setViews; // Views - MVC	
 	
 	// Target
-	CInstanceBase* m_pTargetInstance;
+	_instance* m_pTargetInstance;
 
 	// Selection
-	CInstanceBase* m_pSelectedInstance;
+	_instance* m_pSelectedInstance;
 	
 	// UI properties
 	BOOL m_bScaleAndCenter;
@@ -39,7 +39,7 @@ public: // Methods
 	
 	_ap_model* GetModel() const;
 	void SetModel(_ap_model* pModel);
-	CInstanceBase* LoadInstance(OwlInstance iInstance);
+	_instance* LoadInstance(OwlInstance iInstance);
 
 	// Events
 	void RegisterView(CViewBase* pView);
@@ -74,11 +74,11 @@ public: // Methods
 	void ScaleAndCenter();
 	
 	// Events
-	void ShowMetaInformation(CInstanceBase* pInstance);
-	void SetTargetInstance(CViewBase* pSender, CInstanceBase* pInstance);
-	CInstanceBase* GetTargetInstance() const;
-	void SelectInstance(CViewBase* pSender, CInstanceBase* pInstance);
-	CInstanceBase* GetSelectedInstance() const;
+	void ShowMetaInformation(_instance* pInstance);
+	void SetTargetInstance(CViewBase* pSender, _instance* pInstance);
+	_instance* GetTargetInstance() const;
+	void SelectInstance(CViewBase* pSender, _instance* pInstance);
+	_instance* GetSelectedInstance() const;
 
 	// UI
 	BOOL GetScaleAndCenter() const;

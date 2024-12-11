@@ -1,7 +1,6 @@
 #ifndef IFCFILEPARSER_H
 #define IFCFILEPARSER_H
 
-#include "InstanceBase.h"
 #include "_ap_mvc.h"
 #include "IFCInstance.h"
 #include "Texture.h"
@@ -66,9 +65,9 @@ public: // Methods
 	virtual ~CIFCModel();
 
 	// _model
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
+	virtual void ZoomToInstance(_instance* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance iInstance) override;
+	virtual _instance* LoadInstance(OwlInstance iInstance) override;
 
 protected: // Methods
 

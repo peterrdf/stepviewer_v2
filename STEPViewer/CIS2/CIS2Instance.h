@@ -1,8 +1,8 @@
 #ifndef CIS2_INSTANCE_H
 #define CIS2_INSTANCE_H
 
+#include "_ap_mvc.h"
 #include "_oglUtils.h"
-#include "InstanceBase.h"
 
 #include "engine.h"
 
@@ -20,8 +20,8 @@ enum class enumCIS2InstanceType
 
 // ************************************************************************************************
 class CCIS2Instance
-	: public _geometry
-	, public CInstanceBase
+	: public _ap_geometry
+	, public _ap_instance
 {
 
 private: // Members
@@ -46,7 +46,7 @@ public: // Methods
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize) override;
 
 	// CInstanceBase
-	SdaiModel GetModel() const { return sdaiGetInstanceModel(getSdaiInstance()); }
+	SdaiModel GetModel() const { return sdaiGetInstanceModel(_ap_geometry::getSdaiInstance()); }
 	ExpressID ExpressID() const { return m_iExpressID; }
 	bool& Referenced() { return m_bReferenced; }
 	

@@ -84,12 +84,6 @@
     <ClInclude Include="IFC\IFCUnit.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InstanceBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -259,12 +253,6 @@
     </ClCompile>
     <ClCompile Include="IFC\IFCUnit.cpp">
       <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InstanceBase.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>

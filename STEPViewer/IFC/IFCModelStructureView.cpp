@@ -543,7 +543,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -566,7 +566,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -1241,7 +1241,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstanc
 	{
 		ASSERT(itInstance->second->Referenced());		
 
-		wstring strItem = CInstanceBase::GetName(iInstance);
+		wstring strItem = _ap_instance::GetName(iInstance);
 
 		/*
 		* Object
@@ -1358,7 +1358,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = CInstanceBase::GetName(pInstance->getSdaiInstance());
+			wstring strItem = _ap_instance::GetName(pInstance->_ap_geometry::getSdaiInstance());
 
 			/*
 			* Object

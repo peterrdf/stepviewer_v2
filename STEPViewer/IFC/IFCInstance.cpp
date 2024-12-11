@@ -6,8 +6,8 @@
 
 // ************************************************************************************************
 CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
-	: _geometry(iSdaiInstance, true)
-	, CInstanceBase(iID, this, nullptr)
+	: _ap_geometry(iSdaiInstance)
+	, _ap_instance(iID, this, nullptr)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
 {

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Controller.h"
-#include "InstanceBase.h"
 #include "_mvc.h"
 #include "ViewBase.h"
 
@@ -53,14 +52,14 @@ void CController::SetModel(_ap_model* pModel)
 	m_bUpdatingModel = false;
 }
 
-CInstanceBase* CController::LoadInstance(OwlInstance iInstance)
+_instance* CController::LoadInstance(OwlInstance iInstance)
 {
 	ASSERT(iInstance != 0);
 	ASSERT(m_pModel != nullptr);
 
 	m_pSelectedInstance = nullptr;
 
-	if ((m_pTargetInstance != nullptr) && (m_pTargetInstance->getSdaiInstance() == iInstance))
+	if ((m_pTargetInstance != nullptr) && (dynamic_cast<_ap_instance*>(m_pTargetInstance)->getSdaiInstance() == iInstance))
 	{
 		return nullptr;
 	}
@@ -141,7 +140,7 @@ void CController::SaveInstance(OwlInstance iInstance)
 
 	wstring strName;
 	wstring strUniqueName;
-	CInstanceBase::BuildInstanceNames(m_pModel->getOwlModel(), iInstance, strName, strUniqueName);
+	_instance::BuildInstanceNames(m_pModel->getOwlModel(), iInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
@@ -182,13 +181,13 @@ void CController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::ShowMetaInformation(CInstanceBase* /*pInstance*/)
+void CController::ShowMetaInformation(_instance* /*pInstance*/)
 {
 	ASSERT(FALSE); // OBSOLETE
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::SetTargetInstance(CViewBase* pSender, CInstanceBase* pInstance)
+void CController::SetTargetInstance(CViewBase* pSender, _instance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -210,13 +209,13 @@ void CController::SetTargetInstance(CViewBase* pSender, CInstanceBase* pInstance
 }
 
 // ------------------------------------------------------------------------------------------------
-CInstanceBase* CController::GetTargetInstance() const
+_instance* CController::GetTargetInstance() const
 {
 	return m_pTargetInstance;
 }
 
 
-void CController::SelectInstance(CViewBase* pSender, CInstanceBase* pInstance)
+void CController::SelectInstance(CViewBase* pSender, _instance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -233,7 +232,7 @@ void CController::SelectInstance(CViewBase* pSender, CInstanceBase* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-CInstanceBase* CController::GetSelectedInstance() const
+_instance* CController::GetSelectedInstance() const
 {
 	return m_pSelectedInstance;
 }
