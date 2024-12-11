@@ -470,22 +470,7 @@ public: // Methods
 		clean();
 	}
 
-	void scale(float fScaleFactor)
-	{
-		if (getVerticesCount() == 0)
-		{
-			return;
-		}
-
-		const auto VERTEX_LENGTH = getVertexLength();
-
-		for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
-		{
-			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0] /= fScaleFactor;
-			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= fScaleFactor;
-			m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
-		}
-	}
+	void scale(float fScaleFactor);
 
 	void translate(float fX, float fY, float fZ)
 	{
@@ -664,6 +649,12 @@ public: // Methods
 		} // if (!m_vecPoints.empty())
 	}
 
+	void calculateMinMaxTransform(
+		_instance* pInstance,
+		float& fXmin, float& fXmax,
+		float& fYmin, float& fYmax,
+		float& fZmin, float& fZmax);
+
 	// Metadata
 	OwlInstance getInstance() const { return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
@@ -710,6 +701,9 @@ public: // Methods
 	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }
 	vector<_cohort*>& biNormalVecsCohorts() { return m_vecBiNormalVecsCohorts; }
 	vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
+
+	// Instances
+	const vector<_instance*>& getInstances() { return m_vecInstances; }
 
 	// VBO (OpenGL)
 	GLuint& VBO() { return m_iVBO; }

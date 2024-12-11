@@ -1062,7 +1062,7 @@ void CAP242PModelStructureView::WalkAssemblyTreeRecursively(CAP242Model* pModel,
 			*/
 			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
-				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
+				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->getInstances();
 				int32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextInstance();
 
 				strName = pAssembly->GetRelatedProductDefinition()->GetId();
@@ -1121,7 +1121,7 @@ void CAP242PModelStructureView::LoadProductDefinitionsInMemory(CAP242Model* pMod
 	} // if (pDefinition->GetRelatingProductRefs() > 0)	
 	else
 	{
-		auto& vecInstances = pDefinition->GetInstances();
+		auto& vecInstances = pDefinition->getInstances();
 		int32_t iInstance = pDefinition->GetNextInstance();
 
 		auto pProductInstanceData = new CAP242ItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
@@ -1156,7 +1156,7 @@ void CAP242PModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model*
 			*/
 			if (pAssembly->GetRelatedProductDefinition()->GetRelatingProducts() == 0)
 			{
-				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->GetInstances();
+				auto& vecInstances = pAssembly->GetRelatedProductDefinition()->getInstances();
 				int32_t iInstance = pAssembly->GetRelatedProductDefinition()->GetNextInstance();
 
 				auto pInstanceItemData = new CAP242ItemData(pAssemblyItemData, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
@@ -1179,7 +1179,7 @@ void CAP242PModelStructureView::WalkAssemblyTreeRecursivelyInMemory(CAP242Model*
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...	
 
-	auto& vecInstances = pDefinition->GetInstances();
+	auto& vecInstances = pDefinition->getInstances();
 	int32_t iInstance = pDefinition->GetNextInstance();
 
 	auto pInstanceItemData = new CAP242ItemData(pParent, (int64_t*)vecInstances[iInstance], enumSTEPItemDataType::ProductInstance);
@@ -1293,7 +1293,7 @@ void CAP242PModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 				ASSERT(pDefinition->GetId() != nullptr);
 				ASSERT(pDefinition->GetProductName() != nullptr);
 
-				strName.Format(L"#%lld %s %s", pDefinition->GetExpressID(), pDefinition->GetProductName(), ITEM_PRODUCT_DEFINION);
+				strName.Format(L"#%lld %s %s", pDefinition->getExpressID(), pDefinition->GetProductName(), ITEM_PRODUCT_DEFINION);
 			}
 			break;
 

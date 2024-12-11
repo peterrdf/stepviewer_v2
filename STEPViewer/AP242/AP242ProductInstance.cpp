@@ -11,3 +11,8 @@ CAP242ProductInstance::CAP242ProductInstance(int64_t iID, _geometry* pGeometry, 
 CAP242ProductInstance::~CAP242ProductInstance()
 {
 }
+
+CAP242ProductDefinition* CAP242ProductInstance::GetProductDefinition() const 
+{ 
+	return getGeometryAs<CAP242ProductDefinition>();
+}

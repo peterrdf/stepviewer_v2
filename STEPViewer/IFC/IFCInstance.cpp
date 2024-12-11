@@ -5,20 +5,27 @@
 #include <math.h>
 
 // ************************************************************************************************
-CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance)
-	: _ap_geometry(iSdaiInstance)
+CIFCInstance::CIFCInstance(int64_t iID, SdaiInstance sdaiInstance)
+	: _ap_geometry(sdaiInstance)
 	, _ap_instance(iID, this, nullptr)
-	, m_iExpressID(internalGetP21Line(iSdaiInstance))
 	, m_bReferenced(false)
 {
-	ASSERT(iSdaiInstance != 0);
-	ASSERT(m_iExpressID != 0);
-
 	calculate();
 }
 
 CIFCInstance::~CIFCInstance()
 {}
+
+/*virtual*/ void CIFCInstance::preCalculate() /*override*/
+{
+	// Format
+	setSTEPFormatSettings();
+
+	// Extra settings
+	const int_t flagbit1 = 2;
+	setFilter(GetModel(), flagbit1, flagbit1);
+	setSegmentation(GetModel(), 16, 0.);
+}
 
 /*virtual*/ OwlModel CIFCInstance::getModel() const /*override*/
 {

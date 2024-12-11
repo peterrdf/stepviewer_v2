@@ -16,6 +16,6 @@ public: // Methods
 
 public: // Properties
 
-	CAP242ProductDefinition* GetProductDefinition() const { return getGeometryAs<CAP242ProductDefinition>(); }
+	CAP242ProductDefinition* GetProductDefinition() const;
 };
 

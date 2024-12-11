@@ -399,7 +399,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -538,7 +538,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -643,7 +643,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -749,7 +749,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
 			for (auto pInstance : vecInstances)
 			{
 				if (!pInstance->getEnable())
@@ -869,7 +869,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = itDefinition->second->GetInstances();
+			auto& vecInstances = itDefinition->second->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
@@ -927,7 +927,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->GetInstances();
+			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];

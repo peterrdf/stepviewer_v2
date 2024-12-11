@@ -18,9 +18,6 @@ class CIFCInstance
 	friend class CIFCModel;
 
 private: // Members
-
-	// Metadata
-	ExpressID m_iExpressID;
 	
 	// UI
 	bool m_bReferenced;
@@ -30,12 +27,18 @@ public: // Methods
 	CIFCInstance(int64_t iID, SdaiInstance iSdaiInstance);
 	virtual ~CIFCInstance();
 
+protected: // Methods
+
+	// _geometry
+	virtual void preCalculate() override;
+
+public: // Methods
+
 	// _geometry
 	virtual OwlModel getModel() const override;
 
 	// CInstanceBase
 	SdaiModel GetModel() const { return sdaiGetInstanceModel(_ap_geometry::getSdaiInstance()); }
-	ExpressID ExpressID() const { return m_iExpressID; }
 	bool& Referenced() { return m_bReferenced; }
 };
 

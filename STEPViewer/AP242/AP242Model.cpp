@@ -111,9 +111,8 @@ CAP242Model::~CAP242Model()
 
 	m_fBoundingSphereDiameter = 0.f;
 
-	pProductInstance->GetProductDefinition()->CalculateMinMaxTransform(
+	pProductInstance->GetProductDefinition()->calculateMinMaxTransform(
 		pProductInstance,
-		0., 0., 0.,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,
 		m_fZmin, m_fZmax);
@@ -152,7 +151,7 @@ CAP242Model::~CAP242Model()
 	auto itDefinition = m_mapExpressID2Definition.begin();
 	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
 	{
-		auto& vecInstances = itDefinition->second->GetInstances();
+		auto& vecInstances = itDefinition->second->getInstances();
 		for (auto pInstance : vecInstances)
 		{
 			if (!pInstance->getEnable())
@@ -160,9 +159,8 @@ CAP242Model::~CAP242Model()
 				continue;
 			}
 
-			itDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->calculateMinMaxTransform(
 				pInstance,
-				0., 0., 0.,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
 				m_fZmin, m_fZmax);
@@ -224,10 +222,10 @@ void CAP242Model::Scale()
 			continue;
 		}
 
-		auto itInstance = itDefinition->second->GetInstances();
-		for (auto pInstance : itDefinition->second->GetInstances())
+		auto itInstance = itDefinition->second->getInstances();
+		for (auto pInstance : itDefinition->second->getInstances())
 		{
-			itDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->calculateMinMaxTransform(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -275,7 +273,7 @@ void CAP242Model::Scale()
 			continue;
 		}
 
-		itDefinition->second->Scale(m_fBoundingSphereDiameter / 2.f);
+		itDefinition->second->scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -294,15 +292,15 @@ void CAP242Model::Scale()
 			continue;
 		}
 
-		auto itInstance = itDefinition->second->GetInstances();
-		for (auto pInstance : itDefinition->second->GetInstances())
+		auto itInstance = itDefinition->second->getInstances();
+		for (auto pInstance : itDefinition->second->getInstances())
 		{
 			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			itDefinition->second->CalculateMinMaxTransform(
+			itDefinition->second->calculateMinMaxTransform(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -367,11 +365,11 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
 	m_vecGeometries.push_back(pGeometry);
 
-	ASSERT(m_mapExpressID2Geometry.find(pGeometry->GetExpressID()) == m_mapExpressID2Geometry.end());
-	m_mapExpressID2Geometry[pGeometry->GetExpressID()] = pGeometry;
+	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
 
-	ASSERT(m_mapExpressID2Definition.find(pGeometry->GetExpressID()) == m_mapExpressID2Definition.end());
-	m_mapExpressID2Definition[pGeometry->GetExpressID()] = pGeometry;
+	ASSERT(m_mapExpressID2Definition.find(pGeometry->getExpressID()) == m_mapExpressID2Definition.end());
+	m_mapExpressID2Definition[pGeometry->getExpressID()] = pGeometry;
 
 	return pGeometry;
 }
