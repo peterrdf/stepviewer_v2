@@ -38,22 +38,10 @@ static int64_t GetObjectProperty(OwlInstance iInstance, char* szPropertyName)
 }
 
 // ************************************************************************************************
-static uint32_t DEFAULT_COLOR_R = 175;
-static uint32_t DEFAULT_COLOR_G = 175;
-static uint32_t DEFAULT_COLOR_B = 175;
-static uint32_t DEFAULT_COLOR_A = 255;
-/*static*/ uint32_t CAP242Model::DEFAULT_COLOR =
-	256 * 256 * 256 * DEFAULT_COLOR_R +
-	256 * 256 * DEFAULT_COLOR_G +
-	256 * DEFAULT_COLOR_B +
-	DEFAULT_COLOR_A;
-
-// ************************************************************************************************
 CAP242Model::CAP242Model()
 	: _ap_model(enumAP::STEP)
-	, m_mapID2Instance()
-	, m_mapExpressIDAssembly()
 	, m_iID(1)
+	, m_mapExpressIDAssembly()
 {
 }
 
@@ -77,16 +65,14 @@ CAP242Model::~CAP242Model()
 {
 	_ap_model::clean();
 
-	m_mapID2Instance.clear();
+	m_iID = 1;
 
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
 	{
 		delete itAssembly->second;
 	}
-	m_mapExpressIDAssembly.clear();
-
-	m_iID = 1;
+	m_mapExpressIDAssembly.clear();	
 }
 
 /*virtual*/ void CAP242Model::ZoomToInstance(_instance* pInstance) /*override*/
@@ -196,7 +182,7 @@ CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
 		return nullptr;
 	}
 
-	return itInstance->second;
+	return _ptr<CAP242ProductInstance>(itInstance->second).p();
 }
 
 void CAP242Model::Scale()
@@ -204,7 +190,7 @@ void CAP242Model::Scale()
 	scale();
 }
 
-void CAP242Model::Save(const wchar_t * /*szPath*/)
+void CAP242Model::Save(const wchar_t* /*szPath*/)
 {
 	ASSERT(0); // todo
 	//m_pModel->saveModelW(szPath);
@@ -373,5 +359,6 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		pParentMatrix);
 	m_vecInstances.push_back(pInstance);
 	m_mapID2Instance[pInstance->getID()] = pInstance;
+
 	pProductDefinition->addInstance(pInstance);
 }

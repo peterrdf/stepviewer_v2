@@ -494,7 +494,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
 	{
-		auto pInstance = pItemData->GetInstance<CAP242ProductInstance>();
+		auto pTargetInstance = pItemData->GetInstance<CAP242ProductInstance>();
 
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -502,19 +502,19 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pPopup = menu.GetSubMenu(0);
 
 		// Zoom to
-		if (!pInstance->getEnable())
+		if (!pTargetInstance->getEnable())
 		{
 			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		// Save
-		if (!pInstance->getEnable())
+		if (!pTargetInstance->getEnable())
 		{
 			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		// Enable
-		if (pInstance->getEnable())
+		if (pTargetInstance->getEnable())
 		{
 			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 		}
@@ -525,7 +525,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			return;
 		}
 
-		auto& mapInstances = pModel->GetInstances();
+		auto& vecInstances = pModel->getInstances();
 
 		switch (uiCommand)
 		{
@@ -549,12 +549,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case ID_INSTANCES_ENABLE:
 			{				
-				pInstance->setEnable(!pInstance->getEnable());
+				pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
-				int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 				
-				UpdateChildrenInMemory(pItemData, pInstance->getEnable());
+				UpdateChildrenInMemory(pItemData, pTargetInstance->getEnable());
 				
 				UpdateChildren(hItem);
 				UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
@@ -565,23 +565,22 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				auto itInstance = mapInstances.begin();
-				for (; itInstance != mapInstances.end(); itInstance++)
+				for (auto pInstance : vecInstances)
 				{
-					itInstance->second->setEnable(itInstance->second == pInstance);
+					pInstance->setEnable(pTargetInstance == pInstance);
 				}
 
-				ASSERT(pInstance->getEnable());
+				ASSERT(pTargetInstance->getEnable());
 				
 				ResetTree(false);				
 
-				auto itInstance2Item = m_mapInstance2Item.find(pInstance);
+				auto itInstance2Item = m_mapInstance2Item.find(pTargetInstance);
 				if (itInstance2Item == m_mapInstance2Item.end())
 				{
-					LoadInstanceAncestors(pInstance);
+					LoadInstanceAncestors(pTargetInstance);
 				}
 
-				itInstance2Item = m_mapInstance2Item.find(pInstance);
+				itInstance2Item = m_mapInstance2Item.find(pTargetInstance);
 				if (itInstance2Item == m_mapInstance2Item.end())
 				{
 					ASSERT(FALSE);
@@ -600,10 +599,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				auto itInstance = mapInstances.begin();
-				for (; itInstance != mapInstances.end(); itInstance++)
+				for (auto pInstance : vecInstances)
 				{
-					itInstance->second->setEnable(true);
+					pInstance->setEnable(true);
 				}
 
 				ResetTree(true);
@@ -614,7 +612,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 			case IDS_VIEW_IFC_RELATIONS:
 			{
-				pController->OnViewRelations(this, pInstance->getSdaiInstance());
+				pController->OnViewRelations(this, pTargetInstance->getSdaiInstance());
 			}
 			break;
 

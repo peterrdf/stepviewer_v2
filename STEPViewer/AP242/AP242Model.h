@@ -16,14 +16,9 @@ class CAP242Model : public _ap_model
 
 private: // Members
 
-	map<int64_t, CAP242ProductInstance*> m_mapID2Instance; // ID : Product Instance
-	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
-
 	int64_t m_iID;
 
-public: // Members
-
-	static uint32_t DEFAULT_COLOR;
+	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 public: // Methods
 	
@@ -43,13 +38,12 @@ protected: // Methods
 
 public: // Methods
 
-	const map<int64_t, CAP242ProductInstance*>& GetInstances() const { return m_mapID2Instance; }
 	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
 	CAP242ProductInstance* getProductInstanceByID(int64_t iID) const;
 
 	void Scale(); // [-1, 1]
 
-	void Save(const wchar_t * szPath);
+	void Save(const wchar_t* szPath);
 
 private: // Methods
 	
