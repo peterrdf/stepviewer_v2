@@ -77,8 +77,8 @@ CIFCModel::~CIFCModel()
 	{
 		RetrieveGeometryRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 
-		RetrieveGeometry("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-		RetrieveGeometry("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 		GetObjectsReferencedState();
 	}
@@ -126,9 +126,9 @@ void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>&
 //	}
 }
 
-void CIFCModel::RetrieveGeometry(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
+void CIFCModel::RetrieveGeometry(const char* szEntityName, int_t iCircleSegements)
 {
-	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char *) szEntityName);
+	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char*)szEntityName);
 
 	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
 	if (iIFCInstancesCount == 0)
@@ -141,7 +141,7 @@ void CIFCModel::RetrieveGeometry(const char * szEntityName, const wchar_t * szEn
 		SdaiInstance iInstance = 0;
 		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
-		LoadGeometry(szEntityNameW, iInstance, iCircleSegements);
+		LoadGeometry(szEntityName, iInstance, iCircleSegements);
 	}
 }
 
@@ -360,8 +360,7 @@ void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSe
 		char* szParenEntityName = nullptr;
 		engiGetEntityName(iParentEntity, sdaiSTRING, (const char**)&szParenEntityName);
 
-		wchar_t* szParentEntityNameW = CEntity::GetName(iParentEntity);
-		RetrieveGeometry(szParenEntityName, szParentEntityNameW, iCircleSegments);
+		RetrieveGeometry(szParenEntityName, iCircleSegments);
 	} // if (iIntancesCount != 0)
 
 	iIntancesCount = engiGetEntityCount(getSdaiInstance());
@@ -375,7 +374,7 @@ void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSe
 	}
 }
 
-_geometry* CIFCModel::LoadGeometry(const wchar_t* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
+_geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
 {
 	auto itGeometry = m_mapGeometries.find(sdaiInstance);
 	if (itGeometry != m_mapGeometries.end())
@@ -406,7 +405,7 @@ _geometry* CIFCModel::LoadGeometry(const wchar_t* szEntityName, SdaiInstance sda
 
 	pGeometry->addInstance(pInstance);
 
-	CString strEntity = szEntityName;
+	CString strEntity = (LPWSTR)CA2W(szEntityName);
 	strEntity.MakeUpper();
 
 	pInstance->_instance::setEnable(
