@@ -1035,11 +1035,11 @@ void CAP242OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 		m_pInstanceSelectionFrameBuffer->unbind();
 
-		CAP242ProductInstance* pPointedInstance = nullptr;
+		_instance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-			pPointedInstance = pModel->getProductInstanceByID(iInstanceID);
+			pPointedInstance = pModel->getInstanceByID(iInstanceID);
 			ASSERT(pPointedInstance != nullptr);
 		}
 

@@ -58,7 +58,7 @@ CAP242Model::~CAP242Model()
 
 	LoadGeometry();
 
-	Scale();
+	scale();
 }
 
 /*virtual*/ void CAP242Model::clean() /*override*/
@@ -170,24 +170,6 @@ CAP242Model::~CAP242Model()
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);*/
-}
-
-CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
-{
-	auto itInstance = m_mapID2Instance.find(iID);
-	if (itInstance == m_mapID2Instance.end())
-	{
-		ASSERT(FALSE);
-
-		return nullptr;
-	}
-
-	return _ptr<CAP242ProductInstance>(itInstance->second).p();
-}
-
-void CAP242Model::Scale()
-{
-	scale();
 }
 
 void CAP242Model::Save(const wchar_t* /*szPath*/)

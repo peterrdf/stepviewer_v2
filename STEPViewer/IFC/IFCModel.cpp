@@ -46,7 +46,6 @@ CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
-	, m_bUpdteVertexBuffers(true)
 {}
 
 CIFCModel::~CIFCModel()
@@ -84,23 +83,11 @@ CIFCModel::~CIFCModel()
 		GetObjectsReferencedState();
 	}
 
-	// Units
 	m_pUnitProvider = new CIFCUnitProvider(getSdaiInstance());
-
-	// Properties
 	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiInstance(), m_pUnitProvider);
-
-	// Attributes
 	m_pAttributeProvider = new CIFCAttributeProvider();
 
-	// Helper data structures
-	for (auto pInstance : m_vecInstances)
-	{
-		m_mapID2Instance[pInstance->getID()] = pInstance;
-	}
-
-	// Scale
-	Scale();
+	scale();
 }
 
 /*virtual*/ void CIFCModel::clean() /*override*/
@@ -205,43 +192,6 @@ CIFCModel::~CIFCModel()
 	//m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-}
-
-/*virtual*/ _instance* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
-{
-	ASSERT(FALSE); //#todo
-	return nullptr;
-	//ASSERT(iInstance != 0);
-
-	//m_bUpdteVertexBuffers = true;
-
-	//for (auto pInstance : m_vecInstances)
-	//{
-	//	delete pInstance;
-	//}
-	//m_vecInstances.clear();
-
-	//m_mapInstances.clear();
-	//m_mapID2Instance.clear();
-
-	//auto pInstance = LoadGeometry(SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	//pInstance->_instance::setEnable(true);
-
-	//m_vecInstances.push_back(pInstance);
-	//m_mapInstances[(SdaiInstance)iInstance] = pInstance;
-
-	//// Helper data structures
-	//m_mapID2Instance[pInstance->getID()] = pInstance;
-
-	//// Scale
-	//Scale();
-
-	//return pInstance;
-}
-
-void CIFCModel::Scale()
-{
-	scale();
 }
 
 void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances)

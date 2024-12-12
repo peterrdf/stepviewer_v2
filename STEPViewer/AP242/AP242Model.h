@@ -28,7 +28,6 @@ public: // Methods
 	// _model
 	virtual void ZoomToInstance(_instance* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual _instance* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
 
 protected: // Methods
 
@@ -39,9 +38,6 @@ protected: // Methods
 public: // Methods
 
 	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
-	CAP242ProductInstance* getProductInstanceByID(int64_t iID) const;
-
-	void Scale(); // [-1, 1]
 
 	void Save(const wchar_t* szPath);
 

@@ -50,8 +50,6 @@ private: // Members
 
 	static int_t s_iInstanceID;
 
-	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
-
 public: // Members
 
 	static uint32_t DEFAULT_COLOR;
@@ -64,7 +62,6 @@ public: // Methods
 	// _model
 	virtual void ZoomToInstance(_instance* pInstance) override;
 	virtual void ZoomOut() override;
-	virtual _instance* LoadInstance(OwlInstance iInstance) override;
 
 protected: // Methods
 
@@ -73,8 +70,6 @@ protected: // Methods
 	virtual void clean() override;
 
 public: // Methods
-
-	void Scale(); // [-1, 1]
 
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }

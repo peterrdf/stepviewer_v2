@@ -194,7 +194,7 @@ public: // Methods
 
 	virtual void ZoomToInstance(_instance* pInstance) PURE;
 	virtual void ZoomOut() PURE;
-	virtual _instance* LoadInstance(OwlInstance iInstance) PURE;
+	virtual _instance* LoadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
 
 protected: // Methods
 
@@ -215,7 +215,6 @@ protected: // Methods
 		m_mapID2Instance.clear();
 	}
 
-
 public: // Methods
 	 
 	_geometry* geGeometryByInstance(SdaiInstance sdaiInstance)
@@ -227,6 +226,17 @@ public: // Methods
 		}
 
 		return nullptr;
+	}
+
+	_instance* getInstanceByID(int64_t iID) const
+	{
+		auto itInstance = m_mapID2Instance.find(iID);
+		if (itInstance == m_mapID2Instance.end())
+		{
+			return nullptr;
+		}
+
+		return itInstance->second;
 	}
 
 	void getVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
