@@ -35,11 +35,6 @@ public: // Methods
 	CCIS2Model(bool bLoadInstancesOnDemand = false);
 	virtual ~CCIS2Model();
 
-	// _model
-	virtual void ZoomToInstance(_instance* pInstance) override;
-	virtual void ZoomOut() override;
-	virtual _instance* LoadInstance(OwlInstance iInstance) override;
-
 protected: // Methods
 
 	// _ap_model
@@ -47,8 +42,6 @@ protected: // Methods
 	virtual void clean() override;
 
 public: // Methods
-	
-	void Scale(); // [-1, 1]
 
 	const map<SdaiInstance, CCIS2Instance*>& GetInstances() const { return m_mapInstances; }
 	CCIS2Instance* GetInstanceByID(int64_t iID);

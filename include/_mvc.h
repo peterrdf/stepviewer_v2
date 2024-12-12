@@ -192,8 +192,98 @@ public: // Methods
 		TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 	}
 
-	virtual void ZoomToInstance(_instance* pInstance) PURE;
-	virtual void ZoomOut() PURE;
+	virtual void zoomTo(_instance* pInstance)
+	{
+		assert(pInstance != nullptr);
+		assert(pInstance->getGeometry() != nullptr);
+
+		// World
+		m_fBoundingSphereDiameter = 2.f;
+
+		// Min/Max
+		m_fXmin = FLT_MAX;
+		m_fXmax = -FLT_MAX;
+		m_fYmin = FLT_MAX;
+		m_fYmax = -FLT_MAX;
+		m_fZmin = FLT_MAX;
+		m_fZmax = -FLT_MAX;
+
+		pInstance->getGeometry()->calculateMinMaxTransform(
+			pInstance,
+			m_fXmin, m_fXmax,
+			m_fYmin, m_fYmax,
+			m_fZmin, m_fZmax);
+
+		if ((m_fXmin == FLT_MAX) ||
+			(m_fXmax == -FLT_MAX) ||
+			(m_fYmin == FLT_MAX) ||
+			(m_fYmax == -FLT_MAX) ||
+			(m_fZmin == FLT_MAX) ||
+			(m_fZmax == -FLT_MAX))
+		{
+			m_fXmin = -1.f;
+			m_fXmax = 1.f;
+			m_fYmin = -1.f;
+			m_fYmax = 1.f;
+			m_fZmin = -1.f;
+			m_fZmax = 1.f;
+		}
+
+		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	}
+
+	virtual void zoomOut()
+	{
+		// World
+		m_fBoundingSphereDiameter = 2.f;
+
+		// Min/Max
+		m_fXmin = FLT_MAX;
+		m_fXmax = -FLT_MAX;
+		m_fYmin = FLT_MAX;
+		m_fYmax = -FLT_MAX;
+		m_fZmin = FLT_MAX;
+		m_fZmax = -FLT_MAX;
+
+		for (auto pGeometry : m_vecGeometries)
+		{
+			for (auto pInstance : pGeometry->getInstances())
+			{
+				if (!pInstance->getEnable())
+				{
+					continue;
+				}
+
+				pGeometry->calculateMinMaxTransform(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+		}
+
+		if ((m_fXmin == FLT_MAX) ||
+			(m_fXmax == -FLT_MAX) ||
+			(m_fYmin == FLT_MAX) ||
+			(m_fYmax == -FLT_MAX) ||
+			(m_fZmin == FLT_MAX) ||
+			(m_fZmax == -FLT_MAX))
+		{
+			m_fXmin = -1.f;
+			m_fXmax = 1.f;
+			m_fYmin = -1.f;
+			m_fYmax = 1.f;
+			m_fZmin = -1.f;
+			m_fZmax = 1.f;
+		}
+
+		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	}
+
 	virtual _instance* LoadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
 
 protected: // Methods

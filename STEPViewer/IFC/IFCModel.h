@@ -59,10 +59,6 @@ public: // Methods
 	CIFCModel(bool bLoadInstancesOnDemand = false);
 	virtual ~CIFCModel();
 
-	// _model
-	virtual void ZoomToInstance(_instance* pInstance) override;
-	virtual void ZoomOut() override;
-
 protected: // Methods
 
 	// _ap_model

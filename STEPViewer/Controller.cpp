@@ -111,7 +111,7 @@ void CController::ZoomToInstance()
 	ASSERT(m_pModel != nullptr);
 	ASSERT(m_pSelectedInstance != nullptr);
 
-	GetModel()->ZoomToInstance(m_pSelectedInstance);
+	GetModel()->zoomTo(m_pSelectedInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -125,7 +125,7 @@ void CController::ZoomOut()
 {
 	ASSERT(m_pModel != nullptr);
 
-	GetModel()->ZoomOut();
+	GetModel()->zoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

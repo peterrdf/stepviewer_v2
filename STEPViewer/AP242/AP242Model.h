@@ -25,10 +25,6 @@ public: // Methods
 	CAP242Model();
 	virtual ~CAP242Model();
 
-	// _model
-	virtual void ZoomToInstance(_instance* pInstance) override;
-	virtual void ZoomOut() override;
-
 protected: // Methods
 
 	// _ap_model
