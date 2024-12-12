@@ -2,17 +2,6 @@
 #include "_geometry.h"
 #include "_oglUtils.h"
 
-long _geometry::getEnableInstanceCount()
-{
-	long lCount = 0;
-	for (auto pInstance : m_vecInstances)
-	{
-		lCount += pInstance->getEnable() ? 1 : 0;
-	}
-
-	return lCount;
-}
-
 void _geometry::scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)
@@ -128,6 +117,25 @@ void _geometry::scale(float fScaleFactor)
 	buildConcFacePolygonsCohorts(_oglUtils::getIndicesCountLimit());
 	buildLinesCohorts(mapMaterial2ConcFaceLines, _oglUtils::getIndicesCountLimit());
 	buildPointsCohorts(mapMaterial2ConcFacePoints, _oglUtils::getIndicesCountLimit());
+}
+
+/*virtual*/ void _geometry::enableInstances(bool bEnable)
+{
+	for (auto pInstance : m_vecInstances)
+	{
+		pInstance->setEnable(bEnable);
+	}
+}
+
+long _geometry::getEnabledInstancesCount() const
+{
+	long lCount = 0;
+	for (auto pInstance : m_vecInstances)
+	{
+		lCount += pInstance->getEnable() ? 1 : 0;
+	}
+
+	return lCount;
 }
 
 void _geometry::buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT)

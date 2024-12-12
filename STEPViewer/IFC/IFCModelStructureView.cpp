@@ -384,11 +384,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
 		{
-			mapEntity2VisibleCount[szEntityName] = pGeometry->getEnableInstanceCount();
+			mapEntity2VisibleCount[szEntityName] = pGeometry->getEnabledInstancesCount();
 		}
 		else
 		{
-			itEntity2VisibleCount->second += pGeometry->getEnableInstanceCount();
+			itEntity2VisibleCount->second += pGeometry->getEnabledInstancesCount();
 		}
 	} // for (; itInstance != ...
 

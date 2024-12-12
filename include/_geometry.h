@@ -379,7 +379,6 @@ protected: // Members
 	OwlInstance m_iInstance;
 	wstring m_strName;
 	wstring m_strUniqueName;
-	bool m_bEnable;
 
 	// Geometry
 	_vertices_f* m_pVertexBuffer; // Vertices
@@ -435,7 +434,6 @@ public: // Methods
 		: m_iInstance(iInstance)
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
-		, m_bEnable(bEnable)
 		, m_pVertexBuffer(nullptr)
 		, m_pIndexBuffer(nullptr)
 		, m_iConceptualFacesCount(0)		
@@ -469,8 +467,6 @@ public: // Methods
 	{
 		clean();
 	}
-
-	long getEnableInstanceCount();
 
 	void scale(float fScaleFactor);
 
@@ -664,15 +660,16 @@ public: // Methods
 		m_vecInstances.push_back(pInstance);
 	}
 
+	virtual void enableInstances(bool bEnable);
+	long getEnabledInstancesCount() const;
+
 public: // Properties
 
 	// Metadata
 	OwlInstance getInstance() const { return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
 	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }
-	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }
-	bool getEnable() const { return m_bEnable; }
-	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
+	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }	
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 

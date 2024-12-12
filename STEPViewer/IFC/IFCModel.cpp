@@ -305,7 +305,7 @@ void CIFCModel::GetObjectsReferencedState()
 		{
 			if (!dynamic_cast<CIFCGeometry*>(pGeometry)->Referenced())
 			{
-				pGeometry->setEnable(false);
+				pGeometry->enableInstances(false);
 			}
 		}
 	} // if (iIFCProjectInstancesCount > 0)

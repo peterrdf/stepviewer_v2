@@ -20,7 +20,7 @@ public:  // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
-	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getEnable(); }	
+	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
 
 	wstring GetName() const
 	{

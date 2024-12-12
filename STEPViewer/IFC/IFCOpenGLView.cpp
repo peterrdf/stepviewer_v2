@@ -664,10 +664,10 @@ void CIFCOpenGLView::DrawFaces(_model* pM, bool bTransparent)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			/*if (!pInstance->getEnable())
 			{
 				continue;
-			}
+			}*/
 
 			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
@@ -751,10 +751,10 @@ void CIFCOpenGLView::DrawConceptualFacesPolygons(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			/*if (!pInstance->getEnable())
 			{
 				continue;
-			}
+			}*/
 
 			for (auto pCohort : pInstance->concFacePolygonsCohorts())
 			{
@@ -804,10 +804,10 @@ void CIFCOpenGLView::DrawLines(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			/*if (!pInstance->getEnable())
 			{
 				continue;
-			}
+			}*/
 
 			for (auto pCohort : pInstance->linesCohorts())
 			{
@@ -858,10 +858,10 @@ void CIFCOpenGLView::DrawPoints(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			/*if (!pInstance->getEnable())
 			{
 				continue;
-			}
+			}*/
 
 			for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 			{
