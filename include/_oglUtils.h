@@ -3722,6 +3722,10 @@ class _oglView : public _oglRenderer
 
 protected: // Members
 
+	// Materials
+	_material* m_pSelectedInstanceMaterial;
+	_material* m_pPointedInstanceMaterial;
+
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
 	_instance* m_pPointedInstance;
@@ -3733,7 +3737,25 @@ public: // Methods
 		: m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 		, m_pPointedInstance(nullptr)
 		, m_pSelectedInstance(nullptr)
-	{}
+	{
+		m_pSelectedInstanceMaterial = new _material();
+		m_pSelectedInstanceMaterial->init(
+			1.f, 0.f, 0.f,
+			1.f, 0.f, 0.f,
+			1.f, 0.f, 0.f,
+			1.f, 0.f, 0.f,
+			1.f,
+			nullptr);
+
+		m_pPointedInstanceMaterial = new _material();
+		m_pPointedInstanceMaterial->init(
+			.33f, .33f, .33f,
+			.33f, .33f, .33f,
+			.33f, .33f, .33f,
+			.33f, .33f, .33f,
+			.66f,
+			nullptr);
+	}
 
 	virtual ~_oglView()
 	{
@@ -3983,5 +4005,147 @@ public: // Methods
 	}
 
 	virtual void _draw(CDC* pDC) PURE;
+
+	virtual void _drawFaces(_model* pModel, bool bTransparent)
+	{
+		if (!getShowFaces(pModel))
+		{
+			return;
+		}
+
+		if (pModel->getGeometries().empty())
+		{
+			return;
+		}
+
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+		CString strCullFaces = getCullFacesMode(pModel);
+
+		if (bTransparent)
+		{
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else
+		{
+			if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
+			}
+		}
+
+#ifdef _BLINN_PHONG_SHADERS
+		m_pOGLProgram->_enableBlinnPhongModel(true);
+#else
+		m_pOGLProgram->_enableLighting(true);
+#endif	
+
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+
+		float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+		float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+		float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
+
+		for (auto itCohort : m_oglBuffers.cohorts())
+		{
+			glBindVertexArray(itCohort.first);
+
+			for (auto pGeometry : itCohort.second)
+			{
+				if (pGeometry->concFacesCohorts().empty())
+				{
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances())
+				{
+					if (!pInstance->getEnable())
+					{
+						continue;
+					}
+
+					// Transformation Matrix
+					glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+
+					// Model-View Matrix
+					glm::mat4 matModelView = m_matModelView;
+					matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+					matModelView = matModelView * matTransformation;
+					matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+					m_pOGLProgram->_setModelViewMatrix(matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+					glm::mat4 matNormal = m_matModelView * matTransformation;
+					matNormal = glm::inverse(matNormal);
+					matNormal = glm::transpose(matNormal);
+					m_pOGLProgram->_setNormalMatrix(matNormal);
+#else
+					m_pOGLProgram->_setNormalMatrix(matModelView);
+#endif
+
+					for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++)
+					{
+						auto pCohort = pGeometry->concFacesCohorts()[iCohort];
+
+						const _material* pMaterial =
+							pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+							pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+							pCohort->getMaterial();
+
+						if (bTransparent)
+						{
+							if (pMaterial->getA() == 1.0)
+							{
+								continue;
+							}
+						}
+						else
+						{
+							if (pMaterial->getA() < 1.0)
+							{
+								continue;
+							}
+						}
+
+						m_pOGLProgram->_setMaterial(pMaterial);
+
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
+						glDrawElementsBaseVertex(GL_TRIANGLES,
+							(GLsizei)pCohort->indices().size(),
+							GL_UNSIGNED_INT,
+							(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
+							pGeometry->VBOOffset());
+					}
+				} // auto pInstance : ...			
+			} // for (auto pGeometry : ...
+
+			glBindVertexArray(0);
+		} // for (auto itCohort ...
+
+		if (bTransparent)
+		{
+			glDisable(GL_BLEND);
+		}
+		else
+		{
+			if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
+			{
+				glDisable(GL_CULL_FACE);
+			}
+		}
+
+		// Restore Model-View Matrix
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+
+		_oglUtils::checkForErrors();
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	}
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL

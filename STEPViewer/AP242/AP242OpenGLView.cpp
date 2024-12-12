@@ -16,13 +16,8 @@ static const int MIN_VIEW_PORT_LENGTH = 100;
 CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 	: COpenGLView()	
 	, m_ptStartMousePosition(-1, -1)
-	, m_ptPrevMousePosition(-1, -1)	
-	, m_pSelectedInstanceMaterial(nullptr)
-	, m_pPointedInstanceMaterial(nullptr)
+	, m_ptPrevMousePosition(-1, -1)
 {
-	_oglRendererSettings::m_bShowLines = FALSE;
-	_oglRendererSettings::m_bShowPoints = FALSE;
-
 	_initialize(
 		pWnd,
 		16,
@@ -36,29 +31,9 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 		TEXTFILE,
 		false);
 
-	/*
-	* Default
-	*/
-	m_pSelectedInstanceMaterial = new _material();
-	m_pSelectedInstanceMaterial->init(
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f,
-		nullptr);
-
-	/*
-	* Default
-	*/
-	m_pPointedInstanceMaterial = new _material();
-	m_pPointedInstanceMaterial->init(
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.66f,
-		nullptr);
+	// Default settings
+	_oglRendererSettings::m_bShowLines = FALSE;
+	_oglRendererSettings::m_bShowPoints = FALSE;
 }
 
 CAP242OpenGLView::~CAP242OpenGLView()
@@ -66,9 +41,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	GetController()->UnRegisterView(this);
 
 	_destroy();
-
-	delete m_pSelectedInstanceMaterial;
-	delete m_pPointedInstanceMaterial;
 }
 
 /*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
@@ -89,11 +61,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 /*virtual*/ string CAP242OpenGLView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
-}
-
-/*virtual*/ void CAP242OpenGLView::_load(_model* pModel) /*override*/
-{
-	_oglView::_load(pModel);
 }
 
 /*virtual*/ void CAP242OpenGLView::_draw(CDC* pDC) /*override*/
@@ -136,25 +103,16 @@ CAP242OpenGLView::~CAP242OpenGLView()
 		true,
 		true);
 
-	/* Non-transparent faces */
-	DrawFaces(pModel, false);
-
-	/* Transparent faces */
-	DrawFaces(pModel, true);
-
-	/* Conceptual faces polygons */
+	// Scene
+	_drawFaces(pModel, false);
+	_drawFaces(pModel, true);
 	DrawConceptualFacesPolygons(pModel);
-
-	/* Lines */
 	DrawLines(pModel);
-
-	/* Points */
 	DrawPoints(pModel);
 
-	/* End */
 	SwapBuffers(*pDC);
 
-	/* Selection support */
+	// Buffer
 	DrawInstancesFrameBuffer();
 }
 
@@ -335,160 +293,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 		ASSERT(FALSE);
 		break;
 	} // switch (enEvent)
-}
-
-void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
-{
-	auto pModel = dynamic_cast<CAP242Model*>(pM);
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowFaces(pModel))
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-	CString strCullFaces = getCullFacesMode(pModel);
-
-	if (bTransparent)
-	{
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-	else
-	{
-		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
-		{
-			glEnable(GL_CULL_FACE);
-			glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
-		}
-	}
-
-#ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(true);
-#else
-	m_pOGLProgram->_enableLighting(true);
-#endif	
-
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getSdaiInstance(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
-	for (auto itCohort : m_oglBuffers.cohorts())
-	{
-		glBindVertexArray(itCohort.first);
-
-		for (auto pDefinition : itCohort.second)
-		{
-			if (pDefinition->concFacesCohorts().empty())
-			{
-				continue;
-			}
-
-			auto& vecInstances = dynamic_cast<CAP242ProductDefinition*>(pDefinition)->getInstances();
-			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
-			{
-				auto pInstance = vecInstances[iInstance];
-				if (!pInstance->getEnable())
-				{
-					continue;
-				}
-
-				/*
-				* Transformation Matrix
-				*/
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				/*
-				* Model-View Matrix
-				*/
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
-
-				for (size_t iCohort = 0; iCohort < pDefinition->concFacesCohorts().size(); iCohort++)
-				{
-					auto pCohort = pDefinition->concFacesCohorts()[iCohort];
-
-					const _material* pMaterial =
-						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-						pCohort->getMaterial();
-
-					if (bTransparent)
-					{
-						if (pMaterial->getA() == 1.0)
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (pMaterial->getA() < 1.0)
-						{
-							continue;
-						}
-					}
-
-					m_pOGLProgram->_setMaterial(pMaterial);
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
-						pDefinition->VBOOffset());
-				}
-			} // for (size_t iInstance = ...			
-		} // for (auto pDefinition ...
-
-		glBindVertexArray(0);
-	} // for (auto itCohort ...
-
-	if (bTransparent)
-	{
-		glDisable(GL_BLEND);
-	}
-	else
-	{
-		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
-		{
-			glDisable(GL_CULL_FACE);
-		}
-	}
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
-
-	_oglUtils::checkForErrors();
-
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
 void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)

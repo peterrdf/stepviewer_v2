@@ -15,11 +15,7 @@ private: // Members
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
-	CPoint m_ptPrevMousePosition;
-
-	// Materials
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
+	CPoint m_ptPrevMousePosition;	
 
 public: // Methods
 
@@ -34,7 +30,6 @@ public: // Methods
 	virtual string loadSetting(const string& strName) override;
 
 	// _oglView
-	virtual void _load(_model* pModel) override;
 	virtual void _draw(CDC* pDC) override;
 
 	// CViewBase
@@ -56,7 +51,6 @@ public: // Methods
 private: // Methods
 	
 	// UI
-	void DrawFaces(_model* pM, bool bTransparent);
 	void DrawConceptualFacesPolygons(_model* pM);
 	void DrawLines(_model* pM);
 	void DrawPoints(_model* pM);

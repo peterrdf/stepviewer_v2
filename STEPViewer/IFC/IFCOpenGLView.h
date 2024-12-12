@@ -20,15 +20,6 @@ private: // Members
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
 
-	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	CIFCInstance* m_pPointedInstance;
-	CIFCInstance* m_pSelectedInstance;
-
-	// Materials
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
-
 public: // Methods
 	
 	// ctor/dtor
@@ -42,7 +33,6 @@ public: // Methods
 	virtual string loadSetting(const string& strName) override;
 
 	// _oglView
-	virtual void _load(_model* pModel) override;
 	virtual void _draw(CDC* pDC) override;
 
 	// CViewBase	

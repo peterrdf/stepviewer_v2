@@ -51,7 +51,17 @@ public: // Methods
 		clean();
 	}
 
-public: // Methods
+	// _model
+	virtual OwlModel getOwlInstance() const override
+	{
+		assert(m_sdaiModel != 0);
+
+		OwlModel owlModel = 0;
+		owlGetModel(m_sdaiModel, &owlModel);
+		assert(owlModel != 0);
+
+		return owlModel;
+	}
 
 	bool openModel(const wchar_t* szPath)
 	{
@@ -161,13 +171,13 @@ protected: // Methods
 
 				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 				SetVertexBufferOffset(
-					getOwlModel(),
+					getOwlInstance(),
 					m_dVertexBuffersOffsetX,
 					m_dVertexBuffersOffsetY,
 					m_dVertexBuffersOffsetZ);
 
 				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-				ClearedExternalBuffers(getOwlModel());
+				ClearedExternalBuffers(getOwlInstance());
 
 				m_bUpdteVertexBuffers = false;
 			}
@@ -193,18 +203,6 @@ protected: // Methods
 	}
 
 public: // Properties
-
-	// _model
-	virtual OwlModel getOwlModel() const override
-	{
-		assert(m_sdaiModel != 0);
-
-		OwlModel owlModel = 0;
-		owlGetModel(m_sdaiModel, &owlModel);
-		assert(owlModel != 0);
-
-		return owlModel;
-	}
 
 	// Model
 	SdaiModel getSdaiInstance() const { return m_sdaiModel; }

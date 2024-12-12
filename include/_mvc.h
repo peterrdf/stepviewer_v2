@@ -63,6 +63,8 @@ public: // Methods
 		clean();
 	}
 
+	virtual OwlModel getOwlInstance() const PURE;
+
 	void scale()
 	{
 		// World
@@ -355,8 +357,7 @@ public: // Methods
 public: // Properties
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	virtual OwlModel getOwlModel() const PURE;
-	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
+	uint64_t getVertexLength() const { return SetFormat(getOwlInstance()) / sizeof(float); }
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }
