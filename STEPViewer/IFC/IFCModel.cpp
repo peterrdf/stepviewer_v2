@@ -75,10 +75,10 @@ CIFCModel::~CIFCModel()
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
-		RetrieveObjectsRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveGeometryRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 
-		RetrieveObjects("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-		RetrieveObjects("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveGeometry("IFCPROJECT", L"IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+		RetrieveGeometry("IFCRELSPACEBOUNDARY", L"IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 		GetObjectsReferencedState();
 	}
@@ -126,7 +126,7 @@ void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>&
 //	}
 }
 
-void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
+void CIFCModel::RetrieveGeometry(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
 {
 	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char *) szEntityName);
 
@@ -332,7 +332,7 @@ void CIFCModel::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 	} // for (int64_t i = ...
 }
 
-void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments)
+void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments)
 {
 	if ((iParentEntity == m_ifcDistributionElementEntity) ||
 		(iParentEntity == m_ifcElectricalElementEntity) ||
@@ -361,7 +361,7 @@ void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSeg
 		engiGetEntityName(iParentEntity, sdaiSTRING, (const char**)&szParenEntityName);
 
 		wchar_t* szParentEntityNameW = CEntity::GetName(iParentEntity);
-		RetrieveObjects(szParenEntityName, szParentEntityNameW, iCircleSegments);
+		RetrieveGeometry(szParenEntityName, szParentEntityNameW, iCircleSegments);
 	} // if (iIntancesCount != 0)
 
 	iIntancesCount = engiGetEntityCount(getSdaiInstance());
@@ -370,7 +370,7 @@ void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSeg
 		SdaiEntity iEntity = engiGetEntityElement(getSdaiInstance(), i);
 		if (engiGetEntityParent(iEntity) == iParentEntity)
 		{
-			RetrieveObjectsRecursively(iEntity, iCircleSegments);
+			RetrieveGeometryRecursively(iEntity, iCircleSegments);
 		}
 	}
 }

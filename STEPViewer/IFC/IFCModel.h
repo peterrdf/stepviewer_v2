@@ -81,8 +81,8 @@ private: // Methods
 	void GetObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
 	void GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
-	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
-	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
+	void RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments);
+	void RetrieveGeometry(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
 	_geometry* LoadGeometry(const wchar_t* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments);
 };
 
