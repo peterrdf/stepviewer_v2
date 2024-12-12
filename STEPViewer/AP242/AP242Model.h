@@ -15,8 +15,7 @@ class CAP242Model : public _ap_model
 {
 
 private: // Members
-	
-	map<ExpressID, CAP242ProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
+
 	map<int64_t, CAP242ProductInstance*> m_mapID2Instance; // ID : Product Instance
 	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
@@ -44,7 +43,6 @@ protected: // Methods
 
 public: // Methods
 
-	const map<ExpressID, CAP242ProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
 	const map<int64_t, CAP242ProductInstance*>& GetInstances() const { return m_mapID2Instance; }
 	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
 	CAP242ProductInstance* getProductInstanceByID(int64_t iID) const;

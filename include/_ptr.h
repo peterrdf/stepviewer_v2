@@ -15,10 +15,21 @@ public: // Methods
 		assert(pTin != nullptr);
 
 		m_pTout = dynamic_cast<Tout*>(pTin);
+		assert(m_pTout != nullptr);
 	}
 
 	virtual ~_ptr()
 	{
+	}
+
+	Tout* p()
+	{
+		return m_pTout;
+	}
+
+	operator Tout* ()
+	{
+		return m_pTout;
 	}
 
 	Tout* operator -> ()

@@ -1,9 +1,10 @@
 #include "stdafx.h"
 
+#include "_ptr.h"
+
 #include "AP242Model.h"
 #include "AP242ProductDefinition.h"
 #include "AP242Assembly.h"
-#include "_3DUtils.h"
 
 #include <bitset>
 #include <algorithm>
@@ -50,7 +51,6 @@ static uint32_t DEFAULT_COLOR_A = 255;
 // ************************************************************************************************
 CAP242Model::CAP242Model()
 	: _ap_model(enumAP::STEP)
-	, m_mapExpressID2Definition()
 	, m_mapID2Instance()
 	, m_mapExpressIDAssembly()
 	, m_iID(1)
@@ -77,7 +77,6 @@ CAP242Model::~CAP242Model()
 {
 	_ap_model::clean();
 
-	m_mapExpressID2Definition.clear();
 	m_mapID2Instance.clear();
 
 	auto itAssembly = m_mapExpressIDAssembly.begin();
@@ -139,7 +138,7 @@ CAP242Model::~CAP242Model()
 
 /*virtual*/ void CAP242Model::ZoomOut() /*override*/
 {
-	m_fXmin = FLT_MAX;
+	/*m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
 	m_fYmax = -FLT_MAX;
@@ -184,7 +183,7 @@ CAP242Model::~CAP242Model()
 
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);*/
 }
 
 CAP242ProductInstance* CAP242Model::getProductInstanceByID(int64_t iID) const
@@ -236,8 +235,8 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
 	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
 
-	ASSERT(m_mapExpressID2Definition.find(pGeometry->getExpressID()) == m_mapExpressID2Definition.end());
-	m_mapExpressID2Definition[pGeometry->getExpressID()] = pGeometry;
+	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
 
 	return pGeometry;
 }
@@ -246,20 +245,21 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
-	auto itDefinition = m_mapExpressID2Definition.find(iExpressID);
-	if (itDefinition != m_mapExpressID2Definition.end())
+	auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
+	if (itExpressID2Geometry != m_mapExpressID2Geometry.end())
 	{
+		_ptr<CAP242ProductDefinition> pProductDefinition(itExpressID2Geometry->second);
 		if (bRelatingProduct)
 		{
-			itDefinition->second->m_iRelatingProducts++;
+			pProductDefinition->m_iRelatingProducts++;
 		}
 
 		if (bRelatedProduct)
 		{
-			itDefinition->second->m_iRelatedProducts++;
+			pProductDefinition->m_iRelatedProducts++;
 		}
 
-		return itDefinition->second;
+		return pProductDefinition.p();
 	}
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
@@ -306,12 +306,14 @@ void CAP242Model::LoadAssemblies()
 void CAP242Model::LoadGeometry()
 {
 	// Load
-	auto itDefinition = m_mapExpressID2Definition.begin();
-	for (; itDefinition != m_mapExpressID2Definition.end(); itDefinition++)
+	auto itDefinition = m_mapExpressID2Geometry.begin();
+	for (auto pGeometry : m_vecGeometries)
 	{
-		if (itDefinition->second->GetRelatedProducts() == 0)
+		_ptr<CAP242ProductDefinition> pProductDefinition(pGeometry);
+
+		if (pProductDefinition->GetRelatedProducts() == 0)
 		{
-			WalkAssemblyTreeRecursively(itDefinition->second, nullptr, nullptr);
+			WalkAssemblyTreeRecursively(pProductDefinition, nullptr, nullptr);
 		}
 	}
 }

@@ -535,8 +535,12 @@ _geometry* CIFCModel::LoadGeometry(const wchar_t* szEntityName, SdaiInstance sda
 	m_vecGeometries.push_back(pGeometry);
 	m_mapGeometries[sdaiInstance] = pGeometry;
 
+	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+
 	auto pInstance = new CIFCInstance(s_iInstanceID++, pGeometry, nullptr);
 	m_vecInstances.push_back(pInstance);
+
 	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
 	m_mapID2Instance[pInstance->getID()] = pInstance;
 
