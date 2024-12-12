@@ -15,17 +15,6 @@
 /*static*/ int_t CIFCModel::s_iInstanceID = 1;
 
 // ************************************************************************************************
-static uint32_t DEFAULT_COLOR_R = 10;
-static uint32_t DEFAULT_COLOR_G = 150;
-static uint32_t DEFAULT_COLOR_B = 10;
-static uint32_t DEFAULT_COLOR_A = 255;
-/*static*/ uint32_t CIFCModel::DEFAULT_COLOR =
-	256 * 256 * 256 * DEFAULT_COLOR_R +
-	256 * 256 * DEFAULT_COLOR_G +
-	256 * DEFAULT_COLOR_B +
-	DEFAULT_COLOR_A;
-
-// ************************************************************************************************
 CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::IFC)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
@@ -102,47 +91,6 @@ CIFCModel::~CIFCModel()
 
 	delete m_pAttributeProvider;
 	m_pAttributeProvider = nullptr;
-}
-
-void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances)
-{
-//	vecInstances.clear();
-//
-//	CString strTargetType = szType;
-//	strTargetType.MakeUpper();
-//
-//	for (auto pInstance : m_vecInstances)
-//	{
-//		auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
-//		ASSERT(pAPInstance != nullptr);
-//
-//		CString strType = pAPInstance->GetEntityName();
-//		strType.MakeUpper();
-//
-//		if (strType == strTargetType)
-//		{
-//			vecInstances.push_back(pAPInstance);
-//		}
-//	}
-}
-
-void CIFCModel::RetrieveGeometry(const char* szEntityName, int_t iCircleSegements)
-{
-	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char*)szEntityName);
-
-	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
-	if (iIFCInstancesCount == 0)
-    {
-        return;
-    }	
-
-	for (int_t i = 0; i < iIFCInstancesCount; ++i)
-	{
-		SdaiInstance iInstance = 0;
-		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
-
-		LoadGeometry(szEntityName, iInstance, iCircleSegements);
-	}
 }
 
 void CIFCModel::GetObjectsReferencedState()
@@ -330,6 +278,25 @@ void CIFCModel::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 		if (sdaiIsKindOfBN(iIFCRelatingProductInstance, "IFCPRODUCT"))
 			GetObjectsReferencedStateRecursively(iIFCRelatingProductInstance);
 	} // for (int64_t i = ...
+}
+
+void CIFCModel::RetrieveGeometry(const char* szEntityName, int_t iCircleSegements)
+{
+	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char*)szEntityName);
+
+	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
+	if (iIFCInstancesCount == 0)
+	{
+		return;
+	}
+
+	for (int_t i = 0; i < iIFCInstancesCount; ++i)
+	{
+		SdaiInstance iInstance = 0;
+		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
+
+		LoadGeometry(szEntityName, iInstance, iCircleSegements);
+	}
 }
 
 void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments)

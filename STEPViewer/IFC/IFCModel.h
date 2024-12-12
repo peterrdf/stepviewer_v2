@@ -50,10 +50,6 @@ private: // Members
 
 	static int_t s_iInstanceID;
 
-public: // Members
-
-	static uint32_t DEFAULT_COLOR;
-
 public: // Methods
 	
 	CIFCModel(bool bLoadInstancesOnDemand = false);
@@ -70,7 +66,6 @@ public: // Methods
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
 	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
-	void GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances);
 
 private: // Methods
 	

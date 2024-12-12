@@ -108,6 +108,28 @@ public: // Methods
 		return nullptr;
 	}
 
+	void getInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances)
+	{
+		vecInstances.clear();
+
+		CString strTargetType = szType;
+		strTargetType.MakeUpper();
+
+		for (auto pInstance : m_vecInstances)
+		{
+			auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
+			ASSERT(pAPInstance != nullptr);
+
+			CString strType = pAPInstance->GetEntityName();
+			strType.MakeUpper();
+
+			if (strType == strTargetType)
+			{
+				vecInstances.push_back(pAPInstance);
+			}
+		}
+	}
+
 protected: // Methods
 
 	virtual void attachModelCore() PURE;
