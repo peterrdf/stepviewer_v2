@@ -232,8 +232,8 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
 	m_vecGeometries.push_back(pGeometry);
 
-	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+	ASSERT(m_mapGeometries.find(iProductDefinitionInstance) == m_mapGeometries.end());
+	m_mapGeometries[iProductDefinitionInstance] = pGeometry;
 
 	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
 	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;

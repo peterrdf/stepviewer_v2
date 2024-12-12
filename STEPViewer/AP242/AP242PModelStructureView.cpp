@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "mainfrm.h"
 #include "AP242PModelStructureView.h"
 #include "AP242ProductDefinition.h"
@@ -9,14 +12,9 @@
 
 #include <algorithm>
 #include <chrono>
-
 using namespace std;
 
 // ************************************************************************************************
-// STEP Model Structure
-// ************************************************************************************************
-
-// ------------------------------------------------------------------------------------------------
 CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
@@ -958,8 +956,7 @@ void CAP242PModelStructureView::LoadModel()
 		return;
 	}
 
-	auto& mapDefinitions = pModel->GetDefinitions();
-	if (mapDefinitions.empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -982,7 +979,7 @@ void CAP242PModelStructureView::LoadModel()
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = _T("Model");
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-	tvInsertStruct.item.cChildren = !mapDefinitions.empty() ? 1 : 0;
+	tvInsertStruct.item.cChildren = !pModel->getGeometries().empty() ? 1 : 0;
 	tvInsertStruct.item.lParam = (LPARAM)pModelItemData;
 
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
@@ -991,14 +988,12 @@ void CAP242PModelStructureView::LoadModel()
 	/*
 	* Roots
 	*/
-	auto itDefinition = mapDefinitions.begin();
-	for (; itDefinition != mapDefinitions.end(); itDefinition++)
+	for (auto pGeometry : pModel->getGeometries())
 	{
-		auto pDefinition = itDefinition->second;
-
-		if (pDefinition->GetRelatedProducts() == 0)
+		_ptr<CAP242ProductDefinition> pProductDefinition(pGeometry);
+		if (pProductDefinition->GetRelatedProducts() == 0)
 		{
-			LoadProductDefinitionsInMemory(pModel, pDefinition, pModelItemData);
+			LoadProductDefinitionsInMemory(pModel, pProductDefinition, pModelItemData);
 		}
 	}
 

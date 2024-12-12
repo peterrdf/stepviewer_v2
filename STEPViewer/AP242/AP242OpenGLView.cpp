@@ -350,7 +350,7 @@ void CAP242OpenGLView::DrawFaces(_model* pM, bool bTransparent)
 		return;
 	}
 
-	if (pModel->GetDefinitions().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -504,7 +504,7 @@ void CAP242OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 		return;
 	}
 
-	if (pModel->GetDefinitions().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -609,7 +609,7 @@ void CAP242OpenGLView::DrawLines(_model* pM)
 		return;
 	}
 
-	if (pModel->GetDefinitions().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -714,7 +714,7 @@ void CAP242OpenGLView::DrawPoints(_model* pM)
 		return;
 	}
 
-	if (pModel->GetDefinitions().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -824,7 +824,7 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 		return;
 	}
 
-	if (pModel->GetDefinitions().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -859,17 +859,14 @@ void CAP242OpenGLView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		auto& mapDefinitions = pModel->GetDefinitions();
-		for (auto itDefinition = mapDefinitions.begin(); 
-			itDefinition != mapDefinitions.end(); 
-			itDefinition++)
+		for (auto pGeometry : pModel->getGeometries())
 		{
-			if (itDefinition->second->getTriangles().empty())
+			if (pGeometry->getTriangles().empty())
 			{
 				continue;
 			}
 
-			auto& vecInstances = itDefinition->second->getInstances();
+			auto& vecInstances = pGeometry->getInstances();
 			for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 			{
 				auto pInstance = vecInstances[iInstance];
