@@ -2,6 +2,17 @@
 #include "_geometry.h"
 #include "_oglUtils.h"
 
+long _geometry::getEnableInstanceCount()
+{
+	long lCount = 0;
+	for (auto pInstance : m_vecInstances)
+	{
+		lCount += pInstance->getEnable() ? 1 : 0;
+	}
+
+	return lCount;
+}
+
 void _geometry::scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)

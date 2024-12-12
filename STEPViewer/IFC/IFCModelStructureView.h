@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TreeViewBase.h"
-#include "IFCInstance.h"
+#include "IFCModel.h"
 #include "SearchTreeCtrlDialog.h"
 #include <map>
 

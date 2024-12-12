@@ -43,9 +43,6 @@ CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	, m_ifcReinforcingElementEntity(0)
 	, m_ifcTransportElementEntity(0)
 	, m_ifcVirtualElementEntity(0)
-	, m_vecInstances()
-	, m_mapInstances()
-	, m_mapID2Instance()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
@@ -110,25 +107,19 @@ CIFCModel::~CIFCModel()
 {
 	_ap_model::clean();
 
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
-
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-
 	delete m_pUnitProvider;
 	m_pUnitProvider = nullptr;
 
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
+
+	delete m_pAttributeProvider;
+	m_pAttributeProvider = nullptr;
 }
 
 /*virtual*/ void CIFCModel::ZoomToInstance(_instance* pInstance) /*override*/
 {
-	ASSERT(pInstance != nullptr);
+	/*ASSERT(pInstance != nullptr);
 
 	auto pIFCInstance = dynamic_cast<CIFCInstance*>(pInstance);
 	if (pIFCInstance == nullptr)
@@ -138,7 +129,7 @@ CIFCModel::~CIFCModel()
 		return;
 	}
 
-	ASSERT(m_mapInstances.find(pIFCInstance->_ap_geometry::getSdaiInstance()) != m_mapInstances.end());
+	ASSERT(m_mapInstances.find(pIFCInstance->getSdaiInstance()) != m_mapInstances.end());
 
 	m_fBoundingSphereDiameter = 0.f;
 
@@ -168,223 +159,111 @@ CIFCModel::~CIFCModel()
 
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);*/
 }
 
 /*virtual*/ void CIFCModel::ZoomOut() /*override*/
 {
-	m_fBoundingSphereDiameter = 0.f;
+	//m_fBoundingSphereDiameter = 0.f;
 
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
+	//m_fXmin = FLT_MAX;
+	//m_fXmax = -FLT_MAX;
+	//m_fYmin = FLT_MAX;
+	//m_fYmax = -FLT_MAX;
+	//m_fZmin = FLT_MAX;
+	//m_fZmax = -FLT_MAX;
 
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->_instance::getEnable())
-		{
-			continue;
-		}
+	//auto itInstance = m_mapInstances.begin();
+	//for (; itInstance != m_mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->_instance::getEnable())
+	//	{
+	//		continue;
+	//	}
 
-		itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-	}
+	//	itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	//}
 
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
-	}
+	//if ((m_fXmin == FLT_MAX) ||
+	//	(m_fXmax == -FLT_MAX) ||
+	//	(m_fYmin == FLT_MAX) ||
+	//	(m_fYmax == -FLT_MAX) ||
+	//	(m_fZmin == FLT_MAX) ||
+	//	(m_fZmax == -FLT_MAX))
+	//{
+	//	m_fXmin = -1.;
+	//	m_fXmax = 1.;
+	//	m_fYmin = -1.;
+	//	m_fYmax = 1.;
+	//	m_fZmin = -1.;
+	//	m_fZmax = 1.;
+	//}
 
-	/*
-	* World
-	*/
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	///*
+	//* World
+	//*/
+	//m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
 /*virtual*/ _instance* CIFCModel::LoadInstance(OwlInstance iInstance) /*override*/
 {
-	ASSERT(iInstance != 0);
+	ASSERT(FALSE); //#todo
+	return nullptr;
+	//ASSERT(iInstance != 0);
 
-	m_bUpdteVertexBuffers = true;
+	//m_bUpdteVertexBuffers = true;
 
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
+	//for (auto pInstance : m_vecInstances)
+	//{
+	//	delete pInstance;
+	//}
+	//m_vecInstances.clear();
 
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
+	//m_mapInstances.clear();
+	//m_mapID2Instance.clear();
 
-	auto pInstance = RetrieveGeometry((SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
-	pInstance->_instance::setEnable(true);
+	//auto pInstance = LoadGeometry(SdaiInstance)iInstance, DEFAULT_CIRCLE_SEGMENTS);
+	//pInstance->_instance::setEnable(true);
 
-	m_vecInstances.push_back(pInstance);
-	m_mapInstances[(SdaiInstance)iInstance] = pInstance;
+	//m_vecInstances.push_back(pInstance);
+	//m_mapInstances[(SdaiInstance)iInstance] = pInstance;
 
-	// Helper data structures
-	m_mapID2Instance[pInstance->getID()] = pInstance;
+	//// Helper data structures
+	//m_mapID2Instance[pInstance->getID()] = pInstance;
 
-	// Scale
-	Scale();
+	//// Scale
+	//Scale();
 
-	return pInstance;
+	//return pInstance;
 }
 
 void CIFCModel::Scale()
 {
-	/* World */
-	m_dOriginalBoundingSphereDiameter = 2.;
-	m_fBoundingSphereDiameter = 2.f;
-
-	/* Min/Max */
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
-	auto itIinstance = m_mapInstances.begin();
-	for (; itIinstance != m_mapInstances.end(); itIinstance++)
-	{
-		itIinstance->second->calculateMinMax(
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax);
-	}
-
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		// TODO: new status bar for geometry
-		/*::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);*/
-
-		return;
-	}
-
-	/* World */
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
-
-	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
-		m_fXmin,
-		m_fXmax,
-		m_fYmin,
-		m_fYmax,
-		m_fZmin,
-		m_fZmax);
-	TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
-
-	/* Scale */
-	itIinstance = m_mapInstances.begin();
-	for (; itIinstance != m_mapInstances.end(); itIinstance++)
-	{
-		itIinstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
-	}
-
-	/* Min/Max */
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
-	itIinstance = m_mapInstances.begin();
-	for (; itIinstance != m_mapInstances.end(); itIinstance++)
-	{
-		if (itIinstance->second->_instance::getEnable())
-		{
-			itIinstance->second->calculateMinMax(
-				m_fXmin, m_fXmax, 
-				m_fYmin, m_fYmax, 
-				m_fZmin, m_fZmax);
-		}
-	}
-
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		// TODO: new status bar for geometry
-		/*::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);*/
-
-		return;
-	}
-
-	/* World */
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
-		m_fXmin,
-		m_fXmax,
-		m_fYmin,
-		m_fYmax,
-		m_fZmin,
-		m_fZmax);
-	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+	scale();
 }
 
-CIFCInstance* CIFCModel::GetInstanceByID(int64_t iID)
+void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances)
 {
-	auto itID2Instance = m_mapID2Instance.find(iID);
-	if (itID2Instance != m_mapID2Instance.end())
-	{
-		return itID2Instance->second;
-	}
-
-	return nullptr;
-}
-
-void CIFCModel::GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances)
-{
-	vecInstances.clear();
-
-	CString strTargetType = szType;
-	strTargetType.MakeUpper();
-
-	for (auto pInstance : m_vecInstances)
-	{
-		CString strType = pInstance->GetEntityName();
-		strType.MakeUpper();
-
-		if (strType == strTargetType)
-		{
-			vecInstances.push_back(pInstance);
-		}
-	}
+//	vecInstances.clear();
+//
+//	CString strTargetType = szType;
+//	strTargetType.MakeUpper();
+//
+//	for (auto pInstance : m_vecInstances)
+//	{
+//		auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
+//		ASSERT(pAPInstance != nullptr);
+//
+//		CString strType = pAPInstance->GetEntityName();
+//		strType.MakeUpper();
+//
+//		if (strType == strTargetType)
+//		{
+//			vecInstances.push_back(pAPInstance);
+//		}
+//	}
 }
 
 void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEntityNameW, int_t iCircleSegements)
@@ -402,22 +281,7 @@ void CIFCModel::RetrieveObjects(const char * szEntityName, const wchar_t * szEnt
 		SdaiInstance iInstance = 0;
 		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
-		auto pInstance = RetrieveGeometry(iInstance, iCircleSegements);
-
-		CString strEntity = szEntityNameW;
-		strEntity.MakeUpper();
-
-		pInstance->_instance::setEnable(
-			(strEntity == L"IFCSPACE") || 
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ||
-			(strEntity == L"IFCALIGNMENTVERTICAL") ||
-			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-			(strEntity == L"IFCALIGNMENTSEGMENT") ||
-			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
-		
-		m_vecInstances.push_back(pInstance);
-		m_mapInstances[iInstance] = pInstance;
+		LoadGeometry(szEntityNameW, iInstance, iCircleSegements);
 	}
 }
 
@@ -437,29 +301,29 @@ void CIFCModel::GetObjectsReferencedState()
 		GetObjectsReferencedStateHasAssignments(iProjectInstance);
 
 		// Disable Unreferenced instances
-		for (auto itInstance : m_mapInstances)
+		for (auto pGeometry : m_vecGeometries)
 		{
-			if (!itInstance.second->Referenced())
+			if (!dynamic_cast<CIFCGeometry*>(pGeometry)->Referenced())
 			{
-				itInstance.second->_instance::setEnable(false);
+				pGeometry->setEnable(false);
 			}
 		}
 	} // if (iIFCProjectInstancesCount > 0)
 }
 
-void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance iInstance)
+void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(sdaiInstance != 0);
 
-	auto itInstance = m_mapInstances.find(iInstance);
-	if (itInstance != m_mapInstances.end())
+	auto pGeometry = geGeometryByInstance(sdaiInstance);
+	if (pGeometry != nullptr)
 	{
-		itInstance->second->Referenced() = true;
+		dynamic_cast<CIFCGeometry*>(pGeometry)->Referenced() = true;
 
-		GetObjectsReferencedStateIsDecomposedBy(iInstance);
-		GetObjectsReferencedStateIsNestedBy(iInstance);
-		GetObjectsReferencedStateContainsElements(iInstance);
-		GetObjectsReferencedStateHasAssignments(iInstance);
+		GetObjectsReferencedStateIsDecomposedBy(sdaiInstance);
+		GetObjectsReferencedStateIsNestedBy(sdaiInstance);
+		GetObjectsReferencedStateContainsElements(sdaiInstance);
+		GetObjectsReferencedStateHasAssignments(sdaiInstance);
 	}
 	else
 	{
@@ -651,9 +515,15 @@ void CIFCModel::RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSeg
 	}
 }
 
-CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments)
+_geometry* CIFCModel::LoadGeometry(const wchar_t* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
 {
-	preLoadInstance(iInstance);		
+	auto itGeometry = m_mapGeometries.find(sdaiInstance);
+	if (itGeometry != m_mapGeometries.end())
+	{
+		return itGeometry->second;
+	}
+
+	preLoadInstance(sdaiInstance);		
 
 	// Set up circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -661,7 +531,28 @@ CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleS
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pInstance = new CIFCInstance(s_iInstanceID++, iInstance);	
+	auto pGeometry = new CIFCGeometry(sdaiInstance);
+	m_vecGeometries.push_back(pGeometry);
+	m_mapGeometries[sdaiInstance] = pGeometry;
+
+	auto pInstance = new CIFCInstance(s_iInstanceID++, pGeometry, nullptr);
+	m_vecInstances.push_back(pInstance);
+	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
+	m_mapID2Instance[pInstance->getID()] = pInstance;
+
+	pGeometry->addInstance(pInstance);
+
+	CString strEntity = szEntityName;
+	strEntity.MakeUpper();
+
+	pInstance->_instance::setEnable(
+		(strEntity == L"IFCSPACE") ||
+		(strEntity == L"IFCRELSPACEBOUNDARY") ||
+		(strEntity == L"IFCOPENINGELEMENT") ||
+		(strEntity == L"IFCALIGNMENTVERTICAL") ||
+		(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+		(strEntity == L"IFCALIGNMENTSEGMENT") ||
+		(strEntity == L"IFCALIGNMENTCANT") ? false : true);
 
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -671,5 +562,5 @@ CIFCInstance* CIFCModel::RetrieveGeometry(SdaiInstance iInstance, int_t iCircleS
 
 	cleanMemory(getSdaiInstance(), 0);
 
-	return pInstance;
+	return pGeometry;
 }

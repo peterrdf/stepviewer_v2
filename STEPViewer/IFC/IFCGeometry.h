@@ -20,8 +20,13 @@ private: // Members
 
 public: // Methods
 	
-	CIFCGeometry(int64_t iID, SdaiInstance iSdaiInstance);
+	CIFCGeometry(SdaiInstance sdaiInstance);
 	virtual ~CIFCGeometry();
+
+protected: // Methods
+
+	// _geometry
+	virtual void preCalculate() override;
 
 public: // Properties
 

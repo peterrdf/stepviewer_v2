@@ -86,289 +86,291 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CIFCOpenGLView::_load(_model* pModel2) /*override*/
+/*virtual*/ void CIFCOpenGLView::_load(_model* pModel) /*override*/
 {
-	CWaitCursor waitCursor;
+	_oglView::_load(pModel);
 
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
+	//CWaitCursor waitCursor;
 
-	// OpenGL buffers
-	m_oglBuffers.clear();
+	//BOOL bResult = m_pOGLContext->makeCurrent();
+	//VERIFY(bResult);
 
-	m_pInstanceSelectionFrameBuffer->encoding().clear();
-	m_pPointedInstance = nullptr;
-	m_pSelectedInstance = nullptr;
+	//// OpenGL buffers
+	//m_oglBuffers.clear();
 
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
+	//m_pInstanceSelectionFrameBuffer->encoding().clear();
+	//m_pPointedInstance = nullptr;
+	//m_pSelectedInstance = nullptr;
 
-		return;
-	}
+	//auto pModel = GetModel<CIFCModel>();
+	//if (pModel == nullptr)
+	//{
+	//	ASSERT(FALSE);
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	//	return;
+	//}
 
-	/*
-	* Bounding sphere diameter
-	*/
-	float fBoundingSphereDiameter = fXmax - fXmin;
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fYmax - fYmin);
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fZmax - fZmin);
+	//float fXmin = -1.f;
+	//float fXmax = 1.f;
+	//float fYmin = -1.f;
+	//float fYmax = 1.f;
+	//float fZmin = -1.f;
+	//float fZmax = 1.f;
+	//pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
+	///*
+	//* Bounding sphere diameter
+	//*/
+	//float fBoundingSphereDiameter = fXmax - fXmin;
+	//fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fYmax - fYmin);
+	//fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fZmax - fZmin);
 
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
+	//m_fXTranslation = fXmin;
+	//m_fXTranslation += (fXmax - fXmin) / 2.f;
+	//m_fXTranslation = -m_fXTranslation;
 
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
+	//m_fYTranslation = fYmin;
+	//m_fYTranslation += (fYmax - fYmin) / 2.f;
+	//m_fYTranslation = -m_fYTranslation;
 
-	m_fScaleFactor = pModel->getBoundingSphereDiameter();
+	//m_fZTranslation = fZmin;
+	//m_fZTranslation += (fZmax - fZmin) / 2.f;
+	//m_fZTranslation = -m_fZTranslation;
+	//m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
 
-	// Limits
-	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
+	//m_fScaleFactor = pModel->getBoundingSphereDiameter();
 
-	auto& mapInstances = pModel->GetInstances();
+	//// Limits
+	//GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
+	//GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
-	// VBO
-	GLuint iVerticesCount = 0;
-	vector<_geometry*> vecInstancesCohort;
+	//auto& mapInstances = pModel->GetInstances();
 
-	// IBO - Conceptual faces
-	GLuint iConcFacesIndicesCount = 0;
-	vector<_cohort*> vecConcFacesCohorts;
+	//// VBO
+	//GLuint iVerticesCount = 0;
+	//vector<_geometry*> vecInstancesCohort;
 
-	// IBO - Conceptual face polygons
-	GLuint iConcFacePolygonsIndicesCount = 0;
-	vector<_cohort*> vecConcFacePolygonsCohorts;
+	//// IBO - Conceptual faces
+	//GLuint iConcFacesIndicesCount = 0;
+	//vector<_cohort*> vecConcFacesCohorts;
 
-	// IBO - Lines
-	GLuint iLinesIndicesCount = 0;
-	vector<_cohort*> vecLinesCohorts;
+	//// IBO - Conceptual face polygons
+	//GLuint iConcFacePolygonsIndicesCount = 0;
+	//vector<_cohort*> vecConcFacePolygonsCohorts;
 
-	// IBO - Points
-	GLuint iPointsIndicesCount = 0;
-	vector<_cohort*> vecPointsCohorts;
+	//// IBO - Lines
+	//GLuint iLinesIndicesCount = 0;
+	//vector<_cohort*> vecLinesCohorts;
 
-	for (auto itIinstance = mapInstances.begin(); itIinstance != mapInstances.end(); itIinstance++)
-	{
-		auto pInstance = itIinstance->second;
-		if (pInstance->getVerticesCount() == 0)
-		{
-			continue;
-		}
+	//// IBO - Points
+	//GLuint iPointsIndicesCount = 0;
+	//vector<_cohort*> vecPointsCohorts;
 
-		/******************************************************************************************
-		* Geometry
-		*/
+	//for (auto itIinstance = mapInstances.begin(); itIinstance != mapInstances.end(); itIinstance++)
+	//{
+	//	auto pInstance = itIinstance->second;
+	//	if (pInstance->getVerticesCount() == 0)
+	//	{
+	//		continue;
+	//	}
 
-		/**
-		* VBO - Conceptual faces, polygons, etc.
-		*/
-		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
-		{
-			if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
-			{
-				ASSERT(FALSE);
+	//	/******************************************************************************************
+	//	* Geometry
+	//	*/
 
-				return;
-			}
+	//	/**
+	//	* VBO - Conceptual faces, polygons, etc.
+	//	*/
+	//	if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+	//	{
+	//		if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+	//		{
+	//			ASSERT(FALSE);
 
-			iVerticesCount = 0;
-			vecInstancesCohort.clear();
-		}
+	//			return;
+	//		}
 
-		/*
-		* IBO - Conceptual faces
-		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
-		{
-			if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-				{
-					ASSERT(FALSE);
+	//		iVerticesCount = 0;
+	//		vecInstancesCohort.clear();
+	//	}
 
-					return;
-				}
+	//	/*
+	//	* IBO - Conceptual faces
+	//	*/
+	//	for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
+	//	{
+	//		if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+	//		{
+	//			if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+	//			{
+	//				ASSERT(FALSE);
 
-				iConcFacesIndicesCount = 0;
-				vecConcFacesCohorts.clear();
-			}
+	//				return;
+	//			}
 
-			iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
-		}
+	//			iConcFacesIndicesCount = 0;
+	//			vecConcFacesCohorts.clear();
+	//		}
 
-		/*
-		* IBO - Conceptual face polygons
-		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
-		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-				{
-					ASSERT(FALSE);
+	//		iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
+	//		vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
+	//	}
 
-					return;
-				}
+	//	/*
+	//	* IBO - Conceptual face polygons
+	//	*/
+	//	for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+	//	{
+	//		if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+	//		{
+	//			if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+	//			{
+	//				ASSERT(FALSE);
 
-				iConcFacePolygonsIndicesCount = 0;
-				vecConcFacePolygonsCohorts.clear();
-			}
+	//				return;
+	//			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
-		}
+	//			iConcFacePolygonsIndicesCount = 0;
+	//			vecConcFacePolygonsCohorts.clear();
+	//		}
 
-		/*
-		* IBO - Lines
-		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
-		{
-			if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-				{
-					ASSERT(FALSE);
+	//		iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+	//		vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+	//	}
 
-					return;
-				}
+	//	/*
+	//	* IBO - Lines
+	//	*/
+	//	for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
+	//	{
+	//		if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+	//		{
+	//			if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+	//			{
+	//				ASSERT(FALSE);
 
-				iLinesIndicesCount = 0;
-				vecLinesCohorts.clear();
-			}
+	//				return;
+	//			}
 
-			iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
-		}
+	//			iLinesIndicesCount = 0;
+	//			vecLinesCohorts.clear();
+	//		}
 
-		/*
-		* IBO - Points
-		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
-		{
-			if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-				{
-					ASSERT(FALSE);
+	//		iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
+	//		vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
+	//	}
 
-					return;
-				}
+	//	/*
+	//	* IBO - Points
+	//	*/
+	//	for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
+	//	{
+	//		if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+	//		{
+	//			if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+	//			{
+	//				ASSERT(FALSE);
 
-				iPointsIndicesCount = 0;
-				vecPointsCohorts.clear();
-			}
+	//				return;
+	//			}
 
-			iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
-		}
+	//			iPointsIndicesCount = 0;
+	//			vecPointsCohorts.clear();
+	//		}
 
-		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
-		vecInstancesCohort.push_back(pInstance);
-	} // for (; itIinstances != ...
+	//		iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
+	//		vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
+	//	}
 
-	/******************************************************************************************
-	* Geometry
-	*/
+	//	iVerticesCount += (GLsizei)pInstance->getVerticesCount();
+	//	vecInstancesCohort.push_back(pInstance);
+	//} // for (; itIinstances != ...
 
-	/*
-	* VBO - Conceptual faces, polygons, etc.
-	*/
-	if (iVerticesCount > 0)
-	{
-		if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
-		{
-			ASSERT(FALSE);
+	///******************************************************************************************
+	//* Geometry
+	//*/
 
-			return;
-		}
+	///*
+	//* VBO - Conceptual faces, polygons, etc.
+	//*/
+	//if (iVerticesCount > 0)
+	//{
+	//	if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+	//	{
+	//		ASSERT(FALSE);
 
-		iVerticesCount = 0;
-		vecInstancesCohort.clear();
-	}
+	//		return;
+	//	}
 
-	/*
-	* IBO - Conceptual faces
-	*/
-	if (iConcFacesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-		{
-			ASSERT(FALSE);
+	//	iVerticesCount = 0;
+	//	vecInstancesCohort.clear();
+	//}
 
-			return;
-		}
+	///*
+	//* IBO - Conceptual faces
+	//*/
+	//if (iConcFacesIndicesCount > 0)
+	//{
+	//	if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+	//	{
+	//		ASSERT(FALSE);
 
-		iConcFacesIndicesCount = 0;
-		vecConcFacesCohorts.clear();
-	}
+	//		return;
+	//	}
 
-	/*
-	* IBO - Conceptual face polygons
-	*/
-	if (iConcFacePolygonsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-		{
-			ASSERT(FALSE);
+	//	iConcFacesIndicesCount = 0;
+	//	vecConcFacesCohorts.clear();
+	//}
 
-			return;
-		}
+	///*
+	//* IBO - Conceptual face polygons
+	//*/
+	//if (iConcFacePolygonsIndicesCount > 0)
+	//{
+	//	if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+	//	{
+	//		ASSERT(FALSE);
 
-		iConcFacePolygonsIndicesCount = 0;
-		vecConcFacePolygonsCohorts.clear();
-	}
+	//		return;
+	//	}
 
-	/*
-	* IBO - Lines
-	*/
-	if (iLinesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-		{
-			ASSERT(FALSE);
+	//	iConcFacePolygonsIndicesCount = 0;
+	//	vecConcFacePolygonsCohorts.clear();
+	//}
 
-			return;
-		}
+	///*
+	//* IBO - Lines
+	//*/
+	//if (iLinesIndicesCount > 0)
+	//{
+	//	if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+	//	{
+	//		ASSERT(FALSE);
 
-		iLinesIndicesCount = 0;
-		vecLinesCohorts.clear();
-	}
+	//		return;
+	//	}
 
-	/*
-	* IBO - Points
-	*/
-	if (iPointsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-		{
-			ASSERT(FALSE);
+	//	iLinesIndicesCount = 0;
+	//	vecLinesCohorts.clear();
+	//}
 
-			return;
-		}
+	///*
+	//* IBO - Points
+	//*/
+	//if (iPointsIndicesCount > 0)
+	//{
+	//	if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+	//	{
+	//		ASSERT(FALSE);
 
-		iPointsIndicesCount = 0;
-		vecPointsCohorts.clear();
-	}
+	//		return;
+	//	}
 
-	_redraw();
+	//	iPointsIndicesCount = 0;
+	//	vecPointsCohorts.clear();
+	//}
+
+	//_redraw();
 }
 
 /*virtual*/ void CIFCOpenGLView::_draw(CDC* pDC) /*override*/
@@ -669,10 +671,10 @@ void CIFCOpenGLView::DrawFaces(_model* pM, bool bTransparent)
 
 			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
-				const _material* pMaterial =
-					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+				const _material* pMaterial = pConcFacesCohort->getMaterial();
+					/*pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
 					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-					pConcFacesCohort->getMaterial();
+					pConcFacesCohort->getMaterial();*/
 
 				if (bTransparent)
 				{
@@ -865,10 +867,10 @@ void CIFCOpenGLView::DrawPoints(_model* pM)
 			{
 				auto pCohort = pInstance->pointsCohorts()[iPointsCohort];
 
-				const _material* pMaterial =
-					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+				const _material* pMaterial = pCohort->getMaterial();
+					/*pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
 					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-					pCohort->getMaterial();				
+					pCohort->getMaterial();			*/	
 
 				m_pOGLProgram->_setAmbientColor(
 					pMaterial->getDiffuseColor().r(),
@@ -897,126 +899,126 @@ void CIFCOpenGLView::DrawPoints(_model* pM)
 
 void CIFCOpenGLView::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	/*
-	* Validation
-	*/
-	int iWidth = 0;
-	int iHeight = 0;
-
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	iWidth = rcClient.Width();
-	iHeight = rcClient.Height();
-
-	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
-	{
-		return;
-	}
-
-	/*
-	* Create a frame buffer
-	*/
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-	m_pInstanceSelectionFrameBuffer->create();
-
-	/*
-	* Selection colors
-	*/
-	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
-	{
-		auto& mapInstances = pModel->GetInstances();
-		for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
-		{
-			auto pInstance = itInstance->second;
-
-			auto& vecTriangles = pInstance->getTriangles();
-			if (vecTriangles.empty())
-			{
-				continue;
-			}
-
-			float fR, fG, fB;
-			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
-
-			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
-		}
-	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
-
-	/*
-	* Draw
-	*/
-
-	m_pInstanceSelectionFrameBuffer->bind();
-
-	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
-
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-#ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(false);
-#else
-	m_pOGLProgram->_enableLighting(false);
-#endif
-	m_pOGLProgram->_setTransparency(1.f);
-
-	for (auto itCohort : m_oglBuffers.cohorts())
-	{
-		glBindVertexArray(itCohort.first);
-
-		for (auto pInstance : itCohort.second)
-		{
-			if (!pInstance->getEnable())
-			{
-				continue;
-			}
-
-			auto& vecTriangles = pInstance->getTriangles();
-			if (vecTriangles.empty())
-			{
-				continue;
-			}
-
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(dynamic_cast<_instance*>(pInstance)->getID());
-			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
-
-			m_pOGLProgram->_setAmbientColor(
-				itSelectionColor->second.r(),
-				itSelectionColor->second.g(),
-				itSelectionColor->second.b());
-
-			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pInstance->concFacesCohorts().size(); iConcFacesCohort++)
-			{
-				auto pConcFacesCohort = pInstance->concFacesCohorts()[iConcFacesCohort];
-
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
-				glDrawElementsBaseVertex(GL_TRIANGLES,
-					(GLsizei)pConcFacesCohort->indices().size(),
-					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
-					pInstance->VBOOffset());
-			}
-		} // for (auto pInstance ...
-
-		glBindVertexArray(0);
-	} // for (auto itCohort ...
-
-	m_pInstanceSelectionFrameBuffer->unbind();
+//	auto pModel = GetModel<CIFCModel>();
+//	if (pModel == nullptr)
+//	{
+//		ASSERT(FALSE);
+//
+//		return;
+//	}
+//
+//	/*
+//	* Validation
+//	*/
+//	int iWidth = 0;
+//	int iHeight = 0;
+//
+//	CRect rcClient;
+//	m_pWnd->GetClientRect(&rcClient);
+//
+//	iWidth = rcClient.Width();
+//	iHeight = rcClient.Height();
+//
+//	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
+//	{
+//		return;
+//	}
+//
+//	/*
+//	* Create a frame buffer
+//	*/
+//	BOOL bResult = m_pOGLContext->makeCurrent();
+//	VERIFY(bResult);
+//
+//	m_pInstanceSelectionFrameBuffer->create();
+//
+//	/*
+//	* Selection colors
+//	*/
+//	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+//	{
+//		auto& mapInstances = pModel->GetInstances();
+//		for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
+//		{
+//			auto pInstance = itInstance->second;
+//
+//			auto& vecTriangles = pInstance->getTriangles();
+//			if (vecTriangles.empty())
+//			{
+//				continue;
+//			}
+//
+//			float fR, fG, fB;
+//			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
+//
+//			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+//		}
+//	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+//
+//	/*
+//	* Draw
+//	*/
+//
+//	m_pInstanceSelectionFrameBuffer->bind();
+//
+//	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+//
+//	glClearColor(0.0, 0.0, 0.0, 0.0);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//	// Set up the parameters
+//	glEnable(GL_DEPTH_TEST);
+//	glDepthFunc(GL_LEQUAL);
+//
+//#ifdef _BLINN_PHONG_SHADERS
+//	m_pOGLProgram->_enableBlinnPhongModel(false);
+//#else
+//	m_pOGLProgram->_enableLighting(false);
+//#endif
+//	m_pOGLProgram->_setTransparency(1.f);
+//
+//	for (auto itCohort : m_oglBuffers.cohorts())
+//	{
+//		glBindVertexArray(itCohort.first);
+//
+//		for (auto pInstance : itCohort.second)
+//		{
+//			if (!pInstance->getEnable())
+//			{
+//				continue;
+//			}
+//
+//			auto& vecTriangles = pInstance->getTriangles();
+//			if (vecTriangles.empty())
+//			{
+//				continue;
+//			}
+//
+//			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(dynamic_cast<_instance*>(pInstance)->getID());
+//			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
+//
+//			m_pOGLProgram->_setAmbientColor(
+//				itSelectionColor->second.r(),
+//				itSelectionColor->second.g(),
+//				itSelectionColor->second.b());
+//
+//			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pInstance->concFacesCohorts().size(); iConcFacesCohort++)
+//			{
+//				auto pConcFacesCohort = pInstance->concFacesCohorts()[iConcFacesCohort];
+//
+//				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
+//				glDrawElementsBaseVertex(GL_TRIANGLES,
+//					(GLsizei)pConcFacesCohort->indices().size(),
+//					GL_UNSIGNED_INT,
+//					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
+//					pInstance->VBOOffset());
+//			}
+//		} // for (auto pInstance ...
+//
+//		glBindVertexArray(0);
+//	} // for (auto itCohort ...
+//
+//	m_pInstanceSelectionFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
 }
@@ -1070,9 +1072,9 @@ void CIFCOpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		CIFCInstance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
 		{
-			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+			/*int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 			pPointedInstance = pModel->GetInstanceByID((int_t)iInstanceID);
-			ASSERT(pPointedInstance != nullptr);
+			ASSERT(pPointedInstance != nullptr);*/
 		}
 
 		if (m_pPointedInstance != pPointedInstance)

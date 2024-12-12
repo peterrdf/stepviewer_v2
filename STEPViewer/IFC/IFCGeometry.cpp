@@ -5,8 +5,8 @@
 #include <math.h>
 
 // ************************************************************************************************
-CIFCGeometry::CIFCGeometry(int64_t iID, SdaiInstance iSdaiInstance)
-	: _ap_geometry(iSdaiInstance)
+CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
+	: _ap_geometry(sdaiInstance)
 	, m_bReferenced(false)
 {
 	calculate();
@@ -14,3 +14,14 @@ CIFCGeometry::CIFCGeometry(int64_t iID, SdaiInstance iSdaiInstance)
 
 /*virtual*/ CIFCGeometry::~CIFCGeometry()
 {}
+
+/*virtual*/ void CIFCGeometry::preCalculate() /*override*/
+{
+	// Format
+	setAPFormatSettings();
+
+	// Extra settings
+	const int_t flagbit1 = 2;
+	setFilter(getSdaiModel(), flagbit1, flagbit1);
+	setSegmentation(getSdaiModel(), 16, 0.);
+}

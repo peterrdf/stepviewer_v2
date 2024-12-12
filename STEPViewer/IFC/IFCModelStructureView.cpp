@@ -365,29 +365,30 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
 			}
 		} // if (pInstance == nullptr)
-	} // if (hItem != nullptr)	
-
-	auto& mapInstances = pModel->GetInstances();	
+	} // if (hItem != nullptr)
 
 	// ENTITY : VISIBLE COUNT
 	map<wstring, long> mapEntity2VisibleCount;
-	for (auto itInstance = mapInstances.begin(); 
-		itInstance != mapInstances.end(); 
-		itInstance++)
+	for (auto pGeometry : pModel->getGeometries())
 	{
-		if (!itInstance->second->_instance::hasGeometry())
+		if (!pGeometry->hasGeometry())
 		{
 			continue;
 		}
 
-		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->GetEntityName());
+		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
+		ASSERT(pAPGeometry != nullptr);
+
+		const wchar_t* szEntityName = _ap_instance::GetEntityName(pAPGeometry->getSdaiInstance());
+
+		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
 		{
-			mapEntity2VisibleCount[itInstance->second->GetEntityName()] = itInstance->second->_instance::getEnable() ? 1 : 0;
+			mapEntity2VisibleCount[szEntityName] = pGeometry->getEnableInstanceCount();
 		}
 		else
 		{
-			itEntity2VisibleCount->second += itInstance->second->_instance::getEnable() ? 1 : 0;
+			itEntity2VisibleCount->second += pGeometry->getEnableInstanceCount();
 		}
 	} // for (; itInstance != ...
 
@@ -509,7 +510,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				}
 				break;
 
-				case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+				/*case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 				{
 					for (auto itInstance = mapInstances.begin(); 
 						itInstance != mapInstances.end(); 
@@ -523,9 +524,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 					pController->OnInstancesEnabledStateChanged(this);
 				}
-				break;
+				break;*/
 
-				case ID_INSTANCES_ENABLE_ALL:
+				/*case ID_INSTANCES_ENABLE_ALL:
 				{
 					for (auto itInstance = mapInstances.begin(); 
 						itInstance != mapInstances.end(); 
@@ -539,11 +540,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 					pController->OnInstancesEnabledStateChanged(this);
 				}
-				break;
+				break;*/
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->getSdaiInstance());
 				}
 				break;
 
@@ -566,7 +567,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
+					pController->OnViewRelations(this, pInstance->getSdaiInstance());
 				}
 				break;
 
@@ -616,42 +617,42 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		}
 
 		// Update the Parents just ones
-		set<HTREEITEM> m_setParents;
+		//set<HTREEITEM> m_setParents;
 
-		for (auto itInstance = mapInstances.begin();
-			itInstance != mapInstances.end();
-			itInstance++)
-		{
-			pInstance = itInstance->second;
+		//for (auto itInstance = mapInstances.begin();
+		//	itInstance != mapInstances.end();
+		//	itInstance++)
+		//{
+		//	pInstance = itInstance->second;
 
-			if (pInstance->GetEntityName() == itCommand2Entity->second)
-			{
-				pInstance->_instance::setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+		//	if (pInstance->GetEntityName() == itCommand2Entity->second)
+		//	{
+		//		pInstance->_instance::setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
-				auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pInstance);
-				ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
+		//		auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pInstance);
+		//		ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
 
-				HTREEITEM hGeometryItem = itInstance2GeometryItem->second;
+		//		HTREEITEM hGeometryItem = itInstance2GeometryItem->second;
 
-				int iImage = pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hGeometryItem, iImage, iImage);
+		//		int iImage = pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+		//		m_pTreeCtrl->SetItemImage(hGeometryItem, iImage, iImage);
 
-				ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometryItem));
+		//		ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometryItem));
 
-				HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometryItem);
-				ASSERT(hInstanceItem != NULL);
+		//		HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometryItem);
+		//		ASSERT(hInstanceItem != NULL);
 
-				ClickItem_UpdateParent(hInstanceItem, FALSE);
+		//		ClickItem_UpdateParent(hInstanceItem, FALSE);
 
-				m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
-			}
-		} // for (auto itInstance = ...
+		//		m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
+		//	}
+		//} // for (auto itInstance = ...
 
 		// Update the Parents
-		for (auto hParent : m_setParents)
+		/*for (auto hParent : m_setParents)
 		{
 			ClickItem_UpdateParent(hParent);
-		}
+		}*/
 
 		pController->OnInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
@@ -1013,14 +1014,15 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 	sdaiGetAttrBN(iIFCProjectInstance, "Name", sdaiUNICODE, &szName);
 
 	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);
+	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);		
 
-	auto& mapInstances = pModel->GetInstances();
-
-	auto itInstance = mapInstances.find(iIFCProjectInstance);
-	if (itInstance != mapInstances.end())
+	auto pGeometry = pModel->geGeometryByInstance(iIFCProjectInstance);
+	if (pGeometry != nullptr)
 	{
-		wstring strItem = itInstance->second->GetEntityName();
+		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
+		ASSERT(pAPGeometry != nullptr);
+
+		wstring strItem = _ap_instance::GetEntityName(pAPGeometry->getSdaiInstance());
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1056,10 +1058,10 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
+		tvInsertStruct.item.lParam = (LPARAM)pGeometry;
 
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-		m_mapInstance2GeometryItem[itInstance->second] = hGeometry;
+		//m_mapInstance2GeometryItem[pGeometry] = hGeometry;
 
 		/*
 		* decomposition/contains
@@ -1232,57 +1234,57 @@ void CIFCModelStructureView::LoadContainsElements(CIFCModel* pModel, SdaiInstanc
 // ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent)
 {
-	ASSERT(pModel != nullptr);
+	//ASSERT(pModel != nullptr);
 
-	auto& mapInstances = pModel->GetInstances();
+	//auto& mapInstances = pModel->GetInstances();
 
-	auto itInstance = mapInstances.find(iInstance);
-	if (itInstance != mapInstances.end())
-	{
-		ASSERT(itInstance->second->Referenced());		
+	//auto itInstance = mapInstances.find(iInstance);
+	//if (itInstance != mapInstances.end())
+	//{
+	//	ASSERT(itInstance->second->Referenced());		
 
-		wstring strItem = _ap_instance::GetName(iInstance);
+	//	wstring strItem = _ap_instance::GetName(iInstance);
 
-		/*
-		* Object
-		*/
-		TV_INSERTSTRUCT tvInsertStruct;
-		tvInsertStruct.hParent = hParent;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = itInstance->second->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		tvInsertStruct.item.lParam = NULL;
+	//	/*
+	//	* Object
+	//	*/
+	//	TV_INSERTSTRUCT tvInsertStruct;
+	//	tvInsertStruct.hParent = hParent;
+	//	tvInsertStruct.hInsertAfter = TVI_LAST;
+	//	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	//	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+	//	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = itInstance->second->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+	//	tvInsertStruct.item.lParam = NULL;
 
-		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	//	HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		/*
-		* Geometry
-		*/
-		tvInsertStruct.hParent = hObject;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			itInstance->second->_instance::hasGeometry() ?
-			(itInstance->second->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
-			IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
+	//	/*
+	//	* Geometry
+	//	*/
+	//	tvInsertStruct.hParent = hObject;
+	//	tvInsertStruct.hInsertAfter = TVI_LAST;
+	//	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	//	tvInsertStruct.item.pszText = ITEM_GEOMETRY;
+	//	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
+	//		itInstance->second->_instance::hasGeometry() ?
+	//		(itInstance->second->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+	//		IMAGE_NO_GEOMETRY;
+	//	tvInsertStruct.item.lParam = (LPARAM)itInstance->second;
 
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-		m_mapInstance2GeometryItem[itInstance->second] = hGeometry;
+	//	HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	//	m_mapInstance2GeometryItem[itInstance->second] = hGeometry;
 
-		/*
-		* decomposition/nest/contains
-		*/
-		LoadIsDecomposedBy(pModel, iInstance, hObject);
-		LoadIsNestedBy(pModel, iInstance, hObject);
-		LoadContainsElements(pModel, iInstance, hObject);
-	} // if (itInstance != ...
-	else
-	{
-		ASSERT(FALSE);
-	}
+	//	/*
+	//	* decomposition/nest/contains
+	//	*/
+	//	LoadIsDecomposedBy(pModel, iInstance, hObject);
+	//	LoadIsNestedBy(pModel, iInstance, hObject);
+	//	LoadContainsElements(pModel, iInstance, hObject);
+	//} // if (itInstance != ...
+	//else
+	//{
+	//	ASSERT(FALSE);
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1290,41 +1292,41 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 {
 	ASSERT(pModel != nullptr);
 
-	map<wstring, vector<CIFCInstance*>> mapUnreferencedItems;
+	//map<wstring, vector<CIFCInstance*>> mapUnreferencedItems;
 
-	auto& mapInstances = pModel->GetInstances();
+	//auto& mapInstances = pModel->GetInstances();
 
-	auto itInstance = mapInstances.begin();
-	for (; itInstance != mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->_instance::hasGeometry())
-		{
-			continue;
-		}
+	//auto itInstance = mapInstances.begin();
+	//for (; itInstance != mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->_instance::hasGeometry())
+	//	{
+	//		continue;
+	//	}
 
-		if (!itInstance->second->Referenced())
-		{
-			const wchar_t* szEntity = itInstance->second->GetEntityName();
+	//	if (!itInstance->second->Referenced())
+	//	{
+	//		const wchar_t* szEntity = itInstance->second->GetEntityName();
 
-			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
-			if (itUnreferencedItems == mapUnreferencedItems.end())
-			{
-				vector<CIFCInstance*> veCIFCInstances;
-				veCIFCInstances.push_back(itInstance->second);
+	//		auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
+	//		if (itUnreferencedItems == mapUnreferencedItems.end())
+	//		{
+	//			vector<CIFCInstance*> veCIFCInstances;
+	//			veCIFCInstances.push_back(itInstance->second);
 
-				mapUnreferencedItems[szEntity] = veCIFCInstances;
-			}
-			else
-			{
-				itUnreferencedItems->second.push_back(itInstance->second);
-			}
-		} // for (; itInstance != ...
-	} // for (; itInstance != ...
+	//			mapUnreferencedItems[szEntity] = veCIFCInstances;
+	//		}
+	//		else
+	//		{
+	//			itUnreferencedItems->second.push_back(itInstance->second);
+	//		}
+	//	} // for (; itInstance != ...
+	//} // for (; itInstance != ...
 
-	if (mapUnreferencedItems.empty())
-	{
-		return;
-	}
+	//if (mapUnreferencedItems.empty())
+	//{
+	//	return;
+	//}
 
 	/*
 	* Unreferenced
@@ -1339,54 +1341,54 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 	HTREEITEM hUnreferenced = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	map<wstring, vector<CIFCInstance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
-	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++)
-	{
-		/*
-		* Entity
-		*/
-		tvInsertStruct.hParent = hUnreferenced;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)itUnreferencedItems->first.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-		tvInsertStruct.item.lParam = NULL;
+	//map<wstring, vector<CIFCInstance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
+	//for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++)
+	//{
+	//	/*
+	//	* Entity
+	//	*/
+	//	tvInsertStruct.hParent = hUnreferenced;
+	//	tvInsertStruct.hInsertAfter = TVI_LAST;
+	//	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	//	tvInsertStruct.item.pszText = (LPWSTR)itUnreferencedItems->first.c_str();
+	//	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+	//	tvInsertStruct.item.lParam = NULL;
 
-		HTREEITEM hEntity = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	//	HTREEITEM hEntity = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++)
-		{
-			auto pInstance = itUnreferencedItems->second[iInstance];
+	//	for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++)
+	//	{
+	//		auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = _ap_instance::GetName(pInstance->_ap_geometry::getSdaiInstance());
+	//		wstring strItem = _ap_instance::GetName(pInstance->_ap_geometry::getSdaiInstance());
 
-			/*
-			* Object
-			*/
-			tvInsertStruct.hParent = hEntity;
-			tvInsertStruct.hInsertAfter = TVI_LAST;
-			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-			tvInsertStruct.item.lParam = NULL;
+	//		/*
+	//		* Object
+	//		*/
+	//		tvInsertStruct.hParent = hEntity;
+	//		tvInsertStruct.hInsertAfter = TVI_LAST;
+	//		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	//		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+	//		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+	//		tvInsertStruct.item.lParam = NULL;
 
-			HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	//		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-			/*
-			* Geometry
-			*/
-			tvInsertStruct.hParent = hObject;
-			tvInsertStruct.hInsertAfter = TVI_LAST;
-			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
-			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-				pInstance->_instance::hasGeometry() ? (pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-			tvInsertStruct.item.lParam = (LPARAM)pInstance;
+	//		/*
+	//		* Geometry
+	//		*/
+	//		tvInsertStruct.hParent = hObject;
+	//		tvInsertStruct.hInsertAfter = TVI_LAST;
+	//		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	//		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
+	//		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
+	//			pInstance->_instance::hasGeometry() ? (pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+	//		tvInsertStruct.item.lParam = (LPARAM)pInstance;
 
-			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-			m_mapInstance2GeometryItem[pInstance] = hGeometry;
-		} // for (size_t iInstance = ...
-	} // for (; itUnreferencedItems != ...
+	//		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	//		m_mapInstance2GeometryItem[pInstance] = hGeometry;
+	//	} // for (size_t iInstance = ...
+	//} // for (; itUnreferencedItems != ...
 }
 
 // ------------------------------------------------------------------------------------------------

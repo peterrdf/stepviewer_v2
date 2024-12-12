@@ -470,6 +470,8 @@ public: // Methods
 		clean();
 	}
 
+	long getEnableInstanceCount();
+
 	void scale(float fScaleFactor);
 
 	void translate(float fX, float fY, float fZ)
@@ -654,6 +656,15 @@ public: // Methods
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax);
+
+	void addInstance(_instance* pInstance)
+	{
+		assert(pInstance != 0);
+
+		m_vecInstances.push_back(pInstance);
+	}
+
+public: // Properties
 
 	// Metadata
 	OwlInstance getInstance() const { return m_iInstance; }

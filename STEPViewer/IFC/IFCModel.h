@@ -43,10 +43,6 @@ private: // Members
 	SdaiEntity m_ifcReinforcingElementEntity;
 	SdaiEntity m_ifcTransportElementEntity;
 	SdaiEntity m_ifcVirtualElementEntity;
-	
-	vector<CIFCInstance*> m_vecInstances;
-	map<SdaiInstance, CIFCInstance*> m_mapInstances;
-	map<int64_t, CIFCInstance*> m_mapID2Instance;
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
@@ -78,27 +74,25 @@ protected: // Methods
 
 public: // Methods
 
-	void Scale(); // [-1, 1]	
+	void Scale(); // [-1, 1]
 
-	const map<SdaiInstance, CIFCInstance*>& GetInstances() const { return m_mapInstances; }
 	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
 	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
 	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
-	CIFCInstance* GetInstanceByID(int64_t iID);
-	void GetInstancesByType(const wchar_t* szType, vector<CIFCInstance*>& vecInstances);
+	void GetInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances);
 
 private: // Methods
 	
 	void GetObjectsReferencedState();	
-	void GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance);
-	void GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance);
-	void GetObjectsReferencedStateContainsElements(SdaiInstance iInstance);
-	void GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance);
-	void GetObjectsReferencedStateRecursively(SdaiInstance iInstance);
+	void GetObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance);
+	void GetObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance);
+	void GetObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance);
+	void GetObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
+	void GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
 	void RetrieveObjectsRecursively(int_t iParentEntity, int_t iCircleSegments);
 	void RetrieveObjects(const char* szEntityName, const wchar_t* szEntityNameW, int_t iCircleSegements);
-	CIFCInstance* RetrieveGeometry(SdaiInstance iInstance, int_t iCircleSegments);
+	_geometry* LoadGeometry(const wchar_t* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments);
 };
 
 #endif // IFCFILEPARSER_H
