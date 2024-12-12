@@ -32,7 +32,8 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance sdaiInstance)
 }
 
 /*virtual*/ CAP242ProductDefinition::~CAP242ProductDefinition()
-{}
+{
+}
 
 /*virtual*/ void CAP242ProductDefinition::preCalculate() /*override*/
 {

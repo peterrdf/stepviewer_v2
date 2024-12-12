@@ -5,8 +5,6 @@
 #include <map>
 using namespace std;
 
-#define EMPTY_INSTANCE L"---<EMPTY>---"
-
 // ************************************************************************************************
 class CAP242Assembly;
 class CAP242ProductDefinition;

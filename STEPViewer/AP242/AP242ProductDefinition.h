@@ -1,7 +1,6 @@
 #pragma once
 
 #include "_ap_geometry.h"
-#include "_oglUtils.h"
 
 #include "AP242ProductInstance.h"
 
@@ -30,7 +29,6 @@ private: // Members
 
 public: // Methods
 
-	// ctor/dtor
 	CAP242ProductDefinition(SdaiInstance sdaiInstance);
 	virtual ~CAP242ProductDefinition();
 
