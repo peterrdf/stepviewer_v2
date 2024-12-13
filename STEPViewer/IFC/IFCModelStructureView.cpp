@@ -345,7 +345,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	CPoint ptTree = point;
 	m_pTreeCtrl->ScreenToClient(&ptTree);
 
-	CIFCInstance* pInstance = nullptr;
+	CIFCInstance* pTargetInstance = nullptr;
 
 	UINT flags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(ptTree, &flags);
@@ -354,8 +354,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		m_pTreeCtrl->SelectItem(hItem);
 		m_pTreeCtrl->SetFocus();
 
-		pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-		if (pInstance == nullptr)
+		pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+		if (pTargetInstance == nullptr)
 		{
 			// Check the first child
 			HTREEITEM hChild = NULL;
@@ -364,7 +364,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				(m_pTreeCtrl->GetItemData(hChild) != NULL))
 			{
 				hItem = hChild;
-				pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+				pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
 			}
 		} // if (pInstance == nullptr)
 	} // if (hItem != nullptr)
@@ -400,42 +400,42 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	CMenu menuMain;
 	CMenu* pMenu = nullptr;
 
-	if (pInstance != nullptr)
+	if (pTargetInstance != nullptr)
 	{
-		if (pInstance->_instance::hasGeometry())
+		if (pTargetInstance->hasGeometry())
 		{
 			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES));
 			pMenu = menuMain.GetSubMenu(0);
 
 			// Zoom to
-			if (!pInstance->_instance::getEnable())
+			if (!pTargetInstance->_instance::getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Save
-			if (!pInstance->_instance::getEnable())
+			if (!pTargetInstance->_instance::getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Enable
-			if (pInstance->_instance::getEnable())
+			if (pTargetInstance->_instance::getEnable())
 			{
 				pMenu->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 			}
-		} // if (pInstance->HasGeometry())
+		} // if (pTargetInstance->hasGeometry())
 		else 
 		{
 			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 			pMenu = menuMain.GetSubMenu(0);
-		} // else if (pInstance->HasGeometry())
-	} // if (pInstance != nullptr)
+		}
+	} // if (pTargetInstance != nullptr)
 	else
 	{
 		VERIFY(menuMain.LoadMenuW(IDR_POPUP_META_DATA));
 		pMenu = menuMain.GetSubMenu(0);
-	} // else if (pInstance != nullptr)
+	}
 
 	// Entities
 	CMenu menuEntities;
@@ -474,9 +474,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 	// Execute the command
 	bool bExecuted = true;
-	if (pInstance != nullptr)
+	if (pTargetInstance != nullptr)
 	{
-		if (pInstance->_instance::hasGeometry())
+		if (pTargetInstance->hasGeometry())
 		{
 			switch (uiCommand)
 			{
@@ -500,9 +500,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case ID_INSTANCES_ENABLE:
 				{
-					pInstance->_instance::setEnable(!pInstance->_instance::getEnable());
+					pTargetInstance->_instance::setEnable(!pTargetInstance->getEnable());
 
-					int iImage = pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
 					ClickItem_UpdateChildren(hItem);
@@ -512,13 +512,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				}
 				break;
 
-				/*case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+				case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 				{
-					for (auto itInstance = mapInstances.begin(); 
-						itInstance != mapInstances.end(); 
-						itInstance++)
+					for (auto pInstance : pModel->getInstances())
 					{
-						itInstance->second->_instance::setEnable(itInstance->second == pInstance);
+						pInstance->setEnable(pTargetInstance == pInstance);
 					}
 
 					ResetView();
@@ -526,15 +524,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 					pController->OnInstancesEnabledStateChanged(this);
 				}
-				break;*/
+				break;
 
-				/*case ID_INSTANCES_ENABLE_ALL:
+				case ID_INSTANCES_ENABLE_ALL:
 				{
-					for (auto itInstance = mapInstances.begin(); 
-						itInstance != mapInstances.end(); 
-						itInstance++)
+					for (auto pInstance : pModel->getInstances())
 					{
-						itInstance->second->_instance::setEnable(true);
+						pInstance->setEnable(true);
 					}
 
 					ResetView();
@@ -542,11 +538,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 					pController->OnInstancesEnabledStateChanged(this);
 				}
-				break;*/
+				break;
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pTargetInstance->getSdaiInstance());
 				}
 				break;
 
@@ -569,7 +565,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->getSdaiInstance());
+					pController->OnViewRelations(this, pTargetInstance->getSdaiInstance());
 				}
 				break;
 
