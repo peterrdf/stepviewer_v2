@@ -4032,7 +4032,10 @@ public: // Methods
 		_postDraw(pModel);
 	}
 
-	virtual void _postDraw(_model* /*pModel*/) {}
+	virtual void _postDraw(_model* pModel) 
+	{
+		_drawInstancesFrameBuffer(pModel);
+	}
 
 	virtual void _drawFaces(_model* pModel, bool bTransparent)
 	{
@@ -4478,6 +4481,153 @@ public: // Methods
 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	}
+
+	void _drawInstancesFrameBuffer(_model* pModel)
+	{
+		if (pModel == nullptr)
+		{
+			return;
+		}
+
+		if (pModel->getGeometries().empty())
+		{
+			return;
+		}
+
+		//
+		// Create a frame buffer
+		//
+
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		m_pInstanceSelectionFrameBuffer->create();
+
+		// Selection colors
+		if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+		{
+			for (auto pGeometry : pModel->getGeometries())
+			{
+				if (pGeometry->getTriangles().empty())
+				{
+					continue;
+				}
+
+				auto& vecInstances = pGeometry->getInstances();
+				for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
+				{
+					auto pInstance = vecInstances[iInstance];
+					if (!pInstance->getEnable())
+					{
+						continue;
+					}
+
+					float fR, fG, fB;
+					_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
+
+					m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+				}
+			}
+		} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+
+		//
+		// Draw
+		//
+
+		m_pInstanceSelectionFrameBuffer->bind();
+
+		glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+
+		glClearColor(0.0, 0.0, 0.0, 0.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Set up the parameters
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+#ifdef _BLINN_PHONG_SHADERS
+		m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+		m_pOGLProgram->_enableLighting(false);
+#endif
+		m_pOGLProgram->_setTransparency(1.f);
+
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+
+		float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+		float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+		float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
+
+		for (auto itCohort : m_oglBuffers.cohorts())
+		{
+			glBindVertexArray(itCohort.first);
+
+			for (auto pGeometry : itCohort.second)
+			{
+				if (pGeometry->getTriangles().empty())
+				{
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances())
+				{
+					if (!pInstance->getEnable())
+					{
+						continue;
+					}
+
+					// Transformation Matrix
+					glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+
+					// Model-View Matrix
+					glm::mat4 matModelView = m_matModelView;
+					matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+					matModelView = matModelView * matTransformation;
+					matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+					m_pOGLProgram->_setModelViewMatrix(matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+					glm::mat4 matNormal = m_matModelView * matTransformation;
+					matNormal = glm::inverse(matNormal);
+					matNormal = glm::transpose(matNormal);
+					m_pOGLProgram->_setNormalMatrix(matNormal);
+#else
+					m_pOGLProgram->_setNormalMatrix(matModelView);
+#endif
+					for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++)
+					{
+						auto pCohort = pGeometry->concFacesCohorts()[iCohort];
+
+						auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
+						ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
+
+						m_pOGLProgram->_setAmbientColor(
+							itSelectionColor->second.r(),
+							itSelectionColor->second.g(),
+							itSelectionColor->second.b());
+
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
+						glDrawElementsBaseVertex(GL_TRIANGLES,
+							(GLsizei)pCohort->indices().size(),
+							GL_UNSIGNED_INT,
+							(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
+							pGeometry->VBOOffset());
+					}
+				} // for (size_t iInstance = ...			
+			} // for (auto pGeometry ...
+
+			glBindVertexArray(0);
+		} // for (auto itCohort ...
+
+		// Restore Model-View Matrix
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+
+		m_pInstanceSelectionFrameBuffer->unbind();
+
+		_oglUtils::checkForErrors();
 	}
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL

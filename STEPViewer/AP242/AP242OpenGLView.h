@@ -31,7 +31,6 @@ public: // Methods
 
 	// _oglView
 	virtual bool _preDraw(_model* pModel) override;
-	virtual void _postDraw(_model* pModel) override;
 
 	// CViewBase
 	virtual void OnWorldDimensionsChanged() override;
@@ -50,9 +49,6 @@ public: // Methods
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
 
 private: // Methods
-
-	// Selection
-	void DrawInstancesFrameBuffer();
 
 	// Mouse
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
