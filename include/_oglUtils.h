@@ -4004,7 +4004,35 @@ public: // Methods
 		_redraw();
 	}
 
-	virtual void _draw(CDC* pDC) PURE;
+	virtual bool _preDraw(_model* /*pModel*/) { return true; }
+
+	virtual void _draw(CDC* pDC)
+	{
+		auto pModel = getModel();
+		if (pModel == nullptr)
+		{
+			return;
+		}
+
+		if (!_preDraw(pModel))
+		{
+			return;
+		}
+
+		// Scene
+		_drawFaces(pModel, false);
+		_drawFaces(pModel, true);
+		_drawConceptualFacesPolygons(pModel);
+		_drawLines(pModel);
+		_drawPoints(pModel);
+
+		// OpenGL
+		SwapBuffers(*pDC);
+
+		_postDraw(pModel);
+	}
+
+	virtual void _postDraw(_model* /*pModel*/) {}
 
 	virtual void _drawFaces(_model* pModel, bool bTransparent)
 	{

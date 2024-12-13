@@ -33,7 +33,8 @@ public: // Methods
 	virtual string loadSetting(const string& strName) override;
 
 	// _oglView
-	virtual void _draw(CDC* pDC) override;
+	virtual bool _preDraw(_model* pModel) override;
+	virtual void _postDraw(_model* pModel) override;
 
 	// CViewBase	
 	virtual void OnWorldDimensionsChanged() override;

@@ -57,14 +57,11 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CIFCOpenGLView::_draw(CDC* pDC) /*override*/
+/*virtual*/ bool CIFCOpenGLView::_preDraw(_model* pModel) /*override*/
 {
-	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
-		return;
+		return false;
 	}
 
 	CRect rcClient;
@@ -75,7 +72,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 
 	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
-		return;
+		return false;
 	}
 
 	float fXmin = -1.f;
@@ -95,16 +92,11 @@ CIFCOpenGLView::~CIFCOpenGLView()
 		true,
 		true);
 
-	// Scene
-	_drawFaces(pModel, false);
-	_drawFaces(pModel, true);
-	_drawConceptualFacesPolygons(pModel);
-	_drawLines(pModel);
-	_drawPoints(pModel);
+	return true;
+}
 
-	SwapBuffers(*pDC);
-
-	// Buffer
+/*virtual*/ void CIFCOpenGLView::_postDraw(_model* pModel) /*override*/
+{
 	DrawInstancesFrameBuffer();
 }
 

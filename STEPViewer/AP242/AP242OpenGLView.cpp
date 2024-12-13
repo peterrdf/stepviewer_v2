@@ -63,16 +63,11 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-/*virtual*/ void CAP242OpenGLView::_draw(CDC* pDC) /*override*/
+/*virtual*/ bool CAP242OpenGLView::_preDraw(_model* pModel) /*override*/
 {
-	VERIFY(pDC != nullptr);
-
-	auto pModel = GetModel<CAP242Model>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
-		return;
+		return false;
 	}
 
 	CRect rcClient;
@@ -83,7 +78,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
-		return;
+		return false;
 	}
 
 	float fXmin = -1.f;
@@ -103,16 +98,11 @@ CAP242OpenGLView::~CAP242OpenGLView()
 		true,
 		true);
 
-	// Scene
-	_drawFaces(pModel, false);
-	_drawFaces(pModel, true);
-	_drawConceptualFacesPolygons(pModel);
-	_drawLines(pModel);
-	_drawPoints(pModel);
+	return true;
+}
 
-	SwapBuffers(*pDC);
-
-	// Buffer
+/*virtual*/ void CAP242OpenGLView::_postDraw(_model* pModel) /*override*/
+{
 	DrawInstancesFrameBuffer();
 }
 
