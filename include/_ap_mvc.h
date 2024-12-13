@@ -35,6 +35,7 @@ protected: // Members
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
+	map<SdaiInstance, _geometry*> m_mapGeometries;
 
 public: // Methods
 
@@ -44,6 +45,7 @@ public: // Methods
 		, m_enAP(enAP)
 		, m_pEntityProvider(nullptr)
 		, m_mapExpressID2Geometry()
+		, m_mapGeometries()
 	{}
 
 	virtual ~_ap_model()
@@ -91,7 +93,18 @@ public: // Methods
 		attachModelCore();
 	}
 
-	_geometry* getGeometryByExpressID(int64_t iExpressID) const
+	_geometry* getGeometryByInstance(SdaiInstance sdaiInstance)
+	{
+		auto itGeometry = m_mapGeometries.find(sdaiInstance);
+		if (itGeometry != m_mapGeometries.end())
+		{
+			return itGeometry->second;
+		}
+
+		return nullptr;
+	}
+
+	_geometry* getGeometryByExpressID(ExpressID iExpressID) const
 	{
 		assert(iExpressID != 0);
 
@@ -105,7 +118,7 @@ public: // Methods
 	}
 
 	template<typename T>
-	T* getGeometryByExpressIDAs(int64_t iExpressID) const
+	T* getGeometryByExpressIDAs(ExpressID iExpressID) const
 	{
 		assert(iExpressID != 0);
 
@@ -196,6 +209,7 @@ protected: // Methods
 			m_sdaiModel = 0;
 		}
 
+		m_mapGeometries.clear();
 		m_mapExpressID2Geometry.clear();
 
 		delete m_pEntityProvider;

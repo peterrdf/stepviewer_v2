@@ -123,7 +123,7 @@ void CIFCModel::GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 {
 	ASSERT(sdaiInstance != 0);
 
-	auto pGeometry = geGeometryByInstance(sdaiInstance);
+	auto pGeometry = getGeometryByInstance(sdaiInstance);
 	if (pGeometry != nullptr)
 	{
 		dynamic_cast<CIFCGeometry*>(pGeometry)->Referenced() = true;

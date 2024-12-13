@@ -47,8 +47,7 @@ protected: // Members
 
 	wstring m_strPath;
 
-	vector<_geometry*> m_vecGeometries;
-	map<SdaiInstance, _geometry*> m_mapGeometries;
+	vector<_geometry*> m_vecGeometries;	
 	// 1...*
 	vector<_instance*> m_vecInstances;
 	map<int64_t, _instance*> m_mapID2Instance;
@@ -74,7 +73,6 @@ public: // Methods
 	_model()
 		: m_strPath(L"")
 		, m_vecGeometries()
-		, m_mapGeometries()
 		, m_vecInstances()
 		, m_mapID2Instance()
 		, m_bUpdteVertexBuffers(true)
@@ -95,8 +93,6 @@ public: // Methods
 	{
 		clean();
 	}
-
-	virtual OwlModel getOwlInstance() const PURE;
 
 	void scale()
 	{
@@ -321,6 +317,10 @@ public: // Methods
 
 	virtual _instance* LoadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
 
+public: // Properties
+
+	virtual OwlModel getOwlInstance() const PURE;
+
 protected: // Methods
 
 	virtual void clean()
@@ -330,7 +330,6 @@ protected: // Methods
 			delete pGeometry;
 		}
 		m_vecGeometries.clear();
-		m_mapGeometries.clear();
 
 		for (auto pInstance : m_vecInstances)
 		{
@@ -341,17 +340,6 @@ protected: // Methods
 	}
 
 public: // Methods
-	 
-	_geometry* geGeometryByInstance(SdaiInstance sdaiInstance)
-	{
-		auto itGeometry = m_mapGeometries.find(sdaiInstance);
-		if (itGeometry != m_mapGeometries.end())
-		{
-			return itGeometry->second;
-		}
-
-		return nullptr;
-	}
 
 	_instance* getInstanceByID(int64_t iID) const
 	{
