@@ -49,11 +49,6 @@ public: // Methods
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
 
 private: // Methods
-	
-	// UI
-	void DrawConceptualFacesPolygons(_model* pM);
-	void DrawLines(_model* pM);
-	void DrawPoints(_model* pM);
 
 	// Selection
 	void DrawInstancesFrameBuffer();
