@@ -4591,15 +4591,8 @@ public: // Methods
 					continue;
 				}
 
-				auto& vecInstances = pGeometry->getInstances();
-				for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
+				for (auto pInstance : pGeometry->getInstances())
 				{
-					auto pInstance = vecInstances[iInstance];
-					if (!pInstance->getEnable())
-					{
-						continue;
-					}
-
 					float fR, fG, fB;
 					_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
