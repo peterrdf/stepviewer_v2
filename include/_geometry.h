@@ -666,7 +666,7 @@ public: // Methods
 public: // Properties
 
 	// Metadata
-	OwlInstance getInstance() const { return m_iInstance; }
+	OwlInstance getInstance() const { assert(m_iInstance != 0);  return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
 	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }
 	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }	
@@ -784,7 +784,10 @@ protected: // Methods
 
 	virtual void calculateCore();
 
-	virtual void postCalculate() {}
+	virtual void postCalculate() 
+	{
+		cleanMemoryCore();
+	}
 
 	virtual uint32_t getDefaultColor() const
 	{
@@ -931,6 +934,8 @@ protected: // Methods
 		_cohort::clear(m_vecBiNormalVecsCohorts);
 		_cohort::clear(m_vecTangentVecsCohorts);
 	}
+
+	virtual void cleanMemoryCore() {}
 };
 
 // ************************************************************************************************

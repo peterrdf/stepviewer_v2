@@ -388,9 +388,7 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
 	{
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
-	}
-
-	cleanMemory(getSdaiInstance(), 0);
+	}	
 
 	return pGeometry;
 }

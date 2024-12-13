@@ -25,3 +25,10 @@ CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
 	setFilter(getSdaiModel(), flagbit1, flagbit1);
 	setSegmentation(getSdaiModel(), 16, 0.);
 }
+
+/*virtual*/ void CIFCGeometry::cleanMemoryCore() /*override*/
+{
+	cleanMemory(getSdaiModel(), 0);
+
+	m_iInstance = 0;
+}
