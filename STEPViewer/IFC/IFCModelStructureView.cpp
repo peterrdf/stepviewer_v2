@@ -615,36 +615,34 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		}
 
 		// Update the Parents just ones
-		//set<HTREEITEM> m_setParents;
+		set<HTREEITEM> m_setParents;
+		for (auto pInstance : pModel->getInstances())
+		{
+			//#todo#mappeditems		
+			 pTargetInstance = _ptr<CIFCInstance>(pInstance);
 
-		//for (auto itInstance = mapInstances.begin();
-		//	itInstance != mapInstances.end();
-		//	itInstance++)
-		//{
-		//	pInstance = itInstance->second;
+			if (pTargetInstance->GetEntityName() == itCommand2Entity->second)
+			{
+				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
-		//	if (pInstance->GetEntityName() == itCommand2Entity->second)
-		//	{
-		//		pInstance->_instance::setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+				auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pTargetInstance);
+				ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
 
-		//		auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pInstance);
-		//		ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
+				HTREEITEM hGeometryItem = itInstance2GeometryItem->second;
 
-		//		HTREEITEM hGeometryItem = itInstance2GeometryItem->second;
+				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeCtrl->SetItemImage(hGeometryItem, iImage, iImage);
 
-		//		int iImage = pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		//		m_pTreeCtrl->SetItemImage(hGeometryItem, iImage, iImage);
+				ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometryItem));
 
-		//		ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometryItem));
+				HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometryItem);
+				ASSERT(hInstanceItem != NULL);
 
-		//		HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometryItem);
-		//		ASSERT(hInstanceItem != NULL);
+				ClickItem_UpdateParent(hInstanceItem, FALSE);
 
-		//		ClickItem_UpdateParent(hInstanceItem, FALSE);
-
-		//		m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
-		//	}
-		//} // for (auto itInstance = ...
+				m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
+			}
+		} // for (auto itInstance = ...
 
 		// Update the Parents
 		/*for (auto hParent : m_setParents)
