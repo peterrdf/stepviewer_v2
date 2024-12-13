@@ -5,11 +5,6 @@
 #include "CIS2Model.h"
 #include "resource.h"
 
-#include <chrono>
-
-// ************************************************************************************************
-static const int MIN_VIEW_PORT_LENGTH = 100;
-
 // ************************************************************************************************
 CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
 	: COpenGLView()

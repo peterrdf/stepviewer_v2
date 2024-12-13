@@ -11,14 +11,17 @@
 #include "mat4x4.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
-#include "glew.h"
 
+#include <chrono>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <limits>
 #include <map>
 #undef max
 using namespace std;
+
+// ************************************************************************************************
+static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
 class _oglUtils
@@ -3722,19 +3725,25 @@ class _oglView : public _oglRenderer
 
 protected: // Members
 
-	// Materials
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
+	// Mouse
+	CPoint m_ptStartMousePosition;
+	CPoint m_ptPrevMousePosition;	
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
 	_instance* m_pPointedInstance;
 	_instance* m_pSelectedInstance;
 
+	// Materials
+	_material* m_pSelectedInstanceMaterial;
+	_material* m_pPointedInstanceMaterial;
+
 public: // Methods
 
 	_oglView()
-		: m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
+		: m_ptStartMousePosition(-1, -1)
+		, m_ptPrevMousePosition(-1, -1)
+		, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 		, m_pPointedInstance(nullptr)
 		, m_pSelectedInstance(nullptr)
 	{
@@ -4004,7 +4013,43 @@ public: // Methods
 		_redraw();
 	}
 
-	virtual bool _preDraw(_model* /*pModel*/) { return true; }
+	virtual bool _preDraw(_model* pModel)
+	{
+		if (pModel == nullptr)
+		{
+			return false;
+		}
+
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		int iWidth = rcClient.Width();
+		int iHeight = rcClient.Height();
+
+		if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
+		{
+			return false;
+		}
+
+		float fXmin = -1.f;
+		float fXmax = 1.f;
+		float fYmin = -1.f;
+		float fYmax = 1.f;
+		float fZmin = -1.f;
+		float fZmax = 1.f;
+		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		_prepare(
+			0, 0,
+			iWidth, iHeight,
+			fXmin, fXmax,
+			fYmin, fYmax,
+			fZmin, fZmax,
+			true,
+			true);
+
+		return true;
+	}
 
 	virtual void _draw(CDC* pDC)
 	{
@@ -4628,6 +4673,109 @@ public: // Methods
 		m_pInstanceSelectionFrameBuffer->unbind();
 
 		_oglUtils::checkForErrors();
+	}
+
+	void _onMouseMoveEvent(UINT nFlags, CPoint point)
+	{
+		_model* pModel = getModel();
+		if (pModel == nullptr)
+		{
+			return;
+		}
+
+		// Selection
+		if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
+			((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
+			((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
+			m_pInstanceSelectionFrameBuffer->isInitialized())
+		{
+			int iWidth = 0;
+			int iHeight = 0;
+
+			BOOL bResult = m_pOGLContext->makeCurrent();
+			VERIFY(bResult);
+
+			CRect rcClient;
+			m_pWnd->GetClientRect(&rcClient);
+
+			iWidth = rcClient.Width();
+			iHeight = rcClient.Height();
+
+			GLubyte arPixels[4];
+			memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+
+			m_pInstanceSelectionFrameBuffer->bind();
+
+			glReadPixels(
+				(GLint)dX,
+				(GLint)dY,
+				1, 1,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE,
+				arPixels);
+
+			m_pInstanceSelectionFrameBuffer->unbind();
+
+			_instance* pPointedInstance = nullptr;
+			if (arPixels[3] != 0)
+			{
+				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+				pPointedInstance = pModel->getInstanceByID(iInstanceID);
+				ASSERT(pPointedInstance != nullptr);
+			}
+
+			if (m_pPointedInstance != pPointedInstance)
+			{
+				m_pPointedInstance = pPointedInstance;
+
+				_redraw();
+			}
+		} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
+
+		if (m_ptPrevMousePosition.x == -1)
+		{
+			return;
+		}
+
+		// Rotate
+		if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
+		{
+			_rotateMouseLButton(
+				(float)point.y - (float)m_ptPrevMousePosition.y,
+				(float)point.x - (float)m_ptPrevMousePosition.x);
+
+			m_ptPrevMousePosition = point;
+
+			return;
+		}
+
+		// Zoom
+		if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
+		{
+			_zoomMouseMButton(point.y - m_ptPrevMousePosition.y);
+
+			m_ptPrevMousePosition = point;
+
+			return;
+		}
+
+		// Move
+		if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
+		{
+			CRect rcClient;
+			m_pWnd->GetClientRect(&rcClient);
+
+			_panMouseRButton(
+				((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width(),
+				((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
+
+			m_ptPrevMousePosition = point;
+
+			return;
+		}
 	}
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL

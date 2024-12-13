@@ -32,9 +32,6 @@ public: // Methods
 	virtual void saveSetting(const string& strName, const string& strValue) override;
 	virtual string loadSetting(const string& strName) override;
 
-	// _oglView
-	virtual bool _preDraw(_model* pModel) override;
-
 	// CViewBase	
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstanceSelected(CViewBase* pSender) override;
@@ -49,11 +46,6 @@ public: // Methods
 
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
-
-private: // Methods
-	
-	// Mouse
-	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

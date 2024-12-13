@@ -11,12 +11,6 @@ class CAP242OpenGLView
 	: public COpenGLView
 {
 
-private: // Members	
-
-	// Mouse
-	CPoint m_ptStartMousePosition;
-	CPoint m_ptPrevMousePosition;	
-
 public: // Methods
 
 	// ctor/dtor
@@ -28,9 +22,6 @@ public: // Methods
 	virtual _model* getModel() const override;
 	virtual void saveSetting(const string& strName, const string& strValue) override;
 	virtual string loadSetting(const string& strName) override;
-
-	// _oglView
-	virtual bool _preDraw(_model* pModel) override;
 
 	// CViewBase
 	virtual void OnWorldDimensionsChanged() override;
@@ -47,11 +38,6 @@ public: // Methods
 
 	// COpenGLView
 	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
-
-private: // Methods
-
-	// Mouse
-	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 };
 
 #endif // _OPEN_GL_STEP_VIEW_H_

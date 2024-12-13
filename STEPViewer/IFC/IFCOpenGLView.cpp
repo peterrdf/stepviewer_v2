@@ -8,9 +8,6 @@
 #include <chrono>
 
 // ************************************************************************************************
-static const int MIN_VIEW_PORT_LENGTH = 100;
-
-// ************************************************************************************************
 CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 	: COpenGLView()
 	, m_ptStartMousePosition(-1, -1)
@@ -55,44 +52,6 @@ CIFCOpenGLView::~CIFCOpenGLView()
 /*virtual*/ string CIFCOpenGLView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
-}
-
-/*virtual*/ bool CIFCOpenGLView::_preDraw(_model* pModel) /*override*/
-{
-	if (pModel == nullptr)
-	{
-		return false;
-	}
-
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	int iWidth = rcClient.Width();
-	int iHeight = rcClient.Height();
-
-	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
-	{
-		return false;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	_prepare(
-		0, 0,
-		iWidth, iHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
-
-	return true;
 }
 
 /*virtual*/ void CIFCOpenGLView::OnWorldDimensionsChanged() /*override*/
@@ -252,7 +211,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	{
 		case enumMouseEvent::Move:
 		{
-			OnMouseMoveEvent(nFlags, point);
+			_onMouseMoveEvent(nFlags, point);
 		}
 		break;
 
@@ -280,116 +239,5 @@ CIFCOpenGLView::~CIFCOpenGLView()
 			ASSERT(FALSE);
 			break;
 	} // switch (enEvent)
-}
-
-void CIFCOpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
-{
-	auto pModel = GetModel<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	/*
-	* Selection
-	*/
-	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && 
-		((nFlags & MK_MBUTTON) != MK_MBUTTON) && 
-		((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
-		m_pInstanceSelectionFrameBuffer->isInitialized())
-	{
-		int iWidth = 0;
-		int iHeight = 0;
-
-		BOOL bResult = m_pOGLContext->makeCurrent();
-		VERIFY(bResult);
-
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
-
-		iWidth = rcClient.Width();
-		iHeight = rcClient.Height();
-
-		GLubyte arPixels[4];
-		memset(arPixels, 0, sizeof(GLubyte) * 4);
-
-		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-
-		m_pInstanceSelectionFrameBuffer->bind();
-
-		glReadPixels(
-			(GLint)dX,
-			(GLint)dY,
-			1, 1,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
-			arPixels);
-
-		m_pInstanceSelectionFrameBuffer->unbind();
-
-		CIFCInstance* pPointedInstance = nullptr;
-		if (arPixels[3] != 0)
-		{
-			/*int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-			pPointedInstance = pModel->GetInstanceByID((int_t)iInstanceID);
-			ASSERT(pPointedInstance != nullptr);*/
-		}
-
-		if (m_pPointedInstance != pPointedInstance)
-		{
-			m_pPointedInstance = pPointedInstance;
-
-			_redraw();
-		}
-	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
-
-	if (m_ptPrevMousePosition.x == -1)
-	{
-		return;
-	}
-
-	/*
-	* Rotate
-	*/
-	if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
-	{
-		_rotateMouseLButton(
-			(float)point.y - (float)m_ptPrevMousePosition.y,
-			(float)point.x - (float)m_ptPrevMousePosition.x);
-
-		m_ptPrevMousePosition = point;
-
-		return;
-	}
-
-	/*
-	* Zoom
-	*/
-	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
-	{
-		_zoomMouseMButton(point.y - m_ptPrevMousePosition.y);
-
-		m_ptPrevMousePosition = point;
-
-		return;
-	}
-
-	/*
-	* Move
-	*/
-	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
-	{
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
-
-		_panMouseRButton(
-			((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width(),
-			((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
-
-		m_ptPrevMousePosition = point;
-
-		return;
-	}
 }
 
