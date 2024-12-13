@@ -37,8 +37,8 @@ public: // Methods
 	CController();	
 	virtual ~CController();
 	
-	_ap_model* GetModel() const;
-	void SetModel(_ap_model* pModel);
+	_model* GetModel() const;
+	void SetModel(_model* pModel);
 	_instance* LoadInstance(OwlInstance iInstance);
 
 	// Events

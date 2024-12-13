@@ -4,6 +4,7 @@
 #include "ViewBase.h"
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
+#include "Controller.h"
 
 #include <map>
 using namespace std;

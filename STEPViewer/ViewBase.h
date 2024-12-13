@@ -1,5 +1,7 @@
 #pragma once
 
+#include "_mvc.h"
+
 #include "IFCInstance.h"
 #include "Entity.h"
 
@@ -41,7 +43,7 @@ enum class enumApplicationProperty : int
 
 // ************************************************************************************************
 // View - MVC
-class CViewBase
+class CViewBase : public _view
 {
 
 private: // Members
@@ -59,10 +61,7 @@ public: // Methods
 	void SetController(CController* pController);
 
 	// Events
-	virtual void OnModelChanged();
-	virtual void OnModelUpdated();
-	virtual void OnWorldDimensionsChanged();	
-	virtual void OnShowMetaInformation();
+	
 	virtual void OnTargetInstanceChanged(CViewBase* pSender);
 	virtual void OnInstanceSelected(CViewBase* pSender);
 	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender);

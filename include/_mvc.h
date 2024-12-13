@@ -3,6 +3,7 @@
 #include "_geometry.h"
 #include "_settings_storage.h"
 
+#include <set>
 #include <string>
 using namespace std;
 
@@ -367,18 +368,54 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _controller
+class _controller;
+
+// ************************************************************************************************
+class _view
 {
 
 protected: // Members
 
+	_controller* m_pController;
+
+public: // Methods
+
+	_view()
+		: m_pController(nullptr)
+	{
+	}
+
+	virtual ~_view()
+	{
+	}
+
+	virtual void OnModelChanged() {}
+	virtual void OnModelUpdated() {}
+	virtual void OnWorldDimensionsChanged() {}
+	virtual void OnShowMetaInformation() {}
+
+protected: // Properties
+
+	//_controller* GetController() const { return m_pController; }
+};
+
+// ************************************************************************************************
+class _controller
+{
+
+private: // Members
+
+protected: // Members
+
 	_model* m_pModel;
-	_settings_storage* m_pSettingsStorage;
+	set<_view*> m_setViews;
+	_settings_storage* m_pSettingsStorage;	
 
 public: // Methods
 
 	_controller()
 		: m_pModel(nullptr)
+		, m_setViews()
 		, m_pSettingsStorage(new _settings_storage())
 	{}
 
@@ -386,6 +423,8 @@ public: // Methods
 	{
 		delete m_pSettingsStorage;
 	}
+
+public: // Properties
 
 	_model* getModel() const { return m_pModel; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }

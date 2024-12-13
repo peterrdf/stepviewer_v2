@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "mainfrm.h"
 #include "SchemaView.h"
 #include "Resource.h"
@@ -415,7 +418,7 @@ void CSchemaView::ResetView()
 		return;
 	}
 
-	LoadModel(pModel);
+	LoadModel(_ptr<_ap_model>(pModel));
 }
 
 void CSchemaView::AdjustLayout()

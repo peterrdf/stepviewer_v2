@@ -9,6 +9,8 @@
 #include "STEPViewer.h"
 #endif
 
+#include "_ptr.h"
+
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
 #include "AP242OpenGLView.h"
@@ -49,11 +51,9 @@ CController* CMySTEPViewerView::GetController()
 		return;
 	}
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->GetModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -65,7 +65,7 @@ CController* CMySTEPViewerView::GetController()
 
 	wstring strSettingsFile = pthRootFolder.wstring();
 
-	switch (pModel->getAP())
+	switch (model.p()->getAP())
 	{
 		case enumAP::STEP:
 		{
@@ -74,7 +74,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load(pModel);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
@@ -85,7 +85,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load(pModel);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
@@ -96,7 +96,7 @@ CController* CMySTEPViewerView::GetController()
 
 			m_pOpenGLView = new CCIS2OpenGLView(this);
 			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load(pModel);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
@@ -105,7 +105,7 @@ CController* CMySTEPViewerView::GetController()
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	}
+	} // (model.p()->getAP())
 }
 
 

@@ -27,6 +27,11 @@ public: // Methods
 		return m_pTout;
 	}
 
+	operator bool() const 
+	{ 
+		return m_pTout != nullptr;
+	}
+
 	operator Tout* ()
 	{
 		return m_pTout;

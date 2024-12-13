@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "resource.h"
 
 #include "MainFrm.h"
@@ -553,7 +556,7 @@ SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 _ap_model* CModelCheckDlg::GetActiveModel()
 {
 	if (auto pDoc = GetActiveDoc()) {
-		return pDoc->GetModel();
+		return _ptr<_ap_model>(pDoc->GetModel());
 	}
 	return NULL;
 }

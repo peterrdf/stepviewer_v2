@@ -23,20 +23,6 @@ void CViewBase::SetController(CController* pController)
 	OnControllerChanged();
 }
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CViewBase::OnModelChanged()
-{}
-
-/*virtual*/ void CViewBase::OnModelUpdated()
-{}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CViewBase::OnWorldDimensionsChanged()
-{}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CViewBase::OnShowMetaInformation()
-{}
 
 /*virtual*/ void CViewBase::OnTargetInstanceChanged(CViewBase* /*pSender*/)
 {}

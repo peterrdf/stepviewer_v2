@@ -3746,10 +3746,13 @@ private: //  Methods
 
 // ************************************************************************************************
 class _model;
+class _view;
 class _instance;
 
 // ************************************************************************************************
-class _oglView : public _oglRenderer
+class _oglView 
+	: public _oglRenderer
+	//, public _view
 {
 
 protected: // Members

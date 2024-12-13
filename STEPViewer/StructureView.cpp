@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "mainfrm.h"
 #include "StructureView.h"
 #include "Resource.h"
@@ -30,18 +33,16 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->GetModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
-	}	
+	}
 
 	delete m_pSTEPTreeView;
 	m_pSTEPTreeView = nullptr;
 
-	switch (pModel->getAP())
+	switch (model.p()->getAP())
 	{
 		case enumAP::STEP:
 		{
@@ -72,7 +73,7 @@ static char THIS_FILE[]=__FILE__;
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // switch (pModel ->GetType())
+	} // switch (model.p()->getAP())
 }
 
 /////////////////////////////////////////////////////////////////////////////

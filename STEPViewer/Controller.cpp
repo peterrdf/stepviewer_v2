@@ -27,13 +27,13 @@ CController::CController()
 {}
 
 // ------------------------------------------------------------------------------------------------
-_ap_model* CController::GetModel() const
+_model* CController::GetModel() const
 {
-	return dynamic_cast<_ap_model*>(getModel());
+	return getModel();
 }
 
 // ------------------------------------------------------------------------------------------------
-void CController::SetModel(_ap_model* pModel)
+void CController::SetModel(_model* pModel)
 {
 	ASSERT(pModel != nullptr);
 
