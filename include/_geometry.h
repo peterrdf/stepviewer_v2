@@ -430,7 +430,7 @@ public: // Members
 
 public: // Methods
 
-	_geometry(OwlInstance iInstance, bool bEnable)
+	_geometry(OwlInstance iInstance)
 		: m_iInstance(iInstance)
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")

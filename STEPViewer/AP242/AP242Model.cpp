@@ -189,7 +189,7 @@ void CAP242Model::LoadGeometry()
 	}
 }
 
-void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)

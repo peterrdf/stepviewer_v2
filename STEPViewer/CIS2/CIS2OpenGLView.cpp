@@ -66,7 +66,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	return GetController();
 }
 
-/*virtual*/ void CCIS2OpenGLView::_load(_model* pModel2) /*override*/
+/*virtual*/ void CCIS2OpenGLView::_load(_model* /*pModel2*/) /*override*/
 {
 	CWaitCursor waitCursor;
 
