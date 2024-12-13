@@ -10,8 +10,6 @@
 // ************************************************************************************************
 CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 	: COpenGLView()
-	, m_ptStartMousePosition(-1, -1)
-	, m_ptPrevMousePosition(-1, -1)
 {
 	_initialize(
 		pWnd,
@@ -37,21 +35,6 @@ CIFCOpenGLView::~CIFCOpenGLView()
 /*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/
 {
 	return GetController();
-}
-
-/*virtual*/ _model* CIFCOpenGLView::getModel() const /*override*/
-{
-	return GetController()->getModel();
-}
-
-/*virtual*/ void CIFCOpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
-{
-	GetController()->getSettingsStorage()->setSetting(strName, strValue);
-}
-
-/*virtual*/ string CIFCOpenGLView::loadSetting(const string& strName) /*override*/
-{
-	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
 /*virtual*/ void CIFCOpenGLView::OnWorldDimensionsChanged() /*override*/

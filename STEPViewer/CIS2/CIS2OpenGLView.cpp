@@ -66,21 +66,6 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	return GetController();
 }
 
-/*virtual*/ _model* CCIS2OpenGLView::getModel() const /*override*/
-{
-	return GetController()->getModel();
-}
-
-/*virtual*/ void CCIS2OpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
-{
-	GetController()->getSettingsStorage()->setSetting(strName, strValue);
-}
-
-/*virtual*/ string CCIS2OpenGLView::loadSetting(const string& strName) /*override*/
-{
-	return GetController()->getSettingsStorage()->getSetting(strName);
-}
-
 /*virtual*/ void CCIS2OpenGLView::_load(_model* pModel2) /*override*/
 {
 	CWaitCursor waitCursor;

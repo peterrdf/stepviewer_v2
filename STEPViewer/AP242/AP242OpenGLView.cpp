@@ -40,21 +40,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	return GetController();
 }
 
-/*virtual*/ _model* CAP242OpenGLView::getModel() const /*override*/
-{
-	return GetController()->getModel();
-}
-
-/*virtual*/ void CAP242OpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
-{
-	GetController()->getSettingsStorage()->setSetting(strName, strValue);
-}
-
-/*virtual*/ string CAP242OpenGLView::loadSetting(const string& strName) /*override*/
-{
-	return GetController()->getSettingsStorage()->getSetting(strName);
-}
-
 /*virtual*/ void CAP242OpenGLView::OnWorldDimensionsChanged()  /*override*/
 {
 	auto pModel = GetModel<CAP242Model>();

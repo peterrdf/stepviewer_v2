@@ -2840,9 +2840,38 @@ public: // Methods
 protected: // Methods
 
 	virtual _controller* getController() const PURE;
-	virtual _model* getModel() const PURE;
-	virtual void saveSetting(const string& strName, const string& strValue) PURE;
-	virtual string loadSetting(const string& strName) PURE;
+
+	_model* getModel()
+	{
+		auto pController = getController();
+		if (pController != nullptr)
+		{
+			return pController->getModel();
+		}
+
+		return nullptr;
+	}
+
+	virtual void saveSetting(const string& strName, const string& strValue)
+	{
+		auto pController = getController();
+		if (pController != nullptr)
+		{
+			pController->getSettingsStorage()->setSetting(strName, strValue);
+		}
+	}
+
+	virtual string loadSetting(const string& strName)
+	{
+		auto pController = getController();
+		if (pController != nullptr)
+		{
+			return pController->getSettingsStorage()->getSetting(strName);
+		}
+
+		return "";
+	}
+
 	virtual void loadSettings()
 	{
 		{
