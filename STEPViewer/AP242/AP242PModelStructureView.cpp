@@ -79,7 +79,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CAP242PModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{

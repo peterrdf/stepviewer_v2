@@ -7,7 +7,7 @@
 
 // ************************************************************************************************
 CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
-	: COpenGLView()
+	: _oglView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -450,7 +450,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CCIS2OpenGLView::OnInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -476,7 +476,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	}
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
+/*virtual*/ void CCIS2OpenGLView::OnInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -486,7 +486,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CCIS2OpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -541,61 +541,6 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 
 		loadSettings();
 	}
-}
-
-/*virtual*/ void CCIS2OpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
-
-				_redraw();
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-		case enumMouseEvent::Move:
-		{
-			OnMouseMoveEvent(nFlags, point);
-		}
-		break;
-
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
-
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (enEvent)
 }
 
 void CCIS2OpenGLView::DrawFaces(_model* pM, bool bTransparent)

@@ -39,7 +39,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CRelationsView::OnInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -66,7 +66,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, SdaiInstance iInstance) /*override*/
 {
 	if (pSender == this)
 	{
@@ -91,19 +91,19 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, CEntity* pEntity) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-	
-	LoadProperties(
-		pEntity->GetEntity(),
-		pEntity->GetInstances());
-	
-	ShowPane(TRUE, TRUE, TRUE);
-}
+///*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, CEntity* pEntity) /*override*/
+//{
+//	if (pSender == this)
+//	{
+//		return;
+//	}
+//	
+//	LoadProperties(
+//		pEntity->GetEntity(),
+//		pEntity->GetInstances());
+//	
+//	ShowPane(TRUE, TRUE, TRUE);
+//}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CRelationsView::GetTreeView() /*override*/

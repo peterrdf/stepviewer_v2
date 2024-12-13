@@ -72,7 +72,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CCIS2ModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CCIS2ModelStructureView::OnInstanceSelected(_view* pSender) /*override*/
 {	
 	if (pSender == this)
 	{

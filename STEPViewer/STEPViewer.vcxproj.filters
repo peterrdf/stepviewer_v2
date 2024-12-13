@@ -69,9 +69,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ViewBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,9 +85,6 @@
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TreeViewBase.h">
@@ -245,9 +239,6 @@
     <ClCompile Include="PropertiesWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ViewBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -262,9 +253,6 @@
     </ClCompile>
     <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLView.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
@@ -343,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_geometry.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

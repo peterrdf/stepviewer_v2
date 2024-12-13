@@ -73,7 +73,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CIFCModelStructureView::OnInstanceSelected(_view* pSender) /*override*/
 {	
 	if (pSender == this)
 	{

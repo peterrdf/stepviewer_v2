@@ -638,8 +638,9 @@
     <ClInclude Include="IFC\IFCInstance.h" />
     <ClInclude Include="IFC\IFCUnit.h" />
     <ClInclude Include="IFC\IFCOpenGLView.h" />
-    <ClInclude Include="OpenGLView.h" />
     <ClInclude Include="ModelFactory.h" />
+    <ClInclude Include="StructureView.h" />
+    <ClInclude Include="StructureViewConsts.h" />
     <ClInclude Include="TreeViewBase.h" />
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
@@ -647,7 +648,6 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="ViewBase.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -656,6 +656,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\_geometry.cpp" />
+    <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
@@ -684,7 +685,6 @@
     <ClCompile Include="IFC\IFCInstance.cpp" />
     <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\IFCOpenGLView.cpp" />
-    <ClCompile Include="OpenGLView.cpp" />
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />
     <ClCompile Include="STEPViewerView.cpp" />
@@ -692,7 +692,6 @@
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="StructureView.cpp" />
-    <ClCompile Include="ViewBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">Create</PrecompiledHeader>

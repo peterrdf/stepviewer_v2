@@ -3752,7 +3752,7 @@ class _instance;
 // ************************************************************************************************
 class _oglView 
 	: public _oglRenderer
-	//, public _view
+	, public _view
 {
 
 protected: // Members
@@ -4808,6 +4808,57 @@ public: // Methods
 
 			return;
 		}
+	}
+
+	void _onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
+	{
+		if (enEvent == enumMouseEvent::LBtnUp)
+		{
+			if (point == m_ptStartMousePosition)
+			{
+				if (m_pSelectedInstance != m_pPointedInstance)
+				{
+					m_pSelectedInstance = m_pPointedInstance;
+
+					_redraw();
+
+					getController()->SelectInstance(this, m_pSelectedInstance);
+				} // if (m_pSelectedInstance != ...
+			}
+		} // if (enEvent == meLBtnDown)
+
+		switch (enEvent)
+		{
+			case enumMouseEvent::Move:
+			{
+				_onMouseMoveEvent(nFlags, point);
+			}
+			break;
+
+			case enumMouseEvent::LBtnDown:
+			case enumMouseEvent::MBtnDown:
+			case enumMouseEvent::RBtnDown:
+			{
+				m_ptStartMousePosition = point;
+				m_ptPrevMousePosition = point;
+			}
+			break;
+
+			case enumMouseEvent::LBtnUp:
+			case enumMouseEvent::MBtnUp:
+			case enumMouseEvent::RBtnUp:
+			{
+				m_ptStartMousePosition.x = -1;
+				m_ptStartMousePosition.y = -1;
+				m_ptPrevMousePosition.x = -1;
+				m_ptPrevMousePosition.y = -1;
+			}
+			break;
+
+			default:
+				assert(false);
+				break;
+		} // switch (enEvent)
 	}
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL

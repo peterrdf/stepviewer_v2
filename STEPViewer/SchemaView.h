@@ -3,8 +3,6 @@
 
 // ------------------------------------------------------------------------------------------------
 #include "TreeCtrlEx.h"
-#include "ViewBase.h"
-#include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>
@@ -32,7 +30,7 @@ class CSchemaViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CSchemaView 
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -51,7 +49,7 @@ private: // Members
 
 protected:
 
-	// CViewBase
+	// _view
 	virtual void OnModelChanged() override;
 
 	// CSearchTreeCtrlDialogSite

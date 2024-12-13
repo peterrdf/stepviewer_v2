@@ -8,6 +8,38 @@
 using namespace std;
 
 // ************************************************************************************************
+enum class enumApplicationProperty : int
+{
+	Projection,
+	View,
+	ShowFaces,
+	CullFaces,
+	ShowFacesWireframes,
+	ShowConceptualFacesWireframes,
+	ShowLines,
+	ShowPoints,
+	ShowNormalVectors,
+	ShowTangenVectors,
+	ShowBiNormalVectors,
+	ScaleVectors,
+	ShowBoundingBoxes,
+	RotationMode,
+	ShowCoordinateSystem,
+	CoordinateSystemType,
+	ShowNavigator,
+	PointLightingLocation,
+	AmbientLightWeighting,
+	SpecularLightWeighting,
+	DiffuseLightWeighting,
+	MaterialShininess,
+	Contrast,
+	Brightness,
+	Gamma,
+	VisibleValuesCountLimit,
+	ScalelAndCenter,
+};
+
+// ************************************************************************************************
 class _model
 {
 
@@ -394,9 +426,39 @@ public: // Methods
 	virtual void OnWorldDimensionsChanged() {}
 	virtual void OnShowMetaInformation() {}
 
-protected: // Properties
+	// Controller
+	void SetController(_controller* pController);
 
-	//_controller* GetController() const { return m_pController; }
+	// Events
+
+	virtual void OnTargetInstanceChanged(_view* pSender);
+	virtual void OnInstanceSelected(_view* pSender);
+	virtual void OnInstancesEnabledStateChanged(_view* pSender);
+	virtual void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
+	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance);
+	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity);
+	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+
+protected: // Methods
+
+	// Events
+	virtual void OnControllerChanged();
+
+	// Controller
+	_controller* GetController() const;
+
+	// Model
+	template<class Model>
+	Model* GetModel()
+	{
+		auto pController = GetController();
+		if (pController == nullptr)
+		{
+			return nullptr;
+		}
+
+		return pController->GetModel()->as<Model>();
+	}
 };
 
 // ************************************************************************************************
@@ -411,18 +473,79 @@ protected: // Members
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;	
 
+private: // Members	
+
+	bool m_bUpdatingModel; // Updating model - disable all notifications
+
+	// Target
+	_instance* m_pTargetInstance;
+
+	// Selection
+	_instance* m_pSelectedInstance;
+
+	// UI properties
+	BOOL m_bScaleAndCenter;
+
 public: // Methods
 
-	_controller()
-		: m_pModel(nullptr)
-		, m_setViews()
-		, m_pSettingsStorage(new _settings_storage())
-	{}
+	_model* GetModel() const;
+	void SetModel(_model* pModel);
+	_instance* LoadInstance(OwlInstance iInstance);
 
-	virtual ~_controller()
+	// Events
+	void RegisterView(_view* pView);
+	void UnRegisterView(_view* pView);
+
+	const set<_view*>& GetViews();
+	template <class T>
+	T* GetView()
 	{
-		delete m_pSettingsStorage;
+		set<_view*>::const_iterator itView = m_setViews.begin();
+		for (; itView != m_setViews.end(); itView++)
+		{
+			T* pView = dynamic_cast<T*>(*itView);
+			if (pView != nullptr)
+			{
+				return pView;
+			}
+		}
+
+		return nullptr;
 	}
+
+	// Zoom
+	void ZoomToInstance();
+	void ZoomOut();
+
+	// Save
+	virtual void SaveInstance() PURE;
+	void SaveInstance(OwlInstance iInstance);
+
+	// [-1, 1]
+	void ScaleAndCenter();
+
+	// Events
+	void ShowMetaInformation(_instance* pInstance);
+	void SetTargetInstance(_view* pSender, _instance* pInstance);
+	_instance* GetTargetInstance() const;
+	void SelectInstance(_view* pSender, _instance* pInstance);
+	_instance* GetSelectedInstance() const;
+
+	// UI
+	BOOL GetScaleAndCenter() const;
+	void SetScaleAndCenter(BOOL bScaleAndCenter);
+
+	// Events
+	void OnInstancesEnabledStateChanged(_view* pSender);
+	void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+	void OnViewRelations(_view* pSender, SdaiInstance iInstance);
+	//void OnViewRelations(_view* pSender, CEntity* pEntity);
+	void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
+
+public: // Methods
+
+	_controller();
+	virtual ~_controller();
 
 public: // Properties
 

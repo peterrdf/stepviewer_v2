@@ -9,7 +9,7 @@
 
 // ************************************************************************************************
 CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
-	: COpenGLView()
+	: _oglView()
 {
 	_initialize(
 		pWnd,
@@ -76,7 +76,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CIFCOpenGLView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -102,7 +102,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	}
 }
 
-/*virtual*/ void CIFCOpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -112,7 +112,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CIFCOpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CIFCOpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -169,58 +169,5 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	}
 }
 
-/*virtual*/ void CIFCOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
 
-				_redraw();
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-		case enumMouseEvent::Move:
-		{
-			_onMouseMoveEvent(nFlags, point);
-		}
-		break;
-
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
-
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (enEvent)
-}
 

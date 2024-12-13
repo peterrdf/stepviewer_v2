@@ -302,7 +302,7 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	{
 		case IDS_VIEW_IFC_RELATIONS:
 		{			
-			GetController()->OnViewRelations(this, pEntity);
+			//GetController()->OnViewRelations(this, pEntity);
 		}
 		break;
 	} // switch (iResult)

@@ -3,7 +3,6 @@
 
 #include "IFCInstance.h"
 #include "_oglUtils.h"
-#include "OpenGLView.h"
 
 // ************************************************************************************************
 class CIFCModel;
@@ -11,7 +10,7 @@ class CIFCModel;
 // ************************************************************************************************
 // Open GL View
 class CIFCOpenGLView 
-	: public COpenGLView
+	: public _oglView
 {
 
 public: // Methods
@@ -23,20 +22,15 @@ public: // Methods
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
 
-	// CViewBase	
+	// _view	
 	virtual void OnWorldDimensionsChanged() override;
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
-	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender) override;
-	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(_view* pSender) override;
+	virtual void OnInstancesEnabledStateChanged(_view* pSender) override;
+	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 
 	virtual void OnControllerChanged() override;
-
-public: // Methods
-
-	// COpenGLView
-	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

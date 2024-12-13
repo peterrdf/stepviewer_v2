@@ -2,7 +2,6 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "ViewBase.h"
 #include "OWLProperty.h"
 
 #include <map>
@@ -23,7 +22,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -88,9 +87,9 @@ private: // Members
 
 public: // Methods
 	
-	// CViewBase
+	// _view
 	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
+	virtual void OnInstanceSelected(_view* pSender) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

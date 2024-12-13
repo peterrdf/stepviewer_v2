@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "ViewBase.h"
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
 #include "Controller.h"
@@ -57,7 +56,7 @@ enum class enumRelationsViewMode : int
 // ------------------------------------------------------------------------------------------------
 class CRelationsView 
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -161,11 +160,11 @@ private: // Members
 
 public: // Methods
 	
-	// CViewBase
+	// _view
 	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
-	virtual void OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) override;
-	virtual void OnViewRelations(CViewBase* pSender, CEntity* pEntity) override;
+	virtual void OnInstanceSelected(_view* pSender) override;
+	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance) override;
+	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

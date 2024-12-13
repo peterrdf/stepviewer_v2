@@ -8,7 +8,7 @@
 
 // ************************************************************************************************
 CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
-	: COpenGLView()	
+	: _oglView()
 {
 	_initialize(
 		pWnd,
@@ -30,7 +30,7 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 
 CAP242OpenGLView::~CAP242OpenGLView()
 {
-	GetController()->UnRegisterView(this);
+	getController()->UnRegisterView(this);
 
 	_destroy();
 }
@@ -42,7 +42,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 /*virtual*/ void CAP242OpenGLView::OnWorldDimensionsChanged()  /*override*/
 {
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -76,21 +76,21 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstanceSelected(CViewBase* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::OnInstanceSelected(_view* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (GetController() == nullptr)
+	if (getController() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
+	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
 		dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) :
 		nullptr;
 
@@ -102,7 +102,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	}
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstancesEnabledStateChanged(CViewBase* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::OnInstancesEnabledStateChanged(_view* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -117,7 +117,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CAP242OpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -164,59 +164,5 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	loadSettings();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) /*override*/
-{
-	if (enEvent == enumMouseEvent::LBtnUp)
-	{
-		/*
-		* OnSelectedItemChanged() notification
-		*/
-		if (point == m_ptStartMousePosition)
-		{
-			if (m_pSelectedInstance != m_pPointedInstance)
-			{
-				m_pSelectedInstance = m_pPointedInstance;
-
-				_redraw();
-
-				ASSERT(GetController() != nullptr);
-				GetController()->SelectInstance(this, m_pSelectedInstance);
-			} // if (m_pSelectedInstance != ...
-		}
-	} // if (enEvent == meLBtnDown)
-
-	switch (enEvent)
-	{
-		case enumMouseEvent::Move:
-		{
-			_onMouseMoveEvent(nFlags, point);
-		}
-		break;
-
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
-
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
-
-		default:
-			ASSERT(FALSE);
-			break;
-	} // switch (enEvent)
-}
 
 

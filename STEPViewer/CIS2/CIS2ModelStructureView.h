@@ -43,8 +43,8 @@ public: // Methods
 	CCIS2ModelStructureView(CTreeCtrlEx* pTreeView);
 	virtual ~CCIS2ModelStructureView();
 
-	// CViewBase
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
+	// _view
+	virtual void OnInstanceSelected(_view* pSender) override;
 
 	// CTreeViewBase
 	virtual void Load() override;

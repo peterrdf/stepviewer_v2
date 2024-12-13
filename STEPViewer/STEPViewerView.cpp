@@ -299,7 +299,7 @@ void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -309,7 +309,7 @@ void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -319,7 +319,7 @@ void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -329,7 +329,7 @@ void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -339,7 +339,7 @@ void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -349,7 +349,7 @@ void CMySTEPViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -360,7 +360,7 @@ void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);

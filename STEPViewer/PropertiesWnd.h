@@ -1,11 +1,10 @@
 
 #pragma once
 
-#include "ViewBase.h"
+#include "_mvc.h"
 
 #include <map>
 #include <string>
-
 using namespace std;
 
 class CPropertiesToolBar : public CMFCToolBar
@@ -61,17 +60,17 @@ public: // Methods
 
 class CPropertiesWnd
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 {
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	// CViewBase
+	// _view
 	virtual void OnModelChanged();
 	virtual void OnShowMetaInformation();
-	virtual void OnInstanceSelected(CViewBase* pSender);
-	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(_view* pSender);
+	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 

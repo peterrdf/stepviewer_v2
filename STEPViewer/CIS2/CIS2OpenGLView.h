@@ -3,7 +3,6 @@
 
 #include "CIS2Representation.h"
 #include "_oglUtils.h"
-#include "OpenGLView.h"
 
 // ************************************************************************************************
 class CCIS2Model;
@@ -11,7 +10,7 @@ class CCIS2Model;
 // ************************************************************************************************
 // Open GL View
 class CCIS2OpenGLView 
-	: public COpenGLView
+	: public _oglView
 {
 
 private: // Members
@@ -42,20 +41,15 @@ public: // Methods
 	virtual void _load(_model* pModel) override;
 	virtual void _draw(CDC* pDC) override;
 
-	// CViewBase	
+	// _view	
 	virtual void OnWorldDimensionsChanged() override;
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
-	virtual void OnInstancesEnabledStateChanged(CViewBase* pSender) override;
-	virtual void OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnInstanceSelected(_view* pSender) override;
+	virtual void OnInstancesEnabledStateChanged(_view* pSender) override;
+	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 
 	virtual void OnControllerChanged() override;
-
-public: // Methods
-
-	// COpenGLView
-	virtual void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point) override;
 
 private: // Methods
 	

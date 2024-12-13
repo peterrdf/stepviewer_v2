@@ -1,16 +1,16 @@
 #pragma once
 
-#include "ViewBase.h"
+#include "_mvc.h"
 
 // ------------------------------------------------------------------------------------------------
-class CTreeViewBase : public CViewBase
+class CTreeViewBase : public _view
 {
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	CTreeViewBase()
-		: CViewBase()
+		: _view()
 	{
 	}
 
@@ -21,7 +21,7 @@ public: // Methods
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// CViewBase
+	// _view
 	virtual void OnControllerChanged()
 	{
 		ASSERT(GetController() != nullptr);
