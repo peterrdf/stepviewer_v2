@@ -645,10 +645,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		} // for (auto itInstance = ...
 
 		// Update the Parents
-		/*for (auto hParent : m_setParents)
+		for (auto hParent : m_setParents)
 		{
 			ClickItem_UpdateParent(hParent);
-		}*/
+		}
 
 		pController->OnInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
@@ -1056,8 +1056,13 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = (LPARAM)pGeometry;
 
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-		//m_mapInstance2GeometryItem[pGeometry] = hGeometry;
+		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		//#todo#mappeditems
+		ASSERT(pGeometry->getInstances().size() == 1);
+		_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
+
+		m_mapInstance2GeometryItem[ifcInstance] = hInstance;
 
 		/*
 		* decomposition/contains
