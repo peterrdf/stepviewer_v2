@@ -236,25 +236,3 @@ public: // Properties
 		return m_pEntityProvider;
 	}
 };
-
-// ************************************************************************************************
-class _ap_controller
-{
-
-protected: // Members
-
-	_ap_model* m_pModel;
-
-public: // Methods
-
-	_ap_controller()
-		: m_pModel(nullptr)
-	{}
-
-	virtual ~_ap_controller()
-	{
-	}
-
-	_model* getModel() const { return m_pModel; }
-};
-

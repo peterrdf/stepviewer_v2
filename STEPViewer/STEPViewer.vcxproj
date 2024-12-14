@@ -593,7 +593,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\glext.h" />
-    <ClInclude Include="..\include\log.hpp" />
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_ap242_instance.h" />
@@ -602,7 +601,6 @@
     <ClInclude Include="..\include\_ap_mvc.h" />
     <ClInclude Include="..\include\_cis2_instance.h" />
     <ClInclude Include="..\include\_geometry.h" />
-    <ClInclude Include="..\include\_ifc_instance.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
