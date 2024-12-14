@@ -668,7 +668,7 @@ public: // Properties
 	// Metadata
 	OwlInstance getInstance() const { assert(m_iInstance != 0);  return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
-	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }
+	virtual OwlModel getOwlModel() const { return ::GetModel(m_iInstance); }
 	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }	
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
@@ -678,7 +678,7 @@ public: // Properties
 	int64_t getIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
 	float* getVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
 	int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-	uint32_t getVertexLength() const { return (uint32_t)SetFormat(getModel()) / sizeof(float); }
+	uint32_t getVertexLength() const { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
 	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
@@ -740,8 +740,8 @@ protected: // Methods
 		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
 		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
 
-		SetFormat(getModel(), setting, mask);
-		SetBehavior(getModel(), 2048 + 4096, 2048 + 4096);
+		SetFormat(getOwlModel(), setting, mask);
+		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
 	}
 
 	bool calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
@@ -839,7 +839,7 @@ protected: // Methods
 			int64_t iCard = 0;
 			GetObjectProperty(
 				iMaterialInstance,
-				GetPropertyByName(getModel(), "textures"),
+				GetPropertyByName(getOwlModel(), "textures"),
 				&piInstances,
 				&iCard);
 
@@ -849,7 +849,7 @@ protected: // Methods
 				char** szValue = nullptr;
 				GetDatatypeProperty(
 					piInstances[0],
-					GetPropertyByName(getModel(), "name"),
+					GetPropertyByName(getOwlModel(), "name"),
 					(void**)&szValue,
 					&iCard);
 

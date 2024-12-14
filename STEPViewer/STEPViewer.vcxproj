@@ -595,15 +595,15 @@
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
-    <ClInclude Include="..\include\_ap242_instance.h" />
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
-    <ClInclude Include="..\include\_cis2_instance.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
+    <ClInclude Include="..\include\_owl_geometry.h" />
+    <ClInclude Include="..\include\_owl_instance.h" />
     <ClInclude Include="..\include\_ptr.h" />
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />

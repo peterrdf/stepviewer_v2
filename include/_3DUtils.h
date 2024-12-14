@@ -33,6 +33,7 @@ static void	_transform(const _vector3d* pV, const _matrix* pM, _vector3d* pOut)
 	pOut->z = vecTmp.z;
 }
 
+// ************************************************************************************************
 // mathematicsGeometryDoublePrecisionDerived.h
 // Example: 30 degrees in the XY plane
 // => MatrixRotateByEulerAngles(matrix, 0, 0, 2 * Pi * 30. / 360.);
@@ -40,8 +41,7 @@ static void	_matrixRotateByEulerAngles(
 	_matrix* matrix,
 	double	alpha,
 	double	beta,
-	double	gamma
-)
+	double	gamma)
 {
 	//
 	//	https://en.wikipedia.org/wiki/Rotation_matrix

@@ -8,7 +8,7 @@ class _ap_geometry : public _geometry
 
 private: // Members
 
-	SdaiModel m_sdaiInstance;
+	SdaiInstance m_sdaiInstance;
 
 public: // Methods
 
@@ -22,10 +22,11 @@ public: // Methods
 	}
 
 	virtual ~_ap_geometry()
-	{}
+	{
+	}
 
 	// _geometry
-	virtual OwlModel getModel() const
+	virtual OwlModel getOwlModel() const override
 	{
 		OwlModel owlModel = 0;
 		owlGetModel(getSdaiModel(), &owlModel);

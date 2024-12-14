@@ -1,8 +1,5 @@
 #include "stdafx.h"
 #include "CIS2Instance.h"
-#include "CIS2Model.h"
-
-#include <math.h>
 
 // ************************************************************************************************
 CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2InstanceType enCIS2InstanceType)
@@ -18,7 +15,7 @@ CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2In
 /*virtual*/ CCIS2Instance::~CCIS2Instance()
 {}
 
-/*virtual*/ OwlModel CCIS2Instance::getModel() const /*override*/
+/*virtual*/ OwlModel CCIS2Instance::getOwlModel() const /*override*/
 {
 	OwlModel iOwlModel = 0;
 	owlGetModel(GetModel(), &iOwlModel);
