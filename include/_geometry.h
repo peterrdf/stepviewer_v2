@@ -666,7 +666,7 @@ public: // Methods
 public: // Properties
 
 	// Metadata
-	virtual OwlInstance getOwlInstance() { assert(m_owlInstance != 0); return m_owlInstance; }
+	virtual OwlInstance getOwlInstance() { return m_owlInstance; }
 	OwlClass getClassInstance() { return ::GetInstanceClass(getOwlInstance()); }
 	virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
 	bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }

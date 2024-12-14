@@ -37,8 +37,8 @@ CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
 { 
 	if ((m_owlInstance == 0) && hasGeometry())
 	{
-		owlBuildInstance(getSdaiModel(), getSdaiInstance(), &m_owlInstance);
+		owlBuildInstance(getSdaiModel(), getSdaiInstance(), &m_owlInstance);		
 	}
 
-	return m_owlInstance;
+	return _geometry::getOwlInstance();
 }
