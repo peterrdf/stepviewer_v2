@@ -27,7 +27,7 @@
 		return;
 	} 
 
-	CString strValidPath = dynamic_cast<_ap_instance*>(GetSelectedInstance())->GetName().c_str();
+	CString strValidPath = dynamic_cast<_ap_instance*>(GetSelectedInstance())->getName().c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
 	strValidPath.Replace(_T("/"), _T("-"));
 	strValidPath.Replace(_T(":"), _T("-"));

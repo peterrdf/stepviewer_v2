@@ -22,16 +22,16 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
 	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
 
-	wstring GetName() const
+	wstring getName() const
 	{
-		return GetName(getSdaiInstance());
+		return getName(getSdaiInstance());
 	}
 
-	static wstring GetName(SdaiInstance iInstance)
+	static wstring getName(SdaiInstance sdaiInstance)
 	{
 		wstring strUniqueName;
 
-		int64_t iExpressID = internalGetP21Line(iInstance);
+		int64_t iExpressID = internalGetP21Line(sdaiInstance);
 		if (iExpressID != 0)
 		{
 			CString strID;
@@ -39,15 +39,11 @@ public: // Properties
 
 			strUniqueName = strID;
 			strUniqueName += L" ";
-			strUniqueName += GetEntityName(iInstance);
-		}
-		else
-		{
-			strUniqueName = GetClassName(iInstance);
+			strUniqueName += getEntityName(sdaiInstance);
 		}
 
 		wchar_t* szName = nullptr;
-		sdaiGetAttrBN((SdaiInstance)iInstance, "Name", sdaiUNICODE, &szName);
+		sdaiGetAttrBN(sdaiInstance, "Name", sdaiUNICODE, &szName);
 
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
@@ -57,7 +53,7 @@ public: // Properties
 		}
 
 		wchar_t* szDescription = nullptr;
-		sdaiGetAttrBN((SdaiInstance)iInstance, "Description", sdaiUNICODE, &szDescription);
+		sdaiGetAttrBN(sdaiInstance, "Description", sdaiUNICODE, &szDescription);
 
 		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
 		{
@@ -67,51 +63,28 @@ public: // Properties
 		}
 
 		return strUniqueName;
-	}
+	}	
 
-	OwlClass GetClass() const
+	SdaiEntity getEntityInstance() const
 	{
-		return GetClass(getOwlInstance());
+		return getEntityInstance(getSdaiInstance());
 	}
 
-	static OwlClass GetClass(OwlInstance iInstance)
-	{
-		return GetInstanceClass(iInstance);
-	}
-
-	const wchar_t* GetClassName() const
-	{
-		return GetClassName(getOwlInstance());
-	}
-
-	static const wchar_t* GetClassName(OwlInstance iInstance)
-	{
-		wchar_t* szClassName = nullptr;
-		GetNameOfClassW(GetInstanceClass(iInstance), &szClassName);
-
-		return szClassName;
-	}
-
-	SdaiEntity GetEntity() const
-	{
-		return GetEntity(getSdaiInstance());
-	}
-
-	static SdaiEntity GetEntity(SdaiInstance sdaiInstance)
+	static SdaiEntity getEntityInstance(SdaiInstance sdaiInstance)
 	{
 		return sdaiGetInstanceType(sdaiInstance);
 	}
 
-	const wchar_t* GetEntityName() const
+	const wchar_t* getEntityName() const
 	{
-		return GetEntityName(getSdaiInstance());
+		return getEntityName(getSdaiInstance());
 	}
 
-	static const wchar_t* GetEntityName(SdaiInstance sdaiInstance)
+	static const wchar_t* getEntityName(SdaiInstance sdaiInstance)
 	{
 		wchar_t* szEntityName = nullptr;
-		engiGetEntityName(GetEntity(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
+		engiGetEntityName(getEntityInstance(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
 
-		return szEntityName != nullptr ? szEntityName : L"";
+		return szEntityName;
 	}
 };

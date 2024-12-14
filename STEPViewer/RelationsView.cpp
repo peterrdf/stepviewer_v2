@@ -66,14 +66,14 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, SdaiInstance iInstance) /*override*/
+/*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, SdaiInstance sdaiInstance) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (iInstance == 0)
+	if (sdaiInstance == 0)
 	{
 		ASSERT(FALSE);
 
@@ -81,10 +81,10 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<SdaiInstance> vecInstances;
-	vecInstances.push_back(iInstance);
+	vecInstances.push_back(sdaiInstance);
 
 	LoadProperties(
-		(SdaiInstance)_ap_instance::GetEntity(iInstance),
+		_ap_instance::getEntityInstance(sdaiInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
@@ -317,7 +317,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	for (auto iInstance : vecInstances)
 	{
 		LoadInstance(
-			(SdaiInstance)_ap_instance::GetEntity(iInstance),
+			_ap_instance::getEntityInstance(iInstance),
 			iInstance, 
 			hModel);
 	}
@@ -376,7 +376,7 @@ void CRelationsView::LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hPar
 	/*
 	* Instance
 	*/
-	wstring strItem = _ap_instance::GetName(iInstance);
+	wstring strItem = _ap_instance::getName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;

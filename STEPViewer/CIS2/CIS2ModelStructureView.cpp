@@ -379,10 +379,10 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			continue;
 		}
 
-		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->GetEntityName());
+		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itInstance->second->getEntityName());
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
 		{
-			mapEntity2VisibleCount[itInstance->second->GetEntityName()] = itInstance->second->_instance::getEnable() ? 1 : 0;
+			mapEntity2VisibleCount[itInstance->second->getEntityName()] = itInstance->second->_instance::getEnable() ? 1 : 0;
 		}
 		else
 		{
@@ -623,7 +623,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			pInstance = itInstance->second;
 
-			if (pInstance->GetEntityName() == itCommand2Entity->second)
+			if (pInstance->getEntityName() == itCommand2Entity->second)
 			{
 				pInstance->_instance::setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
@@ -1006,7 +1006,7 @@ void CCIS2ModelStructureView::LoadProject(CCIS2Model* pModel, HTREEITEM hModel, 
 	auto itInstance = mapInstances.find(iIFCProjectInstance);
 	if (itInstance != mapInstances.end())
 	{
-		wstring strItem = itInstance->second->GetEntityName();
+		wstring strItem = itInstance->second->getEntityName();
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1225,7 +1225,7 @@ void CCIS2ModelStructureView::LoadInstance(CCIS2Model* pModel, SdaiInstance iIns
 	auto itInstance = mapInstances.find(iInstance);
 	if (itInstance != mapInstances.end())
 	{
-		wstring strItem = _ap_instance::GetName(iInstance);
+		wstring strItem = _ap_instance::getName(iInstance);
 
 		/*
 		* Object
@@ -1291,7 +1291,7 @@ void CCIS2ModelStructureView::LoadUnreferencedItems(CCIS2Model* pModel, HTREEITE
 
 		if (!itInstance->second->Referenced())
 		{
-			const wchar_t* szEntity = itInstance->second->GetEntityName();
+			const wchar_t* szEntity = itInstance->second->getEntityName();
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
 			if (itUnreferencedItems == mapUnreferencedItems.end())
@@ -1345,7 +1345,7 @@ void CCIS2ModelStructureView::LoadUnreferencedItems(CCIS2Model* pModel, HTREEITE
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = _ap_instance::GetName(pInstance->_ap_geometry::getSdaiInstance());
+			wstring strItem = _ap_instance::getName(pInstance->_ap_geometry::getSdaiInstance());
 
 			/*
 			* Object

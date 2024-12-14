@@ -381,7 +381,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
 		ASSERT(pAPGeometry != nullptr);
 
-		const wchar_t* szEntityName = _ap_instance::GetEntityName(pAPGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = _ap_instance::getEntityName(pAPGeometry->getSdaiInstance());
 
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
@@ -621,7 +621,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			//#todo#mappeditems		
 			 pTargetInstance = _ptr<CIFCInstance>(pInstance);
 
-			if (pTargetInstance->GetEntityName() == itCommand2Entity->second)
+			if (pTargetInstance->getEntityName() == itCommand2Entity->second)
 			{
 				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
@@ -1018,7 +1018,7 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
 		ASSERT(pAPGeometry != nullptr);
 
-		wstring strItem = _ap_instance::GetEntityName(pAPGeometry->getSdaiInstance());
+		wstring strItem = _ap_instance::getEntityName(pAPGeometry->getSdaiInstance());
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
@@ -1252,7 +1252,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstanc
 	{
 		ASSERT(_ptr<CIFCGeometry>(pGeometry)->Referenced());
 
-		wstring strItem = _ap_instance::GetName(iInstance);
+		wstring strItem = _ap_instance::getName(iInstance);
 
 		/*
 		* Object
@@ -1317,7 +1317,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 
 		if (!ifcGeometry->Referenced())
 		{
-			const wchar_t* szEntity = _ap_instance::GetEntityName(ifcGeometry->getSdaiInstance());
+			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
 			if (itUnreferencedItems == mapUnreferencedItems.end())
@@ -1371,7 +1371,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		{
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = _ap_instance::GetName(pInstance->getSdaiInstance());
+			wstring strItem = _ap_instance::getName(pInstance->getSdaiInstance());
 
 			/*
 			* Object

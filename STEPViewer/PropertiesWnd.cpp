@@ -1066,7 +1066,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->GetName().c_str());
+	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
 
 	for (auto pPropertySet : pPropertySetCollection->PropertySets())
 	{

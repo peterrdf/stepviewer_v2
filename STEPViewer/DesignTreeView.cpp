@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_owl_instance.h"
+
 #include "MainFrm.h"
 #include "STEPViewer.h"
 #include "DesignTreeView.h"
@@ -256,7 +259,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = _ap_instance::GetName((SdaiInstance)iInstance);
+	wstring strItem = _owl_instance::getName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;

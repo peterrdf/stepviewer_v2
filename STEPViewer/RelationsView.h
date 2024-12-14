@@ -163,7 +163,7 @@ public: // Methods
 	// _view
 	virtual void OnModelChanged() override;
 	virtual void OnInstanceSelected(_view* pSender) override;
-	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance) override;
+	virtual void OnViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
 	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity) override;
 
 	// CSearchTreeCtrlDialogSite

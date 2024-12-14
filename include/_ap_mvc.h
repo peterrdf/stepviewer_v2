@@ -143,7 +143,7 @@ public: // Methods
 			auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
 			ASSERT(pAPInstance != nullptr);
 
-			CString strType = pAPInstance->GetEntityName();
+			CString strType = pAPInstance->getEntityName();
 			strType.MakeUpper();
 
 			if (strType == strTargetType)

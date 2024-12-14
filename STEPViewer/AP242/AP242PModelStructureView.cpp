@@ -1305,9 +1305,9 @@ void CAP242PModelStructureView::LoadItemChildren(CAP242ItemData* pItemData)
 			{
 				auto pInstance = pChild->GetInstance<CAP242ProductInstance>();
 				ASSERT(pInstance != nullptr);
-				ASSERT(pInstance->GetName() != L"");
+				ASSERT(pInstance->getName() != L"");
 
-				strName.Format(L"%s %s", pInstance->GetName().c_str(), ITEM_PRODUCT_INSTANCE);
+				strName.Format(L"%s %s", pInstance->getName().c_str(), ITEM_PRODUCT_INSTANCE);
 
 				iGeometryImage = pInstance->GetProductDefinition()->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			}
