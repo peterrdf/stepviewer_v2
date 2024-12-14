@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "_mvc.h"
+#include "_owl_instance.h"
 
 // ------------------------------------------------------------------------------------------------
 void _view::SetController(_controller* pController)
@@ -187,7 +188,7 @@ void _controller::SaveInstance(OwlInstance iInstance)
 
 	wstring strName;
 	wstring strUniqueName;
-	_instance::BuildInstanceNames(m_pModel->getOwlInstance(), iInstance, strName, strUniqueName);
+	_owl_instance::buildInstanceNames(m_pModel->getOwlInstance(), iInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));

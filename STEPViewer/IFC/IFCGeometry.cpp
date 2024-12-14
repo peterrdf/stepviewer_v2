@@ -26,11 +26,9 @@ CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
 	setSegmentation(getSdaiModel(), 16, 0.);
 }
 
-/*virtual*/ void CIFCGeometry::cleanMemoryCore() /*override*/
+/*virtual*/ void CIFCGeometry::postCalculate() /*override*/
 {
-	cleanMemory(getSdaiModel(), 0);
-
-	m_owlInstance = 0;
+	cleanCachedGeometry();
 }
 
 /*virtual*/ OwlInstance CIFCGeometry::getOwlInstance() /*override*/

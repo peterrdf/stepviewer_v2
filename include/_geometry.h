@@ -16,132 +16,6 @@ using namespace std;
 #include <atlbase.h>
 
 // ************************************************************************************************
-struct _vector3
-{
-	double x;
-	double y;
-	double z;
-};
-
-// ************************************************************************************************
-struct _matrix4x3
-{
-	double _11, _12, _13;
-	double _21, _22, _23;
-	double _31, _32, _33;
-	double _41, _42, _43;
-};
-
-static void	_matrix4x3Transform(const _vector3* pIn, const _matrix4x3* pM, _vector3* pOut)
-{
-	_vector3 pTmp;
-	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
-	pTmp.y = pIn->x * pM->_12 + pIn->y * pM->_22 + pIn->z * pM->_32 + pM->_42;
-	pTmp.z = pIn->x * pM->_13 + pIn->y * pM->_23 + pIn->z * pM->_33 + pM->_43;
-
-	pOut->x = pTmp.x;
-	pOut->y = pTmp.y;
-	pOut->z = pTmp.z;
-}
-
-static void _matrix4x3Identity(_matrix4x3* pM)
-{
-	assert(pM != nullptr);
-
-	memset(pM, 0, sizeof(_matrix4x3));
-
-	pM->_11 = pM->_22 = pM->_33 = 1.;
-}
-
-static double _matrixDeterminant(_matrix4x3* pM)
-{
-	double a = pM->_11 * pM->_22;
-	double b = pM->_12 * pM->_23;
-	double c = pM->_13 * pM->_21;
-	double d = pM->_22 * pM->_31;
-	double e = pM->_21 * pM->_33;
-	double f = pM->_23 * pM->_32;
-
-	double determinant = 
-		a * pM->_33 +
-		b * pM->_31 +
-		c * pM->_32 -
-		pM->_13 * d -
-		pM->_12 * e -
-		pM->_11 * f;
-
-	return determinant;
-}
-
-static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _matrix4x3* pM2)
-{
-	assert((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
-
-	_matrix4x3 pTmp;
-	pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31;
-	pTmp._12 = pM1->_11 * pM2->_12 + pM1->_12 * pM2->_22 + pM1->_13 * pM2->_32;
-	pTmp._13 = pM1->_11 * pM2->_13 + pM1->_12 * pM2->_23 + pM1->_13 * pM2->_33;
-
-	pTmp._21 = pM1->_21 * pM2->_11 + pM1->_22 * pM2->_21 + pM1->_23 * pM2->_31;
-	pTmp._22 = pM1->_21 * pM2->_12 + pM1->_22 * pM2->_22 + pM1->_23 * pM2->_32;
-	pTmp._23 = pM1->_21 * pM2->_13 + pM1->_22 * pM2->_23 + pM1->_23 * pM2->_33;
-
-	pTmp._31 = pM1->_31 * pM2->_11 + pM1->_32 * pM2->_21 + pM1->_33 * pM2->_31;
-	pTmp._32 = pM1->_31 * pM2->_12 + pM1->_32 * pM2->_22 + pM1->_33 * pM2->_32;
-	pTmp._33 = pM1->_31 * pM2->_13 + pM1->_32 * pM2->_23 + pM1->_33 * pM2->_33;
-
-	pTmp._41 = pM1->_41 * pM2->_11 + pM1->_42 * pM2->_21 + pM1->_43 * pM2->_31 + pM2->_41;
-	pTmp._42 = pM1->_41 * pM2->_12 + pM1->_42 * pM2->_22 + pM1->_43 * pM2->_32 + pM2->_42;
-	pTmp._43 = pM1->_41 * pM2->_13 + pM1->_42 * pM2->_23 + pM1->_43 * pM2->_33 + pM2->_43;
-
-	pOut->_11 = pTmp._11;
-	pOut->_12 = pTmp._12;
-	pOut->_13 = pTmp._13;
-
-	pOut->_21 = pTmp._21;
-	pOut->_22 = pTmp._22;
-	pOut->_23 = pTmp._23;
-
-	pOut->_31 = pTmp._31;
-	pOut->_32 = pTmp._32;
-	pOut->_33 = pTmp._33;
-
-	pOut->_41 = pTmp._41;
-	pOut->_42 = pTmp._42;
-	pOut->_43 = pTmp._43;
-}
-
-// ************************************************************************************************
-struct _matrix4x4
-{
-	double _11, _12, _13, _14;
-	double _21, _22, _23, _24;
-	double _31, _32, _33, _34;
-	double _41, _42, _43, _44;
-};
-
-static void _matrix4x4Identity(_matrix4x4* pM)
-{
-	assert(pM != nullptr);
-
-	memset(pM, 0, sizeof(_matrix4x4));
-
-	pM->_11 = pM->_22 = pM->_33 = pM->_44 = 1.;
-}
-
-static void	_transform(const _vector3* pV, const _matrix4x4* pM, _vector3* pOut)
-{
-	_vector3 pTmp;
-	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
-	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
-	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
-
-	pOut->x = pTmp.x;
-	pOut->y = pTmp.y;
-	pOut->z = pTmp.z;
-}
-
-// ************************************************************************************************
 class _primitives
 {
 
@@ -159,6 +33,8 @@ public: // Methods
 
 	virtual ~_primitives()
 	{}
+
+public: // Properties
 
 	int64_t& startIndex() { return m_iStartIndex; }
 	int64_t& indicesCount() { return m_iIndicesCount; }
@@ -186,32 +62,7 @@ public: // Methods
 	virtual ~_cohort()
 	{}	
 
-	static unsigned int* merge(const vector<_cohort*>& vecCohorts, uint32_t& iIndicesCount)
-	{
-		iIndicesCount = 0;
-		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
-		{
-			iIndicesCount += (uint32_t)vecCohorts[iCohort]->indices().size();
-		}
-
-		unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-		uint32_t iOffset = 0;
-		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
-		{
-			if (vecCohorts[iCohort]->indices().size() == 0)
-			{
-				continue;
-			}
-
-			memcpy((unsigned int*)pIndices + iOffset, vecCohorts[iCohort]->indices().data(),
-				vecCohorts[iCohort]->indices().size() * sizeof(unsigned int));
-
-			iOffset += (uint32_t)vecCohorts[iCohort]->indices().size();
-		}
-
-		return pIndices;
-	}
+	static unsigned int* merge(const vector<_cohort*>& vecCohorts, uint32_t& iIndicesCount);
 
 	template<class T>
 	static void clear(vector<T*>& vecCohorts)
@@ -223,6 +74,8 @@ public: // Methods
 
 		vecCohorts.clear();
 	}
+
+public: // Properties
 
 	vector<GLuint>& indices() { return m_vecIndices; }
 	GLuint& IBO() { return m_iIBO; }
@@ -247,6 +100,8 @@ public: // Methods
 	virtual ~_face()
 	{}
 
+public: // Properties
+
 	int64_t getIndex() const { return m_iIndex; }
 };
 
@@ -269,6 +124,8 @@ public: // Methods
 
 	virtual ~_cohortWithMaterial()
 	{}
+
+public: // Properties
 
 	vector<_face>& faces() { return m_vecFaces; }
 	const _material* getMaterial() const { return &m_material; }
@@ -298,6 +155,8 @@ public: // Methods
 	{
 		delete[] m_pData;
 	}
+
+public: // Properties
 
 	T*& data() { return m_pData; }
 	int64_t& size() { return m_iSize; }
@@ -335,6 +194,8 @@ public: // Methods
 
 		memcpy(_buffer<V>::data(), pSource->data(), (uint32_t)_buffer<V>::size() * getVertexLength() * (uint32_t)sizeof(V));
 	}
+
+public: // Properties
 
 	uint32_t getVertexLength() { return m_iVertexLength; }
 };
@@ -375,8 +236,11 @@ class _geometry
 
 protected: // Members
 
-	// Metadata
 	OwlInstance m_owlInstance;
+
+private: // Members
+
+	// Metadata
 	wstring m_strName;
 	wstring m_strUniqueName;
 
@@ -430,222 +294,19 @@ public: // Members
 
 public: // Methods
 
-	_geometry(OwlInstance iInstance)
-		: m_owlInstance(iInstance)
-		, m_strName(L"NA")
-		, m_strUniqueName(L"")
-		, m_pVertexBuffer(nullptr)
-		, m_pIndexBuffer(nullptr)
-		, m_iConceptualFacesCount(0)		
-		, m_pmtxOriginalBBTransformation(nullptr)
-		, m_pvecOriginalBBMin(nullptr)
-		, m_pvecOriginalBBMax(nullptr)
-		, m_pmtxBBTransformation(nullptr)
-		, m_pvecBBMin(nullptr)
-		, m_pvecBBMax(nullptr)
-		, m_pvecAABBMin(nullptr)
-		, m_pvecAABBMax(nullptr)
-		, m_vecTriangles()
-		, m_vecFacePolygons()
-		, m_vecConcFacePolygons()
-		, m_vecLines()
-		, m_vecPoints()
-		, m_vecConcFacesCohorts()
-		, m_vecFacePolygonsCohorts()
-		, m_vecConcFacePolygonsCohorts()
-		, m_vecLinesCohorts()
-		, m_vecPointsCohorts()
-		, m_vecNormalVecsCohorts()
-		, m_vecBiNormalVecsCohorts()
-		, m_vecTangentVecsCohorts()
-		, m_vecInstances()
-		, m_iVBO(0)
-		, m_iVBOOffset(0)
-	{}
-
-	virtual ~_geometry()
-	{
-		clean();
-	}
-
-	void scale(float fScaleFactor);
-
-	void translate(float fX, float fY, float fZ)
-	{
-		if (getVerticesCount() == 0)
-		{
-			return;
-		}
-
-		const auto iVertexLength = getVertexLength();
-
-		/* Vertices */
-		for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
-		{
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] += fX;
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] += fY;
-			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] += fZ;
-		}
-
-		/* BB - Min */
-		m_pvecBBMin->x += fX;
-		m_pvecBBMin->y += fY;
-		m_pvecBBMin->z += fZ;
-
-		/* BB - Max */
-		m_pvecBBMax->x += fX;
-		m_pvecBBMax->y += fY;
-		m_pvecBBMax->z += fZ;
-	}
+	_geometry(OwlInstance iInstance);
+	virtual ~_geometry();
 
 	static void calculateBBMinMax(
 		OwlInstance iInstance,
 		double& dXmin, double& dXmax,
 		double& dYmin, double& dYmax,
-		double& dZmin, double& dZmax)
-	{
-		assert(iInstance != 0);
-
-		_vector3d vecOriginalBBMin;
-		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(iInstance) &&
-			GetBoundingBox(
-				iInstance,
-				(double*)&vecOriginalBBMin,
-				(double*)&vecOriginalBBMax))
-		{
-			dXmin = fmin(dXmin, vecOriginalBBMin.x);
-			dYmin = fmin(dYmin, vecOriginalBBMin.y);
-			dZmin = fmin(dZmin, vecOriginalBBMin.z);
-
-			dXmax = fmax(dXmax, vecOriginalBBMax.x);
-			dYmax = fmax(dYmax, vecOriginalBBMax.y);
-			dZmax = fmax(dZmax, vecOriginalBBMax.z);
-		}
-	}
+		double& dZmin, double& dZmax);
 
 	void calculateMinMax(
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
-		float& fZmin, float& fZmax)
-	{
-		if (getVerticesCount() == 0)
-		{
-			return;
-		}
-
-		const auto iVertexLength = getVertexLength();
-
-		// Triangles
-		if (!m_vecTriangles.empty())
-		{
-			for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
-					iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
-					iIndex++)
-				{
-					fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-					fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (!m_vecTriangles.empty())
-
-		// Faces polygons
-		if (!m_vecFacePolygons.empty())
-		{
-			for (size_t iPolygon = 0; iPolygon < m_vecFacePolygons.size(); iPolygon++)
-			{
-				for (int64_t iIndex = m_vecFacePolygons[iPolygon].startIndex();
-					iIndex < m_vecFacePolygons[iPolygon].startIndex() + m_vecFacePolygons[iPolygon].indicesCount();
-					iIndex++)
-				{
-					if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
-					{
-						continue;
-					}
-
-					fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-					fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				} // for (size_t iIndex = ...
-			} // for (size_t iPolygon = ...
-		} // if (!m_vecFacePolygons.empty())
-
-		// Conceptual faces polygons
-		if (!m_vecConcFacePolygons.empty())
-		{
-			for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
-			{
-				for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
-					iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
-					iIndex++)
-				{
-					if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
-					{
-						continue;
-					}
-
-					fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-					fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				} // for (size_t iIndex = ...
-			} // for (size_t iPolygon = ...
-		} // if (!m_vecConcFacePolygons.empty())
-
-		// Lines
-		if (!m_vecLines.empty())
-		{
-			for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
-			{
-				for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
-					iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
-					iIndex++)
-				{
-					if (getIndices()[iIndex] == -1)
-					{
-						continue;
-					}
-
-					fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-					fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				} // for (size_t iIndex = ...
-			} // for (size_t iPolygon = ...
-		} // if (!m_vecLines.empty())
-
-		// Points
-		if (!m_vecPoints.empty())
-		{
-			for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
-			{
-				for (int64_t iIndex = m_vecPoints[iPolygon].startIndex();
-					iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
-					iIndex++)
-				{
-					fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-					fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-					fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-					fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				} // for (size_t iIndex = ...
-			} // for (size_t iPolygon = ...
-		} // if (!m_vecPoints.empty())
-	}
+		float& fZmin, float& fZmax);
 
 	void calculateMinMaxTransform(
 		_instance* pInstance,
@@ -653,15 +314,80 @@ public: // Methods
 		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax);
 
-	void addInstance(_instance* pInstance)
-	{
-		assert(pInstance != 0);
+	void scale(float fScaleFactor);
+	void translate(float fX, float fY, float fZ);
 
-		m_vecInstances.push_back(pInstance);
-	}
-
+	void addInstance(_instance* pInstance);
 	virtual void enableInstances(bool bEnable);
 	long getEnabledInstancesCount() const;
+
+protected: // Methods
+
+	bool calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer);
+
+	void calculate()
+	{
+		preCalculate();
+		calculateCore();
+		postCalculate();		
+	}
+
+	virtual void preCalculate()	{}
+
+	virtual void calculateCore();
+
+	virtual void postCalculate() {}
+
+	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecTriangles.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
+	{
+		m_vecFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
+	}
+
+	void addConcFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
+	{
+		m_vecConcFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
+	}
+
+	void addLines(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecLines.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addPoints(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
+	{
+		m_vecPoints.push_back(_primitives(iStartIndex, iIndicesCount));
+
+		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials);
+
+	virtual uint32_t getDefaultColor() const
+	{
+		return 256 * 256 * 256 * DEFAULT_COLOR_R +
+			256 * 256 * DEFAULT_COLOR_G +
+			256 * DEFAULT_COLOR_B +
+			DEFAULT_COLOR_A;
+	}
+
+	wstring getConcFaceTexture(ConceptualFace iConceptualFace);
+
+	void buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
+	void buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT);
+	void buildConcFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT);
+	void buildLinesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
+	void buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
+
+	virtual void clean();
 
 public: // Properties
 
@@ -716,226 +442,6 @@ public: // Properties
 	// VBO (OpenGL)
 	GLuint& VBO() { return m_iVBO; }
 	GLsizei& VBOOffset() { return m_iVBOOffset; }
-
-protected: // Methods
-
-	void setAPFormatSettings()
-	{
-		uint64_t mask = 0;
-		mask += FORMAT_SIZE_VERTEX_DOUBLE;
-		mask += FORMAT_SIZE_INDEX_INT64;
-		mask += FORMAT_VERTEX_NORMAL;
-		mask += FORMAT_VERTEX_TEXTURE_UV;
-		mask += FORMAT_EXPORT_TRIANGLES;
-		mask += FORMAT_EXPORT_LINES;
-		mask += FORMAT_EXPORT_POINTS;
-		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-		mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
-
-		uint64_t setting = 0;
-		setting += FORMAT_VERTEX_NORMAL;
-		setting += FORMAT_EXPORT_TRIANGLES;
-		setting += FORMAT_EXPORT_LINES;
-		setting += FORMAT_EXPORT_POINTS;
-		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
-		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
-
-		SetFormat(getOwlModel(), setting, mask);
-		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
-	}
-
-	bool calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
-	{
-		assert(pVertexBuffer != nullptr);
-		assert(pIndexBuffer != nullptr);		
-
-		if (getOwlInstance() == 0)
-		{
-			return false;
-		}
-
-		CalculateInstance(getOwlInstance(), &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
-		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
-		{
-			return false;
-		}
-
-		pVertexBuffer->data() = new float[(uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength()];
-		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
-
-		UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
-
-		pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
-		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
-
-		UpdateInstanceIndexBuffer(getOwlInstance(), pIndexBuffer->data());
-
-		return true;
-	}
-
-	void calculate()
-	{
-		preCalculate();
-		calculateCore();
-		postCalculate();		
-	}
-
-	virtual void preCalculate()	{}
-
-	virtual void calculateCore();
-
-	virtual void postCalculate() 
-	{
-		cleanMemoryCore();
-	}
-
-	virtual uint32_t getDefaultColor() const
-	{
-		return 256 * 256 * 256 * DEFAULT_COLOR_R +
-			256 * 256 * DEFAULT_COLOR_G +
-			256 * DEFAULT_COLOR_B +
-			DEFAULT_COLOR_A;
-	}
-
-	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
-	{
-		m_vecTriangles.push_back(_primitives(iStartIndex, iIndicesCount));
-
-		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
-	}
-
-	void addFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
-	{
-		m_vecFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
-	}
-
-	void addConcFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
-	{
-		m_vecConcFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
-	}
-
-	void addLines(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
-	{
-		m_vecLines.push_back(_primitives(iStartIndex, iIndicesCount));
-
-		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
-	}
-
-	void addPoints(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
-	{
-		m_vecPoints.push_back(_primitives(iStartIndex, iIndicesCount));
-
-		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
-	}
-
-	wstring getConcFaceTexture(ConceptualFace iConceptualFace)
-	{
-		wstring strTexture;
-
-		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
-		if (iMaterialInstance != 0)
-		{
-			int64_t* piInstances = nullptr;
-			int64_t iCard = 0;
-			GetObjectProperty(
-				iMaterialInstance,
-				GetPropertyByName(getOwlModel(), "textures"),
-				&piInstances,
-				&iCard);
-
-			if (iCard == 1)
-			{
-				iCard = 0;
-				char** szValue = nullptr;
-				GetDatatypeProperty(
-					piInstances[0],
-					GetPropertyByName(getOwlModel(), "name"),
-					(void**)&szValue,
-					&iCard);
-
-				if (iCard == 1)
-				{
-					strTexture = CA2W(szValue[0]);
-				}
-
-				if (strTexture.empty())
-				{
-					strTexture = L"default";
-				}
-			} // if (iCard == 1)
-		} // if (iMaterialInstance != 0)
-
-		return strTexture;
-	}
-
-	void addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
-	{
-		auto itMaterial = mapMaterials.find(material);
-		if (itMaterial == mapMaterials.end())
-		{
-			mapMaterials[material] = vector<_face>{ _face(iConceptualFaceIndex, iStartIndex, iIndicesCount) };
-		}
-		else
-		{
-			itMaterial->second.push_back(_face(iConceptualFaceIndex, iStartIndex, iIndicesCount));
-		}
-	}
-
-	void buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
-	void buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT);
-	void buildConcFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT);
-	void buildLinesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
-	void buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
-
-	virtual void clean()
-	{
-		delete m_pVertexBuffer;
-		m_pVertexBuffer = nullptr;
-
-		delete m_pIndexBuffer;
-		m_pIndexBuffer = nullptr;
-
-		delete m_pmtxOriginalBBTransformation;
-		m_pmtxOriginalBBTransformation = nullptr;
-
-		delete m_pvecOriginalBBMin;
-		m_pvecOriginalBBMin = nullptr;
-
-		delete m_pvecOriginalBBMax;
-		m_pvecOriginalBBMax = nullptr;
-
-		delete m_pmtxBBTransformation;
-		m_pmtxBBTransformation = nullptr;
-
-		delete m_pvecBBMin;
-		m_pvecBBMin = nullptr;
-
-		delete m_pvecBBMax;
-		m_pvecBBMax = nullptr;
-
-		delete m_pvecAABBMin;
-		m_pvecAABBMin = nullptr;
-
-		delete m_pvecAABBMax;
-		m_pvecAABBMax = nullptr;
-
-		m_vecTriangles.clear();
-		m_vecFacePolygons.clear();
-		m_vecConcFacePolygons.clear();
-		m_vecLines.clear();
-		m_vecPoints.clear();
-
-		_cohort::clear(m_vecConcFacesCohorts);
-		_cohort::clear(m_vecFacePolygonsCohorts);
-		_cohort::clear(m_vecConcFacePolygonsCohorts);
-		_cohort::clear(m_vecLinesCohorts);
-		_cohort::clear(m_vecPointsCohorts);
-		_cohort::clear(m_vecNormalVecsCohorts);
-		_cohort::clear(m_vecBiNormalVecsCohorts);
-		_cohort::clear(m_vecTangentVecsCohorts);
-	}
-
-	virtual void cleanMemoryCore() {}
 };
 
 // ************************************************************************************************
@@ -999,56 +505,6 @@ public: // Methods
 		m_pTransformationMatrix->_41 /= fScaleFactor;
 		m_pTransformationMatrix->_42 /= fScaleFactor;
 		m_pTransformationMatrix->_43 /= fScaleFactor;
-	}
-
-	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName)
-	{
-		ASSERT(iModel != 0);
-		ASSERT(iInstance != 0);
-
-		OwlClass iClassInstance = GetInstanceClass(iInstance);
-		ASSERT(iClassInstance != 0);
-
-		wchar_t* szClassName = nullptr;
-		GetNameOfClassW(iClassInstance, &szClassName);
-
-		wchar_t* szName = nullptr;
-		GetNameOfInstanceW(iInstance, &szName);
-
-		if (szName == nullptr)
-		{
-			RdfProperty iTagProperty = GetPropertyByName(iModel, "tag");
-			if (iTagProperty != 0)
-			{
-				SetCharacterSerialization(iModel, 0, 0, false);
-
-				int64_t iCard = 0;
-				wchar_t** szValue = nullptr;
-				GetDatatypeProperty(iInstance, iTagProperty, (void**)&szValue, &iCard);
-
-				if (iCard == 1)
-				{
-					szName = szValue[0];
-				}
-
-				SetCharacterSerialization(iModel, 0, 0, true);
-			}
-		} // if (szName == nullptr)
-
-		wchar_t szUniqueName[200];
-
-		if (szName != nullptr)
-		{
-			strName = szName;
-			swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
-		}
-		else
-		{
-			strName = szClassName;
-			swprintf(szUniqueName, 200, L"#%lld (%s)", iInstance, szClassName);
-		}
-
-		strUniqueName = szUniqueName;
 	}
 
 public: // Properties

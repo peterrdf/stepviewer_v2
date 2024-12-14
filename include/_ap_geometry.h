@@ -26,6 +26,32 @@ public: // Methods
 	}
 
 	// _geometry
+	void setAPFormatSettings()
+	{
+		uint64_t mask = 0;
+		mask += FORMAT_SIZE_VERTEX_DOUBLE;
+		mask += FORMAT_SIZE_INDEX_INT64;
+		mask += FORMAT_VERTEX_NORMAL;
+		mask += FORMAT_VERTEX_TEXTURE_UV;
+		mask += FORMAT_EXPORT_TRIANGLES;
+		mask += FORMAT_EXPORT_LINES;
+		mask += FORMAT_EXPORT_POINTS;
+		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
+		uint64_t setting = 0;
+		setting += FORMAT_VERTEX_NORMAL;
+		setting += FORMAT_EXPORT_TRIANGLES;
+		setting += FORMAT_EXPORT_LINES;
+		setting += FORMAT_EXPORT_POINTS;
+		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
+		SetFormat(getOwlModel(), setting, mask);
+		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
+	}
+
+	// _geometry
 	virtual OwlModel getOwlModel() override
 	{
 		OwlModel owlModel = 0;
@@ -33,6 +59,15 @@ public: // Methods
 		assert(owlModel != 0);
 
 		return owlModel;
+	}
+
+protected: // Methods
+
+	virtual void cleanCachedGeometry()
+	{
+		cleanMemory(getSdaiModel(), 0);
+
+		m_owlInstance = 0;
 	}
 
 public: // Properties

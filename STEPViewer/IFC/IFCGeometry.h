@@ -27,7 +27,7 @@ protected: // Methods
 
 	// _geometry
 	virtual void preCalculate() override;
-	virtual void cleanMemoryCore() override;
+	virtual void postCalculate() override;
 
 public: // Properties
 

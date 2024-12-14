@@ -15,6 +15,56 @@ public:  // Methods
 	{
 	}
 
+	static void buildInstanceNames(OwlModel owlModel, OwlInstance owlInstance, wstring& strName, wstring& strUniqueName)
+	{
+		ASSERT(owlModel != 0);
+		ASSERT(owlInstance != 0);
+
+		OwlClass iClassInstance = GetInstanceClass(owlInstance);
+		ASSERT(iClassInstance != 0);
+
+		wchar_t* szClassName = nullptr;
+		GetNameOfClassW(iClassInstance, &szClassName);
+
+		wchar_t* szName = nullptr;
+		GetNameOfInstanceW(owlInstance, &szName);
+
+		if (szName == nullptr)
+		{
+			RdfProperty iTagProperty = GetPropertyByName(owlModel, "tag");
+			if (iTagProperty != 0)
+			{
+				SetCharacterSerialization(owlModel, 0, 0, false);
+
+				int64_t iCard = 0;
+				wchar_t** szValue = nullptr;
+				GetDatatypeProperty(owlInstance, iTagProperty, (void**)&szValue, &iCard);
+
+				if (iCard == 1)
+				{
+					szName = szValue[0];
+				}
+
+				SetCharacterSerialization(owlModel, 0, 0, true);
+			}
+		} // if (szName == nullptr)
+
+		wchar_t szUniqueName[200];
+
+		if (szName != nullptr)
+		{
+			strName = szName;
+			swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
+		}
+		else
+		{
+			strName = szClassName;
+			swprintf(szUniqueName, 200, L"#%lld (%s)", owlInstance, szClassName);
+		}
+
+		strUniqueName = szUniqueName;
+	}
+
 public: // Properties
 
 	OwlInstance getOwlInstance() const { return getGeometryAs<_owl_geometry>()->getOwlInstance(); }

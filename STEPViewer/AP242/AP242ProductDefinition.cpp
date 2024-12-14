@@ -46,7 +46,7 @@ CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance sdaiInstance)
 
 int32_t CAP242ProductDefinition::GetNextInstance()
 {
-	if (++m_iNextInstance >= (int32_t)m_vecInstances.size())
+	if (++m_iNextInstance >= (int32_t)getInstances().size())
 	{
 		m_iNextInstance = 0;
 	}
