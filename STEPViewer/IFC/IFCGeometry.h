@@ -31,6 +31,9 @@ protected: // Methods
 
 public: // Properties
 
+	// _geometry
+	virtual OwlInstance getOwlInstance() override;
+
 	bool& Referenced() { return m_bReferenced; }
 };
 

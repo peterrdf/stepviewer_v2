@@ -18,7 +18,7 @@ public: // Methods
 	{
 		assert(m_sdaiInstance != 0);
 
-		owlBuildInstance(getSdaiModel(), m_sdaiInstance, &m_iInstance);
+		owlBuildInstance(getSdaiModel(), m_sdaiInstance, &m_owlInstance);
 	}
 
 	virtual ~_ap_geometry()
@@ -26,7 +26,7 @@ public: // Methods
 	}
 
 	// _geometry
-	virtual OwlModel getOwlModel() const override
+	virtual OwlModel getOwlModel() override
 	{
 		OwlModel owlModel = 0;
 		owlGetModel(getSdaiModel(), &owlModel);

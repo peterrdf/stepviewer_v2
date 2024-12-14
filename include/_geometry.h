@@ -376,7 +376,7 @@ class _geometry
 protected: // Members
 
 	// Metadata
-	OwlInstance m_iInstance;
+	OwlInstance m_owlInstance;
 	wstring m_strName;
 	wstring m_strUniqueName;
 
@@ -431,7 +431,7 @@ public: // Members
 public: // Methods
 
 	_geometry(OwlInstance iInstance)
-		: m_iInstance(iInstance)
+		: m_owlInstance(iInstance)
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
 		, m_pVertexBuffer(nullptr)
@@ -666,10 +666,10 @@ public: // Methods
 public: // Properties
 
 	// Metadata
-	OwlInstance getInstance() const { assert(m_iInstance != 0);  return m_iInstance; }
-	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
-	virtual OwlModel getOwlModel() const { return ::GetModel(m_iInstance); }
-	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }	
+	virtual OwlInstance getOwlInstance() { return m_owlInstance; }
+	OwlClass getClassInstance() { return ::GetInstanceClass(getOwlInstance()); }
+	virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
+	bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 
@@ -678,7 +678,7 @@ public: // Properties
 	int64_t getIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
 	float* getVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
 	int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-	uint32_t getVertexLength() const { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
+	uint32_t getVertexLength() { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
 	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
@@ -719,7 +719,7 @@ public: // Properties
 
 protected: // Methods
 
-	void setAPFormatSettings() const
+	void setAPFormatSettings()
 	{
 		uint64_t mask = 0;
 		mask += FORMAT_SIZE_VERTEX_DOUBLE;
@@ -749,12 +749,12 @@ protected: // Methods
 		assert(pVertexBuffer != nullptr);
 		assert(pIndexBuffer != nullptr);		
 
-		if (m_iInstance == 0)
+		if (getOwlInstance() == 0)
 		{
 			return false;
 		}
 
-		CalculateInstance(m_iInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);		
+		CalculateInstance(getOwlInstance(), &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
@@ -763,12 +763,12 @@ protected: // Methods
 		pVertexBuffer->data() = new float[(uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength()];
 		memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
 
-		UpdateInstanceVertexBuffer(m_iInstance, pVertexBuffer->data());
+		UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
 
 		pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
 		memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
-		UpdateInstanceIndexBuffer(m_iInstance, pIndexBuffer->data());
+		UpdateInstanceIndexBuffer(getOwlInstance(), pIndexBuffer->data());
 
 		return true;
 	}
@@ -1053,7 +1053,7 @@ public: // Methods
 
 public: // Properties
 
-	OwlInstance getOwlInstance() const { return getGeometry()->getInstance(); }
+	OwlInstance getOwlInstance() const { return getGeometry()->getOwlInstance(); }
 	int64_t getID() const { return m_iID; }
 	_geometry* getGeometry() const { return m_pGeometry; }
 	template<typename T>

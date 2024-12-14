@@ -4154,8 +4154,7 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 #else
 		m_pOGLProgram->_enableLighting(true);
-#endif	
-
+#endif
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
 

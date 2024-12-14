@@ -30,5 +30,15 @@ CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
 {
 	cleanMemory(getSdaiModel(), 0);
 
-	m_iInstance = 0;
+	m_owlInstance = 0;
+}
+
+/*virtual*/ OwlInstance CIFCGeometry::getOwlInstance() /*override*/
+{ 
+	if ((m_owlInstance == 0) && hasGeometry())
+	{
+		owlBuildInstance(getSdaiModel(), getSdaiInstance(), &m_owlInstance);
+	}
+
+	return _geometry::getOwlInstance();
 }

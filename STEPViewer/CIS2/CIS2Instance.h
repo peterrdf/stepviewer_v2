@@ -42,7 +42,7 @@ public: // Methods
 	enumCIS2InstanceType getType() const { return m_enCIS2InstanceType; }
 
 	// _geometry
-	virtual OwlModel getOwlModel() const override;
+	virtual OwlModel getOwlModel() override;
 
 	// CInstanceBase
 	SdaiModel GetModel() const { return sdaiGetInstanceModel(_ap_geometry::getSdaiInstance()); }

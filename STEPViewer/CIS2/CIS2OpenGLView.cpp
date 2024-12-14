@@ -674,11 +674,6 @@ void CCIS2OpenGLView::DrawConceptualFacesPolygons(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			/*if (!pInstance->getEnable())
-			{
-				continue;
-			}*/
-
 			for (auto pCohort : pInstance->concFacePolygonsCohorts())
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
@@ -727,11 +722,6 @@ void CCIS2OpenGLView::DrawLines(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			/*if (!pInstance->getEnable())
-			{
-				continue;
-			}*/
-
 			for (auto pCohort : pInstance->linesCohorts())
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
@@ -781,11 +771,6 @@ void CCIS2OpenGLView::DrawPoints(_model* pM)
 
 		for (auto pInstance : itCohort.second)
 		{
-			/*if (!pInstance->getEnable())
-			{
-				continue;
-			}*/
-
 			for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 			{
 				auto pCohort = pInstance->pointsCohorts()[iPointsCohort];
@@ -906,18 +891,13 @@ void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 
 		for (auto pInstance : itCohort.second)
 		{
-			/*if (!pInstance->getEnable())
-			{
-				continue;
-			}*/
-
 			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getOwlInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(

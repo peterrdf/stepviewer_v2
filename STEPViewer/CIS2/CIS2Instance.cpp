@@ -15,7 +15,7 @@ CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2In
 /*virtual*/ CCIS2Instance::~CCIS2Instance()
 {}
 
-/*virtual*/ OwlModel CCIS2Instance::getOwlModel() const /*override*/
+/*virtual*/ OwlModel CCIS2Instance::getOwlModel() /*override*/
 {
 	OwlModel iOwlModel = 0;
 	owlGetModel(GetModel(), &iOwlModel);

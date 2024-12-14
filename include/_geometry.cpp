@@ -43,7 +43,7 @@ void _geometry::scale(float fScaleFactor)
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
+	m_iConceptualFacesCount = GetConceptualFaceCnt(getOwlInstance());
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		int64_t iStartIndexTriangles = 0;
@@ -55,7 +55,7 @@ void _geometry::scale(float fScaleFactor)
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 		ConceptualFace iConceptualFace = GetConceptualFace(
-			m_iInstance,
+			getOwlInstance(),
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,
