@@ -277,3 +277,99 @@ static void	_transform(const _vector3* pV, const _matrix4x4* pM, _vector3* pOut)
 	pOut->y = pTmp.y;
 	pOut->z = pTmp.z;
 }
+
+// ************************************************************************************************
+template<class T>
+class _buffer
+{
+
+private: // Members
+
+	T* m_pData;
+	int64_t m_iSize;
+
+public: // Methods
+
+	_buffer()
+		: m_pData(nullptr)
+		, m_iSize(0)
+	{
+	}
+
+	virtual ~_buffer()
+	{
+		delete[] m_pData;
+	}
+
+public: // Properties
+
+	T*& data() { return m_pData; }
+	int64_t& size() { return m_iSize; }
+};
+
+// ************************************************************************************************
+template<class V>
+class _vertexBuffer : public _buffer<V>
+{
+
+private: // Members
+
+	uint32_t m_iVertexLength;
+
+public: // Methods
+
+	_vertexBuffer(uint32_t iVertexLength)
+		: m_iVertexLength(iVertexLength)
+	{
+		static_assert(
+			is_same<V, float>::value ||
+			is_same<V, double>::value,
+			"V must be float or double type.");
+		assert(iVertexLength >= 3);
+	}
+
+	virtual ~_vertexBuffer()
+	{
+	}
+
+	void copyFrom(_vertexBuffer* pSource)
+	{
+		assert(pSource != nullptr);
+		assert(_buffer<V>::size() == pSource->size());
+		assert(getVertexLength() == pSource->getVertexLength());
+
+		memcpy(_buffer<V>::data(), pSource->data(), (uint32_t)_buffer<V>::size() * getVertexLength() * (uint32_t)sizeof(V));
+	}
+
+public: // Properties
+
+	uint32_t getVertexLength() { return m_iVertexLength; }
+};
+
+// ************************************************************************************************
+typedef _vertexBuffer<float> _vertices_f;
+typedef _vertexBuffer<double> _vertices_d;
+
+// ************************************************************************************************
+template<class I>
+class _indexBuffer : public _buffer<I>
+{
+
+public: // Methods
+
+	_indexBuffer()
+	{
+		static_assert(
+			is_same<I, int32_t>::value ||
+			is_same<I, int64_t>::value,
+			"I must be int32_t or int64_t type.");
+	}
+
+	virtual ~_indexBuffer()
+	{
+	}
+};
+
+// ************************************************************************************************
+typedef _indexBuffer<int32_t> _indices_i32;
+typedef _indexBuffer<int64_t> _indices_i64;
