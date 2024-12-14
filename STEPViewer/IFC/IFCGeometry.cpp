@@ -40,5 +40,5 @@ CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
 		owlBuildInstance(getSdaiModel(), getSdaiInstance(), &m_owlInstance);
 	}
 
-	return _geometry::getOwlInstance();
+	return m_owlInstance;
 }
