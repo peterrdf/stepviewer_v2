@@ -68,12 +68,10 @@ private: // Methods
 
 	void LoadModel(CCIS2Model* pModel);
 	void LoadHeader(CCIS2Model* pModel, HTREEITEM hModel);
-	void LoadProject(CCIS2Model* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance);
-	void LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadContainsElements(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadInstance(CCIS2Model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadUnreferencedItems(CCIS2Model* pModel, HTREEITEM hModel);
+	void LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	void LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	void LoadContainsElements(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	void LoadInstance(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadTree_UpdateItems(HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 	void ClickItem_UpdateChildren(HTREEITEM hParent);

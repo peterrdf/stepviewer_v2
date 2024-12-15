@@ -216,6 +216,9 @@
     <ClInclude Include="..\include\_entity.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="CIS2\CIS2Geometry.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -334,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_entity.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Geometry.cpp">
+      <Filter>CIS2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

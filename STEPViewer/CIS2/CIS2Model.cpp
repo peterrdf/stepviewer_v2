@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CIS2Model.h"
-#include <_3DUtils.h>
+#include "CIS2Instance.h"
 
 // ************************************************************************************************
 //#todo???
@@ -10,23 +10,9 @@
 /*static*/ int_t CCIS2Model::s_iInstanceID = 1;
 
 // ************************************************************************************************
-static uint32_t DEFAULT_COLOR_R = 10;
-static uint32_t DEFAULT_COLOR_G = 150;
-static uint32_t DEFAULT_COLOR_B = 10;
-static uint32_t DEFAULT_COLOR_A = 255;
-/*static*/ uint32_t CCIS2Model::DEFAULT_COLOR =
-256 * 256 * 256 * DEFAULT_COLOR_R +
-256 * 256 * DEFAULT_COLOR_G +
-256 * DEFAULT_COLOR_B +
-DEFAULT_COLOR_A;
-
-// ************************************************************************************************
 CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
-	, m_vecInstances()	
-	, m_mapInstances()
-	, m_mapID2Instance()
 {}
 
 /*virtual*/ CCIS2Model::~CCIS2Model()
@@ -62,31 +48,6 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	scale();
 }
 
-/*virtual*/ void CCIS2Model::clean() /*override*/
-{
-	_ap_model::clean();
-
-	for (auto pInstance : m_vecInstances)
-	{
-		delete pInstance;
-	}
-	m_vecInstances.clear();
-
-	m_mapInstances.clear();
-	m_mapID2Instance.clear();
-}
-
-CCIS2Instance* CCIS2Model::GetInstanceByID(int64_t iID)
-{
-	auto itID2Instance = m_mapID2Instance.find(iID);
-	if (itID2Instance != m_mapID2Instance.end())
-	{
-		return itID2Instance->second;
-	}
-
-	return nullptr;
-}
-
 void CCIS2Model::LodDesignParts()
 {
 	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "DESIGN_PART");
@@ -97,11 +58,7 @@ void CCIS2Model::LodDesignParts()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::DesignPart, DEFAULT_CIRCLE_SEGMENTS);
-		pInstance->_instance::setEnable(true);
-
-		m_vecInstances.push_back(pInstance);
-		m_mapInstances[iInstance] = pInstance;
+		LoadGeometry(iInstance, enumCIS2GeometryType::DesignPart, DEFAULT_CIRCLE_SEGMENTS);
 	}
 }
 
@@ -115,17 +72,23 @@ void CCIS2Model::LoadRepresentations()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		auto pInstance = RetrieveGeometry(iInstance, enumCIS2InstanceType::Reperesentation, DEFAULT_CIRCLE_SEGMENTS);
-		pInstance->_instance::setEnable(true);
-
-		m_vecInstances.push_back(pInstance);
-		m_mapInstances[iInstance] = pInstance;
+		LoadGeometry(iInstance, enumCIS2GeometryType::Reperesentation, DEFAULT_CIRCLE_SEGMENTS);
 	}
 }
 
-CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2InstanceType enCIS2InstanceType, int_t iCircleSegments)
+_geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType, int_t iCircleSegments)
 {
-	preLoadInstance(iInstance);
+	auto itGeometry = m_mapGeometries.find(sdaiInstance);
+	if (itGeometry != m_mapGeometries.end())
+	{
+		return itGeometry->second;
+	}
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}
 
 	// Set up circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -133,18 +96,22 @@ CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2Inst
 		circleSegments(iCircleSegments, 5);
 	}
 
-	CCIS2Instance* pInstance = nullptr;
-	switch (enCIS2InstanceType)
+	CCIS2Geometry* pGeometry = nullptr;
+	switch (enCIS2GeometryType)
 	{
-		case enumCIS2InstanceType::DesignPart:
+		case enumCIS2GeometryType::DesignPart:
 		{
-			pInstance = new CCIS2DesignPart(s_iInstanceID++, iInstance);
+			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance);
+			m_vecGeometries.push_back(pGeometry);
+			m_mapGeometries[sdaiInstance] = pGeometry;
 		}
 		break;
 
-		case enumCIS2InstanceType::Reperesentation:
+		case enumCIS2GeometryType::Reperesentation:
 		{
-			pInstance = new CCIS2Representation(s_iInstanceID++, iInstance);
+			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance);
+			m_vecGeometries.push_back(pGeometry);
+			m_mapGeometries[sdaiInstance] = pGeometry;
 		}
 		break;
 
@@ -155,11 +122,22 @@ CCIS2Instance* CCIS2Model::RetrieveGeometry(SdaiInstance iInstance, enumCIS2Inst
 		break;
 	}
 
+	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+
+	auto pInstance = new CCIS2Instance(s_iInstanceID++, pGeometry, nullptr);
+	m_vecInstances.push_back(pInstance);
+
+	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
+	m_mapID2Instance[pInstance->getID()] = pInstance;
+
+	pGeometry->addInstance(pInstance);
+
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
 	{
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
-	return pInstance;
+	return pGeometry;
 }

@@ -500,7 +500,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case ID_INSTANCES_ENABLE:
 				{
-					pTargetInstance->_instance::setEnable(!pTargetInstance->getEnable());
+					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
 					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
@@ -552,7 +552,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				}
 				break;
 			} // switch (uiCommand)
-		} // if (pInstance->HasGeometry())
+		} // if (pTargetInstance->HasGeometry())
 		else
 		{
 			switch (uiCommand)
@@ -575,8 +575,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 				}
 				break;
 			} // switch (uiCommand) 
-		} // else if (pInstance->HasGeometry())
-	} // if (pInstance != nullptr)
+		} // else if (pTargetInstance->HasGeometry())
+	} // if (pTargetInstance != nullptr)
 	else
 	{
 		switch (uiCommand)
@@ -642,7 +642,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
 			}
-		} // for (auto itInstance = ...
+		} // for (auto pInstance = ...
 
 		// Update the Parents
 		for (auto hParent : m_setParents)
@@ -1015,6 +1015,10 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 	auto pGeometry = pModel->getGeometryByInstance(iIFCProjectInstance);
 	if (pGeometry != nullptr)
 	{
+		//#todo#mappeditems
+		ASSERT(pGeometry->getInstances().size() == 1);
+		_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
+
 		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
 		ASSERT(pAPGeometry != nullptr);
 
@@ -1054,13 +1058,10 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)pGeometry;
+		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
 
 		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-		//#todo#mappeditems
-		ASSERT(pGeometry->getInstances().size() == 1);
-		_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
+		
 
 		m_mapInstance2GeometryItem[ifcInstance] = hInstance;
 

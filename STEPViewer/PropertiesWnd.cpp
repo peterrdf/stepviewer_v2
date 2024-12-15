@@ -11,6 +11,7 @@
 #include "AP242Model.h"
 #include "IFCModel.h"
 #include "CIS2Model.h"
+#include "CIS2Instance.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
