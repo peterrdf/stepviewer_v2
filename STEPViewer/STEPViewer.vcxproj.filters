@@ -162,9 +162,6 @@
     <ClInclude Include="..\include\glext.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\wglext.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -192,16 +189,7 @@
     <ClInclude Include="OWLProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_instance.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_ap_instance.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ap242_instance.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_cis2_instance.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_ap_mvc.h">
@@ -215,6 +203,18 @@
     </ClInclude>
     <ClInclude Include="..\include\_ptr.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_instance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureViewConsts.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -329,10 +329,10 @@
     <ClCompile Include="IFC\IFCGeometry.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_geometry.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

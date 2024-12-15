@@ -3,7 +3,289 @@
 #include "_mvc.h"
 #include "_owl_instance.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
+_model::_model()
+	: m_strPath(L"")
+	, m_vecGeometries()
+	, m_vecInstances()
+	, m_mapID2Instance()
+	, m_bUpdteVertexBuffers(true)
+	, m_dVertexBuffersOffsetX(0.)
+	, m_dVertexBuffersOffsetY(0.)
+	, m_dVertexBuffersOffsetZ(0.)
+	, m_dOriginalBoundingSphereDiameter(2.)
+	, m_fXmin(-1.f)
+	, m_fXmax(1.f)
+	, m_fYmin(-1.f)
+	, m_fYmax(1.f)
+	, m_fZmin(-1.f)
+	, m_fZmax(1.f)
+	, m_fBoundingSphereDiameter(2.f)
+{
+}
+
+/*virtual*/ _model::~_model()
+{
+	clean();
+}
+
+void _model::scale()
+{
+	// World
+	m_dOriginalBoundingSphereDiameter = 2.;
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pGeometry : m_vecGeometries)
+	{
+		if (!pGeometry->hasGeometry())
+		{
+			continue;
+		}
+
+		for (auto pInstance : pGeometry->getInstances())
+		{
+			pGeometry->calculateMinMaxTransform(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	} // for (auto pGeometry : ...
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		// TODO: new status bar for messages
+
+		return;
+	}
+
+	// World
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
+
+	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+
+	// Scale
+	for (auto pGeometry : m_vecGeometries)
+	{
+		if (!pGeometry->hasGeometry())
+		{
+			continue;
+		}
+
+		pGeometry->scale(m_fBoundingSphereDiameter / 2.f);
+	}
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pGeometry : m_vecGeometries)
+	{
+		if (!pGeometry->hasGeometry())
+		{
+			continue;
+		}
+
+		for (auto pInstance : pGeometry->getInstances())
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			pGeometry->calculateMinMaxTransform(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	} // for (auto pGeometry : ...
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		// TODO: new status bar for messages
+
+		return;
+	}
+
+	// World
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+}
+
+/*virtual*/ void _model::zoomTo(_instance* pInstance)
+{
+	assert(pInstance != nullptr);
+	assert(pInstance->getGeometry() != nullptr);
+
+	// World
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	pInstance->getGeometry()->calculateMinMaxTransform(
+		pInstance,
+		m_fXmin, m_fXmax,
+		m_fYmin, m_fYmax,
+		m_fZmin, m_fZmax);
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.f;
+		m_fXmax = 1.f;
+		m_fYmin = -1.f;
+		m_fYmax = 1.f;
+		m_fZmin = -1.f;
+		m_fZmax = 1.f;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+}
+
+/*virtual*/ void _model::zoomOut()
+{
+	// World
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pGeometry : m_vecGeometries)
+	{
+		for (auto pInstance : pGeometry->getInstances())
+		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			pGeometry->calculateMinMaxTransform(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.f;
+		m_fXmax = 1.f;
+		m_fYmin = -1.f;
+		m_fYmax = 1.f;
+		m_fZmin = -1.f;
+		m_fZmax = 1.f;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+}
+
+void _model::getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
+{
+	fXmin = m_fXmin;
+	fXmax = m_fXmax;
+	fYmin = m_fYmin;
+	fYmax = m_fYmax;
+	fZmin = m_fZmin;
+	fZmax = m_fZmax;
+}
+
+_instance* _model::getInstanceByID(int64_t iID) const
+{
+	auto itInstance = m_mapID2Instance.find(iID);
+	if (itInstance == m_mapID2Instance.end())
+	{
+		return nullptr;
+	}
+
+	return itInstance->second;
+}
+
+/*virtual*/ void _model::clean()
+{
+	for (auto pGeometry : m_vecGeometries)
+	{
+		delete pGeometry;
+	}
+	m_vecGeometries.clear();
+
+	for (auto pInstance : m_vecInstances)
+	{
+		delete pInstance;
+	}
+	m_vecInstances.clear();
+	m_mapID2Instance.clear();
+}
+
+// ************************************************************************************************
 void _view::SetController(_controller* pController)
 {
 	ASSERT(pController != nullptr);
@@ -100,33 +382,11 @@ void _controller::SetModel(_model* pModel)
 	m_bUpdatingModel = false;
 }
 
-_instance* _controller::LoadInstance(OwlInstance iInstance)
+_instance* _controller::LoadInstance(OwlInstance /*iInstance*/)
 {
-	ASSERT(iInstance != 0);
-	ASSERT(m_pModel != nullptr);
+	ASSERT(FALSE); // #todo
 
-	m_pSelectedInstance = nullptr;
-
-	/*if ((m_pTargetInstance != nullptr) && (dynamic_cast<_ap_instance*>(m_pTargetInstance)->getSdaiInstance() == iInstance))
-	{
-		return nullptr;
-	}*/
-
-	m_pTargetInstance = nullptr;
-
-	m_bUpdatingModel = true;
-
-	auto pInstance = dynamic_cast<_model*>(m_pModel)->LoadInstance(iInstance);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnModelUpdated();
-	}
-
-	m_bUpdatingModel = false;
-
-	return pInstance;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
