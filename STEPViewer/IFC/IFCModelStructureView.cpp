@@ -82,7 +82,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -93,8 +93,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	// Single instance selection
 	UnselectAllItems();
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ? 
-		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) : 
+	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ? 
+		dynamic_cast<CIFCInstance*>(getController()->GetSelectedInstance()) : 
 		nullptr;
 
 	if (pSelectedInstance != nullptr)
@@ -145,7 +145,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	UINT uFlags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(point, &uFlags);
 
-	auto pController = GetController();
+	auto pController = getController();
 	if(pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -245,7 +245,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem) /*override*/
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		return false;
@@ -325,7 +325,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -998,7 +998,7 @@ void CIFCModelStructureView::LoadHeader(CIFCModel* pModel, HTREEITEM hModel)
 // ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance)
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);

@@ -129,7 +129,7 @@ public: // Methods
 	template<class Model>
 	Model* GetModel()
 	{
-		auto pController = GetController();
+		auto pController = getController();
 		if (pController == nullptr)
 		{
 			return nullptr;
@@ -154,7 +154,7 @@ public: // Methods
 
 public: // Properties
 
-	void SetController(_controller* pController)
+	void setController(_controller* pController)
 	{
 		ASSERT(pController != nullptr);
 
@@ -163,7 +163,7 @@ public: // Properties
 		onControllerChanged();
 	}
 
-	_controller* GetController() const { return m_pController; }	
+	_controller* getController() const { return m_pController; }	
 };
 
 // ************************************************************************************************

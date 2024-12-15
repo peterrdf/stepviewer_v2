@@ -83,7 +83,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	ResetView();
 		
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -299,7 +299,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -510,8 +510,8 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->RegisterView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -651,8 +651,8 @@ void CDesignTreeView::OnChangeVisualStyle()
 
 void CDesignTreeView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->UnRegisterView(this);
 
 	__super::OnDestroy();
 

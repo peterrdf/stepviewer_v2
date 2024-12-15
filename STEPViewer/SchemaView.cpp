@@ -302,7 +302,7 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	{
 		case IDS_VIEW_IFC_RELATIONS:
 		{			
-			//GetController()->onViewRelations(this, pEntity);
+			//getController()->onViewRelations(this, pEntity);
 		}
 		break;
 	} // switch (iResult)
@@ -347,8 +347,8 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->RegisterView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -402,7 +402,7 @@ void CSchemaView::ResetView()
 {
 	m_treeCtrl.DeleteAllItems();	
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -517,8 +517,8 @@ void CSchemaView::OnChangeVisualStyle()
 
 void CSchemaView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->UnRegisterView(this);
 
 	__super::OnDestroy();
 

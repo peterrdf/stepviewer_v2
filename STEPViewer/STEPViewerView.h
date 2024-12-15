@@ -21,7 +21,7 @@ private: // Members
 
 private: // Methods
 
-	CController* GetController();
+	CController* getController();
 
 public: // Methods
 

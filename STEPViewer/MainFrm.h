@@ -18,7 +18,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Controller - MVC
-	CController* GetController() const;
+	CController* getController() const;
 
 
 protected: // create from serialization only

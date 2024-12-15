@@ -50,7 +50,7 @@ CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
 
 CCIS2OpenGLView::~CCIS2OpenGLView()
 {
-	GetController()->UnRegisterView(this);	
+	getController()->UnRegisterView(this);	
 
 	delete m_pInstanceSelectionFrameBuffer;
 
@@ -63,7 +63,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 
 /*virtual*/ _controller* CCIS2OpenGLView::getController() const /*override*/
 {
-	return GetController();
+	return getController();
 }
 
 /*virtual*/ void CCIS2OpenGLView::_load(_model* /*pModel2*/) /*override*/
@@ -457,15 +457,15 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 		return;
 	}
 
-	if (GetController() == nullptr)
+	if (getController() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CCIS2Representation*>(GetController()->GetSelectedInstance()) :
+	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CCIS2Representation*>(getController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -526,7 +526,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 
 /*virtual*/ void CCIS2OpenGLView::onControllerChanged() /*override*/
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController != nullptr)
 	{
 		pController->RegisterView(this);

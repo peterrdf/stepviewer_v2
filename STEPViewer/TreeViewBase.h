@@ -17,16 +17,16 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	virtual ~CTreeViewBase()
 	{
-		GetController()->UnRegisterView(this);
+		getController()->UnRegisterView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------
 	// _view
 	virtual void onControllerChanged()
 	{
-		ASSERT(GetController() != nullptr);
+		ASSERT(getController() != nullptr);
 
-		GetController()->RegisterView(this);
+		getController()->RegisterView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------

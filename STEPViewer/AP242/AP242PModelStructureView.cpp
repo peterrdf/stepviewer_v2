@@ -92,7 +92,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		m_hSelectedItem = nullptr;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -100,7 +100,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(getController()->GetSelectedInstance()) : nullptr;
 	if (pSelectedInstance == nullptr)
 	{
 		/*
@@ -183,14 +183,14 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	UINT uFlags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(point, &uFlags);
 
-	ASSERT(GetController() != nullptr);
+	ASSERT(getController() != nullptr);
 
 	/*
 	* TVHT_ONITEMICON
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON))
 	{
-		auto pController = GetController();
+		auto pController = getController();
 		if (pController == nullptr)
 		{
 			ASSERT(FALSE);
@@ -271,7 +271,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::ProductInstance))
 		{
-			GetController()->SelectInstance(this, nullptr);
+			getController()->SelectInstance(this, nullptr);
 
 			return;
 		}
@@ -279,7 +279,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pInstance = pItemData->GetInstance<CAP242ProductInstance>();
 		ASSERT(pInstance != nullptr);
 
-		GetController()->SelectInstance(this, pInstance);
+		getController()->SelectInstance(this, pInstance);
 	} // if ((hItem != nullptr) && ...
 }
 
@@ -458,7 +458,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);

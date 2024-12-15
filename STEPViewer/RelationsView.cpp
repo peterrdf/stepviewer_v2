@@ -46,7 +46,7 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -178,7 +178,7 @@ static char THIS_FILE[]=__FILE__;
 	// ExpressID
 	if (iFilter == (int)enumSearchFilter::ExpressID)
 	{
-		auto pController = GetController();
+		auto pController = getController();
 		if (pController == nullptr)
 		{
 			ASSERT(FALSE);
@@ -269,7 +269,7 @@ static char THIS_FILE[]=__FILE__;
 // ------------------------------------------------------------------------------------------------
 _model* CRelationsView::GetModel() const
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1667,8 +1667,8 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->RegisterView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -1814,8 +1814,8 @@ void CRelationsView::OnChangeVisualStyle()
 
 void CRelationsView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->UnRegisterView(this);
 
 	__super::OnDestroy();
 

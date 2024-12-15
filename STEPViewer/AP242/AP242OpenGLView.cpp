@@ -37,7 +37,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 /*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
 {
-	return GetController();
+	return getController();
 }
 
 /*virtual*/ void CAP242OpenGLView::onWorldDimensionsChanged()  /*override*/
@@ -91,7 +91,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	}
 
 	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance()) :
+		dynamic_cast<CAP242ProductInstance*>(getController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -157,9 +157,9 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 /*virtual*/ void CAP242OpenGLView::onControllerChanged() /*override*/
 {
-	ASSERT(GetController() != nullptr);
+	ASSERT(getController() != nullptr);
 
-	GetController()->RegisterView(this);
+	getController()->RegisterView(this);
 
 	loadSettings();
 }

@@ -27,14 +27,14 @@ CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 
 CIFCOpenGLView::~CIFCOpenGLView()
 {
-	GetController()->UnRegisterView(this);	
+	getController()->UnRegisterView(this);	
 
 	_destroy();
 }
 
 /*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/
 {
-	return GetController();
+	return getController();
 }
 
 /*virtual*/ void CIFCOpenGLView::onWorldDimensionsChanged() /*override*/
@@ -83,15 +83,15 @@ CIFCOpenGLView::~CIFCOpenGLView()
 		return;
 	}
 
-	if (GetController() == nullptr)
+	if (getController() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance()) :
+	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(getController()->GetSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -152,7 +152,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 
 /*virtual*/ void CIFCOpenGLView::onControllerChanged() /*override*/
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController != nullptr)
 	{
 		pController->RegisterView(this);
