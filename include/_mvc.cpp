@@ -10,9 +10,6 @@ _model::_model()
 	, m_vecInstances()
 	, m_mapID2Instance()
 	, m_bUpdteVertexBuffers(true)
-	, m_dVertexBuffersOffsetX(0.)
-	, m_dVertexBuffersOffsetY(0.)
-	, m_dVertexBuffersOffsetZ(0.)
 	, m_dOriginalBoundingSphereDiameter(2.)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -286,66 +283,12 @@ _instance* _model::getInstanceByID(int64_t iID) const
 }
 
 // ************************************************************************************************
-void _view::SetController(_controller* pController)
-{
-	ASSERT(pController != nullptr);
-
-	m_pController = pController;
-
-	OnControllerChanged();
-}
-
-
-/*virtual*/ void _view::OnTargetInstanceChanged(_view* /*pSender*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void _view::OnInstanceSelected(_view* /*pSender*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void _view::OnInstancesEnabledStateChanged(_view* /*pSender*/)
-{
-}
-
-/*virtual*/ void _view::OnInstanceAttributeEdited(_view* /*pSender*/, SdaiInstance /*iInstance*/, SdaiAttr /*pAttribute*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void _view::OnViewRelations(_view* /*pSender*/, SdaiInstance /*iInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void _view::OnViewRelations(_view* /*pSender*/, CEntity* /*pEntity*/)
-//{
-//}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void _view::OnApplicationPropertyChanged(_view* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void _view::OnControllerChanged()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-_controller* _view::GetController() const
-{
-	return m_pController;
-}
-
-// ************************************************************************************************
 _controller::_controller()
 	: m_pModel(nullptr)
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
 	, m_bUpdatingModel(false)
+	, m_pTargetInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
 	, m_bScaleAndCenter(FALSE)
 {

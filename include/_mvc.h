@@ -54,9 +54,6 @@ protected: // Members
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	bool m_bUpdteVertexBuffers;
-	double m_dVertexBuffersOffsetX;
-	double m_dVertexBuffersOffsetY;
-	double m_dVertexBuffersOffsetZ;
 	double m_dOriginalBoundingSphereDiameter;	
 
 	// World's dimensions
@@ -128,32 +125,6 @@ public: // Methods
 	{
 	}
 
-	virtual void OnModelChanged() {}
-	virtual void OnModelUpdated() {}
-	virtual void OnWorldDimensionsChanged() {}
-	virtual void OnShowMetaInformation() {}
-
-	// Controller
-	void SetController(_controller* pController);
-
-	// Events
-
-	virtual void OnTargetInstanceChanged(_view* pSender);
-	virtual void OnInstanceSelected(_view* pSender);
-	virtual void OnInstancesEnabledStateChanged(_view* pSender);
-	virtual void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
-	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance);
-	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity);
-	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
-
-protected: // Methods
-
-	// Events
-	virtual void OnControllerChanged();
-
-	// Controller
-	_controller* GetController() const;
-
 	// Model
 	template<class Model>
 	Model* GetModel()
@@ -166,6 +137,33 @@ protected: // Methods
 
 		return pController->GetModel()->as<Model>();
 	}
+
+	// Events	
+	virtual void OnModelChanged() {}
+	virtual void OnModelUpdated() {}
+	virtual void OnWorldDimensionsChanged() {}
+	virtual void OnShowMetaInformation() {}
+	virtual void OnTargetInstanceChanged(_view* pSender) {}
+	virtual void OnInstanceSelected(_view* pSender) {}
+	virtual void OnInstancesEnabledStateChanged(_view* pSender) {}
+	virtual void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
+	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance) {}
+	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity) {}
+	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
+	virtual void OnControllerChanged() {}
+
+public: // Properties
+
+	void SetController(_controller* pController)
+	{
+		ASSERT(pController != nullptr);
+
+		m_pController = pController;
+
+		OnControllerChanged();
+	}
+
+	_controller* GetController() const { return m_pController; }	
 };
 
 // ************************************************************************************************

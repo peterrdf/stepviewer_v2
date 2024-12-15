@@ -161,10 +161,6 @@ protected: // Methods
 	{
 		if (m_bUpdteVertexBuffers)
 		{
-			m_dVertexBuffersOffsetX = 0.;
-			m_dVertexBuffersOffsetY = 0.;
-			m_dVertexBuffersOffsetZ = 0.;
-
 			_vector3d vecOriginalBBMin;
 			_vector3d vecOriginalBBMax;
 			if (GetInstanceGeometryClass(sdaiInstance) &&
@@ -173,21 +169,21 @@ protected: // Methods
 					(double*)&vecOriginalBBMin,
 					(double*)&vecOriginalBBMax))
 			{
-				m_dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
-				m_dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
-				m_dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
+				double dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
+				double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
+				double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
 
 				TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-					m_dVertexBuffersOffsetX,
-					m_dVertexBuffersOffsetY,
-					m_dVertexBuffersOffsetZ);
+					dVertexBuffersOffsetX,
+					dVertexBuffersOffsetY,
+					dVertexBuffersOffsetZ);
 
 				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 				SetVertexBufferOffset(
 					getOwlInstance(),
-					m_dVertexBuffersOffsetX,
-					m_dVertexBuffersOffsetY,
-					m_dVertexBuffersOffsetZ);
+					dVertexBuffersOffsetX,
+					dVertexBuffersOffsetY,
+					dVertexBuffersOffsetZ);
 
 				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 				ClearedExternalBuffers(getOwlInstance());
