@@ -27,7 +27,7 @@ CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 
 CIFCOpenGLView::~CIFCOpenGLView()
 {
-	getController()->UnRegisterView(this);	
+	getController()->unRegisterView(this);	
 
 	_destroy();
 }
@@ -39,7 +39,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 
 /*virtual*/ void CIFCOpenGLView::onWorldDimensionsChanged() /*override*/
 {
-	auto pModel = GetModel<CIFCModel>();
+	auto pModel = getModelAs<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -90,8 +90,8 @@ CIFCOpenGLView::~CIFCOpenGLView()
 		return;
 	}
 
-	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CIFCInstance*>(getController()->GetSelectedInstance()) :
+	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ?
+		dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -155,7 +155,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	auto pController = getController();
 	if (pController != nullptr)
 	{
-		pController->RegisterView(this);
+		pController->registerView(this);
 
 #ifdef _BLINN_PHONG_SHADERS
 		m_pOGLProgram->_setAmbientLightWeighting(

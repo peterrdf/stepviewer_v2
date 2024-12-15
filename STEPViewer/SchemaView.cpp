@@ -348,7 +348,7 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ASSERT(getController() != nullptr);
-	getController()->RegisterView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -410,7 +410,7 @@ void CSchemaView::ResetView()
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -518,7 +518,7 @@ void CSchemaView::OnChangeVisualStyle()
 void CSchemaView::OnDestroy()
 {
 	ASSERT(getController() != nullptr);
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

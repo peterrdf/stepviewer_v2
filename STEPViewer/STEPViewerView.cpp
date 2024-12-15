@@ -44,14 +44,14 @@ CController* CMySTEPViewerView::getController()
 		return;
 	}
 
-	if (pController->GetModel() == nullptr)
+	if (pController->getModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	_ptr<_ap_model> model(pController->GetModel());
+	_ptr<_ap_model> model(pController->getModel());
 	if (!model)
 	{
 		return;
@@ -267,7 +267,7 @@ int CMySTEPViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	pDoc->RegisterView(this);
+	pDoc->registerView(this);
 
 	return 0;
 }
@@ -282,7 +282,7 @@ void CMySTEPViewerView::OnDestroy()
 		return;
 	}
 
-	pDoc->UnRegisterView(this);
+	pDoc->unRegisterView(this);
 
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
@@ -518,7 +518,7 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->SaveInstance();
+	pDocument->saveInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
@@ -529,10 +529,10 @@ void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 	ASSERT_VALID(pDocument);
 
 	if ((pDocument != nullptr) && 
-		(pDocument->GetModel() != nullptr) &&
-		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->hasGeometry() &&
-		pDocument->GetSelectedInstance()->getEnable())
+		(pDocument->getModel() != nullptr) &&
+		(pDocument->getSelectedInstance() != nullptr) &&
+		pDocument->getSelectedInstance()->hasGeometry() &&
+		pDocument->getSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}
@@ -545,7 +545,7 @@ void CMySTEPViewerView::OnInstancesZoomTo()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	pDocument->ZoomToInstance();
+	pDocument->zoomToInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
@@ -556,10 +556,10 @@ void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 	ASSERT_VALID(pDocument);
 
 	if ((pDocument != nullptr) &&
-		(pDocument->GetModel() != nullptr) &&
-		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->hasGeometry() &&
-		pDocument->GetSelectedInstance()->getEnable())
+		(pDocument->getModel() != nullptr) &&
+		(pDocument->getSelectedInstance() != nullptr) &&
+		pDocument->getSelectedInstance()->hasGeometry() &&
+		pDocument->getSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}

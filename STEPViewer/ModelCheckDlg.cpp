@@ -511,7 +511,7 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 			for (auto inst : p->relatingInstances) {
 				if (auto stepId = internalGetP21Line(inst)) {
 					//if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {#todo
-					//	pDoc->SelectInstance(NULL, pInst);
+					//	pDoc->selectInstance(NULL, pInst);
 					//	return; //>>>>
 					//}
 				}
@@ -557,7 +557,7 @@ SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 _ap_model* CModelCheckDlg::GetActiveModel()
 {
 	if (auto pDoc = GetActiveDoc()) {
-		return _ptr<_ap_model>(pDoc->GetModel());
+		return _ptr<_ap_model>(pDoc->getModel());
 	}
 	return NULL;
 }

@@ -18,7 +18,7 @@ class CMySTEPViewerDoc
 public: // Methods
 
 	// CController
-	virtual void SaveInstance() override;
+	virtual void saveInstance() override;
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();

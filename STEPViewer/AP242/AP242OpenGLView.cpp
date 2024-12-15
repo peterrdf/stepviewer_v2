@@ -30,7 +30,7 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 
 CAP242OpenGLView::~CAP242OpenGLView()
 {
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	_destroy();
 }
@@ -90,8 +90,8 @@ CAP242OpenGLView::~CAP242OpenGLView()
 		return;
 	}
 
-	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CAP242ProductInstance*>(getController()->GetSelectedInstance()) :
+	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ?
+		dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -159,7 +159,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 {
 	ASSERT(getController() != nullptr);
 
-	getController()->RegisterView(this);
+	getController()->registerView(this);
 
 	loadSettings();
 }

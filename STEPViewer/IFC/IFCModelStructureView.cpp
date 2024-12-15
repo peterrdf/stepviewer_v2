@@ -93,8 +93,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	// Single instance selection
 	UnselectAllItems();
 
-	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ? 
-		dynamic_cast<CIFCInstance*>(getController()->GetSelectedInstance()) : 
+	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ? 
+		dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance()) : 
 		nullptr;
 
 	if (pSelectedInstance != nullptr)
@@ -220,7 +220,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			(CIFCInstance*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
 
-		pController->SelectInstance(this, pSelectedInstance);
+		pController->selectInstance(this, pSelectedInstance);
 
 		if (pSelectedInstance != nullptr)
 		{
@@ -257,7 +257,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return false;
 	}	
 
-	return pInstance == pController->GetSelectedInstance();
+	return pInstance == pController->getSelectedInstance();
 }
 
 
@@ -333,7 +333,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pModel = GetModel<CIFCModel>();
+	auto pModel = getModelAs<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -482,19 +482,19 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			{
 				case ID_INSTANCES_ZOOM_TO:
 				{
-					pController->ZoomToInstance();
+					pController->zoomToInstance();
 				}
 				break;
 
 				case ID_VIEW_ZOOM_OUT:
 				{
-					pController->ZoomOut();
+					pController->zoomOut();
 				}
 				break;
 
 				case ID_INSTANCES_SAVE:
 				{
-					pController->SaveInstance();
+					pController->saveInstance();
 				}
 				break;
 
@@ -559,7 +559,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			{
 				case ID_VIEW_ZOOM_OUT:
 				{
-					pController->ZoomOut();
+					pController->zoomOut();
 				}
 				break;
 
@@ -583,7 +583,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			case ID_VIEW_ZOOM_OUT:
 			{
-				pController->ZoomOut();
+				pController->zoomOut();
 			}
 			break;
 
@@ -1723,7 +1723,7 @@ void CIFCModelStructureView::ResetView()
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	auto pModel = GetModel<CIFCModel>();
+	auto pModel = getModelAs<CIFCModel>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

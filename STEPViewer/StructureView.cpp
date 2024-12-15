@@ -33,7 +33,7 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	_ptr<_ap_model> model(pController->GetModel());
+	_ptr<_ap_model> model(pController->getModel());
 	if (!model)
 	{
 		return;
@@ -118,7 +118,7 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	pController->RegisterView(this);
+	pController->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -254,7 +254,7 @@ void CStructureView::OnChangeVisualStyle()
 void CStructureView::OnDestroy()
 {
 	ASSERT(getController() != nullptr);
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }

@@ -18,16 +18,16 @@
 #define new DEBUG_NEW
 #endif
 
-/*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
 {
 	ASSERT(m_pModel != nullptr);
 
-	if (GetSelectedInstance() == nullptr)
+	if (getSelectedInstance() == nullptr)
 	{
 		return;
 	} 
 
-	CString strValidPath = dynamic_cast<_ap_instance*>(GetSelectedInstance())->getName().c_str();
+	CString strValidPath = dynamic_cast<_ap_instance*>(getSelectedInstance())->getName().c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
 	strValidPath.Replace(_T("/"), _T("-"));
 	strValidPath.Replace(_T(":"), _T("-"));
@@ -49,10 +49,10 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
+	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(getSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(dynamic_cast<_ap_instance*>(GetSelectedInstance())->getSdaiInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(dynamic_cast<_ap_instance*>(getSelectedInstance())->getSdaiInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;
@@ -90,7 +90,7 @@
 		SetObjectProperty(
 			iTransformationInstance,
 			GetPropertyByName(iOwlModel, "object"),
-			GetSelectedInstance()->getOwlInstance());
+			getSelectedInstance()->getOwlInstance());
 
 		SetObjectProperty(
 			iTransformationInstance,
@@ -101,7 +101,7 @@
 	}
 	else
 	{
-		SaveInstanceTreeW(GetSelectedInstance()->getOwlInstance(), dlgFile.GetPathName());
+		SaveInstanceTreeW(getSelectedInstance()->getOwlInstance(), dlgFile.GetPathName());
 	}
 }
 
@@ -139,7 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	SetModel(new CAP242Model());
+	setModel(new CAP242Model());
 
 	return TRUE;
 }
@@ -241,7 +241,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		m_pModel = nullptr;
 	}
 
-	SetModel(CModelFactory::Load(lpszPathName));
+	setModel(CModelFactory::Load(lpszPathName));
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -278,7 +278,7 @@ void CMySTEPViewerDoc::OnFileOpen()
 
 void CMySTEPViewerDoc::OnViewZoomOut()
 {
-	ZoomOut();
+	zoomOut();
 }
 
 

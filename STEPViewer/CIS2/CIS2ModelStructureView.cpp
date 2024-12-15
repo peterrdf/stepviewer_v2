@@ -90,8 +90,8 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 	// Single instance selection
 	UnselectAllItems();
 
-	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ? 
-		dynamic_cast<CCIS2Instance*>(getController()->GetSelectedInstance()) : 
+	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ? 
+		dynamic_cast<CCIS2Instance*>(getController()->getSelectedInstance()) : 
 		nullptr;
 
 	if (pSelectedInstance != nullptr)
@@ -217,7 +217,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			(CCIS2Instance*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
 
-		pController->SelectInstance(this, pSelectedInstance);
+		pController->selectInstance(this, pSelectedInstance);
 
 		if (pSelectedInstance != nullptr)
 		{
@@ -254,7 +254,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 		return false;
 	}	
 
-	return pInstance == pController->GetSelectedInstance();
+	return pInstance == pController->getSelectedInstance();
 }
 
 
@@ -330,7 +330,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -478,19 +478,19 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			{
 				case ID_INSTANCES_ZOOM_TO:
 				{
-					pController->ZoomToInstance();
+					pController->zoomToInstance();
 				}
 				break;
 
 				case ID_VIEW_ZOOM_OUT:
 				{
-					pController->ZoomOut();
+					pController->zoomOut();
 				}
 				break;
 
 				case ID_INSTANCES_SAVE:
 				{
-					pController->SaveInstance();
+					pController->saveInstance();
 				}
 				break;
 
@@ -559,7 +559,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			{
 				case ID_VIEW_ZOOM_OUT:
 				{
-					pController->ZoomOut();
+					pController->zoomOut();
 				}
 				break;
 
@@ -583,7 +583,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			case ID_VIEW_ZOOM_OUT:
 			{
-				pController->ZoomOut();
+				pController->zoomOut();
 			}
 			break;
 
@@ -1697,7 +1697,7 @@ void CCIS2ModelStructureView::ResetView()
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

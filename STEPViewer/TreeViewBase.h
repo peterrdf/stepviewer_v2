@@ -17,7 +17,7 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	virtual ~CTreeViewBase()
 	{
-		getController()->UnRegisterView(this);
+		getController()->unRegisterView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ public: // Methods
 	{
 		ASSERT(getController() != nullptr);
 
-		getController()->RegisterView(this);
+		getController()->registerView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------

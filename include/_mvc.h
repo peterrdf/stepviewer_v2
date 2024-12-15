@@ -128,7 +128,7 @@ public: // Methods
 
 	// Model
 	template<class Model>
-	Model* GetModel()
+	Model* getModelAs()
 	{
 		auto pController = getController();
 		if (pController == nullptr)
@@ -136,7 +136,7 @@ public: // Methods
 			return nullptr;
 		}
 
-		return pController->GetModel()->as<Model>();
+		return pController->getModel()->as<Model>();
 	}
 
 	// Events	
@@ -149,7 +149,7 @@ public: // Methods
 	virtual void onInstancesEnabledStateChanged(_view* pSender) {}
 	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
 	virtual void onViewRelations(_view* pSender, SdaiInstance iInstance) {}
-	//virtual void onViewRelations(_view* pSender, _entity* pEntity) {}
+	virtual void onViewRelations(_view* pSender, _entity* pEntity) {}
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
 	virtual void onControllerChanged() {}
 
@@ -157,7 +157,7 @@ public: // Properties
 
 	void setController(_controller* pController)
 	{
-		ASSERT(pController != nullptr);
+		assert(pController != nullptr);
 
 		m_pController = pController;
 
@@ -189,22 +189,17 @@ private: // Members
 	// Selection
 	_instance* m_pSelectedInstance;
 
-	// UI properties
-	BOOL m_bScaleAndCenter;
-
 public: // Methods
 
-	_model* GetModel() const;
-	void SetModel(_model* pModel);
-	_instance* LoadInstance(OwlInstance iInstance);
+	_instance* loadInstance(OwlInstance owlInstance) { assert(false); return nullptr; }
 
 	// Events
-	void RegisterView(_view* pView);
-	void UnRegisterView(_view* pView);
+	void registerView(_view* pView);
+	void unRegisterView(_view* pView);
 
-	const set<_view*>& GetViews();
+	const set<_view*>& getViews();
 	template <class T>
-	T* GetView()
+	T* getViewAs()
 	{
 		set<_view*>::const_iterator itView = m_setViews.begin();
 		for (; itView != m_setViews.end(); itView++)
@@ -220,26 +215,19 @@ public: // Methods
 	}
 
 	// Zoom
-	void ZoomToInstance();
-	void ZoomOut();
+	void zoomToInstance();
+	void zoomOut();
 
 	// Save
-	virtual void SaveInstance() PURE;
-	void SaveInstance(OwlInstance iInstance);
-
-	// [-1, 1]
-	void ScaleAndCenter();
+	virtual void saveInstance() PURE;
+	void saveInstance(OwlInstance owlInstance);
 
 	// Events
-	void ShowMetaInformation(_instance* pInstance);
-	void SetTargetInstance(_view* pSender, _instance* pInstance);
-	_instance* GetTargetInstance() const;
-	void SelectInstance(_view* pSender, _instance* pInstance);
-	_instance* GetSelectedInstance() const;
-
-	// UI
-	BOOL GetScaleAndCenter() const;
-	void SetScaleAndCenter(BOOL bScaleAndCenter);
+	void showMetaInformation(_instance* pInstance) { assert(false); }
+	void setTargetInstance(_view* pSender, _instance* pInstance);
+	_instance* getTargetInstance() const;
+	void selectInstance(_view* pSender, _instance* pInstance);
+	_instance* getSelectedInstance() const;
 
 	// Events
 	void onInstancesEnabledStateChanged(_view* pSender);
@@ -256,6 +244,7 @@ public: // Methods
 public: // Properties
 
 	_model* getModel() const { return m_pModel; }
+	void setModel(_model* pModel);
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 

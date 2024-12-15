@@ -4814,7 +4814,7 @@ public: // Methods
 
 					_redraw();
 
-					_view::getController()->SelectInstance(this, m_pSelectedInstance);
+					_view::getController()->selectInstance(this, m_pSelectedInstance);
 				} // if (m_pSelectedInstance != ...
 			}
 		} // if (enEvent == meLBtnDown)

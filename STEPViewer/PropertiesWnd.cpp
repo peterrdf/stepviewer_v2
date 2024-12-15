@@ -108,7 +108,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 #pragma region Application
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
-		auto pRenderer = getController()->GetView<_oglRenderer>();
+		auto pRenderer = getController()->getViewAs<_oglRenderer>();
 		if (pRenderer == nullptr)
 		{
 			ASSERT(FALSE);
@@ -394,7 +394,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ASSERT(getController() != nullptr);
-	getController()->RegisterView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -509,7 +509,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	auto pRenderer = getController()->GetView<_oglRenderer>();
+	auto pRenderer = getController()->getViewAs<_oglRenderer>();
 	if (pRenderer == nullptr)
 	{
 		return;
@@ -833,7 +833,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		return;
 	}	
 
-	if (getController()->GetSelectedInstance() == nullptr)
+	if (getController()->getSelectedInstance() == nullptr)
 	{
 		return;
 	}
@@ -889,7 +889,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->GetSelectedInstance());
+	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1034,7 +1034,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1052,7 +1052,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	auto pPropertyProvider = pIFCModel->GetPropertyProvider();
 
-	auto pInstance = dynamic_cast<CIFCInstance*>(getController()->GetSelectedInstance());
+	auto pInstance = dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1100,7 +1100,7 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1116,7 +1116,7 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 		return;
 	}	
 
-	auto pInstance = dynamic_cast<CCIS2Instance*>(getController()->GetSelectedInstance());
+	auto pInstance = dynamic_cast<CCIS2Instance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1218,7 +1218,7 @@ void CPropertiesWnd::SetPropListFont()
 void CPropertiesWnd::OnDestroy()
 {
 	ASSERT(getController() != nullptr);
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }

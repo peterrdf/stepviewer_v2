@@ -56,7 +56,7 @@ static char THIS_FILE[]=__FILE__;
 
 	vector<int_t> vecInstances;
 
-	auto pInstance = dynamic_cast<_ap_instance*>(pController->GetSelectedInstance());
+	auto pInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
 	if (pInstance != nullptr)
 	{
 		vecInstances.push_back(pInstance->getSdaiInstance());
@@ -186,7 +186,7 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		_ptr<_ap_model> model(pController->GetModel());
+		_ptr<_ap_model> model(pController->getModel());
 		if (!model)
 		{
 			return FALSE;
@@ -202,13 +202,13 @@ static char THIS_FILE[]=__FILE__;
 
 			case enumAP::IFC:
 			{
-				auto pIFCmodel = pController->GetModel()->as<CIFCModel>();
+				auto pIFCmodel = pController->getModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
 				auto pInstance = nullptr;// pIFCmodel->getInstanceByExpressID(iExpressID);#todo
 				if (pInstance != nullptr)
 				{
-					pController->SelectInstance(
+					pController->selectInstance(
 						nullptr, /*Attributes View will be updated also*/
 						pInstance);
 				}
@@ -277,7 +277,7 @@ _model* CRelationsView::GetModel() const
 		return nullptr;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1668,7 +1668,7 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ASSERT(getController() != nullptr);
-	getController()->RegisterView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -1815,7 +1815,7 @@ void CRelationsView::OnChangeVisualStyle()
 void CRelationsView::OnDestroy()
 {
 	ASSERT(getController() != nullptr);
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

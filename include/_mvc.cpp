@@ -290,7 +290,6 @@ _controller::_controller()
 	, m_bUpdatingModel(false)
 	, m_pTargetInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
-	, m_bScaleAndCenter(FALSE)
 {
 }
 
@@ -299,70 +298,33 @@ _controller::_controller()
 	delete m_pSettingsStorage;
 }
 
-// ------------------------------------------------------------------------------------------------
-_model* _controller::GetModel() const
+void _controller::registerView(_view* pView)
 {
-	return getModel();
-}
-
-// ------------------------------------------------------------------------------------------------
-void _controller::SetModel(_model* pModel)
-{
-	ASSERT(pModel != nullptr);
-
-	m_pModel = pModel;
-
-	m_pSelectedInstance = nullptr;
-
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onModelChanged();
-	}
-
-	m_bUpdatingModel = false;
-}
-
-_instance* _controller::LoadInstance(OwlInstance /*iInstance*/)
-{
-	ASSERT(FALSE); // #todo
-
-	return nullptr;
-}
-
-// ------------------------------------------------------------------------------------------------
-void _controller::RegisterView(_view* pView)
-{
-	ASSERT(pView != nullptr);
-	ASSERT(m_setViews.find(pView) == m_setViews.end());
+	assert(pView != nullptr);
+	assert(m_setViews.find(pView) == m_setViews.end());
 
 	m_setViews.insert(pView);
 }
 
-// ------------------------------------------------------------------------------------------------
-void _controller::UnRegisterView(_view* pView)
+void _controller::unRegisterView(_view* pView)
 {
-	ASSERT(pView != nullptr);
-	ASSERT(m_setViews.find(pView) != m_setViews.end());
+	assert(pView != nullptr);
+	assert(m_setViews.find(pView) != m_setViews.end());
 
 	m_setViews.erase(pView);
 }
 
-// ------------------------------------------------------------------------------------------------
-const set<_view*>& _controller::GetViews()
+const set<_view*>& _controller::getViews()
 {
 	return m_setViews;
 }
 
-// ------------------------------------------------------------------------------------------------
-void _controller::ZoomToInstance()
+void _controller::zoomToInstance()
 {
-	ASSERT(m_pModel != nullptr);
-	ASSERT(m_pSelectedInstance != nullptr);
+	assert(m_pModel != nullptr);
+	assert(m_pSelectedInstance != nullptr);
 
-	GetModel()->zoomTo(m_pSelectedInstance);
+	getModel()->zoomTo(m_pSelectedInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -371,12 +333,11 @@ void _controller::ZoomToInstance()
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-void _controller::ZoomOut()
+void _controller::zoomOut()
 {
-	ASSERT(m_pModel != nullptr);
+	assert(m_pModel != nullptr);
 
-	GetModel()->zoomOut();
+	getModel()->zoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -385,13 +346,13 @@ void _controller::ZoomOut()
 	}
 }
 
-void _controller::SaveInstance(OwlInstance iInstance)
+void _controller::saveInstance(OwlInstance owlInstance)
 {
-	ASSERT(iInstance != 0);
+	assert(owlInstance != 0);
 
 	wstring strName;
 	wstring strUniqueName;
-	_owl_instance::buildInstanceNames(m_pModel->getOwlInstance(), iInstance, strName, strUniqueName);
+	_owl_instance::buildInstanceNames(m_pModel->getOwlInstance(), owlInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
@@ -415,30 +376,10 @@ void _controller::SaveInstance(OwlInstance iInstance)
 		return;
 	}
 
-	SaveInstanceTreeW(iInstance, dlgFile.GetPathName());
+	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName());
 }
 
-// ------------------------------------------------------------------------------------------------
-void _controller::ScaleAndCenter()
-{
-	ASSERT(FALSE); // OBSOLETE
-	/*m_pModel->ScaleAndCenter();
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onWorldDimensionsChanged();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void _controller::ShowMetaInformation(_instance* /*pInstance*/)
-{
-	ASSERT(FALSE); // OBSOLETE
-}
-
-// ------------------------------------------------------------------------------------------------
-void _controller::SetTargetInstance(_view* pSender, _instance* pInstance)
+void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -459,14 +400,13 @@ void _controller::SetTargetInstance(_view* pSender, _instance* pInstance)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-_instance* _controller::GetTargetInstance() const
+_instance* _controller::getTargetInstance() const
 {
 	return m_pTargetInstance;
 }
 
 
-void _controller::SelectInstance(_view* pSender, _instance* pInstance)
+void _controller::selectInstance(_view* pSender, _instance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -482,25 +422,11 @@ void _controller::SelectInstance(_view* pSender, _instance* pInstance)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-_instance* _controller::GetSelectedInstance() const
+_instance* _controller::getSelectedInstance() const
 {
 	return m_pSelectedInstance;
 }
 
-// ------------------------------------------------------------------------------------------------
-BOOL _controller::GetScaleAndCenter() const
-{
-	return m_bScaleAndCenter;
-}
-
-// ------------------------------------------------------------------------------------------------
-void _controller::SetScaleAndCenter(BOOL bScaleAndCenter)
-{
-	m_bScaleAndCenter = bScaleAndCenter;
-}
-
-// ------------------------------------------------------------------------------------------------
 void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
 	auto itView = m_setViews.begin();
@@ -510,7 +436,6 @@ void _controller::onInstancesEnabledStateChanged(_view* pSender)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
@@ -520,7 +445,6 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void _controller::onViewRelations(_view* pSender, SdaiInstance iInstance)
 {
 	auto itView = m_setViews.begin();
@@ -530,7 +454,6 @@ void _controller::onViewRelations(_view* pSender, SdaiInstance iInstance)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 //void _controller::onViewRelations(_view* pSender, _entity* pEntity)
 //{
 //	m_pTargetInstance = nullptr;
@@ -550,4 +473,23 @@ void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstan
 	{
 		(*itView)->onInstanceAttributeEdited(pSender, iInstance, pAttribute);
 	}
+}
+
+void _controller::setModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_pModel = pModel;
+
+	m_pSelectedInstance = nullptr;
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelChanged();
+	}
+
+	m_bUpdatingModel = false;
 }

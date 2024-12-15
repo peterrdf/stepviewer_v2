@@ -100,7 +100,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pSelectedInstance = pController->GetSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(getController()->GetSelectedInstance()) : nullptr;
+	auto pSelectedInstance = pController->getSelectedInstance() != nullptr ? dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance()) : nullptr;
 	if (pSelectedInstance == nullptr)
 	{
 		/*
@@ -271,7 +271,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::ProductInstance))
 		{
-			getController()->SelectInstance(this, nullptr);
+			getController()->selectInstance(this, nullptr);
 
 			return;
 		}
@@ -279,7 +279,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		auto pInstance = pItemData->GetInstance<CAP242ProductInstance>();
 		ASSERT(pInstance != nullptr);
 
-		getController()->SelectInstance(this, pInstance);
+		getController()->selectInstance(this, pInstance);
 	} // if ((hItem != nullptr) && ...
 }
 
@@ -466,7 +466,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = getModelAs<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -531,19 +531,19 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				pController->ZoomToInstance();
+				pController->zoomToInstance();
 			}
 			break;
 
 			case ID_VIEW_ZOOM_OUT:
 			{
-				pController->ZoomOut();
+				pController->zoomOut();
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
-				pController->SaveInstance();
+				pController->saveInstance();
 			}
 			break;
 
@@ -640,7 +640,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		{
 			case ID_VIEW_ZOOM_OUT:
 			{
-				pController->ZoomOut();
+				pController->zoomOut();
 			}
 			break;
 
@@ -669,7 +669,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 // ------------------------------------------------------------------------------------------------
 void CAP242PModelStructureView::LoadHeaderDescription(HTREEITEM hParent)
 {
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = getModelAs<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -946,7 +946,7 @@ void CAP242PModelStructureView::LoadModel()
 
 	m_bInitInProgress = true;
 
-	auto pModel = GetModel<CAP242Model>();
+	auto pModel = getModelAs<CAP242Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

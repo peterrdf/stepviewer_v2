@@ -12,10 +12,10 @@ _entity::_entity(SdaiEntity sdaiEntity)
 	, m_vecSubTypes()
 	, m_vecInstances()
 {
-	ASSERT(m_sdaiEntity != 0);
+	assert(m_sdaiEntity != 0);
 
 	SdaiModel sdaiModel = engiGetEntityModel(sdaiEntity);
-	ASSERT(sdaiModel != 0);
+	assert(sdaiModel != 0);
 
 	m_szName = _entity::getName(m_sdaiEntity);	
 
@@ -79,7 +79,7 @@ _entity_provider::_entity_provider(SdaiModel sdaiModel)
 	: m_sdaiModel(sdaiModel)
 	, m_mapEntities()
 {
-	ASSERT(m_sdaiModel != 0);
+	assert(m_sdaiModel != 0);
 
 	load();
 }
@@ -104,7 +104,7 @@ void _entity_provider::load()
 
 		auto pEntity = new _entity(sdaiEntity);
 
-		ASSERT(m_mapEntities.find(sdaiEntity) == m_mapEntities.end());
+		assert(m_mapEntities.find(sdaiEntity) == m_mapEntities.end());
 		m_mapEntities[sdaiEntity] = pEntity;
 
 		iIndex++;
@@ -120,7 +120,7 @@ void _entity_provider::load()
 		}
 
 		auto itParentEntity = m_mapEntities.find(iParentEntity);
-		ASSERT(itParentEntity != m_mapEntities.end());
+		assert(itParentEntity != m_mapEntities.end());
 
 		itEntity.second->setParent(itParentEntity->second);
 

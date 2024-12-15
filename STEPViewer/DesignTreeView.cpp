@@ -63,7 +63,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
 
-	auto pModel = GetModel<_ap_model>();
+	auto pModel = getModelAs<_ap_model>();
 	if ((pModel == nullptr) || (pModel->getSdaiInstance() == 0))
 	{
 		return;
@@ -91,7 +91,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	auto pModel = GetModel<_ap_model>();
+	auto pModel = getModelAs<_ap_model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -101,7 +101,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 
-	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->GetSelectedInstance());
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{	
 		m_treeCtrl.SelectItem(hModel);
@@ -307,7 +307,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -511,7 +511,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ASSERT(getController() != nullptr);
-	getController()->RegisterView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -652,7 +652,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 void CDesignTreeView::OnDestroy()
 {
 	ASSERT(getController() != nullptr);
-	getController()->UnRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

@@ -50,7 +50,7 @@ CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
 
 CCIS2OpenGLView::~CCIS2OpenGLView()
 {
-	getController()->UnRegisterView(this);	
+	getController()->unRegisterView(this);	
 
 	delete m_pInstanceSelectionFrameBuffer;
 
@@ -80,7 +80,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -353,7 +353,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 
 /*virtual*/ void CCIS2OpenGLView::_draw(CDC* pDC) /*override*/
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -413,7 +413,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 
 /*virtual*/ void CCIS2OpenGLView::onWorldDimensionsChanged() /*override*/
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -464,8 +464,8 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 		return;
 	}
 
-	auto pSelectedInstance = getController()->GetSelectedInstance() != nullptr ?
-		dynamic_cast<CCIS2Representation*>(getController()->GetSelectedInstance()) :
+	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ?
+		dynamic_cast<CCIS2Representation*>(getController()->getSelectedInstance()) :
 		nullptr;
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -529,7 +529,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	auto pController = getController();
 	if (pController != nullptr)
 	{
-		pController->RegisterView(this);
+		pController->registerView(this);
 
 #ifdef _BLINN_PHONG_SHADERS
 		m_pOGLProgram->_setAmbientLightWeighting(
@@ -807,7 +807,7 @@ void CCIS2OpenGLView::DrawPoints(_model* pM)
 
 void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -928,7 +928,7 @@ void CCIS2OpenGLView::DrawInstancesFrameBuffer()
 
 void CCIS2OpenGLView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	auto pModel = GetModel<CCIS2Model>();
+	auto pModel = getModelAs<CCIS2Model>();
 	if (pModel == nullptr)
 	{
 		return;
