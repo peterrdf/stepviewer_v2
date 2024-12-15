@@ -16,7 +16,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSchemaView::OnModelChanged() /*override*/
+/*virtual*/ void CSchemaView::onModelChanged() /*override*/
 {
 	ResetView();
 }
@@ -302,7 +302,7 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	{
 		case IDS_VIEW_IFC_RELATIONS:
 		{			
-			//GetController()->OnViewRelations(this, pEntity);
+			//GetController()->onViewRelations(this, pEntity);
 		}
 		break;
 	} // switch (iResult)

@@ -44,7 +44,7 @@ public: // Methods
 	virtual ~CAP242PModelStructureView();	
 
 	// _view
-	virtual void OnInstanceSelected(_view* pSender) override;
+	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CTreeViewBase
 	virtual void Load();

@@ -67,10 +67,10 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// _view
-	virtual void OnModelChanged();
-	virtual void OnShowMetaInformation();
-	virtual void OnInstanceSelected(_view* pSender);
-	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void onModelChanged();
+	virtual void onShowMetaInformation();
+	virtual void onInstanceSelected(_view* pSender);
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 

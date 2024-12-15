@@ -139,18 +139,18 @@ public: // Methods
 	}
 
 	// Events	
-	virtual void OnModelChanged() {}
-	virtual void OnModelUpdated() {}
-	virtual void OnWorldDimensionsChanged() {}
-	virtual void OnShowMetaInformation() {}
-	virtual void OnTargetInstanceChanged(_view* pSender) {}
-	virtual void OnInstanceSelected(_view* pSender) {}
-	virtual void OnInstancesEnabledStateChanged(_view* pSender) {}
-	virtual void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
-	virtual void OnViewRelations(_view* pSender, SdaiInstance iInstance) {}
-	//virtual void OnViewRelations(_view* pSender, CEntity* pEntity) {}
-	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
-	virtual void OnControllerChanged() {}
+	virtual void onModelChanged() {}
+	virtual void onModelUpdated() {}
+	virtual void onWorldDimensionsChanged() {}
+	virtual void onShowMetaInformation() {}
+	virtual void onTargetInstanceChanged(_view* pSender) {}
+	virtual void onInstanceSelected(_view* pSender) {}
+	virtual void onInstancesEnabledStateChanged(_view* pSender) {}
+	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
+	virtual void onViewRelations(_view* pSender, SdaiInstance iInstance) {}
+	//virtual void onViewRelations(_view* pSender, CEntity* pEntity) {}
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
+	virtual void onControllerChanged() {}
 
 public: // Properties
 
@@ -160,7 +160,7 @@ public: // Properties
 
 		m_pController = pController;
 
-		OnControllerChanged();
+		onControllerChanged();
 	}
 
 	_controller* GetController() const { return m_pController; }	
@@ -241,11 +241,11 @@ public: // Methods
 	void SetScaleAndCenter(BOOL bScaleAndCenter);
 
 	// Events
-	void OnInstancesEnabledStateChanged(_view* pSender);
-	void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
-	void OnViewRelations(_view* pSender, SdaiInstance iInstance);
-	//void OnViewRelations(_view* pSender, CEntity* pEntity);
-	void OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
+	void onInstancesEnabledStateChanged(_view* pSender);
+	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+	void onViewRelations(_view* pSender, SdaiInstance iInstance);
+	//void onViewRelations(_view* pSender, CEntity* pEntity);
+	void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
 
 public: // Methods
 

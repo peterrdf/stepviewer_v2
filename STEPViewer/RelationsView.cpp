@@ -33,13 +33,13 @@ static char THIS_FILE[]=__FILE__;
 // CRelationsView
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnModelChanged() /*override*/
+/*virtual*/ void CRelationsView::onModelChanged() /*override*/
 {
 	LoadProperties(0, vector<int_t>());
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CRelationsView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -66,7 +66,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, SdaiInstance sdaiInstance) /*override*/
+/*virtual*/ void CRelationsView::onViewRelations(_view* pSender, SdaiInstance sdaiInstance) /*override*/
 {
 	if (pSender == this)
 	{
@@ -91,7 +91,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRelationsView::OnViewRelations(_view* pSender, CEntity* pEntity) /*override*/
+///*virtual*/ void CRelationsView::onViewRelations(_view* pSender, CEntity* pEntity) /*override*/
 //{
 //	if (pSender == this)
 //	{
@@ -217,7 +217,7 @@ static char THIS_FILE[]=__FILE__;
 					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->getSdaiInstance(), iExpressID);
 					if (iInstance != 0)
 					{
-						pController->OnViewRelations(
+						pController->onViewRelations(
 							nullptr,  /*Attributes View will be updated also*/
 							iInstance);
 					}

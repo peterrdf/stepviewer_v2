@@ -31,7 +31,7 @@ CController* CMySTEPViewerView::GetController()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CMySTEPViewerView::OnModelChanged()
+/*virtual*/ void CMySTEPViewerView::onModelChanged()
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
@@ -419,7 +419,7 @@ void CMySTEPViewerView::OnProjectionOrthographic()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Orthographic);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -434,7 +434,7 @@ void CMySTEPViewerView::OnProjectionPerspective()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Perspective);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -449,7 +449,7 @@ void CMySTEPViewerView::OnViewFront()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Front);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -459,7 +459,7 @@ void CMySTEPViewerView::OnViewTop()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Top);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -469,7 +469,7 @@ void CMySTEPViewerView::OnViewRight()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Right);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -479,7 +479,7 @@ void CMySTEPViewerView::OnViewBack()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Back);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -489,7 +489,7 @@ void CMySTEPViewerView::OnViewLeft()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Left);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -499,7 +499,7 @@ void CMySTEPViewerView::OnViewBottom()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Bottom);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -509,7 +509,7 @@ void CMySTEPViewerView::OnViewIsometric()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Isometric);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -574,7 +574,7 @@ void CMySTEPViewerView::OnShowFaces()
 	{
 		pRendererSettings->setShowFaces(!pRendererSettings->getShowFaces(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+		GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 	}
 }
 
@@ -596,7 +596,7 @@ void CMySTEPViewerView::OnShowConcFacesWireframes()
 	{
 		pRendererSettings->setShowConceptualFacesPolygons(!pRendererSettings->getShowConceptualFacesPolygons(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
+		GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -618,7 +618,7 @@ void CMySTEPViewerView::OnShowLines()
 	{
 		pRendererSettings->setShowLines(!pRendererSettings->getShowLines(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
+		GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 	}
 }
 
@@ -640,7 +640,7 @@ void CMySTEPViewerView::OnShowPoints()
 	{
 		pRendererSettings->setShowPoints(!pRendererSettings->getShowPoints(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+		GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 	}
 }
 

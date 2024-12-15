@@ -39,7 +39,7 @@ private: // Members
 public: // Methods
 
 	// CViewBase
-	virtual void OnModelChanged();	
+	virtual void onModelChanged();	
 
 // Construction
 public:

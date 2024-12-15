@@ -42,14 +42,14 @@ public: // Methods
 	virtual void _draw(CDC* pDC) override;
 
 	// _view	
-	virtual void OnWorldDimensionsChanged() override;
-	virtual void OnInstanceSelected(_view* pSender) override;
-	virtual void OnInstancesEnabledStateChanged(_view* pSender) override;
-	virtual void OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void onWorldDimensionsChanged() override;
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 
-	virtual void OnControllerChanged() override;
+	virtual void onControllerChanged() override;
 
 private: // Methods
 	

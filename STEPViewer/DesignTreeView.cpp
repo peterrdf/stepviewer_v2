@@ -56,7 +56,7 @@ public:
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
+/*virtual*/ void CDesignTreeView::onModelChanged() /*override*/
 {
 	ResetView();
 
@@ -74,7 +74,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
-/*virtual*/ void CDesignTreeView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CDesignTreeView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{

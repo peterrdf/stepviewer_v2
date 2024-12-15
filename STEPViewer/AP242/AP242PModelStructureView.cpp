@@ -79,7 +79,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CAP242PModelStructureView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CAP242PModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -221,7 +221,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				UpdateChildren(hItem);
 				UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
 
-				pController->OnInstancesEnabledStateChanged(this);
+				pController->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -240,7 +240,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				UpdateChildren(hItem);
 				UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
 
-				pController->OnInstancesEnabledStateChanged(this);
+				pController->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -559,7 +559,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				UpdateChildren(hItem);
 				UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
 								
-				pController->OnInstancesEnabledStateChanged(this);
+				pController->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -593,7 +593,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				UpdateChildren(itInstance2Item->second);
 				UpdateParent(m_pTreeCtrl->GetParentItem(itInstance2Item->second));
 
-				pController->OnInstancesEnabledStateChanged(this);
+				pController->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -606,13 +606,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 				ResetTree(true);
 
-				pController->OnInstancesEnabledStateChanged(this);
+				pController->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case IDS_VIEW_IFC_RELATIONS:
 			{
-				pController->OnViewRelations(this, pTargetInstance->getSdaiInstance());
+				pController->onViewRelations(this, pTargetInstance->getSdaiInstance());
 			}
 			break;
 

@@ -72,7 +72,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CCIS2ModelStructureView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CCIS2ModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {	
 	if (pSender == this)
 	{
@@ -200,7 +200,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			}
 		} // switch (iImage)		
 
-		pController->OnInstancesEnabledStateChanged(this);
+		pController->onInstancesEnabledStateChanged(this);
 
 		return;
 	} // if ((hItem != nullptr) && ...
@@ -504,7 +504,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 					ClickItem_UpdateChildren(hItem);
 					ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
 
-					pController->OnInstancesEnabledStateChanged(this);
+					pController->onInstancesEnabledStateChanged(this);
 				}
 				break;
 
@@ -518,9 +518,9 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 					}
 
 					ResetView();
-					OnInstanceSelected(nullptr);
+					onInstanceSelected(nullptr);
 
-					pController->OnInstancesEnabledStateChanged(this);
+					pController->onInstancesEnabledStateChanged(this);
 				}
 				break;
 
@@ -534,15 +534,15 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 					}
 
 					ResetView();
-					OnInstanceSelected(nullptr);
+					onInstanceSelected(nullptr);
 
-					pController->OnInstancesEnabledStateChanged(this);
+					pController->onInstancesEnabledStateChanged(this);
 				}
 				break;
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
+					pController->onViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -565,7 +565,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case IDS_VIEW_IFC_RELATIONS:
 				{
-					pController->OnViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
+					pController->onViewRelations(this, pInstance->_ap_geometry::getSdaiInstance());
 				}
 				break;
 
@@ -652,7 +652,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			ClickItem_UpdateParent(hParent);
 		}
 
-		pController->OnInstancesEnabledStateChanged(this);
+		pController->onInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
 }
 

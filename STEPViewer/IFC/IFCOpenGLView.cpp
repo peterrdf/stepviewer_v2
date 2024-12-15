@@ -37,7 +37,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	return GetController();
 }
 
-/*virtual*/ void CIFCOpenGLView::OnWorldDimensionsChanged() /*override*/
+/*virtual*/ void CIFCOpenGLView::onWorldDimensionsChanged() /*override*/
 {
 	auto pModel = GetModel<CIFCModel>();
 	if (pModel == nullptr)
@@ -76,7 +76,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CIFCOpenGLView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -102,7 +102,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	}
 }
 
-/*virtual*/ void CIFCOpenGLView::OnInstancesEnabledStateChanged(_view* pSender) /*override*/
+/*virtual*/ void CIFCOpenGLView::onInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -112,7 +112,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CIFCOpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CIFCOpenGLView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -150,7 +150,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CIFCOpenGLView::OnControllerChanged() /*override*/
+/*virtual*/ void CIFCOpenGLView::onControllerChanged() /*override*/
 {
 	auto pController = GetController();
 	if (pController != nullptr)
@@ -163,7 +163,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 			0.4f,
 			0.4f);
 #endif
-		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+		pController->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 
 		loadSettings();
 	}

@@ -40,7 +40,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	return GetController();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnWorldDimensionsChanged()  /*override*/
+/*virtual*/ void CAP242OpenGLView::onWorldDimensionsChanged()  /*override*/
 {
 	auto pModel = getModel();
 	if (pModel == nullptr)
@@ -76,7 +76,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstanceSelected(_view* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::onInstanceSelected(_view* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -102,7 +102,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	}
 }
 
-/*virtual*/ void CAP242OpenGLView::OnInstancesEnabledStateChanged(_view* pSender)  /*override*/
+/*virtual*/ void CAP242OpenGLView::onInstancesEnabledStateChanged(_view* pSender)  /*override*/
 {
 	if (pSender == this)
 	{
@@ -112,12 +112,12 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(nullptr);
+	onInstanceSelected(nullptr);
 
 	_redraw();
 }
 
-/*virtual*/ void CAP242OpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CAP242OpenGLView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -155,7 +155,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CAP242OpenGLView::OnControllerChanged() /*override*/
+/*virtual*/ void CAP242OpenGLView::onControllerChanged() /*override*/
 {
 	ASSERT(GetController() != nullptr);
 

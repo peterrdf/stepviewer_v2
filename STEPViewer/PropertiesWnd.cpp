@@ -57,7 +57,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnModelChanged()
+/*virtual*/ void CPropertiesWnd::onModelChanged()
 {
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 
@@ -65,7 +65,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnShowMetaInformation()
+/*virtual*/ void CPropertiesWnd::onShowMetaInformation()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -73,7 +73,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnInstanceSelected(_view* /*pSender*/)
+/*virtual*/ void CPropertiesWnd::onInstanceSelected(_view* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -81,7 +81,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CPropertiesWnd::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{
@@ -136,7 +136,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
 				break;
 
@@ -144,7 +144,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setCullFacesMode(strValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
 				break;
 
@@ -152,7 +152,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
 				break;
 
@@ -160,7 +160,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
 				break;
 
@@ -168,7 +168,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
 				break;
 
@@ -176,7 +176,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 				}
 				break;
 
@@ -201,7 +201,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
 				}
 				break;
 
@@ -226,7 +226,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 				}
 				break;
 
@@ -251,7 +251,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
 				}
 				break;
 
@@ -276,7 +276,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
 				}
 				break;
 
@@ -288,7 +288,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
 				}
 				break;
 
@@ -300,7 +300,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setContrast(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
 				}
 				break;
 
@@ -312,7 +312,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setBrightness(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
 				}
 				break;
 
@@ -324,7 +324,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setGamma(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
 				}
 				break;
 

@@ -411,7 +411,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	DrawInstancesFrameBuffer();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnWorldDimensionsChanged() /*override*/
+/*virtual*/ void CCIS2OpenGLView::onWorldDimensionsChanged() /*override*/
 {
 	auto pModel = GetModel<CCIS2Model>();
 	if (pModel == nullptr)
@@ -450,7 +450,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CCIS2OpenGLView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -476,7 +476,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	}
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnInstancesEnabledStateChanged(_view* pSender) /*override*/
+/*virtual*/ void CCIS2OpenGLView::onInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -486,7 +486,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	_redraw();
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CCIS2OpenGLView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -524,7 +524,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CCIS2OpenGLView::OnControllerChanged() /*override*/
+/*virtual*/ void CCIS2OpenGLView::onControllerChanged() /*override*/
 {
 	auto pController = GetController();
 	if (pController != nullptr)
@@ -537,7 +537,7 @@ CCIS2OpenGLView::~CCIS2OpenGLView()
 			0.4f,
 			0.4f);
 #endif
-		pController->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+		pController->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 
 		loadSettings();
 	}

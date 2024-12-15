@@ -319,7 +319,7 @@ void _controller::SetModel(_model* pModel)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnModelChanged();
+		(*itView)->onModelChanged();
 	}
 
 	m_bUpdatingModel = false;
@@ -367,7 +367,7 @@ void _controller::ZoomToInstance()
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnWorldDimensionsChanged();
+		(*itView)->onWorldDimensionsChanged();
 	}
 }
 
@@ -381,7 +381,7 @@ void _controller::ZoomOut()
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnWorldDimensionsChanged();
+		(*itView)->onWorldDimensionsChanged();
 	}
 }
 
@@ -427,7 +427,7 @@ void _controller::ScaleAndCenter()
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnWorldDimensionsChanged();
+		(*itView)->onWorldDimensionsChanged();
 	}*/
 }
 
@@ -455,7 +455,7 @@ void _controller::SetTargetInstance(_view* pSender, _instance* pInstance)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnTargetInstanceChanged(pSender);
+		(*itView)->onTargetInstanceChanged(pSender);
 	}
 }
 
@@ -478,7 +478,7 @@ void _controller::SelectInstance(_view* pSender, _instance* pInstance)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnInstanceSelected(pSender);
+		(*itView)->onInstanceSelected(pSender);
 	}
 }
 
@@ -501,53 +501,53 @@ void _controller::SetScaleAndCenter(BOOL bScaleAndCenter)
 }
 
 // ------------------------------------------------------------------------------------------------
-void _controller::OnInstancesEnabledStateChanged(_view* pSender)
+void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnInstancesEnabledStateChanged(pSender);
+		(*itView)->onInstancesEnabledStateChanged(pSender);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void _controller::OnApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
+void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
+		(*itView)->onApplicationPropertyChanged(pSender, enApplicationProperty);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void _controller::OnViewRelations(_view* pSender, SdaiInstance iInstance)
+void _controller::onViewRelations(_view* pSender, SdaiInstance iInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnViewRelations(pSender, iInstance);
+		(*itView)->onViewRelations(pSender, iInstance);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-//void _controller::OnViewRelations(_view* pSender, CEntity* pEntity)
+//void _controller::onViewRelations(_view* pSender, CEntity* pEntity)
 //{
 //	m_pTargetInstance = nullptr;
 //
 //	auto itView = m_setViews.begin();
 //	for (; itView != m_setViews.end(); itView++)
 //	{
-//		(*itView)->OnViewRelations(pSender, pEntity);
+//		(*itView)->onViewRelations(pSender, pEntity);
 //	}
 //}
 
 
-void _controller::OnInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
+void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnInstanceAttributeEdited(pSender, iInstance, pAttribute);
+		(*itView)->onInstanceAttributeEdited(pSender, iInstance, pAttribute);
 	}
 }

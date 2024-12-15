@@ -88,8 +88,8 @@ private: // Members
 public: // Methods
 	
 	// _view
-	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(_view* pSender) override;
+	virtual void onModelChanged() override;
+	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

@@ -23,7 +23,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CStructureView::OnModelChanged()
+/*virtual*/ void CStructureView::onModelChanged()
 {
 	auto pController = GetController();
 	if (pController == nullptr)

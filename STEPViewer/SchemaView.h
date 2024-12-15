@@ -50,7 +50,7 @@ private: // Members
 protected:
 
 	// _view
-	virtual void OnModelChanged() override;
+	virtual void onModelChanged() override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

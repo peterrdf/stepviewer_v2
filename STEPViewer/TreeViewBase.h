@@ -22,7 +22,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// _view
-	virtual void OnControllerChanged()
+	virtual void onControllerChanged()
 	{
 		ASSERT(GetController() != nullptr);
 
