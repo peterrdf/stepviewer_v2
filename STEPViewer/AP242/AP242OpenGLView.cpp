@@ -37,7 +37,7 @@ CAP242OpenGLView::~CAP242OpenGLView()
 
 /*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
 {
-	return getController();
+	return _view::getController();
 }
 
 /*virtual*/ void CAP242OpenGLView::onWorldDimensionsChanged()  /*override*/

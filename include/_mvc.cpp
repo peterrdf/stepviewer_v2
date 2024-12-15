@@ -445,33 +445,32 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 	}
 }
 
-void _controller::onViewRelations(_view* pSender, SdaiInstance iInstance)
+void _controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onViewRelations(pSender, iInstance);
+		(*itView)->onViewRelations(pSender, sdaiInstance);
 	}
 }
 
-//void _controller::onViewRelations(_view* pSender, _entity* pEntity)
-//{
-//	m_pTargetInstance = nullptr;
-//
-//	auto itView = m_setViews.begin();
-//	for (; itView != m_setViews.end(); itView++)
-//	{
-//		(*itView)->onViewRelations(pSender, pEntity);
-//	}
-//}
+void _controller::onViewRelations(_view* pSender, _entity* pEntity)
+{
+	m_pTargetInstance = nullptr;
 
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onViewRelations(pSender, pEntity);
+	}
+}
 
-void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute)
+void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onInstanceAttributeEdited(pSender, iInstance, pAttribute);
+		(*itView)->onInstanceAttributeEdited(pSender, sdaiInstance, pAttribute);
 	}
 }
 

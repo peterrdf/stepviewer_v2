@@ -91,19 +91,19 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRelationsView::onViewRelations(_view* pSender, _entity* pEntity) /*override*/
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//	
-//	LoadProperties(
-//		pEntity->GetEntity(),
-//		pEntity->GetInstances());
-//	
-//	ShowPane(TRUE, TRUE, TRUE);
-//}
+/*virtual*/ void CRelationsView::onViewRelations(_view* pSender, _entity* pEntity) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+	
+	LoadProperties(
+		pEntity->getEntity(),
+		pEntity->getInstances());
+	
+	ShowPane(TRUE, TRUE, TRUE);
+}
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CRelationsView::GetTreeView() /*override*/

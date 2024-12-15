@@ -34,7 +34,7 @@ CIFCOpenGLView::~CIFCOpenGLView()
 
 /*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/
 {
-	return getController();
+	return _view::getController();
 }
 
 /*virtual*/ void CIFCOpenGLView::onWorldDimensionsChanged() /*override*/

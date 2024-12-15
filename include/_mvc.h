@@ -147,8 +147,8 @@ public: // Methods
 	virtual void onTargetInstanceChanged(_view* pSender) {}
 	virtual void onInstanceSelected(_view* pSender) {}
 	virtual void onInstancesEnabledStateChanged(_view* pSender) {}
-	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
-	virtual void onViewRelations(_view* pSender, SdaiInstance iInstance) {}
+	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute) {}
+	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) {}
 	virtual void onViewRelations(_view* pSender, _entity* pEntity) {}
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
 	virtual void onControllerChanged() {}
@@ -232,9 +232,9 @@ public: // Methods
 	// Events
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
-	void onViewRelations(_view* pSender, SdaiInstance iInstance);
-	//void onViewRelations(_view* pSender, _entity* pEntity);
-	void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
+	void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
+	void onViewRelations(_view* pSender, _entity* pEntity);
+	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute);
 
 public: // Methods
 
