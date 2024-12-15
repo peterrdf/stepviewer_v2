@@ -29,7 +29,7 @@ private: // Members
 
 public: // Methods
 
-	CAP242ProductDefinition(SdaiInstance sdaiInstance);
+	CAP242ProductDefinition(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~CAP242ProductDefinition();
 
 protected: // Methods

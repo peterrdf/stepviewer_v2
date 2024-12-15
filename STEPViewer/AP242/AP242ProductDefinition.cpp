@@ -3,8 +3,8 @@
 #include "AP242Model.h"
 
 // ************************************************************************************************
-CAP242ProductDefinition::CAP242ProductDefinition(SdaiInstance sdaiInstance)
-	: _ap_geometry(sdaiInstance)
+CAP242ProductDefinition::CAP242ProductDefinition(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+	: _ap_geometry(owlInstance, sdaiInstance)
 	, m_szId(nullptr)
 	, m_szName(nullptr)
 	, m_szDescription(nullptr)

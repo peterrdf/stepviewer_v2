@@ -12,8 +12,8 @@ private: // Members
 
 public: // Methods
 
-	_ap_geometry(SdaiInstance sdaiInstance)
-		: _geometry(buildOwlInstance(sdaiInstance))
+	_ap_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+		: _geometry(owlInstance)
 		, m_sdaiInstance(sdaiInstance)
 	{
 	}

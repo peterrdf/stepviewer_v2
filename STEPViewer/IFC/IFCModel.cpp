@@ -349,7 +349,11 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 		return itGeometry->second;
 	}
 
-	preLoadInstance(sdaiInstance);		
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}	
 
 	// Set up circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -357,7 +361,7 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pGeometry = new CIFCGeometry(sdaiInstance);
+	auto pGeometry = new CIFCGeometry(owlInstance, sdaiInstance);
 	m_vecGeometries.push_back(pGeometry);
 	m_mapGeometries[sdaiInstance] = pGeometry;
 

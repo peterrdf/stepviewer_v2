@@ -98,9 +98,13 @@ void CAP242Model::LoadProductDefinitions()
 
 CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
-	preLoadInstance(iProductDefinitionInstance);
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(iProductDefinitionInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}
 
-	auto pGeometry = new CAP242ProductDefinition(iProductDefinitionInstance);
+	auto pGeometry = new CAP242ProductDefinition(owlInstance, iProductDefinitionInstance);
 	m_vecGeometries.push_back(pGeometry);
 
 	ASSERT(m_mapGeometries.find(iProductDefinitionInstance) == m_mapGeometries.end());

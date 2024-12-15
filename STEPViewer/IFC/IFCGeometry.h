@@ -20,7 +20,7 @@ private: // Members
 
 public: // Methods
 	
-	CIFCGeometry(SdaiInstance sdaiInstance);
+	CIFCGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~CIFCGeometry();
 
 protected: // Methods

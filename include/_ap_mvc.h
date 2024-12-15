@@ -157,15 +157,20 @@ protected: // Methods
 
 	virtual void attachModelCore() PURE;
 
-	void preLoadInstance(SdaiInstance sdaiInstance)
+	void preLoadInstance(OwlInstance owlInstance)
 	{
+		if (owlInstance == 0)
+		{
+			return;
+		}
+
 		if (m_bUpdteVertexBuffers)
 		{
 			_vector3d vecOriginalBBMin;
 			_vector3d vecOriginalBBMax;
-			if (GetInstanceGeometryClass(sdaiInstance) &&
+			if (GetInstanceGeometryClass(owlInstance) &&
 				GetBoundingBox(
-					sdaiInstance,
+					owlInstance,
 					(double*)&vecOriginalBBMin,
 					(double*)&vecOriginalBBMax))
 			{

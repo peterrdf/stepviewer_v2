@@ -3,7 +3,7 @@
 
 // ************************************************************************************************
 CCIS2Instance::CCIS2Instance(int64_t iID, SdaiInstance iSdaiInstance, enumCIS2InstanceType enCIS2InstanceType)
-	: _ap_geometry(iSdaiInstance)
+	: _ap_geometry(0, iSdaiInstance)
 	, _ap_instance(iID, this, nullptr)
 	, m_enCIS2InstanceType(enCIS2InstanceType)
 	, m_iExpressID(internalGetP21Line(iSdaiInstance))

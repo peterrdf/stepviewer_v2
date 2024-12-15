@@ -5,8 +5,8 @@
 #include <math.h>
 
 // ************************************************************************************************
-CIFCGeometry::CIFCGeometry(SdaiInstance sdaiInstance)
-	: _ap_geometry(sdaiInstance)
+CIFCGeometry::CIFCGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+	: _ap_geometry(owlInstance, sdaiInstance)
 	, m_bReferenced(false)
 {
 	calculate();
