@@ -125,22 +125,22 @@ void CSchemaView::LoadModel(_ap_model* pModel)
 
 	// Roots **************************************************************************************
 	auto pEntityProvider = pModel->getEntityProvider();
-	if ((pEntityProvider == nullptr) || pEntityProvider->GetEntities().empty())
+	if ((pEntityProvider == nullptr) || pEntityProvider->getEntities().empty())
 	{
 		return;
 	}
 
-	auto& mapEntities = pEntityProvider->GetEntities();
+	auto& mapEntities = pEntityProvider->getEntities();
 
-	map<wstring, CEntity *> mapRoots;
+	map<wstring, _entity *> mapRoots;
 	for (auto itEntity : mapEntities)
 	{
-		if (itEntity.second->HasParent())
+		if (itEntity.second->hasParent())
 		{
 			continue;
 		}
 
-		mapRoots[itEntity.second->GetName()] = itEntity.second;
+		mapRoots[itEntity.second->getName()] = itEntity.second;
 	}	
 
 	for (auto itRoot : mapRoots)
@@ -153,9 +153,9 @@ void CSchemaView::LoadModel(_ap_model* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
+void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
 {
-	if (pEntity->GetAttributes().size() == 0)
+	if (pEntity->getAttributes().size() == 0)
 	{
 		return;
 	}
@@ -173,10 +173,10 @@ void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 
 	HTREEITEM hAttributes = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	for (size_t iAttribute = 0; iAttribute < pEntity->GetAttributes().size(); iAttribute++)
+	for (size_t iAttribute = 0; iAttribute < pEntity->getAttributes().size(); iAttribute++)
 	{
-		const wstring& strAttribute = pEntity->GetAttributes()[iAttribute];
-		if (pEntity->IsAttributeInherited(strAttribute))
+		const wstring& strAttribute = pEntity->getAttributes()[iAttribute];
+		if (pEntity->isAttributeInherited(strAttribute))
 		{
 			continue;
 		}
@@ -184,7 +184,7 @@ void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 		tvInsertStruct.hParent = hAttributes;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)pEntity->GetAttributes()[iAttribute].c_str();
+		tvInsertStruct.item.pszText = (LPWSTR)pEntity->getAttributes()[iAttribute].c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTE;
 		tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
@@ -194,7 +194,7 @@ void CSchemaView::LoadAttributes(CEntity* pEntity, HTREEITEM hParent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
+void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 {
 	/*
 	* Entity
@@ -202,7 +202,7 @@ void CSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 	pair<int, int>  prInstancesCount = GetInstancesCount(pEntity);
 
 	CString strEntity;
-	strEntity.Format(_T("%s (%d/%d)"), pEntity->GetName(), prInstancesCount.first, prInstancesCount.second);
+	strEntity.Format(_T("%s (%d/%d)"), pEntity->getName(), prInstancesCount.first, prInstancesCount.second);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
@@ -219,7 +219,7 @@ void CSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 	/*
 	* Sub-types
 	*/
-	if (pEntity->GetSubTypes().size() > 0)
+	if (pEntity->getSubTypes().size() > 0)
 	{
 		tvInsertStruct.hParent = hEntity;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -230,24 +230,24 @@ void CSchemaView::LoadEntity(CEntity* pEntity, HTREEITEM hParent)
 
 		HTREEITEM hSubType = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-		for (size_t iSubType = 0; iSubType < pEntity->GetSubTypes().size(); iSubType++)
+		for (size_t iSubType = 0; iSubType < pEntity->getSubTypes().size(); iSubType++)
 		{
-			LoadEntity(pEntity->GetSubTypes()[iSubType], hSubType);
+			LoadEntity(pEntity->getSubTypes()[iSubType], hSubType);
 		}
 	} // if (pEntity->getSubTypes().size() > 0)
 }
 
 // ------------------------------------------------------------------------------------------------
-pair<int, int> CSchemaView::GetInstancesCount(CEntity* pEntity) const
+pair<int, int> CSchemaView::GetInstancesCount(_entity* pEntity) const
 {
-	int iInstancesCount = (int)pEntity->GetInstances().size();
+	int iInstancesCount = (int)pEntity->getInstances().size();
 
 	int iSubInstancesCount = 0;
-	for (size_t iSubType = 0; iSubType < pEntity->GetSubTypes().size(); iSubType++)
+	for (size_t iSubType = 0; iSubType < pEntity->getSubTypes().size(); iSubType++)
 	{
-		iSubInstancesCount += (int)pEntity->GetSubTypes()[iSubType]->GetInstances().size();
+		iSubInstancesCount += (int)pEntity->getSubTypes()[iSubType]->getInstances().size();
 
-		iSubInstancesCount += GetInstancesCount(pEntity->GetSubTypes()[iSubType]).second;
+		iSubInstancesCount += GetInstancesCount(pEntity->getSubTypes()[iSubType]).second;
 	}
 
 	return pair<int, int>(iInstancesCount, iSubInstancesCount);
@@ -278,7 +278,7 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 	m_treeCtrl.SelectItem(hItem);
 
-	auto pEntity = (CEntity *)m_treeCtrl.GetItemData(hItem);
+	auto pEntity = (_entity *)m_treeCtrl.GetItemData(hItem);
 
 	CMenu menu;
 	VERIFY(menu.CreatePopupMenu());

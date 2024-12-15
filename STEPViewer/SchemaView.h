@@ -61,9 +61,9 @@ protected:
 private: // Methods	
 
 	void LoadModel(_ap_model* pModel);
-	void LoadAttributes(CEntity* pEntity, HTREEITEM hParent);
-	void LoadEntity(CEntity* pEntity, HTREEITEM hParent);
-	pair<int, int> GetInstancesCount(CEntity* pEntity) const;
+	void LoadAttributes(_entity* pEntity, HTREEITEM hParent);
+	void LoadEntity(_entity* pEntity, HTREEITEM hParent);
+	pair<int, int> GetInstancesCount(_entity* pEntity) const;
 
 // Construction
 public:

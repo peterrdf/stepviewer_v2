@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_entity.h"
 #include "_geometry.h"
 #include "_settings_storage.h"
 
@@ -148,7 +149,7 @@ public: // Methods
 	virtual void onInstancesEnabledStateChanged(_view* pSender) {}
 	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute) {}
 	virtual void onViewRelations(_view* pSender, SdaiInstance iInstance) {}
-	//virtual void onViewRelations(_view* pSender, CEntity* pEntity) {}
+	//virtual void onViewRelations(_view* pSender, _entity* pEntity) {}
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
 	virtual void onControllerChanged() {}
 
@@ -244,7 +245,7 @@ public: // Methods
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
 	void onViewRelations(_view* pSender, SdaiInstance iInstance);
-	//void onViewRelations(_view* pSender, CEntity* pEntity);
+	//void onViewRelations(_view* pSender, _entity* pEntity);
 	void onInstanceAttributeEdited(_view* pSender, SdaiInstance iInstance, SdaiAttr pAttribute);
 
 public: // Methods

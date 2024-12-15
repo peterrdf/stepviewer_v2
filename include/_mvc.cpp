@@ -531,7 +531,7 @@ void _controller::onViewRelations(_view* pSender, SdaiInstance iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-//void _controller::onViewRelations(_view* pSender, CEntity* pEntity)
+//void _controller::onViewRelations(_view* pSender, _entity* pEntity)
 //{
 //	m_pTargetInstance = nullptr;
 //

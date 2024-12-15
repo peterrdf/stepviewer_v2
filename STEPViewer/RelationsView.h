@@ -85,7 +85,7 @@ private: // Classes
 
 		int_t GetInstance() const { return m_iInstance; }
 		int_t GetEntity() const { return m_iEntity; }
-		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iEntity); }
+		const wchar_t* GetEntityName() const { return _entity::getName(m_iEntity); }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ public: // Methods
 	virtual void onModelChanged() override;
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
-	//virtual void onViewRelations(_view* pSender, CEntity* pEntity) override;
+	//virtual void onViewRelations(_view* pSender, _entity* pEntity) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;

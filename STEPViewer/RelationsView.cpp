@@ -91,7 +91,7 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRelationsView::onViewRelations(_view* pSender, CEntity* pEntity) /*override*/
+///*virtual*/ void CRelationsView::onViewRelations(_view* pSender, _entity* pEntity) /*override*/
 //{
 //	if (pSender == this)
 //	{
@@ -515,7 +515,7 @@ void CRelationsView::LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiA
 			tvInsertStruct.hParent = hParent;
 			tvInsertStruct.hInsertAfter = TVI_FIRST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = (LPWSTR)CEntity::GetName(iEntity);
+			tvInsertStruct.item.pszText = (LPWSTR)_entity::getName(iEntity);
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 			tvInsertStruct.item.lParam = NULL;
 
@@ -1436,7 +1436,7 @@ void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHiera
 {
 	ASSERT(iEntity != 0);
 
-	wstring strEntity = CEntity::GetName(iEntity);
+	wstring strEntity = _entity::getName(iEntity);
 	if (engiGetEntityIsAbstract(iEntity))
 	{
 		strEntity += L" (ABSTRACT)";
@@ -1447,7 +1447,7 @@ void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHiera
 	int_t iParent = engiGetEntityParent(iEntity);
 	while (iParent != 0)
 	{
-		strEntity = CEntity::GetName(iParent);
+		strEntity = _entity::getName(iParent);
 		if (engiGetEntityIsAbstract(iParent))
 		{
 			strEntity += L" (ABSTRACT)";
@@ -1590,7 +1590,7 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 
 			m_strTooltip += L"\n";
 
-			m_strTooltip += CEntity::GetName(pAttributeData->GetEntity());
+			m_strTooltip += _entity::getName(pAttributeData->GetEntity());
 			if (engiGetEntityIsAbstract(pAttributeData->GetEntity()))
 			{
 				m_strTooltip += L" (ABSTRACT)";

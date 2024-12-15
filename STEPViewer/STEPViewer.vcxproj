@@ -598,6 +598,7 @@
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
+    <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
@@ -621,7 +622,6 @@
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
-    <ClInclude Include="Entity.h" />
     <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCGeometry.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
@@ -653,6 +653,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
@@ -669,7 +670,6 @@
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCGeometry.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />

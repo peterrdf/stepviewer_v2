@@ -3,8 +3,6 @@
 #include "_mvc.h"
 #include "_ap_instance.h"
 
-#include "Entity.h"
-
 #include <string>
 using namespace std;
 
@@ -29,7 +27,7 @@ private: // Members
 	enumAP m_enAP;
 
 	// Helpers
-	CEntityProvider* m_pEntityProvider;
+	_entity_provider* m_pEntityProvider;
 
 protected: // Members
 
@@ -227,11 +225,11 @@ public: // Properties
 	const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }
 
 	// Helpers
-	CEntityProvider* getEntityProvider()
+	_entity_provider* getEntityProvider()
 	{
 		if ((m_pEntityProvider == nullptr) && (m_sdaiModel != 0))
 		{
-			m_pEntityProvider = new CEntityProvider(m_sdaiModel);
+			m_pEntityProvider = new _entity_provider(m_sdaiModel);
 		}
 
 		return m_pEntityProvider;

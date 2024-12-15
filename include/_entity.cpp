@@ -1,64 +1,64 @@
 #include "stdafx.h"
-#include "Entity.h"
+#include "_entity.h"
 
 #include <algorithm>
 
 // ************************************************************************************************
-CEntity::CEntity(SdaiEntity iEntity)
-	: m_iEntity(iEntity)
+_entity::_entity(SdaiEntity sdaiEntity)
+	: m_sdaiEntity(sdaiEntity)
 	, m_szName(nullptr)
 	, m_pParent(nullptr)
 	, m_vecAttributes()
 	, m_vecSubTypes()
 	, m_vecInstances()
 {
-	ASSERT(m_iEntity != 0);
+	ASSERT(m_sdaiEntity != 0);
 
-	SdaiModel iModel = engiGetEntityModel(iEntity);
-	ASSERT(iModel != 0);
+	SdaiModel sdaiModel = engiGetEntityModel(sdaiEntity);
+	ASSERT(sdaiModel != 0);
 
-	m_szName = CEntity::GetName(m_iEntity);	
+	m_szName = _entity::getName(m_sdaiEntity);	
 
 	// Attributes
-	SdaiInteger iAttributesCount = engiGetEntityNoArguments(iEntity);
+	SdaiInteger iAttributesCount = engiGetEntityNoArguments(sdaiEntity);
 	for (SdaiInteger iIndex = 0; iIndex < iAttributesCount; iIndex++)
 	{
 		wchar_t* szArgumentName = 0;
-		engiGetEntityArgumentName(m_iEntity, iIndex, sdaiUNICODE, (const char**)&szArgumentName);
+		engiGetEntityArgumentName(m_sdaiEntity, iIndex, sdaiUNICODE, (const char**)&szArgumentName);
 
 		m_vecAttributes.push_back(szArgumentName);
 	}
 
 	// Instances
-	SdaiAggr pAggr = sdaiGetEntityExtent(iModel, m_iEntity);
-	SdaiInteger iInstancesCount = sdaiGetMemberCount(pAggr);
+	SdaiAggr sdaiAggr = sdaiGetEntityExtent(sdaiModel, m_sdaiEntity);
+	SdaiInteger iInstancesCount = sdaiGetMemberCount(sdaiAggr);
 
 	SdaiInteger iIndex = 0;
 	while (iIndex < iInstancesCount)
 	{
 		SdaiInstance iInstance = 0;
-		sdaiGetAggrByIndex(pAggr, iIndex++, sdaiINSTANCE, &iInstance);
+		sdaiGetAggrByIndex(sdaiAggr, iIndex++, sdaiINSTANCE, &iInstance);
 
 		m_vecInstances.push_back(iInstance);
 	}
 }
 
-CEntity::~CEntity()
+_entity::~_entity()
 {}
 
-/*static*/ wchar_t* CEntity::GetName(SdaiEntity iEntity)
+/*static*/ wchar_t* _entity::getName(SdaiEntity sdaiEntity)
 {
 	wchar_t* szName = nullptr;
-	engiGetEntityName(iEntity, sdaiUNICODE, (const char**)&szName);
+	engiGetEntityName(sdaiEntity, sdaiUNICODE, (const char**)&szName);
 
 	return szName;
 }
 
-bool CEntity::IsAttributeInherited(const wstring& strAttribute) const
+bool _entity::isAttributeInherited(const wstring& strAttribute) const
 {
 	if (m_pParent != nullptr)
 	{
-		const vector<wstring>& vecParentAttributes = m_pParent->GetAttributes();
+		const vector<wstring>& vecParentAttributes = m_pParent->getAttributes();
 
 		return find(vecParentAttributes.begin(), vecParentAttributes.end(), strAttribute) != vecParentAttributes.end();
 	}
@@ -66,7 +66,7 @@ bool CEntity::IsAttributeInherited(const wstring& strAttribute) const
 	return false;
 }
 
-void CEntity::PostProcessing()
+void _entity::postProcessing()
 {
 	if (!m_vecSubTypes.empty())
 	{
@@ -75,16 +75,16 @@ void CEntity::PostProcessing()
 }
 
 // ************************************************************************************************
-CEntityProvider::CEntityProvider(SdaiModel iModel)
-	: m_iModel(iModel)
+_entity_provider::_entity_provider(SdaiModel sdaiModel)
+	: m_sdaiModel(sdaiModel)
 	, m_mapEntities()
 {
-	ASSERT(m_iModel != 0);
+	ASSERT(m_sdaiModel != 0);
 
-	Load();
+	load();
 }
 
-/*virtual*/ CEntityProvider::~CEntityProvider()
+/*virtual*/ _entity_provider::~_entity_provider()
 {
 	for (auto itEntity : m_mapEntities)
 	{
@@ -92,20 +92,20 @@ CEntityProvider::CEntityProvider(SdaiModel iModel)
 	}
 }
 
-void CEntityProvider::Load()
+void _entity_provider::load()
 {
-	SdaiInteger iEntitiesCount = engiGetEntityCount(m_iModel);
+	SdaiInteger iEntitiesCount = engiGetEntityCount(m_sdaiModel);
 
 	// Retrieve the Entities
 	SdaiInteger iIndex = 0;
 	while (iIndex < iEntitiesCount)
 	{
-		SdaiEntity iEntity = engiGetEntityElement(m_iModel, iIndex);
+		SdaiEntity sdaiEntity = engiGetEntityElement(m_sdaiModel, iIndex);
 
-		auto pEntity = new CEntity(iEntity);
+		auto pEntity = new _entity(sdaiEntity);
 
-		ASSERT(m_mapEntities.find(iEntity) == m_mapEntities.end());
-		m_mapEntities[iEntity] = pEntity;
+		ASSERT(m_mapEntities.find(sdaiEntity) == m_mapEntities.end());
+		m_mapEntities[sdaiEntity] = pEntity;
 
 		iIndex++;
 	}
@@ -122,14 +122,14 @@ void CEntityProvider::Load()
 		auto itParentEntity = m_mapEntities.find(iParentEntity);
 		ASSERT(itParentEntity != m_mapEntities.end());
 
-		itEntity.second->SetParent(itParentEntity->second);
+		itEntity.second->setParent(itParentEntity->second);
 
-		itParentEntity->second->AddSubType(itEntity.second);
+		itParentEntity->second->addSubType(itEntity.second);
 	} // for (; itEntities != ...	
 
 	// Post-processing
 	for (auto itEntity : m_mapEntities)
 	{
-		itEntity.second->PostProcessing();
+		itEntity.second->postProcessing();
 	} // for (; itEntities != ...	
 }
