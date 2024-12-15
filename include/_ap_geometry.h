@@ -13,12 +13,9 @@ private: // Members
 public: // Methods
 
 	_ap_geometry(SdaiInstance sdaiInstance)
-		: _geometry(0)
+		: _geometry(buildOwlInstance(sdaiInstance))
 		, m_sdaiInstance(sdaiInstance)
 	{
-		assert(m_sdaiInstance != 0);
-
-		owlBuildInstance(getSdaiModel(), m_sdaiInstance, &m_owlInstance);
 	}
 
 	virtual ~_ap_geometry()
@@ -26,6 +23,35 @@ public: // Methods
 	}
 
 	// _geometry
+	virtual OwlModel getOwlModel() override
+	{
+		return getOwlModel(getSdaiModel());
+	}
+
+	static OwlModel getOwlModel(SdaiModel sdaiModel)
+	{
+		assert(sdaiModel != 0);
+
+		OwlModel owlModel = 0;
+		owlGetModel(sdaiModel, &owlModel);
+		assert(owlModel != 0);
+
+		return owlModel;
+	}
+
+	static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance)
+	{
+		assert(sdaiInstance != 0);
+
+		SdaiModel sdaiModel = sdaiGetInstanceModel(sdaiInstance);
+		assert(sdaiModel != 0);
+
+		OwlInstance owlInstance = 0;
+		owlBuildInstance(sdaiModel, sdaiInstance, &owlInstance);
+
+		return owlInstance;
+	}
+
 	void setAPFormatSettings()
 	{
 		uint64_t mask = 0;
@@ -49,16 +75,6 @@ public: // Methods
 
 		SetFormat(getOwlModel(), setting, mask);
 		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
-	}
-
-	// _geometry
-	virtual OwlModel getOwlModel() override
-	{
-		OwlModel owlModel = 0;
-		owlGetModel(getSdaiModel(), &owlModel);
-		assert(owlModel != 0);
-
-		return owlModel;
 	}
 
 protected: // Methods
