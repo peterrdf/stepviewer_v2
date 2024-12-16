@@ -31,6 +31,9 @@ public: // Methods
 	CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType);
 	virtual ~CCIS2Geometry();
 
+	// _geometry
+	virtual void preCalculate() override;
+
 public: // Properties
 
 	enumCIS2GeometryType getType() const { return m_enCIS2GeometryType; }

@@ -101,17 +101,13 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	{
 		case enumCIS2GeometryType::DesignPart:
 		{
-			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance);
-			m_vecGeometries.push_back(pGeometry);
-			m_mapGeometries[sdaiInstance] = pGeometry;
+			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance);			
 		}
 		break;
 
 		case enumCIS2GeometryType::Reperesentation:
 		{
 			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance);
-			m_vecGeometries.push_back(pGeometry);
-			m_mapGeometries[sdaiInstance] = pGeometry;
 		}
 		break;
 
@@ -121,6 +117,9 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 		}
 		break;
 	}
+
+	m_vecGeometries.push_back(pGeometry);
+	m_mapGeometries[sdaiInstance] = pGeometry;
 
 	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
 	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
