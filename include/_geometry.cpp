@@ -1101,3 +1101,8 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
 	_cohort::clear(m_vecBiNormalVecsCohorts);
 	_cohort::clear(m_vecTangentVecsCohorts);
 }
+
+/*virtual*/ void _geometry::cleanCachedGeometry()
+{
+	m_owlInstance = 0;
+}

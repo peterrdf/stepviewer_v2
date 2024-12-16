@@ -9,7 +9,6 @@ public: // Methods
 	_owl_geometry(OwlInstance owlInstance)
 		: _geometry(owlInstance)
 	{
-		assert(m_owlInstance != 0);
 	}
 
 	virtual ~_owl_geometry()

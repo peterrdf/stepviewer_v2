@@ -141,13 +141,10 @@ class _instance;
 class _geometry
 {
 
-protected: // Members
-
-	OwlInstance m_owlInstance;
-
 private: // Members
 
 	// Metadata
+	OwlInstance m_owlInstance;
 	wstring m_strName;
 	wstring m_strUniqueName;
 
@@ -295,6 +292,7 @@ protected: // Methods
 	void buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
 
 	virtual void clean();
+	virtual void cleanCachedGeometry();
 
 public: // Properties
 

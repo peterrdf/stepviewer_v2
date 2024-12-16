@@ -28,6 +28,13 @@ public: // Methods
 		return getOwlModel(getSdaiModel());
 	}
 
+	virtual void cleanCachedGeometry() override
+	{
+		_geometry::cleanCachedGeometry();
+
+		cleanMemory(getSdaiModel(), 0);
+	}
+
 	static OwlModel getOwlModel(SdaiModel sdaiModel)
 	{
 		assert(sdaiModel != 0);
@@ -79,12 +86,7 @@ public: // Methods
 
 protected: // Methods
 
-	virtual void cleanCachedGeometry()
-	{
-		cleanMemory(getSdaiModel(), 0);
-
-		m_owlInstance = 0;
-	}
+	
 
 public: // Properties
 
