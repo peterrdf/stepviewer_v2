@@ -31,6 +31,10 @@ _oglView::_oglView()
 
 /*virtual*/ _oglView::~_oglView()
 {
+	_view::getController()->unRegisterView(this);
+
+	_destroy();
+
 	delete m_pInstanceSelectionFrameBuffer;
 }
 

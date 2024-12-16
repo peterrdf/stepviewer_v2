@@ -27,9 +27,6 @@ CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 
 CIFCOpenGLView::~CIFCOpenGLView()
 {
-	getController()->unRegisterView(this);	
-
-	_destroy();
 }
 
 /*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/

@@ -26,9 +26,6 @@ CCIS2OpenGLView::CCIS2OpenGLView(CWnd* pWnd)
 
 CCIS2OpenGLView::~CCIS2OpenGLView()
 {
-	getController()->unRegisterView(this);	
-
-	_destroy();
 }
 
 /*virtual*/ _controller* CCIS2OpenGLView::getController() const /*override*/

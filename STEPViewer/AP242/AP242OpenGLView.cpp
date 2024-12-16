@@ -30,9 +30,6 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 
 CAP242OpenGLView::~CAP242OpenGLView()
 {
-	getController()->unRegisterView(this);
-
-	_destroy();
 }
 
 /*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
