@@ -145,6 +145,15 @@ _oglView::_oglView()
 	} // switch (enApplicationProperty)
 }
 
+/*virtual*/ void _oglView::onControllerChanged() /*override*/
+{
+	assert(_view::getController() != nullptr);
+
+	_view::getController()->registerView(this);
+
+	loadSettings();
+}
+
 /*virtual*/ void _oglView::_load(_model* pModel)
 {
 	assert(pModel != nullptr);

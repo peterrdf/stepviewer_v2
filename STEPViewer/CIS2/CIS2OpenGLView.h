@@ -21,10 +21,6 @@ public: // Methods
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
-
-protected: // Methods
-
-	virtual void onControllerChanged() override;
 };
 
 #endif // _OPEN_GL_CIS2_VIEW_H_

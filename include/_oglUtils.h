@@ -3780,6 +3780,7 @@ public: // Methods
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void onControllerChanged() override;
 
 	virtual void _load(_model* pModel);
 

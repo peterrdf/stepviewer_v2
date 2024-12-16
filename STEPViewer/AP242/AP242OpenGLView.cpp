@@ -37,14 +37,5 @@ CAP242OpenGLView::~CAP242OpenGLView()
 	return _view::getController();
 }
 
-/*virtual*/ void CAP242OpenGLView::onControllerChanged() /*override*/
-{
-	ASSERT(getController() != nullptr);
-
-	getController()->registerView(this);
-
-	loadSettings();
-}
-
 
 

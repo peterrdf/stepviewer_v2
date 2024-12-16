@@ -34,24 +34,6 @@ CIFCOpenGLView::~CIFCOpenGLView()
 	return _view::getController();
 }
 
-/*virtual*/ void CIFCOpenGLView::onControllerChanged() /*override*/
-{
-	auto pController = getController();
-	if (pController != nullptr)
-	{
-		pController->registerView(this);
-
-#ifdef _BLINN_PHONG_SHADERS
-		m_pOGLProgram->_setAmbientLightWeighting(
-			0.4f,
-			0.4f,
-			0.4f);
-#endif
-		pController->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
-
-		loadSettings();
-	}
-}
 
 
 

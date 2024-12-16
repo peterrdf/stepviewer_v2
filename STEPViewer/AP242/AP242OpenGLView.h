@@ -18,11 +18,6 @@ public: // Methods
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
-
-protected: // Methods
-
-	// _view
-	virtual void onControllerChanged() override;
 };
 
 #endif // _OPEN_GL_STEP_VIEW_H_
