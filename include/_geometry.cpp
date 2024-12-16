@@ -225,6 +225,8 @@ void _geometry::calculateMinMaxTransform(
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
+	assert(pInstance != nullptr);
+
 	if (!hasGeometry())
 	{
 		return;
@@ -365,6 +367,43 @@ void _geometry::calculateMinMaxTransform(
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecPoints.empty())
+}
+
+void _geometry::calculateMinMaxTransform(
+	_model* pModel,
+	_instance* pInstance,
+	float& fXmin, float& fXmax,
+	float& fYmin, float& fYmax,
+	float& fZmin, float& fZmax)
+{
+	assert(pModel != nullptr);
+	assert(pInstance != nullptr);
+
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
+	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
+	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
+	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
+
+	double _41 = pInstance->getTransformationMatrix()->_41;
+	double _42 = pInstance->getTransformationMatrix()->_42;
+	double _43 = pInstance->getTransformationMatrix()->_43;
+
+	pInstance->getTransformationMatrix()->_41 += fXTranslation;
+	pInstance->getTransformationMatrix()->_42 += fYTranslation;
+	pInstance->getTransformationMatrix()->_43 += fZTranslation;
+
+	calculateMinMaxTransform(
+		pInstance,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	pInstance->getTransformationMatrix()->_41 = _41;
+	pInstance->getTransformationMatrix()->_42 = _42;
+	pInstance->getTransformationMatrix()->_43 = _43;
 }
 
 void _geometry::scale(float fScaleFactor)
