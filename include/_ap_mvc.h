@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_ptr.h"
 #include "_mvc.h"
 #include "_ap_instance.h"
 
@@ -138,15 +139,13 @@ public: // Methods
 
 		for (auto pInstance : m_vecInstances)
 		{
-			auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
-			ASSERT(pAPInstance != nullptr);
-
-			CString strType = pAPInstance->getEntityName();
+			_ptr<_ap_instance> apInstance(pInstance);
+			CString strType = apInstance->getEntityName();
 			strType.MakeUpper();
 
 			if (strType == strTargetType)
 			{
-				vecInstances.push_back(pAPInstance);
+				vecInstances.push_back(apInstance);
 			}
 		}
 	}

@@ -378,10 +378,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			continue;
 		}
 
-		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
-		ASSERT(pAPGeometry != nullptr);
+		_ptr<_ap_geometry> apGeometry(pGeometry);
+		ASSERT(apGeometry);
 
-		const wchar_t* szEntityName = _ap_instance::getEntityName(pAPGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
 
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
@@ -1019,10 +1019,10 @@ void CIFCModelStructureView::LoadProject(CIFCModel* pModel, HTREEITEM hModel, Sd
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
 
-		auto pAPGeometry = dynamic_cast<_ap_geometry*>(pGeometry);
-		ASSERT(pAPGeometry != nullptr);
+		_ptr<_ap_geometry> apGeometry(pGeometry);
+		ASSERT(apGeometry);
 
-		wstring strItem = _ap_instance::getEntityName(pAPGeometry->getSdaiInstance());
+		wstring strItem = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
 		if ((szName != nullptr) && (wcslen(szName) > 0))
 		{
 			strItem += L" '";
