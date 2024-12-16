@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "_ptr.h"
+#include "_owl_instance.h"
 
 #include "AP242Model.h"
 #include "AP242ProductDefinition.h"
@@ -9,33 +10,6 @@
 #include <bitset>
 #include <algorithm>
 using namespace std;
-
-// ************************************************************************************************
-static double GetDoubleProperty(OwlInstance iInstance, char* szPropertyName)
-{
-	double* pdValues = nullptr;
-	int64_t	iCard = 0;
-	GetDatatypeProperty(
-		iInstance,
-		GetPropertyByName(GetModel(iInstance), szPropertyName),
-		(void**)&pdValues,
-		&iCard);
-
-	return (iCard == 1) ? pdValues[0] : 0.;
-}
-
-static int64_t GetObjectProperty(OwlInstance iInstance, char* szPropertyName)
-{
-	int64_t* piValues = nullptr;
-	int64_t	iCard = 0;
-	GetObjectProperty(
-		iInstance,
-		GetPropertyByName(GetModel(iInstance), szPropertyName),
-		&piValues,
-		&iCard);
-
-	return (iCard == 1) ? piValues[0] : 0;
-}
 
 // ************************************************************************************************
 CAP242Model::CAP242Model()
@@ -207,7 +181,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) 
 			{
-				owlInstanceMatrix = GetObjectProperty(owlInstanceMatrix, "matrix");
+				owlInstanceMatrix = _owl_instance::getObjectProperty(owlInstanceMatrix, "matrix");
 			}
 
 			ASSERT(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Matrix") || 
@@ -219,18 +193,18 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 			if (owlInstanceMatrix) 
 			{
 				InferenceInstance(owlInstanceMatrix);
-				matrix._11 = GetDoubleProperty(owlInstanceMatrix, "_11");
-				matrix._12 = GetDoubleProperty(owlInstanceMatrix, "_12");
-				matrix._13 = GetDoubleProperty(owlInstanceMatrix, "_13");
-				matrix._21 = GetDoubleProperty(owlInstanceMatrix, "_21");
-				matrix._22 = GetDoubleProperty(owlInstanceMatrix, "_22");
-				matrix._23 = GetDoubleProperty(owlInstanceMatrix, "_23");
-				matrix._31 = GetDoubleProperty(owlInstanceMatrix, "_31");
-				matrix._32 = GetDoubleProperty(owlInstanceMatrix, "_32");
-				matrix._33 = GetDoubleProperty(owlInstanceMatrix, "_33");
-				matrix._41 = GetDoubleProperty(owlInstanceMatrix, "_41");
-				matrix._42 = GetDoubleProperty(owlInstanceMatrix, "_42");
-				matrix._43 = GetDoubleProperty(owlInstanceMatrix, "_43");
+				matrix._11 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_11");
+				matrix._12 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_12");
+				matrix._13 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_13");
+				matrix._21 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_21");
+				matrix._22 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_22");
+				matrix._23 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_23");
+				matrix._31 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_31");
+				matrix._32 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_32");
+				matrix._33 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_33");
+				matrix._41 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_41");
+				matrix._42 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_42");
+				matrix._43 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_43");
 			}
 
 			if (pParentMatrix) 

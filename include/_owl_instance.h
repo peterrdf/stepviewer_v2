@@ -113,4 +113,30 @@ public: // Properties
 
 		return szClassName;
 	}
+
+	static double getDoubleProperty(OwlInstance iInstance, char* szPropertyName)
+	{
+		double* pdValues = nullptr;
+		int64_t	iCard = 0;
+		GetDatatypeProperty(
+			iInstance,
+			GetPropertyByName(GetModel(iInstance), szPropertyName),
+			(void**)&pdValues,
+			&iCard);
+
+		return (iCard == 1) ? pdValues[0] : 0.;
+	}
+
+	static int64_t getObjectProperty(OwlInstance iInstance, char* szPropertyName)
+	{
+		int64_t* piValues = nullptr;
+		int64_t	iCard = 0;
+		GetObjectProperty(
+			iInstance,
+			GetPropertyByName(GetModel(iInstance), szPropertyName),
+			&piValues,
+			&iCard);
+
+		return (iCard == 1) ? piValues[0] : 0;
+	}
 };
