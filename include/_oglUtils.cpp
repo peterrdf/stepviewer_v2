@@ -3,6 +3,667 @@
 #include "_oglUtils.h"
 
 // ************************************************************************************************
+_oglRenderer::_oglRenderer()
+	: m_pWnd(nullptr)
+	, m_toolTipCtrl()
+	, m_pOGLContext(nullptr)
+	, m_pOGLProgram(nullptr)
+	, m_pVertexShader(nullptr)
+	, m_pFragmentShader(nullptr)
+	, m_matModelView()
+	, m_oglBuffers()
+	, m_fXmin(-1.f)
+	, m_fXmax(1.f)
+	, m_fYmin(-1.f)
+	, m_fYmax(1.f)
+	, m_fZmin(-1.f)
+	, m_fZmax(1.f)
+	, m_fZoomMin(-1.f)
+	, m_fZoomMax(1.f)
+	, m_fZoomInterval(2.f)
+	, m_fPanXMin(-1.f)
+	, m_fPanXMax(1.f)
+	, m_fPanXInterval(2.f)
+	, m_fPanYMin(-1.f)
+	, m_fPanYMax(1.f)
+	, m_fPanYInterval(2.f)
+	, m_fXTranslation(.0f)
+	, m_fYTranslation(.0f)
+	, m_fZTranslation(DEFAULT_TRANSLATION)
+	, m_fScaleFactor(2.f)
+	, m_fScaleFactorMin(0.f)
+	, m_fScaleFactorMax(2.f)
+	, m_fScaleFactorInterval(2.f)
+{
+	_setView(enumView::Isometric);
+}
+
+/*virtual*/ _oglRenderer::~_oglRenderer()
+{
+}
+
+void _oglRenderer::_initialize(CWnd* pWnd,
+	int iSamples,
+	int iVertexShader,
+	int iFragmentShader,
+	int iResourceType,
+	bool bSupportsTexture)
+{
+	m_pWnd = pWnd;
+	assert(m_pWnd != nullptr);
+
+	m_toolTipCtrl.Create(m_pWnd, WS_POPUP | WS_CLIPSIBLINGS | TTS_NOANIMATE | TTS_NOFADE | TTS_ALWAYSTIP);
+	m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
+	m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
+	m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
+	m_toolTipCtrl.Activate(TRUE);
+	m_toolTipCtrl.AddTool(m_pWnd, _T(""));
+
+	m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
+	m_pOGLContext->makeCurrent();
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram = new _oglBlinnPhongProgram(bSupportsTexture);
+#else
+	m_pOGLProgram = new _oglPerPixelProgram(bSupportsTexture);
+#endif
+	m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
+	m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
+
+	if (!m_pVertexShader->load(iVertexShader, iResourceType))
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
+
+		PostQuitMessage(0);
+	}
+
+	if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
+
+		PostQuitMessage(0);
+	}
+
+	if (!m_pVertexShader->compile())
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
+
+		PostQuitMessage(0);
+	}
+
+	if (!m_pFragmentShader->compile())
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
+
+		PostQuitMessage(0);
+	}
+
+	m_pOGLProgram->_attachShader(m_pVertexShader);
+	m_pOGLProgram->_attachShader(m_pFragmentShader);
+
+	glBindFragDataLocation(m_pOGLProgram->_getID(), 0, "FragColor");
+
+	if (!m_pOGLProgram->_link())
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Program linking error!"), _T("Error"), MB_ICONERROR | MB_OK);
+	}
+
+	m_matModelView = glm::identity<glm::mat4>();
+}
+
+void _oglRenderer::_destroy()
+{
+	m_oglBuffers.clear();
+
+	if (m_pOGLContext != nullptr)
+	{
+		m_pOGLContext->makeCurrent();
+	}
+
+	if (m_pOGLProgram != nullptr)
+	{
+		m_pOGLProgram->_detachShader(m_pVertexShader);
+		m_pOGLProgram->_detachShader(m_pFragmentShader);
+
+		delete m_pOGLProgram;
+		m_pOGLProgram = nullptr;
+	}
+
+	delete m_pVertexShader;
+	m_pVertexShader = nullptr;
+
+	delete m_pFragmentShader;
+	m_pFragmentShader = nullptr;
+
+	delete m_pOGLContext;
+	m_pOGLContext = nullptr;
+}
+
+void _oglRenderer::_prepare(
+	int iViewportX, int iViewportY,
+	int iViewportWidth, int iViewportHeight,
+	float fXmin, float fXmax,
+	float fYmin, float fYmax,
+	float fZmin, float fZmax,
+	bool bClearScene,
+	bool bApplyTranslations)
+{
+	m_fXmin = fXmin;
+	m_fXmax = fXmax;
+	m_fYmin = fYmin;
+	m_fYmax = fYmax;
+	m_fZmin = fZmin;
+	m_fZmax = fZmax;
+
+	float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// Zoom
+	m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
+	m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
+	m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
+	m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+
+	// Pan X
+	m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
+	m_fPanXMin -= fBoundingSphereDiameter * 1.25f;
+	m_fPanXMax = (m_fXmax - m_fXmin) / 2.f;
+	m_fPanXMax += fBoundingSphereDiameter * 1.25f;
+	m_fPanXInterval = m_fPanXMax - m_fPanXMin;
+
+	// Pan Y
+	m_fPanYMin = -(m_fYmax - m_fYmin) / 2.f;
+	m_fPanYMin -= fBoundingSphereDiameter * .75f;
+	m_fPanYMax = (m_fYmax - m_fYmin) / 2.f;
+	m_fPanYMax += fBoundingSphereDiameter * .75f;
+	m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
+
+	// Scale (Orthographic)
+	m_fScaleFactorMin = 0.f;
+	m_fScaleFactorMax = fBoundingSphereDiameter;
+	m_fScaleFactorInterval = abs(m_fScaleFactorMax - m_fScaleFactorMin);
+
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+	m_pOGLContext->enableDebug();
+#endif
+
+	m_pOGLProgram->_use();
+
+	glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+
+	if (bClearScene)
+	{
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+
+		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_SCISSOR_TEST);
+	}
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	// Projection Matrix
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = 45.0;
+	GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+
+	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
+	zNear = min(zNear, abs((double)fZmin));
+	if (zNear != 0.)
+	{
+		zNear /= 25.;
+	}
+	else
+	{
+		zNear = fBoundingSphereDiameter * .1;
+	}
+
+	GLdouble zFar = 100.;
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
+
+	// Projection
+	switch (m_enProjection)
+	{
+	case enumProjection::Perspective:
+	{
+		glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+		m_pOGLProgram->_setProjectionMatrix(matProjection);
+	}
+	break;
+
+	case enumProjection::Orthographic:
+	{
+		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+		m_pOGLProgram->_setProjectionMatrix(matProjection);
+	}
+	break;
+
+	default:
+	{
+		assert(false);
+	}
+	break;
+	} // switch (m_enProjection)
+
+	// Model-View Matrix
+	m_matModelView = glm::identity<glm::mat4>();
+
+	if (bApplyTranslations)
+	{
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	}
+	else
+	{
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+	}
+
+	float fXTranslation = fXmin;
+	fXTranslation += (fXmax - fXmin) / 2.f;
+	fXTranslation = -fXTranslation;
+
+	float fYTranslation = fYmin;
+	fYTranslation += (fYmax - fYmin) / 2.f;
+	fYTranslation = -fYTranslation;
+
+	float fZTranslation = fZmin;
+	fZTranslation += (fZmax - fZmin) / 2.f;
+	fZTranslation = -fZTranslation;
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+	if (m_enRotationMode == enumRotationMode::XY)
+	{
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+	}
+	else if (m_enRotationMode == enumRotationMode::XYZ)
+	{
+		// Apply rotation...
+		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
+		m_rotation.cross(rotation);
+
+		// ... and reset
+		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+
+		const double* pRotationMatrix = m_rotation.toMatrix();
+		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
+		delete pRotationMatrix;
+
+		m_matModelView = m_matModelView * matTransformation;
+	}
+	else
+	{
+		assert(false);
+	}
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+	glm::mat4 matNormal = m_matModelView;
+	matNormal = glm::inverse(matNormal);
+	matNormal = glm::transpose(matNormal);
+	m_pOGLProgram->_setNormalMatrix(matNormal);
+
+	// Model
+	m_pOGLProgram->_enableBlinnPhongModel(true);
+#else
+	m_pOGLProgram->_setNormalMatrix(m_matModelView);
+
+	// Model
+	m_pOGLProgram->_enableLighting(true);
+#endif
+}
+
+void _oglRenderer::_rotateMouseLButton(float fXAngle, float fYAngle)
+{
+	if (m_enRotationMode == enumRotationMode::XY)
+	{
+		if (abs(fXAngle) >= abs(fYAngle))
+		{
+			fYAngle = 0.;
+		}
+		else
+		{
+			if (abs(fYAngle) >= abs(fXAngle))
+			{
+				fXAngle = 0.;
+			}
+		}
+
+		_rotate(
+			fXAngle * ROTATION_SPEED,
+			fYAngle * ROTATION_SPEED);
+	}
+	else if (m_enRotationMode == enumRotationMode::XYZ)
+	{
+		_rotate(
+			-fXAngle * ROTATION_SPEED,
+			-fYAngle * ROTATION_SPEED);
+	}
+	else
+	{
+		assert(false);
+	}
+}
+
+void _oglRenderer::_zoomMouseMButton(LONG lDelta)
+{
+	if (lDelta == 0)
+	{
+		return;
+	}
+
+	switch (m_enProjection)
+	{
+		case enumProjection::Perspective:
+		{
+			_zoom(
+				lDelta > 0 ?
+				-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
+				abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
+		}
+		break;
+
+		case enumProjection::Orthographic:
+		{
+			_zoom(
+				lDelta > 0 ?
+				abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE) :
+				-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE));
+		}
+		break;
+
+		default:
+		{
+			assert(false);
+		}
+		break;
+	} // switch (m_enProjection)
+}
+
+void _oglRenderer::_panMouseRButton(float fX, float fY)
+{
+	_pan(
+		m_fPanXInterval * fX,
+		m_fPanYInterval * -fY);
+}
+
+void _oglRenderer::_rotate(float fXAngle, float fYAngle)
+{
+	m_fXAngle += fXAngle * (180.f / (float)M_PI);
+	if (m_fXAngle > 360.f)
+	{
+		m_fXAngle -= 360.f;
+	}
+	else if (m_fXAngle < -360.f)
+	{
+		m_fXAngle += 360.f;
+	}
+
+	m_fYAngle += fYAngle * (180.f / (float)M_PI);
+	if (m_fYAngle > 360.f)
+	{
+		m_fYAngle = m_fYAngle - 360.f;
+	}
+	else if (m_fYAngle < -360.f)
+	{
+		m_fYAngle += 360.f;
+	}
+
+	_redraw();
+}
+
+void _oglRenderer::_zoom(float fZTranslation)
+{
+	switch (m_enProjection)
+	{
+		case enumProjection::Perspective:
+		{
+			float fNewZTranslation = m_fZTranslation + fZTranslation;
+			if ((fNewZTranslation >= m_fZoomMax) ||
+				(fNewZTranslation <= m_fZoomMin))
+			{
+				return;
+			}
+
+			m_fZTranslation = fNewZTranslation;
+		}
+		break;
+
+		case enumProjection::Orthographic:
+		{
+			float fNewScaleFactor = m_fScaleFactor + fZTranslation;
+			if ((fNewScaleFactor >= m_fScaleFactorMax) ||
+				(fNewScaleFactor <= m_fScaleFactorMin))
+			{
+				return;
+			}
+
+			m_fScaleFactor = fNewScaleFactor;
+		}
+		break;
+
+		default:
+		{
+			assert(false);
+		}
+		break;
+	} // switch (m_enProjection)
+
+	_redraw();
+}
+
+void _oglRenderer::_pan(float fX, float fY)
+{
+	bool bRedraw = false;
+
+	float fNewXTranslation = m_fXTranslation + fX;
+	if ((fNewXTranslation < m_fPanXMax) &&
+		(fNewXTranslation > m_fPanXMin))
+	{
+		m_fXTranslation += fX;
+
+		bRedraw = true;
+	}
+
+	float fNewYTranslation = m_fYTranslation + fY;
+	if ((fNewYTranslation < m_fPanYMax) &&
+		(fNewYTranslation > m_fPanYMin))
+	{
+		m_fYTranslation += fY;
+
+		bRedraw = true;
+	}
+
+	if (bRedraw)
+	{
+		_redraw();
+	}
+}
+
+/*virtual*/ void _oglRenderer::_onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+{
+	switch (m_enProjection)
+	{
+		case enumProjection::Perspective:
+		{
+			_zoom(
+				zDelta < 0 ?
+				-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+				abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
+		}
+		break;
+
+		case enumProjection::Orthographic:
+		{
+			_zoom(zDelta < 0 ?
+				-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+				abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL));
+		}
+		break;
+
+		default:
+		{
+			assert(false);
+		}
+		break;
+	} // switch (m_enProjection)
+}
+
+/*virtual*/ void _oglRenderer::_onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+{
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	switch (nChar)
+	{
+		case VK_UP:
+		{
+			_pan(
+				0.f,
+				PAN_SPEED_KEYS * m_fPanYInterval);
+		}
+		break;
+
+		case VK_DOWN:
+		{
+			_pan(
+				0.f,
+				-PAN_SPEED_KEYS * m_fPanYInterval);
+		}
+		break;
+
+		case VK_LEFT:
+		{
+			_pan(
+				-PAN_SPEED_KEYS * m_fPanXInterval,
+				0.f);
+		}
+		break;
+
+		case VK_RIGHT:
+		{
+			_pan(
+				PAN_SPEED_KEYS * m_fPanXInterval,
+				0.f);
+		}
+		break;
+
+		case VK_PRIOR:
+		{
+			_zoom(abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
+		}
+		break;
+
+		case VK_NEXT:
+		{
+			_zoom(-abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
+		}
+		break;
+	} // switch (nChar)
+}
+
+void _oglRenderer::_reset()
+{
+	// Projection
+	m_enProjection = enumProjection::Perspective;
+
+	// Rotation
+	m_enRotationMode = enumRotationMode::XYZ;
+	m_fXAngle = 0.f;
+	m_fYAngle = 0.f;
+	m_fZAngle = 0.f;
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+	// Translation
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = -5.f;
+	m_fScaleFactor = 2.f;
+
+	// UI
+	m_bShowFaces = TRUE;
+	m_strCullFaces = CULL_FACES_NONE;
+	m_bShowFacesPolygons = FALSE;
+	m_bShowConceptualFacesPolygons = TRUE;
+	m_bShowLines = TRUE;
+	m_bShowPoints = TRUE;
+	m_bShowBoundingBoxes = FALSE;
+	m_bShowNormalVectors = FALSE;
+	m_bShowTangenVectors = FALSE;
+	m_bShowBiNormalVectors = FALSE;
+	m_bScaleVectors = FALSE;
+	m_bShowCoordinateSystem = TRUE;
+	m_bShowNavigator = TRUE;
+
+	_redraw();
+}
+
+void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
+{
+	assert(m_toolTipCtrl.GetToolCount() <= 1);
+
+	if (m_toolTipCtrl.GetToolCount() == 1)
+	{
+		CToolInfo toolInfo;
+		m_toolTipCtrl.GetToolInfo(toolInfo, m_pWnd);
+
+		if (CString(toolInfo.lpszText) != szText)
+		{
+			m_toolTipCtrl.SetTitle(0, szTitle);
+
+			toolInfo.lpszText = (LPWSTR)szText;
+			m_toolTipCtrl.SetToolInfo(&toolInfo);
+		}
+		else
+		{
+			CPoint ptCursor;
+			GetCursorPos(&ptCursor);
+
+			m_toolTipCtrl.SetWindowPos(
+				NULL,
+				ptCursor.x + 10,
+				ptCursor.y + 10,
+				0,
+				0,
+				SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+			return;
+		}
+	} // if (m_toolTipCtrl.GetToolCount() == 1)
+	else
+	{
+		m_toolTipCtrl.SetTitle(0, szTitle);
+		m_toolTipCtrl.AddTool(m_pWnd, szText);
+	}
+
+	m_toolTipCtrl.Popup();
+}
+
+void _oglRenderer::_hideTooltip()
+{
+	assert(m_toolTipCtrl.GetToolCount() <= 1);
+
+	if (m_toolTipCtrl.GetToolCount() == 1)
+	{
+		m_toolTipCtrl.DelTool(m_pWnd, 0);
+	}
+}
+
+// ************************************************************************************************
 _oglView::_oglView()
 	: m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
