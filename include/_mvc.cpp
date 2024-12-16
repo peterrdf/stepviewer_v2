@@ -5,9 +5,7 @@
 
 // ************************************************************************************************
 _model::_model()
-	: m_strPath(L"")
-	, m_vecGeometries()
-	, m_vecInstances()
+	: m_strPath(L"")	
 	, m_mapID2Instance()
 	, m_bUpdteVertexBuffers(true)
 	, m_dOriginalBoundingSphereDiameter(2.)
@@ -18,6 +16,8 @@ _model::_model()
 	, m_fZmin(-1.f)
 	, m_fZmax(1.f)
 	, m_fBoundingSphereDiameter(2.f)
+	, m_vecGeometries()
+	, m_vecInstances()
 {
 }
 
@@ -264,6 +264,26 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	}
 
 	return itInstance->second;
+}
+
+void _model::addGeometry(_geometry* pGeometry)
+{
+	assert(pGeometry != nullptr);
+
+	m_vecGeometries.push_back(pGeometry);
+}
+
+void _model::addInstance(_instance* pInstance)
+{
+	assert(pInstance != nullptr);
+	assert(pInstance->getGeometry() != nullptr);
+
+	pInstance->getGeometry()->addInstance(pInstance);
+
+	m_vecInstances.push_back(pInstance);
+
+	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
+	m_mapID2Instance[pInstance->getID()] = pInstance;
 }
 
 /*virtual*/ void _model::clean()

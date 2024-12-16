@@ -201,12 +201,6 @@
     <ClInclude Include="..\include\_ptr.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_owl_geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_owl_instance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -218,6 +212,12 @@
     </ClInclude>
     <ClInclude Include="CIS2\CIS2Geometry.h">
       <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_geometry.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -79,13 +79,7 @@ CAP242ProductDefinition* CAP242Model::LoadProductDefinition(SdaiInstance iProduc
 	}
 
 	auto pGeometry = new CAP242ProductDefinition(owlInstance, iProductDefinitionInstance);
-	m_vecGeometries.push_back(pGeometry);
-
-	ASSERT(m_mapGeometries.find(iProductDefinitionInstance) == m_mapGeometries.end());
-	m_mapGeometries[iProductDefinitionInstance] = pGeometry;
-
-	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+	addGeometry(pGeometry);	
 
 	return pGeometry;
 }
@@ -94,22 +88,22 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
-	auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
-	if (itExpressID2Geometry != m_mapExpressID2Geometry.end())
+	auto pGeometry = getGeometryByExpressID(iExpressID);
+	if (pGeometry != nullptr)
 	{
-		_ptr<CAP242ProductDefinition> pProductDefinition(itExpressID2Geometry->second);
+		_ptr<CAP242ProductDefinition> apProductDefinition(pGeometry);
 		if (bRelatingProduct)
 		{
-			pProductDefinition->m_iRelatingProducts++;
+			apProductDefinition->m_iRelatingProducts++;
 		}
 
 		if (bRelatedProduct)
 		{
-			pProductDefinition->m_iRelatedProducts++;
+			apProductDefinition->m_iRelatedProducts++;
 		}
 
-		return pProductDefinition.p();
-	}
+		return apProductDefinition;
+	} // if (pGeometry != nullptr)
 
 	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
 	if (bRelatingProduct)
@@ -155,14 +149,13 @@ void CAP242Model::LoadAssemblies()
 void CAP242Model::LoadGeometry()
 {
 	// Load
-	auto itDefinition = m_mapExpressID2Geometry.begin();
-	for (auto pGeometry : m_vecGeometries)
+	for (auto pGeometry : getGeometries())
 	{
-		_ptr<CAP242ProductDefinition> pProductDefinition(pGeometry);
+		_ptr<CAP242ProductDefinition> apProductDefinition(pGeometry);
 
-		if (pProductDefinition->GetRelatedProducts() == 0)
+		if (apProductDefinition->GetRelatedProducts() == 0)
 		{
-			WalkAssemblyTreeRecursively(pProductDefinition, nullptr, nullptr);
+			WalkAssemblyTreeRecursively(apProductDefinition, nullptr, nullptr);
 		}
 	}
 }
@@ -220,8 +213,5 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		m_iID++,
 		pProductDefinition,
 		pParentMatrix);
-	m_vecInstances.push_back(pInstance);
-	m_mapID2Instance[pInstance->getID()] = pInstance;
-
-	pProductDefinition->addInstance(pInstance);
+	addInstance(pInstance);
 }

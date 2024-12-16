@@ -48,14 +48,9 @@ protected: // Members
 
 	wstring m_strPath;
 
-	vector<_geometry*> m_vecGeometries;	
-	// 1...*
-	vector<_instance*> m_vecInstances;
-	map<int64_t, _instance*> m_mapID2Instance;
-
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	bool m_bUpdteVertexBuffers;
-	double m_dOriginalBoundingSphereDiameter;	
+	double m_dOriginalBoundingSphereDiameter;
 
 	// World's dimensions
 	float m_fXmin;
@@ -65,6 +60,13 @@ protected: // Members
 	float m_fZmin;
 	float m_fZmax;
 	float m_fBoundingSphereDiameter;
+
+private: // Members
+
+	vector<_geometry*> m_vecGeometries;
+	// 1...*
+	vector<_instance*> m_vecInstances;
+	map<int64_t, _instance*> m_mapID2Instance;
 
 public: // Methods
 
@@ -88,6 +90,9 @@ public: // Methods
 
 protected: // Methods
 
+	void addGeometry(_geometry* pGeometry);
+	void addInstance(_instance* pInstance);
+
 	virtual void clean();
 
 public: // Properties
@@ -95,13 +100,13 @@ public: // Properties
 	virtual OwlModel getOwlInstance() const PURE;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	uint64_t getVertexLength() const { return SetFormat(getOwlInstance()) / sizeof(float); }
+	uint64_t getVertexLength() const { return SetFormat(getOwlInstance()) / sizeof(float); }	
+
+	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
+	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }
-
-	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
-	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }	
 };
 
 // ************************************************************************************************

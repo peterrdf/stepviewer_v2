@@ -78,10 +78,10 @@ void CCIS2Model::LoadRepresentations()
 
 _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType, int_t iCircleSegments)
 {
-	auto itGeometry = m_mapGeometries.find(sdaiInstance);
-	if (itGeometry != m_mapGeometries.end())
+	_ap_geometry* pGeometry = dynamic_cast<_ap_geometry*>(getGeometryByInstance(sdaiInstance));
+	if (pGeometry != nullptr)
 	{
-		return itGeometry->second;
+		return pGeometry;
 	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
@@ -96,7 +96,6 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 		circleSegments(iCircleSegments, 5);
 	}
 
-	CCIS2Geometry* pGeometry = nullptr;
 	switch (enCIS2GeometryType)
 	{
 		case enumCIS2GeometryType::DesignPart:
@@ -118,19 +117,10 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 		break;
 	}
 
-	m_vecGeometries.push_back(pGeometry);
-	m_mapGeometries[sdaiInstance] = pGeometry;
-
-	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+	addGeometry(pGeometry);
 
 	auto pInstance = new CCIS2Instance(s_iInstanceID++, pGeometry, nullptr);
-	m_vecInstances.push_back(pInstance);
-
-	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
-	m_mapID2Instance[pInstance->getID()] = pInstance;
-
-	pGeometry->addInstance(pInstance);
+	addInstance(pInstance);
 
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)

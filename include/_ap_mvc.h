@@ -30,8 +30,6 @@ private: // Members
 	// Helpers
 	_entity_provider* m_pEntityProvider;
 
-protected: // Members
-
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
 	map<SdaiInstance, _geometry*> m_mapGeometries;
@@ -137,7 +135,7 @@ public: // Methods
 		CString strTargetType = szType;
 		strTargetType.MakeUpper();
 
-		for (auto pInstance : m_vecInstances)
+		for (auto pInstance : getInstances())
 		{
 			_ptr<_ap_instance> apInstance(pInstance);
 			CString strType = apInstance->getEntityName();
@@ -193,6 +191,17 @@ protected: // Methods
 				m_bUpdteVertexBuffers = false;
 			}
 		} // if (m_bUpdteVertexBuffers)
+	}
+
+	void addGeometry(_ap_geometry* pGeometry)
+	{
+		_model::addGeometry(pGeometry);
+
+		assert(m_mapGeometries.find(pGeometry->getSdaiInstance()) == m_mapGeometries.end());
+		m_mapGeometries[pGeometry->getSdaiInstance()] = pGeometry;
+
+		assert(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+		m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
 	}
 
 	virtual void clean() override

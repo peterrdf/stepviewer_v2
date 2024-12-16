@@ -109,7 +109,7 @@ void CIFCModel::GetObjectsReferencedState()
 		GetObjectsReferencedStateHasAssignments(iProjectInstance);
 
 		// Disable Unreferenced instances
-		for (auto pGeometry : m_vecGeometries)
+		for (auto pGeometry : getGeometries())
 		{
 			if (!dynamic_cast<CIFCGeometry*>(pGeometry)->Referenced())
 			{
@@ -343,10 +343,10 @@ void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSe
 
 _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
 {
-	auto itGeometry = m_mapGeometries.find(sdaiInstance);
-	if (itGeometry != m_mapGeometries.end())
+	_ap_geometry* pGeometry = dynamic_cast<_ap_geometry*>(getGeometryByInstance(sdaiInstance));
+	if (pGeometry != nullptr)
 	{
-		return itGeometry->second;
+		return pGeometry;
 	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
@@ -361,20 +361,11 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 		circleSegments(iCircleSegments, 5);
 	}
 
-	auto pGeometry = new CIFCGeometry(owlInstance, sdaiInstance);
-	m_vecGeometries.push_back(pGeometry);
-	m_mapGeometries[sdaiInstance] = pGeometry;
-
-	ASSERT(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-	m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+	pGeometry = new CIFCGeometry(owlInstance, sdaiInstance);
+	addGeometry(pGeometry);
 
 	auto pInstance = new CIFCInstance(s_iInstanceID++, pGeometry, nullptr);
-	m_vecInstances.push_back(pInstance);
-
-	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
-	m_mapID2Instance[pInstance->getID()] = pInstance;
-
-	pGeometry->addInstance(pInstance);
+	addInstance(pInstance);
 
 	CString strEntity = (LPWSTR)CA2W(szEntityName);
 	strEntity.MakeUpper();
