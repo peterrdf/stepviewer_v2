@@ -19,12 +19,6 @@ public: // Methods
 	// _oglRendererSettings
 	virtual _controller* getController() const override;
 
-	// _view
-	virtual void onWorldDimensionsChanged() override;
-	virtual void onInstanceSelected(_view* pSender) override;
-	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
-	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
-
 protected: // Methods
 
 	// _view

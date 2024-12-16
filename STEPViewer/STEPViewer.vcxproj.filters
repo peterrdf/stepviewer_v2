@@ -341,6 +341,9 @@
     <ClCompile Include="CIS2\CIS2Geometry.cpp">
       <Filter>CIS2</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="STEPViewer.rc">

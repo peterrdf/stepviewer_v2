@@ -657,6 +657,7 @@
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
+    <ClCompile Include="..\include\_oglUtils.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
