@@ -2246,777 +2246,72 @@ protected: // Members
 
 public: // Methods
 
-	_oglRendererSettings()
-		: m_enProjection(enumProjection::Perspective)
-		, m_enRotationMode(enumRotationMode::XYZ)
-		, m_fXAngle(0.f)
-		, m_fYAngle(0.f)
-		, m_fZAngle(0.f)
-		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
-		, m_bShowFaces(TRUE)
-		, m_strCullFaces(CULL_FACES_NONE)
-		, m_bShowFacesPolygons(FALSE)
-		, m_bShowConceptualFacesPolygons(TRUE)
-		, m_bShowLines(TRUE)
-		, m_fLineWidth(1.f)
-		, m_bShowPoints(TRUE)
-		, m_fPointSize(1.f)
-		, m_bShowBoundingBoxes(FALSE)
-		, m_bShowNormalVectors(FALSE)
-		, m_bShowTangenVectors(FALSE)
-		, m_bShowBiNormalVectors(FALSE)
-		, m_bScaleVectors(FALSE)
-		, m_bShowCoordinateSystem(TRUE)
-		, m_bShowNavigator(TRUE)
-	{}
+	_oglRendererSettings();
+	virtual ~_oglRendererSettings();
 
-	virtual ~_oglRendererSettings()
-	{}
+	void _setView(enumView enView);
 
-	enumProjection _getProjection() const { return m_enProjection; }
-	void _setProjection(enumProjection enProjection)
-	{
-		m_enProjection = enProjection;
+	virtual void saveSetting(const string& strName, const string& strValue);
+	virtual string loadSetting(const string& strName);
+	virtual void loadSettings();
 
-		_setView(enumView::Isometric);
-	}
-
-	enumRotationMode _getRotationMode() const { return m_enRotationMode; }
-	void _setRotationMode(enumRotationMode enRotationMode)
-	{
-		m_enRotationMode = enRotationMode;
-
-		_setView(enumView::Isometric);
-	}
-
-	void _setView(enumView enView)
-	{
-		// Note: OpenGL/Quaternions - CW/CCW
-
-		m_fXAngle = 0.f;
-		m_fYAngle = 0.f;
-		m_fZAngle = 0.f;
-		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
-
-		switch (enView)
-		{
-			case enumView::Front:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::Back:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 90.f;
-					m_fYAngle = 180.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::Left:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-					m_fZAngle = 90.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::Right:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 270.f;
-					m_fZAngle = 270.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::Top:
-			{
-				m_fXAngle = 0.f;
-				m_fYAngle = 0.f;
-				m_fZAngle = 0.f;
-			}
-			break;
-
-			case enumView::Bottom:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fYAngle = 180.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::FrontTopLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::FrontTopRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 315.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::FrontBottomLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::FrontBottomRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 315.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::BackTopLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 225.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::BackTopRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fZAngle = 135.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::BackBottomLeft:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 225.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::BackBottomRight:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 225.f;
-					m_fZAngle = 135.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			case enumView::Isometric:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 315.f;
-					m_fYAngle = 0.f;
-					m_fZAngle = 45.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
-				}
-				else
-				{
-					assert(false);
-				}
-			}
-			break;
-
-			default:
-			{
-				assert(false);
-			}
-			break;
-		} // switch (enView)
-	}
-
-	void setShowFaces(BOOL bValue)
-	{
-		m_bShowFaces = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowFaces);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowFaces(_model* pModel)
-	{
-		if ((pModel == nullptr) || (pModel == getModel()))
-		{
-			return m_bShowFaces;
-		}
-
-		return TRUE;
-	}
-
-	void setCullFacesMode(LPCTSTR szMode)
-	{
-		m_strCullFaces = szMode;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_strCullFaces);
-
-		saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
-	}
-
-	LPCTSTR getCullFacesMode(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_strCullFaces;
-		}
-
-		return CULL_FACES_NONE;
-	}
-
-	void setShowFacesPolygons(BOOL bValue)
-	{
-		m_bShowFacesPolygons = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowFacesPolygons(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowFacesPolygons;
-		}
-
-		return FALSE;
-	}
-
-	void setShowConceptualFacesPolygons(BOOL bValue)
-	{
-		m_bShowConceptualFacesPolygons = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowConceptualFacesPolygons(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowConceptualFacesPolygons;
-		}
-
-		return TRUE;
-	}
-
-	void setShowLines(BOOL bValue)
-	{
-		m_bShowLines = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowLines);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowLines(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowLines;
-		}
-
-		return TRUE;
-	}
-
-	void setLineWidth(GLfloat fWidth)
-	{
-		m_fLineWidth = fWidth;
-	}
-
-	GLfloat getLineWidth() const
-	{
-		return m_fLineWidth;
-	}
-
-	void setShowPoints(BOOL bValue)
-	{
-		m_bShowPoints = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowPoints);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowPoints(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowPoints;
-		}
-
-		return TRUE;
-	}
-
-	void setPointSize(GLfloat fSize)
-	{
-		m_fPointSize = fSize;
-	}
-
-	GLfloat getPointSize() const
-	{
-		return m_fPointSize;
-	}
-
-	void setShowBoundingBoxes(BOOL bValue)
-	{
-		m_bShowBoundingBoxes = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowBoundingBoxes(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowBoundingBoxes;
-		}
-
-		return FALSE;
-	}
-
-	void setShowNormalVectors(BOOL bValue)
-	{
-		m_bShowNormalVectors = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowNormalVectors(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowNormalVectors;
-		}
-
-		return FALSE;
-	}
-
-	void setShowTangentVectors(BOOL bValue)
-	{
-		m_bShowTangenVectors = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowTangentVectors(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowTangenVectors;
-		}
-
-		return FALSE;
-	}
-
-	void setShowBiNormalVectors(BOOL bValue)
-	{
-		m_bShowBiNormalVectors = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowBiNormalVectors(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bShowBiNormalVectors;
-		}
-
-		return FALSE;
-	}
-
-	void setScaleVectors(BOOL bValue)
-	{
-		m_bScaleVectors = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bScaleVectors);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getScaleVectors(_model* pModel) const
-	{
-		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
-		{
-			return m_bScaleVectors;
-		}
-
-		return FALSE;
-	}
-
-	void setShowCoordinateSystem(BOOL bValue)
-	{
-		m_bShowCoordinateSystem = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowCoordinateSystem() const
-	{
-		return m_bShowCoordinateSystem;
-	}
-
-	void setShowNavigator(BOOL bValue)
-	{
-		m_bShowNavigator = bValue;
-
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowNavigator);
-
-		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
-	}
-
-	BOOL getShowNavigator() const
-	{
-		return m_bShowNavigator;
-	}
-
-protected: // Methods
+protected: // Properties
 
 	virtual _controller* _getController() const PURE;
+	_model* _getModel() const;
 
-	_model* getModel()
-	{
-		auto pController = _getController();
-		if (pController != nullptr)
-		{
-			return pController->getModel();
-		}
+public: // Properties
 
-		return nullptr;
-	}
+	enumProjection _getProjection() const;
+	void _setProjection(enumProjection enProjection);
 
-	virtual void saveSetting(const string& strName, const string& strValue)
-	{
-		auto pController = _getController();
-		if (pController != nullptr)
-		{
-			pController->getSettingsStorage()->setSetting(strName, strValue);
-		}
-	}
+	enumRotationMode _getRotationMode() const;
+	void _setRotationMode(enumRotationMode enRotationMode);
+	
+	void setShowFaces(BOOL bValue);
+	BOOL getShowFaces(_model* pModel);
 
-	virtual string loadSetting(const string& strName)
-	{
-		auto pController = _getController();
-		if (pController != nullptr)
-		{
-			return pController->getSettingsStorage()->getSetting(strName);
-		}
+	void setCullFacesMode(LPCTSTR szMode);
+	LPCTSTR getCullFacesMode(_model* pModel) const;
 
-		return "";
-	}
+	void setShowFacesPolygons(BOOL bValue);
+	BOOL getShowFacesPolygons(_model* pModel) const;
 
-	virtual void loadSettings()
-	{
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowFaces);
+	void setShowConceptualFacesPolygons(BOOL bValue);
+	BOOL getShowConceptualFacesPolygons(_model* pModel) const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowFaces = strValue == "TRUE";
-			}			
-		}
+	void setShowLines(BOOL bValue);
+	BOOL getShowLines(_model* pModel) const;
 
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_strCullFaces);
+	void setLineWidth(GLfloat fWidth);
+	GLfloat getLineWidth() const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_strCullFaces = CA2W(strValue.c_str());
-			}
-		}
+	void setShowPoints(BOOL bValue);
+	BOOL getShowPoints(_model* pModel) const;
 
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+	void setPointSize(GLfloat fSize);
+	GLfloat getPointSize() const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowFacesPolygons = strValue == "TRUE";
-			}			
-		}
+	void setShowBoundingBoxes(BOOL bValue);
+	BOOL getShowBoundingBoxes(_model* pModel) const;
 
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+	void setShowNormalVectors(BOOL bValue);
+	BOOL getShowNormalVectors(_model* pModel) const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowConceptualFacesPolygons = strValue == "TRUE";
-			}			
-		}
+	void setShowTangentVectors(BOOL bValue);
+	BOOL getShowTangentVectors(_model* pModel) const;
 
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowLines);
+	void setShowBiNormalVectors(BOOL bValue);
+	BOOL getShowBiNormalVectors(_model* pModel) const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowLines = strValue == "TRUE";
-			}
-		}
+	void setScaleVectors(BOOL bValue);
+	BOOL getScaleVectors(_model* pModel) const;
 
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowPoints);
+	void setShowCoordinateSystem(BOOL bValue);
+	BOOL getShowCoordinateSystem() const;
 
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowPoints = strValue == "TRUE";
-			}			
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowBoundingBoxes = strValue == "TRUE";
-			}			
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowNormalVectors);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowNormalVectors = strValue == "TRUE";
-			}
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowTangenVectors);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowTangenVectors = strValue == "TRUE";
-			}			
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowBiNormalVectors = strValue == "TRUE";
-			}
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bScaleVectors);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bScaleVectors = strValue == "TRUE";
-			}		
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowCoordinateSystem = strValue == "TRUE";
-			}			
-		}
-
-		{
-			string strSettingName(typeid(this).raw_name());
-			strSettingName += NAMEOFVAR(m_bShowNavigator);
-
-			string strValue = loadSetting(strSettingName);
-			if (!strValue.empty())
-			{
-				m_bShowNavigator = strValue == "TRUE";
-			}			
-		}
-	}
+	void setShowNavigator(BOOL bValue);
+	BOOL getShowNavigator() const;
 };
 
 // ************************************************************************************************
@@ -3155,8 +2450,12 @@ public: // Methods
 	_oglView();
 	virtual ~_oglView();
 
+protected: // Properties
+
 	// _oglRendererSettings
 	virtual _controller* _getController() const override { return getController(); }
+
+public: // Methods
 
 	// _view
 	virtual void onWorldDimensionsChanged() override;

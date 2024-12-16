@@ -3,6 +3,785 @@
 #include "_oglUtils.h"
 
 // ************************************************************************************************
+_oglRendererSettings::_oglRendererSettings()
+	: m_enProjection(enumProjection::Perspective)
+	, m_enRotationMode(enumRotationMode::XYZ)
+	, m_fXAngle(0.f)
+	, m_fYAngle(0.f)
+	, m_fZAngle(0.f)
+	, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+	, m_bShowFaces(TRUE)
+	, m_strCullFaces(CULL_FACES_NONE)
+	, m_bShowFacesPolygons(FALSE)
+	, m_bShowConceptualFacesPolygons(TRUE)
+	, m_bShowLines(TRUE)
+	, m_fLineWidth(1.f)
+	, m_bShowPoints(TRUE)
+	, m_fPointSize(1.f)
+	, m_bShowBoundingBoxes(FALSE)
+	, m_bShowNormalVectors(FALSE)
+	, m_bShowTangenVectors(FALSE)
+	, m_bShowBiNormalVectors(FALSE)
+	, m_bScaleVectors(FALSE)
+	, m_bShowCoordinateSystem(TRUE)
+	, m_bShowNavigator(TRUE)
+{
+}
+
+/*virtual*/ _oglRendererSettings::~_oglRendererSettings()
+{
+}
+
+void _oglRendererSettings::_setView(enumView enView)
+{
+	// Note: OpenGL/Quaternions - CW/CCW
+
+	m_fXAngle = 0.f;
+	m_fYAngle = 0.f;
+	m_fZAngle = 0.f;
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+	switch (enView)
+	{
+		case enumView::Front:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 270.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::Back:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 90.f;
+				m_fYAngle = 180.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::Left:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 270.f;
+				m_fZAngle = 90.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::Right:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 270.f;
+				m_fZAngle = 270.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::Top:
+		{
+			m_fXAngle = 0.f;
+			m_fYAngle = 0.f;
+			m_fZAngle = 0.f;
+		}
+		break;
+
+		case enumView::Bottom:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fYAngle = 180.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::FrontTopLeft:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 315.f;
+				m_fZAngle = 45.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::FrontTopRight:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 315.f;
+				m_fZAngle = 315.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::FrontBottomLeft:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 225.f;
+				m_fZAngle = 45.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::FrontBottomRight:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 225.f;
+				m_fZAngle = 315.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::BackTopLeft:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 315.f;
+				m_fZAngle = 225.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::BackTopRight:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 315.f;
+				m_fZAngle = 135.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::BackBottomLeft:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 225.f;
+				m_fZAngle = 225.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::BackBottomRight:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 225.f;
+				m_fZAngle = 135.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		case enumView::Isometric:
+		{
+			if (m_enRotationMode == enumRotationMode::XY)
+			{
+				m_fXAngle = 315.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 45.f;
+			}
+			else if (m_enRotationMode == enumRotationMode::XYZ)
+			{
+				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		break;
+
+		default:
+		{
+			assert(false);
+		}
+		break;
+	} // switch (enView)
+}
+
+/*virtual*/ void _oglRendererSettings::_oglRendererSettings::saveSetting(const string& strName, const string& strValue)
+{
+	auto pController = _getController();
+	if (pController != nullptr)
+	{
+		pController->getSettingsStorage()->setSetting(strName, strValue);
+	}
+}
+
+/*virtual*/ string _oglRendererSettings::loadSetting(const string& strName)
+{
+	auto pController = _getController();
+	if (pController != nullptr)
+	{
+		return pController->getSettingsStorage()->getSetting(strName);
+	}
+
+	return "";
+}
+
+/*virtual*/ void _oglRendererSettings::loadSettings()
+{
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFaces);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowFaces = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_strCullFaces);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_strCullFaces = CA2W(strValue.c_str());
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowFacesPolygons = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowConceptualFacesPolygons = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowLines);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowLines = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowPoints);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowPoints = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowBoundingBoxes = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowNormalVectors = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowTangenVectors = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowBiNormalVectors = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bScaleVectors = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowCoordinateSystem = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bShowNavigator = strValue == "TRUE";
+		}
+	}
+}
+
+_model* _oglRendererSettings::_oglRendererSettings::_getModel() const
+{
+	auto pController = _getController();
+	if (pController != nullptr)
+	{
+		return pController->getModel();
+	}
+
+	return nullptr;
+}
+
+enumProjection _oglRendererSettings::_getProjection() const
+{
+	return m_enProjection;
+}
+
+void _oglRendererSettings::_setProjection(enumProjection enProjection)
+{
+	m_enProjection = enProjection;
+
+	_setView(enumView::Isometric);
+}
+
+enumRotationMode _oglRendererSettings::_getRotationMode() const
+{
+	return m_enRotationMode;
+}
+
+void _oglRendererSettings::_setRotationMode(enumRotationMode enRotationMode)
+{
+	m_enRotationMode = enRotationMode;
+
+	_setView(enumView::Isometric);
+}
+
+void _oglRendererSettings::setShowFaces(BOOL bValue)
+{
+	m_bShowFaces = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowFaces);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowFaces(_model* pModel)
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowFaces;
+	}
+
+	return TRUE;
+}
+
+void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
+{
+	m_strCullFaces = szMode;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_strCullFaces);
+
+	saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
+}
+
+LPCTSTR _oglRendererSettings::getCullFacesMode(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_strCullFaces;
+	}
+
+	return CULL_FACES_NONE;
+}
+
+void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
+{
+	m_bShowFacesPolygons = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowFacesPolygons(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowFacesPolygons;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
+{
+	m_bShowConceptualFacesPolygons = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowConceptualFacesPolygons(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowConceptualFacesPolygons;
+	}
+
+	return TRUE;
+}
+
+void _oglRendererSettings::setShowLines(BOOL bValue)
+{
+	m_bShowLines = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowLines);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowLines(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowLines;
+	}
+
+	return TRUE;
+}
+
+void _oglRendererSettings::setLineWidth(GLfloat fWidth)
+{
+	m_fLineWidth = fWidth;
+}
+
+GLfloat _oglRendererSettings::getLineWidth() const
+{
+	return m_fLineWidth;
+}
+
+void _oglRendererSettings::setShowPoints(BOOL bValue)
+{
+	m_bShowPoints = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowPoints);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowPoints(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowPoints;
+	}
+
+	return TRUE;
+}
+
+void _oglRendererSettings::setPointSize(GLfloat fSize)
+{
+	m_fPointSize = fSize;
+}
+
+GLfloat _oglRendererSettings::getPointSize() const
+{
+	return m_fPointSize;
+}
+
+void _oglRendererSettings::setShowBoundingBoxes(BOOL bValue)
+{
+	m_bShowBoundingBoxes = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowBoundingBoxes(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowBoundingBoxes;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
+{
+	m_bShowNormalVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowNormalVectors(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowNormalVectors;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
+{
+	m_bShowTangenVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowTangentVectors(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowTangenVectors;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
+{
+	m_bShowBiNormalVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowBiNormalVectors(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bShowBiNormalVectors;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setScaleVectors(BOOL bValue)
+{
+	m_bScaleVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getScaleVectors(_model* pModel) const
+{
+	if ((pModel == nullptr) || (pModel == _getModel()))
+	{
+		return m_bScaleVectors;
+	}
+
+	return FALSE;
+}
+
+void _oglRendererSettings::setShowCoordinateSystem(BOOL bValue)
+{
+	m_bShowCoordinateSystem = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowCoordinateSystem() const
+{
+	return m_bShowCoordinateSystem;
+}
+
+void _oglRendererSettings::setShowNavigator(BOOL bValue)
+{
+	m_bShowNavigator = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getShowNavigator() const
+{
+	return m_bShowNavigator;
+}
+
+// ************************************************************************************************
 _oglRenderer::_oglRenderer()
 	: m_pWnd(nullptr)
 	, m_toolTipCtrl()
@@ -701,7 +1480,7 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::onWorldDimensionsChanged() /*override*/
 {
-	auto pModel = getModel();
+	auto pModel = _getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1097,7 +1876,7 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
-	auto pModel = getModel();
+	auto pModel = _getModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1713,7 +2492,7 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 
 void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	_model* pModel = getModel();
+	_model* pModel = _getModel();
 	if (pModel == nullptr)
 	{
 		return;
