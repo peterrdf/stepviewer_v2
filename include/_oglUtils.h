@@ -3775,7 +3775,7 @@ public: // Methods
 	virtual ~_oglView();
 
 	// _oglRendererSettings
-	virtual _controller* _getController() const override { return _view::getController(); }
+	virtual _controller* _getController() const override { return getController(); }
 
 	// _view
 	virtual void onWorldDimensionsChanged() override;

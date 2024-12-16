@@ -31,7 +31,7 @@ _oglView::_oglView()
 
 /*virtual*/ _oglView::~_oglView()
 {
-	_view::getController()->unRegisterView(this);
+	getController()->unRegisterView(this);
 
 	_destroy();
 
@@ -81,14 +81,14 @@ _oglView::_oglView()
 		return;
 	}
 
-	if (_view::getController() == nullptr)
+	if (getController() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pSelectedInstance = _view::getController()->getSelectedInstance();
+	auto pSelectedInstance = getController()->getSelectedInstance();
 	if (m_pSelectedInstance != pSelectedInstance)
 	{
 		m_pSelectedInstance = pSelectedInstance;
@@ -147,9 +147,9 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::onControllerChanged() /*override*/
 {
-	assert(_view::getController() != nullptr);
+	assert(getController() != nullptr);
 
-	_view::getController()->registerView(this);
+	getController()->registerView(this);
 
 	loadSettings();
 }
@@ -1165,7 +1165,7 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 
 				_redraw();
 
-				_view::getController()->selectInstance(this, m_pSelectedInstance);
+				getController()->selectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 		}
 	} // if (enEvent == meLBtnDown)
