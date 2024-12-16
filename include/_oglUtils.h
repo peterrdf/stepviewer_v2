@@ -2599,7 +2599,7 @@ public: // Methods
 
 	LPCTSTR getCullFacesMode(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_strCullFaces;
 		}
@@ -2619,7 +2619,7 @@ public: // Methods
 
 	BOOL getShowFacesPolygons(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowFacesPolygons;
 		}
@@ -2639,7 +2639,7 @@ public: // Methods
 
 	BOOL getShowConceptualFacesPolygons(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowConceptualFacesPolygons;
 		}
@@ -2659,7 +2659,7 @@ public: // Methods
 
 	BOOL getShowLines(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowLines;
 		}
@@ -2689,7 +2689,7 @@ public: // Methods
 
 	BOOL getShowPoints(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowPoints;
 		}
@@ -2719,7 +2719,7 @@ public: // Methods
 
 	BOOL getShowBoundingBoxes(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowBoundingBoxes;
 		}
@@ -2739,7 +2739,7 @@ public: // Methods
 
 	BOOL getShowNormalVectors(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowNormalVectors;
 		}
@@ -2759,7 +2759,7 @@ public: // Methods
 
 	BOOL getShowTangentVectors(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowTangenVectors;
 		}
@@ -2779,7 +2779,7 @@ public: // Methods
 
 	BOOL getShowBiNormalVectors(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bShowBiNormalVectors;
 		}
@@ -2799,7 +2799,7 @@ public: // Methods
 
 	BOOL getScaleVectors(_model* pModel) const
 	{
-		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		if ((pModel == nullptr) || (pModel == _getController()->getModel()))
 		{
 			return m_bScaleVectors;
 		}
@@ -2839,11 +2839,11 @@ public: // Methods
 
 protected: // Methods
 
-	virtual _controller* getController() const PURE;
+	virtual _controller* _getController() const PURE;
 
 	_model* getModel()
 	{
-		auto pController = getController();
+		auto pController = _getController();
 		if (pController != nullptr)
 		{
 			return pController->getModel();
@@ -2854,7 +2854,7 @@ protected: // Methods
 
 	virtual void saveSetting(const string& strName, const string& strValue)
 	{
-		auto pController = getController();
+		auto pController = _getController();
 		if (pController != nullptr)
 		{
 			pController->getSettingsStorage()->setSetting(strName, strValue);
@@ -2863,7 +2863,7 @@ protected: // Methods
 
 	virtual string loadSetting(const string& strName)
 	{
-		auto pController = getController();
+		auto pController = _getController();
 		if (pController != nullptr)
 		{
 			return pController->getSettingsStorage()->getSetting(strName);
@@ -3020,8 +3020,7 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-class _oglRenderer 
-	: public _oglRendererSettings
+class _oglRenderer : public _oglRendererSettings
 {
 
 protected: // Members
@@ -3774,6 +3773,9 @@ public: // Methods
 
 	_oglView();
 	virtual ~_oglView();
+
+	// _oglRendererSettings
+	virtual _controller* _getController() const override { return _view::getController(); }
 
 	// _view
 	virtual void onWorldDimensionsChanged() override;

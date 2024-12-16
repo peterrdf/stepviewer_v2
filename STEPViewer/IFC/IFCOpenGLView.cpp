@@ -29,11 +29,6 @@ CIFCOpenGLView::~CIFCOpenGLView()
 {
 }
 
-/*virtual*/ _controller* CIFCOpenGLView::getController() const /*override*/
-{
-	return _view::getController();
-}
-
 
 
 

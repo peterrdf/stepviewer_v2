@@ -6,18 +6,14 @@
 
 // ************************************************************************************************
 // Open GL View
-class CAP242OpenGLView
-	: public _oglView
+class CAP242OpenGLView : public _oglView
 {
 
 public: // Methods
 
 	// ctor/dtor
 	CAP242OpenGLView(CWnd* pWnd);
-	virtual ~CAP242OpenGLView();	
-
-	// _oglRendererSettings
-	virtual _controller* getController() const override;
+	virtual ~CAP242OpenGLView();
 };
 
 #endif // _OPEN_GL_STEP_VIEW_H_

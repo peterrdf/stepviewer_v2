@@ -32,10 +32,6 @@ CAP242OpenGLView::~CAP242OpenGLView()
 {
 }
 
-/*virtual*/ _controller* CAP242OpenGLView::getController() const /*override*/
-{
-	return _view::getController();
-}
 
 
 
