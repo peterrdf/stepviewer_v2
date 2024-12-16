@@ -69,9 +69,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ViewBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -84,25 +81,13 @@
     <ClInclude Include="IFC\IFCUnit.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InstanceBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="ModelFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TreeViewBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RelationsView.h">
@@ -174,9 +159,6 @@
     <ClInclude Include="..\include\glext.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\wglext.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -204,6 +186,39 @@
     <ClInclude Include="OWLProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ap_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\IFCGeometry.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureViewConsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_entity.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Geometry.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_owl_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -227,9 +242,6 @@
     <ClCompile Include="PropertiesWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ViewBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -242,20 +254,8 @@
     <ClCompile Include="IFC\IFCUnit.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InstanceBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SchemaView.cpp">
       <Filter>Source Files</Filter>
@@ -325,6 +325,24 @@
     </ClCompile>
     <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCGeometry.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_entity.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Geometry.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

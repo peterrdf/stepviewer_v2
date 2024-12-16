@@ -9,6 +9,8 @@
 #include "STEPViewer.h"
 #endif
 
+#include "_ptr.h"
+
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
 #include "AP242OpenGLView.h"
@@ -20,7 +22,7 @@
 #endif
 
 // ------------------------------------------------------------------------------------------------
-CController* CMySTEPViewerView::GetController()
+CController* CMySTEPViewerView::getController()
 {
 	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -29,12 +31,12 @@ CController* CMySTEPViewerView::GetController()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CMySTEPViewerView::OnModelChanged()
+/*virtual*/ void CMySTEPViewerView::onModelChanged()
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -42,18 +44,16 @@ CController* CMySTEPViewerView::GetController()
 		return;
 	}
 
-	if (pController->GetModel() == nullptr)
+	if (pController->getModel() == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->getModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -65,38 +65,38 @@ CController* CMySTEPViewerView::GetController()
 
 	wstring strSettingsFile = pthRootFolder.wstring();
 
-	switch (pModel->GetType())
+	switch (model.p()->getAP())
 	{
-		case enumModelType::STEP:
+		case enumAP::STEP:
 		{
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
 			m_pOpenGLView = new CAP242OpenGLView(this);
-			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->setController(pController);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
-		case enumModelType::IFC:
+		case enumAP::IFC:
 		{
 			strSettingsFile += L"\\STEPViewer_IFC.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
 			m_pOpenGLView = new CIFCOpenGLView(this);
-			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->setController(pController);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
-		case enumModelType::CIS2:
+		case enumAP::CIS2:
 		{
 			strSettingsFile += L"\\STEPViewer_CIS2.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
 			m_pOpenGLView = new CCIS2OpenGLView(this);
-			m_pOpenGLView->SetController(pController);
-			m_pOpenGLView->_load();
+			m_pOpenGLView->setController(pController);
+			m_pOpenGLView->_load(model);
 		}
 		break;
 
@@ -105,7 +105,7 @@ CController* CMySTEPViewerView::GetController()
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	}
+	} // (model.p()->getAP())
 }
 
 
@@ -267,7 +267,7 @@ int CMySTEPViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	pDoc->RegisterView(this);
+	pDoc->registerView(this);
 
 	return 0;
 }
@@ -282,7 +282,7 @@ void CMySTEPViewerView::OnDestroy()
 		return;
 	}
 
-	pDoc->UnRegisterView(this);
+	pDoc->unRegisterView(this);
 
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
@@ -299,7 +299,7 @@ void CMySTEPViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -309,7 +309,7 @@ void CMySTEPViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -319,7 +319,7 @@ void CMySTEPViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -329,7 +329,7 @@ void CMySTEPViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -339,7 +339,7 @@ void CMySTEPViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -349,7 +349,7 @@ void CMySTEPViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -360,7 +360,7 @@ void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -419,7 +419,7 @@ void CMySTEPViewerView::OnProjectionOrthographic()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Orthographic);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -434,7 +434,7 @@ void CMySTEPViewerView::OnProjectionPerspective()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setProjection(enumProjection::Perspective);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -449,7 +449,7 @@ void CMySTEPViewerView::OnViewFront()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Front);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -459,7 +459,7 @@ void CMySTEPViewerView::OnViewTop()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Top);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -469,7 +469,7 @@ void CMySTEPViewerView::OnViewRight()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Right);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -479,7 +479,7 @@ void CMySTEPViewerView::OnViewBack()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Back);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -489,7 +489,7 @@ void CMySTEPViewerView::OnViewLeft()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Left);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -499,7 +499,7 @@ void CMySTEPViewerView::OnViewBottom()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Bottom);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -509,7 +509,7 @@ void CMySTEPViewerView::OnViewIsometric()
 	{
 		dynamic_cast<_oglRenderer*>(m_pOpenGLView)->_setView(enumView::Isometric);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		getController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -518,7 +518,7 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->SaveInstance();
+	pDocument->saveInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
@@ -529,10 +529,10 @@ void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 	ASSERT_VALID(pDocument);
 
 	if ((pDocument != nullptr) && 
-		(pDocument->GetModel() != nullptr) &&
-		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->HasGeometry() &&
-		pDocument->GetSelectedInstance()->IsEnabled())
+		(pDocument->getModel() != nullptr) &&
+		(pDocument->getSelectedInstance() != nullptr) &&
+		pDocument->getSelectedInstance()->hasGeometry() &&
+		pDocument->getSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}
@@ -545,7 +545,7 @@ void CMySTEPViewerView::OnInstancesZoomTo()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	pDocument->ZoomToInstance();
+	pDocument->zoomToInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
@@ -556,10 +556,10 @@ void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 	ASSERT_VALID(pDocument);
 
 	if ((pDocument != nullptr) &&
-		(pDocument->GetModel() != nullptr) &&
-		(pDocument->GetSelectedInstance() != nullptr) &&
-		pDocument->GetSelectedInstance()->HasGeometry() &&
-		pDocument->GetSelectedInstance()->IsEnabled())
+		(pDocument->getModel() != nullptr) &&
+		(pDocument->getSelectedInstance() != nullptr) &&
+		pDocument->getSelectedInstance()->hasGeometry() &&
+		pDocument->getSelectedInstance()->getEnable())
 	{
 		bEnable = TRUE;
 	}
@@ -574,7 +574,7 @@ void CMySTEPViewerView::OnShowFaces()
 	{
 		pRendererSettings->setShowFaces(!pRendererSettings->getShowFaces(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 	}
 }
 
@@ -596,7 +596,7 @@ void CMySTEPViewerView::OnShowConcFacesWireframes()
 	{
 		pRendererSettings->setShowConceptualFacesPolygons(!pRendererSettings->getShowConceptualFacesPolygons(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -618,7 +618,7 @@ void CMySTEPViewerView::OnShowLines()
 	{
 		pRendererSettings->setShowLines(!pRendererSettings->getShowLines(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 	}
 }
 
@@ -640,7 +640,7 @@ void CMySTEPViewerView::OnShowPoints()
 	{
 		pRendererSettings->setShowPoints(!pRendererSettings->getShowPoints(nullptr));
 
-		GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 	}
 }
 

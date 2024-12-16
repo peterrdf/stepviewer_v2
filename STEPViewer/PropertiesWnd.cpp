@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 
+#include "_ptr.h"
+
 #include "PropertiesWnd.h"
 #include "Resource.h"
 #include "MainFrm.h"
@@ -8,7 +10,8 @@
 #include "AP242OpenGLView.h"
 #include "AP242Model.h"
 #include "IFCModel.h"
-#include <CIS2Model.h>
+#include "CIS2Model.h"
+#include "CIS2Instance.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -55,7 +58,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnModelChanged()
+/*virtual*/ void CPropertiesWnd::onModelChanged()
 {
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 
@@ -63,7 +66,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnShowMetaInformation()
+/*virtual*/ void CPropertiesWnd::onShowMetaInformation()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -71,7 +74,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnInstanceSelected(CViewBase* /*pSender*/)
+/*virtual*/ void CPropertiesWnd::onInstanceSelected(_view* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
@@ -79,7 +82,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CViewBase* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CPropertiesWnd::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{
@@ -95,7 +98,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 // ------------------------------------------------------------------------------------------------
 /*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -106,7 +109,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 #pragma region Application
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
-		auto pRenderer = GetController()->GetView<_oglRenderer>();
+		auto pRenderer = getController()->getViewAs<_oglRenderer>();
 		if (pRenderer == nullptr)
 		{
 			ASSERT(FALSE);
@@ -134,7 +137,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
 				break;
 
@@ -142,7 +145,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setCullFacesMode(strValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
 				break;
 
@@ -150,7 +153,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
 				break;
 
@@ -158,7 +161,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
 				break;
 
@@ -166,7 +169,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
 				break;
 
@@ -174,7 +177,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 				{
 					pRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 				}
 				break;
 
@@ -199,7 +202,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
 				}
 				break;
 
@@ -224,7 +227,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 				}
 				break;
 
@@ -249,7 +252,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
 				}
 				break;
 
@@ -274,7 +277,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
 				}
 				break;
 
@@ -286,7 +289,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
 				}
 				break;
 
@@ -298,7 +301,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setContrast(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
 				}
 				break;
 
@@ -310,7 +313,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setBrightness(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
 				}
 				break;
 
@@ -322,7 +325,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 
 					pBlinnPhongProgram->_setGamma(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
 				}
 				break;
 
@@ -391,8 +394,8 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -499,7 +502,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -507,7 +510,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	auto pRenderer = GetController()->GetView<_oglRenderer>();
+	auto pRenderer = getController()->getViewAs<_oglRenderer>();
 	if (pRenderer == nullptr)
 	{
 		return;
@@ -823,42 +826,40 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	auto pContoller = GetController();
-	if (pContoller == nullptr)
+	auto pController = getController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}	
 
-	if (GetController()->GetSelectedInstance() == nullptr)
+	if (getController()->getSelectedInstance() == nullptr)
 	{
 		return;
 	}
 
-	auto pModel = pContoller->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->getModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
-	switch (pModel->GetType())
+	switch (model.p()->getAP())
 	{
-		case enumModelType::STEP:
+		case enumAP::STEP:
 		{
 			LoadSTEPInstanceProperties();
 		}
 		break;
 
-		case enumModelType::IFC:
+		case enumAP::IFC:
 		{
 			LoadIFCInstanceProperties();
 		}
 		break;
 
-		case enumModelType::CIS2:
+		case enumAP::CIS2:
 		{
 			LoadCIS2InstanceProperties();
 		}
@@ -869,29 +870,27 @@ void CPropertiesWnd::LoadInstanceProperties()
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // switch (pModel ->GetType())
+	} // switch (model.p()->GetType())
 }
 
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadSTEPInstanceProperties()
 {
-	auto pContoller = GetController();
-	if (pContoller == nullptr)
+	auto pController = getController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = pContoller->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->getModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(GetController()->GetSelectedInstance());
+	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -907,7 +906,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	int_t* propertyDefinitionInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION"),
+	int_t* propertyDefinitionInstances = sdaiGetEntityExtentBN(model.p()->getSdaiInstance(), "PROPERTY_DEFINITION"),
 		noPropertyDefinitionInstances = sdaiGetMemberCount(propertyDefinitionInstances);
 	for (int_t i = 0; i < noPropertyDefinitionInstances; i++) {
 		int_t propertyDefinitionInstance = 0;
@@ -915,7 +914,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 		int_t definitionInstance = 0;
 		sdaiGetAttrBN(propertyDefinitionInstance, "definition", sdaiINSTANCE, &definitionInstance);
-		if (definitionInstance == pSelectedInstance->GetProductDefinition()->GetInstance()) {
+		if (definitionInstance == pSelectedInstance->GetProductDefinition()->getSdaiInstance()) {
 			CString strValue;
 			strValue.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(propertyDefinitionInstance));
 
@@ -939,7 +938,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 			//
 			//	Lookup value (not using inverse relations)
 			//
-			int_t* propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(pContoller->GetModel()->GetInstance(), "PROPERTY_DEFINITION_REPRESENTATION"),
+			int_t* propertyDefinitionRepresentationInstances = sdaiGetEntityExtentBN(model.p()->getSdaiInstance(), "PROPERTY_DEFINITION_REPRESENTATION"),
 				noPropertyDefinitionRepresentationInstances = sdaiGetMemberCount(propertyDefinitionRepresentationInstances);
 			for (int_t j = 0; j < noPropertyDefinitionRepresentationInstances; j++) {
 				int_t propertyDefinitionRepresentationInstance = 0;
@@ -958,7 +957,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 						int_t representationItemInstance = 0;
 						sdaiGetAggrByIndex(aggrItems, k, sdaiINSTANCE, &representationItemInstance);
 
-						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
+						if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(model.p()->getSdaiInstance(), "DESCRIPTIVE_REPRESENTATION_ITEM")) {
 							char* valueDescription = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "description", sdaiSTRING, &valueDescription);
 
@@ -966,7 +965,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 							pProperty->AllowEdit(FALSE);
 							pPropertyGroup->AddSubItem(pProperty);
 						}
-						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(pContoller->GetModel()->GetInstance(), "VALUE_REPRESENTATION_ITEM")) {
+						else if (sdaiGetInstanceType(representationItemInstance) == sdaiGetEntity(model.p()->getSdaiInstance(), "VALUE_REPRESENTATION_ITEM")) {
 							int_t* valueComponentADB = nullptr;
 							sdaiGetAttrBN(representationItemInstance, "value_component", sdaiADB, &valueComponentADB);
 
@@ -1028,15 +1027,15 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadIFCInstanceProperties()
 {
-	auto pContoller = GetController();
-	if (pContoller == nullptr)
+	auto pController = getController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = pContoller->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1054,7 +1053,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	auto pPropertyProvider = pIFCModel->GetPropertyProvider();
 
-	auto pInstance = dynamic_cast<CIFCInstance*>(GetController()->GetSelectedInstance());
+	auto pInstance = dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1062,13 +1061,13 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->GetInstance());
+	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->getSdaiInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;
 	}
 
-	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->GetName().c_str());
+	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
 
 	for (auto pPropertySet : pPropertySetCollection->PropertySets())
 	{
@@ -1094,15 +1093,15 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 void CPropertiesWnd::LoadCIS2InstanceProperties()
 {
-	auto pContoller = GetController();
-	if (pContoller == nullptr)
+	auto pController = getController();
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	auto pModel = pContoller->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1118,7 +1117,7 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 		return;
 	}	
 
-	auto pInstance = dynamic_cast<CCIS2Instance*>(GetController()->GetSelectedInstance());
+	auto pInstance = dynamic_cast<CCIS2Instance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1219,8 +1218,8 @@ void CPropertiesWnd::SetPropListFont()
 
 void CPropertiesWnd::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }

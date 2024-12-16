@@ -38,7 +38,7 @@ static UINT indicators[] =
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-CController* CMainFrame::GetController() const
+CController* CMainFrame::getController() const
 {
 	POSITION posDocTemplate = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (posDocTemplate == nullptr)
@@ -250,13 +250,13 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::CreateDockingWindows()
 {
-	CController* pController = GetController();
+	CController* pController = getController();
 
 	BOOL bNameValid;
 
 	// ********************************************************************************************
 	// Model Structure View
-	m_structureView.SetController(pController);
+	m_structureView.setController(pController);
 	
 	CString strCaption;
 	bNameValid = strCaption.LoadString(IDS_FILE_VIEW);
@@ -277,7 +277,7 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Design Tree View
-	m_designTreeView.SetController(pController);
+	m_designTreeView.setController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_DESIGN_VIEW);
 	ASSERT(bNameValid);
@@ -297,7 +297,7 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Schema View
-	m_schemaView.SetController(pController);
+	m_schemaView.setController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_SCHEMA_VIEW);
 	ASSERT(bNameValid);
@@ -317,7 +317,7 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Relations/Attributes View
-	m_relationsView.SetController(pController);
+	m_relationsView.setController(pController);
 
 	bNameValid = strCaption.LoadString(IDS_IFC_RELATIONS_VIEW);
 	ASSERT(bNameValid);
@@ -338,7 +338,7 @@ BOOL CMainFrame::CreateDockingWindows()
 
 	// ********************************************************************************************
 	// Create IFC Instance Properties View
-	m_propertiesView.SetController(pController);
+	m_propertiesView.setController(pController);
 	
 	bNameValid = strCaption.LoadString(IDS_PROPERTIES_WND);
 	ASSERT(bNameValid);

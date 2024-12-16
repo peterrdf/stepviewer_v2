@@ -18,16 +18,16 @@
 #define new DEBUG_NEW
 #endif
 
-/*virtual*/ void CMySTEPViewerDoc::SaveInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
 {
 	ASSERT(m_pModel != nullptr);
 
-	if (GetSelectedInstance() == nullptr)
+	if (getSelectedInstance() == nullptr)
 	{
 		return;
 	} 
 
-	CString strValidPath = GetSelectedInstance()->GetName().c_str();
+	CString strValidPath = dynamic_cast<_ap_instance*>(getSelectedInstance())->getName().c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
 	strValidPath.Replace(_T("/"), _T("-"));
 	strValidPath.Replace(_T(":"), _T("-"));
@@ -49,10 +49,10 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(GetSelectedInstance());
+	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(getSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(GetSelectedInstance()->GetInstance());
+		SdaiModel iSdaiModel = sdaiGetInstanceModel(dynamic_cast<_ap_instance*>(getSelectedInstance())->getSdaiInstance());
 		ASSERT(iSdaiModel != 0);
 
 		OwlModel iOwlModel = 0;
@@ -64,18 +64,18 @@
 
 		vector<double> vecMatrix
 		{
-			pProductInstance->GetTransformationMatrix()->_11,
-			pProductInstance->GetTransformationMatrix()->_12,
-			pProductInstance->GetTransformationMatrix()->_13,
-			pProductInstance->GetTransformationMatrix()->_21,
-			pProductInstance->GetTransformationMatrix()->_22,
-			pProductInstance->GetTransformationMatrix()->_23,
-			pProductInstance->GetTransformationMatrix()->_31,
-			pProductInstance->GetTransformationMatrix()->_32,
-			pProductInstance->GetTransformationMatrix()->_33,
-			pProductInstance->GetTransformationMatrix()->_41,
-			pProductInstance->GetTransformationMatrix()->_42,
-			pProductInstance->GetTransformationMatrix()->_43,
+			pProductInstance->getTransformationMatrix()->_11,
+			pProductInstance->getTransformationMatrix()->_12,
+			pProductInstance->getTransformationMatrix()->_13,
+			pProductInstance->getTransformationMatrix()->_21,
+			pProductInstance->getTransformationMatrix()->_22,
+			pProductInstance->getTransformationMatrix()->_23,
+			pProductInstance->getTransformationMatrix()->_31,
+			pProductInstance->getTransformationMatrix()->_32,
+			pProductInstance->getTransformationMatrix()->_33,
+			pProductInstance->getTransformationMatrix()->_41,
+			pProductInstance->getTransformationMatrix()->_42,
+			pProductInstance->getTransformationMatrix()->_43,
 		};
 
 		SetDatatypeProperty(
@@ -90,7 +90,7 @@
 		SetObjectProperty(
 			iTransformationInstance,
 			GetPropertyByName(iOwlModel, "object"),
-			GetSelectedInstance()->GetInstance());
+			getSelectedInstance()->getOwlInstance());
 
 		SetObjectProperty(
 			iTransformationInstance,
@@ -101,7 +101,7 @@
 	}
 	else
 	{
-		SaveInstanceTreeW(GetSelectedInstance()->GetInstance(), dlgFile.GetPathName());
+		SaveInstanceTreeW(getSelectedInstance()->getOwlInstance(), dlgFile.GetPathName());
 	}
 }
 
@@ -139,7 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	SetModel(new CAP242Model());
+	setModel(new CAP242Model());
 
 	return TRUE;
 }
@@ -241,7 +241,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		m_pModel = nullptr;
 	}
 
-	SetModel(CModelFactory::Load(lpszPathName));
+	setModel(CModelFactory::Load(lpszPathName));
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -278,7 +278,7 @@ void CMySTEPViewerDoc::OnFileOpen()
 
 void CMySTEPViewerDoc::OnViewZoomOut()
 {
-	ZoomOut();
+	zoomOut();
 }
 
 

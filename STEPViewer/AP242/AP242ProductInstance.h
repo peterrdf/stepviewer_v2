@@ -1,41 +1,21 @@
 #pragma once
 
-#include "_geometry.h"
-#include "InstanceBase.h"
+#include "_ap_instance.h"
 
 // ************************************************************************************************
 class CAP242ProductDefinition;
 
 // ************************************************************************************************
-class CAP242ProductInstance 
-	: public CInstanceBase
+class CAP242ProductInstance : public _ap_instance
 {
-	friend class CAP242ProductDefinition;
-
-private: // Members
-
-	int64_t m_iID;
-	CAP242ProductDefinition* m_pProductDefinition;
-	_matrix4x4* m_pTransformationMatrix;
-
-	bool m_bEnable;	
 
 public: // Methods
 	
-	CAP242ProductInstance(int64_t iID, CAP242ProductDefinition* pProductDefinition, _matrix4x3* pTransformationMatrix);
+	CAP242ProductInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~CAP242ProductInstance();
 
-	// CInstanceBase
-	virtual SdaiInstance GetInstance() const;
-	virtual bool HasGeometry() const;
-	virtual bool IsEnabled() const { return GetEnable(); }
+public: // Properties
 
-	void Scale(float fScaleFactor);
-	
-	int64_t GetID() const { return m_iID; }
-	CAP242ProductDefinition* GetProductDefinition() const { return m_pProductDefinition; }
-	_matrix4x4* GetTransformationMatrix() const { return m_pTransformationMatrix; }
-	bool GetEnable() const { return m_bEnable; }
-	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
+	CAP242ProductDefinition* GetProductDefinition() const;
 };
 

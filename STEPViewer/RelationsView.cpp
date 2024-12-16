@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "mainfrm.h"
 #include "RelationsView.h"
 #include "Resource.h"
@@ -30,20 +33,20 @@ static char THIS_FILE[]=__FILE__;
 // CRelationsView
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnModelChanged() /*override*/
+/*virtual*/ void CRelationsView::onModelChanged() /*override*/
 {
 	LoadProperties(0, vector<int_t>());
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CRelationsView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -53,24 +56,24 @@ static char THIS_FILE[]=__FILE__;
 
 	vector<int_t> vecInstances;
 
-	auto pInstance = GetController()->GetSelectedInstance();
+	auto pInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
 	if (pInstance != nullptr)
 	{
-		vecInstances.push_back(pInstance->GetInstance());
+		vecInstances.push_back(pInstance->getSdaiInstance());
 	}
 	
 	LoadInstances(vecInstances);
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) /*override*/
+/*virtual*/ void CRelationsView::onViewRelations(_view* pSender, SdaiInstance sdaiInstance) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	if (iInstance == 0)
+	if (sdaiInstance == 0)
 	{
 		ASSERT(FALSE);
 
@@ -78,17 +81,17 @@ static char THIS_FILE[]=__FILE__;
 	}
 
 	vector<SdaiInstance> vecInstances;
-	vecInstances.push_back(iInstance);
+	vecInstances.push_back(sdaiInstance);
 
 	LoadProperties(
-		(SdaiInstance)CInstanceBase::GetEntity(iInstance),
+		_ap_instance::getEntityInstance(sdaiInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::OnViewRelations(CViewBase* pSender, CEntity* pEntity) /*override*/
+/*virtual*/ void CRelationsView::onViewRelations(_view* pSender, _entity* pEntity) /*override*/
 {
 	if (pSender == this)
 	{
@@ -96,8 +99,8 @@ static char THIS_FILE[]=__FILE__;
 	}
 	
 	LoadProperties(
-		pEntity->GetEntity(),
-		pEntity->GetInstances());
+		pEntity->getEntity(),
+		pEntity->getInstances());
 	
 	ShowPane(TRUE, TRUE, TRUE);
 }
@@ -175,7 +178,7 @@ static char THIS_FILE[]=__FILE__;
 	// ExpressID
 	if (iFilter == (int)enumSearchFilter::ExpressID)
 	{
-		auto pController = GetController();
+		auto pController = getController();
 		if (pController == nullptr)
 		{
 			ASSERT(FALSE);
@@ -183,40 +186,38 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		auto pModel = pController->GetModel();
-		if (pModel == nullptr)
+		_ptr<_ap_model> model(pController->getModel());
+		if (!model)
 		{
-			ASSERT(FALSE);
-
 			return FALSE;
 		}
 
-		switch (pModel->GetType())
+		switch (model.p()->getAP())
 		{
-			case enumModelType::STEP:
+			case enumAP::STEP:
 			{
 				ASSERT(FALSE); // TODO
 			}
 			break;
 
-			case enumModelType::IFC:
+			case enumAP::IFC:
 			{
-				auto pIFCmodel = pController->GetModel()->As<CIFCModel>();
+				auto pIFCmodel = pController->getModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
-				auto pInstance = pIFCmodel->GetInstanceByExpressID(iExpressID);
+				auto pInstance = nullptr;// pIFCmodel->getInstanceByExpressID(iExpressID);#todo
 				if (pInstance != nullptr)
 				{
-					pController->SelectInstance(
+					pController->selectInstance(
 						nullptr, /*Attributes View will be updated also*/
 						pInstance);
 				}
 				else
 				{
-					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->GetInstance(), iExpressID);
+					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->getSdaiInstance(), iExpressID);
 					if (iInstance != 0)
 					{
-						pController->OnViewRelations(
+						pController->onViewRelations(
 							nullptr,  /*Attributes View will be updated also*/
 							iInstance);
 					}
@@ -233,7 +234,7 @@ static char THIS_FILE[]=__FILE__;
 				ASSERT(FALSE); // Unknown
 			}
 			break;
-		} // switch (pModel ->GetType())
+		} // switch (model.p()->getAP())
 
 		return TRUE;
 	} // if (iFilter == (int)enumSearchFilter::ExpressID)
@@ -266,9 +267,9 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ------------------------------------------------------------------------------------------------
-CModel* CRelationsView::GetModel() const
+_model* CRelationsView::GetModel() const
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -276,7 +277,7 @@ CModel* CRelationsView::GetModel() const
 		return nullptr;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -316,7 +317,7 @@ void CRelationsView::LoadInstances(const vector<int_t>& vecInstances)
 	for (auto iInstance : vecInstances)
 	{
 		LoadInstance(
-			(SdaiInstance)CInstanceBase::GetEntity(iInstance),
+			_ap_instance::getEntityInstance(iInstance),
 			iInstance, 
 			hModel);
 	}
@@ -375,7 +376,7 @@ void CRelationsView::LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hPar
 	/*
 	* Instance
 	*/
-	wstring strItem = CInstanceBase::GetName(iInstance);
+	wstring strItem = _ap_instance::getName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;
@@ -514,7 +515,7 @@ void CRelationsView::LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiA
 			tvInsertStruct.hParent = hParent;
 			tvInsertStruct.hInsertAfter = TVI_FIRST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = (LPWSTR)CEntity::GetName(iEntity);
+			tvInsertStruct.item.pszText = (LPWSTR)_entity::getName(iEntity);
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
 			tvInsertStruct.item.lParam = NULL;
 
@@ -1435,7 +1436,7 @@ void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHiera
 {
 	ASSERT(iEntity != 0);
 
-	wstring strEntity = CEntity::GetName(iEntity);
+	wstring strEntity = _entity::getName(iEntity);
 	if (engiGetEntityIsAbstract(iEntity))
 	{
 		strEntity += L" (ABSTRACT)";
@@ -1446,7 +1447,7 @@ void CRelationsView::GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHiera
 	int_t iParent = engiGetEntityParent(iEntity);
 	while (iParent != 0)
 	{
-		strEntity = CEntity::GetName(iParent);
+		strEntity = _entity::getName(iParent);
 		if (engiGetEntityIsAbstract(iParent))
 		{
 			strEntity += L" (ABSTRACT)";
@@ -1589,7 +1590,7 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 
 			m_strTooltip += L"\n";
 
-			m_strTooltip += CEntity::GetName(pAttributeData->GetEntity());
+			m_strTooltip += _entity::getName(pAttributeData->GetEntity());
 			if (engiGetEntityIsAbstract(pAttributeData->GetEntity()))
 			{
 				m_strTooltip += L" (ABSTRACT)";
@@ -1666,8 +1667,8 @@ int CRelationsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -1813,8 +1814,8 @@ void CRelationsView::OnChangeVisualStyle()
 
 void CRelationsView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

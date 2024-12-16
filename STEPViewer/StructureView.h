@@ -2,7 +2,6 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "ViewBase.h"
 #include "AP242Assembly.h"
 #include "AP242ItemData.h"
 #include "AP242PModelStructureView.h"
@@ -30,7 +29,7 @@ class CStructureViewToolBar : public CMFCToolBar
 // ------------------------------------------------------------------------------------------------
 class CStructureView
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 {
 
 private: // Members
@@ -40,7 +39,7 @@ private: // Members
 public: // Methods
 
 	// CViewBase
-	virtual void OnModelChanged();	
+	virtual void onModelChanged();	
 
 // Construction
 public:

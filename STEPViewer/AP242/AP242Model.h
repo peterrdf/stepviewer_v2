@@ -1,12 +1,9 @@
 #pragma once
 
-#include "_geometry.h"
-#include "Model.h"
+#include "_ap_mvc.h"
 
 #include <map>
 using namespace std;
-
-#define EMPTY_INSTANCE L"---<EMPTY>---"
 
 // ************************************************************************************************
 class CAP242Assembly;
@@ -14,48 +11,31 @@ class CAP242ProductDefinition;
 class CAP242ProductInstance;
 
 // ************************************************************************************************
-class CAP242Model : public CModel
+class CAP242Model : public _ap_model
 {
 
 private: // Members
-	
-	CEntityProvider* m_pEntityProvider;
-	map<ExpressID, CAP242ProductDefinition*> m_mapExpressID2Definition; // Express ID : Product Definition	
-	map<int64_t, CAP242ProductInstance*> m_mapID2Instance; // ID : Product Instance
-	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 	int64_t m_iID;
 
-	bool m_bUpdteVertexBuffers; // when the first instance with geometry is loaded
-
-public: // Members
-
-	static uint32_t DEFAULT_COLOR;
+	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 public: // Methods
 	
 	CAP242Model();
 	virtual ~CAP242Model();
 
-	void PreLoadProductDefinition(SdaiInstance iProductDefinitionInstance);
+protected: // Methods
 
-	// CModel	
-	virtual CEntityProvider* GetEntityProvider() const override;
-	virtual CInstanceBase* GetInstanceByExpressID(int64_t iExpressID) const override;
-	virtual void ZoomToInstance(CInstanceBase* pInstance) override;
-	virtual void ZoomOut() override;
-	virtual CInstanceBase* LoadInstance(OwlInstance /*iInstance*/) override { ASSERT(FALSE); return nullptr; };
+	// _ap_model
+	virtual void attachModelCore() override;
+	virtual void clean() override;
 
-	const map<ExpressID, CAP242ProductDefinition*>& GetDefinitions() const { return m_mapExpressID2Definition; }
-	const map<int64_t, CAP242ProductInstance*>& GetInstances() const { return m_mapID2Instance; }
+public: // Methods
+
 	const map<ExpressID, CAP242Assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
-	CAP242ProductInstance* getProductInstanceByID(int64_t iID) const;
 
-	void Scale(); // [-1, 1]
-
-	void Save(const wchar_t * szPath);
-	void Load(const wchar_t * szPath);
-	void Load(const wchar_t* szPath, SdaiModel iModel);
+	void Save(const wchar_t* szPath);
 
 private: // Methods
 	
@@ -64,7 +44,6 @@ private: // Methods
 	CAP242ProductDefinition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void LoadAssemblies();
 	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pDefinition, _matrix4x3* pParentMatrix);
-	void Clean();
+	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pParentAssembly, _matrix4x3* pParentMatrix);	
 };
 

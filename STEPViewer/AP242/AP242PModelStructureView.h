@@ -28,7 +28,7 @@ private: // Members
 
 	// Cache
 	vector<CAP242ItemData*> m_vecItemData;
-	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
+	map<_instance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 
 	// --------------------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ public: // Methods
 	CAP242PModelStructureView(CTreeCtrlEx* pTreeView);
 	virtual ~CAP242PModelStructureView();	
 
-	// CViewBase
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
+	// _view
+	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CTreeViewBase
 	virtual void Load();

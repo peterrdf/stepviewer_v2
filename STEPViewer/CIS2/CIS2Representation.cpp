@@ -5,8 +5,8 @@
 #include <math.h>
 
 // ************************************************************************************************
-CCIS2Representation::CCIS2Representation(int64_t iID, SdaiInstance iSdaiInstance)
-	: CCIS2Instance(iID, iSdaiInstance, enumCIS2InstanceType::Reperesentation)
+CCIS2Representation::CCIS2Representation(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+	: CCIS2Geometry(owlInstance, sdaiInstance, enumCIS2GeometryType::Reperesentation)
 {}
 
 /*virtual*/ CCIS2Representation::~CCIS2Representation()

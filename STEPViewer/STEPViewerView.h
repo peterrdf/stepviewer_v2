@@ -2,27 +2,31 @@
 // STEPViewerView.h : interface of the CMySTEPViewerView class
 //
 
-#include "OpenGLView.h"
-
 #pragma once
 
+#include "_mvc.h"
+#include "_oglUtils.h"
+
+#include "Controller.h"
+
+// ************************************************************************************************
 class CMySTEPViewerView 
 	: public CView
-	, public CViewBase
+	, public _view
 {
 
 private: // Members
 
-	COpenGLView* m_pOpenGLView;
+	_oglView* m_pOpenGLView;
 
 private: // Methods
 
-	CController* GetController();
+	CController* getController();
 
 public: // Methods
 
-	// CViewBase
-	virtual void OnModelChanged();
+	// _view
+	virtual void onModelChanged();
 
 protected: // create from serialization only
 	CMySTEPViewerView();

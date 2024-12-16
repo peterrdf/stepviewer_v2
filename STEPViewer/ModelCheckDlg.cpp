@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "resource.h"
 
 #include "MainFrm.h"
@@ -493,7 +496,7 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 					sdaiGetEntity(GetActiveSdaiModel(), "IfcProject"),
 					0 };
 
-					if (pModel && pModel->GetType() == enumModelType::STEP) {
+					if (pModel && pModel->getAP() == enumAP::STEP) {
 						searchEntities[0] = sdaiGetEntity(GetActiveSdaiModel(), "PRODUCT_DEFINITION");
 						searchEntities[1] = 0;
 					}
@@ -507,10 +510,10 @@ void CModelCheckDlg::OnActivateListItem(int iItem)
 
 			for (auto inst : p->relatingInstances) {
 				if (auto stepId = internalGetP21Line(inst)) {
-					if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {
-						pDoc->SelectInstance(NULL, pInst);
-						return; //>>>>
-					}
+					//if (auto pInst = pModel->GetInstanceByExpressID(stepId)) {#todo
+					//	pDoc->selectInstance(NULL, pInst);
+					//	return; //>>>>
+					//}
 				}
 			}
 		}
@@ -546,15 +549,15 @@ void CModelCheckDlg::OnClickedViewAllIssues()
 SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 {
 	if (auto pModel = GetActiveModel()) {
-		return pModel->GetInstance();
+		return dynamic_cast<_ap_model*>(pModel)->getSdaiInstance();
 	}
 	return NULL;
 }
 
-CModel* CModelCheckDlg::GetActiveModel()
+_ap_model* CModelCheckDlg::GetActiveModel()
 {
 	if (auto pDoc = GetActiveDoc()) {
-		return pDoc->GetModel();
+		return _ptr<_ap_model>(pDoc->getModel());
 	}
 	return NULL;
 }

@@ -1,32 +1,32 @@
 #pragma once
 
-#include "ViewBase.h"
+#include "_mvc.h"
 
 // ------------------------------------------------------------------------------------------------
-class CTreeViewBase : public CViewBase
+class CTreeViewBase : public _view
 {
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	CTreeViewBase()
-		: CViewBase()
+		: _view()
 	{
 	}
 
 	// --------------------------------------------------------------------------------------------
 	virtual ~CTreeViewBase()
 	{
-		GetController()->UnRegisterView(this);
+		getController()->unRegisterView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// CViewBase
-	virtual void OnControllerChanged()
+	// _view
+	virtual void onControllerChanged()
 	{
-		ASSERT(GetController() != nullptr);
+		ASSERT(getController() != nullptr);
 
-		GetController()->RegisterView(this);
+		getController()->registerView(this);
 	}
 
 	// --------------------------------------------------------------------------------------------

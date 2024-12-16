@@ -12,10 +12,10 @@ class CModelFactory
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	static CModel* Load(const wchar_t* szPath)
+	static _ap_model* Load(const wchar_t* szPath)
 	{
-		auto iModel = sdaiOpenModelBNUnicode(0, szPath, L"");
-		if (iModel == 0)
+		auto sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
+		if (sdaiModel == 0)
 		{
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -23,7 +23,7 @@ public: // Methods
 		}
 
 		wchar_t* fileSchema = 0;
-		GetSPFFHeaderItem(iModel, 9, 0, sdaiUNICODE, (char**)&fileSchema);
+		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&fileSchema);
 
 		if (fileSchema == nullptr)
 		{
@@ -50,7 +50,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP242") == 0))
 		{
 			auto pModel = new CAP242Model();
-			pModel->Load(szPath, iModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}
@@ -61,7 +61,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new CIFCModel();
-			pModel->Load(szPath, iModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}
@@ -72,7 +72,7 @@ public: // Methods
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
 			auto pModel = new CCIS2Model();
-			pModel->Load(szPath, iModel);
+			pModel->attachModel(szPath, sdaiModel);
 
 			return pModel;
 		}

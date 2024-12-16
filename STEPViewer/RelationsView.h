@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "ViewBase.h"
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
+#include "Controller.h"
 
 #include <map>
 using namespace std;
@@ -56,7 +56,7 @@ enum class enumRelationsViewMode : int
 // ------------------------------------------------------------------------------------------------
 class CRelationsView 
 	: public CDockablePane
-	, public CViewBase
+	, public _view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -85,7 +85,7 @@ private: // Classes
 
 		int_t GetInstance() const { return m_iInstance; }
 		int_t GetEntity() const { return m_iEntity; }
-		const wchar_t* GetEntityName() const { return CEntity::GetName(m_iEntity); }
+		const wchar_t* GetEntityName() const { return _entity::getName(m_iEntity); }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -160,11 +160,11 @@ private: // Members
 
 public: // Methods
 	
-	// CViewBase
-	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
-	virtual void OnViewRelations(CViewBase* pSender, SdaiInstance iInstance) override;
-	virtual void OnViewRelations(CViewBase* pSender, CEntity* pEntity) override;
+	// _view
+	virtual void onModelChanged() override;
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
+	virtual void onViewRelations(_view* pSender, _entity* pEntity) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
@@ -176,7 +176,7 @@ public: // Methods
 
 private: // Methods
 
-	CModel* GetModel() const;
+	_model* GetModel() const;
 	
 	void LoadInstances(const vector<int_t>& vecInstances);
 	void LoadProperties(int_t iEntity, const vector<int_t>& vecInstances);

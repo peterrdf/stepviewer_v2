@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TreeViewBase.h"
-#include "IFCInstance.h"
+#include "IFCModel.h"
 #include "SearchTreeCtrlDialog.h"
 #include <map>
 
@@ -42,8 +42,8 @@ public: // Methods
 	CIFCModelStructureView(CTreeCtrlEx* pTreeView);
 	virtual ~CIFCModelStructureView();
 
-	// CViewBase
-	virtual void OnInstanceSelected(CViewBase* pSender) override;
+	// _view
+	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CTreeViewBase
 	virtual void Load() override;

@@ -1,16 +1,16 @@
 #ifndef CIS2_REPRESENTAION_H
 #define CIS2_REPRESENTAION_H
 
-#include "CIS2Instance.h"
+#include "CIS2Geometry.h"
 
 // ************************************************************************************************
 class CCIS2Representation
-	: public CCIS2Instance
+	: public CCIS2Geometry
 {
 
 public: // Methods
 	
-	CCIS2Representation(int64_t iID, SdaiInstance iSdaiInstance);
+	CCIS2Representation(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~CCIS2Representation();
 };
 

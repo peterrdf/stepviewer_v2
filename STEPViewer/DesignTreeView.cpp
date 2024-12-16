@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_owl_instance.h"
+
 #include "MainFrm.h"
 #include "STEPViewer.h"
 #include "DesignTreeView.h"
@@ -15,6 +18,8 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ************************************************************************************************
+#define EMPTY_INSTANCE L"---<EMPTY>---"
+
 #define IMAGE_MODEL    2
 #define IMAGE_INSTANCE 1
 #define IMAGE_PROPERTY 3
@@ -51,15 +56,15 @@ public:
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CDesignTreeView::OnModelChanged() /*override*/
+/*virtual*/ void CDesignTreeView::onModelChanged() /*override*/
 {
 	ResetView();
 
 	delete m_pPropertyProvider;
 	m_pPropertyProvider = nullptr;
 
-	auto pModel = GetModel<CModel>();
-	if ((pModel == nullptr) || (pModel->GetInstance() == 0))
+	auto pModel = getModelAs<_ap_model>();
+	if ((pModel == nullptr) || (pModel->getSdaiInstance() == 0))
 	{
 		return;
 	}
@@ -69,7 +74,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 }
 
-/*virtual*/ void CDesignTreeView::OnInstanceSelected(CViewBase* pSender) /*override*/
+/*virtual*/ void CDesignTreeView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -78,7 +83,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	ResetView();
 		
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -86,7 +91,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = getModelAs<_ap_model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -96,7 +101,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
 
-	auto pSelectedInstance = pController->GetSelectedInstance();
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{	
 		m_treeCtrl.SelectItem(hModel);
@@ -105,16 +110,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->GetInstance(), pSelectedInstance->GetInstance(), &iInstance);
-
-	if (iInstance == 0)
-	{
-		ExpressID iExpressID = internalGetP21Line(pSelectedInstance->GetInstance());
-		if (iExpressID != 0)
-		{
-			iInstance = internalGetInstanceFromP21Line(pModel->GetInstance(), iExpressID);
-		}
-	}
+	owlBuildInstance(pModel->getSdaiInstance(), pSelectedInstance->getSdaiInstance(), &iInstance);
 
 	if (iInstance == 0)
 	{
@@ -263,7 +259,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = CInstanceBase::GetName((SdaiInstance)iInstance);
+	wstring strItem = _owl_instance::getName(iInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;
@@ -303,7 +299,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -311,7 +307,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -514,8 +510,8 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -655,8 +651,8 @@ void CDesignTreeView::OnChangeVisualStyle()
 
 void CDesignTreeView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

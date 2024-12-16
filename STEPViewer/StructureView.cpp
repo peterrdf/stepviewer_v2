@@ -1,5 +1,8 @@
 
 #include "stdafx.h"
+
+#include "_ptr.h"
+
 #include "mainfrm.h"
 #include "StructureView.h"
 #include "Resource.h"
@@ -20,9 +23,9 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CStructureView::OnModelChanged()
+/*virtual*/ void CStructureView::onModelChanged()
 {
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -30,39 +33,37 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
+	_ptr<_ap_model> model(pController->getModel());
+	if (!model)
 	{
-		ASSERT(FALSE);
-
 		return;
-	}	
+	}
 
 	delete m_pSTEPTreeView;
 	m_pSTEPTreeView = nullptr;
 
-	switch (pModel->GetType())
+	switch (model.p()->getAP())
 	{
-		case enumModelType::STEP:
+		case enumAP::STEP:
 		{
 			m_pSTEPTreeView = new CAP242PModelStructureView(&m_treeCtrl);
-			m_pSTEPTreeView->SetController(pController);
+			m_pSTEPTreeView->setController(pController);
 			m_pSTEPTreeView->Load();
 		}
 		break;
 
-		case enumModelType::IFC:
+		case enumAP::IFC:
 		{
 			m_pSTEPTreeView = new CIFCModelStructureView(&m_treeCtrl);
-			m_pSTEPTreeView->SetController(pController);
+			m_pSTEPTreeView->setController(pController);
 			m_pSTEPTreeView->Load();
 		}
 		break;
 
-		case enumModelType::CIS2:
+		case enumAP::CIS2:
 		{
 			m_pSTEPTreeView = new CCIS2ModelStructureView(&m_treeCtrl);
-			m_pSTEPTreeView->SetController(pController);
+			m_pSTEPTreeView->setController(pController);
 			m_pSTEPTreeView->Load();
 		}
 		break;
@@ -72,7 +73,7 @@ static char THIS_FILE[]=__FILE__;
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // switch (pModel ->GetType())
+	} // switch (model.p()->getAP())
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -109,7 +110,7 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	auto pController = GetController();
+	auto pController = getController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -117,7 +118,7 @@ int CStructureView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	pController->RegisterView(this);
+	pController->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -252,8 +253,8 @@ void CStructureView::OnChangeVisualStyle()
 
 void CStructureView::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	ASSERT(getController() != nullptr);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }
