@@ -31,7 +31,7 @@ private: // Members
 
 	// Cache
 	vector<CAP242ItemData*> m_vecItemData;
-	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
+	map<CAP242ProductInstance*, vector<HTREEITEM>> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 		
 	bool m_bInitInProgress; // don't send notifications while updating the view
@@ -77,9 +77,6 @@ private: // Methods
 	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, CAP242ProductDefinition* pProduct, bool& bHasDescendantWithGeometry);
 	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242Assembly* pAssembly);	
 
-	CAP242ItemData* FindItemData(CAP242ProductInstance* pInstance);
-	void LoadItemChildren(CAP242ItemData* pItemData);
-	void LoadInstanceAncestors(CAP242ProductInstance* pInstance);
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void UpdateChildren(HTREEITEM hParent);
