@@ -12,7 +12,6 @@ CAP242ProductDefinition::CAP242ProductDefinition(OwlInstance owlInstance, SdaiIn
 	, m_szProductName(nullptr)
 	, m_iRelatingProducts(0)
 	, m_iRelatedProducts(0)
-	, m_iNextInstance(-1)
 {
 	sdaiGetAttrBN(sdaiInstance, "id", sdaiUNICODE, &m_szId);
 	sdaiGetAttrBN(sdaiInstance, "name", sdaiUNICODE, &m_szName);
@@ -44,12 +43,3 @@ CAP242ProductDefinition::CAP242ProductDefinition(OwlInstance owlInstance, SdaiIn
 	setSegmentation(getSdaiModel(), 16, 0.);
 }
 
-int32_t CAP242ProductDefinition::GetNextInstance()
-{
-	if (++m_iNextInstance >= (int32_t)getInstances().size())
-	{
-		m_iNextInstance = 0;
-	}
-
-	return m_iNextInstance;
-}

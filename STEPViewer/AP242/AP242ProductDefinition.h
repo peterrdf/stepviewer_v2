@@ -25,8 +25,6 @@ private: // Members
 	SdaiInteger m_iRelatingProducts; // if == 0 then it has geometry, otherwise it is a placeholder
 	SdaiInteger m_iRelatedProducts;  // if == 0 then it is a root element
 
-	int32_t m_iNextInstance;
-
 public: // Methods
 
 	CAP242ProductDefinition(OwlInstance owlInstance, SdaiInstance sdaiInstance);
@@ -47,7 +45,5 @@ public: // Properties
 
 	SdaiInteger GetRelatingProducts() const { return m_iRelatingProducts; }
 	SdaiInteger GetRelatedProducts() const { return m_iRelatedProducts; }
-
-	int32_t GetNextInstance();
 };
 
