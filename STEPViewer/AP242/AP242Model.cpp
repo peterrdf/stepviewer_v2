@@ -152,7 +152,6 @@ void CAP242Model::LoadGeometry()
 	for (auto pGeometry : getGeometries())
 	{
 		_ptr<CAP242ProductDefinition> apProductDefinition(pGeometry);
-
 		if (apProductDefinition->GetRelatedProducts() == 0)
 		{
 			WalkAssemblyTreeRecursively(apProductDefinition, nullptr, nullptr);
@@ -160,7 +159,7 @@ void CAP242Model::LoadGeometry()
 	}
 }
 
-void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pAssembly, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -212,6 +211,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 	auto pInstance = new CAP242ProductInstance(
 		m_iID++,
 		pProductDefinition,
+		pAssembly, 
 		pParentMatrix);
 	addInstance(pInstance);
 }

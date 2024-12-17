@@ -13,7 +13,7 @@
 #include <chrono>
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)

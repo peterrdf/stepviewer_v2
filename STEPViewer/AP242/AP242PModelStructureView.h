@@ -5,7 +5,7 @@
 #include "AP242Model.h"
 #include "SearchTreeCtrlDialog.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CAP242PModelStructureView 
 	: public CTreeViewBase
 	, public CItemStateProvider
@@ -30,10 +30,8 @@ private: // Members
 	vector<CAP242ItemData*> m_vecItemData;
 	map<_instance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
-
-	// --------------------------------------------------------------------------------------------
-	// Don't send notifications while updating the view
-	bool m_bInitInProgress;
+		
+	bool m_bInitInProgress; // don't send notifications while updating the view
 
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;
@@ -66,14 +64,16 @@ public: // Methods
 
 private: // Methods	
 
-	void LoadHeaderDescription(HTREEITEM hParent);
 	void LoadModel();
+	void LoadHeader(HTREEITEM hParent);	
+	void LoadProduct(CAP242Model* pModel, CAP242ProductDefinition* pProduct, HTREEITEM hParent);
+	void LoadAssembly(CAP242Model* pModel, CAP242Assembly* pAssembly, HTREEITEM hParent);
+	void LoadInstance(CAP242Model* pModel, CAP242ProductInstance* pInstance, HTREEITEM hParent);
 
-	void WalkAssemblyTreeRecursively(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, HTREEITEM hParent);
-	void LoadProductDefinitionsInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent);
-	void WalkAssemblyTreeRecursivelyInMemory(CAP242Model* pModel, CAP242ProductDefinition* pDefinition, CAP242ItemData* pParent);
-	void SearchForDescendantWithGeometry();
-	void SearchForDescendantWithGeometryRecursively(CAP242ItemData* pItemData, bool& bHasDescendantWithGeometry);
+	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct);
+	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, CAP242ProductDefinition* pProduct, bool& bHasDescendantWithGeometry);
+	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242Assembly* pAssembly);	
+
 	CAP242ItemData* FindItemData(CAP242ProductInstance* pInstance);
 	void LoadItemChildren(CAP242ItemData* pItemData);
 	void LoadInstanceAncestors(CAP242ProductInstance* pInstance);
