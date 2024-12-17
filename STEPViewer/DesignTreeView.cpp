@@ -114,8 +114,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	if (iInstance == 0)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

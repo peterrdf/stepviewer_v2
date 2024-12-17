@@ -1023,7 +1023,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	}
 
 	// Instances
-	for(auto pInstance : pProduct->getInstances())
+	for (auto pInstance : pProduct->getInstances())
 	{
 		LoadInstance(pModel, _ptr<CAP242ProductInstance>(pInstance), hProduct);
 	}
@@ -1064,7 +1064,7 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 	}
 
 	CString strName;
-	strName.Format(L"%s %s", pInstance->getName().c_str(), ITEM_PRODUCT_INSTANCE);
+	strName.Format(L"%s %s (%lld)", pInstance->getName().c_str(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
 
 	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 
@@ -1076,7 +1076,7 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 
 	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
 
-	//ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
+	ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
 	m_mapInstance2Item[pInstance] = hInstance;
 }
 

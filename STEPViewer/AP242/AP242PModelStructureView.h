@@ -6,6 +6,9 @@
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
+class CAP242ProductInstance;
+
+// ************************************************************************************************
 class CAP242PModelStructureView 
 	: public CTreeViewBase
 	, public CItemStateProvider
@@ -28,7 +31,7 @@ private: // Members
 
 	// Cache
 	vector<CAP242ItemData*> m_vecItemData;
-	map<_instance*, HTREEITEM> m_mapInstance2Item;
+	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
 	HTREEITEM m_hSelectedItem;
 		
 	bool m_bInitInProgress; // don't send notifications while updating the view
