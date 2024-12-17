@@ -961,7 +961,12 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	int iGeometryImage = HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProduct);
 
-	auto pItemData = new CAP242ItemData(nullptr, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
+	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+	ASSERT(pParentItemData != nullptr);
+
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
+	pParentItemData->children().push_back(pItemData);
+
 	m_vecItemData.push_back(pItemData);
 
 	m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pItemData);
@@ -999,7 +1004,12 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, CAP242Assembly
 	int iGeometryImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hAssembly);
 
-	auto pItemData = new CAP242ItemData(nullptr, (int64_t*)pAssembly, enumSTEPItemDataType::Assembly);
+	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+	ASSERT(pParentItemData != nullptr);
+
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pAssembly, enumSTEPItemDataType::Assembly);
+	pParentItemData->children().push_back(pItemData);
+
 	m_vecItemData.push_back(pItemData);
 
 	m_pTreeCtrl->SetItemData(hAssembly, (DWORD_PTR)pItemData);
@@ -1024,7 +1034,12 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 	int iGeometryImage = pInstance->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hInstance);
 
-	auto pItemData = new CAP242ItemData(nullptr, (int64_t*)pInstance, enumSTEPItemDataType::ProductInstance);
+	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+	ASSERT(pParentItemData != nullptr);
+
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumSTEPItemDataType::ProductInstance);
+	pParentItemData->children().push_back(pItemData);
+
 	m_vecItemData.push_back(pItemData);
 
 	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
