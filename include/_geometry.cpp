@@ -380,7 +380,7 @@ void _geometry::calculateMinMaxTransform(
 	assert(pInstance != nullptr);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;

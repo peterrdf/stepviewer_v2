@@ -25,7 +25,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
-		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "ANALYSIS_MODEL_3D"),
+		int_t* cis2AnalysisModel3DInstances = sdaiGetEntityExtentBN(getSdaiModel(), "ANALYSIS_MODEL_3D"),
 			noCis2AnalysisModel3DInstances = sdaiGetMemberCount(cis2AnalysisModel3DInstances);
 		if (noCis2AnalysisModel3DInstances > 0)
 		{
@@ -50,7 +50,7 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 
 void CCIS2Model::LodDesignParts()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "DESIGN_PART");
+	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiModel(), "DESIGN_PART");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{
@@ -64,7 +64,7 @@ void CCIS2Model::LodDesignParts()
 
 void CCIS2Model::LoadRepresentations()
 {
-	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "REPRESENTATION");
+	int_t* piInstances = sdaiGetEntityExtentBN(getSdaiModel(), "REPRESENTATION");
 	int_t iInstancesCount = sdaiGetMemberCount(piInstances);
 	for (int_t i = 0; i < iInstancesCount; i++)
 	{

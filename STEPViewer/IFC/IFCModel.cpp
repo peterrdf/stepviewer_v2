@@ -45,21 +45,21 @@ CIFCModel::~CIFCModel()
 /*virtual*/ void CIFCModel::attachModelCore() /*override*/
 {
 	// Entities
-	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCOBJECT");
-	m_ifcProjectEntity = sdaiGetEntity(getSdaiInstance(), "IFCPROJECT");
-	m_ifcSpaceEntity = sdaiGetEntity(getSdaiInstance(), "IFCSPACE");
-	m_ifcOpeningElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCOPENINGELEMENT");
-	m_ifcDistributionElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCDISTRIBUTIONELEMENT");
-	m_ifcElectricalElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCELECTRICALELEMENT");
-	m_ifcElementAssemblyEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTASSEMBLY");
-	m_ifcElementComponentEntity = sdaiGetEntity(getSdaiInstance(), "IFCELEMENTCOMPONENT");
-	m_ifcEquipmentElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCEQUIPMENTELEMENT");
-	m_ifcFeatureElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENT");
-	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(getSdaiInstance(), "IFCFEATUREELEMENTSUBTRACTION");
-	m_ifcFurnishingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCFURNISHINGELEMENT");
-	m_ifcReinforcingElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCREINFORCINGELEMENT");
-	m_ifcTransportElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCTRANSPORTELEMENT");
-	m_ifcVirtualElementEntity = sdaiGetEntity(getSdaiInstance(), "IFCVIRTUALELEMENT");
+	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
+	m_ifcProjectEntity = sdaiGetEntity(getSdaiModel(), "IFCPROJECT");
+	m_ifcSpaceEntity = sdaiGetEntity(getSdaiModel(), "IFCSPACE");
+	m_ifcOpeningElementEntity = sdaiGetEntity(getSdaiModel(), "IFCOPENINGELEMENT");
+	m_ifcDistributionElementEntity = sdaiGetEntity(getSdaiModel(), "IFCDISTRIBUTIONELEMENT");
+	m_ifcElectricalElementEntity = sdaiGetEntity(getSdaiModel(), "IFCELECTRICALELEMENT");
+	m_ifcElementAssemblyEntity = sdaiGetEntity(getSdaiModel(), "IFCELEMENTASSEMBLY");
+	m_ifcElementComponentEntity = sdaiGetEntity(getSdaiModel(), "IFCELEMENTCOMPONENT");
+	m_ifcEquipmentElementEntity = sdaiGetEntity(getSdaiModel(), "IFCEQUIPMENTELEMENT");
+	m_ifcFeatureElementEntity = sdaiGetEntity(getSdaiModel(), "IFCFEATUREELEMENT");
+	m_ifcFeatureElementSubtractionEntity = sdaiGetEntity(getSdaiModel(), "IFCFEATUREELEMENTSUBTRACTION");
+	m_ifcFurnishingElementEntity = sdaiGetEntity(getSdaiModel(), "IFCFURNISHINGELEMENT");
+	m_ifcReinforcingElementEntity = sdaiGetEntity(getSdaiModel(), "IFCREINFORCINGELEMENT");
+	m_ifcTransportElementEntity = sdaiGetEntity(getSdaiModel(), "IFCTRANSPORTELEMENT");
+	m_ifcVirtualElementEntity = sdaiGetEntity(getSdaiModel(), "IFCVIRTUALELEMENT");
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
@@ -72,8 +72,8 @@ CIFCModel::~CIFCModel()
 		GetObjectsReferencedState();
 	}
 
-	m_pUnitProvider = new CIFCUnitProvider(getSdaiInstance());
-	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiInstance(), m_pUnitProvider);
+	m_pUnitProvider = new CIFCUnitProvider(getSdaiModel());
+	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiModel(), m_pUnitProvider);
 	m_pAttributeProvider = new CIFCAttributeProvider();
 
 	scale();
@@ -95,7 +95,7 @@ CIFCModel::~CIFCModel()
 
 void CIFCModel::GetObjectsReferencedState()
 {
-	SdaiAggr pAggr = sdaiGetEntityExtentBN(getSdaiInstance(), (char*)"IFCPROJECT");
+	SdaiAggr pAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)"IFCPROJECT");
 
 	SdaiInteger iMembersCount = sdaiGetMemberCount(pAggr);
 	if (iMembersCount > 0)
@@ -149,7 +149,7 @@ void CIFCModel::GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 		return;
 	}
 
-	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(getSdaiInstance(), "IFCRELAGGREGATES");
+	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(getSdaiModel(), "IFCRELAGGREGATES");
 
 	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
@@ -188,7 +188,7 @@ void CIFCModel::GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 		return;
 	}
 
-	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(getSdaiInstance(), "IFCRELNESTS");
+	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(getSdaiModel(), "IFCRELNESTS");
 
 	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
@@ -227,7 +227,7 @@ void CIFCModel::GetObjectsReferencedStateContainsElements(SdaiInstance iInstance
 		return;
 	}
 
-	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(getSdaiInstance(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(getSdaiModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
 
 	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
 	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
@@ -282,7 +282,7 @@ void CIFCModel::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 
 void CIFCModel::RetrieveGeometry(const char* szEntityName, int_t iCircleSegements)
 {
-	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiInstance(), (char*)szEntityName);
+	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiModel(), (char*)szEntityName);
 
 	int_t iIFCInstancesCount = sdaiGetMemberCount(iIFCInstances);
 	if (iIFCInstancesCount == 0)
@@ -319,7 +319,7 @@ void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSe
 		iCircleSegments = 6;
 	}
 
-	int_t* piInstances = sdaiGetEntityExtent(getSdaiInstance(), iParentEntity);
+	int_t* piInstances = sdaiGetEntityExtent(getSdaiModel(), iParentEntity);
 	int_t iIntancesCount = sdaiGetMemberCount(piInstances);
 
 	if (iIntancesCount != 0)
@@ -330,10 +330,10 @@ void CIFCModel::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSe
 		RetrieveGeometry(szParenEntityName, iCircleSegments);
 	} // if (iIntancesCount != 0)
 
-	iIntancesCount = engiGetEntityCount(getSdaiInstance());
+	iIntancesCount = engiGetEntityCount(getSdaiModel());
 	for (int_t i = 0; i < iIntancesCount; i++)
 	{
-		SdaiEntity iEntity = engiGetEntityElement(getSdaiInstance(), i);
+		SdaiEntity iEntity = engiGetEntityElement(getSdaiModel(), i);
 		if (engiGetEntityParent(iEntity) == iParentEntity)
 		{
 			RetrieveGeometryRecursively(iEntity, iCircleSegments);

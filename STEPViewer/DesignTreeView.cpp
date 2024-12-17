@@ -64,7 +64,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_pPropertyProvider = nullptr;
 
 	auto pModel = getModelAs<_ap_model>();
-	if ((pModel == nullptr) || (pModel->getSdaiInstance() == 0))
+	if ((pModel == nullptr) || (pModel->getSdaiModel() == 0))
 	{
 		return;
 	}
@@ -110,7 +110,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->getSdaiInstance(), pSelectedInstance->getSdaiInstance(), &iInstance);
+	owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &iInstance);
 
 	if (iInstance == 0)
 	{

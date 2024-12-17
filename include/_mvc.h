@@ -97,10 +97,10 @@ protected: // Methods
 
 public: // Properties
 
-	virtual OwlModel getOwlInstance() const PURE;
+	virtual OwlModel getOwlModel() const PURE;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	uint64_t getVertexLength() const { return SetFormat(getOwlInstance()) / sizeof(float); }	
+	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 
 	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
@@ -149,13 +149,13 @@ public: // Methods
 	virtual void onModelUpdated() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onShowMetaInformation() {}
-	virtual void onTargetInstanceChanged(_view* pSender) {}
-	virtual void onInstanceSelected(_view* pSender) {}
-	virtual void onInstancesEnabledStateChanged(_view* pSender) {}
-	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute) {}
-	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) {}
-	virtual void onViewRelations(_view* pSender, _entity* pEntity) {}
-	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) {}
+	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}
+	virtual void onInstanceSelected(_view* /*pSender*/) {}
+	virtual void onInstancesEnabledStateChanged(_view* /*pSender*/) {}
+	virtual void onInstanceAttributeEdited(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/, SdaiAttr /*sdaiAttribute*/) {}
+	virtual void onViewRelations(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/) {}
+	virtual void onViewRelations(_view* /*pSender*/, _entity* /*pEntity*/) {}
+	virtual void onApplicationPropertyChanged(_view* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/) {}
 	virtual void onControllerChanged() {}
 
 public: // Properties
@@ -196,7 +196,7 @@ private: // Members
 
 public: // Methods
 
-	_instance* loadInstance(OwlInstance owlInstance) { assert(false); return nullptr; }
+	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 
 	// Events
 	void registerView(_view* pView);
@@ -228,7 +228,7 @@ public: // Methods
 	void saveInstance(OwlInstance owlInstance);
 
 	// Events
-	void showMetaInformation(_instance* pInstance) { assert(false); }
+	void showMetaInformation(_instance* /*pInstance*/) { assert(false); }
 	void setTargetInstance(_view* pSender, _instance* pInstance);
 	_instance* getTargetInstance() const;
 	void selectInstance(_view* pSender, _instance* pInstance);

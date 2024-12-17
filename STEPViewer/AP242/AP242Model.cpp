@@ -57,7 +57,7 @@ void CAP242Model::Save(const wchar_t* /*szPath*/)
 
 void CAP242Model::LoadProductDefinitions()
 {
-	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "PRODUCT_DEFINITION");
+	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
 
 	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
 	for (int_t i = 0; i < noProductDefinitionInstances; i++) 
@@ -121,7 +121,7 @@ CAP242ProductDefinition* CAP242Model::GetProductDefinition(SdaiInstance iProduct
 
 void CAP242Model::LoadAssemblies()
 {
-	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiInstance(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
 	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
 	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++) 
@@ -159,7 +159,7 @@ void CAP242Model::LoadGeometry()
 	}
 }
 
-void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pAssembly, _matrix4x3* pParentMatrix)
+void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -169,7 +169,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		if (pAssembly->GetRelatingProductDefinition() == pProductDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(getSdaiInstance(), internalGetInstanceFromP21Line(getSdaiInstance(), pAssembly->GetExpressID()), &owlInstanceMatrix);
+			owlBuildInstance(getSdaiModel(), internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->GetExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) 
 			{
@@ -211,7 +211,6 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 	auto pInstance = new CAP242ProductInstance(
 		m_iID++,
 		pProductDefinition,
-		pAssembly, 
 		pParentMatrix);
 	addInstance(pInstance);
 }

@@ -51,7 +51,7 @@ public: // Methods
 	}
 
 	// _model
-	virtual OwlModel getOwlInstance() const override
+	virtual OwlModel getOwlModel() const override
 	{
 		assert(m_sdaiModel != 0);
 
@@ -180,13 +180,13 @@ protected: // Methods
 
 				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 				SetVertexBufferOffset(
-					getOwlInstance(),
+					getOwlModel(),
 					dVertexBuffersOffsetX,
 					dVertexBuffersOffsetY,
 					dVertexBuffersOffsetZ);
 
 				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-				ClearedExternalBuffers(getOwlInstance());
+				ClearedExternalBuffers(getOwlModel());
 
 				m_bUpdteVertexBuffers = false;
 			}
@@ -226,7 +226,7 @@ protected: // Methods
 public: // Properties
 
 	// Model
-	SdaiModel getSdaiInstance() const { return m_sdaiModel; }
+	SdaiModel getSdaiModel() const { return m_sdaiModel; }
 	enumAP getAP() const { return m_enAP; }
 
 	// Cache	

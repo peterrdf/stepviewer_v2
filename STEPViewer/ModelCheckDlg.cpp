@@ -549,7 +549,7 @@ void CModelCheckDlg::OnClickedViewAllIssues()
 SdaiModel CModelCheckDlg::GetActiveSdaiModel()
 {
 	if (auto pModel = GetActiveModel()) {
-		return dynamic_cast<_ap_model*>(pModel)->getSdaiInstance();
+		return dynamic_cast<_ap_model*>(pModel)->getSdaiModel();
 	}
 	return NULL;
 }

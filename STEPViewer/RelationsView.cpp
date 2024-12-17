@@ -214,7 +214,7 @@ static char THIS_FILE[]=__FILE__;
 				}
 				else
 				{
-					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->getSdaiInstance(), iExpressID);
+					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->getSdaiModel(), iExpressID);
 					if (iInstance != 0)
 					{
 						pController->onViewRelations(

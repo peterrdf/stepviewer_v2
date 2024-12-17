@@ -1947,7 +1947,7 @@ _oglView::_oglView()
 	m_pOGLProgram->_enableLighting(true);
 #endif
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -2078,7 +2078,7 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -2175,7 +2175,7 @@ void _oglView::_drawLines(_model* pModel)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -2273,7 +2273,7 @@ void _oglView::_drawPoints(_model* pModel)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
@@ -2414,7 +2414,7 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlInstance(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;

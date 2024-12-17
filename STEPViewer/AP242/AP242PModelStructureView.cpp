@@ -272,7 +272,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	} // if ((hItem != nullptr) && ...
 }
 
-/*virtual*/ void CAP242PModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) /*override*/
+/*virtual*/ void CAP242PModelStructureView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 }
@@ -695,9 +695,9 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 0, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiModel(), 0, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 0, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 0, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -718,7 +718,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* ImplementationLevel
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 1, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 1, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"ImplementationLevel";
 		strItem += L" = '";
@@ -739,7 +739,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* Name
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 2, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 2, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Name";
 		strItem += L" = '";
@@ -760,7 +760,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* TimeStamp
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 3, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 3, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"TimeStamp";
 		strItem += L" = '";
@@ -791,9 +791,9 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 4, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiModel(), 4, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 4, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 4, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -824,9 +824,9 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 5, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiModel(), 5, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 5, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 5, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
@@ -847,7 +847,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* PreprocessorVersion
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 6, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 6, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"PreprocessorVersion";
 		strItem += L" = '";
@@ -868,7 +868,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* OriginatingSystem
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 7, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 7, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"OriginatingSystem";
 		strItem += L" = '";
@@ -889,7 +889,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	* Authorization
 	*/
 	{
-		GetSPFFHeaderItem(pModel->getSdaiInstance(), 8, 0, sdaiUNICODE, (char**)&szText);
+		GetSPFFHeaderItem(pModel->getSdaiModel(), 8, 0, sdaiUNICODE, (char**)&szText);
 
 		wstring strItem = L"Authorization";
 		strItem += L" = '";
@@ -920,9 +920,9 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
-		if (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 9, iItem, sdaiUNICODE, (char**)&szText))
+		if (!GetSPFFHeaderItem(pModel->getSdaiModel(), 9, iItem, sdaiUNICODE, (char**)&szText))
 		{
-			while (!GetSPFFHeaderItem(pModel->getSdaiInstance(), 9, iItem++, sdaiUNICODE, (char**)&szText))
+			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 9, iItem++, sdaiUNICODE, (char**)&szText))
 			{
 				/*
 				* Item
