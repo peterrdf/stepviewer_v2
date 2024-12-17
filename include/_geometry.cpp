@@ -220,13 +220,11 @@ void _geometry::calculateMinMax(
 }
 
 void _geometry::calculateMinMaxTransform(
-	_instance* pInstance,
+	const _matrix4x4* pTransformationMatrix,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
-	assert(pInstance != nullptr);
-
 	if (!hasGeometry())
 	{
 		return;
@@ -250,9 +248,9 @@ void _geometry::calculateMinMaxTransform(
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				if (pInstance != nullptr)
+				if (pTransformationMatrix != nullptr)
 				{
-					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
 				}
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -286,9 +284,9 @@ void _geometry::calculateMinMaxTransform(
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				if (pInstance != nullptr)
+				if (pTransformationMatrix != nullptr)
 				{
-					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
 				}
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -322,9 +320,9 @@ void _geometry::calculateMinMaxTransform(
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				if (pInstance != nullptr)
+				if (pTransformationMatrix != nullptr)
 				{
-					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
 				}
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -353,9 +351,9 @@ void _geometry::calculateMinMaxTransform(
 					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
 				};
 
-				if (pInstance != nullptr)
+				if (pTransformationMatrix != nullptr)
 				{
-					_transform(&vecPoint, pInstance->getTransformationMatrix(), &vecPoint);
+					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
 				}
 
 				fXmin = (float)fmin(fXmin, vecPoint.x);
@@ -370,6 +368,26 @@ void _geometry::calculateMinMaxTransform(
 }
 
 void _geometry::calculateMinMaxTransform(
+	_instance* pInstance,
+	float& fXmin, float& fXmax,
+	float& fYmin, float& fYmax,
+	float& fZmin, float& fZmax)
+{
+	if (pInstance == nullptr)
+	{
+		assert(false);
+
+		return;
+	}
+
+	calculateMinMaxTransform(
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+}
+
+void _geometry::calculateMinMaxTransform(
 	_model* pModel,
 	_instance* pInstance,
 	float& fXmin, float& fXmax,
@@ -379,6 +397,10 @@ void _geometry::calculateMinMaxTransform(
 	assert(pModel != nullptr);
 	assert(pInstance != nullptr);
 
+	//
+	// Calculate translations
+	//
+
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
@@ -387,23 +409,53 @@ void _geometry::calculateMinMaxTransform(
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	double _41 = pInstance->getTransformationMatrix()->_41;
-	double _42 = pInstance->getTransformationMatrix()->_42;
-	double _43 = pInstance->getTransformationMatrix()->_43;
+	//
+	// Translate - go back to original position (before SetVertexBufferOffset())
+	// 
 
-	pInstance->getTransformationMatrix()->_41 += fXTranslation;
-	pInstance->getTransformationMatrix()->_42 += fYTranslation;
-	pInstance->getTransformationMatrix()->_43 += fZTranslation;
+	_matrix4x4 matTranslations;
+	_matrix4x4Identity(&matTranslations);
+	matTranslations._41 = -fXTranslation;
+	matTranslations._42 = -fYTranslation;
+	matTranslations._43 = -fZTranslation;
 
 	calculateMinMaxTransform(
-		pInstance,
+		&matTranslations,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+	//
+	// Transform
+	//
+
+	fXmin = FLT_MAX;
+	fXmax = -FLT_MAX;
+	fYmin = FLT_MAX;
+	fYmax = -FLT_MAX;
+	fZmin = FLT_MAX;
+	fZmax = -FLT_MAX;	
+	calculateMinMaxTransform(
+		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
 
-	pInstance->getTransformationMatrix()->_41 = _41;
-	pInstance->getTransformationMatrix()->_42 = _42;
-	pInstance->getTransformationMatrix()->_43 = _43;
+	_matrix4x4Identity(&matTranslations);
+	matTranslations._41 = fXTranslation;
+	matTranslations._42 = fYTranslation;
+	matTranslations._43 = fZTranslation;
+
+	fXmin = FLT_MAX;
+	fXmax = -FLT_MAX;
+	fYmin = FLT_MAX;
+	fYmax = -FLT_MAX;
+	fZmin = FLT_MAX;
+	fZmax = -FLT_MAX;
+	calculateMinMaxTransform(
+		&matTranslations,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
 }
 
 void _geometry::scale(float fScaleFactor)
