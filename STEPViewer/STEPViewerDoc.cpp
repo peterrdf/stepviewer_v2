@@ -20,7 +20,7 @@
 
 /*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
 {
-	ASSERT(m_pModel != nullptr);
+	ASSERT(getModel() != nullptr);
 
 	if (getSelectedInstance() == nullptr)
 	{
@@ -125,19 +125,13 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
 {
-	delete m_pModel;
+	
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
 
 	setModel(new CAP242Model());
 
@@ -234,12 +228,6 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
-
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
 
 	setModel(CModelFactory::Load(lpszPathName));
 

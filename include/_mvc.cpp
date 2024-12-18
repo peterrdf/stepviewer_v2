@@ -304,7 +304,7 @@ void _model::addInstance(_instance* pInstance)
 
 // ************************************************************************************************
 _controller::_controller()
-	: m_pModel(nullptr)
+	: m_vecModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
 	, m_bUpdatingModel(false)
@@ -315,6 +315,8 @@ _controller::_controller()
 
 /*virtual*/ _controller::~_controller()
 {
+	clean();
+
 	delete m_pSettingsStorage;
 }
 
@@ -341,7 +343,8 @@ const set<_view*>& _controller::getViews()
 
 void _controller::zoomToInstance()
 {
-	assert(m_pModel != nullptr);
+	ASSERT(0); //#todo
+	/*assert(m_pModel != nullptr);
 	assert(m_pSelectedInstance != nullptr);
 
 	getModel()->zoomTo(m_pSelectedInstance);
@@ -350,12 +353,13 @@ void _controller::zoomToInstance()
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onWorldDimensionsChanged();
-	}
+	}*/
 }
 
 void _controller::zoomOut()
 {
-	assert(m_pModel != nullptr);
+	ASSERT(0); //#todo
+	/*assert(m_pModel != nullptr);
 
 	getModel()->zoomOut();
 
@@ -363,7 +367,7 @@ void _controller::zoomOut()
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onWorldDimensionsChanged();
-	}
+	}*/
 }
 
 void _controller::saveInstance(OwlInstance owlInstance)
@@ -372,7 +376,7 @@ void _controller::saveInstance(OwlInstance owlInstance)
 
 	wstring strName;
 	wstring strUniqueName;
-	_owl_instance::buildInstanceNames(m_pModel->getOwlModel(), owlInstance, strName, strUniqueName);
+	_owl_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));
@@ -424,7 +428,6 @@ _instance* _controller::getTargetInstance() const
 {
 	return m_pTargetInstance;
 }
-
 
 void _controller::selectInstance(_view* pSender, _instance* pInstance)
 {
@@ -494,11 +497,32 @@ void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiIns
 	}
 }
 
+/*virtual*/ void _controller::clean()
+{
+	for (auto pModel : m_vecModels)
+	{
+		delete pModel;
+	}
+	m_vecModels.clear();
+}
+
+_model* _controller::getModel() const 
+{ 
+	if (!m_vecModels.empty())
+	{
+		return m_vecModels.back();
+	}
+
+	return nullptr; 
+}
+
 void _controller::setModel(_model* pModel)
 {
 	assert(pModel != nullptr);
 
-	m_pModel = pModel;
+	clean();
+
+	m_vecModels.push_back(pModel);
 
 	m_pSelectedInstance = nullptr;
 
@@ -508,6 +532,23 @@ void _controller::setModel(_model* pModel)
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onModelChanged();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+void _controller::addModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_vecModels.push_back(pModel);
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelAdded();
 	}
 
 	m_bUpdatingModel = false;

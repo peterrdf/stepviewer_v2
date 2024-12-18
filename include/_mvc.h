@@ -146,6 +146,7 @@ public: // Methods
 
 	// Events	
 	virtual void onModelChanged() {}
+	virtual void onModelAdded() {}
 	virtual void onModelUpdated() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onShowMetaInformation() {}
@@ -178,15 +179,13 @@ class _controller
 
 private: // Members
 
-protected: // Members
-
-	_model* m_pModel;
+	vector<_model*> m_vecModels;
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;	
 
 private: // Members	
 
-	bool m_bUpdatingModel; // Updating model - disable all notifications
+	bool m_bUpdatingModel; // Disable all notifications
 
 	// Target
 	_instance* m_pTargetInstance;
@@ -195,6 +194,9 @@ private: // Members
 	_instance* m_pSelectedInstance;
 
 public: // Methods
+
+	_controller();
+	virtual ~_controller();
 
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 
@@ -241,15 +243,16 @@ public: // Methods
 	void onViewRelations(_view* pSender, _entity* pEntity);
 	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute);
 
-public: // Methods
+protected: // Methods
 
-	_controller();
-	virtual ~_controller();
+	virtual void clean();
 
 public: // Properties
 
-	_model* getModel() const { return m_pModel; }
+	_model* getModel() const; // kept for backward compatibility
+	const vector<_model*>& getModels() const { return m_vecModels; }
 	void setModel(_model* pModel);
+	void addModel(_model* pModel);
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 
