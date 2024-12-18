@@ -19,8 +19,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	: CTreeViewBase()
 	, m_pTreeCtrl(pTreeView)
 	, m_pImageList(nullptr)
-	, m_vecItemData()
+	, m_mapInstanceIterators()
 	, m_mapInstance2Item()
+	, m_vecItemData()
 	, m_hSelectedItem(nullptr)
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
@@ -71,11 +72,15 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;
 
+	for (auto itInstanceIterator : m_mapInstanceIterators)
+	{
+		delete itInstanceIterator.second;
+	}
+
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++)
 	{
 		delete m_vecItemData[iItemData];
 	}
-	m_vecItemData.clear();
 
 	delete m_pSearchDialog;
 }
@@ -955,7 +960,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 
 void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDefinition* pProduct, HTREEITEM hParent)
 {
-	if((pModel == nullptr) || (pProduct == nullptr))
+	if ((pModel == nullptr) || (pProduct == nullptr))
 	{
 		ASSERT(FALSE);
 
@@ -993,10 +998,28 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 		}
 	}
 
+	//
 	// Instances
-	for (auto pInstance : pProduct->getInstances())
+	//
+
+	// Iterator
+	_instance_iterator* pInstanceIterator = nullptr;
+	auto itInstanceIterator = m_mapInstanceIterators.find(pProduct);
+	if (itInstanceIterator == m_mapInstanceIterators.end())
 	{
-		LoadInstance(pModel, _ptr<CAP242ProductInstance>(pInstance), hProduct);
+		pInstanceIterator = new _instance_iterator(pProduct->getInstances());
+		m_mapInstanceIterators[pProduct] = pInstanceIterator;
+	}
+	else
+	{
+		pInstanceIterator = itInstanceIterator->second;
+	}
+
+	// Load
+	_ptr<CAP242ProductInstance> apProductInstance(pInstanceIterator->getNextItem());
+	if (apProductInstance)
+	{
+		LoadInstance(pModel, apProductInstance, hProduct);
 	}
 }
 
@@ -1070,7 +1093,7 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct)
 {
-	if((pModel == nullptr) || (pProduct == nullptr))
+	if ((pModel == nullptr) || (pProduct == nullptr))
 	{
 		ASSERT(FALSE);
 

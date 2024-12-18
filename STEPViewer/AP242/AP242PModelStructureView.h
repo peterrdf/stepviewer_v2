@@ -1,12 +1,14 @@
 #pragma once
 
+#include "_ptr.h"
+
 #include "TreeViewBase.h"
 #include "AP242ItemData.h"
 #include "AP242Model.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
-class CAP242ProductInstance;
+typedef _vector_sequential_iterator<_instance> _instance_iterator;
 
 // ************************************************************************************************
 class CAP242PModelStructureView 
@@ -29,9 +31,10 @@ private: // Members
 	CTreeCtrlEx* m_pTreeCtrl;
 	CImageList* m_pImageList;
 
-	// Cache
-	vector<CAP242ItemData*> m_vecItemData;
+	// Cache	
+	map<CAP242ProductDefinition*, _instance_iterator*> m_mapInstanceIterators;
 	map<CAP242ProductInstance*, vector<HTREEITEM>> m_mapInstance2Item;
+	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
 		
 	bool m_bInitInProgress; // don't send notifications while updating the view
