@@ -56,6 +56,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 	m_pTreeCtrl->SetImageList(m_pImageList, TVSIL_NORMAL);
 
+	// State provider
+	m_pTreeCtrl->SetItemStateProvider(this);
+
 	//  Search
 	m_pSearchDialog = new CSearchTreeCtrlDialog(this);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeCtrl);
@@ -277,9 +280,19 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	*pResult = 0;
 }
 
-/*virtual*/ bool CAP242PModelStructureView::IsSelected(HTREEITEM /*hItem*/)
+/*virtual*/ bool CAP242PModelStructureView::IsSelected(HTREEITEM hItem)
 {
-	ASSERT(FALSE); // TODO
+	auto pController = getController();
+	if (pController == nullptr)
+	{
+		return false;
+	}
+
+	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
+	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+	{
+		return pItemData->GetInstance<_instance>() == pController->getSelectedInstance();
+	}
 
 	return false;
 }
