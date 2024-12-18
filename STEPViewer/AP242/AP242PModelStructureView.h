@@ -33,7 +33,7 @@ private: // Members
 
 	// Cache	
 	map<CAP242ProductDefinition*, _instance_iterator*> m_mapInstanceIterators;
-	map<CAP242ProductInstance*, vector<HTREEITEM>> m_mapInstance2Item;
+	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
 		

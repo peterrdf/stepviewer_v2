@@ -135,8 +135,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	*/
 	m_pTreeCtrl->SendMessage(WM_SETREDRAW, 0, 0);
 
-	ASSERT(!itInstance2Item->second.empty());
-	m_hSelectedItem = itInstance2Item->second[0];
+	ASSERT(itInstance2Item->second != NULL);
+	m_hSelectedItem = itInstance2Item->second;
 
 	m_pTreeCtrl->SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
 	m_pTreeCtrl->EnsureVisible(m_hSelectedItem);
@@ -544,14 +544,11 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 					return;
 				}
 
-				ASSERT(!itInstance2Item->second.empty());
-				for (auto hTreeitem : itInstance2Item->second)
-				{
-					m_pTreeCtrl->SetItemImage(hTreeitem, IMAGE_SELECTED, IMAGE_SELECTED);
+				ASSERT(itInstance2Item->second != NULL);
+				m_pTreeCtrl->SetItemImage(itInstance2Item->second, IMAGE_SELECTED, IMAGE_SELECTED);
 
-					UpdateChildren(hTreeitem);
-					UpdateParent(m_pTreeCtrl->GetParentItem(hTreeitem));
-				}
+				UpdateChildren(itInstance2Item->second);
+				UpdateParent(m_pTreeCtrl->GetParentItem(itInstance2Item->second));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -1086,15 +1083,8 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 
 	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
 
-	auto itInstance2Item = m_mapInstance2Item.find(pInstance);
-	if (itInstance2Item != m_mapInstance2Item.end())
-	{
-		itInstance2Item->second.push_back(hInstance);
-	}
-	else
-	{
-		m_mapInstance2Item[pInstance] = vector<HTREEITEM>{ hInstance };
-	}
+	ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
+	m_mapInstance2Item[pInstance] = hInstance;
 }
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct)
