@@ -82,6 +82,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		delete m_vecItemData[iItemData];
 	}
 
+	m_pTreeCtrl->SetItemStateProvider(nullptr);
+
 	delete m_pSearchDialog;
 }
 
@@ -1020,6 +1022,10 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	if (apProductInstance)
 	{
 		LoadInstance(pModel, apProductInstance, hProduct);
+	}
+	else
+	{
+		ASSERT(FALSE);
 	}
 }
 
