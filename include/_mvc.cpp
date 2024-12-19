@@ -548,7 +548,7 @@ void _controller::addModel(_model* pModel)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onModelAdded();
+		(*itView)->onModelChanged();
 	}
 
 	m_bUpdatingModel = false;

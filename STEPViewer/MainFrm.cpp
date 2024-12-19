@@ -208,6 +208,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
+	// File
+	lstBasicCommands.AddTail(ID_FILE_IMPORT);
+
 	// Projection
 	lstBasicCommands.AddTail(ID_PROJECTION_PERSPECTIVE);
 	lstBasicCommands.AddTail(ID_PROJECTION_ORTHOGRAPHIC);

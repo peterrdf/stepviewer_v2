@@ -105,6 +105,10 @@
 	}
 }
 
+// ************************************************************************************************
+TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
+
+// ************************************************************************************************
 // CMySTEPViewerDoc
 
 IMPLEMENT_DYNCREATE(CMySTEPViewerDoc, CDocument)
@@ -114,6 +118,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
+	ON_COMMAND(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnFileImport)
+	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMySTEPViewerDoc::OnUpdateFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -253,9 +259,7 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	TCHAR szFilters[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -291,4 +295,31 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
+}
+
+
+void CMySTEPViewerDoc::OnFileImport()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	addModel(CModelFactory::Load(dlgFile.GetPathName().GetString()));
+
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += dlgFile.GetPathName().GetString();
+
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
+}
+
+void CMySTEPViewerDoc::OnUpdateFileOpen(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(TRUE);
 }

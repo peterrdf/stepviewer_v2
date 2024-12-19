@@ -167,13 +167,14 @@
 #define ID_VIEW_ISOMETRIC               32825
 #define ID_VIEW_MODELCHECKER            32826
 #define ID_VIEW_MODEL_CHECKER           32827
+#define ID_FILE_IMPORT                  32830
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        351
-#define _APS_NEXT_COMMAND_VALUE         32830
+#define _APS_NEXT_COMMAND_VALUE         32831
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
