@@ -1890,19 +1890,19 @@ _oglView::_oglView()
 
 	// Scene
 	_drawFaces();
-	//_drawConceptualFacesPolygons(pModel);
-	//_drawLines(pModel);
-	//_drawPoints(pModel);
+	_drawConceptualFacesPolygons();
+	_drawLines();
+	_drawPoints();
 
 	// OpenGL
 	SwapBuffers(*pDC);
 
-	//_postDraw(pModel);
+	_postDraw(pModel);
 }
 
-/*virtual*/ void _oglView::_postDraw(_model* pModel)
+/*virtual*/ void _oglView::_postDraw(_model* /*pModel*/)
 {
-	_drawInstancesFrameBuffer(pModel);
+	_drawInstancesFrameBuffer();
 }
 
 void _oglView::_drawFaces()
@@ -1910,7 +1910,43 @@ void _oglView::_drawFaces()
 	for (auto pModel : getController()->getModels())
 	{
 		_drawFaces(pModel, false);
+	}
+
+	for (auto pModel : getController()->getModels())
+	{
 		_drawFaces(pModel, true);
+	}
+}
+
+void _oglView::_drawConceptualFacesPolygons()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawConceptualFacesPolygons(pModel);
+	}
+}
+
+void _oglView::_drawLines()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawLines(pModel);
+	}
+}
+
+void _oglView::_drawPoints()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawPoints(pModel);
+	}
+}
+
+void _oglView::_drawInstancesFrameBuffer()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawInstancesFrameBuffer(pModel);
 	}
 }
 

@@ -2471,7 +2471,12 @@ public: // Methods
 	virtual void _postDraw(_model* pModel);
 
 	void _drawFaces();
-	void _drawFaces(_model* pModel, bool bTransparent);
+	void _drawConceptualFacesPolygons();
+	void _drawLines();
+	void _drawPoints();
+	void _drawInstancesFrameBuffer();
+
+	void _drawFaces(_model* pModel, bool bTransparent);	
 	void _drawConceptualFacesPolygons(_model* pModel);
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
