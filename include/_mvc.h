@@ -97,6 +97,8 @@ public: // Methods
 
 protected: // Methods
 
+	void setVertexBufferOffset(OwlInstance owlInstance);
+
 	void addGeometry(_geometry* pGeometry);
 	void addInstance(_instance* pInstance);
 

@@ -268,6 +268,47 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return itInstance->second;
 }
 
+void _model::setVertexBufferOffset(OwlInstance owlInstance)
+{
+	if (owlInstance == 0)
+	{
+		return;
+	}
+
+	if (m_bUpdteVertexBuffers)
+	{
+		_vector3d vecOriginalBBMin;
+		_vector3d vecOriginalBBMax;
+		if (GetInstanceGeometryClass(owlInstance) &&
+			GetBoundingBox(
+				owlInstance,
+				(double*)&vecOriginalBBMin,
+				(double*)&vecOriginalBBMax))
+		{
+			double dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
+			double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
+			double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
+
+			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+				dVertexBuffersOffsetX,
+				dVertexBuffersOffsetY,
+				dVertexBuffersOffsetZ);
+
+			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+			SetVertexBufferOffset(
+				getOwlModel(),
+				dVertexBuffersOffsetX,
+				dVertexBuffersOffsetY,
+				dVertexBuffersOffsetZ);
+
+			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+			ClearedExternalBuffers(getOwlModel());
+
+			m_bUpdteVertexBuffers = false;
+		}
+	} // if (m_bUpdteVertexBuffers)
+}
+
 void _model::addGeometry(_geometry* pGeometry)
 {
 	assert(pGeometry != nullptr);
