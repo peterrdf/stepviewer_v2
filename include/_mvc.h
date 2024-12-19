@@ -41,8 +41,13 @@ enum class enumApplicationProperty : int
 };
 
 // ************************************************************************************************
+class _controller;
+
+// ************************************************************************************************
 class _model
 {
+
+	friend class _controller;
 
 protected: // Members
 
@@ -60,6 +65,8 @@ protected: // Members
 	float m_fZmin;
 	float m_fZmax;
 	float m_fBoundingSphereDiameter;
+
+	static int64_t s_iInstanceID;
 
 private: // Members
 
@@ -199,6 +206,8 @@ public: // Methods
 	virtual ~_controller();
 
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
+
+	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events
 	void registerView(_view* pView);

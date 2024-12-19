@@ -12,9 +12,6 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-/*static*/ int_t CIFCModel::s_iInstanceID = 1;
-
-// ************************************************************************************************
 CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::IFC)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)

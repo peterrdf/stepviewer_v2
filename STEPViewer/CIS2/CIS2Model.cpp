@@ -7,9 +7,6 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-/*static*/ int_t CCIS2Model::s_iInstanceID = 1;
-
-// ************************************************************************************************
 CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
