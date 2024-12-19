@@ -1480,36 +1480,48 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::onWorldDimensionsChanged() /*override*/
 {
-	auto pModel = _getModel();
-	if (pModel == nullptr)
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	for (auto pModel : getController()->getModels())
 	{
-		ASSERT(FALSE);
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-		return;
+		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
+		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
+		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
+		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
+		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
+		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
 	}
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	float fBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldZmax - fWorldZmin);
 
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
 	m_fXTranslation = -m_fXTranslation;
 
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
 	m_fYTranslation = -m_fYTranslation;
 
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (fBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = pModel->getBoundingSphereDiameter();
+	m_fScaleFactor = fBoundingSphereDiameter;
 
 	_redraw();
 }
@@ -1594,9 +1606,12 @@ _oglView::_oglView()
 	loadSettings();
 }
 
-/*virtual*/ void _oglView::_load(_model* pModel2)
+/*virtual*/ void _oglView::_load()
 {
-	assert(pModel2 != nullptr);
+	if (getController()->getModels().empty())
+	{
+		return;
+	}
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
@@ -1612,28 +1627,48 @@ _oglView::_oglView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel2->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	for (auto pModel : getController()->getModels())
+	{
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
+		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
+		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
+		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
+		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
+		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
+		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
+	}
+
+	float fBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
 	m_fXTranslation = -m_fXTranslation;
 
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
 	m_fYTranslation = -m_fYTranslation;
 
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel2->getBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (fBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = pModel2->getBoundingSphereDiameter();
+	m_fScaleFactor = fBoundingSphereDiameter;
 		
 	for (auto pModel : getController()->getModels())
 	{
@@ -1837,13 +1872,8 @@ _oglView::_oglView()
 	_redraw();
 }
 
-/*virtual*/ bool _oglView::_preDraw(_model* pModel)
+/*virtual*/ bool _oglView::_preDraw()
 {
-	if (pModel == nullptr)
-	{
-		return false;
-	}
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
@@ -1855,20 +1885,36 @@ _oglView::_oglView()
 		return false;
 	}
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	for (auto pModel : getController()->getModels())
+	{
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
+		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
+		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
+		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
+		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
+		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
+	}
 
 	_prepare(
 		0, 0,
 		iWidth, iHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
+		fWorldXmin, fWorldXmax,
+		fWorldYmin, fWorldYmax,
+		fWorldZmin, fWorldZmax,
 		true,
 		true);
 
@@ -1877,13 +1923,7 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
-	auto pModel = _getModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!_preDraw(pModel))
+	if (!_preDraw())
 	{
 		return;
 	}
@@ -1897,10 +1937,10 @@ _oglView::_oglView()
 	// OpenGL
 	SwapBuffers(*pDC);
 
-	_postDraw(pModel);
+	_postDraw();
 }
 
-/*virtual*/ void _oglView::_postDraw(_model* /*pModel*/)
+/*virtual*/ void _oglView::_postDraw()
 {
 	_drawInstancesFrameBuffer();
 }
@@ -2395,14 +2435,14 @@ void _oglView::_drawPoints(_model* pModel)
 	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void _oglView::_drawInstancesFrameBuffer(_model* pModel2)
+void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 {
-	if (pModel2 == nullptr)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel2->getGeometries().empty())
+	if (pModel->getGeometries().empty())
 	{
 		return;
 	}
@@ -2462,9 +2502,9 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel2)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel2->getOwlModel(), (double*)&vecVertexBufferOffset);
+	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-	float dScaleFactor = (float)pModel2->getOriginalBoundingSphereDiameter() / 2.f;
+	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
 	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;

@@ -2464,11 +2464,11 @@ public: // Methods
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	virtual void onControllerChanged() override;
 
-	virtual void _load(_model* pModel);
+	virtual void _load();
 
-	virtual bool _preDraw(_model* pModel);
+	virtual bool _preDraw();
 	virtual void _draw(CDC* pDC);
-	virtual void _postDraw(_model* pModel);
+	virtual void _postDraw();
 
 	void _drawFaces();
 	void _drawConceptualFacesPolygons();

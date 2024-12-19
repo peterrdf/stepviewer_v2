@@ -44,16 +44,18 @@ CController* CMySTEPViewerView::getController()
 		return;
 	}
 
-	if (pController->getModel() == nullptr)
+	if (pController->getModels().empty())
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	_ptr<_ap_model> model(pController->getModel());
+	_ptr<_ap_model> model(pController->getModels().back());
 	if (!model)
 	{
+		ASSERT(FALSE);
+
 		return;
 	}
 
@@ -74,7 +76,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -85,7 +87,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -96,7 +98,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CCIS2OpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
