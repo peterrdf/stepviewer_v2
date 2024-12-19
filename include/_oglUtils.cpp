@@ -1889,21 +1889,29 @@ _oglView::_oglView()
 	}
 
 	// Scene
-	_drawFaces(pModel, false);
-	_drawFaces(pModel, true);
-	_drawConceptualFacesPolygons(pModel);
-	_drawLines(pModel);
-	_drawPoints(pModel);
+	_drawFaces();
+	//_drawConceptualFacesPolygons(pModel);
+	//_drawLines(pModel);
+	//_drawPoints(pModel);
 
 	// OpenGL
 	SwapBuffers(*pDC);
 
-	_postDraw(pModel);
+	//_postDraw(pModel);
 }
 
 /*virtual*/ void _oglView::_postDraw(_model* pModel)
 {
 	_drawInstancesFrameBuffer(pModel);
+}
+
+void _oglView::_drawFaces()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawFaces(pModel, false);
+		_drawFaces(pModel, true);
+	}
 }
 
 /*virtual*/ void _oglView::_drawFaces(_model* pModel, bool bTransparent)

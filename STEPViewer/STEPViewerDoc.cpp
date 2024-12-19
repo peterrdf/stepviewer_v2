@@ -139,8 +139,6 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	setModel(new CAP242Model());
-
 	return TRUE;
 }
 
@@ -235,7 +233,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(CModelFactory::Load(lpszPathName));
+	setModel(CModelFactory::Load(this, lpszPathName));
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -306,7 +304,7 @@ void CMySTEPViewerDoc::OnFileImport()
 		return;
 	}
 
-	addModel(CModelFactory::Load(dlgFile.GetPathName().GetString()));
+	addModel(CModelFactory::Load(this, dlgFile.GetPathName().GetString()));
 
 	// Title
 	CString strTitle = AfxGetAppName();

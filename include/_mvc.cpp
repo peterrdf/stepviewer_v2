@@ -7,7 +7,8 @@
 /*static*/ int64_t _model::s_iInstanceID = 1;
 
 _model::_model()
-	: m_strPath(L"")	
+	: m_strPath(L"")
+	, m_pWorld(nullptr)
 	, m_mapID2Instance()
 	, m_bUpdteVertexBuffers(true)
 	, m_dOriginalBoundingSphereDiameter(2.)
@@ -34,58 +35,65 @@ void _model::scale()
 	m_dOriginalBoundingSphereDiameter = 2.;
 	m_fBoundingSphereDiameter = 2.f;
 
-	// Min/Max
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
-	for (auto pGeometry : m_vecGeometries)
+	if (m_pWorld == nullptr)
 	{
-		if (!pGeometry->hasGeometry())
+		// Min/Max
+		m_fXmin = FLT_MAX;
+		m_fXmax = -FLT_MAX;
+		m_fYmin = FLT_MAX;
+		m_fYmax = -FLT_MAX;
+		m_fZmin = FLT_MAX;
+		m_fZmax = -FLT_MAX;
+
+		for (auto pGeometry : m_vecGeometries)
 		{
-			continue;
+			if (!pGeometry->hasGeometry())
+			{
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances())
+			{
+				pGeometry->calculateMinMaxTransform(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+		} // for (auto pGeometry : ...
+
+		if ((m_fXmin == FLT_MAX) ||
+			(m_fXmax == -FLT_MAX) ||
+			(m_fYmin == FLT_MAX) ||
+			(m_fYmax == -FLT_MAX) ||
+			(m_fZmin == FLT_MAX) ||
+			(m_fZmax == -FLT_MAX))
+		{
+			// TODO: new status bar for messages
+
+			return;
 		}
 
-		for (auto pInstance : pGeometry->getInstances())
-		{
-			pGeometry->calculateMinMaxTransform(
-				pInstance,
-				m_fXmin, m_fXmax,
-				m_fYmin, m_fYmax,
-				m_fZmin, m_fZmax);
-		}
-	} // for (auto pGeometry : ...
+		// World
+		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
+		m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
+
+		TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+			m_fXmin,
+			m_fXmax,
+			m_fYmin,
+			m_fYmax,
+			m_fZmin,
+			m_fZmax);
+		TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+	} // if (m_pWorld == nullptr)
+	else
 	{
-		// TODO: new status bar for messages
-
-		return;
+		m_dOriginalBoundingSphereDiameter = m_pWorld->getOriginalBoundingSphereDiameter();
 	}
-
-	// World
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
-
-	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
-		m_fXmin,
-		m_fXmax,
-		m_fYmin,
-		m_fYmax,
-		m_fZmin,
-		m_fZmax);
-	TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	// Scale
 	for (auto pGeometry : m_vecGeometries)
@@ -95,7 +103,7 @@ void _model::scale()
 			continue;
 		}
 
-		pGeometry->scale(m_fBoundingSphereDiameter / 2.f);
+		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
 	}
 
 	// Min/Max
@@ -277,17 +285,46 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 
 	if (m_bUpdteVertexBuffers)
 	{
-		_vector3d vecOriginalBBMin;
-		_vector3d vecOriginalBBMax;
-		if (GetInstanceGeometryClass(owlInstance) &&
-			GetBoundingBox(
-				owlInstance,
-				(double*)&vecOriginalBBMin,
-				(double*)&vecOriginalBBMax))
+		if (m_pWorld == nullptr)
 		{
-			double dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
-			double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
-			double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
+			_vector3d vecOriginalBBMin;
+			_vector3d vecOriginalBBMax;
+			if (GetInstanceGeometryClass(owlInstance) &&
+				GetBoundingBox(
+					owlInstance,
+					(double*)&vecOriginalBBMin,
+					(double*)&vecOriginalBBMax))
+			{
+				double dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
+				double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
+				double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
+
+				TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+					dVertexBuffersOffsetX,
+					dVertexBuffersOffsetY,
+					dVertexBuffersOffsetZ);
+
+				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+				SetVertexBufferOffset(
+					getOwlModel(),
+					dVertexBuffersOffsetX,
+					dVertexBuffersOffsetY,
+					dVertexBuffersOffsetZ);
+
+				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+				ClearedExternalBuffers(getOwlModel());
+
+				m_bUpdteVertexBuffers = false;
+			}
+		} // if (m_pWorld == nullptr)
+		else
+		{
+			_vector3d vecVertexBufferOffset;
+			GetVertexBufferOffset(m_pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+			double dVertexBuffersOffsetX = vecVertexBufferOffset.x;
+			double dVertexBuffersOffsetY = vecVertexBufferOffset.y;
+			double dVertexBuffersOffsetZ = vecVertexBufferOffset.z;
 
 			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 				dVertexBuffersOffsetX,
@@ -305,7 +342,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 			ClearedExternalBuffers(getOwlModel());
 
 			m_bUpdteVertexBuffers = false;
-		}
+		} // else if (m_pWorld == nullptr)		
 	} // if (m_bUpdteVertexBuffers)
 }
 
@@ -354,6 +391,23 @@ _controller::_controller()
 	, m_pTargetInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
 {
+}
+
+_model* _controller::getModelByInstance(OwlModel owlModel) const
+{
+	assert(owlModel != 0);
+
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel)
+		{
+			return pModel->getOwlModel() == owlModel;
+		});
+
+	if (itModel != m_vecModels.end())
+	{
+		return *itModel;
+	}
+
+	return nullptr;
 }
 
 _instance* _controller::getInstanceByID(int64_t iID) const

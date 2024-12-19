@@ -46,12 +46,13 @@ class _controller;
 // ************************************************************************************************
 class _model
 {
-
 	friend class _controller;
 
 protected: // Members
 
 	wstring m_strPath;
+
+	const _model* m_pWorld;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	bool m_bUpdteVertexBuffers;
@@ -106,20 +107,19 @@ protected: // Methods
 
 public: // Properties
 
+	void setWorld(const _model* pWorld) { m_pWorld = pWorld; }
+
 	virtual OwlModel getOwlModel() const PURE;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
-
+	
 	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }
 };
-
-// ************************************************************************************************
-class _controller;
 
 // ************************************************************************************************
 class _view
@@ -209,6 +209,7 @@ public: // Methods
 
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 
+	_model* getModelByInstance(OwlModel owlModel) const;
 	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events

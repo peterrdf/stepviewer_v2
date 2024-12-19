@@ -2470,7 +2470,8 @@ public: // Methods
 	virtual void _draw(CDC* pDC);
 	virtual void _postDraw(_model* pModel);
 
-	virtual void _drawFaces(_model* pModel, bool bTransparent);
+	void _drawFaces();
+	void _drawFaces(_model* pModel, bool bTransparent);
 	void _drawConceptualFacesPolygons(_model* pModel);
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
