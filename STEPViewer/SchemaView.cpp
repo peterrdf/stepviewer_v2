@@ -16,7 +16,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ************************************************************************************************
-/*virtual*/ void CSchemaView::onModelChanged() /*override*/
+/*virtual*/ void CSchemaView::onModelLoaded() /*override*/
 {
 	ResetView();
 }

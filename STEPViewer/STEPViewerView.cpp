@@ -31,7 +31,7 @@ CController* CMySTEPViewerView::getController()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CMySTEPViewerView::onModelChanged()
+/*virtual*/ void CMySTEPViewerView::onModelLoaded()
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;

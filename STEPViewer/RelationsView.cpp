@@ -33,7 +33,7 @@ static char THIS_FILE[]=__FILE__;
 // CRelationsView
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::onModelChanged() /*override*/
+/*virtual*/ void CRelationsView::onModelLoaded() /*override*/
 {
 	LoadProperties(0, vector<int_t>());
 }

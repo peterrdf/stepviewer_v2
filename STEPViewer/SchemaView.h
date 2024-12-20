@@ -50,7 +50,7 @@ private: // Members
 protected:
 
 	// _view
-	virtual void onModelChanged() override;
+	virtual void onModelLoaded() override;
 	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CSearchTreeCtrlDialogSite

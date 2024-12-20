@@ -56,7 +56,7 @@ public:
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CDesignTreeView::onModelChanged() /*override*/
+/*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
 {
 	ResetView();
 

@@ -161,7 +161,7 @@ private: // Members
 public: // Methods
 	
 	// _view
-	virtual void onModelChanged() override;
+	virtual void onModelLoaded() override;
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
 	virtual void onViewRelations(_view* pSender, _entity* pEntity) override;

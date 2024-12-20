@@ -156,8 +156,7 @@ public: // Methods
 	}
 
 	// Events	
-	virtual void onModelChanged() {}
-	virtual void onModelAdded() {}
+	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onShowMetaInformation() {}

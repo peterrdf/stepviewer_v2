@@ -643,7 +643,7 @@ void _controller::setModel(_model* pModel)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onModelChanged();
+		(*itView)->onModelLoaded();
 	}
 
 	m_bUpdatingModel = false;
@@ -660,7 +660,7 @@ void _controller::addModel(_model* pModel)
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onModelChanged();
+		(*itView)->onModelLoaded();
 	}
 
 	m_bUpdatingModel = false;
