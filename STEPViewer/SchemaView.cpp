@@ -413,8 +413,6 @@ void CSchemaView::ResetView()
 	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

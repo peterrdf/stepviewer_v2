@@ -44,30 +44,22 @@ CController* CMySTEPViewerView::getController()
 		return;
 	}
 
-	if (pController->getModels().empty())
+	enumAP enAP = enumAP::STEP;
+	if (!pController->getModels().empty())
 	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_model> model(pController->getModels().back());
-	if (!model)
-	{
-		ASSERT(FALSE);
-
-		return;
+		_ptr<_ap_model> apModel(pController->getModels().back());
+		ASSERT(apModel);
+		
+		enAP = apModel->getAP();
 	}
 
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
 	fs::path pthExe = szAppPath;
 	auto pthRootFolder = pthExe.parent_path();
-
 	wstring strSettingsFile = pthRootFolder.wstring();
 
-	switch (model.p()->getAP())
+	switch (enAP)
 	{
 		case enumAP::STEP:
 		{
@@ -107,7 +99,7 @@ CController* CMySTEPViewerView::getController()
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // (model.p()->getAP())
+	} // switch (enAP)
 }
 
 

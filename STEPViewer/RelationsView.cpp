@@ -280,8 +280,6 @@ _model* CRelationsView::GetModel() const
 	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return nullptr;
 	}
 

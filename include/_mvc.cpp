@@ -631,11 +631,12 @@ _model* _controller::getModel() const
 
 void _controller::setModel(_model* pModel)
 {
-	assert(pModel != nullptr);
-
 	clean();
 
-	m_vecModels.push_back(pModel);
+	if (pModel != nullptr)
+	{
+		m_vecModels.push_back(pModel);
+	}
 
 	m_pSelectedInstance = nullptr;
 

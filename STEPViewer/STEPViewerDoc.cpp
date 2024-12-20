@@ -139,6 +139,8 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
+	setModel(nullptr);
+
 	return TRUE;
 }
 

@@ -33,6 +33,11 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
+	if (pController->getModel() == nullptr)
+	{
+		return;
+	}
+
 	_ptr<_ap_model> model(pController->getModel());
 	if (!model)
 	{
