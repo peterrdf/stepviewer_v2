@@ -41,6 +41,8 @@ CIFCModel::~CIFCModel()
 
 /*virtual*/ void CIFCModel::attachModelCore() /*override*/
 {
+	setBRepProperties(getSdaiModel(), 7, 0.9, 0., 20000);
+
 	// Entities
 	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
 	m_ifcProjectEntity = sdaiGetEntity(getSdaiModel(), "IFCPROJECT");
