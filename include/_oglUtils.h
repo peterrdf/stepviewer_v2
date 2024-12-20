@@ -2258,7 +2258,6 @@ public: // Methods
 protected: // Properties
 
 	virtual _controller* _getController() const PURE;
-	_model* _getModel() const;
 
 public: // Properties
 

@@ -476,17 +476,6 @@ void _oglRendererSettings::_setView(enumView enView)
 	}
 }
 
-_model* _oglRendererSettings::_oglRendererSettings::_getModel() const
-{
-	auto pController = _getController();
-	if (pController != nullptr)
-	{
-		return pController->getModel();
-	}
-
-	return nullptr;
-}
-
 enumProjection _oglRendererSettings::_getProjection() const
 {
 	return m_enProjection;
@@ -523,7 +512,7 @@ void _oglRendererSettings::setShowFaces(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowFaces(_model* pModel)
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowFaces;
 	}
@@ -543,7 +532,7 @@ void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
 
 LPCTSTR _oglRendererSettings::getCullFacesMode(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_strCullFaces;
 	}
@@ -563,7 +552,7 @@ void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowFacesPolygons;
 	}
@@ -583,7 +572,7 @@ void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowConceptualFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowConceptualFacesPolygons;
 	}
@@ -603,7 +592,7 @@ void _oglRendererSettings::setShowLines(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowLines(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowLines;
 	}
@@ -633,7 +622,7 @@ void _oglRendererSettings::setShowPoints(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowPoints(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowPoints;
 	}
@@ -663,7 +652,7 @@ void _oglRendererSettings::setShowBoundingBoxes(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowBoundingBoxes(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowBoundingBoxes;
 	}
@@ -683,7 +672,7 @@ void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowNormalVectors;
 	}
@@ -703,7 +692,7 @@ void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowTangentVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowTangenVectors;
 	}
@@ -723,7 +712,7 @@ void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowBiNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowBiNormalVectors;
 	}
@@ -743,7 +732,7 @@ void _oglRendererSettings::setScaleVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getScaleVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bScaleVectors;
 	}
