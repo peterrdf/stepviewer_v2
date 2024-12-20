@@ -496,31 +496,37 @@ const set<_view*>& _controller::getViews()
 
 void _controller::zoomToInstance()
 {
-	ASSERT(0); //#todo
-	/*assert(m_pModel != nullptr);
 	assert(m_pSelectedInstance != nullptr);
 
-	getModel()->zoomTo(m_pSelectedInstance);
+	auto pModel = getModelByInstance(m_pSelectedInstance->getOwlModel());
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	pModel->zoomTo(m_pSelectedInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onWorldDimensionsChanged();
-	}*/
+	}
 }
 
 void _controller::zoomOut()
 {
-	ASSERT(0); //#todo
-	/*assert(m_pModel != nullptr);
-
-	getModel()->zoomOut();
+	for (auto pModel : getModels())
+	{
+		getModel()->zoomOut();
+	}
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onWorldDimensionsChanged();
-	}*/
+	}
 }
 
 void _controller::saveInstance(OwlInstance owlInstance)
