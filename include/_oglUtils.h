@@ -2466,8 +2466,16 @@ public: // Methods
 
 	virtual void _load();
 
+protected: // Methods
+
 	virtual bool _preDraw();
+
+public: // Methods
+
 	virtual void _draw(CDC* pDC);
+
+protected: // Methods
+
 	virtual void _postDraw();
 
 	void _drawFaces();
@@ -2480,7 +2488,9 @@ public: // Methods
 	void _drawConceptualFacesPolygons(_model* pModel);
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
-	void _drawInstancesFrameBuffer(_model* pModel);
+	void _drawInstancesFrameBuffer(_model* pModel);	
+
+public: // Methods
 
 	void _onMouseMoveEvent(UINT nFlags, CPoint point);
 	void _onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
