@@ -333,14 +333,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pModel = getModelAs<CIFCModel>();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
 	// Select clicked item
 	CPoint ptTree = point;
 	m_pTreeCtrl->ScreenToClient(&ptTree);
@@ -368,6 +360,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			}
 		} // if (pInstance == nullptr)
 	} // if (hItem != nullptr)
+
+	auto pModel = pController->getModelByInstance(pTargetInstance->getOwlModel());
 
 	// ENTITY : VISIBLE COUNT
 	map<wstring, long> mapEntity2VisibleCount;
