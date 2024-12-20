@@ -629,8 +629,6 @@ void CAP242PModelStructureView::LoadModel()
 	auto pModel = getModelAs<CAP242Model>();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 

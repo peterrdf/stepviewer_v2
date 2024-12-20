@@ -33,21 +33,19 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	if (pController->getModel() == nullptr)
+	enumAP enAP = enumAP::STEP;
+	if (!pController->getModels().empty())
 	{
-		return;
-	}
+		_ptr<_ap_model> apModel(pController->getModels().back());
+		ASSERT(apModel);
 
-	_ptr<_ap_model> model(pController->getModel());
-	if (!model)
-	{
-		return;
+		enAP = apModel->getAP();
 	}
 
 	delete m_pSTEPTreeView;
 	m_pSTEPTreeView = nullptr;
 
-	switch (model.p()->getAP())
+	switch (enAP)
 	{
 		case enumAP::STEP:
 		{
@@ -78,7 +76,7 @@ static char THIS_FILE[]=__FILE__;
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // switch (model.p()->getAP())
+	} // switch (enAP)
 }
 
 /////////////////////////////////////////////////////////////////////////////

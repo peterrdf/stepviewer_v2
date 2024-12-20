@@ -1724,13 +1724,8 @@ void CIFCModelStructureView::ResetView()
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	auto pModel = getModelAs<CIFCModel>();
-	if (pModel == nullptr)
+	for (auto pModel : getController()->getModels())
 	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	LoadModel(pModel);
+		LoadModel(_ptr<CIFCModel>(pModel));
+	}	
 }
