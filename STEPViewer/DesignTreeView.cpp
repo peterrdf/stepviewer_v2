@@ -298,7 +298,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pModel = pController->getModel();
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
+	if (pSelectedInstance == nullptr)
+	{
+		return;
+	}
+
+	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
