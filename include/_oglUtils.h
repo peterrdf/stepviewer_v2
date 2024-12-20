@@ -2258,7 +2258,6 @@ public: // Methods
 protected: // Properties
 
 	virtual _controller* _getController() const PURE;
-	_model* _getModel() const;
 
 public: // Properties
 
@@ -2464,17 +2463,33 @@ public: // Methods
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	virtual void onControllerChanged() override;
 
-	virtual void _load(_model* pModel);
+	virtual void _load();
 
-	virtual bool _preDraw(_model* pModel);
+protected: // Methods
+
+	virtual bool _preDraw();
+
+public: // Methods
+
 	virtual void _draw(CDC* pDC);
-	virtual void _postDraw(_model* pModel);
 
-	virtual void _drawFaces(_model* pModel, bool bTransparent);
+protected: // Methods
+
+	virtual void _postDraw();
+
+	void _drawFaces();
+	void _drawConceptualFacesPolygons();
+	void _drawLines();
+	void _drawPoints();
+	void _drawInstancesFrameBuffer();
+
+	void _drawFaces(_model* pModel, bool bTransparent);	
 	void _drawConceptualFacesPolygons(_model* pModel);
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
-	void _drawInstancesFrameBuffer(_model* pModel);
+	void _drawInstancesFrameBuffer(_model* pModel);	
+
+public: // Methods
 
 	void _onMouseMoveEvent(UINT nFlags, CPoint point);
 	void _onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);

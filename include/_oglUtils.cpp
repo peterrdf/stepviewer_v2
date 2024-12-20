@@ -476,17 +476,6 @@ void _oglRendererSettings::_setView(enumView enView)
 	}
 }
 
-_model* _oglRendererSettings::_oglRendererSettings::_getModel() const
-{
-	auto pController = _getController();
-	if (pController != nullptr)
-	{
-		return pController->getModel();
-	}
-
-	return nullptr;
-}
-
 enumProjection _oglRendererSettings::_getProjection() const
 {
 	return m_enProjection;
@@ -523,7 +512,7 @@ void _oglRendererSettings::setShowFaces(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowFaces(_model* pModel)
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowFaces;
 	}
@@ -543,7 +532,7 @@ void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
 
 LPCTSTR _oglRendererSettings::getCullFacesMode(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_strCullFaces;
 	}
@@ -563,7 +552,7 @@ void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowFacesPolygons;
 	}
@@ -583,7 +572,7 @@ void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowConceptualFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowConceptualFacesPolygons;
 	}
@@ -603,7 +592,7 @@ void _oglRendererSettings::setShowLines(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowLines(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowLines;
 	}
@@ -633,7 +622,7 @@ void _oglRendererSettings::setShowPoints(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowPoints(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowPoints;
 	}
@@ -663,7 +652,7 @@ void _oglRendererSettings::setShowBoundingBoxes(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowBoundingBoxes(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowBoundingBoxes;
 	}
@@ -683,7 +672,7 @@ void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowNormalVectors;
 	}
@@ -703,7 +692,7 @@ void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowTangentVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowTangenVectors;
 	}
@@ -723,7 +712,7 @@ void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getShowBiNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bShowBiNormalVectors;
 	}
@@ -743,7 +732,7 @@ void _oglRendererSettings::setScaleVectors(BOOL bValue)
 
 BOOL _oglRendererSettings::getScaleVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == _getModel()))
+	if (pModel != nullptr)
 	{
 		return m_bScaleVectors;
 	}
@@ -1480,36 +1469,32 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::onWorldDimensionsChanged() /*override*/
 {
-	auto pModel = _getModel();
-	if (pModel == nullptr)
-	{
-		ASSERT(FALSE);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-		return;
-	}
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
 	m_fXTranslation = -m_fXTranslation;
 
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
 	m_fYTranslation = -m_fYTranslation;
 
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = pModel->getBoundingSphereDiameter();
+	m_fScaleFactor = fWorldBoundingSphereDiameter;
 
 	_redraw();
 }
@@ -1594,9 +1579,16 @@ _oglView::_oglView()
 	loadSettings();
 }
 
-/*virtual*/ void _oglView::_load(_model* pModel)
+/*virtual*/ void _oglView::_load()
 {
-	assert(pModel != nullptr);
+	if (getController()->getModels().empty())
+	{
+		return;
+	}
+
+	// Limits
+	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
+	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -1608,65 +1600,162 @@ _oglView::_oglView()
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
 	m_fXTranslation = -m_fXTranslation;
 
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
 	m_fYTranslation = -m_fYTranslation;
 
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->getBoundingSphereDiameter() * 2.f);
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = pModel->getBoundingSphereDiameter();
-
-	// Limits
-	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
-
-	// Data
-	auto& vecGeometries = pModel->getGeometries();
-
-	// VBO
-	GLuint iVerticesCount = 0;
-	vector<_geometry*> vecGeometriesCohort;
-
-	// IBO - Conceptual faces
-	GLuint iConcFacesIndicesCount = 0;
-	vector<_cohort*> vecConcFacesCohorts;
-
-	// IBO - Conceptual face polygons
-	GLuint iConcFacePolygonsIndicesCount = 0;
-	vector<_cohort*> vecConcFacePolygonsCohorts;
-
-	// IBO - Lines
-	GLuint iLinesIndicesCount = 0;
-	vector<_cohort*> vecLinesCohorts;
-
-	// IBO - Points
-	GLuint iPointsIndicesCount = 0;
-	vector<_cohort*> vecPointsCohorts;
-
-	for (auto pGeometry : vecGeometries)
+	m_fScaleFactor = fWorldBoundingSphereDiameter;
+		
+	for (auto pModel : getController()->getModels())
 	{
-		if (pGeometry->getVerticesCount() == 0)
-		{
-			continue;
-		}
+		// VBO
+		GLuint iVerticesCount = 0;
+		vector<_geometry*> vecGeometriesCohort;
 
-		// VBO - Conceptual faces, polygons, etc.
-		if (((int_t)iVerticesCount + pGeometry->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		// IBO - Conceptual faces
+		GLuint iConcFacesIndicesCount = 0;
+		vector<_cohort*> vecConcFacesCohorts;
+
+		// IBO - Conceptual face polygons
+		GLuint iConcFacePolygonsIndicesCount = 0;
+		vector<_cohort*> vecConcFacePolygonsCohorts;
+
+		// IBO - Lines
+		GLuint iLinesIndicesCount = 0;
+		vector<_cohort*> vecLinesCohorts;
+
+		// IBO - Points
+		GLuint iPointsIndicesCount = 0;
+		vector<_cohort*> vecPointsCohorts;
+
+		for (auto pGeometry : pModel->getGeometries())
+		{
+			if (pGeometry->getVerticesCount() == 0)
+			{
+				continue;
+			}
+
+			// VBO - Conceptual faces, polygons, etc.
+			if (((int_t)iVerticesCount + pGeometry->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+			{
+				if (m_oglBuffers.createCohort(vecGeometriesCohort, m_pOGLProgram) != iVerticesCount)
+				{
+					ASSERT(FALSE);
+
+					return;
+				}
+
+				iVerticesCount = 0;
+				vecGeometriesCohort.clear();
+			}
+
+			// IBO - Conceptual faces
+			for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++)
+			{
+				if ((int_t)(iConcFacesIndicesCount + pGeometry->concFacesCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+				{
+					if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+					{
+						ASSERT(FALSE);
+
+						return;
+					}
+
+					iConcFacesIndicesCount = 0;
+					vecConcFacesCohorts.clear();
+				}
+
+				iConcFacesIndicesCount += (GLsizei)pGeometry->concFacesCohorts()[iCohort]->indices().size();
+				vecConcFacesCohorts.push_back(pGeometry->concFacesCohorts()[iCohort]);
+			}
+
+			//  IBO - Conceptual face polygons
+			for (size_t iCohort = 0; iCohort < pGeometry->concFacePolygonsCohorts().size(); iCohort++)
+			{
+				if ((int_t)(iConcFacePolygonsIndicesCount + pGeometry->concFacePolygonsCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+				{
+					if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+					{
+						ASSERT(FALSE);
+
+						return;
+					}
+
+					iConcFacePolygonsIndicesCount = 0;
+					vecConcFacePolygonsCohorts.clear();
+				}
+
+				iConcFacePolygonsIndicesCount += (GLsizei)pGeometry->concFacePolygonsCohorts()[iCohort]->indices().size();
+				vecConcFacePolygonsCohorts.push_back(pGeometry->concFacePolygonsCohorts()[iCohort]);
+			}
+
+			// IBO - Lines
+			for (size_t iCohort = 0; iCohort < pGeometry->linesCohorts().size(); iCohort++)
+			{
+				if ((int_t)(iLinesIndicesCount + pGeometry->linesCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+				{
+					if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+					{
+						ASSERT(FALSE);
+
+						return;
+					}
+
+					iLinesIndicesCount = 0;
+					vecLinesCohorts.clear();
+				}
+
+				iLinesIndicesCount += (GLsizei)pGeometry->linesCohorts()[iCohort]->indices().size();
+				vecLinesCohorts.push_back(pGeometry->linesCohorts()[iCohort]);
+			}
+
+			//  IBO - Points
+			for (size_t iCohort = 0; iCohort < pGeometry->pointsCohorts().size(); iCohort++)
+			{
+				if ((int_t)(iPointsIndicesCount + pGeometry->pointsCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+				{
+					if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+					{
+						ASSERT(FALSE);
+
+						return;
+					}
+
+					iPointsIndicesCount = 0;
+					vecPointsCohorts.clear();
+				}
+
+				iPointsIndicesCount += (GLsizei)pGeometry->pointsCohorts()[iCohort]->indices().size();
+				vecPointsCohorts.push_back(pGeometry->pointsCohorts()[iCohort]);
+			}
+
+			iVerticesCount += (GLsizei)pGeometry->getVerticesCount();
+			vecGeometriesCohort.push_back(pGeometry);
+		} // for (auto pGeometry : ...
+
+		//  VBO - Conceptual faces, polygons, etc.
+		if (iVerticesCount > 0)
 		{
 			if (m_oglBuffers.createCohort(vecGeometriesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -1677,172 +1766,71 @@ _oglView::_oglView()
 
 			iVerticesCount = 0;
 			vecGeometriesCohort.clear();
-		}
+		} // if (iVerticesCount > 0)	
 
-		// IBO - Conceptual faces
-		for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++)
+		//  IBO - Conceptual faces
+		if (iConcFacesIndicesCount > 0)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pGeometry->concFacesCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 			{
-				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-				{
-					ASSERT(FALSE);
+				ASSERT(FALSE);
 
-					return;
-				}
-
-				iConcFacesIndicesCount = 0;
-				vecConcFacesCohorts.clear();
+				return;
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pGeometry->concFacesCohorts()[iCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pGeometry->concFacesCohorts()[iCohort]);
+			iConcFacesIndicesCount = 0;
+			vecConcFacesCohorts.clear();
 		}
 
 		//  IBO - Conceptual face polygons
-		for (size_t iCohort = 0; iCohort < pGeometry->concFacePolygonsCohorts().size(); iCohort++)
+		if (iConcFacePolygonsIndicesCount > 0)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pGeometry->concFacePolygonsCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 			{
-				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-				{
-					ASSERT(FALSE);
+				ASSERT(FALSE);
 
-					return;
-				}
-
-				iConcFacePolygonsIndicesCount = 0;
-				vecConcFacePolygonsCohorts.clear();
+				return;
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pGeometry->concFacePolygonsCohorts()[iCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pGeometry->concFacePolygonsCohorts()[iCohort]);
+			iConcFacePolygonsIndicesCount = 0;
+			vecConcFacePolygonsCohorts.clear();
 		}
 
-		// IBO - Lines
-		for (size_t iCohort = 0; iCohort < pGeometry->linesCohorts().size(); iCohort++)
+		//  IBO - Lines
+		if (iLinesIndicesCount > 0)
 		{
-			if ((int_t)(iLinesIndicesCount + pGeometry->linesCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 			{
-				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-				{
-					ASSERT(FALSE);
+				ASSERT(FALSE);
 
-					return;
-				}
-
-				iLinesIndicesCount = 0;
-				vecLinesCohorts.clear();
+				return;
 			}
 
-			iLinesIndicesCount += (GLsizei)pGeometry->linesCohorts()[iCohort]->indices().size();
-			vecLinesCohorts.push_back(pGeometry->linesCohorts()[iCohort]);
+			iLinesIndicesCount = 0;
+			vecLinesCohorts.clear();
 		}
 
 		//  IBO - Points
-		for (size_t iCohort = 0; iCohort < pGeometry->pointsCohorts().size(); iCohort++)
+		if (iPointsIndicesCount > 0)
 		{
-			if ((int_t)(iPointsIndicesCount + pGeometry->pointsCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 			{
-				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-				{
-					ASSERT(FALSE);
+				ASSERT(FALSE);
 
-					return;
-				}
-
-				iPointsIndicesCount = 0;
-				vecPointsCohorts.clear();
+				return;
 			}
 
-			iPointsIndicesCount += (GLsizei)pGeometry->pointsCohorts()[iCohort]->indices().size();
-			vecPointsCohorts.push_back(pGeometry->pointsCohorts()[iCohort]);
+			iPointsIndicesCount = 0;
+			vecPointsCohorts.clear();
 		}
 
-		iVerticesCount += (GLsizei)pGeometry->getVerticesCount();
-		vecGeometriesCohort.push_back(pGeometry);
-	} // for (auto pGeometry : vecGeometries)
-
-	//  VBO - Conceptual faces, polygons, etc.
-	if (iVerticesCount > 0)
-	{
-		if (m_oglBuffers.createCohort(vecGeometriesCohort, m_pOGLProgram) != iVerticesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iVerticesCount = 0;
-		vecGeometriesCohort.clear();
-	} // if (iVerticesCount > 0)	
-
-	//  IBO - Conceptual faces
-	if (iConcFacesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iConcFacesIndicesCount = 0;
-		vecConcFacesCohorts.clear();
-	}
-
-	//  IBO - Conceptual face polygons
-	if (iConcFacePolygonsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iConcFacePolygonsIndicesCount = 0;
-		vecConcFacePolygonsCohorts.clear();
-	}
-
-	//  IBO - Lines
-	if (iLinesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iLinesIndicesCount = 0;
-		vecLinesCohorts.clear();
-	}
-
-	//  IBO - Points
-	if (iPointsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		iPointsIndicesCount = 0;
-		vecPointsCohorts.clear();
-	}
-
+	} // for (auto pModel : ...	
+	
 	_redraw();
 }
 
-/*virtual*/ bool _oglView::_preDraw(_model* pModel)
+/*virtual*/ bool _oglView::_preDraw()
 {
-	if (pModel == nullptr)
-	{
-		return false;
-	}
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
@@ -1854,20 +1842,20 @@ _oglView::_oglView()
 		return false;
 	}
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
 	_prepare(
 		0, 0,
 		iWidth, iHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
+		fWorldXmin, fWorldXmax,
+		fWorldYmin, fWorldYmax,
+		fWorldZmin, fWorldZmax,
 		true,
 		true);
 
@@ -1876,33 +1864,71 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
-	auto pModel = _getModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!_preDraw(pModel))
+	if (!_preDraw())
 	{
 		return;
 	}
 
 	// Scene
-	_drawFaces(pModel, false);
-	_drawFaces(pModel, true);
-	_drawConceptualFacesPolygons(pModel);
-	_drawLines(pModel);
-	_drawPoints(pModel);
+	_drawFaces();
+	_drawConceptualFacesPolygons();
+	_drawLines();
+	_drawPoints();
 
 	// OpenGL
 	SwapBuffers(*pDC);
 
-	_postDraw(pModel);
+	_postDraw();
 }
 
-/*virtual*/ void _oglView::_postDraw(_model* pModel)
+/*virtual*/ void _oglView::_postDraw()
 {
-	_drawInstancesFrameBuffer(pModel);
+	_drawInstancesFrameBuffer();
+}
+
+void _oglView::_drawFaces()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawFaces(pModel, false);
+	}
+
+	for (auto pModel : getController()->getModels())
+	{
+		_drawFaces(pModel, true);
+	}
+}
+
+void _oglView::_drawConceptualFacesPolygons()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawConceptualFacesPolygons(pModel);
+	}
+}
+
+void _oglView::_drawLines()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawLines(pModel);
+	}
+}
+
+void _oglView::_drawPoints()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawPoints(pModel);
+	}
+}
+
+void _oglView::_drawInstancesFrameBuffer()
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_drawInstancesFrameBuffer(pModel);
+	}
 }
 
 /*virtual*/ void _oglView::_drawFaces(_model* pModel, bool bTransparent)
@@ -2374,21 +2400,24 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	// Selection colors
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		for (auto pGeometry : pModel->getGeometries())
+		for (auto pModel : getController()->getModels())
 		{
-			if (pGeometry->getTriangles().empty())
+			for (auto pGeometry : pModel->getGeometries())
 			{
-				continue;
-			}
+				if (pGeometry->getTriangles().empty())
+				{
+					continue;
+				}
 
-			for (auto pInstance : pGeometry->getInstances())
-			{
-				float fR, fG, fB;
-				_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
+				for (auto pInstance : pGeometry->getInstances())
+				{
+					float fR, fG, fB;
+					_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-				m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+					m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+				}
 			}
-		}
+		} // for (auto pModel : ...
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
 	//
@@ -2492,12 +2521,6 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 
 void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	_model* pModel = _getModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
 	// Selection
 	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
 		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
@@ -2538,7 +2561,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 		if (arPixels[3] != 0)
 		{
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-			pPointedInstance = pModel->getInstanceByID(iInstanceID);
+			pPointedInstance = getController()->getInstanceByID(iInstanceID);
 			ASSERT(pPointedInstance != nullptr);
 		}
 

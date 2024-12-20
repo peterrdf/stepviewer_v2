@@ -33,7 +33,7 @@ static char THIS_FILE[]=__FILE__;
 // CRelationsView
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRelationsView::onModelChanged() /*override*/
+/*virtual*/ void CRelationsView::onModelLoaded() /*override*/
 {
 	LoadProperties(0, vector<int_t>());
 }
@@ -186,13 +186,13 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		_ptr<_ap_model> model(pController->getModel());
-		if (!model)
+		auto pIFCModel = dynamic_cast<CIFCModel*>(GetModel());
+		if (pIFCModel == nullptr)
 		{
 			return FALSE;
 		}
 
-		switch (model.p()->getAP())
+		switch (pIFCModel->getAP())
 		{
 			case enumAP::STEP:
 			{
@@ -202,29 +202,18 @@ static char THIS_FILE[]=__FILE__;
 
 			case enumAP::IFC:
 			{
-				auto pIFCmodel = pController->getModel()->as<CIFCModel>();
 				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
-				auto pInstance = nullptr;// pIFCmodel->getInstanceByExpressID(iExpressID);#todo
-				if (pInstance != nullptr)
+				SdaiInstance sdaiInstance = internalGetInstanceFromP21Line(pIFCModel->getSdaiModel(), iExpressID);
+				if (sdaiInstance != 0)
 				{
-					pController->selectInstance(
-						nullptr, /*Attributes View will be updated also*/
-						pInstance);
+					pController->onViewRelations(
+						nullptr,  /*Attributes View will be updated also*/
+						sdaiInstance);
 				}
 				else
 				{
-					int_t iInstance = internalGetInstanceFromP21Line(pIFCmodel->getSdaiModel(), iExpressID);
-					if (iInstance != 0)
-					{
-						pController->onViewRelations(
-							nullptr,  /*Attributes View will be updated also*/
-							iInstance);
-					}
-					else
-					{
-						::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
-					}
+					::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
 				}
 			}
 			break;
@@ -234,7 +223,7 @@ static char THIS_FILE[]=__FILE__;
 				ASSERT(FALSE); // Unknown
 			}
 			break;
-		} // switch (model.p()->getAP())
+		} // switch (pIFCModel->getAP())
 
 		return TRUE;
 	} // if (iFilter == (int)enumSearchFilter::ExpressID)
@@ -277,15 +266,31 @@ _model* CRelationsView::GetModel() const
 		return nullptr;
 	}
 
-	auto pModel = pController->getModel();
-	if (pModel == nullptr)
+	if (pController->getModels().empty())
 	{
-		ASSERT(FALSE);
-
 		return nullptr;
 	}
 
-	return pModel;
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
+	if (pSelectedInstance != nullptr)
+	{
+		auto pModel = pController->getModelByInstance(pSelectedInstance->getOwlModel());
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return nullptr;
+		}
+
+		return pModel;
+	}
+
+	if (pController->getModels().size() == 1)
+	{
+		return pController->getModels()[0];
+	}
+
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -14,7 +14,6 @@ using namespace std;
 // ************************************************************************************************
 CAP242Model::CAP242Model()
 	: _ap_model(enumAP::STEP)
-	, m_iID(1)
 	, m_mapExpressIDAssembly()
 {
 }
@@ -38,8 +37,6 @@ CAP242Model::~CAP242Model()
 /*virtual*/ void CAP242Model::clean() /*override*/
 {
 	_ap_model::clean();
-
-	m_iID = 1;
 
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -209,7 +206,7 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 	} // for (; itAssembly != ...
 
 	auto pInstance = new CAP242ProductInstance(
-		m_iID++,
+		_model::getNextInstanceID(),
 		pProductDefinition,
 		pParentMatrix);
 	addInstance(pInstance);

@@ -67,7 +67,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// _view
-	virtual void onModelChanged();
+	virtual void onModelLoaded();
 	virtual void onShowMetaInformation();
 	virtual void onInstanceSelected(_view* pSender);
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;

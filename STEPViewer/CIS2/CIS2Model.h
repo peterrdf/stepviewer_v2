@@ -18,8 +18,6 @@ private: // Members
 	// Load
 	bool m_bLoadInstancesOnDemand;
 
-	static int_t s_iInstanceID;
-
 public: // Methods
 
 	CCIS2Model(bool bLoadInstancesOnDemand = false);

@@ -47,8 +47,6 @@ private: // Members
 	CIFCPropertyProvider* m_pPropertyProvider;
 	CIFCAttributeProvider* m_pAttributeProvider;
 
-	static int_t s_iInstanceID;
-
 public: // Methods
 	
 	CIFCModel(bool bLoadInstancesOnDemand = false);

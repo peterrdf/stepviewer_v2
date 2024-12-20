@@ -15,19 +15,22 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CSchemaView::onModelChanged() /*override*/
+// ************************************************************************************************
+/*virtual*/ void CSchemaView::onModelLoaded() /*override*/
 {
 	ResetView();
 }
 
-// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CSchemaView::onInstanceSelected(_view* pSender) /*override*/
+{
+	ResetView();
+}
+
 /*virtual*/ CTreeCtrlEx* CSchemaView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ vector<CString> CSchemaView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
@@ -38,12 +41,10 @@ static char THIS_FILE[]=__FILE__;
 		};
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CSchemaView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CSchemaView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
@@ -99,7 +100,7 @@ static char THIS_FILE[]=__FILE__;
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 void CSchemaView::LoadModel(_ap_model* pModel)
 {
 	if (pModel == nullptr)
@@ -152,7 +153,6 @@ void CSchemaView::LoadModel(_ap_model* pModel)
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
 {
 	if (pEntity->getAttributes().size() == 0)
@@ -193,7 +193,6 @@ void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
 	} // for (size_t iAttribute = ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 {
 	/*
@@ -237,7 +236,6 @@ void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 	} // if (pEntity->getSubTypes().size() > 0)
 }
 
-// ------------------------------------------------------------------------------------------------
 pair<int, int> CSchemaView::GetInstancesCount(_entity* pEntity) const
 {
 	int iInstancesCount = (int)pEntity->getInstances().size();
@@ -410,15 +408,35 @@ void CSchemaView::ResetView()
 		return;
 	}
 
-	auto pModel = pController->getModel();
-	if (pModel == nullptr)
+	if (pController->getModels().empty())
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
-	LoadModel(_ptr<_ap_model>(pModel));
+	_ap_model* pModel = nullptr;
+
+	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
+	if (pSelectedInstance != nullptr)
+	{
+		pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+	}
+	else if (pController->getModels().size() == 1)
+	{
+		pModel = dynamic_cast<_ap_model*>(pController->getModels()[0]);
+	}
+
+	if (pModel == nullptr)
+	{
+		return;
+	}
+
+	LoadModel(pModel);
 }
 
 void CSchemaView::AdjustLayout()

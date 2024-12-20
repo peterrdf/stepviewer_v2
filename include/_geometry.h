@@ -427,14 +427,16 @@ public: // Methods
 	}
 
 public: // Properties
-
-	OwlInstance getOwlInstance() const { return getGeometry()->getOwlInstance(); }
+	
 	int64_t getID() const { return m_iID; }
 	_geometry* getGeometry() const { return m_pGeometry; }
 	template<typename T>
-	T* getGeometryAs() const { return dynamic_cast<T*>(m_pGeometry); }
-	bool hasGeometry() const { return m_pGeometry->hasGeometry(); }
+	T* getGeometryAs() const { return dynamic_cast<T*>(getGeometry()); }	
 	bool getEnable() const { return m_bEnable; }
 	void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	_matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
+
+	OwlModel getOwlModel() { return getGeometry()->getOwlModel(); }
+	OwlInstance getOwlInstance() const { return getGeometry()->getOwlInstance(); }
+	bool hasGeometry() const { return getGeometry()->hasGeometry(); }
 };

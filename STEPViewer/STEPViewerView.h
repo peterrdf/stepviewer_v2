@@ -26,7 +26,7 @@ private: // Methods
 public: // Methods
 
 	// _view
-	virtual void onModelChanged();
+	virtual void onModelLoaded();
 
 protected: // create from serialization only
 	CMySTEPViewerView();

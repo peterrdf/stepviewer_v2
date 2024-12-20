@@ -31,7 +31,7 @@ CController* CMySTEPViewerView::getController()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CMySTEPViewerView::onModelChanged()
+/*virtual*/ void CMySTEPViewerView::onModelLoaded()
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
@@ -44,28 +44,22 @@ CController* CMySTEPViewerView::getController()
 		return;
 	}
 
-	if (pController->getModel() == nullptr)
+	enumAP enAP = enumAP::STEP;
+	if (!pController->getModels().empty())
 	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_model> model(pController->getModel());
-	if (!model)
-	{
-		return;
+		_ptr<_ap_model> apModel(pController->getModels().back());
+		ASSERT(apModel);
+		
+		enAP = apModel->getAP();
 	}
 
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
 	fs::path pthExe = szAppPath;
 	auto pthRootFolder = pthExe.parent_path();
-
 	wstring strSettingsFile = pthRootFolder.wstring();
 
-	switch (model.p()->getAP())
+	switch (enAP)
 	{
 		case enumAP::STEP:
 		{
@@ -74,7 +68,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -85,7 +79,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -96,7 +90,7 @@ CController* CMySTEPViewerView::getController()
 
 			m_pOpenGLView = new CCIS2OpenGLView(this);
 			m_pOpenGLView->setController(pController);
-			m_pOpenGLView->_load(model);
+			m_pOpenGLView->_load();
 		}
 		break;
 
@@ -105,7 +99,7 @@ CController* CMySTEPViewerView::getController()
 			ASSERT(FALSE); // Unknown
 		}
 		break;
-	} // (model.p()->getAP())
+	} // switch (enAP)
 }
 
 
@@ -545,7 +539,7 @@ void CMySTEPViewerView::OnInstancesZoomTo()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	pDocument->zoomToInstance();
+	pDocument->zoomToSelectedInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)

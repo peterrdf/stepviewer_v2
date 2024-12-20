@@ -7,9 +7,6 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-/*static*/ int_t CCIS2Model::s_iInstanceID = 1;
-
-// ************************************************************************************************
 CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
@@ -119,7 +116,7 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 
 	addGeometry(pGeometry);
 
-	auto pInstance = new CCIS2Instance(s_iInstanceID++, pGeometry, nullptr);
+	auto pInstance = new CCIS2Instance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
 	// Restore circleSegments()

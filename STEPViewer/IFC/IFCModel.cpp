@@ -12,9 +12,6 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-/*static*/ int_t CIFCModel::s_iInstanceID = 1;
-
-// ************************************************************************************************
 CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::IFC)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
@@ -44,6 +41,8 @@ CIFCModel::~CIFCModel()
 
 /*virtual*/ void CIFCModel::attachModelCore() /*override*/
 {
+	setBRepProperties(getSdaiModel(), 7, 0.9, 0., 20000);
+
 	// Entities
 	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
 	m_ifcProjectEntity = sdaiGetEntity(getSdaiModel(), "IFCPROJECT");
@@ -364,7 +363,7 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 	pGeometry = new CIFCGeometry(owlInstance, sdaiInstance);
 	addGeometry(pGeometry);
 
-	auto pInstance = new CIFCInstance(s_iInstanceID++, pGeometry, nullptr);
+	auto pInstance = new CIFCInstance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
 	CString strEntity = (LPWSTR)CA2W(szEntityName);

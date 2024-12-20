@@ -20,7 +20,7 @@
 
 /*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
 {
-	ASSERT(m_pModel != nullptr);
+	ASSERT(getModel() != nullptr);
 
 	if (getSelectedInstance() == nullptr)
 	{
@@ -105,6 +105,10 @@
 	}
 }
 
+// ************************************************************************************************
+TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
+
+// ************************************************************************************************
 // CMySTEPViewerDoc
 
 IMPLEMENT_DYNCREATE(CMySTEPViewerDoc, CDocument)
@@ -114,6 +118,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
+	ON_COMMAND(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnFileImport)
+	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnUpdateFileImport)
 END_MESSAGE_MAP()
 
 
@@ -125,7 +131,7 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
 {
-	delete m_pModel;
+	
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
@@ -133,13 +139,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
-
-	setModel(new CAP242Model());
+	setModel(nullptr);
 
 	return TRUE;
 }
@@ -235,13 +235,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
-
-	setModel(CModelFactory::Load(lpszPathName));
+	setModel(CModelFactory::Load(this, lpszPathName));
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -265,9 +259,7 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	TCHAR szFilters[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -303,4 +295,37 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
+}
+
+
+void CMySTEPViewerDoc::OnFileImport()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	addModel(CModelFactory::Load(this, dlgFile.GetPathName().GetString()));
+
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += dlgFile.GetPathName().GetString();
+
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
+}
+
+void CMySTEPViewerDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
+{
+	BOOL bEnable = FALSE;
+	if (!getModels().empty())
+	{
+		bEnable = _ptr<_ap_model>(getModels()[0])->getAP() == enumAP::IFC;
+	}
+
+	pCmdUI->Enable(bEnable);
 }

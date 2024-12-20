@@ -41,12 +41,21 @@ enum class enumApplicationProperty : int
 };
 
 // ************************************************************************************************
+class _controller;
+
+// ************************************************************************************************
+static int64_t s_iInstanceID = 1;
+
+// ************************************************************************************************
 class _model
 {
+	friend class _controller;
 
 protected: // Members
 
 	wstring m_strPath;
+
+	const _model* m_pWorld;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	bool m_bUpdteVertexBuffers;
@@ -79,16 +88,19 @@ public: // Methods
 		return dynamic_cast<T*>(this);
 	}
 
+	static int64_t getNextInstanceID() { return s_iInstanceID++; }
 	virtual _instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
 
 	void scale();
 	virtual void zoomTo(_instance* pInstance);
 	virtual void zoomOut();
 
-	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	_instance* getInstanceByID(int64_t iID) const;	
 
 protected: // Methods
+
+	void setVertexBufferOffset(OwlInstance owlInstance);
 
 	void addGeometry(_geometry* pGeometry);
 	void addInstance(_instance* pInstance);
@@ -97,20 +109,19 @@ protected: // Methods
 
 public: // Properties
 
+	void setWorld(const _model* pWorld) { m_pWorld = pWorld; }
+
 	virtual OwlModel getOwlModel() const PURE;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
-
+	
 	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 
 	const vector<_geometry*>& getGeometries() const { return m_vecGeometries; }
 	const vector<_instance*>& getInstances() const { return m_vecInstances; }
 };
-
-// ************************************************************************************************
-class _controller;
 
 // ************************************************************************************************
 class _view
@@ -145,7 +156,7 @@ public: // Methods
 	}
 
 	// Events	
-	virtual void onModelChanged() {}
+	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onShowMetaInformation() {}
@@ -178,15 +189,13 @@ class _controller
 
 private: // Members
 
-protected: // Members
-
-	_model* m_pModel;
+	vector<_model*> m_vecModels;
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;	
 
 private: // Members	
 
-	bool m_bUpdatingModel; // Updating model - disable all notifications
+	bool m_bUpdatingModel; // Disable all notifications
 
 	// Target
 	_instance* m_pTargetInstance;
@@ -196,7 +205,16 @@ private: // Members
 
 public: // Methods
 
+	_controller();
+	virtual ~_controller();
+
+	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	float getWorldBoundingSphereDiameter() const;
+
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
+
+	_model* getModelByInstance(OwlModel owlModel) const;	
+	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events
 	void registerView(_view* pView);
@@ -220,7 +238,7 @@ public: // Methods
 	}
 
 	// Zoom
-	void zoomToInstance();
+	void zoomToSelectedInstance();
 	void zoomOut();
 
 	// Save
@@ -241,15 +259,16 @@ public: // Methods
 	void onViewRelations(_view* pSender, _entity* pEntity);
 	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute);
 
-public: // Methods
+protected: // Methods
 
-	_controller();
-	virtual ~_controller();
+	virtual void clean();
 
 public: // Properties
 
-	_model* getModel() const { return m_pModel; }
+	_model* getModel() const; // kept for backward compatibility
+	const vector<_model*>& getModels() const { return m_vecModels; }
 	void setModel(_model* pModel);
+	void addModel(_model* pModel);
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 
