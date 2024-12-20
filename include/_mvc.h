@@ -95,7 +95,7 @@ public: // Methods
 	virtual void zoomTo(_instance* pInstance);
 	virtual void zoomOut();
 
-	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	_instance* getInstanceByID(int64_t iID) const;	
 
 protected: // Methods
@@ -207,6 +207,9 @@ public: // Methods
 
 	_controller();
 	virtual ~_controller();
+
+	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	float getWorldBoundingSphereDiameter() const;
 
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 

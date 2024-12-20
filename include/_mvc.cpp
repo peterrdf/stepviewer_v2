@@ -253,7 +253,7 @@ void _model::scale()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-void _model::getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
+void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
 {
 	fXmin = m_fXmin;
 	fXmax = m_fXmax;
@@ -391,6 +391,57 @@ _controller::_controller()
 {
 }
 
+/*virtual*/ _controller::~_controller()
+{
+	clean();
+
+	delete m_pSettingsStorage;
+}
+
+void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float& fWorldYmin, float& fWorldYmax, float& fWorldZmin, float& fWorldZmax) const
+{
+	fWorldXmin = FLT_MAX;
+	fWorldXmax = -FLT_MAX;
+	fWorldYmin = FLT_MAX;
+	fWorldYmax = -FLT_MAX;
+	fWorldZmin = FLT_MAX;
+	fWorldZmax = -FLT_MAX;
+	for (auto pModel : getModels())
+	{
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
+		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
+		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
+		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
+		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
+		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
+	}
+}
+
+float _controller::getWorldBoundingSphereDiameter() const
+{
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	return fWorldBoundingSphereDiameter;
+}
+
 _model* _controller::getModelByInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
@@ -420,13 +471,6 @@ _instance* _controller::getInstanceByID(int64_t iID) const
 	}
 	
 	return nullptr;
-}
-
-/*virtual*/ _controller::~_controller()
-{
-	clean();
-
-	delete m_pSettingsStorage;
 }
 
 void _controller::registerView(_view* pView)

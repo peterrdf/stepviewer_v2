@@ -1475,27 +1475,11 @@ _oglView::_oglView()
 	float fWorldYmax = -FLT_MAX;
 	float fWorldZmin = FLT_MAX;
 	float fWorldZmax = -FLT_MAX;
-	for (auto pModel : getController()->getModels())
-	{
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
-		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
-		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
-		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
-		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
-		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
-	}
-
-	float fBoundingSphereDiameter = fWorldXmax - fWorldXmin;
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldYmax - fWorldYmin);
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
 
 	m_fXTranslation = fWorldXmin;
 	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
@@ -1508,9 +1492,9 @@ _oglView::_oglView()
 	m_fZTranslation = fWorldZmin;
 	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (fBoundingSphereDiameter * 2.f);
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = fBoundingSphereDiameter;
+	m_fScaleFactor = fWorldBoundingSphereDiameter;
 
 	_redraw();
 }
@@ -1622,27 +1606,11 @@ _oglView::_oglView()
 	float fWorldYmax = -FLT_MAX;
 	float fWorldZmin = FLT_MAX;
 	float fWorldZmax = -FLT_MAX;
-	for (auto pModel : getController()->getModels())
-	{
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
-		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
-		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
-		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
-		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
-		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
-	}
-
-	float fBoundingSphereDiameter = fWorldXmax - fWorldXmin;
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldYmax - fWorldYmin);
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
 
 	m_fXTranslation = fWorldXmin;
 	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
@@ -1655,9 +1623,9 @@ _oglView::_oglView()
 	m_fZTranslation = fWorldZmin;
 	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (fBoundingSphereDiameter * 2.f);
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
-	m_fScaleFactor = fBoundingSphereDiameter;
+	m_fScaleFactor = fWorldBoundingSphereDiameter;
 		
 	for (auto pModel : getController()->getModels())
 	{
@@ -1880,23 +1848,7 @@ _oglView::_oglView()
 	float fWorldYmax = -FLT_MAX;
 	float fWorldZmin = FLT_MAX;
 	float fWorldZmax = -FLT_MAX;
-	for (auto pModel : getController()->getModels())
-	{
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		pModel->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
-		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
-		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
-		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
-		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
-		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
-	}
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
 	_prepare(
 		0, 0,
