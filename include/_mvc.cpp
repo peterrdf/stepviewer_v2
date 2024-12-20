@@ -4,8 +4,6 @@
 #include "_owl_instance.h"
 
 // ************************************************************************************************
-/*static*/ int64_t _model::s_iInstanceID = 1;
-
 _model::_model()
 	: m_strPath(L"")
 	, m_pWorld(nullptr)
@@ -616,7 +614,7 @@ void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiIns
 	}
 	m_vecModels.clear();
 
-	_model::s_iInstanceID = 1;
+	s_iInstanceID = 1;
 }
 
 _model* _controller::getModel() const 

@@ -361,7 +361,7 @@ _geometry* CIFCModel::LoadGeometry(const char* szEntityName, SdaiInstance sdaiIn
 	pGeometry = new CIFCGeometry(owlInstance, sdaiInstance);
 	addGeometry(pGeometry);
 
-	auto pInstance = new CIFCInstance(s_iInstanceID++, pGeometry, nullptr);
+	auto pInstance = new CIFCInstance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
 	CString strEntity = (LPWSTR)CA2W(szEntityName);

@@ -16,8 +16,6 @@ class CAP242Model : public _ap_model
 
 private: // Members
 
-	int64_t m_iID;
-
 	map<ExpressID, CAP242Assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
 
 public: // Methods

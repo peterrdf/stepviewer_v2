@@ -116,7 +116,7 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 
 	addGeometry(pGeometry);
 
-	auto pInstance = new CCIS2Instance(s_iInstanceID++, pGeometry, nullptr);
+	auto pInstance = new CCIS2Instance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
 	// Restore circleSegments()

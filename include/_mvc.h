@@ -44,6 +44,9 @@ enum class enumApplicationProperty : int
 class _controller;
 
 // ************************************************************************************************
+static int64_t s_iInstanceID = 1;
+
+// ************************************************************************************************
 class _model
 {
 	friend class _controller;
@@ -67,8 +70,6 @@ protected: // Members
 	float m_fZmax;
 	float m_fBoundingSphereDiameter;
 
-	static int64_t s_iInstanceID;
-
 private: // Members
 
 	vector<_geometry*> m_vecGeometries;
@@ -87,6 +88,7 @@ public: // Methods
 		return dynamic_cast<T*>(this);
 	}
 
+	static int64_t getNextInstanceID() { return s_iInstanceID++; }
 	virtual _instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
 
 	void scale();
@@ -209,7 +211,7 @@ public: // Methods
 
 	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 
-	_model* getModelByInstance(OwlModel owlModel) const;
+	_model* getModelByInstance(OwlModel owlModel) const;	
 	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events
