@@ -539,7 +539,7 @@ void CMySTEPViewerView::OnInstancesZoomTo()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	pDocument->zoomToInstance();
+	pDocument->zoomToSelectedInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)

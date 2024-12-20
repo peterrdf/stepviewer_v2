@@ -238,7 +238,7 @@ public: // Methods
 	}
 
 	// Zoom
-	void zoomToInstance();
+	void zoomToSelectedInstance();
 	void zoomOut();
 
 	// Save

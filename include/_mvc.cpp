@@ -494,7 +494,7 @@ const set<_view*>& _controller::getViews()
 	return m_setViews;
 }
 
-void _controller::zoomToInstance()
+void _controller::zoomToSelectedInstance()
 {
 	assert(m_pSelectedInstance != nullptr);
 

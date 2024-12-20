@@ -476,7 +476,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			{
 				case ID_INSTANCES_ZOOM_TO:
 				{
-					pController->zoomToInstance();
+					pController->zoomToSelectedInstance();
 				}
 				break;
 
