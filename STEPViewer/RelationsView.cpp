@@ -272,18 +272,25 @@ _model* CRelationsView::GetModel() const
 	}
 
 	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pSelectedInstance == nullptr)
+	if (pSelectedInstance != nullptr)
 	{
-		return nullptr;
+		auto pModel = pController->getModelByInstance(pSelectedInstance->getOwlModel());
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			return nullptr;
+		}
+
+		return pModel;
 	}
 
-	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
-	if (pModel == nullptr)
+	if (pController->getModels().size() == 1)
 	{
-		return nullptr;
+		return pController->getModels()[0];
 	}
 
-	return pModel;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
