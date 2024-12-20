@@ -119,7 +119,7 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
 	ON_COMMAND(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnFileImport)
-	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMySTEPViewerDoc::OnUpdateFileOpen)
+	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnUpdateFileImport)
 END_MESSAGE_MAP()
 
 
@@ -319,7 +319,13 @@ void CMySTEPViewerDoc::OnFileImport()
 	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
 }
 
-void CMySTEPViewerDoc::OnUpdateFileOpen(CCmdUI* pCmdUI)
+void CMySTEPViewerDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(TRUE);
+	BOOL bEnable = FALSE;
+	if (!getModels().empty())
+	{
+		bEnable = _ptr<_ap_model>(getModels()[0])->getAP() == enumAP::IFC;
+	}
+
+	pCmdUI->Enable(bEnable);
 }

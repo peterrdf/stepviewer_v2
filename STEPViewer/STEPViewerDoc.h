@@ -67,5 +67,5 @@ public:
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
 	afx_msg void OnFileImport();
-	afx_msg void OnUpdateFileOpen(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateFileImport(CCmdUI* pCmdUI);
 };
