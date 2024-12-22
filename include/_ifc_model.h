@@ -24,19 +24,19 @@ private: // Members
 	bool m_bLoadInstancesOnDemand;
 
 	// Entities
-	SdaiEntity m_ifcSpaceEntity;
-	SdaiEntity m_ifcOpeningElementEntity;
-	SdaiEntity m_ifcDistributionElementEntity;
-	SdaiEntity m_ifcElectricalElementEntity;
-	SdaiEntity m_ifcElementAssemblyEntity;
-	SdaiEntity m_ifcElementComponentEntity;
-	SdaiEntity m_ifcEquipmentElementEntity;
-	SdaiEntity m_ifcFeatureElementEntity;
-	SdaiEntity m_ifcFeatureElementSubtractionEntity;
-	SdaiEntity m_ifcFurnishingElementEntity;
-	SdaiEntity m_ifcReinforcingElementEntity;
-	SdaiEntity m_ifcTransportElementEntity;
-	SdaiEntity m_ifcVirtualElementEntity;
+	SdaiEntity m_sdaiSpaceEntity;
+	SdaiEntity m_sdaiOpeningElementEntity;
+	SdaiEntity m_sdaiDistributionElementEntity;
+	SdaiEntity m_sdaiElectricalElementEntity;
+	SdaiEntity m_sdaiElementAssemblyEntity;
+	SdaiEntity m_sdaiElementComponentEntity;
+	SdaiEntity m_sdaiEquipmentElementEntity;
+	SdaiEntity m_sdaiFeatureElementEntity;
+	SdaiEntity m_sdaiFeatureElementSubtractionEntity;
+	SdaiEntity m_sdaiFurnishingElementEntity;
+	SdaiEntity m_sdaiReinforcingElementEntity;
+	SdaiEntity m_sdaiTransportElementEntity;
+	SdaiEntity m_sdaiVirtualElementEntity;
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
@@ -67,9 +67,9 @@ private: // Methods
 	void getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
-	void retrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments);
-	void retrieveGeometry(const char* szEntityName, int_t iCircleSegements);
-	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments);
+	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, int_t iCircleSegments);
+	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
+	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments);
 
 public: // Properties
 
