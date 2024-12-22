@@ -1,7 +1,7 @@
 #ifndef IFCFILEPARSER_H
 #define IFCFILEPARSER_H
 
-#include "_ifc_model.h"
+#include "_ifc_mvc.h"
 
 #include "IFCGeometry.h"
 #include "IFCInstance.h"

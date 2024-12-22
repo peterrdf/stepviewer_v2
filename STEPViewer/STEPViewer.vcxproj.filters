@@ -213,7 +213,7 @@
     <ClInclude Include="..\include\_ifc_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_model.h">
+    <ClInclude Include="..\include\_ifc_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_attribute.h">
@@ -344,7 +344,7 @@
     <ClCompile Include="..\include\_ifc_geometry.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_ifc_model.cpp">
+    <ClCompile Include="..\include\_ifc_mvc.cpp">
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_attribute.cpp">
