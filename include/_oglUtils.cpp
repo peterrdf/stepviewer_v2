@@ -1438,6 +1438,7 @@ _oglView::_oglView()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pPointedInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
+	, m_tmShowTooltip(clock())
 {
 	m_pSelectedInstanceMaterial = new _material();
 	m_pSelectedInstanceMaterial->init(
@@ -2519,6 +2520,86 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	_oglUtils::checkForErrors();
 }
 
+bool _oglView::getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+{
+	if (pModel == nullptr)
+	{
+		return false;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	//
+	// Restore Z buffer
+	// 
+
+	_prepare(
+		0, 0,
+		rcClient.Width(), rcClient.Height(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	// Store Matrices
+	GLfloat arModelViewMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
+
+	GLfloat arProjectionMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
+	
+	_draw(m_pWnd->GetDC());
+
+	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
+
+	GLdouble arModelView[16];
+	GLdouble arProjection[16];
+	for (int i = 0; i < 16; i++)
+	{
+		arModelView[i] = arModelViewMatrix[i];
+		arProjection[i] = arProjectionMatrix[i];
+	}
+
+	GLdouble dWinX = (double)iX;
+	GLdouble dWinY = (double)arViewport[3] - (double)iY;
+
+	double dWinZ = 0.;
+	if (fDepth == -FLT_MAX)
+	{
+		float fWinZ = 0.f;
+		glReadPixels(iX, (int)dWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+
+		dWinZ = fWinZ;
+
+		_oglUtils::checkForErrors();
+	}
+	else
+	{
+		dWinZ = fDepth;
+	}
+
+	if (dWinZ >= 1.)
+	{
+		return false;
+	}
+
+	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
+
+	_oglUtils::checkForErrors();
+
+	return iResult == GL_TRUE;
+}
+
 void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	// Selection
@@ -2572,6 +2653,48 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			_redraw();
 		}
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
+
+	if (m_pPointedInstance != nullptr)
+	{
+		clock_t timeSpan = clock() - m_tmShowTooltip;
+		if (timeSpan >= 200)
+		{
+			auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel());
+			assert(pModel != nullptr);
+
+			CString strInstanceMetaData;
+
+			GLdouble dX = 0.;
+			GLdouble dY = 0.;
+			GLdouble dZ = 0.;
+			if (getOGLPos(pModel, point.x, point.y, -FLT_MAX, dX, dY, dZ))
+			{
+				_vector3d vecVertexBufferOffset;
+				GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+				auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
+
+				GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+				GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+				GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+
+				strInstanceMetaData += L"X/Y/Z: ";
+				strInstanceMetaData += to_wstring(dWorldX).c_str();
+				strInstanceMetaData += L", ";
+				strInstanceMetaData += to_wstring(dWorldY).c_str();
+				strInstanceMetaData += L", ";
+				strInstanceMetaData += to_wstring(dWorldZ).c_str();				
+			} // if (getOGLPos( ...
+
+			m_tmShowTooltip = clock();
+
+			_showTooltip(L"Information", strInstanceMetaData);
+		} // if (timeSpan >= ...
+	} // if (m_pPointedInstance != nullptr)
+	else
+	{
+		_hideTooltip();
+	}
 
 	if (m_ptPrevMousePosition.x == -1)
 	{

@@ -13,11 +13,12 @@
 #include "gtc/type_ptr.hpp"
 
 #include <chrono>
+#include <ctime>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#undef max
 #include <limits>
 #include <map>
-#undef max
 using namespace std;
 
 // ************************************************************************************************
@@ -2444,6 +2445,9 @@ protected: // Members
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 
+	// Tooltip
+	clock_t m_tmShowTooltip;
+
 public: // Methods
 
 	_oglView();
@@ -2488,6 +2492,9 @@ protected: // Methods
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
 	void _drawInstancesFrameBuffer(_model* pModel);	
+
+	// http://nehe.gamedev.net/article/using_gluunproject/16013/
+	bool getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
 
 public: // Methods
 
