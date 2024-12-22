@@ -1,7 +1,7 @@
 #ifndef IFCFILEPARSER_H
 #define IFCFILEPARSER_H
 
-#include "_ap_mvc.h"
+#include "_ifc_model.h"
 
 #include "IFCGeometry.h"
 #include "IFCInstance.h"
@@ -9,13 +9,8 @@
 #include "IFCProperty.h"
 #include "IFCAttribute.h"
 
-#include <string>
-#include <map>
-#include <set>
-using namespace std;
-
 // ************************************************************************************************
-class CIFCModel : public _ap_model
+class CIFCModel : public _ifc_model
 {
 
 private: // Classes
@@ -28,7 +23,6 @@ private: // Members
 	bool m_bLoadInstancesOnDemand;
 
 	// Entities
-	SdaiEntity m_ifcProjectEntity;
 	SdaiEntity m_ifcSpaceEntity;
 	SdaiEntity m_ifcOpeningElementEntity;
 	SdaiEntity m_ifcDistributionElementEntity;

@@ -491,7 +491,7 @@ void _geometry::translate(float fX, float fY, float fZ)
 
 	const auto iVertexLength = getVertexLength();
 
-	/* Vertices */
+	// Geometry
 	for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
 	{
 		m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] += fX;

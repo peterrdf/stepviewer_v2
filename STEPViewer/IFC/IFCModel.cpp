@@ -13,9 +13,8 @@
 
 // ************************************************************************************************
 CIFCModel::CIFCModel(bool bLoadInstancesOnDemand/* = false*/)
-	: _ap_model(enumAP::IFC)
+	: _ifc_model()
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
-	, m_ifcProjectEntity(0)
 	, m_ifcSpaceEntity(0)
 	, m_ifcOpeningElementEntity(0)
 	, m_ifcDistributionElementEntity(0)
@@ -45,7 +44,6 @@ CIFCModel::~CIFCModel()
 
 	// Entities
 	SdaiEntity ifcObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
-	m_ifcProjectEntity = sdaiGetEntity(getSdaiModel(), "IFCPROJECT");
 	m_ifcSpaceEntity = sdaiGetEntity(getSdaiModel(), "IFCSPACE");
 	m_ifcOpeningElementEntity = sdaiGetEntity(getSdaiModel(), "IFCOPENINGELEMENT");
 	m_ifcDistributionElementEntity = sdaiGetEntity(getSdaiModel(), "IFCDISTRIBUTIONELEMENT");

@@ -600,6 +600,7 @@
     <ClInclude Include="..\include\_ap_mvc.h" />
     <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />
+    <ClInclude Include="..\include\_ifc_model.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
@@ -656,6 +657,7 @@
   <ItemGroup>
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
+    <ClCompile Include="..\include\_ifc_model.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="..\include\_oglUtils.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />

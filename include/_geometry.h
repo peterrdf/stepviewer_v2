@@ -426,6 +426,13 @@ public: // Methods
 		m_pTransformationMatrix->_43 /= fScaleFactor;
 	}
 
+	void translate(float fX, float fY, float fZ)
+	{
+		m_pTransformationMatrix->_41 += fX;
+		m_pTransformationMatrix->_42 += fY;
+		m_pTransformationMatrix->_43 += fZ;
+	}
+
 public: // Properties
 	
 	int64_t getID() const { return m_iID; }
