@@ -1245,7 +1245,7 @@ void CIFCModelStructureView::LoadObject(CIFCModel* pModel, SdaiInstance iInstanc
 	_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
 	if (ifcInstance)
 	{
-		ASSERT(_ptr<CIFCGeometry>(pGeometry)->Referenced());
+		ASSERT(_ptr<CIFCGeometry>(pGeometry)->getIsReferenced());
 
 		wstring strItem = _ap_instance::getName(iInstance);
 
@@ -1310,7 +1310,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<CIFCInstance> ifcInstance(pGeometry->getInstances()[0]);
 
-		if (!ifcGeometry->Referenced())
+		if (!ifcGeometry->getIsReferenced())
 		{
 			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 

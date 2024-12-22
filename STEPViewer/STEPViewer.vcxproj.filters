@@ -219,6 +219,12 @@
     <ClInclude Include="..\include\_owl_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ifc_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_model.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -342,6 +348,12 @@
       <Filter>CIS2</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_geometry.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

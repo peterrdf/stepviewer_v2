@@ -1,37 +1,16 @@
 #ifndef IFC_GEOMETRY_H
 #define IFC_GEOMETRY_H
 
-#include "_oglUtils.h"
-#include "_ap_mvc.h"
-
-#include "engine.h"
-
-#include <cstddef>
-#include <string>
-using namespace std;
+#include "_ifc_geometry.h"
 
 // ************************************************************************************************
-class CIFCGeometry : public _ap_geometry
+class CIFCGeometry : public _ifc_geometry
 {
-
-private: // Members
-	
-	bool m_bReferenced;
 
 public: // Methods
 	
 	CIFCGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~CIFCGeometry();
-
-protected: // Methods
-
-	// _geometry
-	virtual void preCalculate() override;
-	virtual void postCalculate() override;
-
-public: // Properties
-
-	bool& Referenced() { return m_bReferenced; }
 };
 
 #endif // IFC_GEOMETRY_H
