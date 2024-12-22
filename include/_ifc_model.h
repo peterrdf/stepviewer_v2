@@ -53,12 +53,6 @@ protected: // Methods
 	virtual void attachModelCore() override;
 	virtual void clean() override;
 
-public: // Methods
-
-	CIFCUnitProvider* GetUnitProvider() const { return m_pUnitProvider; }
-	CIFCPropertyProvider* GetPropertyProvider() const { return m_pPropertyProvider; }
-	CIFCAttributeProvider* GetAttributeProvider() const { return m_pAttributeProvider; }
-
 protected: // Methods
 
 	virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
@@ -66,15 +60,21 @@ protected: // Methods
 
 private: // Methods
 
-	void GetObjectsReferencedState();
-	void GetObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance);
-	void GetObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance);
-	void GetObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance);
-	void GetObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
-	void GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
+	void getObjectsReferencedState();
+	void getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance);
+	void getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance);
+	void getObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance);
+	void getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
+	void getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
-	void RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments);
-	void RetrieveGeometry(const char* szEntityName, int_t iCircleSegements);
-	_geometry* LoadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments);
+	void retrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments);
+	void retrieveGeometry(const char* szEntityName, int_t iCircleSegements);
+	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments);
+
+public: // Properties
+
+	CIFCUnitProvider* getUnitProvider();
+	CIFCPropertyProvider* getPropertyProvider();
+	CIFCAttributeProvider* getAttributeProvider();
 };
 

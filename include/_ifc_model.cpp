@@ -58,17 +58,13 @@ _ifc_model::_ifc_model(bool bLoadInstancesOnDemand/* = false*/)
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand)
 	{
-		RetrieveGeometryRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
+		retrieveGeometryRecursively(ifcObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 
-		RetrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-		RetrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
-		GetObjectsReferencedState();
+		getObjectsReferencedState();
 	}
-
-	m_pUnitProvider = new CIFCUnitProvider(getSdaiModel());
-	m_pPropertyProvider = new CIFCPropertyProvider(getSdaiModel(), m_pUnitProvider);
-	m_pAttributeProvider = new CIFCAttributeProvider();
 
 	scale();
 }
@@ -97,7 +93,7 @@ _ifc_model::_ifc_model(bool bLoadInstancesOnDemand/* = false*/)
 	return new _ap_instance(iID, pGeometry, pTransformationMatrix);
 }
 
-void _ifc_model::GetObjectsReferencedState()
+void _ifc_model::getObjectsReferencedState()
 {
 	SdaiAggr pAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)"IFCPROJECT");
 
@@ -107,10 +103,10 @@ void _ifc_model::GetObjectsReferencedState()
 		SdaiInstance iProjectInstance = 0;
 		engiGetAggrElement(pAggr, 0, sdaiINSTANCE, &iProjectInstance);
 
-		GetObjectsReferencedStateIsDecomposedBy(iProjectInstance);
-		GetObjectsReferencedStateIsNestedBy(iProjectInstance);
-		GetObjectsReferencedStateContainsElements(iProjectInstance);
-		GetObjectsReferencedStateHasAssignments(iProjectInstance);
+		getObjectsReferencedStateIsDecomposedBy(iProjectInstance);
+		getObjectsReferencedStateIsNestedBy(iProjectInstance);
+		getObjectsReferencedStateContainsElements(iProjectInstance);
+		getObjectsReferencedStateHasAssignments(iProjectInstance);
 
 		// Disable Unreferenced instances
 		for (auto pGeometry : getGeometries())
@@ -123,7 +119,7 @@ void _ifc_model::GetObjectsReferencedState()
 	} // if (iIFCProjectInstancesCount > 0)
 }
 
-void _ifc_model::GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
+void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 {
 	ASSERT(sdaiInstance != 0);
 
@@ -132,10 +128,10 @@ void _ifc_model::GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	{
 		_ptr<_ifc_geometry>(pGeometry)->m_bIsReferenced = true;
 
-		GetObjectsReferencedStateIsDecomposedBy(sdaiInstance);
-		GetObjectsReferencedStateIsNestedBy(sdaiInstance);
-		GetObjectsReferencedStateContainsElements(sdaiInstance);
-		GetObjectsReferencedStateHasAssignments(sdaiInstance);
+		getObjectsReferencedStateIsDecomposedBy(sdaiInstance);
+		getObjectsReferencedStateIsNestedBy(sdaiInstance);
+		getObjectsReferencedStateContainsElements(sdaiInstance);
+		getObjectsReferencedStateHasAssignments(sdaiInstance);
 	}
 	else
 	{
@@ -143,7 +139,7 @@ void _ifc_model::GetObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	}
 }
 
-void _ifc_model::GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 {
 	SdaiAggr piIsDecomposedByInstances = nullptr;
 	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &piIsDecomposedByInstances);
@@ -175,12 +171,12 @@ void _ifc_model::GetObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 			SdaiInstance iRelatedObjectsInstance = 0;
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iRelatedObjectsInstance);
 
-			GetObjectsReferencedStateRecursively(iRelatedObjectsInstance);
+			getObjectsReferencedStateRecursively(iRelatedObjectsInstance);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...
 }
 
-void _ifc_model::GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 {
 	ASSERT(iInstance != 0);
 
@@ -214,12 +210,12 @@ void _ifc_model::GetObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 			SdaiInstance iIFCRelatedObjectsInstance = 0;
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
-			GetObjectsReferencedStateRecursively(iIFCRelatedObjectsInstance);
+			getObjectsReferencedStateRecursively(iIFCRelatedObjectsInstance);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...
 }
 
-void _ifc_model::GetObjectsReferencedStateContainsElements(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance iInstance)
 {
 	ASSERT(iInstance != 0);
 
@@ -253,12 +249,12 @@ void _ifc_model::GetObjectsReferencedStateContainsElements(SdaiInstance iInstanc
 			SdaiInstance iIFCRelatedElementsInstance = 0;
 			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
 
-			GetObjectsReferencedStateRecursively(iIFCRelatedElementsInstance);
+			getObjectsReferencedStateRecursively(iIFCRelatedElementsInstance);
 		} // for (int_t j = ...
 	} // for (int64_t i = ...
 }
 
-void _ifc_model::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 {
 	ASSERT(iInstance != 0);
 
@@ -280,11 +276,11 @@ void _ifc_model::GetObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 		sdaiGetAttrBN(iIFCContainsElementsInstance, "RelatingProduct", sdaiINSTANCE, &iIFCRelatingProductInstance);
 
 		if (sdaiIsKindOfBN(iIFCRelatingProductInstance, "IFCPRODUCT"))
-			GetObjectsReferencedStateRecursively(iIFCRelatingProductInstance);
+			getObjectsReferencedStateRecursively(iIFCRelatingProductInstance);
 	} // for (int64_t i = ...
 }
 
-void _ifc_model::RetrieveGeometry(const char* szEntityName, int_t iCircleSegements)
+void _ifc_model::retrieveGeometry(const char* szEntityName, int_t iCircleSegements)
 {
 	SdaiAggr iIFCInstances = sdaiGetEntityExtentBN(getSdaiModel(), (char*)szEntityName);
 
@@ -299,11 +295,11 @@ void _ifc_model::RetrieveGeometry(const char* szEntityName, int_t iCircleSegemen
 		SdaiInstance iInstance = 0;
 		engiGetAggrElement(iIFCInstances, i, sdaiINSTANCE, &iInstance);
 
-		LoadGeometry(szEntityName, iInstance, iCircleSegements);
+		loadGeometry(szEntityName, iInstance, iCircleSegements);
 	}
 }
 
-void _ifc_model::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments)
+void _ifc_model::retrieveGeometryRecursively(int_t iParentEntity, int_t iCircleSegments)
 {
 	if ((iParentEntity == m_ifcDistributionElementEntity) ||
 		(iParentEntity == m_ifcElectricalElementEntity) ||
@@ -331,7 +327,7 @@ void _ifc_model::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleS
 		char* szParenEntityName = nullptr;
 		engiGetEntityName(iParentEntity, sdaiSTRING, (const char**)&szParenEntityName);
 
-		RetrieveGeometry(szParenEntityName, iCircleSegments);
+		retrieveGeometry(szParenEntityName, iCircleSegments);
 	} // if (iIntancesCount != 0)
 
 	iIntancesCount = engiGetEntityCount(getSdaiModel());
@@ -340,12 +336,12 @@ void _ifc_model::RetrieveGeometryRecursively(int_t iParentEntity, int_t iCircleS
 		SdaiEntity iEntity = engiGetEntityElement(getSdaiModel(), i);
 		if (engiGetEntityParent(iEntity) == iParentEntity)
 		{
-			RetrieveGeometryRecursively(iEntity, iCircleSegments);
+			retrieveGeometryRecursively(iEntity, iCircleSegments);
 		}
 	}
 }
 
-_geometry* _ifc_model::LoadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
+_geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, int_t iCircleSegments)
 {
 	_ap_geometry* pGeometry = dynamic_cast<_ap_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr)
@@ -390,5 +386,34 @@ _geometry* _ifc_model::LoadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	}
 
 	return pGeometry;
+}
+
+CIFCUnitProvider* _ifc_model::getUnitProvider() 
+{ 
+	if (m_pUnitProvider == nullptr)
+	{
+		m_pUnitProvider = new CIFCUnitProvider(getSdaiModel());
+	}
+
+	return m_pUnitProvider; 
+}
+CIFCPropertyProvider* _ifc_model::getPropertyProvider() 
+{ 
+	if (m_pPropertyProvider == nullptr)
+	{
+		m_pPropertyProvider = new CIFCPropertyProvider(getSdaiModel(), getUnitProvider());
+	}
+
+	return m_pPropertyProvider; 
+}
+
+CIFCAttributeProvider* _ifc_model::getAttributeProvider() 
+{ 
+	if (m_pAttributeProvider == nullptr)
+	{
+		m_pAttributeProvider = new CIFCAttributeProvider();
+	}
+
+	return m_pAttributeProvider; 
 }
 

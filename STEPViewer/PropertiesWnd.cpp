@@ -1051,7 +1051,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertyProvider = pIFCModel->GetPropertyProvider();
+	auto pPropertyProvider = pIFCModel->getPropertyProvider();
 
 	auto pInstance = dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
