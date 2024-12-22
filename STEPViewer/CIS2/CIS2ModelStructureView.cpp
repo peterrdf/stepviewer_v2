@@ -174,7 +174,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->_instance::setEnable(false);
+					pInstance->setEnable(false);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -188,7 +188,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->_instance::setEnable(true);
+					pInstance->setEnable(true);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -408,19 +408,19 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 			pMenu = menuMain.GetSubMenu(0);
 
 			// Zoom to
-			if (!pTargetInstance->_instance::getEnable())
+			if (!pTargetInstance->getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Save
-			if (!pTargetInstance->_instance::getEnable())
+			if (!pTargetInstance->getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Enable
-			if (pTargetInstance->_instance::getEnable())
+			if (pTargetInstance->getEnable())
 			{
 				pMenu->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 			}
@@ -500,9 +500,9 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
 
 				case ID_INSTANCES_ENABLE:
 				{
-					pTargetInstance->_instance::setEnable(!pTargetInstance->_instance::getEnable());
+					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
-					int iImage = pTargetInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
 					ClickItem_UpdateChildren(hItem);
@@ -1360,7 +1360,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
+			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
 		}
 
 		ClickItem_UpdateChildren(hChild);
@@ -1438,7 +1438,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(true);
+			pInstance->setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1456,7 +1456,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(false);
+			pInstance->setEnable(false);
 		}
 
 		if (bRecursive)
@@ -1474,7 +1474,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 		CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(true);
+			pInstance->setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1490,7 +1490,7 @@ void CCIS2ModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRe
 	CCIS2Instance* pInstance = (CCIS2Instance*)m_pTreeCtrl->GetItemData(hParent);
 	if (pInstance != nullptr)
 	{
-		pInstance->_instance::setEnable(true);
+		pInstance->setEnable(true);
 	}
 
 	if (bRecursive)

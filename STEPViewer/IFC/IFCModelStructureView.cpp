@@ -174,7 +174,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->_instance::setEnable(false);
+					pInstance->setEnable(false);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -188,7 +188,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 
 				if (pInstance != nullptr)
 				{
-					pInstance->_instance::setEnable(true);
+					pInstance->setEnable(true);
 				}
 
 				ClickItem_UpdateChildren(hItem);
@@ -402,19 +402,19 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 			pMenu = menuMain.GetSubMenu(0);
 
 			// Zoom to
-			if (!pTargetInstance->_instance::getEnable())
+			if (!pTargetInstance->getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Save
-			if (!pTargetInstance->_instance::getEnable())
+			if (!pTargetInstance->getEnable())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 			}
 
 			// Enable
-			if (pTargetInstance->_instance::getEnable())
+			if (pTargetInstance->getEnable())
 			{
 				pMenu->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 			}
@@ -1388,7 +1388,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM 
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-				pInstance->_instance::hasGeometry() ? (pInstance->_instance::getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
 			tvInsertStruct.item.lParam = (LPARAM)pInstance;
 
 			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
@@ -1559,7 +1559,7 @@ void CIFCModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 		CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
+			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
 		}
 
 		ClickItem_UpdateChildren(hChild);
@@ -1637,7 +1637,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 		CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(true);
+			pInstance->setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1655,7 +1655,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 		CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(false);
+			pInstance->setEnable(false);
 		}
 
 		if (bRecursive)
@@ -1673,7 +1673,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 		CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hParent);
 		if (pInstance != nullptr)
 		{
-			pInstance->_instance::setEnable(true);
+			pInstance->setEnable(true);
 		}
 
 		if (bRecursive)
@@ -1689,7 +1689,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 	CIFCInstance* pInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hParent);
 	if (pInstance != nullptr)
 	{
-		pInstance->_instance::setEnable(true);
+		pInstance->setEnable(true);
 	}
 
 	if (bRecursive)
