@@ -1,10 +1,9 @@
 #pragma once
 
 #include "_ap_mvc.h"
-
-#include "IFCUnit.h"
-#include "IFCProperty.h"
-#include "IFCAttribute.h"
+#include "_unit.h"
+#include "_property.h"
+#include "_attribute.h"
 
 #include <string>
 #include <map>

@@ -598,6 +598,7 @@
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
+    <ClInclude Include="..\include\_attribute.h" />
     <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_ifc_geometry.h" />
@@ -607,9 +608,11 @@
     <ClInclude Include="..\include\_oglUtils.h" />
     <ClInclude Include="..\include\_owl_geometry.h" />
     <ClInclude Include="..\include\_owl_instance.h" />
+    <ClInclude Include="..\include\_property.h" />
     <ClInclude Include="..\include\_ptr.h" />
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
+    <ClInclude Include="..\include\_unit.h" />
     <ClInclude Include="AP242\AP242Assembly.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242ProductDefinition.h" />
@@ -625,10 +628,8 @@
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
-    <ClInclude Include="IFC\IFCAttribute.h" />
     <ClInclude Include="IFC\IFCGeometry.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
-    <ClInclude Include="IFC\IFCProperty.h" />
     <ClInclude Include="ModelCheckDlg.h" />
     <ClInclude Include="OWLProperty.h" />
     <ClInclude Include="RelationsView.h" />
@@ -637,7 +638,6 @@
     <ClInclude Include="SearchTreeCtrlDialog.h" />
     <ClInclude Include="IFC\IFCModel.h" />
     <ClInclude Include="IFC\IFCInstance.h" />
-    <ClInclude Include="IFC\IFCUnit.h" />
     <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="StructureView.h" />
@@ -656,12 +656,15 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\_attribute.cpp" />
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
     <ClCompile Include="..\include\_ifc_geometry.cpp" />
     <ClCompile Include="..\include\_ifc_model.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="..\include\_oglUtils.cpp" />
+    <ClCompile Include="..\include\_property.cpp" />
+    <ClCompile Include="..\include\_unit.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
@@ -677,10 +680,8 @@
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
-    <ClCompile Include="IFC\IFCAttribute.cpp" />
     <ClCompile Include="IFC\IFCGeometry.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
-    <ClCompile Include="IFC\IFCProperty.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
     <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
@@ -688,7 +689,6 @@
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />
     <ClCompile Include="IFC\IFCModel.cpp" />
     <ClCompile Include="IFC\IFCInstance.cpp" />
-    <ClCompile Include="IFC\IFCUnit.cpp" />
     <ClCompile Include="IFC\IFCOpenGLView.cpp" />
     <ClCompile Include="STEPViewer.cpp" />
     <ClCompile Include="STEPViewerDoc.cpp" />

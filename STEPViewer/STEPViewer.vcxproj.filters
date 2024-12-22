@@ -78,9 +78,6 @@
     <ClInclude Include="IFC\IFCInstance.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCUnit.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -102,17 +99,11 @@
     <ClInclude Include="IFC\IFCModelStructureView.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCProperty.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="SearchTreeCtrlDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModelCheckDlg.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\IFCAttribute.h">
-      <Filter>IFC</Filter>
     </ClInclude>
     <ClInclude Include="AP242\AP242Assembly.h">
       <Filter>AP242</Filter>
@@ -225,6 +216,15 @@
     <ClInclude Include="..\include\_ifc_model.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_attribute.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_unit.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -257,9 +257,6 @@
     <ClCompile Include="IFC\IFCInstance.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCUnit.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
@@ -272,17 +269,11 @@
     <ClCompile Include="IFC\IFCModelStructureView.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCProperty.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="SearchTreeCtrlDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ModelCheckDlg.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCAttribute.cpp">
-      <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="AP242\AP242Assembly.cpp">
       <Filter>AP242</Filter>
@@ -354,6 +345,15 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ifc_model.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_attribute.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_property.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_unit.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

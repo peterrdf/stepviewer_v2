@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "IFCProperty.h"
-#include "IFCUnit.h"
+#include "_property.h"
+#include "_unit.h"
 
 // ************************************************************************************************
 CIFCProperty::CIFCProperty(const wstring& strName, const wstring& strValue)

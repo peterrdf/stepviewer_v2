@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "IFCAttribute.h"
+#include "_attribute.h"
 
 // ************************************************************************************************
 CIFCAttribute::CIFCAttribute(SdaiAttr pInstance)
