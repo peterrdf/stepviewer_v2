@@ -152,7 +152,7 @@ protected: // Methods
 
 	virtual void attachModelCore() PURE;
 
-	void preLoadInstance(OwlInstance owlInstance)
+	virtual void preLoadInstance(OwlInstance owlInstance)
 	{
 		setVertexBufferOffset(owlInstance);
 	}

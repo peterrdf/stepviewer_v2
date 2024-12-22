@@ -210,7 +210,7 @@
     <ClInclude Include="..\include\_owl_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_geometry.h">
+    <ClInclude Include="..\include\_step_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_ifc_mvc.h">
@@ -341,7 +341,7 @@
     <ClCompile Include="..\include\_oglUtils.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_ifc_geometry.cpp">
+    <ClCompile Include="..\include\_step_mvc.cpp">
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ifc_mvc.cpp">

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "_ifc_mvc.h"
-
 #include "_ptr.h"
-#include "_ifc_geometry.h"
 
 // ************************************************************************************************
 #define DEFAULT_CIRCLE_SEGMENTS 36
@@ -422,7 +420,6 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 {
 }
 
-// _geometry
 /*virtual*/ void _ifc_geometry::preCalculate() /*override*/
 {
 	// Format
@@ -434,7 +431,6 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 	setSegmentation(getSdaiModel(), 16, 0.);
 }
 
-// _geometry
 /*virtual*/ void _ifc_geometry::postCalculate() /*override*/
 {
 	cleanCachedGeometry();

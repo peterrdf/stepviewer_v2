@@ -13,7 +13,7 @@ using namespace std;
 
 // ************************************************************************************************
 CAP242Model::CAP242Model()
-	: _ap_model(enumAP::STEP)
+	: _step_model()
 	, m_mapExpressIDAssembly()
 {
 }
