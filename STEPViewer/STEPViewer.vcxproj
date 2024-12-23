@@ -620,6 +620,7 @@
     <ClInclude Include="AP242\AP242ItemData.h" />
     <ClInclude Include="AP242\AP242Model.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
+    <ClInclude Include="AP242\AP242DraughtingModel.h" />
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Geometry.h" />
     <ClInclude Include="CIS2\CIS2Instance.h" />
@@ -666,6 +667,7 @@
     <ClCompile Include="..\include\_property.cpp" />
     <ClCompile Include="..\include\_unit.cpp" />
     <ClCompile Include="AP242\AP242Assembly.cpp" />
+    <ClCompile Include="AP242\AP242DraughtingModel.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
     <ClCompile Include="AP242\AP242ProductInstance.cpp" />

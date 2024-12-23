@@ -26,10 +26,10 @@ CAP242Model::~CAP242Model()
 /*virtual*/ void CAP242Model::attachModelCore() /*override*/
 {
 	LoadProductDefinitions();
-
 	LoadAssemblies();
-
 	LoadGeometry();
+
+	LoadDraughtingModels();
 
 	scale();
 }
@@ -210,4 +210,52 @@ void CAP242Model::WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductD
 		pProductDefinition,
 		pParentMatrix);
 	addInstance(pInstance);
+}
+
+void CAP242Model::LoadDraughtingModels()
+{
+	SdaiAggr sdaiDraughtingModelAggr = xxxxGetEntityAndSubTypesExtentBN(getSdaiModel(), "DRAUGHTING_MODEL");
+	SdaiInteger iDraughtingModelMembersCount = sdaiGetMemberCount(sdaiDraughtingModelAggr);
+	for (SdaiInteger i = 0; i < iDraughtingModelMembersCount; i++)
+	{
+		SdaiInstance sdaiProductDefinitionInstance = 0;
+		sdaiGetAggrByIndex(sdaiDraughtingModelAggr, i, sdaiINSTANCE, &sdaiProductDefinitionInstance);
+
+		ASSERT(sdaiProductDefinitionInstance != 0);
+		//LoadProductDefinition(sdaiProductDefinitionInstance);
+
+		{
+			wchar_t* szName = 0;
+			SdaiAttr	itemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(sdaiGetInstanceModel(sdaiProductDefinitionInstance), "REPRESENTATION"), "name");
+			sdaiGetAttr(sdaiProductDefinitionInstance, itemsAttr, sdaiUNICODE, &szName);
+
+			wchar_t* szName2 = 0;
+			sdaiGetAttrBN(sdaiProductDefinitionInstance, "name", sdaiUNICODE, &szName2);
+			TRACE(L"");
+		}
+
+
+		SdaiAttr sdaiItemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(getSdaiModel(), "REPRESENTATION"), "items");
+
+		SdaiAggr sdaiItemsAggr = nullptr;
+		sdaiGetAttr(sdaiProductDefinitionInstance, sdaiItemsAttr, sdaiAGGR, &sdaiItemsAggr);
+		SdaiInteger iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
+		for (SdaiInteger j = 0; j < iItemsCount; j++)
+		{
+			SdaiInstance sdaiItemInstance = 0;
+			sdaiGetAggrByIndex(sdaiItemsAggr, j, sdaiINSTANCE, &sdaiItemInstance);
+
+			if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "ANNOTATION_PLANE") ||
+				sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "DRAUGHTING_CALLOUT")) {
+				wchar_t* szName2 = 0;
+				sdaiGetAttrBN(sdaiItemInstance, "name", sdaiUNICODE, &szName2);
+				TRACE(L"");
+				//auto pDefinition = LoadProductDefinition(sdaiItemInstance);
+				//assert(pDefinition);
+				//ASSERT(m_mapExpressID2G.find(pDefinition->getExpressID()) == m_mapExpressID2Definition.end());
+
+				//m_mapExpressID2Definition[pDefinition->getExpressID()] = pDefinition;
+			}
+		}
+	} // for (SdaiInteger i = ...
 }
