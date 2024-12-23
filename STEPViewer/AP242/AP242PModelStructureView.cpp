@@ -979,7 +979,58 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
+	//
+	// Do not show Instances
+	//
+
+	//
+	// Instance
+	//
+
+	// Iterator
+	_instance_iterator* pInstanceIterator = nullptr;
+	auto itInstanceIterator = m_mapInstanceIterators.find(pProduct);
+	if (itInstanceIterator == m_mapInstanceIterators.end())
+	{
+		pInstanceIterator = new _instance_iterator(pProduct->getInstances());
+		m_mapInstanceIterators[pProduct] = pInstanceIterator;
+	}
+	else
+	{
+		pInstanceIterator = itInstanceIterator->second;
+	}
+
+	// Load
+	_ptr<CAP242ProductInstance> apProductInstance(pInstanceIterator->getNextItem());
+	if (apProductInstance)
+	{
+		auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)apProductInstance.p(), enumSTEPItemDataType::ProductInstance);
+		pParentItemData->children().push_back(pItemData);
+
+		m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pItemData);
+
+		ASSERT(m_mapInstance2Item.find(apProductInstance) == m_mapInstance2Item.end());
+		m_mapInstance2Item[apProductInstance] = hProduct;
+	}
+	else
+	{
+		ASSERT(FALSE);
+	}
+
+	// Assemblies
+	for (auto itAssembly : pModel->GetAssemblies())
+	{
+		if (itAssembly.second->GetRelatingProductDefinition() == pProduct)
+		{
+			LoadAssembly(pModel, itAssembly.second, hProduct);
+		}
+	}
+
+	//
+	// Show Instances
+	//
+
+	/*auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
 	pParentItemData->children().push_back(pItemData);
 
 	m_vecItemData.push_back(pItemData);
@@ -1021,7 +1072,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	else
 	{
 		ASSERT(FALSE);
-	}
+	}*/
 }
 
 void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, CAP242Assembly* pAssembly, HTREEITEM hParent)
