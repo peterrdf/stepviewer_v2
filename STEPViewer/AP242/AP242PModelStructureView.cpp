@@ -971,15 +971,16 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	CString strName;
 	strName.Format(L"#%lld %s %s", pProduct->getExpressID(), pProduct->GetProductName(), ITEM_PRODUCT_DEFINION);
 
-	int iImage = HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);	
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hProduct);
+	int iProductImage = pProduct->hasGeometry() || HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iProductImage, iProductImage, hParent);
+	int iGeometryImage = pProduct->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProduct);
 
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
 
 	//
-	// Do not show Instances
+	// I) Do not show Instances
 	//
 
 	//
@@ -1026,7 +1027,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	}
 
 	//
-	// Show Instances
+	// II) Show Instances
 	//
 
 	/*auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
@@ -1086,9 +1087,9 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, CAP242Assembly
 	CString strName;
 	strName.Format(L"#%lld %s %s", pAssembly->GetExpressID(), pAssembly->GetName(), ITEM_ASSEMBLY);
 
-	int iImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hAssembly);
+	int iAssemblyImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iAssemblyImage, iAssemblyImage, hParent);
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hAssembly);
 
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
