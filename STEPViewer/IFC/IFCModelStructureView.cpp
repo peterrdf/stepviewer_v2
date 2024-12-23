@@ -337,31 +337,63 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	CPoint ptTree = point;
 	m_pTreeCtrl->ScreenToClient(&ptTree);
 
-	CIFCInstance* pTargetInstance = nullptr;
-
 	UINT flags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(ptTree, &flags);
-	if (hItem != nullptr)
+	if (hItem == nullptr)
 	{
-		m_pTreeCtrl->SelectItem(hItem);
-		m_pTreeCtrl->SetFocus();
+		return;
+	}
 
-		pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-		if (pTargetInstance == nullptr)
+	m_pTreeCtrl->SelectItem(hItem);
+	m_pTreeCtrl->SetFocus();
+
+	auto pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+	if (pTargetInstance == nullptr)
+	{
+		// Check the first child
+		HTREEITEM hChild = NULL;
+		if (((hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD)) != NULL) &&
+			(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
+			(m_pTreeCtrl->GetItemData(hChild) != NULL))
 		{
-			// Check the first child
-			HTREEITEM hChild = NULL;
-			if (((hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD)) != NULL) &&
-				(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
-				(m_pTreeCtrl->GetItemData(hChild) != NULL))
-			{
-				hItem = hChild;
-				pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
-			}
-		} // if (pInstance == nullptr)
-	} // if (hItem != nullptr)
+			hItem = hChild;
+			pTargetInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hItem);
+		}
+	} // if (pInstance == nullptr)
 
-	auto pModel = pController->getModelByInstance(pTargetInstance->getOwlModel());
+	_model* pModel = nullptr;
+	if (pTargetInstance == nullptr)
+	{
+		HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+		while (hParent != nullptr)
+		{
+			auto pParentInstance = (CIFCInstance*)m_pTreeCtrl->GetItemData(hParent);
+			if (pParentInstance == nullptr)
+			{
+				// Check the first child
+				HTREEITEM hChild = NULL;
+				if (((hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD)) != NULL) &&
+					(m_pTreeCtrl->GetItemText(hChild) == ITEM_GEOMETRY) &&
+					(m_pTreeCtrl->GetItemData(hChild) != NULL))
+				{
+					pModel = pController->getModelByInstance(((CIFCInstance*)m_pTreeCtrl->GetItemData(hChild))->getOwlModel());
+
+					break;
+				}
+			}
+
+			hParent = m_pTreeCtrl->GetParentItem(hParent);
+		} // while (hParent != nullptr)
+	} // if (pTargetInstance == nullptr)
+	else
+	{
+		pModel = pController->getModelByInstance(pTargetInstance->getOwlModel());
+	}
+
+	if (pModel == nullptr)
+	{
+		return;
+	}
 
 	// ENTITY : VISIBLE COUNT
 	map<wstring, long> mapEntity2VisibleCount;
