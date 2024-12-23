@@ -971,10 +971,9 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, CAP242ProductDe
 	CString strName;
 	strName.Format(L"#%lld %s %s", pProduct->getExpressID(), pProduct->GetProductName(), ITEM_PRODUCT_DEFINION);
 
-	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
-
-	int iGeometryImage = HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProduct);
+	int iImage = HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);	
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hProduct);
 
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
@@ -1087,10 +1086,9 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, CAP242Assembly
 	CString strName;
 	strName.Format(L"#%lld %s %s", pAssembly->GetExpressID(), pAssembly->GetName(), ITEM_ASSEMBLY);
 
-	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
-
-	int iGeometryImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hAssembly);
+	int iImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hAssembly);
 
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
