@@ -42,8 +42,8 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class _annotation_plane;
-class _draghting_callout;
+class _ap242_annotation_plane;
+class _ap242_draghting_callout;
 
 // ************************************************************************************************
 class _ap242_draghting_model
@@ -55,8 +55,8 @@ private: // Members
 	wstring m_strName;
 
 	// Reperesentation
-	vector<_annotation_plane*> m_vecAnnotationPlanes;
-	vector<_draghting_callout*> m_vecDraghtingCallouts;
+	vector<_ap242_annotation_plane*> m_vecAnnotationPlanes;
+	vector<_ap242_draghting_callout*> m_vecDraghtingCallouts;
 
 public: // Methods
 
@@ -70,11 +70,15 @@ protected: // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	const wchar_t* getName() { return m_strName.c_str(); }
+
+	const vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
+	const vector<_ap242_draghting_callout*> getDraghtingCallouts() const { return m_vecDraghtingCallouts; }
 };
 
 // ************************************************************************************************
-class _annotation_plane
+class _ap242_annotation_plane
 {
 
 private: // Members
@@ -84,17 +88,18 @@ private: // Members
 
 public: // Methods
 
-	_annotation_plane(SdaiInstance sdaiInstance);
-	virtual ~_annotation_plane();
+	_ap242_annotation_plane(SdaiInstance sdaiInstance);
+	virtual ~_ap242_annotation_plane();
 
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	const wchar_t* getName() { return m_strName.c_str(); }
 };
 
 // ************************************************************************************************
-class _draghting_callout
+class _ap242_draghting_callout
 {
 
 private: // Members
@@ -104,11 +109,12 @@ private: // Members
 
 public: // Methods
 
-	_draghting_callout(SdaiInstance sdaiInstance);
-	virtual ~_draghting_callout();
+	_ap242_draghting_callout(SdaiInstance sdaiInstance);
+	virtual ~_ap242_draghting_callout();
 
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	const wchar_t* getName() { return m_strName.c_str(); }
 };

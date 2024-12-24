@@ -657,15 +657,15 @@ void CAP242PModelStructureView::LoadModel()
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	pModelItemData->treeItem() = hModel;
 
-	/*
-	* Header
-	*/
+	// Header
 	HTREEITEM hHeader = m_pTreeCtrl->InsertItem(_T("Header"), IMAGE_PROPERTY_SET, IMAGE_PROPERTY_SET, hModel);
 	LoadHeader(hHeader);
 
-	/*
-	* Roots
-	*/
+	//
+	// Roots
+	//
+
+	// Product definitions
 	for (auto pGeometry : pModel->getGeometries())
 	{
 		_ptr<CAP242ProductDefinition> apProductDefinition(pGeometry);
@@ -673,6 +673,12 @@ void CAP242PModelStructureView::LoadModel()
 		{
 			LoadProduct(pModel, apProductDefinition, hModel);
 		}
+	}
+
+	// Draughitng models
+	for (auto pDraghtingModel : pModel->getDraghtingModels())
+	{
+		LoadDraghtingModel(pDraghtingModel, hModel);
 	}
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
@@ -1133,6 +1139,61 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 
 	ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
 	m_mapInstance2Item[pInstance] = hInstance;
+}
+
+void CAP242PModelStructureView::LoadDraghtingModel(_ap242_draghting_model* pDraugthingModel, HTREEITEM hParent)
+{
+	if (pDraugthingModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	CString strName;
+	strName.Format(L"#%lld %s %s", pDraugthingModel->getExpressID(), pDraugthingModel->getName(), ITEM_DRAUGHTING_MODEL);
+
+	HTREEITEM hDraugthingModel = m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
+
+	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes())
+	{
+		LoadAnnotationPlane(pAnnotationPlane, hDraugthingModel);
+	}
+
+	for (auto pDraghtingCallout : pDraugthingModel->getDraghtingCallouts())
+	{
+		LoadDraghtingCallout(pDraghtingCallout, hDraugthingModel);
+	}
+}
+
+void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent)
+{
+	if (pAnnotationPlane == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	CString strName;
+	strName.Format(L"#%lld %s %s", pAnnotationPlane->getExpressID(), pAnnotationPlane->getName(), ITEM_ANNOTATION_PLANE);
+
+	m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
+}
+
+void CAP242PModelStructureView::LoadDraghtingCallout(_ap242_draghting_callout* pDraugthingCallout, HTREEITEM hParent)
+{
+	if (pDraugthingCallout == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	CString strName;
+	strName.Format(L"#%lld %s %s", pDraugthingCallout->getExpressID(), pDraugthingCallout->getName(), ITEM_DRAUGHTING_CALLOUT);
+
+	m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
 }
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct)
