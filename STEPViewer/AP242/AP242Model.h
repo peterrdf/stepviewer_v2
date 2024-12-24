@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_step_mvc.h"
+#include "_ap242_mvc.h"
 
 #include <map>
 using namespace std;
@@ -11,7 +11,7 @@ class CAP242ProductDefinition;
 class CAP242ProductInstance;
 
 // ************************************************************************************************
-class CAP242Model : public _step_model
+class CAP242Model : public _ap242_model
 {
 
 private: // Members
@@ -43,7 +43,5 @@ private: // Methods
 	void LoadAssemblies();
 	void LoadGeometry();
 	void WalkAssemblyTreeRecursively(CAP242ProductDefinition* pProductDefinition, CAP242Assembly* pAssembly, _matrix4x3* pParentMatrix);
-
-	void LoadDraughtingModels();
 };
 
