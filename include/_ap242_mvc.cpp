@@ -60,6 +60,8 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
 _ap242_draghting_model::_ap242_draghting_model(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strName(L"")
+	, m_vecAnnotationPlanes()
+	, m_vecDraghtingCallouts()
 {
 	assert(m_sdaiInstance != 0);
 
@@ -67,31 +69,79 @@ _ap242_draghting_model::_ap242_draghting_model(SdaiInstance sdaiInstance)
 
 	wchar_t* szName = nullptr;
 	sdaiGetAttr(m_sdaiInstance, sdaiNameAttr, sdaiUNICODE, &szName);
-
 	m_strName = szName != nullptr ? szName : L"NA";
+
+	load();
 }
 
 /*virtual*/ _ap242_draghting_model::~_ap242_draghting_model()
 {
+	for (auto pAnnotationPlane : m_vecAnnotationPlanes)
+	{
+		delete pAnnotationPlane;
+	}
+
+	for (auto pDraghtingCallout : m_vecDraghtingCallouts)
+	{
+		delete pDraghtingCallout;
+	}
 }
 
 void _ap242_draghting_model::load()
 {
-	/*SdaiAttr sdaiItemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(getSdaiModel(), "REPRESENTATION"), "items");
+	SdaiModel sdaiModel = sdaiGetInstanceModel(m_sdaiInstance);
+	assert(sdaiModel != 0);
+
+	SdaiAttr sdaiItemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(sdaiModel, "REPRESENTATION"), "items");
+	assert(sdaiItemsAttr != nullptr);
 
 	SdaiAggr sdaiItemsAggr = nullptr;
-	sdaiGetAttr(sdaiDraughtingModelInstance, sdaiItemsAttr, sdaiAGGR, &sdaiItemsAggr);
+	sdaiGetAttr(m_sdaiInstance, sdaiItemsAttr, sdaiAGGR, &sdaiItemsAggr);
 	SdaiInteger iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
 	for (SdaiInteger j = 0; j < iItemsCount; j++)
 	{
 		SdaiInstance sdaiItemInstance = 0;
 		sdaiGetAggrByIndex(sdaiItemsAggr, j, sdaiINSTANCE, &sdaiItemInstance);
 
-		if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "ANNOTATION_PLANE") ||
-			sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "DRAUGHTING_CALLOUT")) {
-			wchar_t* szName2 = 0;
-			sdaiGetAttrBN(sdaiItemInstance, "name", sdaiUNICODE, &szName2);
-			TRACE(L"");
+		if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "ANNOTATION_PLANE"))
+		{
+			m_vecAnnotationPlanes.push_back(new _annotation_plane(sdaiItemInstance));
 		}
-	}*/
+		else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "DRAUGHTING_CALLOUT")) 
+		{
+			m_vecDraghtingCallouts.push_back(new _draghting_callout(sdaiItemInstance));
+		}
+	}
+}
+
+// ************************************************************************************************
+_annotation_plane::_annotation_plane(SdaiInstance sdaiInstance)
+	: m_sdaiInstance(sdaiInstance)
+	, m_strName(L"")
+{
+	assert(m_sdaiInstance != 0);
+
+	wchar_t* szName = 0;
+	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &szName);
+	m_strName = szName != nullptr ? szName : L"NA";
+}
+
+/*virtual*/ _annotation_plane::~_annotation_plane()
+{
+}
+
+// ************************************************************************************************
+_draghting_callout::_draghting_callout(SdaiInstance sdaiInstance)
+	: m_sdaiInstance(sdaiInstance)
+	, m_strName(L"")
+{
+	assert(m_sdaiInstance != 0);
+
+	wchar_t* szName = 0;
+	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &szName);
+	m_strName = szName != nullptr ? szName : L"NA";
+}
+
+/*virtual*/ _draghting_callout::~_draghting_callout()
+{
 }

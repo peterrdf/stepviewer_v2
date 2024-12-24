@@ -42,6 +42,10 @@ public: // Methods
 };
 
 // ************************************************************************************************
+class _annotation_plane;
+class _draghting_callout;
+
+// ************************************************************************************************
 class _ap242_draghting_model
 {
 
@@ -49,6 +53,10 @@ private: // Members
 
 	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
+
+	// Reperesentation
+	vector<_annotation_plane*> m_vecAnnotationPlanes;
+	vector<_draghting_callout*> m_vecDraghtingCallouts;
 
 public: // Methods
 
@@ -58,6 +66,46 @@ public: // Methods
 protected: // Methods
 
 	void load();
+
+public: // Properties
+
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	const wchar_t* getName() { return m_strName.c_str(); }
+};
+
+// ************************************************************************************************
+class _annotation_plane
+{
+
+private: // Members
+
+	SdaiInstance m_sdaiInstance;
+	wstring m_strName;
+
+public: // Methods
+
+	_annotation_plane(SdaiInstance sdaiInstance);
+	virtual ~_annotation_plane();
+
+public: // Properties
+
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	const wchar_t* getName() { return m_strName.c_str(); }
+};
+
+// ************************************************************************************************
+class _draghting_callout
+{
+
+private: // Members
+
+	SdaiInstance m_sdaiInstance;
+	wstring m_strName;
+
+public: // Methods
+
+	_draghting_callout(SdaiInstance sdaiInstance);
+	virtual ~_draghting_callout();
 
 public: // Properties
 
