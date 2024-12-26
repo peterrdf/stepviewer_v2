@@ -1225,6 +1225,7 @@ void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDr
 	ASSERT(pParentItemData != nullptr);
 
 	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pDraugthingModel, enumSTEPItemDataType::DraughtingModel);
+	pParentItemData->children().push_back(pItemData);
 	m_pTreeCtrl->SetItemData(hDraugthingModel, (DWORD_PTR)pItemData);
 
 	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes())
