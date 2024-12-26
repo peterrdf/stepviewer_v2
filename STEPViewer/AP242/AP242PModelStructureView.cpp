@@ -328,7 +328,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			_T("(All)"),
 			_T("Product Definitions"),
 			_T("Assemblies"),
-			_T("Product Instances")
+			_T("Product Instances"),
+			_T("Annotation Plane"),
+			_T("Draughting Callout")
+
 		};
 }
 
@@ -388,7 +391,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 	auto pItemData = (CAP242ItemData*)GetTreeView()->GetItemData(hItem);
 
-	// Product Definition
+	// Product Definitions
 	if (iFilter == (int)enumSearchFilter::ProductDefitions)
 	{
 		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductDefinition))
@@ -410,7 +413,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return FALSE;
 	}
 
-	// Product Instance
+	// Product/Annotation Plane/Draughting Callout Instance
 	if (iFilter == (int)enumSearchFilter::ProductInstances)
 	{
 		if ((pItemData != nullptr) &&

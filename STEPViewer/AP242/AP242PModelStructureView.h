@@ -23,7 +23,10 @@ private: // Classes
 		All = 0,
 		ProductDefitions = 1,
 		Assemblies = 2,
-		ProductInstances = 3
+		ProductInstances = 3,
+		DraughtingModel = 4,
+		AnnotationPlane = 5,
+		DraughtingCallout = 6
 	};
 
 private: // Members
