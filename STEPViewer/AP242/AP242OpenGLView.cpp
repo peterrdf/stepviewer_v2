@@ -22,10 +22,6 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 #endif
 		TEXTFILE,
 		false);
-
-	// Default settings
-	_oglRendererSettings::m_bShowLines = FALSE;
-	_oglRendererSettings::m_bShowPoints = FALSE;
 }
 
 CAP242OpenGLView::~CAP242OpenGLView()
