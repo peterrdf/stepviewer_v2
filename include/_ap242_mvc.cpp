@@ -61,13 +61,16 @@ void _ap242_model::loadDraughtingModels()
 				auto pGeometry = getGeometryByInstance(sdaiItemInstance);
 				if (pGeometry == nullptr)
 				{
-					auto pAnnotationPlane = loadAnnotationPlane(sdaiItemInstance);
-					pDraughtingModel->m_vecAnnotationPlanes.push_back(pAnnotationPlane);
+					pDraughtingModel->m_vecAnnotationPlanes.push_back(loadAnnotationPlane(sdaiItemInstance));
 				}				
 			}
 			else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "DRAUGHTING_CALLOUT"))
 			{
-				//m_vecDraughtingCallouts.push_back(new _ap242_draughting_callout(sdaiItemInstance));
+				auto pGeometry = getGeometryByInstance(sdaiItemInstance);
+				if (pGeometry == nullptr)
+				{
+					pDraughtingModel->m_vecDraughtingCallouts.push_back(loadDraughtingCallout(sdaiItemInstance));
+				}				
 			}
 		}
 	} // for (SdaiInteger i = ...
@@ -75,6 +78,8 @@ void _ap242_model::loadDraughtingModels()
 
 _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInstance)
 {
+	assert(sdaiInstance != 0);
+
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (owlInstance != 0)
 	{
@@ -82,6 +87,28 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 	}
 
 	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance);
+	addGeometry(pGeometry);
+
+	auto pInstance = new _ap_instance(
+		_model::getNextInstanceID(),
+		pGeometry,
+		nullptr);
+	addInstance(pInstance);
+
+	return pGeometry;
+}
+
+_ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdaiInstance)
+{
+	assert(sdaiInstance != 0);
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}
+
+	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance);
 	addGeometry(pGeometry);
 
 	auto pInstance = new _ap_instance(
@@ -142,15 +169,15 @@ _ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiIn
 }
 
 // ************************************************************************************************
-_ap242_draughting_callout::_ap242_draughting_callout(SdaiInstance sdaiInstance)
-	: m_sdaiInstance(sdaiInstance)
+_ap242_draughting_callout::_ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+	: _ap_geometry(owlInstance, sdaiInstance)
 	, m_strName(L"")
 {
-	assert(m_sdaiInstance != 0);
-
 	wchar_t* szName = 0;
-	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &szName);
+	sdaiGetAttrBN(getSdaiInstance(), "name", sdaiUNICODE, &szName);
 	m_strName = szName != nullptr ? szName : L"NA";
+
+	calculate();
 }
 
 /*virtual*/ _ap242_draughting_callout::~_ap242_draughting_callout()

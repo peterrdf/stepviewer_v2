@@ -29,6 +29,7 @@ protected: // Methods
 
 	void loadDraughtingModels();
 	_ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
+	_ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);
 
 public: // Properties
 
@@ -93,22 +94,19 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ap242_draughting_callout
+class _ap242_draughting_callout : public _ap_geometry
 {
 
 private: // Members
 
-	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
 
 public: // Methods
 
-	_ap242_draughting_callout(SdaiInstance sdaiInstance);
+	_ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~_ap242_draughting_callout();
 
 public: // Properties
 
-	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
-	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	const wchar_t* getName() { return m_strName.c_str(); }
 };
