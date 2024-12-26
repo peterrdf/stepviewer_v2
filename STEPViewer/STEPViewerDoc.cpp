@@ -49,18 +49,21 @@
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<CAP242ProductInstance*>(getSelectedInstance());
+	auto pProductInstance = dynamic_cast<_ap_instance*>(getSelectedInstance());
 	if (pProductInstance != nullptr)
 	{
-		SdaiModel iSdaiModel = sdaiGetInstanceModel(dynamic_cast<_ap_instance*>(getSelectedInstance())->getSdaiInstance());
-		ASSERT(iSdaiModel != 0);
+		OwlModel owlModel = getModel()->getOwlModel();
+		ASSERT(owlModel != 0);
 
-		OwlModel iOwlModel = 0;
-		owlGetModel(iSdaiModel, &iOwlModel);
-		ASSERT(iOwlModel != 0);
+		OwlInstance owlInstance = getSelectedInstance()->getOwlInstance();
+		if (owlInstance == 0)
+		{
+			owlInstance = _ap_geometry::buildOwlInstance(pProductInstance->getSdaiInstance());
+			ASSERT(owlInstance != 0);
+		}
 
-		OwlInstance	iMatrixInstance = CreateInstance(GetClassByName(iOwlModel, "Matrix"));
-		ASSERT(iMatrixInstance != 0);
+		OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
+		ASSERT(owlMatrixInstance != 0);
 
 		vector<double> vecMatrix
 		{
@@ -79,29 +82,29 @@
 		};
 
 		SetDatatypeProperty(
-			iMatrixInstance,
-			GetPropertyByName(iOwlModel, "coordinates"),
+			owlMatrixInstance,
+			GetPropertyByName(owlModel, "coordinates"),
 			vecMatrix.data(),
 			vecMatrix.size());
 
-		OwlInstance iTransformationInstance = CreateInstance(GetClassByName(iOwlModel, "Transformation"));
-		ASSERT(iTransformationInstance != 0);
+		OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
+		ASSERT(owlTransformationInstance != 0);
 
 		SetObjectProperty(
-			iTransformationInstance,
-			GetPropertyByName(iOwlModel, "object"),
-			getSelectedInstance()->getOwlInstance());
+			owlTransformationInstance,
+			GetPropertyByName(owlModel, "object"),
+			owlInstance);
 
 		SetObjectProperty(
-			iTransformationInstance,
-			GetPropertyByName(iOwlModel, "matrix"),
-			iMatrixInstance);
+			owlTransformationInstance,
+			GetPropertyByName(owlModel, "matrix"),
+			owlMatrixInstance);
 
-		SaveInstanceTreeW(iTransformationInstance, dlgFile.GetPathName());
+		SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
 	}
 	else
 	{
-		SaveInstanceTreeW(getSelectedInstance()->getOwlInstance(), dlgFile.GetPathName());
+		ASSERT(FALSE);
 	}
 }
 

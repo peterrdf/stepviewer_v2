@@ -893,7 +893,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 
 		return;
 	}
