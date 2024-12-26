@@ -668,10 +668,10 @@ void CAP242PModelStructureView::LoadModel()
 	// Product definitions
 	for (auto pGeometry : pModel->getGeometries())
 	{
-		_ptr<CAP242ProductDefinition> apProductDefinition(pGeometry);
-		if (apProductDefinition->GetRelatedProducts() == 0)
+		auto pProduct = dynamic_cast<CAP242ProductDefinition*>(pGeometry);		
+		if ((pProduct != nullptr) && (pProduct->GetRelatedProducts() == 0))
 		{
-			LoadProduct(pModel, apProductDefinition, hModel);
+			LoadProduct(pModel, pProduct, hModel);
 		}
 	}
 

@@ -3,7 +3,10 @@
 #include "_ap_mvc.h"
 
 // ************************************************************************************************
+class _ap242_geometry;
 class _ap242_draughting_model;
+class _ap242_annotation_plane;
+class _ap242_draughting_callout;
 
 // ************************************************************************************************
 class _ap242_model : public _ap_model
@@ -25,6 +28,7 @@ protected: // Methods
 	virtual void clean() override;
 
 	void loadDraughtingModels();
+	_ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
 
 public: // Properties
 
@@ -42,12 +46,9 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class _ap242_annotation_plane;
-class _ap242_draughting_callout;
-
-// ************************************************************************************************
 class _ap242_draughting_model
 {
+	friend class _ap242_model;
 
 private: // Members
 
@@ -63,10 +64,6 @@ public: // Methods
 	_ap242_draughting_model(SdaiInstance sdaiInstance);
 	virtual ~_ap242_draughting_model();
 
-protected: // Methods
-
-	void load();
-
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
@@ -78,23 +75,20 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ap242_annotation_plane
+class _ap242_annotation_plane : public _ap_geometry
 {
 
 private: // Members
 
-	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
 
 public: // Methods
 
-	_ap242_annotation_plane(SdaiInstance sdaiInstance);
+	_ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~_ap242_annotation_plane();
 
 public: // Properties
 
-	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
-	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	const wchar_t* getName() { return m_strName.c_str(); }
 };
 
