@@ -413,13 +413,43 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return FALSE;
 	}
 
-	// Product/Annotation Plane/Draughting Callout Instance
+	// Product Instance
 	if (iFilter == (int)enumSearchFilter::ProductInstances)
 	{
-		if ((pItemData != nullptr) &&
-			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// Draughting Model
+	if (iFilter == (int)enumSearchFilter::DraughtingModel)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::DraughtingModel))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// Annotation Plane
+	if (iFilter == (int)enumSearchFilter::AnnotationPlane)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::AnnotationPlane))
+		{
+			return strItemText.Find(strText, 0) != -1;
+		}
+
+		return FALSE;
+	}
+
+	// Draughting Callout
+	if (iFilter == (int)enumSearchFilter::DraughtingCallout)
+	{
+		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
