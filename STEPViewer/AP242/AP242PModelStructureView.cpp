@@ -1452,6 +1452,10 @@ void CAP242PModelStructureView::UpdateChildrenItemData(CAP242ItemData* pParent, 
 		{
 			pChild->GetInstance<_instance>()->setEnable(bEnable);
 		}
+		else if (pChild->getType() == enumSTEPItemDataType::DraughtingModel)
+		{
+			pChild->GetInstance<_ap242_draughting_model>()->enableInstances(bEnable);
+		}
 
 		UpdateChildrenItemData(pChild, bEnable);
 	} // for (size_t iChild = ...
