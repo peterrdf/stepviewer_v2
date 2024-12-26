@@ -11,7 +11,10 @@ enum class enumSTEPItemDataType : int
 	Model = 0,
 	ProductDefinition = 1,
 	Assembly = 2,
-	ProductInstance = 3
+	ProductInstance = 3,
+	DraughtingModel = 4,
+	AnnotationPlane = 5,
+	DraughtingCallout = 6,
 };
 
 // ------------------------------------------------------------------------------------------------

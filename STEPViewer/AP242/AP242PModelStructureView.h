@@ -33,7 +33,7 @@ private: // Members
 
 	// Cache	
 	map<CAP242ProductDefinition*, _instance_iterator*> m_mapInstanceIterators;
-	map<CAP242ProductInstance*, HTREEITEM> m_mapInstance2Item;
+	map<_instance*, HTREEITEM> m_mapInstance2Item;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
 		
@@ -87,9 +87,10 @@ private: // Methods
 
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
-	void UpdateChildren(HTREEITEM hParent);
-	void UpdateChildrenInMemory(CAP242ItemData* pParent, bool bEnable);
-	void UpdateParent(HTREEITEM hParent);
+	void UpdateChildrenItemData(CAP242ItemData* pParent, bool bEnable);
+	void UpdateChildrenUI(HTREEITEM hParent);
+	void UpdateParentsItemDataAndUI(HTREEITEM hParent);
+	
 	void ResetView();
 };
 
