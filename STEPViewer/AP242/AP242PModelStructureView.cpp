@@ -208,9 +208,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			case IMAGE_SEMI_SELECTED:
 			{
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+				if ((pItemData != nullptr) && 
+					((pItemData->getType() == enumSTEPItemDataType::ProductInstance) || 
+						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) || 
+						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 				{
-					pItemData->GetInstance<CAP242ProductInstance>()->setEnable(false);
+					pItemData->GetInstance<_instance>()->setEnable(false);
 				}
 				
 				UpdateChildrenItemData(pItemData, false);
@@ -227,9 +230,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			case IMAGE_NOT_SELECTED:
 			{
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-				if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+				if ((pItemData != nullptr) &&
+					((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 				{
-					pItemData->GetInstance<CAP242ProductInstance>()->setEnable(true);
+					pItemData->GetInstance<_instance>()->setEnable(true);
 				}
 
 				UpdateChildrenItemData(pItemData, true);
@@ -268,7 +274,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		m_hSelectedItem = hItem;
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-		if ((pItemData == nullptr) || (pItemData->getType() != enumSTEPItemDataType::ProductInstance))
+		if ((pItemData == nullptr) ||
+			((pItemData->getType() != enumSTEPItemDataType::ProductInstance) &&
+				(pItemData->getType() != enumSTEPItemDataType::AnnotationPlane) &&
+				(pItemData->getType() != enumSTEPItemDataType::DraughtingCallout)))
 		{
 			getController()->selectInstance(this, nullptr);
 
@@ -296,7 +305,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	}
 
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+	if ((pItemData != nullptr) &&
+		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 	{
 		return pItemData->GetInstance<_instance>() == pController->getSelectedInstance();
 	}
@@ -401,7 +413,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Product Instance
 	if (iFilter == (int)enumSearchFilter::ProductInstances)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		if ((pItemData != nullptr) &&
+			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -454,9 +469,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	* Instances
 	*/
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+	if ((pItemData != nullptr) &&
+		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 	{
-		auto pTargetInstance = pItemData->GetInstance<CAP242ProductInstance>();
+		auto pTargetInstance = pItemData->GetInstance<_ap_instance>();
 
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -1220,6 +1238,20 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 	int iImage = pDraugthingCallout->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hDraugthingCallout = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
 	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hDraugthingCallout);
+
+	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+	ASSERT(pParentItemData != nullptr);
+
+	ASSERT(pDraugthingCallout->getInstances().size() == 1);
+	auto pInstance = pDraugthingCallout->getInstances()[0];
+
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumSTEPItemDataType::DraughtingCallout);
+	pParentItemData->children().push_back(pItemData);
+
+	m_pTreeCtrl->SetItemData(hDraugthingCallout, (DWORD_PTR)pItemData);
+
+	ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
+	m_mapInstance2Item[pInstance] = hDraugthingCallout;
 }
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct)
@@ -1368,9 +1400,11 @@ void CAP242PModelStructureView::UpdateChildrenItemData(CAP242ItemData* pParent, 
 	for (size_t iChild = 0; iChild < pParent->children().size(); iChild++)
 	{
 		auto pChild = pParent->children()[iChild];
-		if (pChild->getType() == enumSTEPItemDataType::ProductInstance)
+		if ((pChild->getType() == enumSTEPItemDataType::ProductInstance) ||
+			(pChild->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+			(pChild->getType() == enumSTEPItemDataType::DraughtingCallout))
 		{
-			pChild->GetInstance<CAP242ProductInstance>()->setEnable(bEnable);
+			pChild->GetInstance<_instance>()->setEnable(bEnable);
 		}
 
 		UpdateChildrenItemData(pChild, bEnable);
@@ -1487,9 +1521,12 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		if ((pItemData != nullptr) &&
+			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 		{
-			pItemData->GetInstance<CAP242ProductInstance>()->setEnable(true);
+			pItemData->GetInstance<_instance>()->setEnable(true);
 		}
 
 		UpdateParentsItemDataAndUI(m_pTreeCtrl->GetParentItem(hParent));
@@ -1502,9 +1539,12 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		if ((pItemData != nullptr) &&
+			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 		{
-			pItemData->GetInstance<CAP242ProductInstance>()->setEnable(false);
+			pItemData->GetInstance<_instance>()->setEnable(false);
 		}
 
 		UpdateParentsItemDataAndUI(m_pTreeCtrl->GetParentItem(hParent));
@@ -1517,7 +1557,10 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		if ((pItemData != nullptr) &&
+			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 		{
 			pItemData->GetInstance<CAP242ProductInstance>()->setEnable(true);
 		}
@@ -1530,7 +1573,10 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+	if ((pItemData != nullptr) &&
+		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
 	{
 		pItemData->GetInstance<CAP242ProductInstance>()->setEnable(true);
 	}
