@@ -3,7 +3,7 @@
 #include "_ap_mvc.h"
 
 // ************************************************************************************************
-class _ap242_draghting_model;
+class _ap242_draughting_model;
 
 // ************************************************************************************************
 class _ap242_model : public _ap_model
@@ -11,7 +11,7 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
-	vector<_ap242_draghting_model*> m_vecDraghtingModels;
+	vector<_ap242_draughting_model*> m_vecDraughtingModels;
 
 public: // Methods
 
@@ -28,7 +28,7 @@ protected: // Methods
 
 public: // Properties
 
-	const vector<_ap242_draghting_model*>& getDraghtingModels() const { return m_vecDraghtingModels; }
+	const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
 };
 
 // ************************************************************************************************
@@ -43,10 +43,10 @@ public: // Methods
 
 // ************************************************************************************************
 class _ap242_annotation_plane;
-class _ap242_draghting_callout;
+class _ap242_draughting_callout;
 
 // ************************************************************************************************
-class _ap242_draghting_model
+class _ap242_draughting_model
 {
 
 private: // Members
@@ -56,12 +56,12 @@ private: // Members
 
 	// Reperesentation
 	vector<_ap242_annotation_plane*> m_vecAnnotationPlanes;
-	vector<_ap242_draghting_callout*> m_vecDraghtingCallouts;
+	vector<_ap242_draughting_callout*> m_vecDraughtingCallouts;
 
 public: // Methods
 
-	_ap242_draghting_model(SdaiInstance sdaiInstance);
-	virtual ~_ap242_draghting_model();
+	_ap242_draughting_model(SdaiInstance sdaiInstance);
+	virtual ~_ap242_draughting_model();
 
 protected: // Methods
 
@@ -74,7 +74,7 @@ public: // Properties
 	const wchar_t* getName() { return m_strName.c_str(); }
 
 	const vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
-	const vector<_ap242_draghting_callout*> getDraghtingCallouts() const { return m_vecDraghtingCallouts; }
+	const vector<_ap242_draughting_callout*> getDraughtingCallouts() const { return m_vecDraughtingCallouts; }
 };
 
 // ************************************************************************************************
@@ -99,7 +99,7 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ap242_draghting_callout
+class _ap242_draughting_callout
 {
 
 private: // Members
@@ -109,8 +109,8 @@ private: // Members
 
 public: // Methods
 
-	_ap242_draghting_callout(SdaiInstance sdaiInstance);
-	virtual ~_ap242_draghting_callout();
+	_ap242_draughting_callout(SdaiInstance sdaiInstance);
+	virtual ~_ap242_draughting_callout();
 
 public: // Properties
 

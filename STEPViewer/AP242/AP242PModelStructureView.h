@@ -80,9 +80,9 @@ private: // Methods
 	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, CAP242ProductDefinition* pProduct, bool& bHasDescendantWithGeometry);
 	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242Assembly* pAssembly);
 
-	void LoadDraghtingModel(_ap242_draghting_model* pDraugthingModel, HTREEITEM hParent);
+	void LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent);
 	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);
-	void LoadDraghtingCallout(_ap242_draghting_callout* pDraugthingCallout, HTREEITEM hParent);
+	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
 
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);

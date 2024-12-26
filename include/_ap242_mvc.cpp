@@ -4,7 +4,7 @@
 // ************************************************************************************************
 _ap242_model::_ap242_model()
 	: _ap_model(enumAP::STEP)
-	, m_vecDraghtingModels()
+	, m_vecDraughtingModels()
 {
 }
 
@@ -22,11 +22,11 @@ _ap242_model::_ap242_model()
 {
 	_ap_model::clean();
 
-	for (auto pDraghtingModel : m_vecDraghtingModels)
+	for (auto pDraughtingModel : m_vecDraughtingModels)
 	{
-		delete pDraghtingModel;
+		delete pDraughtingModel;
 	}
-	m_vecDraghtingModels.clear();
+	m_vecDraughtingModels.clear();
 }
 
 void _ap242_model::loadDraughtingModels()
@@ -41,7 +41,7 @@ void _ap242_model::loadDraughtingModels()
 		sdaiGetAggrByIndex(sdaiDraughtingModelAggr, i, sdaiINSTANCE, &sdaiDraughtingModelInstance);
 		assert(sdaiDraughtingModelInstance != 0);
 
-		m_vecDraghtingModels.push_back(new _ap242_draghting_model(sdaiDraughtingModelInstance));
+		m_vecDraughtingModels.push_back(new _ap242_draughting_model(sdaiDraughtingModelInstance));
 	} // for (SdaiInteger i = ...
 }
 
@@ -57,11 +57,11 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
 }
 
 // ************************************************************************************************
-_ap242_draghting_model::_ap242_draghting_model(SdaiInstance sdaiInstance)
+_ap242_draughting_model::_ap242_draughting_model(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strName(L"")
 	, m_vecAnnotationPlanes()
-	, m_vecDraghtingCallouts()
+	, m_vecDraughtingCallouts()
 {
 	assert(m_sdaiInstance != 0);
 
@@ -74,20 +74,20 @@ _ap242_draghting_model::_ap242_draghting_model(SdaiInstance sdaiInstance)
 	load();
 }
 
-/*virtual*/ _ap242_draghting_model::~_ap242_draghting_model()
+/*virtual*/ _ap242_draughting_model::~_ap242_draughting_model()
 {
 	for (auto pAnnotationPlane : m_vecAnnotationPlanes)
 	{
 		delete pAnnotationPlane;
 	}
 
-	for (auto pDraghtingCallout : m_vecDraghtingCallouts)
+	for (auto pDraughtingCallout : m_vecDraughtingCallouts)
 	{
-		delete pDraghtingCallout;
+		delete pDraughtingCallout;
 	}
 }
 
-void _ap242_draghting_model::load()
+void _ap242_draughting_model::load()
 {
 	SdaiModel sdaiModel = sdaiGetInstanceModel(m_sdaiInstance);
 	assert(sdaiModel != 0);
@@ -109,7 +109,7 @@ void _ap242_draghting_model::load()
 		}
 		else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "DRAUGHTING_CALLOUT")) 
 		{
-			m_vecDraghtingCallouts.push_back(new _ap242_draghting_callout(sdaiItemInstance));
+			m_vecDraughtingCallouts.push_back(new _ap242_draughting_callout(sdaiItemInstance));
 		}
 	}
 }
@@ -131,7 +131,7 @@ _ap242_annotation_plane::_ap242_annotation_plane(SdaiInstance sdaiInstance)
 }
 
 // ************************************************************************************************
-_ap242_draghting_callout::_ap242_draghting_callout(SdaiInstance sdaiInstance)
+_ap242_draughting_callout::_ap242_draughting_callout(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strName(L"")
 {
@@ -142,6 +142,6 @@ _ap242_draghting_callout::_ap242_draghting_callout(SdaiInstance sdaiInstance)
 	m_strName = szName != nullptr ? szName : L"NA";
 }
 
-/*virtual*/ _ap242_draghting_callout::~_ap242_draghting_callout()
+/*virtual*/ _ap242_draughting_callout::~_ap242_draughting_callout()
 {
 }

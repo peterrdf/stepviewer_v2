@@ -676,9 +676,9 @@ void CAP242PModelStructureView::LoadModel()
 	}
 
 	// Draughitng models
-	for (auto pDraghtingModel : pModel->getDraghtingModels())
+	for (auto pDraughtingModel : pModel->getDraughtingModels())
 	{
-		LoadDraghtingModel(pDraghtingModel, hModel);
+		LoadDraughtingModel(pDraughtingModel, hModel);
 	}
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
@@ -1141,7 +1141,7 @@ void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, CAP242ProductI
 	m_mapInstance2Item[pInstance] = hInstance;
 }
 
-void CAP242PModelStructureView::LoadDraghtingModel(_ap242_draghting_model* pDraugthingModel, HTREEITEM hParent)
+void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent)
 {
 	if (pDraugthingModel == nullptr)
 	{
@@ -1160,9 +1160,9 @@ void CAP242PModelStructureView::LoadDraghtingModel(_ap242_draghting_model* pDrau
 		LoadAnnotationPlane(pAnnotationPlane, hDraugthingModel);
 	}
 
-	for (auto pDraghtingCallout : pDraugthingModel->getDraghtingCallouts())
+	for (auto pDraughtingCallout : pDraugthingModel->getDraughtingCallouts())
 	{
-		LoadDraghtingCallout(pDraghtingCallout, hDraugthingModel);
+		LoadDraughtingCallout(pDraughtingCallout, hDraugthingModel);
 	}
 }
 
@@ -1181,7 +1181,7 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 	m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
 }
 
-void CAP242PModelStructureView::LoadDraghtingCallout(_ap242_draghting_callout* pDraugthingCallout, HTREEITEM hParent)
+void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent)
 {
 	if (pDraugthingCallout == nullptr)
 	{
