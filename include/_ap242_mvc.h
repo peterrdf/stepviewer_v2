@@ -65,6 +65,8 @@ public: // Methods
 	_ap242_draughting_model(SdaiInstance sdaiInstance);
 	virtual ~_ap242_draughting_model();
 
+	void enableInstances(bool bEnable);
+
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }

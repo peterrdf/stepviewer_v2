@@ -208,13 +208,19 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			case IMAGE_SEMI_SELECTED:
 			{
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-				if ((pItemData != nullptr) && 
-					((pItemData->getType() == enumSTEPItemDataType::ProductInstance) || 
-						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) || 
-						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+				if (pItemData != nullptr)
 				{
-					pItemData->GetInstance<_instance>()->setEnable(false);
-				}
+					if ((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
+						{
+							pItemData->GetInstance<_instance>()->setEnable(false);
+						}
+					else if (pItemData->getType() == enumSTEPItemDataType::DraughtingModel)
+					{
+						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
+					}
+				}					
 				
 				UpdateChildrenItemData(pItemData, false);
 				
@@ -230,12 +236,18 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			case IMAGE_NOT_SELECTED:
 			{
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-				if ((pItemData != nullptr) &&
-					((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+				if (pItemData != nullptr)
 				{
-					pItemData->GetInstance<_instance>()->setEnable(true);
+					if ((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
+						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
+						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
+					{
+						pItemData->GetInstance<_instance>()->setEnable(true);
+					}
+					else if (pItemData->getType() == enumSTEPItemDataType::DraughtingModel)
+					{
+						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(true);
+					}
 				}
 
 				UpdateChildrenItemData(pItemData, true);

@@ -152,6 +152,21 @@ _ap242_draughting_model::_ap242_draughting_model(SdaiInstance sdaiInstance)
 {
 }
 
+void _ap242_draughting_model::enableInstances(bool bEnable)
+{
+	for (auto pAnnotationPlane : m_vecAnnotationPlanes)
+	{
+		assert(pAnnotationPlane->getInstances().size() == 1);
+		pAnnotationPlane->getInstances()[0]->setEnable(bEnable);
+	}
+
+	for (auto pDraughtingCallout : m_vecDraughtingCallouts)
+	{
+		assert(pDraughtingCallout->getInstances().size() == 1);
+		pDraughtingCallout->getInstances()[0]->setEnable(bEnable);
+	}
+}
+
 // ************************************************************************************************
 _ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 	: _ap_geometry(owlInstance, sdaiInstance)
