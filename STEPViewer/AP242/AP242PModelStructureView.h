@@ -79,6 +79,7 @@ private: // Methods
 	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct);
 	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, CAP242ProductDefinition* pProduct, bool& bHasDescendantWithGeometry);
 	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242Assembly* pAssembly);
+	bool HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel);
 
 	void LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent);
 	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);

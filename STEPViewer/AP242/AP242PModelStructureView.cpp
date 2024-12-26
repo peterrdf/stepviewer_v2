@@ -1153,7 +1153,9 @@ void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDr
 	CString strName;
 	strName.Format(L"#%lld %s %s", pDraugthingModel->getExpressID(), pDraugthingModel->getName(), ITEM_DRAUGHTING_MODEL);
 
-	HTREEITEM hDraugthingModel = m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
+	int iImage = HasDescendantsWithGeometry(pDraugthingModel) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hDraugthingModel = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hDraugthingModel);	
 
 	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes())
 	{
@@ -1178,7 +1180,9 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 	CString strName;
 	strName.Format(L"#%lld %s %s", pAnnotationPlane->getExpressID(), pAnnotationPlane->getName(), ITEM_ANNOTATION_PLANE);
 
-	m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
+	int iImage = pAnnotationPlane->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hAnnotationPlane = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hAnnotationPlane);
 }
 
 void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent)
@@ -1193,7 +1197,9 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 	CString strName;
 	strName.Format(L"#%lld %s %s", pDraugthingCallout->getExpressID(), pDraugthingCallout->getName(), ITEM_DRAUGHTING_CALLOUT);
 
-	m_pTreeCtrl->InsertItem(strName, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hParent);
+	int iImage = pDraugthingCallout->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
+	HTREEITEM hDraugthingCallout = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
+	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hDraugthingCallout);
 }
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct)
@@ -1248,6 +1254,34 @@ bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, 
 	}
 
 	return HasDescendantsWithGeometry(pModel, pAssembly->GetRelatedProductDefinition());
+}
+
+bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel)
+{
+	if (pDraughtingModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return false;
+	}
+
+	for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes())
+	{
+		if (pAnnotationPlane->hasGeometry())
+		{
+			return true;
+		}
+	}
+
+	for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts())
+	{
+		if (pDraughtingCallout->hasGeometry())
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void CAP242PModelStructureView::ResetTree(bool bEnable)
