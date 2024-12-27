@@ -893,8 +893,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
-		//ASSERT(FALSE);
-
+		// Annotation Planes and Draughting Callouts have no properties
 		return;
 	}
 

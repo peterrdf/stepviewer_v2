@@ -344,7 +344,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 			_T("Draughting Model"),
 			_T("Annotation Plane"),
 			_T("Draughting Callout")
-
 		};
 }
 
