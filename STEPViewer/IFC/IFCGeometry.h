@@ -1,7 +1,7 @@
 #ifndef IFC_GEOMETRY_H
 #define IFC_GEOMETRY_H
 
-#include "_ifc_mvc.h"
+#include "_ifc_geometry.h"
 
 // ************************************************************************************************
 class CIFCGeometry : public _ifc_geometry

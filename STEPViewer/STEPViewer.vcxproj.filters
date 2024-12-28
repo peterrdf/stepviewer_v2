@@ -231,6 +231,9 @@
     <ClInclude Include="..\include\_instance.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ifc_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -364,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="AP242\AP242DraughtingModel.cpp">
       <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_geometry.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

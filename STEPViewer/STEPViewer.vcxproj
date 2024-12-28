@@ -602,6 +602,7 @@
     <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_ap242_mvc.h" />
+    <ClInclude Include="..\include\_ifc_geometry.h" />
     <ClInclude Include="..\include\_ifc_mvc.h" />
     <ClInclude Include="..\include\_instance.h" />
     <ClInclude Include="..\include\_material.h" />
@@ -662,6 +663,7 @@
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
     <ClCompile Include="..\include\_ap242_mvc.cpp" />
+    <ClCompile Include="..\include\_ifc_geometry.cpp" />
     <ClCompile Include="..\include\_ifc_mvc.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="..\include\_oglUtils.cpp" />

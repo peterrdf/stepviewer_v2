@@ -84,10 +84,6 @@ public: // Methods
 		SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
 	}
 
-protected: // Methods
-
-	
-
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
