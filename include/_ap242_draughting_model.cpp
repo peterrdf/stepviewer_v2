@@ -48,8 +48,6 @@ _ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiIn
 	wchar_t* szName = 0;
 	sdaiGetAttrBN(getSdaiInstance(), "name", sdaiUNICODE, &szName);
 	m_strName = szName != nullptr ? szName : L"NA";
-
-	calculate();
 }
 
 /*virtual*/ _ap242_annotation_plane::~_ap242_annotation_plane()
@@ -64,8 +62,6 @@ _ap242_draughting_callout::_ap242_draughting_callout(OwlInstance owlInstance, Sd
 	wchar_t* szName = 0;
 	sdaiGetAttrBN(getSdaiInstance(), "name", sdaiUNICODE, &szName);
 	m_strName = szName != nullptr ? szName : L"NA";
-
-	calculate();
 }
 
 /*virtual*/ _ap242_draughting_callout::~_ap242_draughting_callout()
