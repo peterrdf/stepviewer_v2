@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "_oglUtils.h"
+#include "_instance.h"
 
 // ************************************************************************************************
 _oglRendererSettings::_oglRendererSettings()

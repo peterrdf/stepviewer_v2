@@ -228,6 +228,9 @@
     <ClInclude Include="AP242\AP242DraughtingModel.h">
       <Filter>AP242</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">

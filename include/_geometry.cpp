@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "_geometry.h"
+#include "_instance.h"
 #include "_oglUtils.h"
 
 // ************************************************************************************************
