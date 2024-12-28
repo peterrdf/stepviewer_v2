@@ -19,7 +19,7 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 
 	SdaiInstance sdaiFormationInstance = 0;
 	sdaiGetAttrBN(sdaiInstance, "formation", sdaiINSTANCE, &sdaiFormationInstance);
-	ASSERT(sdaiFormationInstance != 0);
+	assert(sdaiFormationInstance != 0);
 
 	SdaiInstance sdaiOfProductInstance = 0;
 	sdaiGetAttrBN(sdaiFormationInstance, "of_product", sdaiINSTANCE, &sdaiOfProductInstance);
@@ -42,24 +42,22 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 }
 
 // ************************************************************************************************
-_ap242_assembly::_ap242_assembly(SdaiInstance iInstance, _ap242_product_definition* pRelatingProductDefinition, _ap242_product_definition* pRelatedProductDefinition)
-	: m_iInstance(iInstance)
-	, m_iExpressID(internalGetP21Line(iInstance))
+_ap242_assembly::_ap242_assembly(SdaiInstance sdaiInstance, _ap242_product_definition* pRelatingProductDefinition, _ap242_product_definition* pRelatedProductDefinition)
+	: m_sdaiInstance(sdaiInstance)
 	, m_szId(nullptr)
 	, m_szName(nullptr)
 	, m_szDescription(nullptr)
 	, m_pRelatingProductDefinition(pRelatingProductDefinition)
 	, m_pRelatedProductDefinition(pRelatedProductDefinition)
 {
-	ASSERT(m_iInstance != 0);
-	ASSERT(m_iExpressID != 0);
+	assert(m_sdaiInstance != 0);
 
-	sdaiGetAttrBN(iInstance, "id", sdaiUNICODE, &m_szId);
-	sdaiGetAttrBN(iInstance, "name", sdaiUNICODE, &m_szName);
-	sdaiGetAttrBN(iInstance, "description", sdaiUNICODE, &m_szDescription);
+	sdaiGetAttrBN(m_sdaiInstance, "id", sdaiUNICODE, &m_szId);
+	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &m_szName);
+	sdaiGetAttrBN(m_sdaiInstance, "description", sdaiUNICODE, &m_szDescription);
 
-	ASSERT(m_pRelatingProductDefinition != nullptr);
-	ASSERT(m_pRelatedProductDefinition != nullptr);
+	assert(m_pRelatingProductDefinition != nullptr);
+	assert(m_pRelatedProductDefinition != nullptr);
 }
 
 /*virtual*/ _ap242_assembly::~_ap242_assembly()

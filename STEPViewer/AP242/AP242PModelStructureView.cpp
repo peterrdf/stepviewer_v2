@@ -735,7 +735,7 @@ void CAP242PModelStructureView::LoadModel()
 	for (auto pGeometry : pModel->getGeometries())
 	{
 		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);		
-		if ((pProduct != nullptr) && (pProduct->GetRelatedProducts() == 0))
+		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0))
 		{
 			LoadProduct(pModel, pProduct, hModel);
 		}
@@ -1041,7 +1041,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_
 	//
 
 	CString strName;
-	strName.Format(L"#%lld %s %s", pProduct->getExpressID(), pProduct->GetProductName(), ITEM_PRODUCT_DEFINION);
+	strName.Format(L"#%lld %s %s", pProduct->getExpressID(), pProduct->getProductName(), ITEM_PRODUCT_DEFINION);
 
 	int iProductImage = pProduct->hasGeometry() || HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iProductImage, iProductImage, hParent);
@@ -1092,7 +1092,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_
 	// Assemblies
 	for (auto itAssembly : pModel->GetAssemblies())
 	{
-		if (itAssembly.second->GetRelatingProductDefinition() == pProduct)
+		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
 		{
 			LoadAssembly(pModel, itAssembly.second, hProduct);
 		}
@@ -1157,7 +1157,7 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, _ap242_assembl
 	}
 
 	CString strName;
-	strName.Format(L"#%lld %s %s", pAssembly->GetExpressID(), pAssembly->GetName(), ITEM_ASSEMBLY);
+	strName.Format(L"#%lld %s %s", pAssembly->getExpressID(), pAssembly->getName(), ITEM_ASSEMBLY);
 
 	int iAssemblyImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iAssemblyImage, iAssemblyImage, hParent);
@@ -1173,7 +1173,7 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, _ap242_assembl
 
 	m_pTreeCtrl->SetItemData(hAssembly, (DWORD_PTR)pItemData);
 
-	LoadProduct(pModel, pAssembly->GetRelatedProductDefinition(), hAssembly);
+	LoadProduct(pModel, pAssembly->getRelatedProductDefinition(), hAssembly);
 }
 
 void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, _ap242_instance* pInstance, HTREEITEM hParent)
@@ -1334,9 +1334,9 @@ void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(CAP242Mode
 
 	for (auto itAssembly : pModel->GetAssemblies())
 	{
-		if (itAssembly.second->GetRelatingProductDefinition() == pProduct)
+		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
 		{
-			bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, itAssembly.second->GetRelatedProductDefinition());
+			bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, itAssembly.second->getRelatedProductDefinition());
 			if (bHasDescendantWithGeometry)
 			{
 				break;
@@ -1354,7 +1354,7 @@ bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, 
 		return false;
 	}
 
-	return HasDescendantsWithGeometry(pModel, pAssembly->GetRelatedProductDefinition());
+	return HasDescendantsWithGeometry(pModel, pAssembly->getRelatedProductDefinition());
 }
 
 bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel)

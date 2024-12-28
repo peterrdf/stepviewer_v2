@@ -63,7 +63,7 @@ void _ap242_model::LoadProductDefinitions()
 	{
 		SdaiInstance iProductDefinitionInstance = 0;
 		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
-		ASSERT(iProductDefinitionInstance != 0);
+		assert(iProductDefinitionInstance != 0);
 
 		LoadProductDefinition(iProductDefinitionInstance);
 	}
@@ -139,9 +139,9 @@ void _ap242_model::LoadAssemblies()
 		auto pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
 
 		auto pAssembly = new _ap242_assembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
-		ASSERT(m_mapExpressIDAssembly.find(pAssembly->GetExpressID()) == m_mapExpressIDAssembly.end());
+		assert(m_mapExpressIDAssembly.find(pAssembly->getExpressID()) == m_mapExpressIDAssembly.end());
 
-		m_mapExpressIDAssembly[pAssembly->GetExpressID()] = pAssembly;
+		m_mapExpressIDAssembly[pAssembly->getExpressID()] = pAssembly;
 	}
 }
 
@@ -151,7 +151,7 @@ void _ap242_model::LoadGeometry()
 	for (auto pGeometry : getGeometries())
 	{
 		_ptr<_ap242_product_definition> apProductDefinition(pGeometry);
-		if (apProductDefinition->GetRelatedProducts() == 0)
+		if (apProductDefinition->getRelatedProducts() == 0)
 		{
 			WalkAssemblyTreeRecursively(apProductDefinition, nullptr, nullptr);
 		}
@@ -165,17 +165,17 @@ void _ap242_model::WalkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 	{
 		auto pAssembly = itAssembly->second;
 
-		if (pAssembly->GetRelatingProductDefinition() == pProductDefinition)
+		if (pAssembly->getRelatingProductDefinition() == pProductDefinition)
 		{
 			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(getSdaiModel(), internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->GetExpressID()), &owlInstanceMatrix);
+			owlBuildInstance(getSdaiModel(), internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->getExpressID()), &owlInstanceMatrix);
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation"))
 			{
 				owlInstanceMatrix = _owl_instance::getObjectProperty(owlInstanceMatrix, "matrix");
 			}
 
-			ASSERT(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Matrix") ||
+			assert(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Matrix") ||
 				GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "MatrixMultiplication"));
 
 			_matrix4x3 matrix;
@@ -203,7 +203,7 @@ void _ap242_model::WalkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 				_matrix4x3Multiply(&matrix, &matrix, pParentMatrix);
 			}
 
-			WalkAssemblyTreeRecursively(pAssembly->GetRelatedProductDefinition(), pAssembly, &matrix);
+			WalkAssemblyTreeRecursively(pAssembly->getRelatedProductDefinition(), pAssembly, &matrix);
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
@@ -306,5 +306,5 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 
 void _ap242_model::Save(const wchar_t* /*szPath*/)
 {
-	ASSERT(0); //#todo
+	assert(0); //#todo
 }

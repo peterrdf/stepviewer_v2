@@ -14,7 +14,7 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
 {
 }
 
-_ap242_product_definition* _ap242_instance::GetProductDefinition() const
+_ap242_product_definition* _ap242_instance::getProductDefinition() const
 {
 	return getGeometryAs<_ap242_product_definition>();
 }

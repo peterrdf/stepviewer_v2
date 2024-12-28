@@ -902,7 +902,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Instance
 	*/
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->GetProductDefinition()->GetId());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getId());
 
 	/*
 	* Properties
@@ -915,7 +915,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 		int_t definitionInstance = 0;
 		sdaiGetAttrBN(propertyDefinitionInstance, "definition", sdaiINSTANCE, &definitionInstance);
-		if (definitionInstance == pSelectedInstance->GetProductDefinition()->getSdaiInstance()) {
+		if (definitionInstance == pSelectedInstance->getProductDefinition()->getSdaiInstance()) {
 			CString strValue;
 			strValue.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(propertyDefinitionInstance));
 

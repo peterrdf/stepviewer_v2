@@ -17,5 +17,5 @@ public:  // Methods
 
 public:  // Properties
 
-	_ap242_product_definition* GetProductDefinition() const;
+	_ap242_product_definition* getProductDefinition() const;
 };
