@@ -1090,7 +1090,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_
 	}
 
 	// Assemblies
-	for (auto itAssembly : pModel->GetAssemblies())
+	for (auto itAssembly : pModel->getAssemblies())
 	{
 		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
 		{
@@ -1332,7 +1332,7 @@ void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(CAP242Mode
 		return;
 	}
 
-	for (auto itAssembly : pModel->GetAssemblies())
+	for (auto itAssembly : pModel->getAssemblies())
 	{
 		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
 		{

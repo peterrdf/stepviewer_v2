@@ -21,9 +21,9 @@ _ap242_model::_ap242_model()
 
 /*virtual*/ void _ap242_model::attachModelCore() /*override*/
 {
-	LoadProductDefinitions();
-	LoadAssemblies();
-	LoadGeometry();
+	loadProductDefinitions();
+	loadAssemblies();
+	loadGeometry();
 
 	loadDraughtingModels();
 
@@ -54,7 +54,7 @@ _ap242_model::_ap242_model()
 	m_vecDraughtingModels.clear();
 }
 
-void _ap242_model::LoadProductDefinitions()
+void _ap242_model::loadProductDefinitions()
 {
 	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
 
@@ -65,11 +65,11 @@ void _ap242_model::LoadProductDefinitions()
 		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
 		assert(iProductDefinitionInstance != 0);
 
-		LoadProductDefinition(iProductDefinitionInstance);
+		loadProductDefinition(iProductDefinitionInstance);
 	}
 }
 
-_ap242_product_definition* _ap242_model::LoadProductDefinition(SdaiInstance iProductDefinitionInstance)
+_ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance iProductDefinitionInstance)
 {
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(iProductDefinitionInstance);
 	if (owlInstance != 0)
@@ -83,7 +83,7 @@ _ap242_product_definition* _ap242_model::LoadProductDefinition(SdaiInstance iPro
 	return pGeometry;
 }
 
-_ap242_product_definition* _ap242_model::GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+_ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
 	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
 
@@ -104,7 +104,7 @@ _ap242_product_definition* _ap242_model::GetProductDefinition(SdaiInstance iProd
 		return apProductDefinition;
 	} // if (pGeometry != nullptr)
 
-	auto pDefinition = LoadProductDefinition(iProductDefinitionInstance);
+	auto pDefinition = loadProductDefinition(iProductDefinitionInstance);
 	if (bRelatingProduct)
 	{
 		pDefinition->m_iRelatingProducts++;
@@ -118,7 +118,7 @@ _ap242_product_definition* _ap242_model::GetProductDefinition(SdaiInstance iProd
 	return pDefinition;
 }
 
-void _ap242_model::LoadAssemblies()
+void _ap242_model::loadAssemblies()
 {
 	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
@@ -131,12 +131,12 @@ void _ap242_model::LoadAssemblies()
 		int_t iRelatingProductDefinition = 0;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "relating_product_definition", sdaiINSTANCE, &iRelatingProductDefinition);
 
-		auto pRelatingProductDefinition = GetProductDefinition(iRelatingProductDefinition, true, false);
+		auto pRelatingProductDefinition = getProductDefinition(iRelatingProductDefinition, true, false);
 
 		int_t iRelatedProductDefinition = 0;
 		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "related_product_definition", sdaiINSTANCE, &iRelatedProductDefinition);
 
-		auto pRelatedProductDefinition = GetProductDefinition(iRelatedProductDefinition, false, true);
+		auto pRelatedProductDefinition = getProductDefinition(iRelatedProductDefinition, false, true);
 
 		auto pAssembly = new _ap242_assembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
 		assert(m_mapExpressIDAssembly.find(pAssembly->getExpressID()) == m_mapExpressIDAssembly.end());
@@ -145,7 +145,7 @@ void _ap242_model::LoadAssemblies()
 	}
 }
 
-void _ap242_model::LoadGeometry()
+void _ap242_model::loadGeometry()
 {
 	// Load
 	for (auto pGeometry : getGeometries())
@@ -153,12 +153,12 @@ void _ap242_model::LoadGeometry()
 		_ptr<_ap242_product_definition> apProductDefinition(pGeometry);
 		if (apProductDefinition->getRelatedProducts() == 0)
 		{
-			WalkAssemblyTreeRecursively(apProductDefinition, nullptr, nullptr);
+			walkAssemblyTreeRecursively(apProductDefinition, nullptr, nullptr);
 		}
 	}
 }
 
-void _ap242_model::WalkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
+void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
 {
 	auto itAssembly = m_mapExpressIDAssembly.begin();
 	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
@@ -203,7 +203,7 @@ void _ap242_model::WalkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 				_matrix4x3Multiply(&matrix, &matrix, pParentMatrix);
 			}
 
-			WalkAssemblyTreeRecursively(pAssembly->getRelatedProductDefinition(), pAssembly, &matrix);
+			walkAssemblyTreeRecursively(pAssembly->getRelatedProductDefinition(), pAssembly, &matrix);
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 

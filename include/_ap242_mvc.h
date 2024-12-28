@@ -30,12 +30,14 @@ protected: // Methods
 	virtual void preLoadInstance(OwlInstance owlInstance) override;
 	virtual void clean() override;
 
-	void LoadProductDefinitions();
-	_ap242_product_definition* LoadProductDefinition(SdaiInstance iProductDefinitionInstance);
-	_ap242_product_definition* GetProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
-	void LoadAssemblies();
-	void LoadGeometry();
-	void WalkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
+private: // Methods
+
+	void loadProductDefinitions();
+	_ap242_product_definition* loadProductDefinition(SdaiInstance iProductDefinitionInstance);
+	_ap242_product_definition* getProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
+	void loadAssemblies();
+	void loadGeometry();
+	void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
 
 	void loadDraughtingModels();
 	_ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
@@ -45,6 +47,6 @@ protected: // Methods
 
 public: // Properties
 
-	const map<ExpressID, _ap242_assembly*>& GetAssemblies() const { return m_mapExpressIDAssembly; }
+	const map<ExpressID, _ap242_assembly*>& getAssemblies() const { return m_mapExpressIDAssembly; }
 	const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
 };
