@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 
+#include "_ap242_product_definition.h"
+#include "_ap242_instance.h"
 #include "_ptr.h"
 
 #include "PropertiesWnd.h"
@@ -890,7 +892,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<CAP242ProductInstance*>(getController()->getSelectedInstance());
+	auto pSelectedInstance = dynamic_cast<_ap242_instance*>(getController()->getSelectedInstance());
 	if (pSelectedInstance == nullptr)
 	{
 		// Annotation Planes and Draughting Callouts have no properties

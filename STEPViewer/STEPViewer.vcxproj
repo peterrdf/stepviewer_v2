@@ -597,6 +597,8 @@
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_ap242_geometry.h" />
+    <ClInclude Include="..\include\_ap242_instance.h" />
+    <ClInclude Include="..\include\_ap242_product_definition.h" />
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
@@ -617,14 +619,10 @@
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="..\include\_unit.h" />
-    <ClInclude Include="AP242\AP242Assembly.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
-    <ClInclude Include="AP242\AP242ProductDefinition.h" />
-    <ClInclude Include="AP242\AP242ProductInstance.h" />
     <ClInclude Include="AP242\AP242ItemData.h" />
     <ClInclude Include="AP242\AP242Model.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
-    <ClInclude Include="AP242\AP242DraughtingModel.h" />
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Geometry.h" />
     <ClInclude Include="CIS2\CIS2Instance.h" />
@@ -663,6 +661,8 @@
   <ItemGroup>
     <ClCompile Include="..\include\_ap242_draughting_model.cpp" />
     <ClCompile Include="..\include\_ap242_geometry.cpp" />
+    <ClCompile Include="..\include\_ap242_instance.cpp" />
+    <ClCompile Include="..\include\_ap242_product_definition.cpp" />
     <ClCompile Include="..\include\_attribute.cpp" />
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
@@ -673,11 +673,7 @@
     <ClCompile Include="..\include\_oglUtils.cpp" />
     <ClCompile Include="..\include\_property.cpp" />
     <ClCompile Include="..\include\_unit.cpp" />
-    <ClCompile Include="AP242\AP242Assembly.cpp" />
-    <ClCompile Include="AP242\AP242DraughtingModel.cpp" />
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
-    <ClCompile Include="AP242\AP242ProductDefinition.cpp" />
-    <ClCompile Include="AP242\AP242ProductInstance.cpp" />
     <ClCompile Include="AP242\AP242ItemData.cpp" />
     <ClCompile Include="AP242\AP242Model.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />

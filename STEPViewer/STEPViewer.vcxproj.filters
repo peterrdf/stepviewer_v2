@@ -105,16 +105,7 @@
     <ClInclude Include="ModelCheckDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242Assembly.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
     <ClInclude Include="AP242\AP242OpenGLView.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
-    <ClInclude Include="AP242\AP242ProductDefinition.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
-    <ClInclude Include="AP242\AP242ProductInstance.h">
       <Filter>AP242</Filter>
     </ClInclude>
     <ClInclude Include="AP242\AP242ItemData.h">
@@ -225,9 +216,6 @@
     <ClInclude Include="..\include\_unit.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242DraughtingModel.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_instance.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -238,6 +226,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_ap242_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_product_definition.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_instance.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -290,16 +284,7 @@
     <ClCompile Include="ModelCheckDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242Assembly.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
     <ClCompile Include="AP242\AP242OpenGLView.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
-    <ClCompile Include="AP242\AP242ProductDefinition.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
-    <ClCompile Include="AP242\AP242ProductInstance.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\AP242ItemData.cpp">
@@ -371,9 +356,6 @@
     <ClCompile Include="..\include\_unit.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="AP242\AP242DraughtingModel.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\_ifc_geometry.cpp">
       <Filter>include</Filter>
     </ClCompile>
@@ -381,6 +363,12 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ap242_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_product_definition.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_instance.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

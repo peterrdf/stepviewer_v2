@@ -2,16 +2,13 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "AP242Assembly.h"
 #include "AP242ItemData.h"
 #include "AP242PModelStructureView.h"
 
 #include <map>
-
 using namespace std;
 
-
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CStructureViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -24,9 +21,6 @@ class CStructureViewToolBar : public CMFCToolBar
 
 // ************************************************************************************************
 // Model Structure
-// ************************************************************************************************
-
-// ------------------------------------------------------------------------------------------------
 class CStructureView
 	: public CDockablePane
 	, public _view

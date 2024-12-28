@@ -11,7 +11,6 @@
 
 #include "STEPViewerDoc.h"
 #include "ModelFactory.h"
-#include "AP242ProductInstance.h"
 #include <propkey.h>
 
 #ifdef _DEBUG

@@ -8,6 +8,11 @@
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
+class _ap242_product_definition;
+class _ap242_instance;
+class _ap242_assembly;
+
+// ************************************************************************************************
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
 
 // ************************************************************************************************
@@ -35,7 +40,7 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache	
-	map<CAP242ProductDefinition*, _instance_iterator*> m_mapInstanceIterators;
+	map<_ap242_product_definition*, _instance_iterator*> m_mapInstanceIterators;
 	map<_instance*, HTREEITEM> m_mapInstance2Item;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
@@ -75,13 +80,13 @@ private: // Methods
 
 	void LoadModel();
 	void LoadHeader(HTREEITEM hParent);	
-	void LoadProduct(CAP242Model* pModel, CAP242ProductDefinition* pProduct, HTREEITEM hParent);
-	void LoadAssembly(CAP242Model* pModel, CAP242Assembly* pAssembly, HTREEITEM hParent);
-	void LoadInstance(CAP242Model* pModel, CAP242ProductInstance* pInstance, HTREEITEM hParent);
+	void LoadProduct(CAP242Model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent);
+	void LoadAssembly(CAP242Model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent);
+	void LoadInstance(CAP242Model* pModel, _ap242_instance* pInstance, HTREEITEM hParent);
 
-	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242ProductDefinition* pProduct);
-	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, CAP242ProductDefinition* pProduct, bool& bHasDescendantWithGeometry);
-	bool HasDescendantsWithGeometry(CAP242Model* pModel, CAP242Assembly* pAssembly);
+	bool HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_product_definition* pProduct);
+	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry);
+	bool HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_assembly* pAssembly);
 	bool HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel);
 
 	void LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent);
