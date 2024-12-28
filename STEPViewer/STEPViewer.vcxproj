@@ -592,9 +592,11 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\_ap242_draughting_model.h" />
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
+    <ClInclude Include="..\include\_ap242_geometry.h" />
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
     <ClInclude Include="..\include\_ap_mvc.h" />
@@ -659,6 +661,8 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\_ap242_draughting_model.cpp" />
+    <ClCompile Include="..\include\_ap242_geometry.cpp" />
     <ClCompile Include="..\include\_attribute.cpp" />
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />

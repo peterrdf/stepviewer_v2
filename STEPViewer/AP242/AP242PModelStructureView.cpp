@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "_ap242_draughting_model.h"
 #include "_ptr.h"
 
 #include "mainfrm.h"
