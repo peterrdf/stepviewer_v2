@@ -12,6 +12,7 @@ using namespace std;
 
 // ************************************************************************************************
 class _ifc_geometry;
+class _ifc_instance;
 
 // ************************************************************************************************
 class _ifc_model : public _ap_model
@@ -55,7 +56,7 @@ protected: // Methods
 protected: // Methods
 
 	virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
-	virtual _ap_instance* createInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
+	virtual _ifc_instance* createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 
 private: // Methods
 

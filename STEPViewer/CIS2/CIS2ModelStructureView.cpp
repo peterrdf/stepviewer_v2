@@ -6,7 +6,6 @@
 #include "CIS2ModelStructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "IFCModel.h"
 #include "StructureViewConsts.h"
 
 #include <algorithm>

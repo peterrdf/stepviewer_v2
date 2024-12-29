@@ -72,12 +72,6 @@
     <ClInclude Include="Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCModel.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
-    <ClInclude Include="IFC\IFCInstance.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -177,9 +171,6 @@
     <ClInclude Include="..\include\_ap_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="IFC\IFCGeometry.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_ptr.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -234,6 +225,9 @@
     <ClInclude Include="..\include\_ap242_instance.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ifc_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -259,12 +253,6 @@
     </ClCompile>
     <ClCompile Include="Controller.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCModel.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
-    <ClCompile Include="IFC\IFCInstance.cpp">
-      <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="IFC\IFCOpenGLView.cpp">
       <Filter>IFC</Filter>
@@ -323,9 +311,6 @@
     <ClCompile Include="StructureView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFC\IFCGeometry.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\_mvc.cpp">
       <Filter>include</Filter>
     </ClCompile>
@@ -369,6 +354,9 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ap242_instance.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_instance.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

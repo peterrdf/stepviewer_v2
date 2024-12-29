@@ -1,6 +1,9 @@
 
 #include "stdafx.h"
 
+#include "_ifc_mvc.h"
+#include "_ifc_instance.h"
+
 #include "_ap242_product_definition.h"
 #include "_ap242_instance.h"
 #include "_ptr.h"
@@ -11,7 +14,7 @@
 #include "STEPViewer.h"
 #include "AP242OpenGLView.h"
 #include "AP242Model.h"
-#include "IFCModel.h"
+
 #include "CIS2Model.h"
 #include "CIS2Instance.h"
 
@@ -1044,7 +1047,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pIFCModel = dynamic_cast<CIFCModel*>(pModel);
+	auto pIFCModel = dynamic_cast<_ifc_model*>(pModel);
 	if (pIFCModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1054,7 +1057,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	auto pPropertyProvider = pIFCModel->getPropertyProvider();
 
-	auto pInstance = dynamic_cast<CIFCInstance*>(getController()->getSelectedInstance());
+	auto pInstance = dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance());
 	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);

@@ -1,13 +1,13 @@
 
 #include "stdafx.h"
 
+#include "_ifc_mvc.h"
 #include "_ptr.h"
 
 #include "mainfrm.h"
 #include "RelationsView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "IFCModel.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -186,7 +186,7 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		auto pIFCModel = dynamic_cast<CIFCModel*>(GetModel());
+		auto pIFCModel = dynamic_cast<_ifc_model*>(GetModel());
 		if (pIFCModel == nullptr)
 		{
 			return FALSE;

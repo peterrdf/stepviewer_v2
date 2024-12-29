@@ -1,11 +1,15 @@
 #pragma once
 
-#include "TreeViewBase.h"
-#include "IFCModel.h"
-#include "SearchTreeCtrlDialog.h"
-#include <map>
+#include "_ifc_instance.h"
 
+#include "TreeViewBase.h"
+#include "SearchTreeCtrlDialog.h"
+
+#include <map>
 using namespace std;
+
+// ************************************************************************************************
+class _ifc_model;
 
 // ************************************************************************************************
 // IFC Model Structure
@@ -28,8 +32,8 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	map<CIFCInstance*, HTREEITEM> m_mapInstance2GeometryItem;	
-	map<CIFCInstance*, HTREEITEM> m_mapSelectedInstances;
+	map<_ifc_instance*, HTREEITEM> m_mapInstance2GeometryItem;	
+	map<_ifc_instance*, HTREEITEM> m_mapSelectedInstances;
 	
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;
@@ -62,14 +66,14 @@ public: // Methods
 
 private: // Methods		
 
-	void LoadModel(CIFCModel* pModel);
-	void LoadHeader(CIFCModel* pModel, HTREEITEM hModel);
-	void LoadProject(CIFCModel* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance);
-	void LoadIsDecomposedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadIsNestedBy(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadContainsElements(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadObject(CIFCModel* pModel, SdaiInstance iInstance, HTREEITEM hParent);
-	void LoadUnreferencedItems(CIFCModel* pModel, HTREEITEM hModel);
+	void LoadModel(_ifc_model* pModel);
+	void LoadHeader(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance);
+	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadContainsElements(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadObject(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent);
+	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
 	void LoadTree_UpdateItems(HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 	void ClickItem_UpdateChildren(HTREEITEM hParent);

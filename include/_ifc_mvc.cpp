@@ -2,6 +2,7 @@
 
 #include "_ifc_mvc.h"
 #include "_ifc_geometry.h"
+#include "_ifc_instance.h"
 #include "_ptr.h"
 
 // ************************************************************************************************
@@ -88,9 +89,9 @@ _ifc_model::_ifc_model(bool bLoadInstancesOnDemand/* = false*/)
 	return new _ifc_geometry(owlInstance, sdaiInstance);
 }
 
-/*virtual*/ _ap_instance* _ifc_model::createInstance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+/*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
 {
-	return new _ap_instance(iID, pGeometry, pTransformationMatrix);
+	return new _ifc_instance(iID, pGeometry, pTransformationMatrix);
 }
 
 void _ifc_model::getObjectsReferencedState()
@@ -335,7 +336,7 @@ void _ifc_model::retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiIn
 
 _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments)
 {
-	_ap_geometry* pGeometry = dynamic_cast<_ap_geometry*>(getGeometryByInstance(sdaiInstance));
+	auto pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr)
 	{
 		return pGeometry;

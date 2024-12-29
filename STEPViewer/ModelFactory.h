@@ -2,7 +2,7 @@
 
 #include "_mvc.h"
 
-#include "IFCModel.h"
+#include "_ifc_mvc.h"
 #include "AP242Model.h"
 #include "CIS2Model.h"
 
@@ -64,7 +64,7 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
-			auto pModel = new CIFCModel();
+			auto pModel = new _ifc_model();
 			if (!pController->getModels().empty())
 			{
 				pModel->setWorld(pController->getModels()[0]);

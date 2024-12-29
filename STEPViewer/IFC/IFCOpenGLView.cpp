@@ -1,11 +1,7 @@
 #include "stdafx.h"
 
 #include "IFCOpenGLView.h"
-#include "Controller.h"
-#include "IFCModel.h"
 #include "resource.h"
-
-#include <chrono>
 
 // ************************************************************************************************
 CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
