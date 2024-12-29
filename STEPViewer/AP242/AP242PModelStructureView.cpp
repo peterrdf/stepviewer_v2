@@ -1090,11 +1090,11 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_
 	}
 
 	// Assemblies
-	for (auto itAssembly : pModel->getAssemblies())
+	for (auto itExpressID2Assembly : pModel->getExpressID2Assembly())
 	{
-		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
+		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct)
 		{
-			LoadAssembly(pModel, itAssembly.second, hProduct);
+			LoadAssembly(pModel, itExpressID2Assembly.second, hProduct);
 		}
 	}
 
@@ -1332,11 +1332,11 @@ void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(CAP242Mode
 		return;
 	}
 
-	for (auto itAssembly : pModel->getAssemblies())
+	for (auto itExpressID2Assembly : pModel->getExpressID2Assembly())
 	{
-		if (itAssembly.second->getRelatingProductDefinition() == pProduct)
+		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct)
 		{
-			bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, itAssembly.second->getRelatedProductDefinition());
+			bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, itExpressID2Assembly.second->getRelatedProductDefinition());
 			if (bHasDescendantWithGeometry)
 			{
 				break;

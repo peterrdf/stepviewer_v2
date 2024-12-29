@@ -9,7 +9,7 @@
 // ************************************************************************************************
 _ap242_model::_ap242_model()
 	: _ap_model(enumAP::STEP)
-	, m_mapExpressIDAssembly()
+	, m_mapExpressID2Assembly()
 	, m_vecDraughtingModels()
 {
 }
@@ -40,12 +40,12 @@ _ap242_model::_ap242_model()
 {
 	_ap_model::clean();
 
-	auto itAssembly = m_mapExpressIDAssembly.begin();
-	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
+	auto itExpressID2Assembly = m_mapExpressID2Assembly.begin();
+	for (; itExpressID2Assembly != m_mapExpressID2Assembly.end(); itExpressID2Assembly++)
 	{
-		delete itAssembly->second;
+		delete itExpressID2Assembly->second;
 	}
-	m_mapExpressIDAssembly.clear();
+	m_mapExpressID2Assembly.clear();
 
 	for (auto pDraughtingModel : m_vecDraughtingModels)
 	{
@@ -56,38 +56,38 @@ _ap242_model::_ap242_model()
 
 void _ap242_model::loadProductDefinitions()
 {
-	SdaiAggr pProductDefinitionInstances = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
+	SdaiAggr sdaiProductDefinitionAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
 
-	int_t noProductDefinitionInstances = sdaiGetMemberCount(pProductDefinitionInstances);
-	for (int_t i = 0; i < noProductDefinitionInstances; i++)
+	SdaiInteger iProductDefinitionsCount = sdaiGetMemberCount(sdaiProductDefinitionAggr);
+	for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++)
 	{
-		SdaiInstance iProductDefinitionInstance = 0;
-		sdaiGetAggrByIndex(pProductDefinitionInstances, i, sdaiINSTANCE, &iProductDefinitionInstance);
-		assert(iProductDefinitionInstance != 0);
+		SdaiInstance sdaiProductDefinitionInstance = 0;
+		sdaiGetAggrByIndex(sdaiProductDefinitionAggr, i, sdaiINSTANCE, &sdaiProductDefinitionInstance);
+		assert(sdaiProductDefinitionInstance != 0);
 
-		loadProductDefinition(iProductDefinitionInstance);
+		loadProductDefinition(sdaiProductDefinitionInstance);
 	}
 }
 
-_ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance iProductDefinitionInstance)
+_ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance)
 {
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(iProductDefinitionInstance);
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
 	if (owlInstance != 0)
 	{
 		preLoadInstance(owlInstance);
 	}
 
-	auto pGeometry = new _ap242_product_definition(owlInstance, iProductDefinitionInstance);
+	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance);
 	addGeometry(pGeometry);
 
 	return pGeometry;
 }
 
-_ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
+_ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct)
 {
-	ExpressID iExpressID = internalGetP21Line(iProductDefinitionInstance);
+	ExpressID expressID = internalGetP21Line(sdaiProductDefinitionInstance);
 
-	auto pGeometry = getGeometryByExpressID(iExpressID);
+	auto pGeometry = getGeometryByExpressID(expressID);
 	if (pGeometry != nullptr)
 	{
 		_ptr<_ap242_product_definition> apProductDefinition(pGeometry);
@@ -104,7 +104,7 @@ _ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance iProd
 		return apProductDefinition;
 	} // if (pGeometry != nullptr)
 
-	auto pDefinition = loadProductDefinition(iProductDefinitionInstance);
+	auto pDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
 	if (bRelatingProduct)
 	{
 		pDefinition->m_iRelatingProducts++;
@@ -120,34 +120,33 @@ _ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance iProd
 
 void _ap242_model::loadAssemblies()
 {
-	SdaiAggr pNextAssemblyUsageOccurrenceInstances = sdaiGetEntityExtentBN(getSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
+	SdaiAggr sdaiNextAssemblyUsageOccurrenceAggr = sdaiGetEntityExtentBN(getSdaiModel(), "NEXT_ASSEMBLY_USAGE_OCCURRENCE");
 
-	int_t noNextAssemblyUsageOccurrenceInstances = sdaiGetMemberCount(pNextAssemblyUsageOccurrenceInstances);
-	for (int_t i = 0; i < noNextAssemblyUsageOccurrenceInstances; i++)
+	SdaiInteger iNextAssemblyUsageOccurrencesCount = sdaiGetMemberCount(sdaiNextAssemblyUsageOccurrenceAggr);
+	for (SdaiInteger i = 0; i < iNextAssemblyUsageOccurrencesCount; i++)
 	{
-		SdaiInstance pNextAssemblyUsageOccurrenceInstance = 0;
-		sdaiGetAggrByIndex(pNextAssemblyUsageOccurrenceInstances, i, sdaiINSTANCE, &pNextAssemblyUsageOccurrenceInstance);
+		SdaiInstance sdaiNextAssemblyUsageOccurrenceInstance = 0;
+		sdaiGetAggrByIndex(sdaiNextAssemblyUsageOccurrenceAggr, i, sdaiINSTANCE, &sdaiNextAssemblyUsageOccurrenceInstance);
 
-		int_t iRelatingProductDefinition = 0;
-		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "relating_product_definition", sdaiINSTANCE, &iRelatingProductDefinition);
+		SdaiInstance sdaiRelatingProductDefinition = 0;
+		sdaiGetAttrBN(sdaiNextAssemblyUsageOccurrenceInstance, "relating_product_definition", sdaiINSTANCE, &sdaiRelatingProductDefinition);
 
-		auto pRelatingProductDefinition = getProductDefinition(iRelatingProductDefinition, true, false);
+		auto pRelatingProductDefinition = getProductDefinition(sdaiRelatingProductDefinition, true, false);
 
-		int_t iRelatedProductDefinition = 0;
-		sdaiGetAttrBN(pNextAssemblyUsageOccurrenceInstance, "related_product_definition", sdaiINSTANCE, &iRelatedProductDefinition);
+		SdaiInstance sdaiRelatedProductDefinition = 0;
+		sdaiGetAttrBN(sdaiNextAssemblyUsageOccurrenceInstance, "related_product_definition", sdaiINSTANCE, &sdaiRelatedProductDefinition);
 
-		auto pRelatedProductDefinition = getProductDefinition(iRelatedProductDefinition, false, true);
+		auto pRelatedProductDefinition = getProductDefinition(sdaiRelatedProductDefinition, false, true);
 
-		auto pAssembly = new _ap242_assembly(pNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
-		assert(m_mapExpressIDAssembly.find(pAssembly->getExpressID()) == m_mapExpressIDAssembly.end());
+		auto pAssembly = new _ap242_assembly(sdaiNextAssemblyUsageOccurrenceInstance, pRelatingProductDefinition, pRelatedProductDefinition);
+		assert(m_mapExpressID2Assembly.find(pAssembly->getExpressID()) == m_mapExpressID2Assembly.end());
 
-		m_mapExpressIDAssembly[pAssembly->getExpressID()] = pAssembly;
+		m_mapExpressID2Assembly[pAssembly->getExpressID()] = pAssembly;
 	}
 }
 
 void _ap242_model::loadGeometry()
 {
-	// Load
 	for (auto pGeometry : getGeometries())
 	{
 		_ptr<_ap242_product_definition> apProductDefinition(pGeometry);
@@ -160,10 +159,10 @@ void _ap242_model::loadGeometry()
 
 void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* /*pParentAssembly*/, _matrix4x3* pParentMatrix)
 {
-	auto itAssembly = m_mapExpressIDAssembly.begin();
-	for (; itAssembly != m_mapExpressIDAssembly.end(); itAssembly++)
+	auto itExpressID2Assembly = m_mapExpressID2Assembly.begin();
+	for (; itExpressID2Assembly != m_mapExpressID2Assembly.end(); itExpressID2Assembly++)
 	{
-		auto pAssembly = itAssembly->second;
+		auto pAssembly = itExpressID2Assembly->second;
 
 		if (pAssembly->getRelatingProductDefinition() == pProductDefinition)
 		{
@@ -234,6 +233,7 @@ void _ap242_model::loadDraughtingModels()
 
 		SdaiAggr sdaiItemsAggr = nullptr;
 		sdaiGetAttr(sdaiDraughtingModelInstance, sdaiItemsAttr, sdaiAGGR, &sdaiItemsAggr);
+
 		SdaiInteger iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
 		for (SdaiInteger j = 0; j < iItemsCount; j++)
 		{
@@ -304,7 +304,7 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 	return pGeometry;
 }
 
-void _ap242_model::Save(const wchar_t* /*szPath*/)
+void _ap242_model::save(const wchar_t* /*szPath*/)
 {
 	assert(0); //#todo
 }

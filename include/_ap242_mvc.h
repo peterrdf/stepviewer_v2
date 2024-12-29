@@ -15,7 +15,7 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
-	map<ExpressID, _ap242_assembly*> m_mapExpressIDAssembly; // Express ID : Assembly
+	map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
 	vector<_ap242_draughting_model*> m_vecDraughtingModels;
 
 public: // Methods
@@ -33,8 +33,8 @@ protected: // Methods
 private: // Methods
 
 	void loadProductDefinitions();
-	_ap242_product_definition* loadProductDefinition(SdaiInstance iProductDefinitionInstance);
-	_ap242_product_definition* getProductDefinition(SdaiInstance iProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
+	_ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
+	_ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
 	void loadAssemblies();
 	void loadGeometry();
 	void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
@@ -43,10 +43,10 @@ private: // Methods
 	_ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
 	_ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);	
 
-	void Save(const wchar_t* szPath);	
+	void save(const wchar_t* szPath);	
 
 public: // Properties
 
-	const map<ExpressID, _ap242_assembly*>& getAssemblies() const { return m_mapExpressIDAssembly; }
+	const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
 	const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
 };
