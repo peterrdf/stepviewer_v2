@@ -4,13 +4,11 @@
 #include "_oglUtils.h"
 
 // ************************************************************************************************
-// Open GL View
 class CAP242OpenGLView : public _oglView
 {
 
 public: // Methods
 
-	// ctor/dtor
 	CAP242OpenGLView(CWnd* pWnd);
 	virtual ~CAP242OpenGLView();
 };

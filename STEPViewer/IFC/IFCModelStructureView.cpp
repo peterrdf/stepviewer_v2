@@ -62,7 +62,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, m_pTreeCtrl);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CIFCModelStructureView::~CIFCModelStructureView()
 {
 	m_pTreeCtrl->SetImageList(nullptr, TVSIL_NORMAL);
@@ -75,7 +74,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	delete m_pSearchDialog;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {	
 	if (pSender == this)
@@ -113,19 +111,16 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::Load() /*override*/
 {
 	ResetView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CImageList* CIFCModelStructureView::GetImageList() const /*override*/
 {
 	return m_pImageList;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::OnShowWindow(BOOL bShow, UINT /*nStatus*/) /*override*/
 {
 	if (!bShow)
@@ -134,7 +129,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::OnTreeItemClick(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
@@ -237,13 +231,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	} // if ((hItem != nullptr) && ...
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::OnTreeItemExpanding(NMHDR* /*pNMHDR*/, LRESULT* pResult) /*override*/
 {
 	*pResult = 0;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CIFCModelStructureView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pController = getController();
@@ -261,14 +253,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	return pInstance == pController->getSelectedInstance();
 }
 
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CIFCModelStructureView::GetTreeView() /*override*/
 {
 	return m_pTreeCtrl;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ vector<CString> CIFCModelStructureView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
@@ -278,12 +267,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 		};
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CIFCModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
@@ -312,7 +299,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::OnContextMenu(CWnd* pWnd, CPoint point) /*override*/
 {
 	ASSERT_VALID(m_pTreeCtrl);
@@ -681,7 +667,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	} // if (!bProcessed)
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CIFCModelStructureView::OnSearch() /*override*/
 {
 	if (!m_pSearchDialog->IsWindowVisible())
@@ -694,12 +679,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 {
-	/**********************************************************************************************
-	* Model
-	*/
+	// Model
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -707,49 +689,36 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
-
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-	//*********************************************************************************************
 
-	/*
-	* Header
-	*/
+	// Header
 	LoadHeader(pModel, hModel);
 
-	/**********************************************************************************************
-	* Project/Units/Unreferenced
-	*/
-	SdaiAggr iIFCProjectInstances = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCPROJECT");
+	// Project/Units/Unreferenced
+	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCPROJECT");
 
-	SdaiInteger iIFCProjectInstancesCount = sdaiGetMemberCount(iIFCProjectInstances);
-	if (iIFCProjectInstancesCount > 0)
+	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
+	if (iProjectInstancesCount > 0)
 	{
-		SdaiInstance iIFCProjectInstance = 0;
-		engiGetAggrElement(iIFCProjectInstances, 0, sdaiINSTANCE, &iIFCProjectInstance);
+		SdaiInstance sdaiProjectInstance = 0;
+		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
-		/*
-		* Project
-		*/
-		LoadProject(pModel, hModel, iIFCProjectInstance);
+		// Project
+		LoadProject(pModel, hModel, sdaiProjectInstance);
 
-		/*
-		* Unreferenced
-		*/
+		// Unreferenced
 		LoadUnreferencedItems(pModel, hModel);
 
+		// UI
 		LoadTree_UpdateItems(hModel);
-	} // if (iIFCProjectInstancesCount > 0)
-	//*********************************************************************************************
+	} // if (iProjectInstancesCount > 0)
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 {
-	/*********************************************************************************************
-	* Header
-	*/
+	// Header
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hModel;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -757,15 +726,11 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 	tvInsertStruct.item.pszText = L"Header";
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
 	tvInsertStruct.item.lParam = NULL;
-
 	HTREEITEM hHeader = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-	//*********************************************************************************************	
 
 	wchar_t* szText = nullptr;
 
-	/*
-	* Descriptions
-	*/
+	// Descriptions
 	{
 		tvInsertStruct.hParent = hHeader;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -773,7 +738,6 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = L"Descriptions";
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
@@ -781,24 +745,18 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		{
 			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 0, iItem++, sdaiUNICODE, (char**)&szText))
 			{
-				/*
-				* Item
-				*/
 				tvInsertStruct.hParent = hDescriptions;
 				tvInsertStruct.hInsertAfter = TVI_LAST;
 				tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 				tvInsertStruct.item.pszText = szText;
 				tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 				tvInsertStruct.item.lParam = NULL;
-
 				m_pTreeCtrl->InsertItem(&tvInsertStruct);
 			}
 		} // if (!GetSPFFHeaderItem(...
 	}
 
-	/*
-	* ImplementationLevel
-	*/
+	// ImplementationLevel
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 1, 0, sdaiUNICODE, (char**)&szText);
 
@@ -813,13 +771,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* Name
-	*/
+	// Name
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 2, 0, sdaiUNICODE, (char**)&szText);
 
@@ -834,13 +789,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* TimeStamp
-	*/
+	// TimeStamp
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 3, 0, sdaiUNICODE, (char**)&szText);
 
@@ -855,13 +807,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* Authors
-	*/
+	// Authors
 	{
 		tvInsertStruct.hParent = hHeader;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -869,7 +818,6 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = L"Authors";
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
@@ -877,24 +825,18 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		{
 			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 4, iItem++, sdaiUNICODE, (char**)&szText))
 			{
-				/*
-				* Item
-				*/
 				tvInsertStruct.hParent = hDescriptions;
 				tvInsertStruct.hInsertAfter = TVI_LAST;
 				tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 				tvInsertStruct.item.pszText = szText;
 				tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 				tvInsertStruct.item.lParam = NULL;
-
 				m_pTreeCtrl->InsertItem(&tvInsertStruct);
 			}
 		} // if (!GetSPFFHeaderItem(...
 	}
 
-	/*
-	* Organizations
-	*/
+	// Organizations
 	{
 		tvInsertStruct.hParent = hHeader;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -910,24 +852,18 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		{
 			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 5, iItem++, sdaiUNICODE, (char**)&szText))
 			{
-				/*
-				* Item
-				*/
 				tvInsertStruct.hParent = hDescriptions;
 				tvInsertStruct.hInsertAfter = TVI_LAST;
 				tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 				tvInsertStruct.item.pszText = szText;
 				tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 				tvInsertStruct.item.lParam = NULL;
-
 				m_pTreeCtrl->InsertItem(&tvInsertStruct);
 			}
 		} // if (!GetSPFFHeaderItem(...
 	}
 
-	/*
-	* PreprocessorVersion
-	*/
+	// PreprocessorVersion
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 6, 0, sdaiUNICODE, (char**)&szText);
 
@@ -942,13 +878,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* OriginatingSystem
-	*/
+	// OriginatingSystem
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 7, 0, sdaiUNICODE, (char**)&szText);
 
@@ -963,13 +896,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* Authorization
-	*/
+	// Authorization
 	{
 		GetSPFFHeaderItem(pModel->getSdaiModel(), 8, 0, sdaiUNICODE, (char**)&szText);
 
@@ -984,13 +914,10 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 		tvInsertStruct.item.lParam = NULL;
-
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	}
 
-	/*
-	* FileSchemas
-	*/
+	// FileSchemas
 	{
 		tvInsertStruct.hParent = hHeader;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -998,7 +925,6 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.pszText = L"FileSchemas";
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY_SET;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hDescriptions = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		int_t iItem = 0;
@@ -1006,24 +932,19 @@ void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
 		{
 			while (!GetSPFFHeaderItem(pModel->getSdaiModel(), 9, iItem++, sdaiUNICODE, (char**)&szText))
 			{
-				/*
-				* Item
-				*/
 				tvInsertStruct.hParent = hDescriptions;
 				tvInsertStruct.hInsertAfter = TVI_LAST;
 				tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 				tvInsertStruct.item.pszText = szText;
 				tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_PROPERTY;
 				tvInsertStruct.item.lParam = NULL;
-
 				m_pTreeCtrl->InsertItem(&tvInsertStruct);
 			}
 		} // if (!GetSPFFHeaderItem(...
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance iIFCProjectInstance)
+void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance)
 {
 	auto pController = getController();
 	if (pController == nullptr)
@@ -1034,12 +955,12 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 	}
 
 	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(iIFCProjectInstance, "Name", sdaiUNICODE, &szName);
+	sdaiGetAttrBN(sdaiProjectInstance, "Name", sdaiUNICODE, &szName);
 
 	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(iIFCProjectInstance, "Description", sdaiUNICODE, &szDescription);		
+	sdaiGetAttrBN(sdaiProjectInstance, "Description", sdaiUNICODE, &szDescription);
 
-	auto pGeometry = pModel->getGeometryByInstance(iIFCProjectInstance);
+	auto pGeometry = pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr)
 	{
 		//#todo#mappeditems
@@ -1064,9 +985,7 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 			strItem += L")";
 		}
 
-		/*
-		* Project
-		*/
+		// Project
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hModel;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1074,63 +993,53 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hProject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		/*
-		* Geometry
-		*/
+		// Instance
 		tvInsertStruct.hParent = hProject;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
-
-		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-		
+		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);		
 
 		m_mapInstance2GeometryItem[ifcInstance] = hInstance;
 
-		/*
-		* decomposition/contains
-		*/
-		LoadIsDecomposedBy(pModel, iIFCProjectInstance, hProject);
-		LoadIsNestedBy(pModel, iIFCProjectInstance, hProject);
-		LoadContainsElements(pModel, iIFCProjectInstance, hProject);
+		// decomposition/contains
+		LoadIsDecomposedBy(pModel, sdaiProjectInstance, hProject);
+		LoadIsNestedBy(pModel, sdaiProjectInstance, hProject);
+		LoadContainsElements(pModel, sdaiProjectInstance, hProject);
 
 		m_pTreeCtrl->Expand(hProject, TVE_EXPAND);
 	} // if (itInstance != ...
 }
 
-void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	SdaiAggr piIsDecomposedByInstances = nullptr;
-	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &piIsDecomposedByInstances);
+	SdaiAggr sdaiIsDecomposedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "IsDecomposedBy", sdaiAGGR, &sdaiIsDecomposedByAggr);
 
-	if (piIsDecomposedByInstances == nullptr)
+	if (sdaiIsDecomposedByAggr == nullptr)
 	{
 		return;
 	}
 
-	SdaiEntity iIFCRelAggregatesEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELAGGREGATES");
+	SdaiEntity sdaiRelAggregatesEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELAGGREGATES");
 
-	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
-	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	SdaiInteger iIsDecomposedByInstancesCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
+	for (SdaiInteger i = 0; i < iIsDecomposedByInstancesCount; ++i)
 	{
-		SdaiInstance iIFCIsDecomposedByInstance = 0;
-		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+		SdaiInstance sdaiIsDecomposedByInstance = 0;
+		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
 
-		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelAggregatesEntity)
+		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity)
 		{
 			continue;
 		}
 
-		/*
-		* decomposition
-		*/
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hParent;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1138,51 +1047,47 @@ void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance
 		tvInsertStruct.item.pszText = ITEM_DECOMPOSITION;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hDecomposition = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		SdaiAggr piIFCRelatedObjectsInstances = 0;
-		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
+		SdaiAggr sdaiRelatedObjectsAggr = 0;
+		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
-		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
-		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j)
 		{
-			SdaiInstance iIFCRelatedObjectsInstance = 0;
-			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+			SdaiInstance sdaiRelatedObjectsInstance = 0;
+			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
-			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
-		} // for (int_t j = ...
-	} // for (int64_t i = ...	
+			LoadObject(pModel, sdaiRelatedObjectsInstance, hDecomposition);
+		}
+	} // for (SdaiInteger i = ...	
 }
 
-void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	SdaiAggr piIsDecomposedByInstances = nullptr;
-	sdaiGetAttrBN(iInstance, "IsNestedBy", sdaiAGGR, &piIsDecomposedByInstances);
+	SdaiAggr sdaiIsNestedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "IsNestedBy", sdaiAGGR, &sdaiIsNestedByAggr);
 
-	if (piIsDecomposedByInstances == nullptr)
+	if (sdaiIsNestedByAggr == nullptr)
 	{
 		return;
 	}
 
-	SdaiEntity iIFCRelNestsEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELNESTS");
+	SdaiEntity sdaiRelNestsEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELNESTS");
 
-	SdaiInteger iIFCIsDecomposedByInstancesCount = sdaiGetMemberCount(piIsDecomposedByInstances);
-	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
+	SdaiInteger sdaiIsNestedByInstancesCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
+	for (SdaiInteger i = 0; i < sdaiIsNestedByInstancesCount; ++i)
 	{
-		SdaiInstance iIFCIsDecomposedByInstance = 0;
-		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+		SdaiInstance sdaiIsNestedByInstance = 0;
+		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
 
-		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelNestsEntity)
+		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity)
 		{
 			continue;
 		}
 
-		/*
-		* decomposition
-		*/
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hParent;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1190,52 +1095,47 @@ void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance iIn
 		tvInsertStruct.item.pszText = ITEM_DECOMPOSITION;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hDecomposition = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		SdaiAggr piIFCRelatedObjectsInstances = 0;
-		sdaiGetAttrBN(iIFCIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &piIFCRelatedObjectsInstances);
+		SdaiAggr sdaiRelatedObjectsAggr = 0;
+		sdaiGetAttrBN(sdaiIsNestedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
-		SdaiInteger iIFCRelatedObjectsInstancesCount = sdaiGetMemberCount(piIFCRelatedObjectsInstances);
-		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
+		SdaiInteger sdaiRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+		for (SdaiInteger j = 0; j < sdaiRelatedObjectsInstancesCount; ++j)
 		{
-			SdaiInstance iIFCRelatedObjectsInstance = 0;
-			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+			SdaiInstance sdaiRelatedObjectsInstance = 0;
+			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
-			LoadObject(pModel, iIFCRelatedObjectsInstance, hDecomposition);
-		} // for (int_t j = ...
-	} // for (int64_t i = ...
+			LoadObject(pModel, sdaiRelatedObjectsInstance, hDecomposition);
+		}
+	} // for (SdaiInteger i = ...
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	SdaiAggr piContainsElementsInstances = nullptr;
-	sdaiGetAttrBN(iInstance, "ContainsElements", sdaiAGGR, &piContainsElementsInstances);
+	SdaiAggr sdaiContainsElementsAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "ContainsElements", sdaiAGGR, &sdaiContainsElementsAggr);
 
-	if (piContainsElementsInstances == nullptr)
+	if (sdaiContainsElementsAggr == nullptr)
 	{
 		return;
 	}
 
-	SdaiEntity iIFCRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
+	SdaiEntity sdaiRelContainedInSpatialStructureEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELCONTAINEDINSPATIALSTRUCTURE");
 
-	SdaiInteger iIFCContainsElementsInstancesCount = sdaiGetMemberCount(piContainsElementsInstances);
-	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
+	SdaiInteger iContainsElementsInstancesCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
+	for (SdaiInteger i = 0; i < iContainsElementsInstancesCount; ++i)
 	{
-		SdaiInstance iIFCContainsElementsInstance = 0;
-		engiGetAggrElement(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
+		SdaiInstance sdaiContainsElementsInstance = 0;
+		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
-		if (sdaiGetInstanceType(iIFCContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity)
+		if (sdaiGetInstanceType(sdaiContainsElementsInstance) != sdaiRelContainedInSpatialStructureEntity)
 		{
 			continue;
 		}
 
-		/*
-		* contains
-		*/
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hParent;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1243,29 +1143,27 @@ void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstan
 		tvInsertStruct.item.pszText = ITEM_CONTAINS;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hContains = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		SdaiAggr piIFCRelatedElementsInstances = 0;
-		sdaiGetAttrBN(iIFCContainsElementsInstance, "RelatedElements", sdaiAGGR, &piIFCRelatedElementsInstances);
+		SdaiAggr sdaiRelatedElementsInstances = 0;
+		sdaiGetAttrBN(sdaiContainsElementsInstance, "RelatedElements", sdaiAGGR, &sdaiRelatedElementsInstances);
 
-		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(piIFCRelatedElementsInstances);
+		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(sdaiRelatedElementsInstances);
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j)
 		{
-			SdaiInstance iIFCRelatedElementsInstance = 0;
-			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
+			SdaiInstance sdaiRelatedElementsInstance = 0;
+			engiGetAggrElement(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
-			LoadObject(pModel, iIFCRelatedElementsInstance, hContains);
-		} // for (int_t j = ...
-	} // for (int64_t i = ...
+			LoadObject(pModel, sdaiRelatedElementsInstance, hContains);
+		}
+	} // for (SdaiInteger i = ...
 }
 
-// ------------------------------------------------------------------------------------------------
-void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance iInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
 {
 	ASSERT(pModel != nullptr);
 
-	auto pGeometry = pModel->getGeometryByInstance(iInstance);
+	auto pGeometry = pModel->getGeometryByInstance(sdaiInstance);
 	if (pGeometry == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1280,11 +1178,9 @@ void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance iInstan
 	{
 		ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
 
-		wstring strItem = _ap_instance::getName(iInstance);
+		wstring strItem = _ap_instance::getName(sdaiInstance);
 
-		/*
-		* Object
-		*/
+		// Object
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hParent;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1292,12 +1188,9 @@ void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance iInstan
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		/*
-		* Geometry
-		*/
+		// Geometry
 		tvInsertStruct.hParent = hObject;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
@@ -1307,16 +1200,13 @@ void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance iInstan
 			(ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 			IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
-
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 		m_mapInstance2GeometryItem[ifcInstance.p()] = hGeometry;
 
-		/*
-		* decomposition/nest/contains
-		*/
-		LoadIsDecomposedBy(pModel, iInstance, hObject);
-		LoadIsNestedBy(pModel, iInstance, hObject);
-		LoadContainsElements(pModel, iInstance, hObject);
+		// decomposition/nested/contains
+		LoadIsDecomposedBy(pModel, sdaiInstance, hObject);
+		LoadIsNestedBy(pModel, sdaiInstance, hObject);
+		LoadContainsElements(pModel, sdaiInstance, hObject);
 	} // if (ifcInstance)
 	else
 	{
@@ -1324,7 +1214,6 @@ void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance iInstan
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel)
 {
 	ASSERT(pModel != nullptr);
@@ -1342,7 +1231,6 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 		//#todo#mappeditems
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
 		if (!ifcGeometry->getIsReferenced())
 		{
 			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
@@ -1359,17 +1247,15 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			{
 				itUnreferencedItems->second.push_back(ifcInstance.p());
 			}
-		} // for (; itInstance != ...
-	} // for (; itInstance != ...
+		}
+	} // for (auto pGeometry : ...
 
 	if (mapUnreferencedItems.empty())
 	{
 		return;
 	}
 
-	/*
-	* Unreferenced
-	*/
+	// Unreferenced
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hModel;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1377,22 +1263,18 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 	tvInsertStruct.item.pszText = L"Unreferenced";
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
-
 	HTREEITEM hUnreferenced = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 	map<wstring, vector<_ifc_instance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
 	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++)
 	{
-		/*
-		* Entity
-		*/
+		// Entity
 		tvInsertStruct.hParent = hUnreferenced;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)itUnreferencedItems->first.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-
 		HTREEITEM hEntity = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++)
@@ -1401,21 +1283,16 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 
 			wstring strItem = _ap_instance::getName(pInstance->getSdaiInstance());
 
-			/*
-			* Object
-			*/
+			// Object
 			tvInsertStruct.hParent = hEntity;
 			tvInsertStruct.hInsertAfter = TVI_LAST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 			tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 			tvInsertStruct.item.lParam = NULL;
-
 			HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-			/*
-			* Geometry
-			*/
+			// Geometry
 			tvInsertStruct.hParent = hObject;
 			tvInsertStruct.hInsertAfter = TVI_LAST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
@@ -1423,14 +1300,12 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
 			tvInsertStruct.item.lParam = (LPARAM)pInstance;
-
 			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 			m_mapInstance2GeometryItem[pInstance] = hGeometry;
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CIFCModelStructureView::LoadTree_UpdateItems(HTREEITEM hModel)
 {
 	HTREEITEM hModelChild = m_pTreeCtrl->GetNextItem(hModel, TVGN_CHILD);
@@ -1455,7 +1330,6 @@ void CIFCModelStructureView::LoadTree_UpdateItems(HTREEITEM hModel)
 	}
 }
 
-// ----------------------------------------------------------------------------
 void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);
@@ -1497,29 +1371,29 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 		switch (iImage)
 		{
-		case IMAGE_SELECTED:
-		{
-			iSelectedChidlrenCount++;
-		}
-		break;
+			case IMAGE_SELECTED:
+			{
+				iSelectedChidlrenCount++;
+			}
+			break;
 
-		case IMAGE_SEMI_SELECTED:
-		{
-			iSemiSelectedChidlrenCount++;
-		}
-		break;
+			case IMAGE_SEMI_SELECTED:
+			{
+				iSemiSelectedChidlrenCount++;
+			}
+			break;
 
-		case IMAGE_NOT_SELECTED:
-		{
-			// NA
-		}
-		break;
+			case IMAGE_NOT_SELECTED:
+			{
+				// NA
+			}
+			break;
 
-		default:
-		{
-			ASSERT(FALSE); // unexpected
-		}
-		break;
+			default:
+			{
+				ASSERT(FALSE); // unexpected
+			}
+			break;
 		} // switch (iImage)
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
@@ -1555,7 +1429,6 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 }
 
-// ----------------------------------------------------------------------------
 void CIFCModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 {
 	ASSERT(hParent != nullptr);
@@ -1601,7 +1474,6 @@ void CIFCModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
 	} // while (hChild != nullptr)
 }
 
-// ----------------------------------------------------------------------------
 void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive/* = TRUE*/)
 {
 	if (hParent == nullptr)
@@ -1731,7 +1603,6 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 	}
 }
 
-// ----------------------------------------------------------------------------
 void CIFCModelStructureView::UnselectAllItems()
 {
 	auto itSelectedIInstance = m_mapSelectedInstances.begin();
@@ -1743,7 +1614,6 @@ void CIFCModelStructureView::UnselectAllItems()
 	m_mapSelectedInstances.clear();
 }
 
-// ----------------------------------------------------------------------------
 void CIFCModelStructureView::ResetView()
 {
 	m_mapInstance2GeometryItem.clear();
