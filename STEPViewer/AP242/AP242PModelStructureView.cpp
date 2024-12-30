@@ -13,7 +13,6 @@
 #include "Resource.h"
 #include "STEPViewer.h"
 
-
 #include <algorithm>
 #include <chrono>
 using namespace std;

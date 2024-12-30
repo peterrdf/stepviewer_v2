@@ -592,6 +592,7 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\OWLProperty.h" />
     <ClInclude Include="..\include\_ap242_draughting_model.h" />
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\wglext.h" />
@@ -632,7 +633,6 @@
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="ModelCheckDlg.h" />
-    <ClInclude Include="OWLProperty.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
     <ClInclude Include="SchemaViewConsts.h" />
@@ -655,6 +655,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\OWLProperty.cpp" />
     <ClCompile Include="..\include\_ap242_draughting_model.cpp" />
     <ClCompile Include="..\include\_ap242_geometry.cpp" />
     <ClCompile Include="..\include\_ap242_instance.cpp" />
@@ -682,7 +683,6 @@
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
-    <ClCompile Include="OWLProperty.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />
