@@ -4,13 +4,16 @@
 
 #include "TreeViewBase.h"
 #include "AP242ItemData.h"
-#include "AP242Model.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
+class _ap242_model;
 class _ap242_product_definition;
 class _ap242_instance;
 class _ap242_assembly;
+class _ap242_draughting_model;
+class _ap242_annotation_plane;
+class _ap242_draughting_callout;
 
 // ************************************************************************************************
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
@@ -80,13 +83,13 @@ private: // Methods
 
 	void LoadModel();
 	void LoadHeader(HTREEITEM hParent);	
-	void LoadProduct(CAP242Model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent);
-	void LoadAssembly(CAP242Model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent);
-	void LoadInstance(CAP242Model* pModel, _ap242_instance* pInstance, HTREEITEM hParent);
+	void LoadProduct(_ap242_model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent);
+	void LoadAssembly(_ap242_model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent);
+	void LoadInstance(_ap242_model* pModel, _ap242_instance* pInstance, HTREEITEM hParent);
 
-	bool HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_product_definition* pProduct);
-	void HasDescendantsWithGeometryRecursively(CAP242Model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry);
-	bool HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_assembly* pAssembly);
+	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_definition* pProduct);
+	void HasDescendantsWithGeometryRecursively(_ap242_model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry);
+	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_assembly* pAssembly);
 	bool HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel);
 
 	void LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent);

@@ -1,9 +1,9 @@
 
 #pragma once
 
+#include "TreeViewBase.h"
 #include "TreeCtrlEx.h"
 #include "AP242ItemData.h"
-#include "AP242PModelStructureView.h"
 
 #include <map>
 using namespace std;

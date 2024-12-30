@@ -7,13 +7,12 @@
 #include "StructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "AP242Model.h"
+#include "AP242PModelStructureView.h"
 #include "IFCModelStructureView.h"
 #include "CIS2ModelStructureView.h"
 
 #include <algorithm>
 #include <chrono>
-
 using namespace std;
 
 #ifdef _DEBUG

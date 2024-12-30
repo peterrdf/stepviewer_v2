@@ -3,6 +3,7 @@
 
 #include "_ifc_mvc.h"
 #include "_ifc_instance.h"
+#include "_ap242_mvc.h"
 
 #include "_ap242_product_definition.h"
 #include "_ap242_instance.h"
@@ -13,7 +14,6 @@
 #include "MainFrm.h"
 #include "STEPViewer.h"
 #include "AP242OpenGLView.h"
-#include "AP242Model.h"
 
 #include "CIS2Model.h"
 #include "CIS2Instance.h"

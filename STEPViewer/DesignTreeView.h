@@ -3,9 +3,9 @@
 
 #include "TreeCtrlEx.h"
 #include "OWLProperty.h"
+#include "SearchTreeCtrlDialog.h"
 
 #include <map>
-
 using namespace std;
 
 // ************************************************************************************************

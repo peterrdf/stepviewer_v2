@@ -3,6 +3,7 @@
 #include "AP242PModelStructureView.h"
 #include "StructureViewConsts.h"
 
+#include "_ap242_mvc.h"
 #include "_ap242_product_definition.h"
 #include "_ap242_instance.h"
 #include "_ap242_draughting_model.h"
@@ -491,7 +492,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 		return;
 	}
 
-	auto pModel = getModelAs<CAP242Model>();
+	auto pModel = getModelAs<_ap242_model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -692,7 +693,7 @@ void CAP242PModelStructureView::LoadModel()
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	auto pModel = getModelAs<CAP242Model>();
+	auto pModel = getModelAs<_ap242_model>();
 	if (pModel == nullptr)
 	{
 		return;
@@ -757,7 +758,7 @@ void CAP242PModelStructureView::LoadModel()
 
 void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 {
-	auto pModel = getModelAs<CAP242Model>();
+	auto pModel = getModelAs<_ap242_model>();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -1027,7 +1028,7 @@ void CAP242PModelStructureView::LoadHeader(HTREEITEM hParent)
 	}
 }
 
-void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent)
+void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent)
 {
 	if ((pModel == nullptr) || (pProduct == nullptr))
 	{
@@ -1147,7 +1148,7 @@ void CAP242PModelStructureView::LoadProduct(CAP242Model* pModel, _ap242_product_
 	}*/
 }
 
-void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent)
+void CAP242PModelStructureView::LoadAssembly(_ap242_model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent)
 {
 	if ((pModel == nullptr) || (pAssembly == nullptr))
 	{
@@ -1176,7 +1177,7 @@ void CAP242PModelStructureView::LoadAssembly(CAP242Model* pModel, _ap242_assembl
 	LoadProduct(pModel, pAssembly->getRelatedProductDefinition(), hAssembly);
 }
 
-void CAP242PModelStructureView::LoadInstance(CAP242Model* pModel, _ap242_instance* pInstance, HTREEITEM hParent)
+void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instance* pInstance, HTREEITEM hParent)
 {
 	if ((pModel == nullptr) || (pInstance == nullptr))
 	{
@@ -1303,7 +1304,7 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 	m_mapInstance2Item[pInstance] = hDraugthingCallout;
 }
 
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_product_definition* pProduct)
+bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_definition* pProduct)
 {
 	if ((pModel == nullptr) || (pProduct == nullptr))
 	{
@@ -1323,7 +1324,7 @@ bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, 
 	return bHasDescendantWithGeometry;
 }
 
-void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(CAP242Model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry)
+void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(_ap242_model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry)
 {
 	if ((pModel == nullptr) || (pProduct == nullptr))
 	{
@@ -1345,7 +1346,7 @@ void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(CAP242Mode
 	}
 }
 
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(CAP242Model* pModel, _ap242_assembly* pAssembly)
+bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_assembly* pAssembly)
 {
 	if ((pModel == nullptr) || (pAssembly == nullptr))
 	{

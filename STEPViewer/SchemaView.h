@@ -1,7 +1,8 @@
 
 #pragma once
 
-// ------------------------------------------------------------------------------------------------
+#include "_ap_mvc.h"
+
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
 

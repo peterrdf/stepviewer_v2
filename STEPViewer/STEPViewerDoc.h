@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "AP242Model.h"
 #include "Controller.h"
 #include "ModelCheckDlg.h"
 

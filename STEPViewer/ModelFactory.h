@@ -3,7 +3,7 @@
 #include "_mvc.h"
 
 #include "_ifc_mvc.h"
-#include "AP242Model.h"
+#include "_ap242_mvc.h"
 #include "CIS2Model.h"
 
 // ************************************************************************************************
@@ -49,7 +49,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
-			auto pModel = new CAP242Model();
+			auto pModel = new _ap242_model();
 			if (!pController->getModels().empty())
 			{
 				pModel->setWorld(pController->getModels()[0]);

@@ -105,9 +105,6 @@
     <ClInclude Include="AP242\AP242ItemData.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="AP242\AP242Model.h">
-      <Filter>AP242</Filter>
-    </ClInclude>
     <ClInclude Include="AP242\AP242PModelStructureView.h">
       <Filter>AP242</Filter>
     </ClInclude>
@@ -276,9 +273,6 @@
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\AP242ItemData.cpp">
-      <Filter>AP242</Filter>
-    </ClCompile>
-    <ClCompile Include="AP242\AP242Model.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="AP242\AP242PModelStructureView.cpp">

@@ -1,9 +1,6 @@
 #include "stdafx.h"
 
 #include "AP242OpenGLView.h"
-#include "Controller.h"
-#include "AP242Model.h"
-#include "_3DUtils.h"
 #include "Resource.h"
 
 // ************************************************************************************************
