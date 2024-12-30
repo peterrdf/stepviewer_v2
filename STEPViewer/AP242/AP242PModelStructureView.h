@@ -3,7 +3,6 @@
 #include "_ptr.h"
 
 #include "TreeViewBase.h"
-#include "AP242ItemData.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
@@ -14,6 +13,7 @@ class _ap242_assembly;
 class _ap242_draughting_model;
 class _ap242_annotation_plane;
 class _ap242_draughting_callout;
+class CAP242ItemData;
 
 // ************************************************************************************************
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
@@ -105,3 +105,46 @@ private: // Methods
 	void ResetView();
 };
 
+// ************************************************************************************************
+enum class enumAP242ItemDataType : int
+{
+	Unknown = -1,
+	Model = 0,
+	ProductDefinition = 1,
+	Assembly = 2,
+	ProductInstance = 3,
+	DraughtingModel = 4,
+	AnnotationPlane = 5,
+	DraughtingCallout = 6,
+};
+
+// ************************************************************************************************
+class CAP242ItemData
+{
+
+private: // Members	
+
+	CAP242ItemData* m_pParent;	
+	int64_t* m_pInstance; // Instance - C++ wrapper class
+	enumAP242ItemDataType m_enAP242ItemDataType;
+	HTREEITEM m_hItem;
+	vector<CAP242ItemData*> m_vecChildren;
+
+public: // Methods
+
+	CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumAP242ItemDataType enItemDataType);
+	virtual ~CAP242ItemData();
+
+public: // Properties
+
+	CAP242ItemData* GetParent() const { return m_pParent; }
+	vector<CAP242ItemData*>& Children() { return m_vecChildren; }
+	enumAP242ItemDataType GetType() const { return m_enAP242ItemDataType; }
+	HTREEITEM& TreeItem() { return m_hItem; }
+	 
+	template<typename T>
+	T* GetInstance() const
+	{
+		return (T*)m_pInstance;
+	}
+};

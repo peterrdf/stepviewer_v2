@@ -214,13 +214,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if (pItemData != nullptr)
 				{
-					if ((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
+					if ((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+						(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+						(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))
 						{
 							pItemData->GetInstance<_instance>()->setEnable(false);
 						}
-					else if (pItemData->getType() == enumSTEPItemDataType::DraughtingModel)
+					else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)
 					{
 						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
 					}
@@ -242,13 +242,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if (pItemData != nullptr)
 				{
-					if ((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-						(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-						(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
+					if ((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+						(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+						(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))
 					{
 						pItemData->GetInstance<_instance>()->setEnable(true);
 					}
-					else if (pItemData->getType() == enumSTEPItemDataType::DraughtingModel)
+					else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)
 					{
 						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(true);
 					}
@@ -291,9 +291,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 		if ((pItemData == nullptr) ||
-			((pItemData->getType() != enumSTEPItemDataType::ProductInstance) &&
-				(pItemData->getType() != enumSTEPItemDataType::AnnotationPlane) &&
-				(pItemData->getType() != enumSTEPItemDataType::DraughtingCallout)))
+			((pItemData->GetType() != enumAP242ItemDataType::ProductInstance) &&
+				(pItemData->GetType() != enumAP242ItemDataType::AnnotationPlane) &&
+				(pItemData->GetType() != enumAP242ItemDataType::DraughtingCallout)))
 		{
 			getController()->selectInstance(this, nullptr);
 
@@ -322,9 +322,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) &&
-		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 	{
 		return pItemData->GetInstance<_instance>() == pController->getSelectedInstance();
 	}
@@ -410,7 +410,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Product Definitions
 	if (iFilter == (int)enumSearchFilter::ProductDefitions)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductDefinition))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductDefinition))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -421,7 +421,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Assemblies
 	if (iFilter == (int)enumSearchFilter::Assemblies)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::Assembly))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::Assembly))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -432,7 +432,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Product Instance
 	if (iFilter == (int)enumSearchFilter::ProductInstances)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::ProductInstance))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductInstance))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -443,7 +443,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Draughting Model
 	if (iFilter == (int)enumSearchFilter::DraughtingModel)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::DraughtingModel))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -454,7 +454,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Annotation Plane
 	if (iFilter == (int)enumSearchFilter::AnnotationPlane)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::AnnotationPlane))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -465,7 +465,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	// Draughting Callout
 	if (iFilter == (int)enumSearchFilter::DraughtingCallout)
 	{
-		if ((pItemData != nullptr) && (pItemData->getType() == enumSTEPItemDataType::DraughtingCallout))
+		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))
 		{
 			return strItemText.Find(strText, 0) != -1;
 		}
@@ -519,9 +519,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
 	*/
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) &&
-		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 	{
 		auto pTargetInstance = pItemData->GetInstance<_ap_instance>();
 
@@ -709,7 +709,7 @@ void CAP242PModelStructureView::LoadModel()
 	/*
 	* Model
 	*/
-	auto pModelItemData = new CAP242ItemData(nullptr, (int64_t*)pModel, enumSTEPItemDataType::Model);
+	auto pModelItemData = new CAP242ItemData(nullptr, (int64_t*)pModel, enumAP242ItemDataType::Model);
 	m_vecItemData.push_back(pModelItemData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -722,7 +722,7 @@ void CAP242PModelStructureView::LoadModel()
 	tvInsertStruct.item.lParam = (LPARAM)pModelItemData;
 
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-	pModelItemData->treeItem() = hModel;
+	pModelItemData->TreeItem() = hModel;
 
 	// Header
 	HTREEITEM hHeader = m_pTreeCtrl->InsertItem(_T("Header"), IMAGE_PROPERTY_SET, IMAGE_PROPERTY_SET, hModel);
@@ -1077,8 +1077,8 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 	_ptr<_ap242_instance> apProductInstance(pInstanceIterator->getNextItem());
 	if (apProductInstance)
 	{
-		auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)apProductInstance.p(), enumSTEPItemDataType::ProductInstance);
-		pParentItemData->children().push_back(pItemData);
+		auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)apProductInstance.p(), enumAP242ItemDataType::ProductInstance);
+		pParentItemData->Children().push_back(pItemData);
 
 		m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pItemData);
 
@@ -1103,7 +1103,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 	// II) Show Instances
 	//
 
-	/*auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumSTEPItemDataType::ProductDefinition);
+	/*auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumAP242ItemDataType::ProductDefinition);
 	pParentItemData->children().push_back(pItemData);
 
 	m_vecItemData.push_back(pItemData);
@@ -1167,8 +1167,8 @@ void CAP242PModelStructureView::LoadAssembly(_ap242_model* pModel, _ap242_assemb
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pAssembly, enumSTEPItemDataType::Assembly);
-	pParentItemData->children().push_back(pItemData);
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pAssembly, enumAP242ItemDataType::Assembly);
+	pParentItemData->Children().push_back(pItemData);
 
 	m_vecItemData.push_back(pItemData);
 
@@ -1197,8 +1197,8 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumSTEPItemDataType::ProductInstance);
-	pParentItemData->children().push_back(pItemData);
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::ProductInstance);
+	pParentItemData->Children().push_back(pItemData);
 
 	m_vecItemData.push_back(pItemData);
 
@@ -1227,8 +1227,8 @@ void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDr
 	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	ASSERT(pParentItemData != nullptr);
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pDraugthingModel, enumSTEPItemDataType::DraughtingModel);
-	pParentItemData->children().push_back(pItemData);
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pDraugthingModel, enumAP242ItemDataType::DraughtingModel);
+	pParentItemData->Children().push_back(pItemData);
 	m_pTreeCtrl->SetItemData(hDraugthingModel, (DWORD_PTR)pItemData);
 
 	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes())
@@ -1264,8 +1264,8 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 	ASSERT(pAnnotationPlane->getInstances().size() == 1);
 	auto pInstance = pAnnotationPlane->getInstances()[0];
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumSTEPItemDataType::AnnotationPlane);
-	pParentItemData->children().push_back(pItemData);
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::AnnotationPlane);
+	pParentItemData->Children().push_back(pItemData);
 
 	m_pTreeCtrl->SetItemData(hAnnotationPlane, (DWORD_PTR)pItemData);
 
@@ -1295,8 +1295,8 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 	ASSERT(pDraugthingCallout->getInstances().size() == 1);
 	auto pInstance = pDraugthingCallout->getInstances()[0];
 
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumSTEPItemDataType::DraughtingCallout);
-	pParentItemData->children().push_back(pItemData);
+	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::DraughtingCallout);
+	pParentItemData->Children().push_back(pItemData);
 
 	m_pTreeCtrl->SetItemData(hDraugthingCallout, (DWORD_PTR)pItemData);
 
@@ -1447,16 +1447,16 @@ void CAP242PModelStructureView::UpdateChildrenItemData(CAP242ItemData* pParent, 
 		return;
 	}
 
-	for (size_t iChild = 0; iChild < pParent->children().size(); iChild++)
+	for (size_t iChild = 0; iChild < pParent->Children().size(); iChild++)
 	{
-		auto pChild = pParent->children()[iChild];
-		if ((pChild->getType() == enumSTEPItemDataType::ProductInstance) ||
-			(pChild->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-			(pChild->getType() == enumSTEPItemDataType::DraughtingCallout))
+		auto pChild = pParent->Children()[iChild];
+		if ((pChild->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pChild->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+			(pChild->GetType() == enumAP242ItemDataType::DraughtingCallout))
 		{
 			pChild->GetInstance<_instance>()->setEnable(bEnable);
 		}
-		else if (pChild->getType() == enumSTEPItemDataType::DraughtingModel)
+		else if (pChild->GetType() == enumAP242ItemDataType::DraughtingModel)
 		{
 			pChild->GetInstance<_ap242_draughting_model>()->enableInstances(bEnable);
 		}
@@ -1576,9 +1576,9 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) &&
-			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+			((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+				(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+				(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 		{
 			pItemData->GetInstance<_instance>()->setEnable(true);
 		}
@@ -1594,9 +1594,9 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) &&
-			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+			((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+				(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+				(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 		{
 			pItemData->GetInstance<_instance>()->setEnable(false);
 		}
@@ -1612,9 +1612,9 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 		if ((pItemData != nullptr) &&
-			((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-				(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-				(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+			((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+				(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+				(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 		{
 			pItemData->GetInstance<_ap242_instance>()->setEnable(true);
 		}
@@ -1628,9 +1628,9 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
 	if ((pItemData != nullptr) &&
-		((pItemData->getType() == enumSTEPItemDataType::ProductInstance) ||
-			(pItemData->getType() == enumSTEPItemDataType::AnnotationPlane) ||
-			(pItemData->getType() == enumSTEPItemDataType::DraughtingCallout)))
+		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
+			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)))
 	{
 		pItemData->GetInstance<_ap242_instance>()->setEnable(true);
 	}
@@ -1653,4 +1653,20 @@ void CAP242PModelStructureView::ResetView()
 	m_pSearchDialog->Reset();
 
 	LoadModel();
+}
+
+// ************************************************************************************************
+CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumAP242ItemDataType enItemDataType)
+	: m_pParent(pParent)
+	, m_pInstance(pInstance)
+	, m_enAP242ItemDataType(enItemDataType)
+	, m_hItem(nullptr)
+	, m_vecChildren()
+{
+	ASSERT(m_pInstance != nullptr);
+	ASSERT(m_enAP242ItemDataType != enumAP242ItemDataType::Unknown);
+}
+
+CAP242ItemData::~CAP242ItemData()
+{
 }
