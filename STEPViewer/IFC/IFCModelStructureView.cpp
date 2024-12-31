@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "_ifc_mvc.h"
+#include "_ifc_model.h"
 #include "_ifc_geometry.h"
 #include "_ptr.h"
 
@@ -8,16 +8,14 @@
 #include "IFCModelStructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "StructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>
 using namespace std;
 
 // ************************************************************************************************
-CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeView)
-	: CTreeViewBase()
-	, m_pTreeCtrl(pTreeView)
+CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
+	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_mapInstance2GeometryItem()
 	, m_mapSelectedInstances()
@@ -716,7 +714,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 }
 
-void CIFCModelStructureView::LoadHeader(_ifc_model* pModel, HTREEITEM hModel)
+void CIFCModelStructureView::LoadHeader(_ap_model* pModel, HTREEITEM hModel)
 {
 	// Header
 	TV_INSERTSTRUCT tvInsertStruct;

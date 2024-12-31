@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include "TreeViewBase.h"
-#include "TreeCtrlEx.h"
+#include "ModelStructureViewBase.h"
 
 #include <map>
 using namespace std;
@@ -27,7 +26,7 @@ class CStructureView
 
 private: // Members
 
-	CTreeViewBase* m_pSTEPTreeView;
+	CModelStructureViewBase* m_pSTEPTreeView;
 
 public: // Methods
 

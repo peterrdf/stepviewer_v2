@@ -2,7 +2,7 @@
 
 #include "_ifc_instance.h"
 
-#include "TreeViewBase.h"
+#include "ModelStructureViewBase.h"
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>
@@ -14,7 +14,7 @@ class _ifc_model;
 // ************************************************************************************************
 // IFC Model Structure
 class CIFCModelStructureView 
-	: public CTreeViewBase
+	: public CModelStructureViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -28,7 +28,6 @@ private: // Classes
 
 private: // Members	
 	
-	CTreeCtrlEx* m_pTreeCtrl;
 	CImageList* m_pImageList;
 
 	// Cache
@@ -40,13 +39,13 @@ private: // Members
 
 public: // Methods
 
-	CIFCModelStructureView(CTreeCtrlEx* pTreeView);
+	CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl);
 	virtual ~CIFCModelStructureView();
 
 	// _view
 	virtual void onInstanceSelected(_view* pSender) override;
 
-	// CTreeViewBase
+	// CModelStructureViewBase
 	virtual void Load() override;
 	virtual CImageList* GetImageList() const override;
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus) override;
@@ -67,7 +66,7 @@ public: // Methods
 private: // Methods		
 
 	void LoadModel(_ifc_model* pModel);
-	void LoadHeader(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadHeader(_ap_model* pModel, HTREEITEM hModel);
 	void LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance);
 	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);

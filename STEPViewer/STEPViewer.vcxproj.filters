@@ -78,7 +78,7 @@
     <ClInclude Include="ModelFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TreeViewBase.h">
+    <ClInclude Include="ModelStructureViewBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RelationsView.h">

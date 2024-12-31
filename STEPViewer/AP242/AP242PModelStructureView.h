@@ -2,7 +2,7 @@
 
 #include "_ptr.h"
 
-#include "TreeViewBase.h"
+#include "ModelStructureViewBase.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
@@ -20,7 +20,7 @@ typedef _vector_sequential_iterator<_instance> _instance_iterator;
 
 // ************************************************************************************************
 class CAP242PModelStructureView 
-	: public CTreeViewBase
+	: public CModelStructureViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -38,8 +38,7 @@ private: // Classes
 	};
 
 private: // Members
-	
-	CTreeCtrlEx* m_pTreeCtrl;
+
 	CImageList* m_pImageList;
 
 	// Cache	
@@ -55,13 +54,13 @@ private: // Members
 
 public: // Methods
 
-	CAP242PModelStructureView(CTreeCtrlEx* pTreeView);
+	CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl);
 	virtual ~CAP242PModelStructureView();	
 
 	// _view
 	virtual void onInstanceSelected(_view* pSender) override;
 
-	// CTreeViewBase
+	// CModelStructureViewBase
 	virtual void Load();
 	virtual CImageList* GetImageList() const override;
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus) override;

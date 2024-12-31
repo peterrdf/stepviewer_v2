@@ -1,11 +1,11 @@
 #pragma once
 
-#include "TreeViewBase.h"
+#include "ModelStructureViewBase.h"
 #include "CIS2Model.h"
 #include "CIS2Instance.h"
 #include "SearchTreeCtrlDialog.h"
-#include <map>
 
+#include <map>
 using namespace std;
 
 // ************************************************************************************************
@@ -14,7 +14,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 class CCIS2ModelStructureView 
-	: public CTreeViewBase
+	: public CModelStructureViewBase
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -28,7 +28,6 @@ private: // Classes
 
 private: // Members	
 	
-	CTreeCtrlEx* m_pTreeCtrl;
 	CImageList* m_pImageList;
 
 	// Cache
@@ -40,13 +39,13 @@ private: // Members
 
 public: // Methods
 
-	CCIS2ModelStructureView(CTreeCtrlEx* pTreeView);
+	CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl);
 	virtual ~CCIS2ModelStructureView();
 
 	// _view
 	virtual void onInstanceSelected(_view* pSender) override;
 
-	// CTreeViewBase
+	// CModelStructureViewBase
 	virtual void Load() override;
 	virtual CImageList* GetImageList() const override;
 	virtual void OnShowWindow(BOOL bShow, UINT nStatus) override;

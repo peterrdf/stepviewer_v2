@@ -20,10 +20,10 @@ static char THIS_FILE[]=__FILE__;
 // ************************************************************************************************
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
-#define IMAGE_MODEL    2
-#define IMAGE_INSTANCE 1
-#define IMAGE_PROPERTY 3
-#define IMAGE_VALUE    5
+#define IMAGE_DT_MODEL    2
+#define IMAGE_DT_INSTANCE 1
+#define IMAGE_DT_PROPERTY 3
+#define IMAGE_DT_VALUE    5
 
 // ************************************************************************************************
 class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
@@ -100,7 +100,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 		
-	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL, IMAGE_MODEL);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_DT_MODEL, IMAGE_DT_MODEL);
 
 	OwlInstance iInstance = 0;
 	owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &iInstance);
@@ -185,7 +185,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		ASSERT(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_INSTANCE)
+		if (iImage == IMAGE_DT_INSTANCE)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -203,7 +203,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		ASSERT(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_PROPERTY)
+		if (iImage == IMAGE_DT_PROPERTY)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -221,7 +221,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		ASSERT(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_VALUE)
+		if (iImage == IMAGE_DT_VALUE)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -257,7 +257,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_DT_INSTANCE;
 	tvInsertStruct.item.lParam = NULL;
 	tvInsertStruct.item.cChildren = 1;
 
@@ -323,7 +323,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 			strProperty += L" : ";
 			strProperty += pProperty->GetTypeName();
 
-			HTREEITEM hProperty = m_treeCtrl.InsertItem(strProperty.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
+			HTREEITEM hProperty = m_treeCtrl.InsertItem(strProperty.c_str(), IMAGE_DT_PROPERTY, IMAGE_DT_PROPERTY, hParent);
 
 			/*
 			* rdfs:range
@@ -333,14 +333,14 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 			wstring strRange = L"rdfs:range : ";
 			strRange += pProperty->GetRange(vecRestrictionClasses);
 
-			HTREEITEM hRange = m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			HTREEITEM hRange = m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_DT_PROPERTY, IMAGE_DT_PROPERTY, hProperty);
 
 			for (auto iRestrictionClass : vecRestrictionClasses)
 			{
 				wchar_t* szClassName = nullptr;
 				GetNameOfClassW(iRestrictionClass, &szClassName);
 
-				m_treeCtrl.InsertItem(szClassName, IMAGE_VALUE, IMAGE_VALUE, hRange);
+				m_treeCtrl.InsertItem(szClassName, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hRange);
 			}
 			
 			/*
@@ -349,7 +349,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->GetCardinality(iInstance);
 
-			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 
 			/*
 			* value(s)
@@ -370,7 +370,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 						}
 						else
 						{
-							m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
+							m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_DT_INSTANCE, IMAGE_DT_INSTANCE, hProperty);
   						}
 					} // for (int64_t iInstance = ...
 				}
@@ -385,7 +385,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
 						swprintf(szBuffer, 100, L"value = %s", pbValue[iValue] ? L"TRUE" : L"FALSE");
-						m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+						m_treeCtrl.InsertItem(szBuffer, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 					}
 				}
 				break;
@@ -401,7 +401,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 						wstring strValue = CA2W(szValue[iValue]);
 						swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
 
-						m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+						m_treeCtrl.InsertItem(szBuffer, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 					} // for (int64_t iValue = ...
 				}
 				break;				
@@ -416,7 +416,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 					{
 						swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
 
-						m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+						m_treeCtrl.InsertItem(szBuffer, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 					}
 				}
 				break;
@@ -431,7 +431,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 					{
 						swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
 
-						m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+						m_treeCtrl.InsertItem(szBuffer, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 					}
 				}
 				break;
@@ -446,7 +446,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 					{
 						swprintf(szBuffer, 100, L"value = %d", piValue[iValue]);
 
-						m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+						m_treeCtrl.InsertItem(szBuffer, IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 					}
 				}
 				break;

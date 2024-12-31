@@ -1,7 +1,5 @@
 #include "stdafx.h"
-
 #include "AP242PModelStructureView.h"
-#include "StructureViewConsts.h"
 
 #include "_ap242_model.h"
 #include "_ap242_product_definition.h"
@@ -18,9 +16,8 @@
 using namespace std;
 
 // ************************************************************************************************
-CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeView)
-	: CTreeViewBase()
-	, m_pTreeCtrl(pTreeView)
+CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
+	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_mapInstanceIterators()
 	, m_mapInstance2Item()

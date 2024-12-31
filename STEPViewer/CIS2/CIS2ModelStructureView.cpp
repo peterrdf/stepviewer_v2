@@ -6,16 +6,14 @@
 #include "CIS2ModelStructureView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "StructureViewConsts.h"
 
 #include <algorithm>
 #include <chrono>
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeView)
-	: CTreeViewBase()
-	, m_pTreeCtrl(pTreeView)
+CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
+	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_mapInstance2GeometryItem()
 	, m_mapSelectedInstances()

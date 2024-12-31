@@ -1,4 +1,3 @@
-
 #pragma once
 
 #define ITEM_GEOMETRY L"geometry"
