@@ -2,7 +2,7 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "OWLProperty.h"
+#include "_owl_property.h"
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>

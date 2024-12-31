@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "OWLProperty.h"
+#include "_owl_property.h"
 
 // ************************************************************************************************
 COWLProperty::COWLProperty(RdfProperty iInstance)

@@ -592,7 +592,7 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\OWLProperty.h" />
+    <ClInclude Include="..\include\_owl_property.h" />
     <ClInclude Include="..\include\_ap242_draughting_model.h" />
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\wglext.h" />

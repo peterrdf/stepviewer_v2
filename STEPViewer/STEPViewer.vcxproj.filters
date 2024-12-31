@@ -216,8 +216,8 @@
     <ClInclude Include="..\include\_ifc_instance.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\OWLProperty.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_owl_property.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -342,7 +342,7 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\OWLProperty.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
