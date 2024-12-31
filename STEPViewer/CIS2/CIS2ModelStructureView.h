@@ -66,7 +66,6 @@ public: // Methods
 private: // Methods		
 
 	void LoadModel(CCIS2Model* pModel);
-	void LoadHeader(CCIS2Model* pModel, HTREEITEM hModel);
 	void LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadContainsElements(CCIS2Model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);

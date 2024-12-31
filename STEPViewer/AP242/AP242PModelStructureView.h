@@ -81,7 +81,6 @@ public: // Methods
 private: // Methods	
 
 	void LoadModel();
-	void LoadHeader(HTREEITEM hParent);	
 	void LoadProduct(_ap242_model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent);
 	void LoadAssembly(_ap242_model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent);
 	void LoadInstance(_ap242_model* pModel, _ap242_instance* pInstance, HTREEITEM hParent);

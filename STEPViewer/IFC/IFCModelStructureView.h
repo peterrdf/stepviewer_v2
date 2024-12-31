@@ -66,7 +66,6 @@ public: // Methods
 private: // Methods		
 
 	void LoadModel(_ifc_model* pModel);
-	void LoadHeader(_ap_model* pModel, HTREEITEM hModel);
 	void LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance);
 	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
