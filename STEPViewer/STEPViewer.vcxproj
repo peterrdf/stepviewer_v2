@@ -606,10 +606,10 @@
     <ClInclude Include="..\include\_attribute.h" />
     <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />
-    <ClInclude Include="..\include\_ap242_mvc.h" />
+    <ClInclude Include="..\include\_ap242_model.h" />
     <ClInclude Include="..\include\_ifc_geometry.h" />
     <ClInclude Include="..\include\_ifc_instance.h" />
-    <ClInclude Include="..\include\_ifc_mvc.h" />
+    <ClInclude Include="..\include\_ifc_model.h" />
     <ClInclude Include="..\include\_instance.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
@@ -663,10 +663,10 @@
     <ClCompile Include="..\include\_attribute.cpp" />
     <ClCompile Include="..\include\_entity.cpp" />
     <ClCompile Include="..\include\_geometry.cpp" />
-    <ClCompile Include="..\include\_ap242_mvc.cpp" />
+    <ClCompile Include="..\include\_ap242_model.cpp" />
     <ClCompile Include="..\include\_ifc_geometry.cpp" />
     <ClCompile Include="..\include\_ifc_instance.cpp" />
-    <ClCompile Include="..\include\_ifc_mvc.cpp" />
+    <ClCompile Include="..\include\_ifc_model.cpp" />
     <ClCompile Include="..\include\_mvc.cpp" />
     <ClCompile Include="..\include\_oglUtils.cpp" />
     <ClCompile Include="..\include\_property.cpp" />

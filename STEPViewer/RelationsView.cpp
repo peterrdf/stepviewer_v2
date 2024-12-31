@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-#include "_ifc_mvc.h"
+#include "_ifc_model.h"
 #include "_ptr.h"
 
 #include "mainfrm.h"

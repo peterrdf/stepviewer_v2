@@ -3,7 +3,7 @@
 #include "AP242PModelStructureView.h"
 #include "StructureViewConsts.h"
 
-#include "_ap242_mvc.h"
+#include "_ap242_model.h"
 #include "_ap242_product_definition.h"
 #include "_ap242_instance.h"
 #include "_ap242_draughting_model.h"

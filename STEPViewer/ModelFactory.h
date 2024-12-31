@@ -1,9 +1,8 @@
 #pragma once
 
 #include "_mvc.h"
-
-#include "_ifc_mvc.h"
-#include "_ap242_mvc.h"
+#include "_ifc_model.h"
+#include "_ap242_model.h"
 #include "CIS2Model.h"
 
 // ************************************************************************************************
