@@ -168,9 +168,6 @@
     <ClInclude Include="StructureView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StructureViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_entity.h">
       <Filter>include</Filter>
     </ClInclude>

@@ -18,8 +18,6 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 // ************************************************************************************************
-#define EMPTY_INSTANCE L"---<EMPTY>---"
-
 #define IMAGE_DT_MODEL    2
 #define IMAGE_DT_INSTANCE 1
 #define IMAGE_DT_PROPERTY 3

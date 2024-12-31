@@ -640,7 +640,6 @@
     <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="StructureView.h" />
-    <ClInclude Include="StructureViewConsts.h" />
     <ClInclude Include="ModelStructureViewBase.h" />
     <ClInclude Include="STEPViewer.h" />
     <ClInclude Include="STEPViewerDoc.h" />
