@@ -635,7 +635,6 @@
     <ClInclude Include="ModelCheckDlg.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
-    <ClInclude Include="SchemaViewConsts.h" />
     <ClInclude Include="SearchTreeCtrlDialog.h" />
     <ClInclude Include="IFC\IFCOpenGLView.h" />
     <ClInclude Include="ModelFactory.h" />

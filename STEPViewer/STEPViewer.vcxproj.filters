@@ -87,9 +87,6 @@
     <ClInclude Include="SchemaView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SchemaViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFC\IFCModelStructureView.h">
       <Filter>IFC</Filter>
     </ClInclude>

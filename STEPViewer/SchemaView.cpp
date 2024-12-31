@@ -1,19 +1,28 @@
 
 #include "stdafx.h"
+#include "SchemaView.h"
 
 #include "_ptr.h"
 
 #include "mainfrm.h"
-#include "SchemaView.h"
 #include "Resource.h"
 #include "STEPViewer.h"
-#include "SchemaViewConsts.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
+
+// ************************************************************************************************
+#define IMAGE_ENTITY_SCHEMA_VIEW				1
+#define IMAGE_MODEL_SCHEMA_VIEW					2
+#define IMAGE_SUB_TYPES_SCHEMA_VIEW				2
+#define IMAGE_ATTRIBUTES_SCHEMA_VIEW			2
+#define IMAGE_ATTRIBUTE_SCHEMA_VIEW				5
+
+#define ITEM_SUB_TYPES_SCHEMA_VIEW				L"Sub-types"
+#define ITEM_ATTRIBUTES_SCHEMA_VIEW				L"Attributes"
 
 // ************************************************************************************************
 /*virtual*/ void CSchemaView::onModelLoaded() /*override*/
@@ -68,7 +77,7 @@ static char THIS_FILE[]=__FILE__;
 
 		ASSERT(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_ENTITY)
+		if (iImage == IMAGE_ENTITY_SCHEMA_VIEW)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -86,7 +95,7 @@ static char THIS_FILE[]=__FILE__;
 
 		ASSERT(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_ATTRIBUTE)
+		if (iImage == IMAGE_ATTRIBUTE_SCHEMA_VIEW)
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -118,7 +127,7 @@ void CSchemaView::LoadModel(_ap_model* pModel)
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL_SCHEMA_VIEW;
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
@@ -167,8 +176,8 @@ void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
 	tvInsertStruct.hParent = hParent;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = ITEM_ATTRIBUTES;
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTES;
+	tvInsertStruct.item.pszText = ITEM_ATTRIBUTES_SCHEMA_VIEW;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTES_SCHEMA_VIEW;
 	tvInsertStruct.item.lParam = NULL;
 
 	HTREEITEM hAttributes = m_treeCtrl.InsertItem(&tvInsertStruct);
@@ -185,7 +194,7 @@ void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)pEntity->getAttributes()[iAttribute].c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTE;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTE_SCHEMA_VIEW;
 		tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
 		HTREEITEM hAttribute = m_treeCtrl.InsertItem(&tvInsertStruct);
@@ -208,7 +217,7 @@ void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPTSTR)strEntity.GetBuffer();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ENTITY_SCHEMA_VIEW;
 	tvInsertStruct.item.lParam = (LPARAM)pEntity;
 
 	HTREEITEM hEntity = m_treeCtrl.InsertItem(&tvInsertStruct);
@@ -223,8 +232,8 @@ void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 		tvInsertStruct.hParent = hEntity;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_SUB_TYPES;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SUB_TYPES;
+		tvInsertStruct.item.pszText = ITEM_SUB_TYPES_SCHEMA_VIEW;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SUB_TYPES_SCHEMA_VIEW;
 		tvInsertStruct.item.lParam = NULL;
 
 		HTREEITEM hSubType = m_treeCtrl.InsertItem(&tvInsertStruct);

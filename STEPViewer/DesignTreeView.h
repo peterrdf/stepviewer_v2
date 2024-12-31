@@ -1,8 +1,8 @@
-
 #pragma once
 
-#include "TreeCtrlEx.h"
 #include "_owl_property.h"
+
+#include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>
@@ -19,6 +19,8 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ************************************************************************************************
+// Design Tree
 // ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
