@@ -100,15 +100,15 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		
 	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_DT_MODEL, IMAGE_DT_MODEL);
 
-	OwlInstance iInstance = 0;
-	owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &iInstance);
+	OwlInstance owlInstance = 0;
+	owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &owlInstance);
 
-	if (iInstance == 0)
+	if (owlInstance == 0)
 	{
 		return;
 	}
 
-	AddInstance(hModel, iInstance);
+	AddInstance(hModel, owlInstance);
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
@@ -243,12 +243,12 @@ void CDesignTreeView::ResetView()
 	Clean();
 }
 
-void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance owlInstance)
 {
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = _owl_instance::getName(iInstance);
+	wstring strItem = _owl_instance::getName(owlInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;
@@ -261,13 +261,13 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	auto itInstance2Data = m_mapInstance2Data.find(iInstance);
+	auto itInstance2Data = m_mapInstance2Data.find(owlInstance);
 	if (itInstance2Data == m_mapInstance2Data.end())
 	{
-		auto pInstanceData = new CInstanceData(iInstance);
+		auto pInstanceData = new CInstanceData(owlInstance);
 		pInstanceData->Items().push_back(hInstance);
 
-		m_mapInstance2Data[iInstance] = pInstanceData;
+		m_mapInstance2Data[owlInstance] = pInstanceData;
 
 		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)pInstanceData);
 	}
@@ -279,9 +279,9 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance iInstance)
 	}
 }
 
-void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 {
-	if (iInstance == 0)
+	if (owlInstance == 0)
 	{
 		ASSERT(FALSE);
 
@@ -310,7 +310,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 		return;
 	}
 
-	auto pPropertyCollection = m_pPropertyProvider->GetPropertyCollection(iInstance);
+	auto pPropertyCollection = m_pPropertyProvider->GetPropertyCollection(owlInstance);
 	if (pPropertyCollection != nullptr)
 	{
 		wchar_t szBuffer[100];
@@ -345,7 +345,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(iInstance);
+			strCardinality += pProperty->GetCardinality(owlInstance);
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_DT_VALUE, IMAGE_DT_VALUE, hProperty);
 
@@ -356,15 +356,15 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 			{
 				case OBJECTTYPEPROPERTY_TYPE:
 				{
-					OwlInstance* piInstances = nullptr;
+					OwlInstance* powlInstances = nullptr;
 					int64_t iValuesCount = 0;
-					GetObjectProperty(iInstance, pProperty->GetInstance(), &piInstances, &iValuesCount);
+					GetObjectProperty(owlInstance, pProperty->GetInstance(), &powlInstances, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
-						if (piInstances[iValue] != 0)
+						if (powlInstances[iValue] != 0)
 						{
-							AddInstance(hProperty, piInstances[iValue]);
+							AddInstance(hProperty, powlInstances[iValue]);
 						}
 						else
 						{
@@ -378,7 +378,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 				{
 					bool* pbValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&pbValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&pbValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -392,7 +392,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 				{
 					char** szValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&szValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&szValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -408,7 +408,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 				{
 					int64_t* piValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -423,7 +423,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 				{
 					double* pdValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&pdValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&pdValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -438,7 +438,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance iInstance)
 				{
 					BYTE* piValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(iInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -672,7 +672,7 @@ void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 		ASSERT(pItem->GetType() == enumItemType::Instance);
 
 		auto pInstanceData = dynamic_cast<CInstanceData*>(pItem);
-		AddProperties(pNMTreeView->itemNew.hItem, pInstanceData->GetInstance());
+		AddProperties(pNMTreeView->itemNew.hItem, pInstanceData->GetOwlInstance());
 	}
 }
 

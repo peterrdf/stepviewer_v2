@@ -37,23 +37,25 @@ private: // Classes
 	class CItemData
 	{
 
-	private: // Methods
+	private: // Members
 		
-		OwlInstance m_iInstance;
+		OwlInstance m_owlInstance;
 		enumItemType m_enItemType;
 		vector<HTREEITEM> m_vecItems;
 
-	public: // Members
+	public: // Methods
 		
-		CItemData(OwlInstance iInstance, enumItemType enItemType)
-			: m_iInstance(iInstance)
+		CItemData(OwlInstance owlInstance, enumItemType enItemType)
+			: m_owlInstance(owlInstance)
 			, m_enItemType(enItemType)
 			, m_vecItems()
 		{}
 
 		virtual ~CItemData() {}
 
-		OwlInstance GetInstance() const { return m_iInstance; }
+	public: // Properties
+
+		OwlInstance GetOwlInstance() const { return m_owlInstance; }
 		enumItemType GetType() const { return m_enItemType; }
 		vector<HTREEITEM>& Items() { return m_vecItems; }
 	};
@@ -100,8 +102,8 @@ public: // Methods
 private: // Methods
 
 	void ResetView();	
-	void AddInstance(HTREEITEM hParent, OwlInstance iInstance);
-	void AddProperties(HTREEITEM hParent, OwlInstance iInstance);
+	void AddInstance(HTREEITEM hParent, OwlInstance owlInstance);
+	void AddProperties(HTREEITEM hParent, OwlInstance owlInstance);
 
 	void Clean();
 
