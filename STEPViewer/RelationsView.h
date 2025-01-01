@@ -58,46 +58,43 @@ class CRelationsView
 
 private: // Classes
 
-	// -----------------------------------------------------------------------------------------------	
 	class CItemData
 	{
 
 	private: // Members
 
-		int_t m_iInstance;
-		int_t m_iEntity;
+		SdaiInstance m_sdaiInstance;
+		SdaiEntity m_sdaiEntity;
 
 	public: // Methods
 
-		CItemData(int_t iInstance, int_t iEntity)
-			: m_iInstance(iInstance)
-			, m_iEntity(iEntity)
+		CItemData(SdaiInstance sdaiInstance, SdaiEntity sdaiEntity)
+			: m_sdaiInstance(sdaiInstance)
+			, m_sdaiEntity(sdaiEntity)
 		{
-			ASSERT(m_iInstance != 0);
-			ASSERT(m_iEntity != 0);
+			ASSERT(m_sdaiInstance != 0);
+			ASSERT(m_sdaiEntity != 0);
 		}
 
 		virtual ~CItemData() {}
 
-		int_t GetInstance() const { return m_iInstance; }
-		int_t GetEntity() const { return m_iEntity; }
-		const wchar_t* GetEntityName() const { return _entity::getName(m_iEntity); }
+		SdaiInstance GetInstance() const { return m_sdaiInstance; }
+		SdaiEntity GetEntity() const { return m_sdaiEntity; }
+		const wchar_t* GetEntityName() const { return _entity::getName(m_sdaiEntity); }
 	};
 
-	// -----------------------------------------------------------------------------------------------
 	class CInstanceData : public CItemData
 	{
 
 	public: // Methods
 
-		CInstanceData(int_t iInstance, int_t iEntity)
-			: CItemData(iInstance, iEntity)
+		CInstanceData(SdaiInstance sdaiInstance, SdaiEntity sdaiEntity)
+			: CItemData(sdaiInstance, sdaiEntity)
 		{}
 
 		virtual ~CInstanceData() {}
 	};
 
-	// -----------------------------------------------------------------------------------------------
 	class CAttributeData : public CItemData
 	{
 
@@ -107,8 +104,8 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeData(int_t iInstance, int_t iEntity, const char* szName)
-			: CItemData(iInstance, iEntity)
+		CAttributeData(SdaiInstance sdaiInstance, SdaiEntity sdaiEntity, const char* szName)
+			: CItemData(sdaiInstance, sdaiEntity)
 			, m_srtName(szName)
 		{}
 
@@ -117,7 +114,6 @@ private: // Classes
 		const char* GetName() const { return m_srtName.c_str(); }
 	};
 
-	// -----------------------------------------------------------------------------------------------
 	class CAttributeSet : public CItemData
 	{
 
@@ -127,8 +123,8 @@ private: // Classes
 
 	public: // Methods
 
-		CAttributeSet(int_t iInstance, int_t iEntity)
-			: CItemData(iInstance, iEntity)
+		CAttributeSet(SdaiInstance sdaiInstance, SdaiEntity sdaiEntity)
+			: CItemData(sdaiInstance, sdaiEntity)
 			, m_vecAttributes()
 		{}
 
@@ -137,7 +133,6 @@ private: // Classes
 		vector<pair<SdaiAttr, SdaiInteger>>& Attributes() { return m_vecAttributes; }
 	};
 
-	// -----------------------------------------------------------------------------------------------
 	enum class enumSearchFilter : int {
 		All = 0,
 		ExpressID,
@@ -174,33 +169,33 @@ private: // Methods
 
 	_model* GetModel() const;
 	
-	void LoadInstances(const vector<int_t>& vecInstances);
-	void LoadProperties(int_t iEntity, const vector<int_t>& vecInstances);
-	void LoadInstance(int_t iEntity, int_t iInstance, HTREEITEM hParent);
-	int_t GetInstanceAttributes(int_t iEntity, int_t iInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
-	void LoadInstanceAttribute(int_t iEntity, int_t iInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
-	void AddInstanceAttribute(SdaiEntity iEntity, SdaiInstance iInstance, SdaiAttr iAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void LoadInstances(const vector<SdaiInstance>& vecInstances);
+	void LoadProperties(SdaiEntity sdaiEntity, const vector<SdaiInstance>& vecSdaiInstances);
+	void LoadInstance(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	SdaiInteger GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	void LoadInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void AddInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
 
-	void CreateAttributeLabelInstance(SdaiInstance iInstance, wstring& strLabel);
+	void CreateAttributeLabelInstance(SdaiInstance sdaiInstance, wstring& strLabel);
 	void CreateAttributeLabelBoolean(bool bValue, wstring& strLabel);
 	void CreateAttributeLabelLogical(char* szValue, wstring& strLabel);
 	void CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel);
 	void CreateAttributeLabelReal(double dValue, wstring& strLabel);
-	void CreateAttributeLabelInteger(int_t iValue, wstring& strLabel);
+	void CreateAttributeLabelInteger(SdaiInteger iValue, wstring& strLabel);
 	void CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel);
 	
-	bool CreateAttributeLabel(SdaiInstance iInstance, SdaiAttr iAttribute, wstring& strLabel);
+	bool CreateAttributeLabel(SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, wstring& strLabel);
 
-	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, wstring& strLabel);
+	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiPrimitiveType, SdaiInteger iIndex, wstring& strLabel);
 	bool CreateAttributeLabelAggregation(SdaiAggr aggregation, wstring& strLabel);
 	bool CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel);
 
 	void GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent);
-	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, int_t iAggrType, SdaiInteger iIndex, HTREEITEM hParent);
+	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiPrimitiveType, SdaiInteger iIndex, HTREEITEM hParent);
 	void GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent);
-	void GetAttributeReferences(SdaiInstance iInstance, SdaiAttr iAttribute, HTREEITEM hParent);
+	void GetAttributeReferences(SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, HTREEITEM hParent);
 
-	void GetEntityHierarchy(int_t iEntity, vector<wstring>& vecHierarchy) const;
+	void GetEntityHierarchy(SdaiEntity sdaiEntity, vector<wstring>& vecHierarchy) const;
 
 	void Clean();
 

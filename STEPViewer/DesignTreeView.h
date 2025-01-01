@@ -68,8 +68,8 @@ private: // Classes
 
 	public: // Methods
 
-		CInstanceData(OwlInstance iInstance)
-			: CItemData(iInstance, enumItemType::Instance)
+		CInstanceData(OwlInstance owlInstance)
+			: CItemData(owlInstance, enumItemType::Instance)
 		{}
 
 		virtual ~CInstanceData() {}
