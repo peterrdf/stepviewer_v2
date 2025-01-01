@@ -8,9 +8,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CTreeCtrlEx
-
+// ************************************************************************************************
 CTreeCtrlEx::CTreeCtrlEx()
 	: m_pItemStateProvider(nullptr)
 {
@@ -25,10 +23,6 @@ BEGIN_MESSAGE_MAP(CTreeCtrlEx, CTreeCtrl)
     ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CTreeCtrlEx message handlers
-
-// ------------------------------------------------------------------------------------------------
 BOOL CTreeCtrlEx::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	BOOL bRes = CTreeCtrl::OnNotify(wParam, lParam, pResult);
@@ -44,13 +38,11 @@ BOOL CTreeCtrlEx::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return bRes;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CTreeCtrlEx::SetItemStateProvider(CItemStateProvider* pItemStateProvider)
 {
     m_pItemStateProvider = pItemStateProvider;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CTreeCtrlEx::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
 {
     NMTVCUSTOMDRAW* pNMCD = reinterpret_cast<NMTVCUSTOMDRAW*>(pNMHDR);
@@ -86,7 +78,6 @@ void CTreeCtrlEx::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
     } // switch (pNMCD->nmcd.dwDrawStage)
 }
 
-// ------------------------------------------------------------------------------------------------
 void CTreeCtrlEx::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
     if ((GetKeyState(VK_CONTROL) & 0x8000) &&

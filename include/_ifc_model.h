@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_mvc.h"
+#include "_ap_model.h"
 #include "_unit.h"
 #include "_property.h"
 #include "_attribute.h"
@@ -67,7 +67,7 @@ private: // Methods
 	void getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
-	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, int_t iCircleSegments);
+	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
 	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
 	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments);
 

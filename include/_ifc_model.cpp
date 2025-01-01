@@ -170,7 +170,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
-		} // for (int_t j = ...
+		}
 	} // for (SdaiInteger i = ...
 }
 
@@ -276,16 +276,16 @@ void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 	} // for (SdaiInteger i = ...
 }
 
-void _ifc_model::retrieveGeometry(const char* szEntityName, int_t iCircleSegements)
+void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements)
 {
 	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)szEntityName);
-	SdaiInteger sdaiMembersCount = sdaiGetMemberCount(sdaiAggr);
-	if (sdaiMembersCount == 0)
+	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
+	if (iMembersCount == 0)
 	{
 		return;
 	}
 
-	for (int_t i = 0; i < sdaiMembersCount; ++i)
+	for (SdaiInteger i = 0; i < iMembersCount; ++i)
 	{
 		SdaiInstance sdaiInstance = 0;
 		engiGetAggrElement(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);

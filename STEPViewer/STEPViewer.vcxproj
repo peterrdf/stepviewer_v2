@@ -602,7 +602,7 @@
     <ClInclude Include="..\include\_ap242_product_definition.h" />
     <ClInclude Include="..\include\_ap_geometry.h" />
     <ClInclude Include="..\include\_ap_instance.h" />
-    <ClInclude Include="..\include\_ap_mvc.h" />
+    <ClInclude Include="..\include\_ap_model.h" />
     <ClInclude Include="..\include\_attribute.h" />
     <ClInclude Include="..\include\_entity.h" />
     <ClInclude Include="..\include\_geometry.h" />

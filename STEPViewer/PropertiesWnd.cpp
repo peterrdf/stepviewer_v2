@@ -944,7 +944,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 							{
 								case sdaiINTEGER:
 								{
-									int_t iValue = 0;
+									SdaiInteger iValue = 0;
 									sdaiGetADBValue(sdaiValueComponentADB, sdaiINTEGER, (void*)&iValue);
 
 									strValue.Format(L"%i [%s]", (int)iValue, (LPCTSTR)CA2W(szTypePath));

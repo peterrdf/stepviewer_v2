@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_mvc.h"
+#include "_ap_model.h"
 
 // ************************************************************************************************
 class _ap242_product_definition;

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "_ap_mvc.h"
+#include "_ap_model.h"
 
+// ************************************************************************************************
 class CMySTEPViewerDoc;
 
-// CModelCheckDlg dialog
-
+// ************************************************************************************************
 class CModelCheckDlg : public CDialog
 {
 	DECLARE_DYNAMIC(CModelCheckDlg)

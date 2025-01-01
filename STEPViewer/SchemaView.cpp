@@ -260,13 +260,11 @@ pair<int, int> CSchemaView::GetInstancesCount(_entity* pEntity) const
 	return pair<int, int>(iInstancesCount, iSubInstancesCount);
 }
 
-// ----------------------------------------------------------------------------
 void CSchemaView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT * pResult)
 {
 	*pResult = 0;
 }
 
-// ----------------------------------------------------------------------------
 void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 1;
@@ -317,7 +315,6 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	VERIFY(menu.DestroyMenu());
 }
 
-// ----------------------------------------------------------------------------
 void CSchemaView::OnTVNItemexpandingTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
