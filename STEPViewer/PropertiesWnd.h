@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "_mvc.h"
@@ -7,9 +6,12 @@
 #include <string>
 using namespace std;
 
+// ************************************************************************************************
 class CPropertiesToolBar : public CMFCToolBar
 {
+
 public:
+
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
 		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*) GetOwner(), bDisableIfNoHndler);
@@ -18,46 +20,35 @@ public:
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CApplicationPropertyData
 {
 
 private:  // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Type
 	enumApplicationProperty m_enApplicationProperty;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CApplicationPropertyData(enumApplicationProperty enApplicationProperty);
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
+public: // Properties
+
 	enumApplicationProperty GetType() const;
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CApplicationProperty : public CMFCPropertyGridProperty
 {
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CApplicationProperty(const CString& strName, const COleVariant& vtValue, LPCTSTR szDescription, DWORD_PTR dwData);
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CApplicationProperty(const CString& strGroupName, DWORD_PTR dwData, BOOL bIsValueList);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CApplicationProperty();
 };
 
+// ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
 	, public _view
@@ -65,7 +56,6 @@ class CPropertiesWnd
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// _view
 	virtual void onModelLoaded();
 	virtual void onShowMetaInformation();
@@ -74,7 +64,6 @@ public: // Methods
 
 protected: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// Support for properties
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 
@@ -111,10 +100,6 @@ protected:
 	afx_msg void OnUpdateExpandAllProperties(CCmdUI* pCmdUI);
 	afx_msg void OnSortProperties();
 	afx_msg void OnUpdateSortProperties(CCmdUI* pCmdUI);
-	afx_msg void OnProperties1();
-	afx_msg void OnUpdateProperties1(CCmdUI* pCmdUI);
-	afx_msg void OnProperties2();
-	afx_msg void OnUpdateProperties2(CCmdUI* pCmdUI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 	afx_msg void OnViewModeChanged();
