@@ -3,7 +3,7 @@
 #include "_ap_model.h"
 #include "_unit.h"
 #include "_property.h"
-#include "_attribute.h"
+#include "_ifc_attribute.h"
 
 #include <string>
 #include <map>
@@ -40,7 +40,7 @@ private: // Members
 
 	CIFCUnitProvider* m_pUnitProvider;
 	CIFCPropertyProvider* m_pPropertyProvider;
-	CIFCAttributeProvider* m_pAttributeProvider;
+	_ifc_attribute_provider* m_pAttributeProvider;
 
 public: // Methods
 
@@ -75,7 +75,7 @@ public: // Properties
 
 	CIFCUnitProvider* getUnitProvider();
 	CIFCPropertyProvider* getPropertyProvider();
-	CIFCAttributeProvider* getAttributeProvider();
+	_ifc_attribute_provider* getAttributeProvider();
 };
 
 

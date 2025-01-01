@@ -401,11 +401,11 @@ CIFCPropertyProvider* _ifc_model::getPropertyProvider()
 	return m_pPropertyProvider; 
 }
 
-CIFCAttributeProvider* _ifc_model::getAttributeProvider() 
+_ifc_attribute_provider* _ifc_model::getAttributeProvider() 
 { 
 	if (m_pAttributeProvider == nullptr)
 	{
-		m_pAttributeProvider = new CIFCAttributeProvider();
+		m_pAttributeProvider = new _ifc_attribute_provider();
 	}
 
 	return m_pAttributeProvider; 

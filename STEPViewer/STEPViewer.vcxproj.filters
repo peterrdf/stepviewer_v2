@@ -183,7 +183,7 @@
     <ClInclude Include="..\include\_ifc_model.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_attribute.h">
+    <ClInclude Include="..\include\_ifc_attribute.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_property.h">
@@ -311,7 +311,7 @@
     <ClCompile Include="..\include\_ifc_model.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_attribute.cpp">
+    <ClCompile Include="..\include\_ifc_attribute.cpp">
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_property.cpp">
