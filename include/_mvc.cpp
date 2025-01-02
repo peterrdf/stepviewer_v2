@@ -517,10 +517,7 @@ void _controller::zoomToSelectedInstance()
 
 void _controller::zoomOut()
 {
-	for (auto pModel : getModels())
-	{
-		getModel()->zoomOut();
-	}
+	getModel()->zoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -671,7 +668,7 @@ _model* _controller::getModel() const
 { 
 	if (!m_vecModels.empty())
 	{
-		return m_vecModels.back();
+		return m_vecModels.front();
 	}
 
 	return nullptr; 

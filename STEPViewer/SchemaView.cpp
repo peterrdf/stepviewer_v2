@@ -30,7 +30,7 @@ static char THIS_FILE[]=__FILE__;
 	ResetView();
 }
 
-/*virtual*/ void CSchemaView::onInstanceSelected(_view* pSender) /*override*/
+/*virtual*/ void CSchemaView::onInstanceSelected(_view* /*pSender*/) /*override*/
 {
 	ResetView();
 }

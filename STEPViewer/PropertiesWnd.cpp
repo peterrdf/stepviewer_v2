@@ -927,7 +927,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 						if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(model.p()->getSdaiModel(), "DESCRIPTIVE_REPRESENTATION_ITEM")) 
 						{
-							char* szDescription = nullptr;
+							szDescription = nullptr;
 							sdaiGetAttrBN(sdaiItemInstance, "description", sdaiSTRING, &szDescription);
 
 							pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)szDescription, L"value");

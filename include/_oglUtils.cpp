@@ -2402,9 +2402,9 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	// Selection colors
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		for (auto pModel : getController()->getModels())
+		for (auto pM : getController()->getModels())
 		{
-			for (auto pGeometry : pModel->getGeometries())
+			for (auto pGeometry : pM->getGeometries())
 			{
 				if (pGeometry->getTriangles().empty())
 				{
@@ -2419,7 +2419,7 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 					m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 				}
 			}
-		} // for (auto pModel : ...
+		} // for (auto pM : ...
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
 	//
