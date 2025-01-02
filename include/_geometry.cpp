@@ -32,8 +32,8 @@
 }
 
 // ************************************************************************************************
-_geometry::_geometry(OwlInstance iInstance)
-	: m_owlInstance(iInstance)
+_geometry::_geometry(OwlInstance owlInstance)
+	: m_owlInstance(owlInstance)
 	, m_strName(L"NA")
 	, m_strUniqueName(L"")
 	, m_pVertexBuffer(nullptr)

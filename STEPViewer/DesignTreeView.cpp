@@ -310,16 +310,16 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 		return;
 	}
 
-	auto pPropertyCollection = m_pPropertyProvider->GetPropertyCollection(owlInstance);
+	auto pPropertyCollection = m_pPropertyProvider->getPropertyCollection(owlInstance);
 	if (pPropertyCollection != nullptr)
 	{
 		wchar_t szBuffer[100];
 
-		for (auto pProperty : pPropertyCollection->Properties())
+		for (auto pProperty : pPropertyCollection->properties())
 		{
-			wstring strProperty = pProperty->GetName();
+			wstring strProperty = pProperty->getName();
 			strProperty += L" : ";
-			strProperty += pProperty->GetTypeName();
+			strProperty += pProperty->getTypeName();
 
 			HTREEITEM hProperty = m_treeCtrl.InsertItem(strProperty.c_str(), IMAGE_PROPERTY_DESIGN_TREE_VIEW, IMAGE_PROPERTY_DESIGN_TREE_VIEW, hParent);
 
@@ -329,7 +329,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 			vector<int64_t> vecRestrictionClasses;
 
 			wstring strRange = L"rdfs:range : ";
-			strRange += pProperty->GetRange(vecRestrictionClasses);
+			strRange += pProperty->getRange(vecRestrictionClasses);
 
 			HTREEITEM hRange = m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY_DESIGN_TREE_VIEW, IMAGE_PROPERTY_DESIGN_TREE_VIEW, hProperty);
 
@@ -345,20 +345,20 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(owlInstance);
+			strCardinality += pProperty->getCardinality(owlInstance);
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE_DESIGN_TREE_VIEW, IMAGE_VALUE_DESIGN_TREE_VIEW, hProperty);
 
 			/*
 			* value(s)
 			*/
-			switch (pProperty->GetType())
+			switch (pProperty->getType())
 			{
 				case OBJECTTYPEPROPERTY_TYPE:
 				{
 					OwlInstance* powlInstances = nullptr;
 					int64_t iValuesCount = 0;
-					GetObjectProperty(owlInstance, pProperty->GetInstance(), &powlInstances, &iValuesCount);
+					GetObjectProperty(owlInstance, pProperty->getRdfProperty(), &powlInstances, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -378,7 +378,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 				{
 					bool* pbValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&pbValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->getRdfProperty(), (void**)&pbValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -392,7 +392,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 				{
 					char** szValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&szValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->getRdfProperty(), (void**)&szValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -408,7 +408,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 				{
 					int64_t* piValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->getRdfProperty(), (void**)&piValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -423,7 +423,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 				{
 					double* pdValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&pdValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->getRdfProperty(), (void**)&pdValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{
@@ -438,7 +438,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 				{
 					BYTE* piValue = nullptr;
 					int64_t iValuesCount = 0;
-					GetDatatypeProperty(owlInstance, pProperty->GetInstance(), (void**)&piValue, &iValuesCount);
+					GetDatatypeProperty(owlInstance, pProperty->getRdfProperty(), (void**)&piValue, &iValuesCount);
 
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 					{

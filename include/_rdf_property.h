@@ -18,17 +18,19 @@ public: // Methods
 	_rdf_property(RdfProperty rdfProperty);
 	virtual ~_rdf_property();
 
-	RdfProperty GetInstance() const { return m_rdfProperty; }
-	RdfPropertyType GetType() const { return GetType(m_rdfProperty); }
-	static RdfPropertyType GetType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
-	wstring GetTypeName() { return GetTypeName(GetType()); }
-	static wstring GetTypeName(RdfPropertyType iType);
-	wchar_t* GetName() const;
+	wstring getRange(vector<int64_t>& vecRestrictionClasses) const { return getRange(m_rdfProperty, vecRestrictionClasses); }
+	static wstring getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
+	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
+	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
 
-	wstring GetRange(vector<int64_t>& vecRestrictionClasses) const { return GetRange(m_rdfProperty, vecRestrictionClasses); }
-	static wstring GetRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
-	wstring GetCardinality(int64_t rdfProperty) const { return GetCardinality(rdfProperty, GetInstance()); }
-	static wstring GetCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
+public: // Properties
+
+	RdfProperty getRdfProperty() const { return m_rdfProperty; }
+	RdfPropertyType getType() const { return getType(m_rdfProperty); }
+	static RdfPropertyType getType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
+	wstring getTypeName() { return getTypeName(getType()); }
+	static wstring getTypeName(RdfPropertyType rdfPropertyType);
+	wchar_t* getName() const;
 };
 
 // ************************************************************************************************
@@ -44,7 +46,9 @@ public: // Methods
 	_rdf_property_collection();
 	virtual ~_rdf_property_collection();
 
-	vector<_rdf_property*>& Properties() { return m_vecProperties; }
+public: // Properties
+
+	vector<_rdf_property*>& properties() { return m_vecProperties; }
 };
 
 // ************************************************************************************************
@@ -60,9 +64,9 @@ public: // Methods
 	_rdf_property_provider();
 	virtual ~_rdf_property_provider();
 
-	_rdf_property_collection* GetPropertyCollection(OwlInstance iInstance);
+	_rdf_property_collection* getPropertyCollection(OwlInstance owlInstance);
 
 private: // Methods
 
-	_rdf_property_collection* LoadPropertyCollection(OwlInstance iInstance);
+	_rdf_property_collection* loadPropertyCollection(OwlInstance owlInstance);
 };

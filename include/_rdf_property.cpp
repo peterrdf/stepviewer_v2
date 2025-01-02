@@ -9,35 +9,18 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 /*virtual*/ _rdf_property::~_rdf_property()
 {}
 
-/*static*/ wstring _rdf_property::GetTypeName(RdfPropertyType iType)
-{
-	wstring strTypeName = iType == OBJECTPROPERTY_TYPE ?
-		L"owl:ObjectProperty" :
-		L"owl:DatatypeProperty";
-
-	return strTypeName;
-}
-
-wchar_t* _rdf_property::GetName() const
-{
-	wchar_t* szName = nullptr;
-	GetNameOfPropertyW(m_rdfProperty, &szName);
-
-	return szName;
-}
-
-/*static*/ wstring _rdf_property::GetRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
+/*static*/ wstring _rdf_property::getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
 {
 	wstring strRange = L"unknown";
 	vecRestrictionClasses.clear();
 
-	switch (GetType(rdfProperty))
+	switch (getType(rdfProperty))
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
 			strRange = L"xsd:object";
 
-			OwlClass iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, 0);
+			int64_t iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, 0);
 			while (iRestrictionClassInstance != 0)
 			{
 				vecRestrictionClasses.push_back(iRestrictionClassInstance);				
@@ -87,53 +70,53 @@ wchar_t* _rdf_property::GetName() const
 	return strRange;
 }
 
-/*static*/ wstring _rdf_property::GetCardinality(OwlInstance iInstance, RdfProperty iPropertyInstance)
+/*static*/ wstring _rdf_property::getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty)
 {
-	ASSERT(iInstance != 0);
-	ASSERT(iPropertyInstance != 0);
+	ASSERT(owlInstance != 0);
+	ASSERT(rdfProperty != 0);
 
 	int64_t iCard = 0;
-	switch (GetType(iPropertyInstance))
+	switch (getType(rdfProperty))
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
 			int64_t* piInstances = nullptr;
-			GetObjectProperty(iInstance, iPropertyInstance, &piInstances, &iCard);
+			GetObjectProperty(owlInstance, rdfProperty, &piInstances, &iCard);
 		}
 		break;
 
 		case DATATYPEPROPERTY_TYPE_BOOLEAN:
 		{
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&pbValue, &iCard);
+			GetDatatypeProperty(owlInstance, rdfProperty, (void**)&pbValue, &iCard);
 		}
 		break;
 
 		case DATATYPEPROPERTY_TYPE_STRING:
 		{
 			char** szValue = nullptr;
-			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&szValue, &iCard);
+			GetDatatypeProperty(owlInstance, rdfProperty, (void**)&szValue, &iCard);
 		}
 		break;
 
 		case DATATYPEPROPERTY_TYPE_INTEGER:
 		{
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&piValue, &iCard);
+			GetDatatypeProperty(owlInstance, rdfProperty, (void**)&piValue, &iCard);
 		}
 		break;
 
 		case DATATYPEPROPERTY_TYPE_DOUBLE:
 		{
 			double* pdValue = nullptr;
-			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&pdValue, &iCard);
+			GetDatatypeProperty(owlInstance, rdfProperty, (void**)&pdValue, &iCard);
 		}
 		break;
 
 		case DATATYPEPROPERTY_TYPE_BYTE:
 		{
 			BYTE* piValue = nullptr;
-			GetDatatypeProperty(iInstance, iPropertyInstance, (void**)&piValue, &iCard);
+			GetDatatypeProperty(owlInstance, rdfProperty, (void**)&piValue, &iCard);
 		}
 		break;	
 
@@ -142,14 +125,14 @@ wchar_t* _rdf_property::GetName() const
 			ASSERT(false);
 		}
 		break;
-	} // switch (GetType(iPropertyInstance))
+	} // switch (getType(rdfProperty))
 
-	OwlClass iInstanceClass = GetInstanceClass(iInstance);
+	OwlClass iInstanceClass = GetInstanceClass(owlInstance);
 	ASSERT(iInstanceClass != 0);
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	GetClassPropertyAggregatedCardinalityRestriction(iInstanceClass, iPropertyInstance, &iMinCard, &iMaxCard);
+	GetClassPropertyAggregatedCardinalityRestriction(iInstanceClass, rdfProperty, &iMinCard, &iMaxCard);
 
 	wchar_t szBuffer[100];
 	if ((iMinCard == -1) && (iMaxCard == -1))
@@ -169,6 +152,23 @@ wchar_t* _rdf_property::GetName() const
 	}
 
 	return szBuffer;
+}
+
+/*static*/ wstring _rdf_property::getTypeName(RdfPropertyType rdfPropertyType)
+{
+	wstring strTypeName = rdfPropertyType == OBJECTPROPERTY_TYPE ?
+		L"owl:ObjectProperty" :
+		L"owl:DatatypeProperty";
+
+	return strTypeName;
+}
+
+wchar_t* _rdf_property::getName() const
+{
+	wchar_t* szName = nullptr;
+	GetNameOfPropertyW(m_rdfProperty, &szName);
+
+	return szName;
 }
 
 // ************************************************************************************************
@@ -197,30 +197,30 @@ _rdf_property_provider::_rdf_property_provider()
 	}
 }
 
-_rdf_property_collection* _rdf_property_provider::GetPropertyCollection(OwlInstance iInstance)
+_rdf_property_collection* _rdf_property_provider::getPropertyCollection(OwlInstance owlInstance)
 {
-	if (iInstance == 0)
+	if (owlInstance == 0)
 	{
 		ASSERT(FALSE);
 
 		return nullptr;
 	}
 
-	auto itPropertyCollection = m_mapPropertyCollections.find(iInstance);
+	auto itPropertyCollection = m_mapPropertyCollections.find(owlInstance);
 	if (itPropertyCollection != m_mapPropertyCollections.end())
 	{
 		return itPropertyCollection->second;
 	}
 
-	auto pPropertyCollection = LoadPropertyCollection(iInstance);
-	m_mapPropertyCollections[iInstance] = pPropertyCollection;
+	auto pPropertyCollection = loadPropertyCollection(owlInstance);
+	m_mapPropertyCollections[owlInstance] = pPropertyCollection;
 
 	return pPropertyCollection;
 }
 
-_rdf_property_collection* _rdf_property_provider::LoadPropertyCollection(OwlInstance iInstance)
+_rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInstance owlInstance)
 {
-	if (iInstance == 0)
+	if (owlInstance == 0)
 	{
 		ASSERT(FALSE);
 
@@ -229,12 +229,12 @@ _rdf_property_collection* _rdf_property_provider::LoadPropertyCollection(OwlInst
 
 	auto propertyCollection = new _rdf_property_collection();
 
-	RdfProperty iPropertyInstance = GetInstancePropertyByIterator(iInstance, 0);
-	while (iPropertyInstance != 0)
+	RdfProperty rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
+	while (rdfProperty != 0)
 	{
-		propertyCollection->Properties().push_back(new _rdf_property(iPropertyInstance));
+		propertyCollection->properties().push_back(new _rdf_property(rdfProperty));
 
-		iPropertyInstance = GetInstancePropertyByIterator(iInstance, iPropertyInstance);
+		rdfProperty = GetInstancePropertyByIterator(owlInstance, rdfProperty);
 	}
 
 	return propertyCollection;
