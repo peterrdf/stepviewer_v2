@@ -257,7 +257,7 @@ public: // Methods
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
 	void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
 	void onViewRelations(_view* pSender, _entity* pEntity);
-	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute);
+	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr);
 
 protected: // Methods
 

@@ -653,7 +653,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\include\OWLProperty.cpp" />
+    <ClCompile Include="..\include\_owl_property.cpp" />
     <ClCompile Include="..\include\_ap242_draughting_model.cpp" />
     <ClCompile Include="..\include\_ap242_geometry.cpp" />
     <ClCompile Include="..\include\_ap242_instance.cpp" />

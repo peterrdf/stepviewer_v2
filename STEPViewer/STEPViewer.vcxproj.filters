@@ -338,7 +338,7 @@
     <ClCompile Include="..\include\_ifc_instance.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\OWLProperty.cpp">
+    <ClCompile Include="..\include\_owl_property.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

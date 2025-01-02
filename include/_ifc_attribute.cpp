@@ -72,18 +72,18 @@ void _ifc_attribute_provider::loadInstanceAttributes(SdaiEntity sdaiEntity, Sdai
 	loadInstanceAttributes(engiGetEntityParent(sdaiEntity), sdaiInstance, vecAttributes);
 
 	SdaiInteger iIndex = 0;
-	SdaiAttr pAttribute = engiGetEntityAttributeByIndex(
+	SdaiAttr sdaiAttr = engiGetEntityAttributeByIndex(
 		sdaiEntity,
 		iIndex++,
 		false,
 		true);
 
-	while (pAttribute != nullptr)
+	while (sdaiAttr != nullptr)
 	{
-		auto pIFCAttribute = new _ifc_attribute(pAttribute);
+		auto pIFCAttribute = new _ifc_attribute(sdaiAttr);
 		vecAttributes.push_back(pIFCAttribute);
 
-		pAttribute = engiGetEntityAttributeByIndex(
+		sdaiAttr = engiGetEntityAttributeByIndex(
 			sdaiEntity,
 			iIndex++,
 			false,

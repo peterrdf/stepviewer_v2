@@ -2,14 +2,14 @@
 #include "_owl_property.h"
 
 // ************************************************************************************************
-COWLProperty::COWLProperty(RdfProperty iInstance)
+_owl_property::_owl_property(RdfProperty iInstance)
 	: m_iInstance(iInstance)
 {}
 
-/*virtual*/ COWLProperty::~COWLProperty()
+/*virtual*/ _owl_property::~_owl_property()
 {}
 
-/*static*/ wstring COWLProperty::GetTypeName(RdfPropertyType iType)
+/*static*/ wstring _owl_property::GetTypeName(RdfPropertyType iType)
 {
 	wstring strTypeName = iType == OBJECTPROPERTY_TYPE ?
 		L"owl:ObjectProperty" :
@@ -18,7 +18,7 @@ COWLProperty::COWLProperty(RdfProperty iInstance)
 	return strTypeName;
 }
 
-wchar_t* COWLProperty::GetName() const
+wchar_t* _owl_property::GetName() const
 {
 	wchar_t* szName = nullptr;
 	GetNameOfPropertyW(m_iInstance, &szName);
@@ -26,7 +26,7 @@ wchar_t* COWLProperty::GetName() const
 	return szName;
 }
 
-/*static*/ wstring COWLProperty::GetRange(RdfProperty iInstance, vector<OwlClass>& vecRestrictionClasses)
+/*static*/ wstring _owl_property::GetRange(RdfProperty iInstance, vector<OwlClass>& vecRestrictionClasses)
 {
 	wstring strRange = L"unknown";
 	vecRestrictionClasses.clear();
@@ -87,7 +87,7 @@ wchar_t* COWLProperty::GetName() const
 	return strRange;
 }
 
-/*static*/ wstring COWLProperty::GetCardinality(OwlInstance iInstance, RdfProperty iPropertyInstance)
+/*static*/ wstring _owl_property::GetCardinality(OwlInstance iInstance, RdfProperty iPropertyInstance)
 {
 	ASSERT(iInstance != 0);
 	ASSERT(iPropertyInstance != 0);
@@ -232,7 +232,7 @@ COWLPropertyCollection* COWLPropertyProvider::LoadPropertyCollection(OwlInstance
 	RdfProperty iPropertyInstance = GetInstancePropertyByIterator(iInstance, 0);
 	while (iPropertyInstance != 0)
 	{
-		propertyCollection->Properties().push_back(new COWLProperty(iPropertyInstance));
+		propertyCollection->Properties().push_back(new _owl_property(iPropertyInstance));
 
 		iPropertyInstance = GetInstancePropertyByIterator(iInstance, iPropertyInstance);
 	}

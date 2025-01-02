@@ -3,11 +3,10 @@
 #include <string>
 #include <vector>
 #include <map>
-
 using namespace std;
 
 // ************************************************************************************************
-class COWLProperty
+class _owl_property
 {
 
 private: // Members	
@@ -16,8 +15,8 @@ private: // Members
 
 public: // Methods
 
-	COWLProperty(RdfProperty iInstance);
-	virtual ~COWLProperty();
+	_owl_property(RdfProperty iInstance);
+	virtual ~_owl_property();
 
 	RdfProperty GetInstance() const { return m_iInstance; }
 	RdfPropertyType GetType() const { return GetType(m_iInstance); }
@@ -38,14 +37,14 @@ class COWLPropertyCollection
 
 private: // Members
 
-	vector<COWLProperty*> m_vecProperties;
+	vector<_owl_property*> m_vecProperties;
 
 public: // Methods
 
 	COWLPropertyCollection();
 	virtual ~COWLPropertyCollection();
 
-	vector<COWLProperty*>& Properties() { return m_vecProperties; }
+	vector<_owl_property*>& Properties() { return m_vecProperties; }
 };
 
 // ************************************************************************************************

@@ -647,12 +647,12 @@ void _controller::onViewRelations(_view* pSender, _entity* pEntity)
 	}
 }
 
-void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr pAttribute)
+void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->onInstanceAttributeEdited(pSender, sdaiInstance, pAttribute);
+		(*itView)->onInstanceAttributeEdited(pSender, sdaiInstance, sdaiAttr);
 	}
 }
 
