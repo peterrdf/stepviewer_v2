@@ -53,6 +53,7 @@ void _model::scale()
 			for (auto pInstance : pGeometry->getInstances())
 			{
 				pGeometry->calculateMinMaxTransform(
+					this,
 					pInstance,
 					m_fXmin, m_fXmax,
 					m_fYmin, m_fYmax,
@@ -127,6 +128,7 @@ void _model::scale()
 			}
 
 			pGeometry->calculateMinMaxTransform(
+				this,
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -227,6 +229,7 @@ void _model::scale()
 			}
 
 			pGeometry->calculateMinMaxTransform(
+				this,
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,

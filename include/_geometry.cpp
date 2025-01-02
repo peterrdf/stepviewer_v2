@@ -398,10 +398,6 @@ void _geometry::calculateMinMaxTransform(
 	assert(pModel != nullptr);
 	assert(pInstance != nullptr);
 
-	//
-	// Calculate translations
-	//
-
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 

@@ -27,7 +27,6 @@ protected: // Methods
 
 	// _ap_model
 	virtual void attachModelCore() override;
-	virtual void preLoadInstance(OwlInstance owlInstance) override;
 	virtual void clean() override;
 
 private: // Methods

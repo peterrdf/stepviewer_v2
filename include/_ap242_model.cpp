@@ -30,12 +30,6 @@ _ap242_model::_ap242_model()
 	scale();
 }
 
-/*virtual*/ void _ap242_model::preLoadInstance(OwlInstance /*owlInstance*/) /*override*/
-{
-	//#todo
-	//setVertexBufferOffset(owlInstance);
-}
-
 /*virtual*/ void _ap242_model::clean() /*override*/
 {
 	_ap_model::clean();
