@@ -86,7 +86,7 @@ public: // Methods
 			return nullptr;
 		}
 
-		return m_vecData[m_iIndex];
+		return m_vecData[(unsigned int)m_iIndex];
 	}
 
 public: // Properties
