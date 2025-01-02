@@ -1,7 +1,7 @@
 #pragma once
 
 #include "_ap_model.h"
-#include "_unit.h"
+#include "_ifc_unit.h"
 #include "_ifc_property.h"
 #include "_ifc_attribute.h"
 
@@ -38,7 +38,7 @@ private: // Members
 	SdaiEntity m_sdaiTransportElementEntity;
 	SdaiEntity m_sdaiVirtualElementEntity;
 
-	CIFCUnitProvider* m_pUnitProvider;
+	_ifc_unit_provider* m_pUnitProvider;
 	_ifc_property_provider* m_pPropertyProvider;
 	_ifc_attribute_provider* m_pAttributeProvider;
 
@@ -73,7 +73,7 @@ private: // Methods
 
 public: // Properties
 
-	CIFCUnitProvider* getUnitProvider();
+	_ifc_unit_provider* getUnitProvider();
 	_ifc_property_provider* getPropertyProvider();
 	_ifc_attribute_provider* getAttributeProvider();
 };

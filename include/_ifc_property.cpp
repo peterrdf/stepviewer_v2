@@ -1,6 +1,7 @@
 #include "stdafx.h"
+
 #include "_ifc_property.h"
-#include "_unit.h"
+#include "_ifc_unit.h"
 
 // ************************************************************************************************
 _ifc_property::_ifc_property(const wstring& strName, const wstring& strValue)
@@ -94,7 +95,7 @@ _ifc_property_set_collection::_ifc_property_set_collection()
 }
 
 // ************************************************************************************************
-_ifc_property_provider::_ifc_property_provider(SdaiModel sdaiModel, CIFCUnitProvider* pUnitProvider)
+_ifc_property_provider::_ifc_property_provider(SdaiModel sdaiModel, _ifc_unit_provider* pUnitProvider)
 	: m_sdaiModel(sdaiModel)
 	, m_pUnitProvider(pUnitProvider)
 	, m_mapPropertyCollections()
@@ -331,42 +332,42 @@ void _ifc_property_provider::loadQuantites(SdaiInstance sdaiElementQuantityInsta
 
 void _ifc_property_provider::loadIFCQuantityLength(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityLength(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityLength(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }
 
 void _ifc_property_provider::loadIFCQuantityArea(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityArea(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityArea(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }
 
 void _ifc_property_provider::loadIFCQuantityVolume(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityVolume(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityVolume(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }
 
 void _ifc_property_provider::loadIFCQuantityCount(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityCount(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityCount(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }
 
 void _ifc_property_provider::loadIFCQuantityWeight(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityWeight(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityWeight(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }
 
 void _ifc_property_provider::loadIFCQuantityTime(SdaiInstance sdaiQuantityInstance, _ifc_property_set* pPropertySet)
 {
-	auto prProperty = m_pUnitProvider->GetQuantityTime(sdaiQuantityInstance);
+	auto prProperty = m_pUnitProvider->getQuantityTime(sdaiQuantityInstance);
 
 	pPropertySet->properties().push_back(new _ifc_property(prProperty.first, prProperty.second));
 }

@@ -189,7 +189,7 @@
     <ClInclude Include="..\include\_ifc_property.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_unit.h">
+    <ClInclude Include="..\include\_ifc_unit.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_instance.h">
@@ -317,7 +317,7 @@
     <ClCompile Include="..\include\_ifc_property.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_unit.cpp">
+    <ClCompile Include="..\include\_ifc_unit.cpp">
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ifc_geometry.cpp">

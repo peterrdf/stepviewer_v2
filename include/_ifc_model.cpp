@@ -381,11 +381,11 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	return pGeometry;
 }
 
-CIFCUnitProvider* _ifc_model::getUnitProvider() 
+_ifc_unit_provider* _ifc_model::getUnitProvider() 
 { 
 	if (m_pUnitProvider == nullptr)
 	{
-		m_pUnitProvider = new CIFCUnitProvider(getSdaiModel());
+		m_pUnitProvider = new _ifc_unit_provider(getSdaiModel());
 	}
 
 	return m_pUnitProvider; 

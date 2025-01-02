@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_unit.h"
+#include "_ifc_unit.h"
 
 #include <string>
 #include <vector>
@@ -75,12 +75,12 @@ class _ifc_property_provider
 private: // Members
 
 	SdaiModel m_sdaiModel;
-	CIFCUnitProvider* m_pUnitProvider;
+	_ifc_unit_provider* m_pUnitProvider;
 	map<SdaiInstance, _ifc_property_set_collection*> m_mapPropertyCollections;
 
 public: // Methods
 
-	_ifc_property_provider(SdaiModel sdaiModel, CIFCUnitProvider* pUnitProvider);
+	_ifc_property_provider(SdaiModel sdaiModel, _ifc_unit_provider* pUnitProvider);
 	virtual ~_ifc_property_provider();
 
 public: // Properties

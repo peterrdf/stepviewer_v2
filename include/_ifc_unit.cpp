@@ -1,38 +1,22 @@
 #include "stdafx.h"
-#include "_unit.h"
+#include "_ifc_unit.h"
 
 // ************************************************************************************************
-CIFCUnit::CIFCUnit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
+_ifc_unit::_ifc_unit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
 	: m_iType(UNKNOWN)
 	, m_strType(L"")
     , m_strPrefix(L"")
     , m_strName(L"")
 {
-	ConvertType(szType);
-	ConvertPrefix(szPrefix);
-	ConvertName(szName);
+	convertType(szType);
+	convertPrefix(szPrefix);
+	convertName(szName);
 }
 
-/*virtual*/ CIFCUnit::~CIFCUnit()
+/*virtual*/ _ifc_unit::~_ifc_unit()
 {}
 
-// ------------------------------------------------------------------------------------------------
-wstring CIFCUnit::GetType() const
-{
-    return m_strType;
-}
-
-wstring CIFCUnit::GetPrefix() const
-{
-    return m_strPrefix;
-}
-
-wstring CIFCUnit::GetName() const
-{
-    return m_strName;
-}
-
-wstring CIFCUnit::GetUnit() const
+wstring _ifc_unit::getUnit() const
 {
     wstring strUnit = m_strPrefix;
     if (!strUnit.empty())
@@ -45,9 +29,9 @@ wstring CIFCUnit::GetUnit() const
     return strUnit;
 }
 
-void CIFCUnit::ConvertType(const wchar_t* szUnitType)
+void _ifc_unit::convertType(const wchar_t* szUnitType)
 {
-    ASSERT(szUnitType != nullptr);
+    assert(szUnitType != nullptr);
 
     if (wcscmp(szUnitType, L".ABSORBEDDOSEUNIT.") == 0)
     {
@@ -256,7 +240,7 @@ void CIFCUnit::ConvertType(const wchar_t* szUnitType)
 	m_strType = L"UNKNOWN";
 }
 
-void CIFCUnit::ConvertPrefix(const wchar_t* szPrefix)
+void _ifc_unit::convertPrefix(const wchar_t* szPrefix)
 {
     if (szPrefix == nullptr)
     {
@@ -360,9 +344,9 @@ void CIFCUnit::ConvertPrefix(const wchar_t* szPrefix)
     }
 }
 
-void CIFCUnit::ConvertName(const wchar_t* szName)
+void _ifc_unit::convertName(const wchar_t* szName)
 {
-    ASSERT(szName != nullptr);
+    assert(szName != nullptr);
 
     if (wcscmp(szName, L".AMPERE.") == 0)
     {
@@ -548,16 +532,16 @@ void CIFCUnit::ConvertName(const wchar_t* szName)
 }
 
 // ************************************************************************************************
-CIFCUnitProvider::CIFCUnitProvider(SdaiModel iModel)
-    : m_iModel(iModel)
+_ifc_unit_provider::_ifc_unit_provider(SdaiModel iModel)
+    : m_sdaiModel(iModel)
     , m_mapUnits()
 {
-    ASSERT(m_iModel != 0);
+    assert(m_sdaiModel != 0);
 
-    Load();
+    load();
 }
 
-/*virtual*/ CIFCUnitProvider::~CIFCUnitProvider()
+/*virtual*/ _ifc_unit_provider::~_ifc_unit_provider()
 {
     for (auto itUnit : m_mapUnits)
     {
@@ -565,7 +549,7 @@ CIFCUnitProvider::CIFCUnitProvider(SdaiModel iModel)
     }
 }
 
-const CIFCUnit* CIFCUnitProvider::GetUnit(const wchar_t* szUnit) const
+const _ifc_unit* _ifc_unit_provider::getUnit(const wchar_t* szUnit) const
 {
     auto itUnit = m_mapUnits.find(szUnit);
     if (itUnit != m_mapUnits.end())
@@ -576,19 +560,19 @@ const CIFCUnit* CIFCUnitProvider::GetUnit(const wchar_t* szUnit) const
     return nullptr;
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantity(SdaiInstance iQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
 {
     wchar_t* szQuantityName = nullptr;
-    sdaiGetAttrBN(iQuantityInstance, "Name", sdaiUNICODE, &szQuantityName);
+    sdaiGetAttrBN(sdaiQuantityInstance, "Name", sdaiUNICODE, &szQuantityName);
 
     wchar_t* szQuantityDescription = nullptr;
-    sdaiGetAttrBN(iQuantityInstance, "Description", sdaiUNICODE, &szQuantityDescription);
+    sdaiGetAttrBN(sdaiQuantityInstance, "Description", sdaiUNICODE, &szQuantityDescription);
 
     wchar_t* szValue = nullptr;
-    sdaiGetAttrBN(iQuantityInstance, szValueName, sdaiUNICODE, &szValue);
+    sdaiGetAttrBN(sdaiQuantityInstance, szValueName, sdaiUNICODE, &szValue);
 
     wchar_t* szUnit = nullptr;
-    sdaiGetAttrBN(iQuantityInstance, "Unit", sdaiUNICODE, &szUnit);
+    sdaiGetAttrBN(sdaiQuantityInstance, "Unit", sdaiUNICODE, &szUnit);
 
     wstring strName = szQuantityName;
     wstring strValue = szValue != nullptr ? szValue : L"NA";
@@ -604,7 +588,7 @@ pair<wstring, wstring> CIFCUnitProvider::GetQuantity(SdaiInstance iQuantityInsta
         if (itUnit != m_mapUnits.end())
         {
             strValue += L" ";
-            strValue += itUnit->second->GetName();
+            strValue += itUnit->second->getName();
         }
     } // else if (szUnit != nullptr)	
 
@@ -618,118 +602,118 @@ pair<wstring, wstring> CIFCUnitProvider::GetQuantity(SdaiInstance iQuantityInsta
     return pair<wstring, wstring>(strName, strValue);
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityLength(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityLength(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "LengthValue", L"LENGTHUNIT");
+    return getQuantity(sdaiQuantityInstance, "LengthValue", L"LENGTHUNIT");
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityArea(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityArea(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "AreaValue", L"AREAUNIT");
+    return getQuantity(sdaiQuantityInstance, "AreaValue", L"AREAUNIT");
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityVolume(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityVolume(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "VolumeValue", L"VOLUMEUNIT");
+    return getQuantity(sdaiQuantityInstance, "VolumeValue", L"VOLUMEUNIT");
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityCount(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityCount(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "CountValue", L"");
+    return getQuantity(sdaiQuantityInstance, "CountValue", L"");
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityWeight(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityWeight(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "WeigthValue", L"MASSUNIT");
+    return getQuantity(sdaiQuantityInstance, "WeigthValue", L"MASSUNIT");
 }
 
-pair<wstring, wstring> CIFCUnitProvider::GetQuantityTime(SdaiInstance iQuantityInstance) const
+pair<wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuantityInstance) const
 {
-    return GetQuantity(iQuantityInstance, "TimeValue", L"TIMEUNIT");
+    return getQuantity(sdaiQuantityInstance, "TimeValue", L"TIMEUNIT");
 }
 
-void CIFCUnitProvider::Load()
+void _ifc_unit_provider::load()
 {
-    SdaiAggr pProjectAggr = sdaiGetEntityExtentBN(m_iModel, (char*)"IFCPROJECT");
+    SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_sdaiModel, (char*)"IFCPROJECT");
 
-    SdaiInteger iMembersCount = sdaiGetMemberCount(pProjectAggr);
+    SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiProjectAggr);
     if (iMembersCount > 0)
     {
-        SdaiInstance iProjectInstance = 0;
-        engiGetAggrElement(pProjectAggr, 0, sdaiINSTANCE, &iProjectInstance);
+        SdaiInstance sdaiProjectInstance = 0;
+        engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
         
-        if (iProjectInstance != 0)
+        if (sdaiProjectInstance != 0)
         {
-            LoadUnits(iProjectInstance);
+            loadUnits(sdaiProjectInstance);
         }
     }
 }
 
-void CIFCUnitProvider::LoadUnits(SdaiInstance iProjectInstance)
+void _ifc_unit_provider::loadUnits(SdaiInstance sdaiProjectInstance)
 {
-    ASSERT(iProjectInstance != 0);
+    assert(sdaiProjectInstance != 0);
 
-    SdaiInstance iUnitsInContextInstance = 0;
-    sdaiGetAttrBN(iProjectInstance, "UnitsInContext", sdaiINSTANCE, &iUnitsInContextInstance);
+    SdaiInstance sdaiUnitsInContextInstance = 0;
+    sdaiGetAttrBN(sdaiProjectInstance, "UnitsInContext", sdaiINSTANCE, &sdaiUnitsInContextInstance);
 
-    SdaiAggr pUnits = nullptr;
-    sdaiGetAttrBN(iUnitsInContextInstance, "Units", sdaiAGGR, &pUnits);
+    SdaiAggr sdaiUnitsAggr = nullptr;
+    sdaiGetAttrBN(sdaiUnitsInContextInstance, "Units", sdaiAGGR, &sdaiUnitsAggr);
 
-    SdaiInteger iMembersCount = sdaiGetMemberCount(pUnits);
+    SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiUnitsAggr);
     for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++)
     {
-        SdaiInstance iAggrInstance = 0;
-        engiGetAggrElement(pUnits, iMember, sdaiINSTANCE, &iAggrInstance);
+        SdaiInstance sdaiAggrInstance = 0;
+        engiGetAggrElement(sdaiUnitsAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
-        if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCCONVERSIONBASEDUNIT"))
+        if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(m_sdaiModel, "IFCCONVERSIONBASEDUNIT"))
         {
-            SdaiInstance iConversionFactorInstance = 0;
-            sdaiGetAttrBN(iAggrInstance, "ConversionFactor", sdaiINSTANCE, &iConversionFactorInstance);
+            SdaiInstance sdaiConversionFactorInstance = 0;
+            sdaiGetAttrBN(sdaiAggrInstance, "ConversionFactor", sdaiINSTANCE, &sdaiConversionFactorInstance);
 
-            if (iConversionFactorInstance != 0)
+            if (sdaiConversionFactorInstance != 0)
             {
-                SdaiInstance iUnitComponentInstance = 0;
-                sdaiGetAttrBN(iConversionFactorInstance, "UnitComponent", sdaiINSTANCE, &iUnitComponentInstance);
+                SdaiInstance sdaiUnitComponentInstance = 0;
+                sdaiGetAttrBN(sdaiConversionFactorInstance, "UnitComponent", sdaiINSTANCE, &sdaiUnitComponentInstance);
 
-                if (sdaiGetInstanceType(iUnitComponentInstance) == sdaiGetEntity(m_iModel, "IFCSIUNIT"))
+                if (sdaiGetInstanceType(sdaiUnitComponentInstance) == sdaiGetEntity(m_sdaiModel, "IFCSIUNIT"))
                 {
                     wchar_t* szUnitType = nullptr;
-                    sdaiGetAttrBN(iUnitComponentInstance, "UnitType", sdaiUNICODE, &szUnitType);
+                    sdaiGetAttrBN(sdaiUnitComponentInstance, "UnitType", sdaiUNICODE, &szUnitType);
 
                     wchar_t* szPrefix = nullptr;
-                    sdaiGetAttrBN(iUnitComponentInstance, "Prefix", sdaiUNICODE, &szPrefix);
+                    sdaiGetAttrBN(sdaiUnitComponentInstance, "Prefix", sdaiUNICODE, &szPrefix);
 
                     wchar_t* szName = nullptr;
-                    sdaiGetAttrBN(iUnitComponentInstance, "Name", sdaiUNICODE, &szName);
+                    sdaiGetAttrBN(sdaiUnitComponentInstance, "Name", sdaiUNICODE, &szName);
 
-                    CIFCUnit* pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-                    m_mapUnits[pUnit->GetType()] = pUnit;
+                    _ifc_unit* pUnit = new _ifc_unit(szUnitType, szPrefix, szName);
+                    m_mapUnits[pUnit->getType()] = pUnit;
                 }
                 else
                 {
-                    ASSERT(FALSE);
+                    assert(FALSE);
                 }
-            } // if (iConversionFactorInstance != 0) 
+            } // if (sdaiConversionFactorInstance != 0) 
             else
             {
-                ASSERT(FALSE);
+                assert(FALSE);
             }
         } // IFCCONVERSIONBASEDUNIT
         else
         {
-            if (sdaiGetInstanceType(iAggrInstance) == sdaiGetEntity(m_iModel, "IFCSIUNIT"))
+            if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(m_sdaiModel, "IFCSIUNIT"))
             {
                 wchar_t* szUnitType = nullptr;
-                sdaiGetAttrBN(iAggrInstance, "UnitType", sdaiUNICODE, &szUnitType);
+                sdaiGetAttrBN(sdaiAggrInstance, "UnitType", sdaiUNICODE, &szUnitType);
 
                 wchar_t* szPrefix = nullptr;
-                sdaiGetAttrBN(iAggrInstance, "Prefix", sdaiUNICODE, &szPrefix);
+                sdaiGetAttrBN(sdaiAggrInstance, "Prefix", sdaiUNICODE, &szPrefix);
 
                 wchar_t* szName = nullptr;
-                sdaiGetAttrBN(iAggrInstance, "Name", sdaiUNICODE, &szName);
+                sdaiGetAttrBN(sdaiAggrInstance, "Name", sdaiUNICODE, &szName);
 
-                auto pUnit = new CIFCUnit(szUnitType, szPrefix, szName);
-                m_mapUnits[pUnit->GetType()] = pUnit;
+                auto pUnit = new _ifc_unit(szUnitType, szPrefix, szName);
+                m_mapUnits[pUnit->getType()] = pUnit;
             } // IFCSIUNIT
         } // else IFCCONVERSIONBASEDUNIT
     } // for (SdaiInteger iMember = ...
