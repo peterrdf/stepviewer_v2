@@ -369,26 +369,6 @@ void _geometry::calculateMinMaxTransform(
 }
 
 void _geometry::calculateMinMaxTransform(
-	_instance* pInstance,
-	float& fXmin, float& fXmax,
-	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
-{
-	if (pInstance == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
-	calculateMinMaxTransform(
-		pInstance->getTransformationMatrix(),
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax);
-}
-
-void _geometry::calculateMinMaxTransform(
 	_model* pModel,
 	_instance* pInstance,
 	float& fXmin, float& fXmax,

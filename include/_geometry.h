@@ -220,12 +220,6 @@ public: // Methods
 		float& fZmin, float& fZmax);
 
 	void calculateMinMaxTransform(
-		_instance* pInstance,
-		float& fXmin, float& fXmax,
-		float& fYmin, float& fYmax,
-		float& fZmin, float& fZmax);
-
-	void calculateMinMaxTransform(
 		_model* pModel,
 		_instance* pInstance,
 		float& fXmin, float& fXmax,
