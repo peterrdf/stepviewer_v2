@@ -72,12 +72,12 @@ public: // Methods
 			return false;
 		}
 
-		attachModel(szPath, sdaiModel);
+		attachModel(szPath, sdaiModel, nullptr);
 
 		return true;
 	}
 
-	void attachModel(const wchar_t* szPath, SdaiModel sdaiModel)
+	void attachModel(const wchar_t* szPath, SdaiModel sdaiModel, _model* pWorld)
 	{
 		assert((szPath != nullptr) && (wcslen(szPath) > 0));
 		assert(sdaiModel != 0);
@@ -86,6 +86,7 @@ public: // Methods
 
 		m_strPath = szPath;
 		m_sdaiModel = sdaiModel;
+		m_pWorld = pWorld;
 
 		attachModelCore();
 	}

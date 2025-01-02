@@ -11,7 +11,7 @@ class CModelFactory
 
 public: // Methods
 
-	static _ap_model* Load(_controller* pController, const wchar_t* szPath)
+	static _ap_model* Load(_controller* pController, const wchar_t* szPath, bool bMultipleModelsMode)
 	{
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (sdaiModel == 0)
@@ -49,11 +49,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP242") == 0))
 		{
 			auto pModel = new _ap242_model();
-			if (!pController->getModels().empty())
-			{
-				pModel->setWorld(pController->getModels()[0]);
-			}			
-			pModel->attachModel(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel, bMultipleModelsMode ? pController->getModel() : nullptr);
 
 			return pModel;
 		}
@@ -64,11 +60,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new _ifc_model();
-			if (!pController->getModels().empty())
-			{
-				pModel->setWorld(pController->getModels()[0]);
-			}
-			pModel->attachModel(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel, bMultipleModelsMode ? pController->getModel() : nullptr);
 
 			return pModel;
 		}
@@ -79,11 +71,7 @@ public: // Methods
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
 			auto pModel = new CCIS2Model();
-			if (!pController->getModels().empty())
-			{
-				pModel->setWorld(pController->getModels()[0]);
-			}
-			pModel->attachModel(szPath, sdaiModel);
+			pModel->attachModel(szPath, sdaiModel, bMultipleModelsMode ? pController->getModel() : nullptr);
 
 			return pModel;
 		}
