@@ -177,44 +177,44 @@
     <ClInclude Include="..\include\_rdf_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ap242_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_attribute.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_property.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_unit.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_instance.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_geometry.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ap242_draughting_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ap242_geometry.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ap242_product_definition.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ap242_instance.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_ifc_instance.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_rdf_property.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_draughting_model.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_geometry.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_instance.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_model.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_product_definition.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_attribute.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_geometry.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_instance.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_model.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_property.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_unit.h">
+      <Filter>IFC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -305,41 +305,41 @@
     <ClCompile Include="..\include\_oglUtils.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_ap242_model.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ifc_model.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ifc_attribute.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ifc_property.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ifc_unit.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ifc_geometry.cpp">
+    <ClCompile Include="..\include\_rdf_property.cpp">
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ap242_draughting_model.cpp">
-      <Filter>include</Filter>
+      <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ap242_geometry.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\_ap242_product_definition.cpp">
-      <Filter>include</Filter>
+      <Filter>AP242</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ap242_instance.cpp">
-      <Filter>include</Filter>
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_model.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_product_definition.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_attribute.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_geometry.cpp">
+      <Filter>IFC</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ifc_instance.cpp">
-      <Filter>include</Filter>
+      <Filter>IFC</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_rdf_property.cpp">
-      <Filter>include</Filter>
+    <ClCompile Include="..\include\_ifc_model.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_property.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_unit.cpp">
+      <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
