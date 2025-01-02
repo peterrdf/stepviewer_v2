@@ -178,6 +178,7 @@ void _model::scale()
 	m_fZmax = -FLT_MAX;
 
 	pInstance->getGeometry()->calculateMinMaxTransform(
+		this,
 		pInstance,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,

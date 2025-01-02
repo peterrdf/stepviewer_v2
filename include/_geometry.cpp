@@ -410,50 +410,19 @@ void _geometry::calculateMinMaxTransform(
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	//
-	// Translate - go back to original position (before SetVertexBufferOffset())
-	// 
+	glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+	glm::mat4 matModelView = glm::identity<glm::mat4>();
+	matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	matModelView = matModelView * matTransformation;
+	matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-	_matrix4x4 matTranslations;
-	_matrix4x4Identity(&matTranslations);
-	matTranslations._41 = -fXTranslation;
-	matTranslations._42 = -fYTranslation;
-	matTranslations._43 = -fZTranslation;
+	double arTransformation[16] = { 0.0 };
+	const float* pSourceData = (const float*)glm::value_ptr(matTransformation);
+	for (int i = 0; i < 16; ++i)
+		arTransformation[i] = pSourceData[i];
 
 	calculateMinMaxTransform(
-		&matTranslations,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax);
-	//
-	// Transform
-	//
-
-	fXmin = FLT_MAX;
-	fXmax = -FLT_MAX;
-	fYmin = FLT_MAX;
-	fYmax = -FLT_MAX;
-	fZmin = FLT_MAX;
-	fZmax = -FLT_MAX;	
-	calculateMinMaxTransform(
-		pInstance->getTransformationMatrix(),
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax);
-
-	_matrix4x4Identity(&matTranslations);
-	matTranslations._41 = fXTranslation;
-	matTranslations._42 = fYTranslation;
-	matTranslations._43 = fZTranslation;
-
-	fXmin = FLT_MAX;
-	fXmax = -FLT_MAX;
-	fYmin = FLT_MAX;
-	fYmax = -FLT_MAX;
-	fZmin = FLT_MAX;
-	fZmax = -FLT_MAX;
-	calculateMinMaxTransform(
-		&matTranslations,
+		(const _matrix4x4*)arTransformation,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
