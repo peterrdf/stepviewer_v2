@@ -410,16 +410,16 @@ void _geometry::calculateMinMaxTransform(
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
-	glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-	glm::mat4 matModelView = glm::identity<glm::mat4>();
-	matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	matModelView = matModelView * matTransformation;
-	matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+	glm::mat4 matInstanceTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+	glm::mat4 matFinalTransformation = glm::identity<glm::mat4>();
+	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	matFinalTransformation = matFinalTransformation * matInstanceTransformation;
+	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 	double arTransformation[16] = { 0.0 };
-	const float* pSourceData = (const float*)glm::value_ptr(matTransformation);
+	const float* pRawData = (const float*)glm::value_ptr(matFinalTransformation);
 	for (int i = 0; i < 16; ++i)
-		arTransformation[i] = pSourceData[i];
+		arTransformation[i] = pRawData[i];
 
 	calculateMinMaxTransform(
 		(const _matrix4x4*)arTransformation,
