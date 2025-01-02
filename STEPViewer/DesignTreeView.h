@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_owl_property.h"
+#include "_rdf_property.h"
 
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
@@ -84,7 +84,7 @@ private: // Classes
 
 private: // Members
 	
-	COWLPropertyProvider* m_pPropertyProvider;
+	_rdf_property_provider* m_pPropertyProvider;
 	map<OwlInstance, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
 	CSearchTreeCtrlDialog* m_pSearchDialog;

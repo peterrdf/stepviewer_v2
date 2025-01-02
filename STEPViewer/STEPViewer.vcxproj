@@ -592,7 +592,7 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\_owl_property.h" />
+    <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_ap242_draughting_model.h" />
     <ClInclude Include="..\include\glext.h" />
     <ClInclude Include="..\include\wglext.h" />
@@ -614,8 +614,8 @@
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
-    <ClInclude Include="..\include\_owl_geometry.h" />
-    <ClInclude Include="..\include\_owl_instance.h" />
+    <ClInclude Include="..\include\_rdf_geometry.h" />
+    <ClInclude Include="..\include\_rdf_instance.h" />
     <ClInclude Include="..\include\_ifc_property.h" />
     <ClInclude Include="..\include\_ptr.h" />
     <ClInclude Include="..\include\_quaterniond.h" />
@@ -653,7 +653,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\include\_owl_property.cpp" />
+    <ClCompile Include="..\include\_rdf_property.cpp" />
     <ClCompile Include="..\include\_ap242_draughting_model.cpp" />
     <ClCompile Include="..\include\_ap242_geometry.cpp" />
     <ClCompile Include="..\include\_ap242_instance.cpp" />

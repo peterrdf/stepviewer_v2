@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-#include "_owl_instance.h"
+#include "_rdf_instance.h"
 
 #include "MainFrm.h"
 #include "STEPViewer.h"
@@ -59,7 +59,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	ResetView();
 
 	delete m_pPropertyProvider;	
-	m_pPropertyProvider = new COWLPropertyProvider();
+	m_pPropertyProvider = new _rdf_property_provider();
 }
 
 /*virtual*/ void CDesignTreeView::onInstanceSelected(_view* pSender) /*override*/
@@ -248,7 +248,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance owlInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = _owl_instance::getName(owlInstance);
+	wstring strItem = _rdf_instance::getName(owlInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;

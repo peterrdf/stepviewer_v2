@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "_mvc.h"
-#include "_owl_instance.h"
+#include "_rdf_instance.h"
 
 // ************************************************************************************************
 _model::_model()
@@ -535,7 +535,7 @@ void _controller::saveInstance(OwlInstance owlInstance)
 
 	wstring strName;
 	wstring strUniqueName;
-	_owl_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
+	_rdf_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
 
 	CString strValidPath = strUniqueName.c_str();
 	strValidPath.Replace(_T("\\"), _T("-"));

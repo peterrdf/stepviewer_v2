@@ -1,20 +1,20 @@
 #pragma once
 
 #include "_instance.h"
-#include "_owl_geometry.h"
+#include "_rdf_geometry.h"
 
 // ************************************************************************************************
-class _owl_instance : public _instance
+class _rdf_instance : public _instance
 {
 
 public:  // Methods
 
-	_owl_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+	_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
 		: _instance(iID, pGeometry, pTransformationMatrix)
 	{
 	}
 
-	virtual ~_owl_instance()
+	virtual ~_rdf_instance()
 	{
 	}
 
@@ -23,25 +23,25 @@ public:  // Methods
 		ASSERT(owlModel != 0);
 		ASSERT(owlInstance != 0);
 
-		OwlClass iClassInstance = GetInstanceClass(owlInstance);
-		ASSERT(iClassInstance != 0);
+		OwlClass owlClass = GetInstanceClass(owlInstance);
+		ASSERT(owlClass != 0);
 
 		wchar_t* szClassName = nullptr;
-		GetNameOfClassW(iClassInstance, &szClassName);
+		GetNameOfClassW(owlClass, &szClassName);
 
 		wchar_t* szName = nullptr;
 		GetNameOfInstanceW(owlInstance, &szName);
 
 		if (szName == nullptr)
 		{
-			RdfProperty iTagProperty = GetPropertyByName(owlModel, "tag");
-			if (iTagProperty != 0)
+			RdfProperty rdfTagProperty = GetPropertyByName(owlModel, "tag");
+			if (rdfTagProperty != 0)
 			{
 				SetCharacterSerialization(owlModel, 0, 0, false);
 
 				int64_t iCard = 0;
 				wchar_t** szValue = nullptr;
-				GetDatatypeProperty(owlInstance, iTagProperty, (void**)&szValue, &iCard);
+				GetDatatypeProperty(owlInstance, rdfTagProperty, (void**)&szValue, &iCard);
 
 				if (iCard == 1)
 				{
@@ -70,7 +70,7 @@ public:  // Methods
 
 public: // Properties
 
-	OwlInstance getOwlInstance() const { return getGeometryAs<_owl_geometry>()->getOwlInstance(); }
+	OwlInstance getOwlInstance() const { return getGeometryAs<_rdf_geometry>()->getOwlInstance(); }
 
 	wstring getName() const
 	{
@@ -117,26 +117,26 @@ public: // Properties
 		return szClassName;
 	}
 
-	static double getDoubleProperty(OwlInstance iInstance, char* szPropertyName)
+	static double getDoubleProperty(OwlInstance owlInstance, char* szPropertyName)
 	{
 		double* pdValues = nullptr;
 		int64_t	iCard = 0;
 		GetDatatypeProperty(
-			iInstance,
-			GetPropertyByName(GetModel(iInstance), szPropertyName),
+			owlInstance,
+			GetPropertyByName(GetModel(owlInstance), szPropertyName),
 			(void**)&pdValues,
 			&iCard);
 
 		return (iCard == 1) ? pdValues[0] : 0.;
 	}
 
-	static int64_t getObjectProperty(OwlInstance iInstance, char* szPropertyName)
+	static int64_t getObjectProperty(OwlInstance owlInstance, char* szPropertyName)
 	{
-		int64_t* piValues = nullptr;
+		OwlInstance* piValues = nullptr;
 		int64_t	iCard = 0;
 		GetObjectProperty(
-			iInstance,
-			GetPropertyByName(GetModel(iInstance), szPropertyName),
+			owlInstance,
+			GetPropertyByName(GetModel(owlInstance), szPropertyName),
 			&piValues,
 			&iCard);
 

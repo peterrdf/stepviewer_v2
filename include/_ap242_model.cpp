@@ -4,7 +4,7 @@
 #include "_ap242_product_definition.h"
 #include "_ap242_draughting_model.h"
 #include "_ap242_instance.h"
-#include "_owl_instance.h"
+#include "_rdf_instance.h"
 
 // ************************************************************************************************
 _ap242_model::_ap242_model()
@@ -171,7 +171,7 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation"))
 			{
-				owlInstanceMatrix = _owl_instance::getObjectProperty(owlInstanceMatrix, "matrix");
+				owlInstanceMatrix = _rdf_instance::getObjectProperty(owlInstanceMatrix, "matrix");
 			}
 
 			assert(owlInstanceMatrix == 0 || GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Matrix") ||
@@ -183,18 +183,18 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 			if (owlInstanceMatrix)
 			{
 				InferenceInstance(owlInstanceMatrix);
-				matrix._11 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_11");
-				matrix._12 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_12");
-				matrix._13 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_13");
-				matrix._21 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_21");
-				matrix._22 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_22");
-				matrix._23 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_23");
-				matrix._31 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_31");
-				matrix._32 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_32");
-				matrix._33 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_33");
-				matrix._41 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_41");
-				matrix._42 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_42");
-				matrix._43 = _owl_instance::getDoubleProperty(owlInstanceMatrix, "_43");
+				matrix._11 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_11");
+				matrix._12 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_12");
+				matrix._13 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_13");
+				matrix._21 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_21");
+				matrix._22 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_22");
+				matrix._23 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_23");
+				matrix._31 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_31");
+				matrix._32 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_32");
+				matrix._33 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_33");
+				matrix._41 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_41");
+				matrix._42 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_42");
+				matrix._43 = _rdf_instance::getDoubleProperty(owlInstanceMatrix, "_43");
 			}
 
 			if (pParentMatrix)

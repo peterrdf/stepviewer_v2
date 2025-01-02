@@ -171,10 +171,10 @@
     <ClInclude Include="CIS2\CIS2Geometry.h">
       <Filter>CIS2</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_owl_instance.h">
+    <ClInclude Include="..\include\_rdf_instance.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_owl_geometry.h">
+    <ClInclude Include="..\include\_rdf_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_ap242_model.h">
@@ -213,7 +213,7 @@
     <ClInclude Include="..\include\_ifc_instance.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_owl_property.h">
+    <ClInclude Include="..\include\_rdf_property.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -338,7 +338,7 @@
     <ClCompile Include="..\include\_ifc_instance.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_owl_property.cpp">
+    <ClCompile Include="..\include\_rdf_property.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
