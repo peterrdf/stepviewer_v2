@@ -43,7 +43,7 @@ public: // Methods
 };
 
 // ************************************************************************************************
-struct SORT_ENTITIES
+struct _sort_entities
 {
 	bool operator()(const _entity* pLeft, const _entity* pRight) const
 	{

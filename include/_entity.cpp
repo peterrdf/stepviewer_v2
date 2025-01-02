@@ -70,7 +70,7 @@ void _entity::postProcessing()
 {
 	if (!m_vecSubTypes.empty())
 	{
-		std::sort(m_vecSubTypes.begin(), m_vecSubTypes.end(), SORT_ENTITIES());
+		std::sort(m_vecSubTypes.begin(), m_vecSubTypes.end(), _sort_entities());
 	}
 }
 

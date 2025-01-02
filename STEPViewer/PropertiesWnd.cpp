@@ -1031,7 +1031,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 		return;
 	}
 
-	auto pPropertySetCollection = pPropertyProvider->GetPropertySetCollection(pInstance->getSdaiInstance());
+	auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pInstance->getSdaiInstance());
 	if (pPropertySetCollection == nullptr)
 	{
 		return;
@@ -1039,17 +1039,17 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 
 	auto pInstanceGridGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
 
-	for (auto pPropertySet : pPropertySetCollection->PropertySets())
+	for (auto pPropertySet : pPropertySetCollection->propertySets())
 	{
-		auto pPropertySetGroup = new CMFCPropertyGridProperty(pPropertySet->GetName().c_str());
+		auto pPropertySetGroup = new CMFCPropertyGridProperty(pPropertySet->getName().c_str());
 
 		pInstanceGridGroup->AddSubItem(pPropertySetGroup);
 
-		for (auto pProperty : pPropertySet->Properties())
+		for (auto pProperty : pPropertySet->properties())
 		{
 			auto pGridProperty = new CMFCPropertyGridProperty(
-				pProperty->GetName().c_str(), 
-				(_variant_t)pProperty->GetValue().c_str(), 
+				pProperty->getName().c_str(), 
+				(_variant_t)pProperty->getValue().c_str(), 
 				L""); // Description
 			pGridProperty->AllowEdit(FALSE);
 

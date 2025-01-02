@@ -391,11 +391,11 @@ CIFCUnitProvider* _ifc_model::getUnitProvider()
 	return m_pUnitProvider; 
 }
 
-CIFCPropertyProvider* _ifc_model::getPropertyProvider() 
+_ifc_property_provider* _ifc_model::getPropertyProvider() 
 { 
 	if (m_pPropertyProvider == nullptr)
 	{
-		m_pPropertyProvider = new CIFCPropertyProvider(getSdaiModel(), getUnitProvider());
+		m_pPropertyProvider = new _ifc_property_provider(getSdaiModel(), getUnitProvider());
 	}
 
 	return m_pPropertyProvider; 

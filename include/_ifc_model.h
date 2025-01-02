@@ -2,7 +2,7 @@
 
 #include "_ap_model.h"
 #include "_unit.h"
-#include "_property.h"
+#include "_ifc_property.h"
 #include "_ifc_attribute.h"
 
 #include <string>
@@ -39,7 +39,7 @@ private: // Members
 	SdaiEntity m_sdaiVirtualElementEntity;
 
 	CIFCUnitProvider* m_pUnitProvider;
-	CIFCPropertyProvider* m_pPropertyProvider;
+	_ifc_property_provider* m_pPropertyProvider;
 	_ifc_attribute_provider* m_pAttributeProvider;
 
 public: // Methods
@@ -74,7 +74,7 @@ private: // Methods
 public: // Properties
 
 	CIFCUnitProvider* getUnitProvider();
-	CIFCPropertyProvider* getPropertyProvider();
+	_ifc_property_provider* getPropertyProvider();
 	_ifc_attribute_provider* getAttributeProvider();
 };
 

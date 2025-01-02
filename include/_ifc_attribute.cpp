@@ -5,7 +5,7 @@
 _ifc_attribute::_ifc_attribute(SdaiAttr sdaiAttr)
 	: m_sdaiAttr(sdaiAttr)
 {
-	ASSERT(m_sdaiAttr != 0);
+	assert(m_sdaiAttr != 0);
 }
 
 /*virtual*/ _ifc_attribute::~_ifc_attribute()
@@ -41,7 +41,7 @@ _ifc_attribute_provider::_ifc_attribute_provider()
 
 const vector<_ifc_attribute*>& _ifc_attribute_provider::getInstanceAttributes(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	auto itInstanceAttributes = m_mapInstanceAttributes.find(sdaiInstance);
 	if (itInstanceAttributes != m_mapInstanceAttributes.end())
@@ -50,7 +50,7 @@ const vector<_ifc_attribute*>& _ifc_attribute_provider::getInstanceAttributes(Sd
 	}
 
 	SdaiEntity sdaiEntity = sdaiGetInstanceType(sdaiInstance);
-	ASSERT(sdaiEntity != 0);
+	assert(sdaiEntity != 0);
 
 	vector<_ifc_attribute*> vecAttributes;
 	loadInstanceAttributes(sdaiEntity, sdaiInstance, vecAttributes);
@@ -67,7 +67,7 @@ void _ifc_attribute_provider::loadInstanceAttributes(SdaiEntity sdaiEntity, Sdai
 		return;
 	}
 
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	loadInstanceAttributes(engiGetEntityParent(sdaiEntity), sdaiInstance, vecAttributes);
 
