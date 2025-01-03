@@ -108,6 +108,7 @@
 }
 
 // ************************************************************************************************
+TCHAR IFC_FILES[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
 TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
@@ -292,17 +293,15 @@ void CMySTEPViewerDoc::OnViewModelChecker()
 	}
 }
 
-
 void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
 }
 
-
 void CMySTEPViewerDoc::OnFileImport()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SUPPORTED_FILES);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, IFC_FILES);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -315,6 +314,7 @@ void CMySTEPViewerDoc::OnFileImport()
 		CString strFileName = dlgFile.GetNextPathName(pos);
 		if (bFirstFile)
 		{
+			setModel(nullptr);
 			setModel(CModelFactory::Load(this, strFileName, true));
 
 			bFirstFile = false;
@@ -327,22 +327,12 @@ void CMySTEPViewerDoc::OnFileImport()
 
 	// Title
 	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += dlgFile.GetPathName().GetString();
+	strTitle += L" - ...";
 
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
 }
 
 void CMySTEPViewerDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = FALSE;
-	if (!getModels().empty())
-	{
-		bEnable = _ptr<_ap_model>(getModels()[0])->getAP() == enumAP::IFC;
-	}
-
-	pCmdUI->Enable(bEnable);
+	pCmdUI->Enable(TRUE);
 }
