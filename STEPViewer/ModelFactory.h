@@ -21,17 +21,16 @@ public: // Methods
 			return nullptr;
 		}
 
-		wchar_t* fileSchema = 0;
-		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&fileSchema);
-
-		if (fileSchema == nullptr)
+		wchar_t* szFileSchema = 0;
+		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
+		if (szFileSchema == nullptr)
 		{
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
 
 			return nullptr;
 		}
 
-		CString strFileSchema = fileSchema;
+		CString strFileSchema = szFileSchema;
 		strFileSchema.MakeUpper();
 
 		/*

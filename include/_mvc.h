@@ -109,8 +109,6 @@ protected: // Methods
 
 public: // Properties
 
-	void setWorld(const _model* pWorld) { m_pWorld = pWorld; }
-
 	virtual OwlModel getOwlModel() const PURE;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
