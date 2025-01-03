@@ -244,7 +244,6 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	CString strTitle = AfxGetAppName();
 	strTitle += L" - ";
 	strTitle += lpszPathName;
-
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
 
 	// MRU
@@ -332,8 +331,10 @@ void CMySTEPViewerDoc::OnFileOpenMultipleIFC()
 	strTitle += L" - ";
 	strTitle += strFirstFileName;
 	strTitle += L", ...";
-
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(strFirstFileName);
 }
 
 void CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC(CCmdUI* pCmdUI)
