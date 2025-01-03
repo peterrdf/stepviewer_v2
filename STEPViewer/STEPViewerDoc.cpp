@@ -17,6 +17,11 @@
 #define new DEBUG_NEW
 #endif
 
+// ************************************************************************************************
+TCHAR IFC_FILES[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
+TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
+
+
 /*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
 {
 	ASSERT(getModel() != nullptr);
@@ -107,9 +112,25 @@
 	}
 }
 
-// ************************************************************************************************
-TCHAR IFC_FILES[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
-TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc)|*.stp;*.step; *.ifc|All Files (*.*)|*.*||");
+void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
+{
+	bool bFirstFile = true;
+	for (auto model : vecModels)
+	{
+		if (bFirstFile)
+		{
+			setModel(nullptr);
+			setModel(CModelFactory::Load(this, model, true));
+
+			bFirstFile = false;
+		}
+		else
+		{
+			addModel(CModelFactory::Load(this, model, true));
+		}
+	}
+}
+
 
 // ************************************************************************************************
 // CMySTEPViewerDoc
@@ -306,35 +327,27 @@ void CMySTEPViewerDoc::OnFileOpenMultipleIFC()
 		return;
 	}
 
+	vector<CString> vecModels;
+
 	bool bFirstFile = true;
-	CString strFirstFileName;
 	POSITION pos(dlgFile.GetStartPosition());
 	while (pos != nullptr)
 	{
 		CString strFileName = dlgFile.GetNextPathName(pos);
-		if (bFirstFile)
-		{
-			setModel(nullptr);
-			setModel(CModelFactory::Load(this, strFileName, true));
-
-			bFirstFile = false;
-			strFirstFileName = strFileName;
-		}
-		else
-		{
-			addModel(CModelFactory::Load(this, strFileName, true));
-		}
+		vecModels.push_back(strFileName);
 	}	
+
+	OpenModels(vecModels);
 
 	// Title
 	CString strTitle = AfxGetAppName();
 	strTitle += L" - ";
-	strTitle += strFirstFileName;
+	strTitle += vecModels[0];
 	strTitle += L", ...";
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
 
 	// MRU
-	AfxGetApp()->AddToRecentFileList(strFirstFileName);
+	AfxGetApp()->AddToRecentFileList(vecModels[0]);
 }
 
 void CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC(CCmdUI* pCmdUI)

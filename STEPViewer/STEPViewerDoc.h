@@ -19,6 +19,8 @@ public: // Methods
 	// CController
 	virtual void saveInstance() override;
 
+	void OpenModels(vector<CString>& vecModels);
+
 protected: // create from serialization only
 	CMySTEPViewerDoc();
 	DECLARE_DYNCREATE(CMySTEPViewerDoc)

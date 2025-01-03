@@ -363,30 +363,31 @@ void CMySTEPViewerView::OnMouseMove(UINT nFlags, CPoint point)
 // https://code.msdn.microsoft.com/windowsdesktop/Drag-and-Drop-in-MFC-f3008aad
 void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 {
-	// Get the number of files dropped 
-	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
-	if (iFilesDropped != 1)
+	vector<CString> vecFiles;
+	for (UINT iFile = 0; iFile < DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0); iFile++)
 	{
-		return;
-	}
+		DWORD dwBuffer = DragQueryFile(hDropInfo, iFile, nullptr, 0);
+		ASSERT(dwBuffer > 0);
 
-	// Get the buffer size of the file.
-	DWORD dwBuffer = DragQueryFile(hDropInfo, 0, nullptr, 0);
+		CString strFile;
+		DragQueryFile(hDropInfo, iFile, strFile.GetBuffer(dwBuffer + 1), dwBuffer + 1);
+		vecFiles.push_back(strFile);
+		strFile.ReleaseBuffer();
+	}	
 
-	// Get path and name of the file 
-	CString strFile;
-	DragQueryFile(hDropInfo, 0, strFile.GetBuffer(dwBuffer + 1), dwBuffer + 1);
+	DragFinish(hDropInfo);
 
-	// Open
 	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
-	pDoc->OnOpenDocument(strFile);
-
-	strFile.ReleaseBuffer();
-
-	// Free the memory block containing the dropped-file information 
-	DragFinish(hDropInfo);
+	if (vecFiles.size() == 1)
+	{
+		pDoc->OnOpenDocument(vecFiles[0]);
+	}
+	else
+	{
+		pDoc->OpenModels(vecFiles);
+	}
 }
 
 BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
