@@ -209,7 +209,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
 	// File
-	lstBasicCommands.AddTail(ID_FILE_IMPORT);
+	lstBasicCommands.AddTail(ID_FILE_OPEN_MULTIPLE_IFC);
 
 	// Projection
 	lstBasicCommands.AddTail(ID_PROJECTION_PERSPECTIVE);

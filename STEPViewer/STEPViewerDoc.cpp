@@ -121,8 +121,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
-	ON_COMMAND(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnFileImport)
-	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORT, &CMySTEPViewerDoc::OnUpdateFileImport)
+	ON_COMMAND(ID_FILE_OPEN_MULTIPLE_IFC, &CMySTEPViewerDoc::OnFileOpenMultipleIFC)
+	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN_MULTIPLE_IFC, &CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC)
 END_MESSAGE_MAP()
 
 
@@ -299,7 +299,7 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(visible);
 }
 
-void CMySTEPViewerDoc::OnFileImport()
+void CMySTEPViewerDoc::OnFileOpenMultipleIFC()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, IFC_FILES);
 	if (dlgFile.DoModal() != IDOK)
@@ -336,7 +336,7 @@ void CMySTEPViewerDoc::OnFileImport()
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
 }
 
-void CMySTEPViewerDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
+void CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
 }
