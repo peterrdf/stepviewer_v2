@@ -308,6 +308,7 @@ void CMySTEPViewerDoc::OnFileImport()
 	}
 
 	bool bFirstFile = true;
+	CString strFirstFileName;
 	POSITION pos(dlgFile.GetStartPosition());
 	while (pos != nullptr)
 	{
@@ -318,6 +319,7 @@ void CMySTEPViewerDoc::OnFileImport()
 			setModel(CModelFactory::Load(this, strFileName, true));
 
 			bFirstFile = false;
+			strFirstFileName = strFileName;
 		}
 		else
 		{
@@ -327,7 +329,9 @@ void CMySTEPViewerDoc::OnFileImport()
 
 	// Title
 	CString strTitle = AfxGetAppName();
-	strTitle += L" - ...";
+	strTitle += L" - ";
+	strTitle += strFirstFileName;
+	strTitle += L", ...";
 
 	AfxGetMainWnd()->SetWindowTextW(strTitle);
 }
