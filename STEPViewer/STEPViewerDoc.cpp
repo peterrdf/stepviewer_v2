@@ -328,8 +328,6 @@ void CMySTEPViewerDoc::OnFileOpenMultipleIFC()
 	}
 
 	vector<CString> vecModels;
-
-	bool bFirstFile = true;
 	POSITION pos(dlgFile.GetStartPosition());
 	while (pos != nullptr)
 	{
