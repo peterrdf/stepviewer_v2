@@ -9,8 +9,9 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-_ifc_model::_ifc_model(bool bLoadInstancesOnDemand/* = false*/)
+_ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstancesOnDemand /*= false*/)
 	: _ap_model(enumAP::IFC)
+	, m_bUseWorldCoordinates(bUseWorldCoordinates)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_sdaiSpaceEntity(0)
 	, m_sdaiOpeningElementEntity(0)
@@ -86,7 +87,7 @@ _ifc_model::_ifc_model(bool bLoadInstancesOnDemand/* = false*/)
 
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance);
+	return new _ifc_geometry(owlInstance, sdaiInstance, m_bUseWorldCoordinates);
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)

@@ -9,11 +9,12 @@ class _ifc_geometry : public _ap_geometry
 
 private: // Members
 
+	bool m_bUseWorldCoordinates;
 	bool m_bIsReferenced;
 
 public: // Methods
 
-	_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+	_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, bool bUseWorldCoordinates);
 	virtual ~_ifc_geometry();
 
 protected: // Methods

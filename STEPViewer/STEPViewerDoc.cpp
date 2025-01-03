@@ -302,13 +302,28 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnFileImport()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SUPPORTED_FILES);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
 	}
 
-	addModel(CModelFactory::Load(this, dlgFile.GetPathName().GetString(), true));
+	bool bFirstFile = true;
+	POSITION pos(dlgFile.GetStartPosition());
+	while (pos != nullptr)
+	{
+		CString strFileName = dlgFile.GetNextPathName(pos);
+		if (bFirstFile)
+		{
+			setModel(CModelFactory::Load(this, strFileName, true));
+
+			bFirstFile = false;
+		}
+		else
+		{
+			addModel(CModelFactory::Load(this, strFileName, true));
+		}
+	}	
 
 	// Title
 	CString strTitle = AfxGetAppName();

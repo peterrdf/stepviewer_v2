@@ -21,6 +21,7 @@ class _ifc_model : public _ap_model
 private: // Members
 
 	// Load
+	bool m_bUseWorldCoordinates;
 	bool m_bLoadInstancesOnDemand;
 
 	// Entities
@@ -44,7 +45,7 @@ private: // Members
 
 public: // Methods
 
-	_ifc_model(bool bLoadInstancesOnDemand = false);
+	_ifc_model(bool bUseWorldCoordinates = false, bool bLoadInstancesOnDemand = false);
 	virtual ~_ifc_model();
 
 protected: // Methods
