@@ -1202,11 +1202,12 @@ void _oglRenderer::_zoom(float fZTranslation)
 		case enumProjection::Perspective:
 		{
 			float fNewZTranslation = m_fZTranslation + fZTranslation;
-			if ((fNewZTranslation >= m_fZoomMax) ||
+			//#todo
+			/*if ((fNewZTranslation >= m_fZoomMax) ||
 				(fNewZTranslation <= m_fZoomMin))
 			{
 				return;
-			}
+			}*/
 
 			m_fZTranslation = fNewZTranslation;
 		}
