@@ -23,11 +23,6 @@ public: // Methods
 	_ap242_product_definition(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~_ap242_product_definition();
 
-protected: // Methods
-
-	// _geometry
-	virtual void preCalculate() override;
-
 public: // Properties
 
 	const wchar_t* getId() const { return m_szId; }

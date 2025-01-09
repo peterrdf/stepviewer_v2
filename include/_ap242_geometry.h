@@ -10,4 +10,9 @@ public: // Methods
 
 	_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
 	virtual ~_ap242_geometry();
+
+protected: // Methods
+
+	// _geometry
+	virtual void preCalculate() override;
 };

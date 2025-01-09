@@ -12,3 +12,12 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
 /*virtual*/ _ap242_geometry::~_ap242_geometry()
 {
 }
+
+/*virtual*/ void _ap242_geometry::preCalculate() /*override*/
+{
+	// Format
+	setAPFormatSettings();
+
+	// Extra settings
+	setSegmentation(getSdaiModel(), 16, 0.);
+}

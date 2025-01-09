@@ -32,15 +32,6 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 {
 }
 
-/*virtual*/ void _ap242_product_definition::preCalculate() /*override*/
-{
-	// Format
-	setAPFormatSettings();
-
-	// Extra settings
-	setSegmentation(getSdaiModel(), 16, 0.);
-}
-
 // ************************************************************************************************
 _ap242_assembly::_ap242_assembly(SdaiInstance sdaiInstance, _ap242_product_definition* pRelatingProductDefinition, _ap242_product_definition* pRelatedProductDefinition)
 	: m_sdaiInstance(sdaiInstance)
