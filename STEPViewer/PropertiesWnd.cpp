@@ -487,7 +487,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"),
-			pRenderer->getShowFaces(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			pRenderer->getShowFaces(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -497,7 +497,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		CString strCullFacesMode = pRenderer->getCullFacesMode(nullptr);
+		CString strCullFacesMode = pRenderer->getCullFacesMode(pController->getModel());
 
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"),
@@ -513,7 +513,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"),
-			pRenderer->getShowConceptualFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pRenderer->getShowConceptualFacesPolygons(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Conceptual faces wireframes"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -524,7 +524,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Lines"), pRenderer->getShowLines(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Lines"), pRenderer->getShowLines(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -535,7 +535,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Points"), pRenderer->getShowPoints(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Points"), pRenderer->getShowPoints(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
