@@ -1122,7 +1122,9 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 		ASSERT(iImage == iSelectedImage);
 
-		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED))
+		if ((iImage != IMAGE_SELECTED) && 
+			(iImage != IMAGE_SEMI_SELECTED) && 
+			(iImage != IMAGE_NOT_SELECTED))
 		{
 			// skip the properties, items without a geometry, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
@@ -1154,6 +1156,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 			break;
 
 			case IMAGE_NOT_SELECTED:
+			case IMAGE_NO_GEOMETRY:
 			{
 				// NA
 			}
@@ -1171,7 +1174,8 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 	if (iChidlrenCount == 0)
 	{
-		// keep the state as it is
+		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+
 		return;
 	}
 
