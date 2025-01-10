@@ -39,7 +39,12 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 
 /*virtual*/ void _ifc_model::attachModelCore() /*override*/
 {
-	setBRepProperties(getSdaiModel(), 7, 0.9, 0., 20000);
+	if (m_bUseWorldCoordinates)
+	{
+		SetBehavior(getOwlModel(), FLAGBIT(10), FLAGBIT(10));
+	}
+
+	setBRepProperties(getSdaiModel(), 7, 0.9, 0., 20000);	
 
 	// Entities
 	SdaiEntity sdaiObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
