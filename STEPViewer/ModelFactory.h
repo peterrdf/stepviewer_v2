@@ -50,7 +50,7 @@ public: // Methods
 			ASSERT(!bUseWorldCoordinates);
 
 			auto pModel = new _ap242_model();
-			pModel->attachModel(szPath, sdaiModel, bUseWorldCoordinates ? pController->getModel() : nullptr);
+			pModel->attachModel(szPath, sdaiModel, nullptr);
 
 			return pModel;
 		}
@@ -74,7 +74,7 @@ public: // Methods
 			ASSERT(!bUseWorldCoordinates);
 
 			auto pModel = new CCIS2Model();
-			pModel->attachModel(szPath, sdaiModel, bUseWorldCoordinates ? pController->getModel() : nullptr);
+			pModel->attachModel(szPath, sdaiModel, nullptr);
 
 			return pModel;
 		}

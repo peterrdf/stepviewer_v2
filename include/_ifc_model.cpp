@@ -92,7 +92,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance, m_bUseWorldCoordinates);
+	return new _ifc_geometry(owlInstance, sdaiInstance);
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
