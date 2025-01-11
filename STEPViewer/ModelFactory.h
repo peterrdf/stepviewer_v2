@@ -11,7 +11,7 @@ class CModelFactory
 
 public: // Methods
 
-	static _ap_model* Load(_controller* pController, const wchar_t* szPath, bool bUseWorldCoordinates)
+	static _ap_model* Load(_controller* pController, const wchar_t* szPath, bool bMultipleModels)
 	{
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
 		if (sdaiModel == 0)
@@ -47,7 +47,7 @@ public: // Methods
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
-			ASSERT(!bUseWorldCoordinates);
+			ASSERT(!bMultipleModels); // Not supported!
 
 			auto pModel = new _ap242_model();
 			pModel->attachModel(szPath, sdaiModel, nullptr);
@@ -60,8 +60,8 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
-			auto pModel = new _ifc_model(bUseWorldCoordinates);
-			pModel->attachModel(szPath, sdaiModel, bUseWorldCoordinates ? pController->getModel() : nullptr);
+			auto pModel = new _ifc_model(bMultipleModels);
+			pModel->attachModel(szPath, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
 
 			return pModel;
 		}
@@ -71,7 +71,7 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
-			ASSERT(!bUseWorldCoordinates);
+			ASSERT(!bMultipleModels); // Not supported!
 
 			auto pModel = new CCIS2Model();
 			pModel->attachModel(szPath, sdaiModel, nullptr);

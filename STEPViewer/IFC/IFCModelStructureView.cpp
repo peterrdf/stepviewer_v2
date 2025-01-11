@@ -722,38 +722,19 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		ASSERT(FALSE);
 
 		return;
-	}
-
-	wchar_t* szName = nullptr;
-	sdaiGetAttrBN(sdaiProjectInstance, "Name", sdaiUNICODE, &szName);
-
-	wchar_t* szDescription = nullptr;
-	sdaiGetAttrBN(sdaiProjectInstance, "Description", sdaiUNICODE, &szDescription);
+	}	
 
 	auto pGeometry = pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr)
 	{
+		wstring strItem = _ap_instance::getName(sdaiProjectInstance);
+
 		//#todo#mappeditems
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 
 		_ptr<_ap_geometry> apGeometry(pGeometry);
 		ASSERT(apGeometry);
-
-		wstring strItem = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
-		if ((szName != nullptr) && (wcslen(szName) > 0))
-		{
-			strItem += L" '";
-			strItem += szName;
-			strItem += L"'";
-		}
-
-		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-		{
-			strItem += L" (";
-			strItem += szDescription;
-			strItem += L")";
-		}
 
 		// Project
 		TV_INSERTSTRUCT tvInsertStruct;
