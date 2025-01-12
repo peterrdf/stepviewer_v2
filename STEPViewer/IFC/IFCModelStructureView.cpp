@@ -708,7 +708,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		LoadUnreferencedItems(pModel, hModel);
 
 		// UI
-		LoadTree_UpdateItems(hModel);
+		LoadTree_UpdateItem(hModel);
 	} // if (iProjectInstancesCount > 0)
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
@@ -1055,30 +1055,6 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			m_mapInstance2GeometryItem[pInstance] = hGeometry;
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
-}
-
-void CIFCModelStructureView::LoadTree_UpdateItems(HTREEITEM hModel)
-{
-	HTREEITEM hModelChild = m_pTreeCtrl->GetNextItem(hModel, TVGN_CHILD);
-	while (hModelChild != nullptr)
-	{
-		int iImage, iSelectedImage = -1;
-		m_pTreeCtrl->GetItemImage(hModelChild, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED))
-		{
-			// skip the Header and unreferenced items
-			hModelChild = m_pTreeCtrl->GetNextSiblingItem(hModelChild);
-
-			continue;
-		}
-
-		LoadTree_UpdateItem(hModelChild);
-
-		hModelChild = m_pTreeCtrl->GetNextSiblingItem(hModelChild);
-	}
 }
 
 void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
