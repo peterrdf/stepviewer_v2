@@ -1070,6 +1070,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 	int iChildrenCount = 0;
 	int iSelectedChildrenCount = 0;
 	int iSemiSelectedChildrenCount = 0;
+	int iNoGeometryChildrenCount = 0;
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
@@ -1113,9 +1114,14 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 			break;
 
 			case IMAGE_NOT_SELECTED:
-			case IMAGE_NO_GEOMETRY:
 			{
 				// NA
+			}
+			break;
+			
+			case IMAGE_NO_GEOMETRY:
+			{
+				iNoGeometryChildrenCount++;
 			}
 			break;
 
@@ -1129,8 +1135,9 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
-	if (iChildrenCount == 0)
-	{
+	if ((iChildrenCount == 0) /*Instance*/ ||
+		(iChildrenCount == iNoGeometryChildrenCount)/*contains/decomposition*/)
+	{		
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 
 		return;
