@@ -1242,9 +1242,9 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 
 	ASSERT(m_pTreeCtrl->ItemHasChildren(hParent));
 
-	int iChidlrenCount = 0;
-	int iSelectedChidlrenCount = 0;
-	int iSemiSelectedChidlrenCount = 0;
+	int iChildrenCount = 0;
+	int iSelectedChildrenCount = 0;
+	int iSemiSelectedChildrenCount = 0;
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
@@ -1262,19 +1262,19 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 			continue;
 		}
 
-		iChidlrenCount++;
+		iChildrenCount++;
 
 		switch (iImage)
 		{
 			case IMAGE_SELECTED:
 			{
-				iSelectedChidlrenCount++;
+				iSelectedChildrenCount++;
 			}
 			break;
 
 			case IMAGE_SEMI_SELECTED:
 			{
-				iSemiSelectedChidlrenCount++;
+				iSemiSelectedChildrenCount++;
 			}
 			break;
 
@@ -1294,7 +1294,7 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
-	if (iSemiSelectedChidlrenCount > 0)
+	if (iSemiSelectedChildrenCount > 0)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
@@ -1312,7 +1312,7 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		return;
 	}
 
-	if (iSelectedChidlrenCount == 0)
+	if (iSelectedChildrenCount == 0)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
@@ -1330,7 +1330,7 @@ void CAP242PModelStructureView::UpdateParentsItemDataAndUI(HTREEITEM hParent)
 		return;
 	}
 
-	if (iSelectedChidlrenCount == iChidlrenCount)
+	if (iSelectedChildrenCount == iChildrenCount)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
