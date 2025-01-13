@@ -19,7 +19,7 @@
 
 // ************************************************************************************************
 TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
-TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.ifc; *.ifczip)|*.stp;*.step; *.ifc; *.ifczip|All Files (*.*)|*.*||");
+TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 
 /*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
