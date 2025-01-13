@@ -177,7 +177,12 @@ public: // Methods
 		struct zip_stat zipStat;
 		zip_stat_init(&zipStat);
 		zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
+
 		g_pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
+		if (g_pZipFile == nullptr)
+		{
+			return 0;
+		}
 
 		auto sdaiModel = engiOpenModelByStream(0, ReadCallBackFunction, "");
 
