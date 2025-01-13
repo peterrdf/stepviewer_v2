@@ -12,21 +12,19 @@ namespace fs = std::experimental::filesystem;
 #pragma comment(lib, "libz-static.lib")
 #pragma comment(lib, "libzip-static.lib")
 
+// ************************************************************************************************
 const int_t	BLOCK_LENGTH_READ = 20000; // MAX: 65535
 
-FILE* myFileRead = nullptr;
-
-
-int_t	__stdcall	ReadCallBackFunction(unsigned char* content)
-{
-	if (myFileRead == nullptr || feof(myFileRead)) {
-		return	-1;
-	}
-
-	int_t	size = fread(content, 1, BLOCK_LENGTH_READ, myFileRead);
-
-	return	size;
-}
+//int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
+//{
+//	if (myFileRead == nullptr || feof(myFileRead)) {
+//		return	-1;
+//	}
+//
+//	int_t	size = fread(content, 1, BLOCK_LENGTH_READ, myFileRead);
+//
+//	return	size;
+//}
 
 // ************************************************************************************************
 class CModelFactory
@@ -43,35 +41,49 @@ public: // Methods
 		*/		
 		if (pathModel.extension().string() == ".ifczip")
 		{
-			string strIFCFileName = pathModel.stem().string();
-			strIFCFileName += ".ifc";
-
-			int iError = 0;
-			zip* pZip = zip_open(pathModel.string().c_str(), 0, &iError);
-			if (iError == 0)
+			auto sdaiModel = OpenIFCZIPModel(pathModel);
+			if (sdaiModel == 0)
 			{
-				struct zip_stat zipStat;
-				zip_stat_init(&zipStat);
-				zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
+				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
 
-				unsigned char* szContent = new unsigned char[zipStat.size];
+				return nullptr;
+			}
 
-				zip_file* pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
-				zip_fread(pZipFile, szContent, zipStat.size);
-				zip_fclose(pZipFile);
-				zip_close(pZip);
+			auto pModel = new _ifc_model(bMultipleModels);
+			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
 
-				auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, (const char*)1);
+			return pModel;
 
-				delete[] szContent;
 
-				auto pModel = new _ifc_model(bMultipleModels);
-				pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+			//string strIFCFileName = pathModel.stem().string();
+			//strIFCFileName += ".ifc";
 
-				return pModel;
-			} // if (iError == 0)
+			//int iError = 0;
+			//zip* pZip = zip_open(pathModel.string().c_str(), 0, &iError);
+			//if (iError == 0)
+			//{
+			//	struct zip_stat zipStat;
+			//	zip_stat_init(&zipStat);
+			//	zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
 
-			return nullptr;
+			//	unsigned char* szContent = new unsigned char[zipStat.size];
+
+			//	zip_file* pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
+			//	zip_fread(pZipFile, szContent, zipStat.size);
+			//	zip_fclose(pZipFile);
+			//	zip_close(pZip);
+
+			//	auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, "");
+
+			//	delete[] szContent;
+
+			//	auto pModel = new _ifc_model(bMultipleModels);
+			//	pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+
+			//	return pModel;
+			//} // if (iError == 0)
+
+			//return nullptr;
 		} // IFCZIP
 
 		/*
@@ -96,7 +108,7 @@ public: // Methods
 				zip_fclose(pZipFile);
 				zip_close(pZip);
 
-				auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, (const char*)1);
+				auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, (const char*)"");
 
 				delete[] szContent;
 
@@ -176,6 +188,35 @@ public: // Methods
 		}
 
 		return nullptr;
+	}
+
+	static SdaiModel OpenIFCZIPModel(const fs::path& pathIfcZip)
+	{
+		string strIFCFileName = pathIfcZip.stem().string();
+		strIFCFileName += ".ifc";
+
+		int iError = 0;
+		zip* pZip = zip_open(pathIfcZip.string().c_str(), 0, &iError);
+		if (iError != 0)
+		{
+			return 0;
+		}
+
+		struct zip_stat zipStat;
+		zip_stat_init(&zipStat);
+		zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
+		zip_file* pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
+
+		unsigned char* szContent = new unsigned char[zipStat.size];
+		zip_fread(pZipFile, szContent, zipStat.size);
+
+		auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, "");
+
+		delete[] szContent;
+		zip_fclose(pZipFile);
+		zip_close(pZip);
+
+		return sdaiModel;
 	}
 };
 
