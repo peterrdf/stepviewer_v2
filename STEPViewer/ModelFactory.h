@@ -5,15 +5,74 @@
 #include "_ap242_model.h"
 #include "CIS2Model.h"
 
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
+#include "zip.h"
+#pragma comment(lib, "libz-static.lib")
+#pragma comment(lib, "libzip-static.lib")
+
+const int_t	BLOCK_LENGTH_READ = 20000; // MAX: 65535
+
+FILE* myFileRead = nullptr;
+
+
+int_t	__stdcall	ReadCallBackFunction(unsigned char* content)
+{
+	if (myFileRead == nullptr || feof(myFileRead)) {
+		return	-1;
+	}
+
+	int_t	size = fread(content, 1, BLOCK_LENGTH_READ, myFileRead);
+
+	return	size;
+}
+
 // ************************************************************************************************
 class CModelFactory
 {
 
 public: // Methods
 
-	static _ap_model* Load(_controller* pController, const wchar_t* szPath, bool bMultipleModels)
+	static _ap_model* Load(_controller* pController, const wchar_t* szModel, bool bMultipleModels)
 	{
-		auto sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
+		/*
+		* IFCZIP
+		*/
+		fs::path pathModel = szModel;
+		if (pathModel.extension().string() == ".ifczip")
+		{
+			string strIFCFileName = pathModel.stem().string();
+			strIFCFileName += ".ifc";
+
+			int iError = 0;
+			zip* pZip = zip_open(pathModel.string().c_str(), 0, &iError);
+
+			if (iError == 0)
+			{
+				struct zip_stat zipStat;
+				zip_stat_init(&zipStat);
+				zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
+
+				unsigned char* szContent = new unsigned char[zipStat.size];
+
+				zip_file* pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
+				zip_fread(pZipFile, szContent, zipStat.size);
+				zip_fclose(pZipFile);
+				zip_close(pZip);
+
+				auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, (const char*)1);
+
+				delete[] szContent;
+
+				auto pModel = new _ifc_model(bMultipleModels);
+				pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+
+				return pModel;
+			} // if (iError == 0)
+		}
+
+		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0)
 		{
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -50,7 +109,7 @@ public: // Methods
 			ASSERT(!bMultipleModels); // Not supported!
 
 			auto pModel = new _ap242_model();
-			pModel->attachModel(szPath, sdaiModel, nullptr);
+			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
 		}
@@ -61,7 +120,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new _ifc_model(bMultipleModels);
-			pModel->attachModel(szPath, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
 
 			return pModel;
 		}
@@ -74,7 +133,7 @@ public: // Methods
 			ASSERT(!bMultipleModels); // Not supported!
 
 			auto pModel = new CCIS2Model();
-			pModel->attachModel(szPath, sdaiModel, nullptr);
+			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
 		}
