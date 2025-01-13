@@ -27,92 +27,7 @@ int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 		return -1;
 	}
 
-	return zip_fread(g_pZipFile, szContent, BLOCK_LENGTH_READ);
-}
-
-// ************************************************************************************************
-// https://windrealm.org/tutorials/decompress-gzip-stream.php
-bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes) {
-	if (compressedBytes.size() == 0) {
-		uncompressedBytes = compressedBytes;
-		return true;
-	}
-
-	uncompressedBytes.clear();
-
-	unsigned full_length = (unsigned)compressedBytes.size();
-	unsigned half_length = (unsigned)compressedBytes.size() / 2;
-
-	unsigned uncompLength = full_length;
-	char* uncomp = (char*)calloc(sizeof(char), uncompLength);
-
-	z_stream strm;
-	strm.next_in = (Bytef*)compressedBytes.c_str();
-	strm.avail_in = (unsigned)compressedBytes.size();
-	strm.total_out = 0;
-	strm.zalloc = Z_NULL;
-	strm.zfree = Z_NULL;
-
-	bool done = false;
-
-	if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
-		free(uncomp);
-		return false;
-	}
-
-	while (!done) {
-		// If our output buffer is too small  
-		if (strm.total_out >= uncompLength) {
-			// Increase size of output buffer  
-			char* uncomp2 = (char*)calloc(sizeof(char), uncompLength + half_length);
-			memcpy(uncomp2, uncomp, uncompLength);
-			uncompLength += half_length;
-			free(uncomp);
-			uncomp = uncomp2;
-		}
-
-		strm.next_out = (Bytef*)(uncomp + strm.total_out);
-		strm.avail_out = uncompLength - strm.total_out;
-
-		// Inflate another chunk.  
-		int err = inflate(&strm, Z_SYNC_FLUSH);
-		if (err == Z_STREAM_END) done = true;
-		else if (err != Z_OK) {
-			break;
-		}
-	}
-
-	if (inflateEnd(&strm) != Z_OK) {
-		free(uncomp);
-		return false;
-	}
-
-	for (size_t i = 0; i < strm.total_out; ++i) {
-		uncompressedBytes += uncomp[i];
-	}
-	free(uncomp);
-	return true;
-}
-
-/* Reads a file into memory. */
-bool loadBinaryFile(const std::string& filename, std::string& contents) {
-	// Open the gzip file in binary mode  
-	FILE* f = fopen(filename.c_str(), "rb");
-	if (f == NULL)
-		return false;
-
-	// Clear existing bytes in output vector  
-	contents.clear();
-
-	// Read all the bytes in the file  
-	int c = fgetc(f);
-	while (c != EOF) {
-		contents += (char)c;
-		c = fgetc(f);
-	}
-	fclose(f);
-
-	return true;
+	return (int_t)zip_fread(g_pZipFile, szContent, BLOCK_LENGTH_READ);
 }
 
 // ************************************************************************************************
@@ -149,24 +64,14 @@ public: // Methods
 		*/
 		if (pathModel.extension().string() == ".stpz")
 		{
-			// Read the gzip file data into memory  
-			std::string fileData;
-			if (!loadBinaryFile(pathModel.string(), fileData)) {
-				printf("Error loading input file.");
+			auto sdaiModel = OpenSTEPGZIPModel(pathModel);
+			if (sdaiModel == 0)
+			{
+				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+
 				return nullptr;
 			}
-
-			std::string data;
-			if (!gzipInflate(fileData, data)) {
-				printf("Error decompressing file.");
-				return nullptr;
-			}
-
-			char* szContent = new char[data.size() + 1];
-			strcpy(szContent, data.c_str());
-			szContent[data.size()] = '\0';
-
-			auto sdaiModel = engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
+			
 			auto pModel = new _ap242_model();
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
@@ -242,6 +147,9 @@ public: // Methods
 		return nullptr;
 	}
 
+	// ********************************************************************************************
+	// zip support
+	// ********************************************************************************************
 	static SdaiModel OpenIFCZIPModel(const fs::path& pathIfcZip)
 	{
 		string strIFCFileName = pathIfcZip.stem().string();
@@ -271,6 +179,111 @@ public: // Methods
 		zip_close(pZip);
 
 		return sdaiModel;
+	}
+
+	// ********************************************************************************************
+	// gzip support
+	// https://windrealm.org/tutorials/decompress-gzip-stream.php
+	// ********************************************************************************************	
+	static bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes) {
+		if (compressedBytes.size() == 0) {
+			uncompressedBytes = compressedBytes;
+			return true;
+		}
+
+		uncompressedBytes.clear();
+
+		unsigned full_length = (unsigned)compressedBytes.size();
+		unsigned half_length = (unsigned)compressedBytes.size() / 2;
+
+		unsigned uncompLength = full_length;
+		char* uncomp = (char*)calloc(sizeof(char), uncompLength);
+
+		z_stream strm;
+		strm.next_in = (Bytef*)compressedBytes.c_str();
+		strm.avail_in = (unsigned)compressedBytes.size();
+		strm.total_out = 0;
+		strm.zalloc = Z_NULL;
+		strm.zfree = Z_NULL;
+
+		bool done = false;
+
+		if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
+			free(uncomp);
+			return false;
+		}
+
+		while (!done) {
+			// If our output buffer is too small  
+			if (strm.total_out >= uncompLength) {
+				// Increase size of output buffer  
+				char* uncomp2 = (char*)calloc(sizeof(char), uncompLength + half_length);
+				memcpy(uncomp2, uncomp, uncompLength);
+				uncompLength += half_length;
+				free(uncomp);
+				uncomp = uncomp2;
+			}
+
+			strm.next_out = (Bytef*)(uncomp + strm.total_out);
+			strm.avail_out = uncompLength - strm.total_out;
+
+			// Inflate another chunk.  
+			int err = inflate(&strm, Z_SYNC_FLUSH);
+			if (err == Z_STREAM_END) done = true;
+			else if (err != Z_OK) {
+				break;
+			}
+		}
+
+		if (inflateEnd(&strm) != Z_OK) {
+			free(uncomp);
+			return false;
+		}
+
+		for (size_t i = 0; i < strm.total_out; ++i) {
+			uncompressedBytes += uncomp[i];
+		}
+		free(uncomp);
+		return true;
+	}
+
+	/* Reads a file into memory. */
+	static bool loadBinaryFile(const std::string& filename, std::string& contents) {
+		// Open the gzip file in binary mode  
+		FILE* f = fopen(filename.c_str(), "rb");
+		if (f == NULL)
+			return false;
+
+		// Clear existing bytes in output vector  
+		contents.clear();
+
+		// Read all the bytes in the file  
+		int c = fgetc(f);
+		while (c != EOF) {
+			contents += (char)c;
+			c = fgetc(f);
+		}
+		fclose(f);
+
+		return true;
+	}
+
+	static SdaiModel OpenSTEPGZIPModel(const fs::path& pathStepZip)
+	{
+		// Read the gzip file data into memory  
+		std::string fileData;
+		if (!loadBinaryFile(pathStepZip.string(), fileData)) {
+			printf("Error loading input file.");
+			return 0;
+		}
+
+		std::string data;
+		if (!gzipInflate(fileData, data)) {
+			printf("Error decompressing file.");
+			return 0;
+		}
+
+		return engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
 	}
 };
 
