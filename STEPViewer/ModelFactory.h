@@ -9,6 +9,7 @@
 namespace fs = std::experimental::filesystem;
 
 #include "zip.h"
+#include "zlib.h"
 #pragma comment(lib, "libz-static.lib")
 #pragma comment(lib, "libzip-static.lib")
 
@@ -27,6 +28,91 @@ int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 	}
 
 	return zip_fread(g_pZipFile, szContent, BLOCK_LENGTH_READ);
+}
+
+// ************************************************************************************************
+// https://windrealm.org/tutorials/decompress-gzip-stream.php
+bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes) {
+	if (compressedBytes.size() == 0) {
+		uncompressedBytes = compressedBytes;
+		return true;
+	}
+
+	uncompressedBytes.clear();
+
+	unsigned full_length = (unsigned)compressedBytes.size();
+	unsigned half_length = (unsigned)compressedBytes.size() / 2;
+
+	unsigned uncompLength = full_length;
+	char* uncomp = (char*)calloc(sizeof(char), uncompLength);
+
+	z_stream strm;
+	strm.next_in = (Bytef*)compressedBytes.c_str();
+	strm.avail_in = (unsigned)compressedBytes.size();
+	strm.total_out = 0;
+	strm.zalloc = Z_NULL;
+	strm.zfree = Z_NULL;
+
+	bool done = false;
+
+	if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
+		free(uncomp);
+		return false;
+	}
+
+	while (!done) {
+		// If our output buffer is too small  
+		if (strm.total_out >= uncompLength) {
+			// Increase size of output buffer  
+			char* uncomp2 = (char*)calloc(sizeof(char), uncompLength + half_length);
+			memcpy(uncomp2, uncomp, uncompLength);
+			uncompLength += half_length;
+			free(uncomp);
+			uncomp = uncomp2;
+		}
+
+		strm.next_out = (Bytef*)(uncomp + strm.total_out);
+		strm.avail_out = uncompLength - strm.total_out;
+
+		// Inflate another chunk.  
+		int err = inflate(&strm, Z_SYNC_FLUSH);
+		if (err == Z_STREAM_END) done = true;
+		else if (err != Z_OK) {
+			break;
+		}
+	}
+
+	if (inflateEnd(&strm) != Z_OK) {
+		free(uncomp);
+		return false;
+	}
+
+	for (size_t i = 0; i < strm.total_out; ++i) {
+		uncompressedBytes += uncomp[i];
+	}
+	free(uncomp);
+	return true;
+}
+
+/* Reads a file into memory. */
+bool loadBinaryFile(const std::string& filename, std::string& contents) {
+	// Open the gzip file in binary mode  
+	FILE* f = fopen(filename.c_str(), "rb");
+	if (f == NULL)
+		return false;
+
+	// Clear existing bytes in output vector  
+	contents.clear();
+
+	// Read all the bytes in the file  
+	int c = fgetc(f);
+	while (c != EOF) {
+		contents += (char)c;
+		c = fgetc(f);
+	}
+	fclose(f);
+
+	return true;
 }
 
 // ************************************************************************************************
@@ -63,34 +149,28 @@ public: // Methods
 		*/
 		if (pathModel.extension().string() == ".stpz")
 		{
-			string strSTEPFileName = pathModel.stem().string();
+			// Read the gzip file data into memory  
+			std::string fileData;
+			if (!loadBinaryFile(pathModel.string(), fileData)) {
+				printf("Error loading input file.");
+				return nullptr;
+			}
 
-			int iError = 0;
-			zip* pZip = zip_open(pathModel.string().c_str(), 0, &iError);
-			if (iError == 0)
-			{
-				struct zip_stat zipStat;
-				zip_stat_init(&zipStat);
-				zip_stat(pZip, strSTEPFileName.c_str(), 0, &zipStat);
+			std::string data;
+			if (!gzipInflate(fileData, data)) {
+				printf("Error decompressing file.");
+				return nullptr;
+			}
 
-				unsigned char* szContent = new unsigned char[zipStat.size];
+			char* szContent = new char[data.size() + 1];
+			strcpy(szContent, data.c_str());
+			szContent[data.size()] = '\0';
 
-				zip_file* pZipFile = zip_fopen(pZip, strSTEPFileName.c_str(), 0);
-				zip_fread(pZipFile, szContent, zipStat.size);
-				zip_fclose(pZipFile);
-				zip_close(pZip);
+			auto sdaiModel = engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
+			auto pModel = new _ap242_model();
+			pModel->attachModel(szModel, sdaiModel, nullptr);
 
-				auto sdaiModel = engiOpenModelByArray(0, szContent, (int_t)zipStat.size, (const char*)"");
-
-				delete[] szContent;
-
-				ASSERT(!bMultipleModels); // Not supported!
-
-				auto pModel = new _ap242_model();
-				pModel->attachModel(szModel, sdaiModel, nullptr);
-
-				return pModel;
-			} // if (iError == 0)
+			return pModel;
 		} // STEPZIP
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
