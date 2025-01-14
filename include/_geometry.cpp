@@ -715,7 +715,7 @@ float _geometry::getTransparency(OwlInstance owlMaterialInstance)
 			assert(owlColorComponentInstance != 0);
 
 			iCard = 0;
-			double* pdValue = nullptr;
+			pdValue = nullptr;
 			GetDatatypeProperty(
 				owlColorComponentInstance,
 				GetPropertyByName(getOwlModel(), "W"),
