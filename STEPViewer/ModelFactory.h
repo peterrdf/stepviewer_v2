@@ -45,7 +45,7 @@ public: // Methods
 		*/		
 		if (pathModel.extension().string() == ".ifczip")
 		{
-			auto sdaiModel = OpenIFCZIPModel(pathModel);
+			auto sdaiModel = OpenIFCZipModel(pathModel);
 			if (sdaiModel == 0)
 			{
 				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -60,11 +60,11 @@ public: // Methods
 		} // IFCZIP
 
 		/*
-		* STEPZIP
+		* STEPGZip
 		*/
 		if (pathModel.extension().string() == ".stpz")
 		{
-			auto sdaiModel = OpenSTEPGZIPModel(pathModel);
+			auto sdaiModel = OpenSTEPGZipModel(pathModel);
 			if (sdaiModel == 0)
 			{
 				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -148,9 +148,9 @@ public: // Methods
 	}
 
 	// ********************************************************************************************
-	// zip support
+	// Zip support
 	// ********************************************************************************************
-	static SdaiModel OpenIFCZIPModel(const fs::path& pathIfcZip)
+	static SdaiModel OpenIFCZipModel(const fs::path& pathIfcZip)
 	{
 		string strIFCFileName = pathIfcZip.stem().string();
 		strIFCFileName += ".ifc";
@@ -182,7 +182,7 @@ public: // Methods
 	}
 
 	// ********************************************************************************************
-	// gzip support
+	// GZip support
 	// https://windrealm.org/tutorials/decompress-gzip-stream.php
 	// ********************************************************************************************	
 	static bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes) {
@@ -268,11 +268,11 @@ public: // Methods
 		return true;
 	}
 
-	static SdaiModel OpenSTEPGZIPModel(const fs::path& pathStepZip)
+	static SdaiModel OpenSTEPGZipModel(const fs::path& pathStepGZip)
 	{
 		// Read the gzip file data into memory  
 		std::string fileData;
-		if (!loadBinaryFile(pathStepZip.string(), fileData)) {
+		if (!loadBinaryFile(pathStepGZip.string(), fileData)) {
 			printf("Error loading input file.");
 			return 0;
 		}

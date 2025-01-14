@@ -565,7 +565,7 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 			iDiffuseColor = GetMaterialColorDiffuse(iMaterialInstance);
 			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
 			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
-			fTransparency = (float)COLOR_GET_W(iAmbientColor);
+			fTransparency = getTransparency(iMaterialInstance);
 		}
 
 		_material material(
@@ -655,6 +655,81 @@ wstring _geometry::getConcFaceTexture(ConceptualFace iConceptualFace)
 	} // if (iMaterialInstance != 0)
 
 	return strTexture;
+}
+
+float _geometry::getTransparency(OwlInstance owlMaterialInstance)
+{
+	assert(owlMaterialInstance != 0);
+
+	//
+	// color
+	//
+
+	OwlInstance* powlInstances = nullptr;
+	int64_t iCard = 0;
+	GetObjectProperty(
+		owlMaterialInstance,
+		GetPropertyByName(getOwlModel(), "color"),
+		&powlInstances,
+		&iCard);
+	
+	// color
+	if (iCard == 1)
+	{
+		OwlInstance owlColorInstance = powlInstances[0];
+		assert(owlColorInstance != 0);
+
+		//
+		// color/transparency
+		//
+
+		iCard = 0;
+		double* pdValue = nullptr;
+		GetDatatypeProperty(
+			owlColorInstance,
+			GetPropertyByName(getOwlModel(), "transparency"),
+			(void**)&pdValue,
+			&iCard);
+
+		if (iCard == 1)
+		{
+			return (float)pdValue[0];
+		}
+
+		//
+		// color/ambient/W
+		//
+
+		powlInstances = nullptr;
+		iCard = 0;
+		GetObjectProperty(
+			owlColorInstance,
+			GetPropertyByName(getOwlModel(), "ambient"),
+			&powlInstances,
+			&iCard);
+
+		// ambient
+		if (iCard == 1)
+		{
+			OwlInstance owlColorComponentInstance = powlInstances[0];
+			assert(owlColorComponentInstance != 0);
+
+			iCard = 0;
+			double* pdValue = nullptr;
+			GetDatatypeProperty(
+				owlColorComponentInstance,
+				GetPropertyByName(getOwlModel(), "W"),
+				(void**)&pdValue,
+				&iCard);
+
+			if (iCard == 1)
+			{
+				return (float)pdValue[0];
+			}
+		} // ambient
+	} // color
+
+	return 1.f;
 }
 
 void _geometry::buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT)

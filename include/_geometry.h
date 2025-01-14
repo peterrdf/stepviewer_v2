@@ -292,6 +292,7 @@ protected: // Methods
 	}
 
 	wstring getConcFaceTexture(ConceptualFace iConceptualFace);
+	float getTransparency(OwlInstance owlMaterialInstance);
 
 	void buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);
 	void buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT);
