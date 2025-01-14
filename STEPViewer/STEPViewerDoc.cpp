@@ -154,8 +154,7 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 }
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{
-	
+{	
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
