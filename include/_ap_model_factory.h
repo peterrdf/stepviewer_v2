@@ -3,7 +3,9 @@
 #include "_mvc.h"
 #include "_ifc_model.h"
 #include "_ap242_model.h"
+#ifdef _CIS2_EXPERIMENTAL
 #include "CIS2Model.h"
+#endif
 
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
@@ -23,7 +25,7 @@ zip_file* g_pZipFile = nullptr;
 // ************************************************************************************************
 int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 {
-	if (g_pZipFile == nullptr) 
+	if (g_pZipFile == nullptr)
 	{
 		return -1;
 	}
@@ -45,7 +47,7 @@ public: // Methods
 
 		/*
 		* IFCZIP
-		*/		
+		*/
 		if (pathModel.extension().string() == ".ifczip")
 		{
 			auto sdaiModel = openIFCZipModel(pathModel);
@@ -74,7 +76,7 @@ public: // Methods
 
 				return nullptr;
 			}
-			
+
 			auto pModel = new _ap242_model();
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
@@ -111,7 +113,7 @@ public: // Methods
 			(strFileSchema.Find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
 			(strFileSchema.Find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
 			(strFileSchema.Find(L"AUTOMOTIVE_DESIGN") == 0) ||
-			(strFileSchema.Find(L"AP203") == 0) || 
+			(strFileSchema.Find(L"AP203") == 0) ||
 			(strFileSchema.Find(L"AP209") == 0) ||
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
