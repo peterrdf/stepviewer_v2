@@ -1,6 +1,4 @@
-
-#include "stdafx.h"
-
+#include "_host.h"
 #include "_ap242_draughting_model.h"
 #include "_instance.h"
 

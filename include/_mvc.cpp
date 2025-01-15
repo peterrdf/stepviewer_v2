@@ -1,5 +1,4 @@
-#include "stdafx.h"
-
+#include "_host.h"
 #include "_mvc.h"
 #include "_rdf_instance.h"
 

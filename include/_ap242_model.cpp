@@ -1,5 +1,4 @@
-#include "stdafx.h"
-
+#include "_host.h"
 #include "_ap242_model.h"
 #include "_ap242_product_definition.h"
 #include "_ap242_draughting_model.h"
