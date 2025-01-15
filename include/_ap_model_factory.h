@@ -8,6 +8,7 @@
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
+#ifdef _USE_LIBZIP
 #include "zip.h"
 #include "zlib.h"
 #pragma comment(lib, "libz-static.lib")
@@ -29,15 +30,17 @@ int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 
 	return (int_t)zip_fread(g_pZipFile, szContent, BLOCK_LENGTH_READ);
 }
+#endif // _USE_LIBZIP
 
 // ************************************************************************************************
-class CModelFactory
+class _ap_model_factory
 {
 
 public: // Methods
 
-	static _ap_model* Load(_controller* pController, const wchar_t* szModel, bool bMultipleModels)
+	static _ap_model* load(_controller* pController, const wchar_t* szModel, bool bMultipleModels)
 	{
+#ifdef _USE_LIBZIP
 		fs::path pathModel = szModel;
 
 		/*
@@ -45,7 +48,7 @@ public: // Methods
 		*/		
 		if (pathModel.extension().string() == ".ifczip")
 		{
-			auto sdaiModel = OpenIFCZipModel(pathModel);
+			auto sdaiModel = openIFCZipModel(pathModel);
 			if (sdaiModel == 0)
 			{
 				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -64,7 +67,7 @@ public: // Methods
 		*/
 		if (pathModel.extension().string() == ".stpz")
 		{
-			auto sdaiModel = OpenSTEPGZipModel(pathModel);
+			auto sdaiModel = openSTEPGZipModel(pathModel);
 			if (sdaiModel == 0)
 			{
 				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -77,6 +80,7 @@ public: // Methods
 
 			return pModel;
 		} // STEPZIP
+#endif // _USE_LIBZIP
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0)
@@ -131,6 +135,7 @@ public: // Methods
 			return pModel;
 		}
 
+#ifdef _CIS2_EXPERIMENTAL
 		/*
 		* CIS2
 		*/
@@ -143,14 +148,16 @@ public: // Methods
 
 			return pModel;
 		}
+#endif // _CIS2_EXPERIMENTAL
 
 		return nullptr;
 	}
 
+#ifdef _USE_LIBZIP
 	// ********************************************************************************************
 	// Zip support
 	// ********************************************************************************************
-	static SdaiModel OpenIFCZipModel(const fs::path& pathIfcZip)
+	static SdaiModel openIFCZipModel(const fs::path& pathIfcZip)
 	{
 		string strIFCFileName = pathIfcZip.stem().string();
 		strIFCFileName += ".ifc";
@@ -268,7 +275,7 @@ public: // Methods
 		return true;
 	}
 
-	static SdaiModel OpenSTEPGZipModel(const fs::path& pathStepGZip)
+	static SdaiModel openSTEPGZipModel(const fs::path& pathStepGZip)
 	{
 		// Read the gzip file data into memory  
 		std::string fileData;
@@ -285,5 +292,6 @@ public: // Methods
 
 		return engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
 	}
+#endif _USE_LIBZIP
 };
 

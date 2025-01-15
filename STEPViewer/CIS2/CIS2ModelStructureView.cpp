@@ -491,7 +491,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				case ID_INSTANCES_SAVE:
 				{
-					pController->saveInstance();
+					pController->saveSelectedInstance();
 				}
 				break;
 

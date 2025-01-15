@@ -530,7 +530,7 @@ void _controller::zoomOut()
 	}
 }
 
-void _controller::saveInstance(OwlInstance owlInstance)
+void _controller::saveSelectedInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 

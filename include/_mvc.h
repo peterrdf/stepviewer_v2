@@ -240,8 +240,8 @@ public: // Methods
 	void zoomOut();
 
 	// Save
-	virtual void saveInstance() PURE;
-	void saveInstance(OwlInstance owlInstance);
+	virtual void saveSelectedInstance() PURE;
+	void saveSelectedInstance(OwlInstance owlInstance);
 
 	// Events
 	void showMetaInformation(_instance* /*pInstance*/) { assert(false); }
