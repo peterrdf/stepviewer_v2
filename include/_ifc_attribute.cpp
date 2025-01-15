@@ -11,7 +11,7 @@ _ifc_attribute::_ifc_attribute(SdaiAttr sdaiAttr)
 /*virtual*/ _ifc_attribute::~_ifc_attribute()
 {}
 
-SdaiPrimitiveType _ifc_attribute::getType() const
+SdaiPrimitiveType _ifc_attribute::getSdaiPrimitiveType() const
 {
 	SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(m_sdaiAttr);
 	if ((sdaiPrimitiveType & engiTypeFlagAggr) ||

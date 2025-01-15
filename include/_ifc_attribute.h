@@ -18,7 +18,7 @@ public: // Methods
 	virtual ~_ifc_attribute();
 
 	SdaiAttr getSdaiAttr() const { return m_sdaiAttr; }
-	SdaiPrimitiveType getType() const;
+	SdaiPrimitiveType getSdaiPrimitiveType() const;
 };
 
 // ************************************************************************************************
