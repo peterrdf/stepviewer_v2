@@ -10,7 +10,7 @@
 #endif
 
 #include "STEPViewerDoc.h"
-#include "ModelFactory.h"
+#include "_ap_model_factory.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -22,7 +22,7 @@ TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*
 TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 
-/*virtual*/ void CMySTEPViewerDoc::saveInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::saveSelectedInstance() /*override*/
 {
 	ASSERT(getModel() != nullptr);
 
@@ -120,13 +120,13 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 		if (bFirstFile)
 		{
 			setModel(nullptr);
-			setModel(CModelFactory::Load(this, model, true));
+			setModel(_ap_model_factory::load(this, model, true, false));
 
 			bFirstFile = false;
 		}
 		else
 		{
-			addModel(CModelFactory::Load(this, model, true));
+			addModel(_ap_model_factory::load(this, model, true, false));
 		}
 	}
 }
@@ -154,8 +154,7 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 }
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{
-	
+{	
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
@@ -259,7 +258,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(CModelFactory::Load(this, lpszPathName, false));
+	setModel(_ap_model_factory::load(this, lpszPathName, false, false));
 
 	// Title
 	CString strTitle = AfxGetAppName();

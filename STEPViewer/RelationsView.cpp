@@ -81,7 +81,7 @@ static char THIS_FILE[]=__FILE__;
 	vecInstances.push_back(sdaiInstance);
 
 	LoadProperties(
-		_ap_instance::getEntityInstance(sdaiInstance),
+		_ap_instance::getSdaiEntity(sdaiInstance),
 		vecInstances);
 
 	ShowPane(TRUE, TRUE, TRUE);
@@ -309,7 +309,7 @@ void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances)
 	for (auto sdaiInstance : vecInstances)
 	{
 		LoadInstance(
-			_ap_instance::getEntityInstance(sdaiInstance),
+			_ap_instance::getSdaiEntity(sdaiInstance),
 			sdaiInstance,
 			hModel);
 	}

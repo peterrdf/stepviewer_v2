@@ -568,7 +568,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			case ID_INSTANCES_SAVE:
 			{
-				pController->saveInstance();
+				pController->saveSelectedInstance();
 			}
 			break;
 

@@ -17,6 +17,13 @@ CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
 	clean();
 }
 
+/*virtual*/ _instance* CCIS2Model::loadInstance(int64_t /*iInstance*/) /*override*/
+{
+	assert(false); // not implemented
+
+	return nullptr;
+}
+
 /*virtual*/ void CCIS2Model::attachModelCore() /*override*/
 {
 	// Objects & Unreferenced

@@ -15,19 +15,24 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
+	bool m_bLoadInstancesOnDemand;
+
 	map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
 	vector<_ap242_draughting_model*> m_vecDraughtingModels;
 
 public: // Methods
 
-	_ap242_model();
+	_ap242_model(bool bLoadInstancesOnDemand = false);
 	virtual ~_ap242_model();
 
 protected: // Methods
 
+	// _model
+	virtual _instance* loadInstance(int64_t iInstance) override;
+	virtual void clean(bool bCloseModel = true) override;
+
 	// _ap_model
 	virtual void attachModelCore() override;
-	virtual void clean() override;
 
 private: // Methods
 

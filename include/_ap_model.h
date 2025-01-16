@@ -2,6 +2,7 @@
 
 #include "_ptr.h"
 #include "_mvc.h"
+#include "_attribute.h"
 #include "_ap_instance.h"
 
 #include <string>
@@ -29,6 +30,7 @@ private: // Members
 
 	// Helpers
 	_entity_provider* m_pEntityProvider;
+	_attribute_provider* m_pAttributeProvider;
 
 	// Cache
 	map<ExpressID, _geometry*> m_mapExpressID2Geometry;
@@ -41,6 +43,7 @@ public: // Methods
 		, m_sdaiModel(0)
 		, m_enAP(enAP)
 		, m_pEntityProvider(nullptr)
+		, m_pAttributeProvider(nullptr)
 		, m_mapExpressID2Geometry()
 		, m_mapGeometries()
 	{}
@@ -67,7 +70,7 @@ public: // Methods
 		assert((szPath != nullptr) && (wcslen(szPath) > 0));
 
 		SdaiModel sdaiModel = sdaiOpenModelBNUnicode(0, szPath, L"");
-		if (m_sdaiModel == 0)
+		if (sdaiModel == 0)
 		{
 			return false;
 		}
@@ -169,23 +172,27 @@ protected: // Methods
 		m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
 	}
 
-	virtual void clean() override
+	virtual void clean(bool bCloseModel = true) override
 	{
-		_model::clean();
+		_model::clean(bCloseModel);
 
-		m_strPath = L"";
-
-		if (m_sdaiModel != 0)
+		if (bCloseModel)
 		{
-			sdaiCloseModel(m_sdaiModel);
-			m_sdaiModel = 0;
+			if (m_sdaiModel != 0)
+			{
+				sdaiCloseModel(m_sdaiModel);
+				m_sdaiModel = 0;
+			}
+
+			delete m_pEntityProvider;
+			m_pEntityProvider = nullptr;
+
+			delete m_pAttributeProvider;
+			m_pAttributeProvider = nullptr;
 		}
 
 		m_mapGeometries.clear();
 		m_mapExpressID2Geometry.clear();
-
-		delete m_pEntityProvider;
-		m_pEntityProvider = nullptr;
 	}
 
 public: // Properties
@@ -206,5 +213,15 @@ public: // Properties
 		}
 
 		return m_pEntityProvider;
+	}
+
+	_attribute_provider* getAttributeProvider()
+	{
+		if (m_pAttributeProvider == nullptr)
+		{
+			m_pAttributeProvider = new _attribute_provider();
+		}
+
+		return m_pAttributeProvider;
 	}
 };

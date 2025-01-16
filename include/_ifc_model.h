@@ -3,7 +3,6 @@
 #include "_ap_model.h"
 #include "_ifc_unit.h"
 #include "_ifc_property.h"
-#include "_ifc_attribute.h"
 
 #include <string>
 #include <map>
@@ -40,8 +39,7 @@ private: // Members
 	SdaiEntity m_sdaiVirtualElementEntity;
 
 	_ifc_unit_provider* m_pUnitProvider;
-	_ifc_property_provider* m_pPropertyProvider;
-	_ifc_attribute_provider* m_pAttributeProvider;
+	_ifc_property_provider* m_pPropertyProvider;	
 
 public: // Methods
 
@@ -50,9 +48,12 @@ public: // Methods
 
 protected: // Methods
 
+	// _model
+	virtual _instance* loadInstance(int64_t iInstance) override;
+	virtual void clean(bool bCloseModel = true) override;
+
 	// _ap_model
-	virtual void attachModelCore() override;
-	virtual void clean() override;
+	virtual void attachModelCore() override;	
 
 protected: // Methods
 
@@ -76,7 +77,6 @@ public: // Properties
 
 	_ifc_unit_provider* getUnitProvider();
 	_ifc_property_provider* getPropertyProvider();
-	_ifc_attribute_provider* getAttributeProvider();
 };
 
 

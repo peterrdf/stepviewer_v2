@@ -1,5 +1,4 @@
-#include "stdafx.h"
-
+#include "_host.h"
 #include "_ap242_instance.h"
 #include "_ap242_geometry.h"
 #include "_ap242_product_definition.h"

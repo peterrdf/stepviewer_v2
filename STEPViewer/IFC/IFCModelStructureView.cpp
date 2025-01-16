@@ -505,7 +505,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				case ID_INSTANCES_SAVE:
 				{
-					pController->saveInstance();
+					pController->saveSelectedInstance();
 				}
 				break;
 

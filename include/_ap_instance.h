@@ -66,12 +66,12 @@ public: // Properties
 		return strUniqueName;
 	}	
 
-	SdaiEntity getEntityInstance() const
+	SdaiEntity getSdaiEntity() const
 	{
-		return getEntityInstance(getSdaiInstance());
+		return getSdaiEntity(getSdaiInstance());
 	}
 
-	static SdaiEntity getEntityInstance(SdaiInstance sdaiInstance)
+	static SdaiEntity getSdaiEntity(SdaiInstance sdaiInstance)
 	{
 		return sdaiGetInstanceType(sdaiInstance);
 	}
@@ -84,7 +84,7 @@ public: // Properties
 	static const wchar_t* getEntityName(SdaiInstance sdaiInstance)
 	{
 		wchar_t* szEntityName = nullptr;
-		engiGetEntityName(getEntityInstance(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
+		engiGetEntityName(getSdaiEntity(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
 
 		return szEntityName;
 	}

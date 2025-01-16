@@ -82,14 +82,15 @@ public: // Methods
 	_model();
 	virtual ~_model();
 
+	virtual _instance* loadInstance(int64_t /*iInstance*/) PURE;
+
 	template<typename T>
 	T* as()
 	{
 		return dynamic_cast<T*>(this);
 	}
 
-	static int64_t getNextInstanceID() { return s_iInstanceID++; }
-	virtual _instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; };
+	static int64_t getNextInstanceID() { return s_iInstanceID++; }	
 
 	void scale();
 	virtual void zoomTo(_instance* pInstance);
@@ -105,7 +106,7 @@ protected: // Methods
 	void addGeometry(_geometry* pGeometry);
 	void addInstance(_instance* pInstance);
 
-	virtual void clean();
+	virtual void clean(bool bCloseModel = true);
 
 public: // Properties
 
@@ -206,10 +207,12 @@ public: // Methods
 	_controller();
 	virtual ~_controller();
 
+	void setModel(_model* pModel);
+	void addModel(_model* pModel);
+	_instance* loadInstance(int64_t iInstance);
+
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float getWorldBoundingSphereDiameter() const;
-
-	_instance* loadInstance(OwlInstance /*owlInstance*/) { assert(false); return nullptr; }
 
 	_model* getModelByInstance(OwlModel owlModel) const;	
 	_instance* getInstanceByID(int64_t iID) const;
@@ -240,8 +243,8 @@ public: // Methods
 	void zoomOut();
 
 	// Save
-	virtual void saveInstance() PURE;
-	void saveInstance(OwlInstance owlInstance);
+	virtual void saveSelectedInstance() PURE;
+	void saveSelectedInstance(OwlInstance owlInstance);
 
 	// Events
 	void showMetaInformation(_instance* /*pInstance*/) { assert(false); }
@@ -264,9 +267,7 @@ protected: // Methods
 public: // Properties
 
 	_model* getModel() const; // kept for backward compatibility
-	const vector<_model*>& getModels() const { return m_vecModels; }
-	void setModel(_model* pModel);
-	void addModel(_model* pModel);
+	const vector<_model*>& getModels() const { return m_vecModels; }	
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 

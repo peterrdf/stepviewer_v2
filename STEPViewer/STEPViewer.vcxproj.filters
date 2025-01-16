@@ -75,9 +75,6 @@
     <ClInclude Include="IFC\IFCOpenGLView.h">
       <Filter>IFC</Filter>
     </ClInclude>
-    <ClInclude Include="ModelFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ModelStructureViewBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -198,9 +195,6 @@
     <ClInclude Include="..\include\_ap242_product_definition.h">
       <Filter>AP242</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_attribute.h">
-      <Filter>IFC</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_ifc_geometry.h">
       <Filter>IFC</Filter>
     </ClInclude>
@@ -215,6 +209,15 @@
     </ClInclude>
     <ClInclude Include="..\include\_ifc_unit.h">
       <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_model_factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_host.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_attribute.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -323,9 +326,6 @@
     <ClCompile Include="..\include\_ap242_product_definition.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_ifc_attribute.cpp">
-      <Filter>IFC</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\_ifc_geometry.cpp">
       <Filter>IFC</Filter>
     </ClCompile>
@@ -340,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_ifc_unit.cpp">
       <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_attribute.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

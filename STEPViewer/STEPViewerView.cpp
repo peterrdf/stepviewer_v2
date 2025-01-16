@@ -513,7 +513,7 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->saveInstance();
+	pDocument->saveSelectedInstance();
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
