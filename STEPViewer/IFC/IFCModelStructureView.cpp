@@ -942,10 +942,10 @@ void CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiI
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 		tvInsertStruct.item.lParam = NULL;
-		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		// Geometry
-		tvInsertStruct.hParent = hObject;
+		tvInsertStruct.hParent = hInstance;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
@@ -963,9 +963,9 @@ void CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiI
 		}		
 
 		// decomposition/nested/contains
-		LoadIsDecomposedBy(pModel, sdaiInstance, hObject);
-		LoadIsNestedBy(pModel, sdaiInstance, hObject);
-		LoadContainsElements(pModel, sdaiInstance, hObject);
+		LoadIsDecomposedBy(pModel, sdaiInstance, hInstance);
+		LoadIsNestedBy(pModel, sdaiInstance, hInstance);
+		LoadContainsElements(pModel, sdaiInstance, hInstance);
 	} // if (ifcInstance)
 	else
 	{
@@ -1117,10 +1117,10 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 			tvInsertStruct.item.lParam = NULL;
-			HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+			HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 			// Geometry
-			tvInsertStruct.hParent = hObject;
+			tvInsertStruct.hParent = hInstance;
 			tvInsertStruct.hInsertAfter = TVI_LAST;
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
