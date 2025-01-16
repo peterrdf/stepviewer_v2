@@ -53,7 +53,7 @@ protected: // Methods
 	virtual void clean(bool bCloseModel = true) override;
 
 	// _ap_model
-	virtual void attachModelCore() override;	
+	virtual void attachModelCore() override;
 
 protected: // Methods
 

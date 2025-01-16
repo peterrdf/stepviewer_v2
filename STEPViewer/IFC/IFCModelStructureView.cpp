@@ -704,6 +704,9 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		// Project
 		LoadProject(pModel, hModel, sdaiProjectInstance);
 
+		// Groups
+		LoadGroups(pModel, hModel);
+
 		// Unreferenced
 		LoadUnreferencedItems(pModel, hModel);
 
@@ -962,6 +965,53 @@ void CIFCModelStructureView::LoadObject(_ifc_model* pModel, SdaiInstance sdaiIns
 	else
 	{
 		ASSERT(FALSE);
+	}
+}
+
+void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
+{
+	ASSERT(pModel != nullptr);
+
+	vector<_ap_instance*> vecInstances;
+	pModel->getInstancesByType(L"IFCGROUP", vecInstances);
+	if (vecInstances.empty())
+	{
+		return;
+	}
+
+	// Groups
+	TV_INSERTSTRUCT tvInsertStruct;
+	tvInsertStruct.hParent = hModel;
+	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	tvInsertStruct.item.pszText = L"Groups";
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+	tvInsertStruct.item.lParam = NULL;
+	HTREEITEM hGroups = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+	for (auto pInstance : vecInstances)
+	{
+		wstring strItem = _ap_instance::getName(pInstance->getSdaiInstance());
+
+		// Object
+		tvInsertStruct.hParent = hGroups;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+		tvInsertStruct.item.lParam = NULL;
+		HTREEITEM hObject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		// Geometry
+		tvInsertStruct.hParent = hObject;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
+			pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+		tvInsertStruct.item.lParam = (LPARAM)pInstance;
+		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+		m_mapInstance2GeometryItem[_ptr<_ifc_instance>(pInstance)] = hGeometry;
 	}
 }
 
