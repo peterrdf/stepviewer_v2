@@ -26,14 +26,53 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	, m_sdaiTransportElementEntity(0)
 	, m_sdaiVirtualElementEntity(0)
 	, m_pUnitProvider(nullptr)
-	, m_pPropertyProvider(nullptr)
-	, m_pAttributeProvider(nullptr)
+	, m_pPropertyProvider(nullptr)	
 {
 }
 
 /*virtual*/ _ifc_model::~_ifc_model()
 {
 	clean();
+}
+
+/*virtual*/ _instance* _ifc_model::loadInstance(int64_t iInstance) /*override*/
+{ 
+	assert(iInstance != 0);
+	SdaiInstance sdaiInstance = (SdaiInstance)iInstance;
+
+	clean(false);
+
+	m_bUpdteVertexBuffers = true;
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}
+
+	auto pGeometry = createGeometry(owlInstance, sdaiInstance);
+	addGeometry(pGeometry);
+
+	auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+	addInstance(pInstance);
+
+	scale();
+
+	return pInstance;
+}
+
+/*virtual*/ void _ifc_model::clean(bool bCloseModel/* = true*/) /*override*/
+{
+	_ap_model::clean(bCloseModel);
+
+	if (bCloseModel)
+	{
+		delete m_pUnitProvider;
+		m_pUnitProvider = nullptr;
+
+		delete m_pPropertyProvider;
+		m_pPropertyProvider = nullptr;
+	}
 }
 
 /*virtual*/ void _ifc_model::attachModelCore() /*override*/
@@ -73,20 +112,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	}
 
 	scale();
-}
-
-/*virtual*/ void _ifc_model::clean() /*override*/
-{
-	_ap_model::clean();
-
-	delete m_pUnitProvider;
-	m_pUnitProvider = nullptr;
-
-	delete m_pPropertyProvider;
-	m_pPropertyProvider = nullptr;
-
-	delete m_pAttributeProvider;
-	m_pAttributeProvider = nullptr;
 }
 
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
@@ -404,15 +429,5 @@ _ifc_property_provider* _ifc_model::getPropertyProvider()
 	}
 
 	return m_pPropertyProvider; 
-}
-
-_ifc_attribute_provider* _ifc_model::getAttributeProvider() 
-{ 
-	if (m_pAttributeProvider == nullptr)
-	{
-		m_pAttributeProvider = new _ifc_attribute_provider();
-	}
-
-	return m_pAttributeProvider; 
 }
 

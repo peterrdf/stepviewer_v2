@@ -1,17 +1,17 @@
 #include "_host.h"
-#include "_ifc_attribute.h"
+#include "_attribute.h"
 
 // ************************************************************************************************
-_ifc_attribute::_ifc_attribute(SdaiAttr sdaiAttr)
+_attribute::_attribute(SdaiAttr sdaiAttr)
 	: m_sdaiAttr(sdaiAttr)
 {
 	assert(m_sdaiAttr != 0);
 }
 
-/*virtual*/ _ifc_attribute::~_ifc_attribute()
+/*virtual*/ _attribute::~_attribute()
 {}
 
-SdaiPrimitiveType _ifc_attribute::getSdaiPrimitiveType() const
+SdaiPrimitiveType _attribute::getSdaiPrimitiveType() const
 {
 	SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(m_sdaiAttr);
 	if ((sdaiPrimitiveType & engiTypeFlagAggr) ||
@@ -24,11 +24,11 @@ SdaiPrimitiveType _ifc_attribute::getSdaiPrimitiveType() const
 }
 
 // ************************************************************************************************
-_ifc_attribute_provider::_ifc_attribute_provider()
+_attribute_provider::_attribute_provider()
 	: m_mapInstanceAttributes()
 {}
 
-/*virtual*/ _ifc_attribute_provider::~_ifc_attribute_provider()
+/*virtual*/ _attribute_provider::~_attribute_provider()
 {
 	for (auto& itInstanceAttributes : m_mapInstanceAttributes)
 	{
@@ -39,7 +39,7 @@ _ifc_attribute_provider::_ifc_attribute_provider()
 	}
 }
 
-const vector<_ifc_attribute*>& _ifc_attribute_provider::getInstanceAttributes(SdaiInstance sdaiInstance)
+const vector<_attribute*>& _attribute_provider::getInstanceAttributes(SdaiInstance sdaiInstance)
 {
 	assert(sdaiInstance != 0);
 
@@ -52,7 +52,7 @@ const vector<_ifc_attribute*>& _ifc_attribute_provider::getInstanceAttributes(Sd
 	SdaiEntity sdaiEntity = sdaiGetInstanceType(sdaiInstance);
 	assert(sdaiEntity != 0);
 
-	vector<_ifc_attribute*> vecAttributes;
+	vector<_attribute*> vecAttributes;
 	loadInstanceAttributes(sdaiEntity, sdaiInstance, vecAttributes);
 
 	m_mapInstanceAttributes[sdaiInstance] = vecAttributes;
@@ -60,7 +60,7 @@ const vector<_ifc_attribute*>& _ifc_attribute_provider::getInstanceAttributes(Sd
 	return m_mapInstanceAttributes.at(sdaiInstance);
 }
 
-void _ifc_attribute_provider::loadInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, vector<_ifc_attribute*>& vecAttributes)
+void _attribute_provider::loadInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, vector<_attribute*>& vecAttributes)
 {
 	if (sdaiEntity == 0)
 	{
@@ -80,7 +80,7 @@ void _ifc_attribute_provider::loadInstanceAttributes(SdaiEntity sdaiEntity, Sdai
 
 	while (sdaiAttr != nullptr)
 	{
-		auto pIFCAttribute = new _ifc_attribute(sdaiAttr);
+		auto pIFCAttribute = new _attribute(sdaiAttr);
 		vecAttributes.push_back(pIFCAttribute);
 
 		sdaiAttr = engiGetEntityAttributeByIndex(

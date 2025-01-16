@@ -25,6 +25,9 @@ public: // Methods
 
 protected: // Methods
 
+	// _model
+	virtual _instance* loadInstance(int64_t iInstance) override;
+
 	// _ap_model
 	virtual void attachModelCore() override;
 

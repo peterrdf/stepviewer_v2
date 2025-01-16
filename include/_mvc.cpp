@@ -367,8 +367,13 @@ void _model::addInstance(_instance* pInstance)
 	m_mapID2Instance[pInstance->getID()] = pInstance;
 }
 
-/*virtual*/ void _model::clean()
+/*virtual*/ void _model::clean(bool bCloseModel/* = true*/)
 {
+	if (bCloseModel)
+	{
+		m_strPath = L"";
+	}	
+
 	for (auto pGeometry : m_vecGeometries)
 	{
 		delete pGeometry;
@@ -399,6 +404,75 @@ _controller::_controller()
 	clean();
 
 	delete m_pSettingsStorage;
+}
+
+void _controller::setModel(_model* pModel)
+{
+	clean();
+
+	if (pModel != nullptr)
+	{
+		m_vecModels.push_back(pModel);
+	}
+
+	m_pSelectedInstance = nullptr;
+	m_pTargetInstance = nullptr;
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+void _controller::addModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_vecModels.push_back(pModel);
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+_instance* _controller::loadInstance(int64_t iInstance)
+{
+	assert(iInstance != 0);
+
+	if (getModels().size() != 1)
+	{
+		assert(false); // not supported!
+
+		return nullptr;
+	}
+
+	m_pSelectedInstance = nullptr;
+	m_pTargetInstance = nullptr;
+
+	m_bUpdatingModel = true;
+
+	auto pInstance = getModel()->loadInstance(iInstance);
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelUpdated();
+	}
+
+	m_bUpdatingModel = false;
+
+	return pInstance;
 }
 
 void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float& fWorldYmin, float& fWorldYmax, float& fWorldZmin, float& fWorldZmax) const
@@ -675,43 +749,4 @@ _model* _controller::getModel() const
 	}
 
 	return nullptr; 
-}
-
-void _controller::setModel(_model* pModel)
-{
-	clean();
-
-	if (pModel != nullptr)
-	{
-		m_vecModels.push_back(pModel);
-	}
-
-	m_pSelectedInstance = nullptr;
-
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onModelLoaded();
-	}
-
-	m_bUpdatingModel = false;
-}
-
-void _controller::addModel(_model* pModel)
-{
-	assert(pModel != nullptr);
-
-	m_vecModels.push_back(pModel);
-
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onModelLoaded();
-	}
-
-	m_bUpdatingModel = false;
 }

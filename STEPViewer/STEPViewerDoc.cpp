@@ -120,13 +120,13 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 		if (bFirstFile)
 		{
 			setModel(nullptr);
-			setModel(_ap_model_factory::load(this, model, true));
+			setModel(_ap_model_factory::load(this, model, true, false));
 
 			bFirstFile = false;
 		}
 		else
 		{
-			addModel(_ap_model_factory::load(this, model, true));
+			addModel(_ap_model_factory::load(this, model, true, false));
 		}
 	}
 }
@@ -258,7 +258,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(_ap_model_factory::load(this, lpszPathName, false));
+	setModel(_ap_model_factory::load(this, lpszPathName, false, false));
 
 	// Title
 	CString strTitle = AfxGetAppName();

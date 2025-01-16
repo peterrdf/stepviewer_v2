@@ -6,8 +6,9 @@
 #include "_rdf_instance.h"
 
 // ************************************************************************************************
-_ap242_model::_ap242_model()
+_ap242_model::_ap242_model(bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(enumAP::STEP)
+	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_mapExpressID2Assembly()
 	, m_vecDraughtingModels()
 {
@@ -18,20 +19,38 @@ _ap242_model::_ap242_model()
 	clean();
 }
 
-/*virtual*/ void _ap242_model::attachModelCore() /*override*/
+/*virtual*/ _instance* _ap242_model::loadInstance(int64_t iInstance) /*override*/
 {
-	loadProductDefinitions();
-	loadAssemblies();
-	loadGeometry();
+	assert(iInstance != 0);
+	SdaiInstance sdaiInstance = (SdaiInstance)iInstance;
 
-	loadDraughtingModels();
+	clean(false);
+
+	m_bUpdteVertexBuffers = true;
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (owlInstance != 0)
+	{
+		preLoadInstance(owlInstance);
+	}
+
+	auto pGeometry = new _ap242_geometry(owlInstance, sdaiInstance);
+	addGeometry(pGeometry);
+
+	auto pInstance = new _ap242_instance(
+		_model::getNextInstanceID(),
+		pGeometry,
+		nullptr);
+	addInstance(pInstance);
 
 	scale();
+
+	return pInstance;
 }
 
-/*virtual*/ void _ap242_model::clean() /*override*/
+/*virtual*/ void _ap242_model::clean(bool bCloseModel/*= true*/) /*override*/
 {
-	_ap_model::clean();
+	_ap_model::clean(bCloseModel);
 
 	auto itExpressID2Assembly = m_mapExpressID2Assembly.begin();
 	for (; itExpressID2Assembly != m_mapExpressID2Assembly.end(); itExpressID2Assembly++)
@@ -45,6 +64,20 @@ _ap242_model::_ap242_model()
 		delete pDraughtingModel;
 	}
 	m_vecDraughtingModels.clear();
+}
+
+/*virtual*/ void _ap242_model::attachModelCore() /*override*/
+{
+	if (!m_bLoadInstancesOnDemand)
+	{
+		loadProductDefinitions();
+		loadAssemblies();
+		loadGeometry();
+
+		loadDraughtingModels();
+
+		scale();
+	}
 }
 
 void _ap242_model::loadProductDefinitions()

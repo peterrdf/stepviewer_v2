@@ -25,7 +25,7 @@ zip_file* g_pZipFile = nullptr;
 // ************************************************************************************************
 int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 {
-	if (g_pZipFile == nullptr)
+	if (g_pZipFile == nullptr) 
 	{
 		return -1;
 	}
@@ -40,14 +40,14 @@ class _ap_model_factory
 
 public: // Methods
 
-	static _ap_model* load(_controller* pController, const wchar_t* szModel, bool bMultipleModels)
+	static _ap_model* load(_controller* pController, const wchar_t* szModel, bool bMultipleModels, bool bLoadInstancesOnDemand)
 	{
 #ifdef _USE_LIBZIP
 		fs::path pathModel = szModel;
 
 		/*
 		* IFCZIP
-		*/
+		*/		
 		if (pathModel.extension().string() == ".ifczip")
 		{
 			auto sdaiModel = openIFCZipModel(pathModel);
@@ -58,7 +58,7 @@ public: // Methods
 				return nullptr;
 			}
 
-			auto pModel = new _ifc_model(bMultipleModels);
+			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
 
 			return pModel;
@@ -77,7 +77,9 @@ public: // Methods
 				return nullptr;
 			}
 
-			auto pModel = new _ap242_model();
+			ASSERT(!bMultipleModels); // Not supported!
+			
+			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
@@ -113,14 +115,14 @@ public: // Methods
 			(strFileSchema.Find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
 			(strFileSchema.Find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
 			(strFileSchema.Find(L"AUTOMOTIVE_DESIGN") == 0) ||
-			(strFileSchema.Find(L"AP203") == 0) ||
+			(strFileSchema.Find(L"AP203") == 0) || 
 			(strFileSchema.Find(L"AP209") == 0) ||
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
 			ASSERT(!bMultipleModels); // Not supported!
 
-			auto pModel = new _ap242_model();
+			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
@@ -131,7 +133,7 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
-			auto pModel = new _ifc_model(bMultipleModels);
+			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
 
 			return pModel;
