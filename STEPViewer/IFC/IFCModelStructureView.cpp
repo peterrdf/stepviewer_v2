@@ -1213,9 +1213,15 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
-	if ((iChildrenCount == 0) /*Instance*/ ||
-		(iChildrenCount == iNoGeometryChildrenCount)/*contains/decomposition*/)
+	if (iChildrenCount == 0) /*Instance*/
 	{		
+		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+
+		return;
+	}
+
+	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
+	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 
 		return;
@@ -1235,12 +1241,21 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 		return;
 	}
 
-	if (iSelectedChildrenCount == iChildrenCount)
+	if (iChildrenCount == iSelectedChildrenCount)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		return;
 	}
+
+	if ((iChildrenCount - iNoGeometryChildrenCount) == iSelectedChildrenCount)
+	{
+		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
+
+		return;
+	}
+
+	ASSERT(iChildrenCount > iSelectedChildrenCount);
 
 	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 }
