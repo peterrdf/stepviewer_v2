@@ -701,16 +701,13 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		SdaiInstance sdaiProjectInstance = 0;
 		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
-		// Project
+		// Load
 		LoadProject(pModel, hModel, sdaiProjectInstance);
-
-		// Groups
 		LoadGroups(pModel, hModel);
-
-		// Unreferenced
+		LoadSpaceBoundaries(pModel, hModel);
 		LoadUnreferencedItems(pModel, hModel);
 
-		// UI
+		// Update UI
 		LoadTree_UpdateItem(hModel);
 	} // if (iProjectInstancesCount > 0)
 
@@ -1039,6 +1036,39 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 			} // for (SdaiInteger i = ...
 		} // if (sdaiIsGroupedByInstance != 0)
 	} // for (auto pGroupInstance : ...
+}
+
+void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel)
+{
+	ASSERT(pModel != nullptr);
+
+	if (sdaiGetMemberCount(sdaiGetEntityExtentBN(pModel->getSdaiModel(), "IFCRELSPACEBOUNDARY")) == 0)
+	{
+		return;
+	}
+
+	vector<_ap_instance*> vecBuildingStoreyInstances;
+	pModel->getInstancesByType(L"IFCBUILDINGSTOREY", vecBuildingStoreyInstances);
+
+	if (vecBuildingStoreyInstances.empty())
+	{
+		return;
+	}
+	
+	// Space Boundaries
+	TV_INSERTSTRUCT tvInsertStruct;
+	tvInsertStruct.hParent = hModel;
+	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	tvInsertStruct.item.pszText = L"Space Boundaries";
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+	tvInsertStruct.item.lParam = NULL;
+	HTREEITEM hSpaceBoundaries = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+	for (auto pBuildingStoreyInstance : vecBuildingStoreyInstances)
+	{
+		LoadInstance(pModel, pBuildingStoreyInstance->getSdaiInstance(), hSpaceBoundaries);
+	}
 }
 
 void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel)

@@ -72,6 +72,7 @@ private: // Methods
 	void LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadGroups(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel);
 	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
