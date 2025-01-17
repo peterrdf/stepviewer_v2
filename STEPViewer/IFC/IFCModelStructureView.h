@@ -31,8 +31,9 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	map<_ifc_instance*, HTREEITEM> m_mapInstance2GeometryItem;	
-	map<_ifc_instance*, HTREEITEM> m_mapSelectedInstances;
+	map<_ifc_instance*, vector<HTREEITEM>> m_mapInstanceItems;	
+	_ifc_instance* m_pSelectedInstance;
+
 	
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;

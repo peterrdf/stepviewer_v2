@@ -17,8 +17,8 @@ using namespace std;
 CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
-	, m_mapInstance2GeometryItem()
-	, m_mapSelectedInstances()
+	, m_mapInstanceItems()
+	, m_pSelectedInstance(nullptr)
 	, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
@@ -94,18 +94,34 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance()) : 
 		nullptr;
 
+	// Reset selection
+	if (m_pSelectedInstance != nullptr)
+	{
+		auto itInstanceItems = m_mapInstanceItems.find(m_pSelectedInstance);
+		ASSERT(itInstanceItems != m_mapInstanceItems.end());
+
+		for (auto hGeometry : itInstanceItems->second)
+		{
+			m_pTreeCtrl->SetItemState(hGeometry, 0, TVIS_BOLD);
+		}
+
+		m_pSelectedInstance = nullptr;
+	}	
+
+	// Select
 	if (pSelectedInstance != nullptr)
 	{
-		auto itIInstance2GeometryItem = m_mapInstance2GeometryItem.find(pSelectedInstance);
-	
-		if (itIInstance2GeometryItem != m_mapInstance2GeometryItem.end())
-		{
-			ASSERT(m_mapSelectedInstances.find(pSelectedInstance) == m_mapSelectedInstances.end());
-			m_mapSelectedInstances[pSelectedInstance] = itIInstance2GeometryItem->second;
+		m_pSelectedInstance = pSelectedInstance;
+		
+		auto itInstanceItems = m_mapInstanceItems.find(m_pSelectedInstance);
+		ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
-			m_pTreeCtrl->SetItemState(itIInstance2GeometryItem->second, TVIS_BOLD, TVIS_BOLD);
-			m_pTreeCtrl->EnsureVisible(itIInstance2GeometryItem->second);
+		for (auto hGeometry : itInstanceItems->second)
+		{
+			m_pTreeCtrl->SetItemState(hGeometry, TVIS_BOLD, TVIS_BOLD);
 		}
+
+		m_pTreeCtrl->EnsureVisible(itInstanceItems->second.front());		
 	}
 }
 
@@ -217,14 +233,15 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 		if (pSelectedInstance != nullptr)
 		{
-			auto itIInstance2GeometryItem = m_mapInstance2GeometryItem.find(pSelectedInstance);
-			ASSERT(itIInstance2GeometryItem != m_mapInstance2GeometryItem.end());
+			m_pSelectedInstance = pSelectedInstance;
 
-			ASSERT(m_mapSelectedInstances.find(pSelectedInstance) == m_mapSelectedInstances.end());
-			m_mapSelectedInstances[pSelectedInstance] = itIInstance2GeometryItem->second;
+			auto itInstanceItems = m_mapInstanceItems.find(m_pSelectedInstance);
+			ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
-			m_pTreeCtrl->SetItemState(itIInstance2GeometryItem->second, TVIS_BOLD, TVIS_BOLD);
-			m_pTreeCtrl->EnsureVisible(itIInstance2GeometryItem->second);
+			for (auto hGeometry : itInstanceItems->second)
+			{
+				m_pTreeCtrl->SetItemState(hGeometry, TVIS_BOLD, TVIS_BOLD);
+			}
 		}
 	} // if ((hItem != nullptr) && ...
 }
@@ -626,7 +643,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		}
 
 		// Update the Parents just ones
-		set<HTREEITEM> m_setParents;
+		set<HTREEITEM> setParents;
 		for (auto pInstance : pModel->getInstances())
 		{
 			//#todo#mappeditems		
@@ -634,29 +651,30 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			if (pTargetInstance->getEntityName() == itCommand2Entity->second)
 			{
-				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);				
 
-				auto itInstance2GeometryItem = m_mapInstance2GeometryItem.find(pTargetInstance);
-				ASSERT(itInstance2GeometryItem != m_mapInstance2GeometryItem.end());
-
-				HTREEITEM hGeometryItem = itInstance2GeometryItem->second;
+				auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
+				ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
 				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				m_pTreeCtrl->SetItemImage(hGeometryItem, iImage, iImage);
+				for (auto hGeometry : itInstanceItems->second)
+				{					
+					m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
 
-				ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometryItem));
+					ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometry));
 
-				HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometryItem);
-				ASSERT(hInstanceItem != NULL);
+					HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometry);
+					ASSERT(hInstanceItem != NULL);
 
-				ClickItem_UpdateParent(hInstanceItem, FALSE);
+					ClickItem_UpdateParent(hInstanceItem, FALSE);
 
-				m_setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
+					setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
+				}				
 			}
 		} // for (auto pInstance = ...
 
 		// Update the Parents
-		for (auto hParent : m_setParents)
+		for (auto hParent : setParents)
 		{
 			ClickItem_UpdateParent(hParent);
 		}
@@ -746,16 +764,17 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		tvInsertStruct.item.lParam = NULL;
 		HTREEITEM hProject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		// Instance
+		// Geometry
 		tvInsertStruct.hParent = hProject;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
-		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);		
+		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		m_mapInstance2GeometryItem[ifcInstance] = hInstance;
+		ASSERT(m_mapInstanceItems.find(ifcInstance) == m_mapInstanceItems.end());
+		m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hGeometry };
 
 		// decomposition/contains
 		LoadIsDecomposedBy(pModel, sdaiProjectInstance, hProject);
@@ -953,11 +972,15 @@ void CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiI
 		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		if (m_mapInstance2GeometryItem.find(ifcInstance) == m_mapInstance2GeometryItem.end())
+		auto itInstanceItems = m_mapInstanceItems.find(ifcInstance);
+		if (itInstanceItems != m_mapInstanceItems.end())
 		{
-			// IfcGroup/IfcMappedItem
-			m_mapInstance2GeometryItem[ifcInstance] = hGeometry;
-		}		
+			itInstanceItems->second.push_back(hGeometry);
+		}
+		else
+		{
+			m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hGeometry };
+		}
 
 		// decomposition/nested/contains
 		LoadIsDecomposedBy(pModel, sdaiInstance, hInstance);
@@ -1016,9 +1039,9 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.lParam = (LPARAM)pGroupInstance;
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		assert(m_mapInstance2GeometryItem.find(ifcGroupInstance) == m_mapInstance2GeometryItem.end());
-		m_mapInstance2GeometryItem[ifcGroupInstance] = hGeometry;
-
+		assert(m_mapInstanceItems.find(ifcGroupInstance) == m_mapInstanceItems.end());
+		m_mapInstanceItems[ifcGroupInstance] = vector<HTREEITEM>{ hGeometry };
+		
 		SdaiInstance sdaiIsGroupedByInstance = 0;
 		sdaiGetAttrBN(pGroupInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
 		if (sdaiIsGroupedByInstance != 0)
@@ -1159,8 +1182,8 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.lParam = (LPARAM)pInstance;
 			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-			assert(m_mapInstance2GeometryItem.find(pInstance) == m_mapInstance2GeometryItem.end());
-			m_mapInstance2GeometryItem[pInstance] = hGeometry;
+			assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
+			m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hGeometry };
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
 }
@@ -1466,19 +1489,25 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 
 void CIFCModelStructureView::UnselectAllItems()
 {
-	auto itSelectedIInstance = m_mapSelectedInstances.begin();
-	for (; itSelectedIInstance != m_mapSelectedInstances.end(); itSelectedIInstance++)
-	{
-		m_pTreeCtrl->SetItemState(itSelectedIInstance->second, 0, TVIS_BOLD);
-	}
 
-	m_mapSelectedInstances.clear();
+	if (m_pSelectedInstance != nullptr)
+	{
+		auto itInstanceItems = m_mapInstanceItems.find(m_pSelectedInstance);
+		ASSERT(itInstanceItems != m_mapInstanceItems.end());
+
+		for (auto hGeometry : itInstanceItems->second)
+		{
+			m_pTreeCtrl->SetItemState(hGeometry, 0, TVIS_BOLD);
+		}
+
+		m_pSelectedInstance = nullptr;
+	}
 }
 
 void CIFCModelStructureView::ResetView()
 {
-	m_mapInstance2GeometryItem.clear();
-	m_mapSelectedInstances.clear();
+	m_mapInstanceItems.clear();
+	m_pSelectedInstance = nullptr;
 
 	m_pTreeCtrl->DeleteAllItems();
 
