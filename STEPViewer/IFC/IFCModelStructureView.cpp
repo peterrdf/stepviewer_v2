@@ -929,7 +929,36 @@ void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstan
 	} // for (SdaiInteger i = ...
 }
 
-void CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
+void CIFCModelStructureView::LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent)
+{
+	ASSERT(pModel != nullptr);
+
+	SdaiAggr sdaiContainsElementsAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiContainsElementsAggr);
+
+	if (sdaiContainsElementsAggr == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELSPACEBOUNDARY");
+
+	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
+	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i)
+	{
+		SdaiInstance sdaiBoundedByInstance = 0;
+		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+
+		if (sdaiGetInstanceType(sdaiBoundedByInstance) != sdaiRelSpaceBoundaryEntity)
+		{
+			continue;
+		}
+
+		LoadInstance(pModel, sdaiBoundedByInstance, hParent);
+	}
+}
+
+HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, bool bLoadChildren/* = true*/)
 {
 	ASSERT(pModel != nullptr);
 
@@ -938,59 +967,65 @@ void CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiI
 	{
 		ASSERT(FALSE);
 
-		return;
+		return NULL;
 	}
 
 	//#todo#mappeditems
 	ASSERT(pGeometry->getInstances().size() == 1);
+
 	_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-	if (ifcInstance)
+	if (!ifcInstance)
 	{
-		ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
+		ASSERT(FALSE);
 
-		wstring strItem = _ap_instance::getName(sdaiInstance);
+		return NULL;
+	}
+		
+	//#tbd
+	//ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
 
-		// Instance
-		TV_INSERTSTRUCT tvInsertStruct;
-		tvInsertStruct.hParent = hParent;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		tvInsertStruct.item.lParam = NULL;
-		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	wstring strItem = _ap_instance::getName(sdaiInstance);
 
-		// Geometry
-		tvInsertStruct.hParent = hInstance;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			ifcInstance->hasGeometry() ?
-			(ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
-			IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	// Instance
+	TV_INSERTSTRUCT tvInsertStruct;
+	tvInsertStruct.hParent = hParent;
+	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+	tvInsertStruct.item.lParam = NULL;
+	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		auto itInstanceItems = m_mapInstanceItems.find(ifcInstance);
-		if (itInstanceItems != m_mapInstanceItems.end())
-		{
-			itInstanceItems->second.push_back(hGeometry);
-		}
-		else
-		{
-			m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hGeometry };
-		}
+	// Geometry
+	tvInsertStruct.hParent = hInstance;
+	tvInsertStruct.hInsertAfter = TVI_LAST;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	tvInsertStruct.item.pszText = ITEM_GEOMETRY;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
+		ifcInstance->hasGeometry() ?
+		(ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+		IMAGE_NO_GEOMETRY;
+	tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
+	HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		// decomposition/nested/contains
+	auto itInstanceItems = m_mapInstanceItems.find(ifcInstance);
+	if (itInstanceItems != m_mapInstanceItems.end())
+	{
+		itInstanceItems->second.push_back(hGeometry);
+	}
+	else
+	{
+		m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hGeometry };
+	}
+
+	if (bLoadChildren)
+	{
 		LoadIsDecomposedBy(pModel, sdaiInstance, hInstance);
 		LoadIsNestedBy(pModel, sdaiInstance, hInstance);
 		LoadContainsElements(pModel, sdaiInstance, hInstance);
-	} // if (ifcInstance)
-	else
-	{
-		ASSERT(FALSE);
-	}
+	}		
+
+	return hInstance;	
 }
 
 void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
@@ -1090,8 +1125,73 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 
 	for (auto pBuildingStoreyInstance : vecBuildingStoreyInstances)
 	{
-		LoadInstance(pModel, pBuildingStoreyInstance->getSdaiInstance(), hSpaceBoundaries);
+		_ptr<_ifc_instance> ifcBuildingStoreyInstance(pBuildingStoreyInstance);
+
+		wstring strItem = _ap_instance::getName(pBuildingStoreyInstance->getSdaiInstance());
+
+		// Instance
+		tvInsertStruct.hParent = hSpaceBoundaries;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
+		tvInsertStruct.item.lParam = NULL;
+		HTREEITEM hBuildingStorey = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		auto itInstanceItems = m_mapInstanceItems.find(ifcBuildingStoreyInstance);
+		if (itInstanceItems != m_mapInstanceItems.end())
+		{
+			itInstanceItems->second.push_back(hBuildingStorey);
+		}
+		else
+		{
+			m_mapInstanceItems[ifcBuildingStoreyInstance] = vector<HTREEITEM>{ hBuildingStorey };
+		}
+
+		LoadBuildingStoreyChildren(pModel, pBuildingStoreyInstance->getSdaiInstance(), hBuildingStorey);
+	} // for (auto pBuildingStoreyInstance : 
+}
+
+void CIFCModelStructureView::LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey)
+{
+	ASSERT(pModel != nullptr);
+
+	SdaiAggr sdaiIsDecomposedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "IsDecomposedBy", sdaiAGGR, &sdaiIsDecomposedByAggr);
+
+	if (sdaiIsDecomposedByAggr == nullptr)
+	{
+		return;
 	}
+
+	SdaiEntity sdaiRelAggregatesEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELAGGREGATES");
+	
+	SdaiInteger iIsDecomposedByInstancesCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
+	for (SdaiInteger i = 0; i < iIsDecomposedByInstancesCount; ++i)
+	{
+		SdaiInstance sdaiIsDecomposedByInstance = 0;
+		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
+
+		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity)
+		{
+			continue;
+		}
+
+		SdaiAggr sdaiRelatedObjectsAggr = 0;
+		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
+
+		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j)
+		{
+			SdaiInstance sdaiRelatedObjectsInstance = 0;
+			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+
+			HTREEITEM hSpace = LoadInstance(pModel, sdaiRelatedObjectsInstance, hBuildingStorey, false);
+			ASSERT(hSpace != NULL);
+
+			LoadBoundedBy(pModel, sdaiRelatedObjectsInstance, hSpace);
+		}
+	} // for (SdaiInteger i = ...	
 }
 
 void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel)
@@ -1110,6 +1210,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 
 		//#todo#mappeditems
 		ASSERT(pGeometry->getInstances().size() == 1);
+
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 		if (!ifcGeometry->getIsReferenced())
 		{
@@ -1182,8 +1283,9 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.lParam = (LPARAM)pInstance;
 			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-			assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
-			m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hGeometry };
+			//#tbd
+			//assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
+			//m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hGeometry };
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
 }
