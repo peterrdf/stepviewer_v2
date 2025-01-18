@@ -71,8 +71,11 @@ private: // Methods
 	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	void LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	void LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	void LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
+	HTREEITEM LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, bool bLoadChildren = true);
 	void LoadGroups(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey);
 	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
