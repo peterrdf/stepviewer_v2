@@ -603,7 +603,7 @@ void _controller::zoomOut()
 	}
 }
 
-void _controller::saveSelectedInstance(OwlInstance owlInstance)
+void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 
@@ -611,21 +611,10 @@ void _controller::saveSelectedInstance(OwlInstance owlInstance)
 	wstring strUniqueName;
 	_rdf_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
 
-	CString strValidPath = strUniqueName.c_str();
-	strValidPath.Replace(_T("\\"), _T("-"));
-	strValidPath.Replace(_T("/"), _T("-"));
-	strValidPath.Replace(_T(":"), _T("-"));
-	strValidPath.Replace(_T("*"), _T("-"));
-	strValidPath.Replace(_T("?"), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("<"), _T("-"));
-	strValidPath.Replace(_T(">"), _T("-"));
-	strValidPath.Replace(_T("|"), _T("-"));
+	CString strValidFileName = validateFileName(strUniqueName.c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), strValidPath,
+	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
@@ -634,6 +623,34 @@ void _controller::saveSelectedInstance(OwlInstance owlInstance)
 	}
 
 	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName());
+}
+
+/*virtual*/ void _controller::saveSelectedInstance()
+{
+	assert(getSelectedInstance() != nullptr);
+
+	saveInstance(getSelectedInstance()->getOwlInstance());
+}
+
+/*static*/ wstring _controller::validateFileName(const wchar_t* szFileName)
+{
+	assert((szFileName != nullptr) && (wcslen(szFileName) > 0));
+
+	CStringW strValidFileName = szFileName;
+	strValidFileName.Replace(_T("\\"), _T("-"));
+	strValidFileName.Replace(_T("/"), _T("-"));
+	strValidFileName.Replace(_T(":"), _T("-"));
+	strValidFileName.Replace(_T("*"), _T("-"));
+	strValidFileName.Replace(_T("?"), _T("-"));
+	strValidFileName.Replace(_T("\""), _T("-"));
+	strValidFileName.Replace(_T("\""), _T("-"));
+	strValidFileName.Replace(_T("\""), _T("-"));
+	strValidFileName.Replace(_T("<"), _T("-"));
+	strValidFileName.Replace(_T(">"), _T("-"));
+	strValidFileName.Replace(_T("|"), _T("-"));
+	strValidFileName.Replace(_T("\t"), _T("-"));
+
+	return (LPCWSTR)strValidFileName;
 }
 
 void _controller::setTargetInstance(_view* pSender, _instance* pInstance)

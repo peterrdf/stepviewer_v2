@@ -21,7 +21,7 @@
 TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
 TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
-
+// ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveSelectedInstance() /*override*/
 {
 	ASSERT(getModel() != nullptr);
@@ -31,21 +31,10 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 		return;
 	} 
 
-	CString strValidPath = dynamic_cast<_ap_instance*>(getSelectedInstance())->getName().c_str();
-	strValidPath.Replace(_T("\\"), _T("-"));
-	strValidPath.Replace(_T("/"), _T("-"));
-	strValidPath.Replace(_T(":"), _T("-"));
-	strValidPath.Replace(_T("*"), _T("-"));
-	strValidPath.Replace(_T("?"), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("\""), _T("-"));
-	strValidPath.Replace(_T("<"), _T("-"));
-	strValidPath.Replace(_T(">"), _T("-"));
-	strValidPath.Replace(_T("|"), _T("-"));
+	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(getSelectedInstance())->getName().c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), strValidPath,
+	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
@@ -53,63 +42,63 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 		return;
 	}
 
-	auto pProductInstance = dynamic_cast<_ap_instance*>(getSelectedInstance());
-	if (pProductInstance != nullptr)
-	{
-		OwlModel owlModel = getModel()->getOwlModel();
-		ASSERT(owlModel != 0);
-
-		OwlInstance owlInstance = getSelectedInstance()->getOwlInstance();
-		if (owlInstance == 0)
-		{
-			owlInstance = _ap_geometry::buildOwlInstance(pProductInstance->getSdaiInstance());
-			ASSERT(owlInstance != 0);
-		}
-
-		OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
-		ASSERT(owlMatrixInstance != 0);
-
-		vector<double> vecMatrix
-		{
-			pProductInstance->getTransformationMatrix()->_11,
-			pProductInstance->getTransformationMatrix()->_12,
-			pProductInstance->getTransformationMatrix()->_13,
-			pProductInstance->getTransformationMatrix()->_21,
-			pProductInstance->getTransformationMatrix()->_22,
-			pProductInstance->getTransformationMatrix()->_23,
-			pProductInstance->getTransformationMatrix()->_31,
-			pProductInstance->getTransformationMatrix()->_32,
-			pProductInstance->getTransformationMatrix()->_33,
-			pProductInstance->getTransformationMatrix()->_41,
-			pProductInstance->getTransformationMatrix()->_42,
-			pProductInstance->getTransformationMatrix()->_43,
-		};
-
-		SetDatatypeProperty(
-			owlMatrixInstance,
-			GetPropertyByName(owlModel, "coordinates"),
-			vecMatrix.data(),
-			vecMatrix.size());
-
-		OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
-		ASSERT(owlTransformationInstance != 0);
-
-		SetObjectProperty(
-			owlTransformationInstance,
-			GetPropertyByName(owlModel, "object"),
-			owlInstance);
-
-		SetObjectProperty(
-			owlTransformationInstance,
-			GetPropertyByName(owlModel, "matrix"),
-			owlMatrixInstance);
-
-		SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
-	}
-	else
+	auto pAPInstance = dynamic_cast<_ap_instance*>(getSelectedInstance());
+	if (pAPInstance == nullptr)
 	{
 		ASSERT(FALSE);
+
+		return;
 	}
+
+	OwlModel owlModel = getModel()->getOwlModel();
+	ASSERT(owlModel != 0);
+
+	OwlInstance owlInstance = getSelectedInstance()->getOwlInstance();
+	if (owlInstance == 0)
+	{
+		owlInstance = _ap_geometry::buildOwlInstance(pAPInstance->getSdaiInstance());
+		ASSERT(owlInstance != 0);
+	}
+
+	OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
+	ASSERT(owlMatrixInstance != 0);
+
+	vector<double> vecMatrix
+	{
+		pAPInstance->getTransformationMatrix()->_11,
+		pAPInstance->getTransformationMatrix()->_12,
+		pAPInstance->getTransformationMatrix()->_13,
+		pAPInstance->getTransformationMatrix()->_21,
+		pAPInstance->getTransformationMatrix()->_22,
+		pAPInstance->getTransformationMatrix()->_23,
+		pAPInstance->getTransformationMatrix()->_31,
+		pAPInstance->getTransformationMatrix()->_32,
+		pAPInstance->getTransformationMatrix()->_33,
+		pAPInstance->getTransformationMatrix()->_41,
+		pAPInstance->getTransformationMatrix()->_42,
+		pAPInstance->getTransformationMatrix()->_43,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(owlModel, "coordinates"),
+		vecMatrix.data(),
+		vecMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
+	ASSERT(owlTransformationInstance != 0);
+
+	SetObjectProperty(
+		owlTransformationInstance,
+		GetPropertyByName(owlModel, "object"),
+		owlInstance);
+
+	SetObjectProperty(
+		owlTransformationInstance,
+		GetPropertyByName(owlModel, "matrix"),
+		owlMatrixInstance);
+
+	SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
 }
 
 void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)

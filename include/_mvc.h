@@ -242,9 +242,10 @@ public: // Methods
 	void zoomToSelectedInstance();
 	void zoomOut();
 
-	// Save
-	virtual void saveSelectedInstance() PURE;
-	void saveSelectedInstance(OwlInstance owlInstance);
+	// Save	
+	void saveInstance(OwlInstance owlInstance);
+	virtual void saveSelectedInstance();
+	static wstring validateFileName(const wchar_t* szFileName);
 
 	// Events
 	void showMetaInformation(_instance* /*pInstance*/) { assert(false); }
