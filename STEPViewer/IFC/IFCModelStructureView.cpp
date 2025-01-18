@@ -722,7 +722,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		// Load
 		LoadProject(pModel, hModel, sdaiProjectInstance);
 		LoadGroups(pModel, hModel);
-		LoadSpaceBoundaries(pModel, hModel);
+		//LoadSpaceBoundaries(pModel, hModel); // TEST
 		LoadUnreferencedItems(pModel, hModel);
 
 		// Update UI
@@ -981,8 +981,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		return NULL;
 	}
 		
-	//#tbd
-	//ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
+	ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
 
 	wstring strItem = _ap_instance::getName(sdaiInstance);
 
@@ -1283,9 +1282,8 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.lParam = (LPARAM)pInstance;
 			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-			//#tbd
-			//assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
-			//m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hGeometry };
+			assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
+			m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hGeometry };
 		} // for (size_t iInstance = ...
 	} // for (; itUnreferencedItems != ...
 }
