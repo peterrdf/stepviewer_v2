@@ -1125,6 +1125,15 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 	{
 		return;
 	}
+
+	SdaiAggr sdaiBuildingStoreyAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCBUILDINGSTOREY");
+	ASSERT(sdaiBuildingStoreyAggr != nullptr);
+
+	SdaiInteger iBuildingStoreyInstancesCount = sdaiGetMemberCount(sdaiBuildingStoreyAggr);
+	if (iBuildingStoreyInstancesCount == 0)
+	{
+		return;
+	}
 	
 	// Space Boundaries
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -1136,11 +1145,23 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 	tvInsertStruct.item.lParam = NULL;
 	HTREEITEM hSpaceBoundaries = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	for (auto pBuildingStoreyInstance : vecBuildingStoreyInstances)
+	for (SdaiInteger iBuildingStoreyInstance = 0; iBuildingStoreyInstance < iBuildingStoreyInstancesCount; iBuildingStoreyInstance++)
 	{
-		_ptr<_ifc_instance> ifcBuildingStoreyInstance(pBuildingStoreyInstance);
+		SdaiInstance sdaiBuildingStoreyInstance = 0;
+		sdaiGetAggrByIndex(sdaiBuildingStoreyAggr, iBuildingStoreyInstance, sdaiINSTANCE, &sdaiBuildingStoreyInstance);
+		ASSERT(sdaiBuildingStoreyInstance != 0);
 
-		wstring strItem = _ap_instance::getName(pBuildingStoreyInstance->getSdaiInstance());
+		auto pGeometry = pModel->getGeometryByInstance(sdaiBuildingStoreyInstance);
+		ASSERT(pGeometry != nullptr);
+
+		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		ASSERT(pGeometry->getInstances().size() == 1);
+
+		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
+		ASSERT(ifcInstance);
+
+		wstring strItem = _ap_instance::getName(ifcInstance->getSdaiInstance());
 
 		// Instance
 		tvInsertStruct.hParent = hSpaceBoundaries;
@@ -1151,18 +1172,18 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 		tvInsertStruct.item.lParam = NULL;
 		HTREEITEM hBuildingStorey = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		auto itInstanceItems = m_mapInstanceItems.find(ifcBuildingStoreyInstance);
+		auto itInstanceItems = m_mapInstanceItems.find(ifcInstance);
 		if (itInstanceItems != m_mapInstanceItems.end())
 		{
 			itInstanceItems->second.push_back(hBuildingStorey);
 		}
 		else
 		{
-			m_mapInstanceItems[ifcBuildingStoreyInstance] = vector<HTREEITEM>{ hBuildingStorey };
+			m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hBuildingStorey };
 		}
 
-		LoadBuildingStoreyChildren(pModel, pBuildingStoreyInstance->getSdaiInstance(), hBuildingStorey);
-	} // for (auto pBuildingStoreyInstance : 
+		LoadBuildingStoreyChildren(pModel, ifcInstance->getSdaiInstance(), hBuildingStorey);
+	} // for (SdaiInteger iBuildingStoreyInstance = ...
 }
 
 void CIFCModelStructureView::LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey)
