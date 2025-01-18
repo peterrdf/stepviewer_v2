@@ -1031,9 +1031,11 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 {
 	ASSERT(pModel != nullptr);
 
-	vector<_ap_instance*> vecGroupInstances;
-	pModel->getInstancesByType(L"IFCGROUP", vecGroupInstances);
-	if (vecGroupInstances.empty())
+	SdaiAggr sdaiGroupAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCGROUP");
+	ASSERT(sdaiGroupAggr != nullptr);
+
+	SdaiInteger iGroupInstancesCount = sdaiGetMemberCount(sdaiGroupAggr);
+	if (iGroupInstancesCount == 0)
 	{
 		return;
 	}
@@ -1048,11 +1050,23 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 	tvInsertStruct.item.lParam = NULL;
 	HTREEITEM hGroups = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	for (auto pGroupInstance : vecGroupInstances)
+	for (SdaiInteger iGroupInstance = 0; iGroupInstance < iGroupInstancesCount; iGroupInstance++)
 	{
-		_ptr<_ifc_instance> ifcGroupInstance(pGroupInstance);
+		SdaiInstance sdaiGroupInstance = 0;
+		sdaiGetAggrByIndex(sdaiGroupAggr, iGroupInstance, sdaiINSTANCE, &sdaiGroupInstance);
+		ASSERT(sdaiGroupInstance != 0);
 
-		wstring strItem = _ap_instance::getName(pGroupInstance->getSdaiInstance());
+		auto pGeometry = pModel->getGeometryByInstance(sdaiGroupInstance);
+		ASSERT(pGeometry != nullptr);
+
+		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);		
+		ASSERT(pGeometry->getInstances().size() == 1);
+
+		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
+		ASSERT(ifcInstance);
+
+		wstring strItem = _ap_instance::getName(ifcInstance->getSdaiInstance());
 
 		// Instance
 		tvInsertStruct.hParent = hGroups;
@@ -1069,15 +1083,15 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			pGroupInstance->hasGeometry() ? (pGroupInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = (LPARAM)pGroupInstance;
+			ifcInstance->hasGeometry() ? (ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
+		tvInsertStruct.item.lParam = (LPARAM)ifcInstance;
 		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		assert(m_mapInstanceItems.find(ifcGroupInstance) == m_mapInstanceItems.end());
-		m_mapInstanceItems[ifcGroupInstance] = vector<HTREEITEM>{ hGeometry };
+		assert(m_mapInstanceItems.find(ifcInstance) == m_mapInstanceItems.end());
+		m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hGeometry };
 		
 		SdaiInstance sdaiIsGroupedByInstance = 0;
-		sdaiGetAttrBN(pGroupInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
+		sdaiGetAttrBN(ifcInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
 		if (sdaiIsGroupedByInstance != 0)
 		{
 			SdaiAggr sdaiRelatedObjectsAggr = nullptr;
@@ -1092,7 +1106,7 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 				LoadInstance(pModel, sdaiRelatedObject, hGroup);
 			} // for (SdaiInteger i = ...
 		} // if (sdaiIsGroupedByInstance != 0)
-	} // for (auto pGroupInstance : ...
+	} // for (SdaiInteger iGroupInstance = ...
 }
 
 void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel)
