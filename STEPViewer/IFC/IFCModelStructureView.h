@@ -77,7 +77,13 @@ private: // Methods
 	void LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel);
 	void LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey);
 	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
+
 	void LoadTree_UpdateItem(HTREEITEM hParent);
+
+	void EnableChildren(HTREEITEM hParent, bool bEnable);
+	void UpdateChildrenUI(HTREEITEM hParent);
+	void UpdateParentsUI(HTREEITEM hParent);
+
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
 	void ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive = TRUE);
 	void UnselectAllItems();
