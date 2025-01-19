@@ -132,23 +132,26 @@ public: // Methods
 		return nullptr;
 	}
 
-	void getInstancesByType(const wchar_t* szType, vector<_ap_instance*>& vecInstances)
+	void getGeometriesByType(const char* szType, vector<_ap_geometry*>& vecGeometries)
 	{
-		vecInstances.clear();
+		assert((szType != nullptr) && (strlen(szType) > 0));
 
-		CString strTargetType = szType;
-		strTargetType.MakeUpper();
+		vecGeometries.clear();
 
-		for (auto pInstance : getInstances())
+		SdaiAggr sdaiGroupAggr = sdaiGetEntityExtentBN(getSdaiModel(), szType);
+		ASSERT(sdaiGroupAggr != nullptr);
+
+		SdaiInteger iInstancesCount = sdaiGetMemberCount(sdaiGroupAggr);
+		for (SdaiInteger i = 0; i < iInstancesCount; i++)
 		{
-			_ptr<_ap_instance> apInstance(pInstance);
-			CString strType = apInstance->getEntityName();
-			strType.MakeUpper();
+			SdaiInstance sdaiInstance = 0;
+			sdaiGetAggrByIndex(sdaiGroupAggr, i, sdaiINSTANCE, &sdaiInstance);
+			assert(sdaiInstance != 0);
 
-			if (strType == strTargetType)
-			{
-				vecInstances.push_back(apInstance);
-			}
+			auto pGeometry = getGeometryByInstance(sdaiInstance);
+			assert(pGeometry != nullptr);
+
+			vecGeometries.push_back(_ptr<_ap_geometry>(pGeometry));
 		}
 	}
 

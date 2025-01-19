@@ -1031,11 +1031,10 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 {
 	ASSERT(pModel != nullptr);
 
-	SdaiAggr sdaiGroupAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCGROUP");
-	ASSERT(sdaiGroupAggr != nullptr);
+	vector<_ap_geometry*> vecGeometries;
+	pModel->getGeometriesByType("IFCGROUP", vecGeometries);
 
-	SdaiInteger iGroupInstancesCount = sdaiGetMemberCount(sdaiGroupAggr);
-	if (iGroupInstancesCount == 0)
+	if (vecGeometries.empty())
 	{
 		return;
 	}
@@ -1050,13 +1049,8 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 	tvInsertStruct.item.lParam = NULL;
 	HTREEITEM hGroups = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	for (SdaiInteger iGroupInstance = 0; iGroupInstance < iGroupInstancesCount; iGroupInstance++)
+	for (auto pGeometry : vecGeometries)
 	{
-		SdaiInstance sdaiGroupInstance = 0;
-		sdaiGetAggrByIndex(sdaiGroupAggr, iGroupInstance, sdaiINSTANCE, &sdaiGroupInstance);
-		ASSERT(sdaiGroupInstance != 0);
-
-		auto pGeometry = pModel->getGeometryByInstance(sdaiGroupInstance);
 		ASSERT(pGeometry != nullptr);
 
 		//#todo#mappeditems
@@ -1118,22 +1112,13 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 		return;
 	}
 
-	vector<_ap_instance*> vecBuildingStoreyInstances;
-	pModel->getInstancesByType(L"IFCBUILDINGSTOREY", vecBuildingStoreyInstances);
+	vector<_ap_geometry*> vecGeometries;
+	pModel->getGeometriesByType("IFCBUILDINGSTOREY", vecGeometries);
 
-	if (vecBuildingStoreyInstances.empty())
+	if (vecGeometries.empty())
 	{
 		return;
-	}
-
-	SdaiAggr sdaiBuildingStoreyAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCBUILDINGSTOREY");
-	ASSERT(sdaiBuildingStoreyAggr != nullptr);
-
-	SdaiInteger iBuildingStoreyInstancesCount = sdaiGetMemberCount(sdaiBuildingStoreyAggr);
-	if (iBuildingStoreyInstancesCount == 0)
-	{
-		return;
-	}
+	}	
 	
 	// Space Boundaries
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -1145,13 +1130,8 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 	tvInsertStruct.item.lParam = NULL;
 	HTREEITEM hSpaceBoundaries = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	for (SdaiInteger iBuildingStoreyInstance = 0; iBuildingStoreyInstance < iBuildingStoreyInstancesCount; iBuildingStoreyInstance++)
+	for (auto pGeometry : vecGeometries)
 	{
-		SdaiInstance sdaiBuildingStoreyInstance = 0;
-		sdaiGetAggrByIndex(sdaiBuildingStoreyAggr, iBuildingStoreyInstance, sdaiINSTANCE, &sdaiBuildingStoreyInstance);
-		ASSERT(sdaiBuildingStoreyInstance != 0);
-
-		auto pGeometry = pModel->getGeometryByInstance(sdaiBuildingStoreyInstance);
 		ASSERT(pGeometry != nullptr);
 
 		//#todo#mappeditems
