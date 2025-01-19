@@ -617,18 +617,16 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				ResetTree(false);
 
 				auto itInstance2Item = m_mapInstance2Item.find(pTargetInstance);
-				if (itInstance2Item == m_mapInstance2Item.end())
-				{
-					ASSERT(FALSE);
-
-					return;
-				}
-
+				ASSERT(itInstance2Item != m_mapInstance2Item.end());
 				ASSERT(itInstance2Item->second != NULL);
-				m_pTreeCtrl->SetItemImage(itInstance2Item->second, IMAGE_SELECTED, IMAGE_SELECTED);
 
-				UpdateChildrenUI(itInstance2Item->second);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(itInstance2Item->second));
+				HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(itInstance2Item->second);
+				ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
+
+				m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
+
+				UpdateChildrenUI(hGeometry);
+				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hGeometry));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
