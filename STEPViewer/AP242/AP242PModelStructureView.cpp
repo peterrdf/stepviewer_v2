@@ -231,12 +231,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
 				}
 				
-				UpdateChildrenItemData(pItemData, false);
+				Model_EnableChildren(pItemData, false);
 				
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-				UpdateChildrenUI(hItem);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hItem));
+				Tree_UpdateChildren(hItem);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -267,12 +267,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(true);
 				}
 
-				UpdateChildrenItemData(pItemData, true);
+				Model_EnableChildren(pItemData, true);
 
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
-				UpdateChildrenUI(hItem);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hItem));
+				Tree_UpdateChildren(hItem);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -596,10 +596,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 				m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 				
-				UpdateChildrenItemData(pItemData, pTargetInstance->getEnable());
+				Model_EnableChildren(pItemData, pTargetInstance->getEnable());
 				
-				UpdateChildrenUI(hItem);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hItem));
+				Tree_UpdateChildren(hItem);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 								
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -625,8 +625,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
 
-				UpdateChildrenUI(hGeometry);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hGeometry));
+				Tree_UpdateChildren(hGeometry);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -1178,7 +1178,7 @@ void CAP242PModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
 	}
 }
 
-void CAP242PModelStructureView::UpdateChildrenItemData(CAP242ItemData* pParent, bool bEnable)
+void CAP242PModelStructureView::Model_EnableChildren(CAP242ItemData* pParent, bool bEnable)
 {
 	if (pParent == nullptr)
 	{
@@ -1199,11 +1199,11 @@ void CAP242PModelStructureView::UpdateChildrenItemData(CAP242ItemData* pParent, 
 			pChild->GetInstance<_ap242_draughting_model>()->enableInstances(bEnable);
 		}
 
-		UpdateChildrenItemData(pChild, bEnable);
+		Model_EnableChildren(pChild, bEnable);
 	} // for (size_t iChild = ...
 }
 
-void CAP242PModelStructureView::UpdateChildrenUI(HTREEITEM hParent)
+void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1241,13 +1241,13 @@ void CAP242PModelStructureView::UpdateChildrenUI(HTREEITEM hParent)
 
 		m_pTreeCtrl->SetItemImage(hChild, iParentImage, iParentImage);
 
-		UpdateChildrenUI(hChild);
+		Tree_UpdateChildren(hChild);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 }
 
-void CAP242PModelStructureView::UpdateParentsUI(HTREEITEM hParent)
+void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1312,19 +1312,19 @@ void CAP242PModelStructureView::UpdateParentsUI(HTREEITEM hParent)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else if (iSelectedChildrenCount == 0)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else if (iSelectedChildrenCount == iChildrenCount)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else
 	{
@@ -1332,7 +1332,7 @@ void CAP242PModelStructureView::UpdateParentsUI(HTREEITEM hParent)
 
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 }
 

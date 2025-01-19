@@ -80,9 +80,9 @@ private: // Methods
 
 	void LoadTree_UpdateItem(HTREEITEM hParent);
 
-	void EnableChildren(HTREEITEM hParent, bool bEnable);
-	void UpdateChildrenUI(HTREEITEM hParent);
-	void UpdateParentsUI(HTREEITEM hParent);
+	void Model_EnableChildren(HTREEITEM hParent, bool bEnable);
+	void Tree_UpdateChildren(HTREEITEM hParent);
+	void Tree_UpdateParents(HTREEITEM hParent);
 
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
 	void ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive = TRUE);

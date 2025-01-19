@@ -194,12 +194,12 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance->setEnable(false);
 				}
 
-				EnableChildren(hItem, false);
+				Model_EnableChildren(hItem, false);
 
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-				UpdateChildrenUI(hItem);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hItem));
+				Tree_UpdateChildren(hItem);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -223,12 +223,12 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance->setEnable(true);
 				}
 
-				EnableChildren(hItem, true);
+				Model_EnableChildren(hItem, true);
 
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);				
 
-				UpdateChildrenUI(hItem);
-				UpdateParentsUI(m_pTreeCtrl->GetParentItem(hItem));
+				Tree_UpdateChildren(hItem);
+				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -1455,7 +1455,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 }
 
-void CIFCModelStructureView::EnableChildren(HTREEITEM hParent, bool bEnable)
+void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hParent, bool bEnable)
 {
 	if (hParent == nullptr)
 	{
@@ -1483,13 +1483,13 @@ void CIFCModelStructureView::EnableChildren(HTREEITEM hParent, bool bEnable)
 			pInstance->setEnable(bEnable);
 		}
 
-		EnableChildren(hChild, bEnable);
+		Model_EnableChildren(hChild, bEnable);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 }
 
-void CIFCModelStructureView::UpdateChildrenUI(HTREEITEM hParent)
+void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1527,13 +1527,13 @@ void CIFCModelStructureView::UpdateChildrenUI(HTREEITEM hParent)
 
 		m_pTreeCtrl->SetItemImage(hChild, iParentImage, iParentImage);
 
-		UpdateChildrenUI(hChild);
+		Tree_UpdateChildren(hChild);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 }
 
-void CIFCModelStructureView::UpdateParentsUI(HTREEITEM hParent)
+void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hParent)
 {
 	if (hParent == nullptr)
 	{
@@ -1598,19 +1598,19 @@ void CIFCModelStructureView::UpdateParentsUI(HTREEITEM hParent)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else if (iSelectedChildrenCount == 0)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else if (iSelectedChildrenCount == iChildrenCount)
 	{
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 	else
 	{
@@ -1618,7 +1618,7 @@ void CIFCModelStructureView::UpdateParentsUI(HTREEITEM hParent)
 
 		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		UpdateParentsUI(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
 	}
 }
 
