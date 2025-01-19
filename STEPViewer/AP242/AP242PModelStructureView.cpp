@@ -216,10 +216,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						{
 							pItemData->GetInstance<_instance>()->setEnable(false);
 						}
-					else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)
-					{
-						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
-					}
+						else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)
+						{
+							pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
+						}
 				}					
 				
 				UpdateChildrenItemData(pItemData, false);
@@ -721,8 +721,7 @@ void CAP242PModelStructureView::LoadModel()
 	pModelItemData->TreeItem() = hModel;
 
 	// Header
-	HTREEITEM hHeader = m_pTreeCtrl->InsertItem(_T("Header"), IMAGE_PROPERTY_SET, IMAGE_PROPERTY_SET, hModel);
-	LoadHeader(hHeader);
+	LoadHeader(hModel);
 
 	//
 	// Roots
