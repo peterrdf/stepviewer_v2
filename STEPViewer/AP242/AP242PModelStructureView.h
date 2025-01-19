@@ -97,8 +97,8 @@ private: // Methods
 	void ResetTree(bool bEnable);
 	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void Model_EnableChildren(CAP242ItemData* pParent, bool bEnable);
-	void Tree_UpdateChildren(HTREEITEM hParent);
-	void Tree_UpdateParents(HTREEITEM hParent);
+	void Tree_UpdateChildren(HTREEITEM hItem);
+	void Tree_UpdateParents(HTREEITEM hItem);
 	
 	void ResetView();
 };

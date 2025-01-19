@@ -1203,27 +1203,27 @@ void CAP242PModelStructureView::Model_EnableChildren(CAP242ItemData* pParent, bo
 	} // for (size_t iChild = ...
 }
 
-void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hParent)
+void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 {
-	if (hParent == nullptr)
+	if (hItem == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (!m_pTreeCtrl->ItemHasChildren(hParent))
+	if (!m_pTreeCtrl->ItemHasChildren(hItem))
 	{
 		return;
 	}
 
 	int iParentImage = -1;
 	int iParentSelectedImage = -1;
-	m_pTreeCtrl->GetItemImage(hParent, iParentImage, iParentSelectedImage);
+	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
 
 	ASSERT(iParentImage == iParentSelectedImage);
 
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		int iImage, iSelectedImage = -1;
@@ -1247,20 +1247,20 @@ void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hParent)
 	} // while (hChild != nullptr)
 }
 
-void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hParent)
+void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 {
-	if (hParent == nullptr)
+	if (hItem == nullptr)
 	{
 		return;
 	}
 
-	ASSERT(m_pTreeCtrl->ItemHasChildren(hParent));
+	ASSERT(m_pTreeCtrl->ItemHasChildren(hItem));
 
 	int iChildrenCount = 0;
 	int iSelectedChildrenCount = 0;
 	int iSemiSelectedChildrenCount = 0;
 
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		int iImage, iSelectedImage = -1;
@@ -1310,29 +1310,29 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hParent)
 
 	if (iSemiSelectedChildrenCount > 0)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
+		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 	}
 	else if (iSelectedChildrenCount == 0)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+		m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
-		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 	}
 	else if (iSelectedChildrenCount == iChildrenCount)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
+		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
-		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 	}
 	else
 	{
 		ASSERT(iSelectedChildrenCount < iChildrenCount);
 
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
+		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
-		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hParent));
+		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 	}
 }
 
