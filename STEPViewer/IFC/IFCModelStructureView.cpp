@@ -211,7 +211,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					//
 
 					auto itInstanceItems = m_mapInstanceItems.find(pInstance);
-					assert(itInstanceItems != m_mapInstanceItems.end());
+					ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
 					for (auto hInstance : itInstanceItems->second)
 					{
@@ -272,7 +272,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					//
 
 					auto itInstanceItems = m_mapInstanceItems.find(pInstance);
-					assert(itInstanceItems != m_mapInstanceItems.end());
+					ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
 					for (auto hInstance : itInstanceItems->second)
 					{
@@ -634,7 +634,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 
 					auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
-					assert(itInstanceItems != m_mapInstanceItems.end());
+					ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
 					for (auto hInstance : itInstanceItems->second)
 					{
@@ -655,8 +655,18 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						pInstance->setEnable(pTargetInstance == pInstance);
 					}
 
-					ResetView();
-					onInstanceSelected(nullptr);
+					ResetTree(false);
+
+					auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
+					ASSERT(itInstanceItems != m_mapInstanceItems.end());
+
+					for (auto hInstance : itInstanceItems->second)
+					{
+						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
+
+						Tree_UpdateChildren(hInstance);
+						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+					}
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
@@ -1891,6 +1901,60 @@ void CIFCModelStructureView::UnselectAllItems()
 		}
 
 		m_pSelectedInstance = nullptr;
+	}
+}
+
+void CIFCModelStructureView::ResetTree(bool bEnable)
+{
+	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
+	while (hRoot != nullptr)
+	{
+		int iImage, iSelectedImage = -1;
+		m_pTreeCtrl->GetItemImage(hRoot, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED))
+		{
+			// skip the Header and unreferenced items
+			hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
+
+			continue;
+		}
+
+		ResetTree(hRoot, bEnable);
+
+		hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
+	}
+}
+
+void CIFCModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
+{
+	if (hItem == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
+	while (hChild != nullptr)
+	{
+		ResetTree(hChild, bEnable);
+
+		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+	} // while (hChild != nullptr)
+
+	int iParentImage = -1;
+	int iParentSelectedImage = -1;
+	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
+
+	ASSERT(iParentImage == iParentSelectedImage);
+
+	if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) || (iParentImage == IMAGE_NOT_SELECTED))
+	{
+		int iImage = bEnable ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+		m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 	}
 }
 

@@ -1148,16 +1148,16 @@ void CAP242PModelStructureView::ResetTree(bool bEnable)
 	}
 }
 
-void CAP242PModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
+void CAP242PModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
 {
-	if (hParent == nullptr)
+	if (hItem == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		ResetTree(hChild, bEnable);
@@ -1167,14 +1167,14 @@ void CAP242PModelStructureView::ResetTree(HTREEITEM hParent, bool bEnable)
 
 	int iParentImage = -1;
 	int iParentSelectedImage = -1;
-	m_pTreeCtrl->GetItemImage(hParent, iParentImage, iParentSelectedImage);
+	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
 
 	ASSERT(iParentImage == iParentSelectedImage);
 
 	if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) || (iParentImage == IMAGE_NOT_SELECTED))
 	{
 		int iImage = bEnable ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		m_pTreeCtrl->SetItemImage(hParent, iImage, iImage);
+		m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 	}
 }
 

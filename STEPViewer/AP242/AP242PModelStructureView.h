@@ -95,7 +95,7 @@ private: // Methods
 	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
 
 	void ResetTree(bool bEnable);
-	void ResetTree(HTREEITEM hParent, bool bEnable);
+	void ResetTree(HTREEITEM hItem, bool bEnable);
 	void Model_EnableChildren(CAP242ItemData* pParent, bool bEnable);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);

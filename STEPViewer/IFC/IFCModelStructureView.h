@@ -87,6 +87,9 @@ private: // Methods
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
 	void ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive = TRUE);
 	void UnselectAllItems();
+
+	void ResetTree(bool bEnable);
+	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void ResetView();
 };
 
