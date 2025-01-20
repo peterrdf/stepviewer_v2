@@ -88,7 +88,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	}
 
 	// Single instance selection
-	UnselectAllItems();
+	Tree_Unselect();
 
 	auto pSelectedInstance = getController()->getSelectedInstance() != nullptr ? 
 		dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance()) : 
@@ -314,7 +314,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
 		// Single instance selection
-		UnselectAllItems();
+		Tree_Unselect();
 
 		auto pSelectedInstance = m_pTreeCtrl->GetItemData(hItem) != NULL ?
 			(_ifc_instance*)m_pTreeCtrl->GetItemData(hItem) :
@@ -843,7 +843,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		LoadUnreferencedItems(pModel, hModel);
 
 		// Update UI
-		LoadTree_UpdateItem(hModel);
+		Tree_UpdateAll(hModel);
 	} // if (iProjectInstancesCount > 0)
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
@@ -1420,11 +1420,11 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 	} // for (; itUnreferencedItems != ...
 }
 
-void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
+void CIFCModelStructureView::Tree_UpdateAll(HTREEITEM hModel)
 {
-	ASSERT(hParent != nullptr);
+	ASSERT(hModel != nullptr);
 
-	if (!m_pTreeCtrl->ItemHasChildren(hParent))
+	if (!m_pTreeCtrl->ItemHasChildren(hModel))
 	{
 		// keep the state as it is
 		return;
@@ -1435,7 +1435,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 	int iSemiSelectedChildrenCount = 0;
 	int iNoGeometryChildrenCount = 0;
 
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hModel, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
 		int iImage, iSelectedImage = -1;
@@ -1453,7 +1453,7 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 			continue;
 		}
 
-		LoadTree_UpdateItem(hChild);
+		Tree_UpdateAll(hChild);
 
 		iImage = iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
@@ -1500,49 +1500,49 @@ void CIFCModelStructureView::LoadTree_UpdateItem(HTREEITEM hParent)
 
 	if (iChildrenCount == 0) /*Instance*/
 	{		
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 
 		return;
 	}
 
 	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 
 		return;
 	}
 
 	if (iSemiSelectedChildrenCount > 0)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		return;
 	}
 
 	if (iSelectedChildrenCount == 0)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
 		return;
 	}
 
 	if (iChildrenCount == iSelectedChildrenCount)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		return;
 	}
 
 	if ((iChildrenCount - iNoGeometryChildrenCount) == iSelectedChildrenCount)
 	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
+		m_pTreeCtrl->SetItemImage(hModel, IMAGE_SELECTED, IMAGE_SELECTED);
 
 		return;
 	}
 
 	ASSERT(iChildrenCount > iSelectedChildrenCount);
 
-	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
+	m_pTreeCtrl->SetItemImage(hModel, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 }
 
 void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hParent, bool bEnable)
@@ -1886,7 +1886,7 @@ void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRec
 	}
 }
 
-void CIFCModelStructureView::UnselectAllItems()
+void CIFCModelStructureView::Tree_Unselect()
 {
 
 	if (m_pSelectedInstance != nullptr)
