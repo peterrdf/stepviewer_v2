@@ -679,8 +679,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						pInstance->setEnable(true);
 					}
 
-					ResetView();
-					onInstanceSelected(nullptr);
+					ResetTree(true);
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
