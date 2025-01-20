@@ -1177,7 +1177,7 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-		tvInsertStruct.item.lParam = (LPARAM)ifcInstance;
+		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
 		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		// Geometry
@@ -1558,6 +1558,8 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hParent, bool bEnabl
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
+
+		CString sss = m_pTreeCtrl->GetItemText(hChild);
 
 		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
