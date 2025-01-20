@@ -614,7 +614,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				ASSERT(pTargetInstance->getEnable());
 				
-				ResetTree(false);
+				Tree_Reset(false);
 
 				auto itInstance2Item = m_mapInstance2Item.find(pTargetInstance);
 				ASSERT(itInstance2Item != m_mapInstance2Item.end());
@@ -639,7 +639,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance->setEnable(true);
 				}
 
-				ResetTree(true);
+				Tree_Reset(true);
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -1124,7 +1124,7 @@ bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_draughting_mod
 	return false;
 }
 
-void CAP242PModelStructureView::ResetTree(bool bEnable)
+void CAP242PModelStructureView::Tree_Reset(bool bEnable)
 {
 	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
 	while (hRoot != nullptr)
@@ -1142,13 +1142,13 @@ void CAP242PModelStructureView::ResetTree(bool bEnable)
 			continue;
 		}
 
-		ResetTree(hRoot, bEnable);
+		Tree_Reset(hRoot, bEnable);
 
 		hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
 	}
 }
 
-void CAP242PModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
+void CAP242PModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 {
 	if (hItem == nullptr)
 	{
@@ -1160,7 +1160,7 @@ void CAP242PModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		ResetTree(hChild, bEnable);
+		Tree_Reset(hChild, bEnable);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)

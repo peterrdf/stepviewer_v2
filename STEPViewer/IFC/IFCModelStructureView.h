@@ -79,17 +79,15 @@ private: // Methods
 	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
 
 	void LoadTree_UpdateItem(HTREEITEM hParent);
-
 	void Model_EnableChildren(HTREEITEM hParent, bool bEnable);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);
-
 	void ClickItem_UpdateChildren(HTREEITEM hParent);
 	void ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive = TRUE);
 	void UnselectAllItems();
+	void Tree_Reset(bool bEnable);
+	void Tree_Reset(HTREEITEM hParent, bool bEnable);
 
-	void ResetTree(bool bEnable);
-	void ResetTree(HTREEITEM hParent, bool bEnable);
 	void ResetView();
 };
 

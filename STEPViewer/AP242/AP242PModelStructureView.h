@@ -94,8 +94,8 @@ private: // Methods
 	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);
 	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
 
-	void ResetTree(bool bEnable);
-	void ResetTree(HTREEITEM hItem, bool bEnable);
+	void Tree_Reset(bool bEnable);
+	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Model_EnableChildren(CAP242ItemData* pParent, bool bEnable);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);

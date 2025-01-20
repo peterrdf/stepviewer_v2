@@ -655,7 +655,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						pInstance->setEnable(pTargetInstance == pInstance);
 					}
 
-					ResetTree(false);
+					Tree_Reset(false);
 
 					auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
 					ASSERT(itInstanceItems != m_mapInstanceItems.end());
@@ -679,7 +679,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						pInstance->setEnable(true);
 					}
 
-					ResetTree(true);
+					Tree_Reset(true);
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
@@ -1903,7 +1903,7 @@ void CIFCModelStructureView::UnselectAllItems()
 	}
 }
 
-void CIFCModelStructureView::ResetTree(bool bEnable)
+void CIFCModelStructureView::Tree_Reset(bool bEnable)
 {
 	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
 	while (hRoot != nullptr)
@@ -1921,13 +1921,13 @@ void CIFCModelStructureView::ResetTree(bool bEnable)
 			continue;
 		}
 
-		ResetTree(hRoot, bEnable);
+		Tree_Reset(hRoot, bEnable);
 
 		hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
 	}
 }
 
-void CIFCModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
+void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 {
 	if (hItem == nullptr)
 	{
@@ -1939,7 +1939,7 @@ void CIFCModelStructureView::ResetTree(HTREEITEM hItem, bool bEnable)
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		ResetTree(hChild, bEnable);
+		Tree_Reset(hChild, bEnable);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
