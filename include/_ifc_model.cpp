@@ -126,7 +126,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 
 void _ifc_model::getObjectsReferencedState()
 {
-	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)"IFCPROJECT");
+	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), "IFCPROJECT");
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
 	if (iMembersCount > 0)
 	{

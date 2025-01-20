@@ -820,7 +820,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	LoadHeader(hModel);
 
 	// Project/Units/Unreferenced
-	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), (char*)"IFCPROJECT");
+	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), "IFCPROJECT");
 
 	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
 	if (iProjectInstancesCount > 0)

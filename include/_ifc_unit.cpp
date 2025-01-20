@@ -634,7 +634,7 @@ pair<wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuan
 
 void _ifc_unit_provider::load()
 {
-    SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_sdaiModel, (char*)"IFCPROJECT");
+    SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_sdaiModel, "IFCPROJECT");
 
     SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiProjectAggr);
     if (iMembersCount > 0)
