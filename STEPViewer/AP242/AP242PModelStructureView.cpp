@@ -207,6 +207,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
 			{
+				bool bGeometryItem = false;
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData == nullptr) &&
 					(iImage == IMAGE_SELECTED) &&
@@ -217,7 +218,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					ASSERT(hParent != NULL);
 
 					pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+
+					bGeometryItem = true;
 				}
+
+				//
+				// Model
+				//
 
 				if ((pItemData != nullptr) && 
 					((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
@@ -231,7 +238,14 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
 				}
 				
-				Model_EnableChildren(pItemData, false);
+				if (!bGeometryItem)
+				{
+					Model_EnableChildren(pItemData, false);
+				}				
+
+				//
+				// UI
+				//
 				
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
 
@@ -244,6 +258,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			case IMAGE_NOT_SELECTED:
 			{
+				bool bGeometryItem = false;
 				auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pItemData == nullptr) &&
 					!m_pTreeCtrl->ItemHasChildren(hItem) && 
@@ -253,7 +268,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					ASSERT(hParent != NULL);
 
 					pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+
+					bGeometryItem = true;
 				}
+
+				//
+				// Model
+				//
 
 				if ((pItemData != nullptr) &&
 					((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
@@ -267,7 +288,14 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(true);
 				}
 
-				Model_EnableChildren(pItemData, true);
+				if (!bGeometryItem)
+				{
+					Model_EnableChildren(pItemData, true);
+				}				
+
+				//
+				// UI
+				//
 
 				m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
 
