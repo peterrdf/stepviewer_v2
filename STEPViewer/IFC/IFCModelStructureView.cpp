@@ -619,13 +619,30 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				case ID_INSTANCES_ENABLE:
 				{
+					//
+					// Model
+					//
+
 					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
-					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
+					Model_EnableChildren(hItem, pTargetInstance->getEnable());
 
-					ClickItem_UpdateChildren(hItem);
-					ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hItem));
+					//
+					// UI
+					//
+
+					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+
+					auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
+					assert(itInstanceItems != m_mapInstanceItems.end());
+
+					for (auto hInstance : itInstanceItems->second)
+					{
+						m_pTreeCtrl->SetItemImage(hInstance, iImage, iImage);
+
+						Tree_UpdateChildren(hInstance);
+						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+					}
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
