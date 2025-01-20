@@ -918,7 +918,7 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = NULL;
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		ASSERT(m_mapInstanceItems.find(ifcInstance) == m_mapInstanceItems.end());
 		m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
@@ -1152,7 +1152,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		(ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 		IMAGE_NO_GEOMETRY;
 	tvInsertStruct.item.lParam = NULL;
-	HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 	auto itInstanceItems = m_mapInstanceItems.find(ifcInstance);
 	if (itInstanceItems != m_mapInstanceItems.end())
@@ -1226,7 +1226,7 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel)
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 			ifcInstance->hasGeometry() ? (ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
 		tvInsertStruct.item.lParam = NULL;
-		HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 		assert(m_mapInstanceItems.find(ifcInstance) == m_mapInstanceItems.end());
 		m_mapInstanceItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
@@ -1442,7 +1442,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
 				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
 			tvInsertStruct.item.lParam = NULL;
-			HTREEITEM hGeometry = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+			m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
 			assert(m_mapInstanceItems.find(pInstance) == m_mapInstanceItems.end());
 			m_mapInstanceItems[pInstance] = vector<HTREEITEM>{ hInstance };
