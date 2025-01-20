@@ -189,17 +189,49 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
 				}
 
+				//
+				// Model
+				//
+
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(false);
 				}
-
+				
 				Model_EnableChildren(hItem, false);
 
-				m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+				//
+				// UI
+				//
 
-				Tree_UpdateChildren(hItem);
-				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+				if (pInstance != nullptr)
+				{
+					//
+					// Instance
+					//
+
+					auto itInstanceItems = m_mapInstanceItems.find(pInstance);
+					assert(itInstanceItems != m_mapInstanceItems.end());
+
+					for (auto hInstance : itInstanceItems->second)
+					{
+						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+
+						Tree_UpdateChildren(hInstance);
+						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+					}
+				}
+				else
+				{
+					//
+					// Item
+					//
+
+					m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+
+					Tree_UpdateChildren(hItem);
+					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+				}
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
@@ -218,6 +250,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
 				}
 
+				//
+				// Model
+				//
+
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(true);
@@ -225,10 +261,38 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				Model_EnableChildren(hItem, true);
 
-				m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);				
+				//
+				// UI
+				//
 
-				Tree_UpdateChildren(hItem);
-				Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+				if (pInstance != nullptr)
+				{
+					//
+					// Instance
+					//
+
+					auto itInstanceItems = m_mapInstanceItems.find(pInstance);
+					assert(itInstanceItems != m_mapInstanceItems.end());
+
+					for (auto hInstance : itInstanceItems->second)
+					{
+						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
+
+						Tree_UpdateChildren(hInstance);
+						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+					}
+				}
+				else
+				{
+					//
+					// Item
+					//
+
+					m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
+
+					Tree_UpdateChildren(hItem);
+					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+				}
 
 				pController->onInstancesEnabledStateChanged(this);
 			}
