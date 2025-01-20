@@ -170,13 +170,14 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
-		ASSERT(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);		
 
 		switch (iImage)
 		{
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
 			{
+				bool bGeometryItem = false;
 				_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pInstance == nullptr) &&
 					(iImage == IMAGE_SELECTED) &&
@@ -187,6 +188,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					ASSERT(hParent != NULL);
 
 					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
+
+					bGeometryItem = true;
 				}
 
 				//
@@ -198,7 +201,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance->setEnable(false);
 				}
 				
-				Model_EnableChildren(hItem, false);
+				if (!bGeometryItem)
+				{
+					Model_EnableChildren(hItem, false);
+				}				
 
 				//
 				// UI
@@ -215,10 +221,23 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					for (auto hInstance : itInstanceItems->second)
 					{
-						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+						if (bGeometryItem)
+						{
+							HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
+							ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-						Tree_UpdateChildren(hInstance);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+							m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+
+							Tree_UpdateChildren(hGeometry);
+							Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
+						}
+						else
+						{
+							m_pTreeCtrl->SetItemImage(hInstance, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
+
+							Tree_UpdateChildren(hInstance);
+							Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+						}						
 					}
 				}
 				else
@@ -239,6 +258,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			case IMAGE_NOT_SELECTED:
 			{
+				bool bGeometryItem = false;
 				_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
 				if ((pInstance == nullptr) &&
 					!m_pTreeCtrl->ItemHasChildren(hItem) &&
@@ -248,6 +268,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					ASSERT(hParent != NULL);
 
 					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
+
+					bGeometryItem = true;
 				}
 
 				//
@@ -259,7 +281,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					pInstance->setEnable(true);
 				}
 
-				Model_EnableChildren(hItem, true);
+				if (!bGeometryItem)
+				{
+					Model_EnableChildren(hItem, true);
+				}				
 
 				//
 				// UI
@@ -268,7 +293,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				if (pInstance != nullptr)
 				{
 					//
-					// Instance
+					// Instance/Geometry
 					//
 
 					auto itInstanceItems = m_mapInstanceItems.find(pInstance);
@@ -276,11 +301,24 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					for (auto hInstance : itInstanceItems->second)
 					{
-						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
+						if (bGeometryItem)
+						{
+							HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
+							ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-						Tree_UpdateChildren(hInstance);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
-					}
+							m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
+
+							Tree_UpdateChildren(hGeometry);
+							Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
+						}
+						else
+						{
+							m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
+
+							Tree_UpdateChildren(hInstance);
+							Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+						}						
+					} // for (auto hInstance : ...
 				}
 				else
 				{
@@ -1558,8 +1596,6 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hParent, bool bEnabl
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
 
 		ASSERT(iImage == iSelectedImage);
-
-		CString sss = m_pTreeCtrl->GetItemText(hChild);
 
 		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
