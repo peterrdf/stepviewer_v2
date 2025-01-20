@@ -662,10 +662,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					for (auto hInstance : itInstanceItems->second)
 					{
-						m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
+						HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
+						ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-						Tree_UpdateChildren(hInstance);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+						m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
+
+						Tree_UpdateChildren(hGeometry);
+						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -759,8 +762,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			return;
 		}
 
-		// Update the Parents just ones
-		set<HTREEITEM> setParents;
 		for (auto pInstance : pModel->getInstances())
 		{
 			//#todo#mappeditems		
@@ -770,31 +771,22 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			{
 				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);				
 
+				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+
 				auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
 				ASSERT(itInstanceItems != m_mapInstanceItems.end());
 
-				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-				for (auto hGeometry : itInstanceItems->second)
-				{					
-					m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
+				for (auto hInstance : itInstanceItems->second)
+				{
+					m_pTreeCtrl->SetItemImage(hInstance, iImage, iImage);
 
-					ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometry));
-
-					HTREEITEM hInstanceItem = m_pTreeCtrl->GetParentItem(hGeometry);
-					ASSERT(hInstanceItem != NULL);
-
-					ClickItem_UpdateParent(hInstanceItem, FALSE);
-
-					setParents.insert(m_pTreeCtrl->GetParentItem(hInstanceItem));
-				}				
+					Tree_UpdateChildren(hInstance);
+					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
+				}
 			}
 		} // for (auto pInstance = ...
 
-		// Update the Parents
-		for (auto hParent : setParents)
-		{
-			ClickItem_UpdateParent(hParent);
-		}
+		Tree_UpdateAll(m_pTreeCtrl->GetRootItem());
 
 		pController->onInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
@@ -1709,180 +1701,6 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
-	}
-}
-
-void CIFCModelStructureView::ClickItem_UpdateChildren(HTREEITEM hParent)
-{
-	ASSERT(hParent != nullptr);
-
-	if (!m_pTreeCtrl->ItemHasChildren(hParent))
-	{
-		return;
-	}
-
-	int iParentImage = -1;
-	int iParentSelectedImage = -1;
-	m_pTreeCtrl->GetItemImage(hParent, iParentImage, iParentSelectedImage);
-
-	ASSERT(iParentImage == iParentSelectedImage);
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != nullptr)
-	{
-		int iImage, iSelectedImage = -1;
-		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED))
-		{
-			// skip the properties, items without a geometry, etc.
-			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
-			continue;
-		}
-
-		m_pTreeCtrl->SetItemImage(hChild, iParentImage, iParentImage);
-
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
-		if (pInstance != nullptr)
-		{
-			pInstance->setEnable((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) ? true : false);
-		}
-
-		ClickItem_UpdateChildren(hChild);
-
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != nullptr)
-}
-
-void CIFCModelStructureView::ClickItem_UpdateParent(HTREEITEM hParent, BOOL bRecursive/* = TRUE*/)
-{
-	if (hParent == nullptr)
-	{
-		return;
-	}
-
-	ASSERT(m_pTreeCtrl->ItemHasChildren(hParent));
-
-	int iChildrenCount = 0;
-	int iSelectedChildrenCount = 0;
-	int iSemiSelectedChildrenCount = 0;
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hParent, TVGN_CHILD);
-	while (hChild != nullptr)
-	{
-		int iImage, iSelectedImage = -1;
-		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED))
-		{
-			// skip the properties, items without a geometry, etc.
-			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
-			continue;
-		}
-
-		iChildrenCount++;
-
-		switch (iImage)
-		{
-			case IMAGE_SELECTED:
-			{
-				iSelectedChildrenCount++;
-			}
-			break;
-
-			case IMAGE_SEMI_SELECTED:
-			{
-				iSemiSelectedChildrenCount++;
-			}
-			break;
-
-			case IMAGE_NOT_SELECTED:
-			{
-				// NA
-			}
-			break;
-
-			default:
-			{
-				ASSERT(FALSE); // unexpected
-			}
-			break;
-		} // switch (iImage)
-
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != nullptr)
-
-	if (iSemiSelectedChildrenCount > 0)
-	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
-
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
-		if (pInstance != nullptr)
-		{
-			pInstance->setEnable(true);
-		}
-
-		if (bRecursive)
-		{
-			ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
-		}		
-
-		return;
-	}
-
-	if (iSelectedChildrenCount == 0)
-	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
-		if (pInstance != nullptr)
-		{
-			pInstance->setEnable(false);
-		}
-
-		if (bRecursive)
-		{
-			ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
-		}
-
-		return;
-	}
-
-	if (iSelectedChildrenCount == iChildrenCount)
-	{
-		m_pTreeCtrl->SetItemImage(hParent, IMAGE_SELECTED, IMAGE_SELECTED);
-
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
-		if (pInstance != nullptr)
-		{
-			pInstance->setEnable(true);
-		}
-
-		if (bRecursive)
-		{
-			ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
-		}
-
-		return;
-	}
-
-	m_pTreeCtrl->SetItemImage(hParent, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
-
-	_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
-	if (pInstance != nullptr)
-	{
-		pInstance->setEnable(true);
-	}
-
-	if (bRecursive)
-	{
-		ClickItem_UpdateParent(m_pTreeCtrl->GetParentItem(hParent));
 	}
 }
 
