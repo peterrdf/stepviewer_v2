@@ -835,6 +835,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			return;
 		}
 
+		//
+		// Model
+		//
+
 		set<_ifc_instance*> setInstances;
 		for (auto pInstance : pModel->getInstances())
 		{
@@ -848,6 +852,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				setInstances.insert(ifcInstance);
 			}
 		} // for (auto pInstance = ...
+
+		//
+		// UI
+		//
 
 		Tree_Update(m_hProject, m_mapProject, setInstances);
 		Tree_Update(m_hGroups, m_mapGroups, setInstances);
