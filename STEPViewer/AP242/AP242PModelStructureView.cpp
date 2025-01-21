@@ -114,7 +114,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		/*
 		* Select the Model by default
 		*/
-		HTREEITEM hModel = m_pTreeCtrl->GetChildItem(nullptr);
+		HTREEITEM hModel = m_pTreeCtrl->GetRootItem();
 		ASSERT(hModel != nullptr);
 
 		m_pTreeCtrl->SelectItem(hModel);

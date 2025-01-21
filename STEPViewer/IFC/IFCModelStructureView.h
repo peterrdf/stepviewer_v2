@@ -6,6 +6,7 @@
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>
+#include <set>
 using namespace std;
 
 // ************************************************************************************************
@@ -21,6 +22,8 @@ class CIFCModelStructureView
 
 private: // Classes
 
+	typedef map<_ifc_instance*, vector<HTREEITEM>> ITEMS;
+
 	enum class enumSearchFilter : int {
 		All = 0,
 		ExpressID = 1,
@@ -31,7 +34,15 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache
-	map<_ifc_instance*, vector<HTREEITEM>> m_mapInstanceItems;	
+	HTREEITEM m_hModel;
+	HTREEITEM m_hProject;
+	HTREEITEM m_hGroups;
+	HTREEITEM m_hSpaceBoundaries;
+	HTREEITEM m_hUnreferenced;
+	ITEMS m_mapProject;
+	ITEMS m_mapGroups;
+	ITEMS m_mapSpaceBoundaries;
+	ITEMS m_mapUnreferenced;
 	_ifc_instance* m_pSelectedInstance;
 
 	
@@ -67,24 +78,32 @@ public: // Methods
 private: // Methods		
 
 	void LoadModel(_ifc_model* pModel);
-	void LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance);
-	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	void LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	void LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	HTREEITEM LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, bool bLoadChildren = true);
-	void LoadGroups(_ifc_model* pModel, HTREEITEM hModel);
-	void LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel);
-	void LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey);
-	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel);
+	void LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance, ITEMS& mapItems);
+	void LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
+	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
+	void LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
+	void LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
+	HTREEITEM LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems, bool bLoadChildren = true);
+	void LoadGroups(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems);
+	void LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems);
+	void LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey, ITEMS& mapItems);
+	void LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems);	
 
-	void Tree_UpdateAll(HTREEITEM hModel);
-	void Model_EnableChildren(HTREEITEM hParent, bool bEnable);
+	void Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren);
+
+	bool Tree_IsProjectItem(HTREEITEM hItem);
+	bool Tree_IsGroupsItem(HTREEITEM hItem);
+	bool Tree_IsSpaceBoundariesItem(HTREEITEM hItem);
+	bool Tree_IsUnreferencedItem(HTREEITEM hItem);
+
+	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
+	void Tree_Update(HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);	
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);
-	void Tree_Unselect();
 	void Tree_Reset(bool bEnable);
-	void Tree_Reset(HTREEITEM hParent, bool bEnable);
+	void Tree_Reset(HTREEITEM hItem, bool bEnable);
+	bool Tree_EnsureVisible(_ifc_instance* pInstance);
+	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
 
 	void ResetView();
 };
