@@ -201,17 +201,17 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				// Model
 				//
 
-				set<_ifc_instance*> setChildren;
+				set<_ifc_instance*> setInstances;
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(false);
 
-					setChildren.insert(pInstance);
+					setInstances.insert(pInstance);
 				}				
 				
 				if (!bGeometryItem)
 				{
-					Model_EnableChildren(hItem, false, setChildren);
+					Model_EnableChildren(hItem, false, setInstances);
 				}				
 
 				//
@@ -262,11 +262,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				if (bIsProjectItem)
 				{
-					Tree_Update(m_hGroups, m_mapGroups, setChildren);
+					Tree_Update(m_hGroups, m_mapGroups, setInstances);
 				}
 				else if (bIsGroupsItem)
 				{
-					Tree_Update(m_hProject, m_mapProject, setChildren);
+					Tree_Update(m_hProject, m_mapProject, setInstances);
 				}
 
 				pController->onInstancesEnabledStateChanged(this);
@@ -293,17 +293,17 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				// Model
 				//
 
-				set<_ifc_instance*> setChildren;
+				set<_ifc_instance*> setInstances;
 				if (pInstance != nullptr)
 				{
 					pInstance->setEnable(true);
 
-					setChildren.insert(pInstance);
+					setInstances.insert(pInstance);
 				}
 
 				if (!bGeometryItem)
 				{					
-					Model_EnableChildren(hItem, true, setChildren);
+					Model_EnableChildren(hItem, true, setInstances);
 				}				
 
 				//
@@ -354,11 +354,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				if (bIsProjectItem)
 				{
-					Tree_Update(m_hGroups, m_mapGroups, setChildren);
+					Tree_Update(m_hGroups, m_mapGroups, setInstances);
 				}
 				else if (bIsGroupsItem)
 				{
-					Tree_Update(m_hProject, m_mapProject, setChildren);
+					Tree_Update(m_hProject, m_mapProject, setInstances);
 				}
 
 				pController->onInstancesEnabledStateChanged(this);
@@ -668,7 +668,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
-					set<_ifc_instance*> setChildren{ pTargetInstance };
+					set<_ifc_instance*> setInstances{ pTargetInstance };
 
 					//
 					// UI
@@ -697,11 +697,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					if (bIsProjectItem)
 					{
-						Tree_Update(m_hGroups, m_mapGroups, setChildren);
+						Tree_Update(m_hGroups, m_mapGroups, setInstances);
 					}
 					else if (bIsGroupsItem)
 					{
-						Tree_Update(m_hProject, m_mapProject, setChildren);
+						Tree_Update(m_hProject, m_mapProject, setInstances);
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -719,7 +719,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						pInstance->setEnable(pTargetInstance == pInstance);
 					}
 
-					set<_ifc_instance*> setChildren{ pTargetInstance };
+					set<_ifc_instance*> setInstances{ pTargetInstance };
 
 					//
 					// UI
@@ -737,11 +737,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					if (bIsProjectItem)
 					{
-						Tree_Update(m_hGroups, m_mapGroups, setChildren);
+						Tree_Update(m_hGroups, m_mapGroups, setInstances);
 					}
 					else if (bIsGroupsItem)
 					{
-						Tree_Update(m_hProject, m_mapProject, setChildren);
+						Tree_Update(m_hProject, m_mapProject, setInstances);
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -835,25 +835,24 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			return;
 		}
 
-		//for (auto pInstance : pModel->getInstances())
-		//{
-		//	//#todo#mappeditems		
-		//	_ptr<_ifc_instance> ifcInstance(pInstance);
+		set<_ifc_instance*> setInstances;
+		for (auto pInstance : pModel->getInstances())
+		{
+			//#todo#mappeditems		
+			_ptr<_ifc_instance> ifcInstance(pInstance);
 
-		//	if (ifcInstance->getEntityName() == itCommand2Entity->second)
-		//	{
-		//		ifcInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+			if (ifcInstance->getEntityName() == itCommand2Entity->second)
+			{
+				ifcInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
-		//		int iImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				setInstances.insert(ifcInstance);
+			}
+		} // for (auto pInstance = ...
 
-		//		HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hItem);
-		//		ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
-
-		//		m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
-		//	}
-		//} // for (auto pInstance = ...
-
-		Tree_Update(m_hModel);
+		Tree_Update(m_hProject, m_mapProject, setInstances);
+		Tree_Update(m_hGroups, m_mapGroups, setInstances);
+		Tree_Update(m_hSpaceBoundaries, m_mapSpaceBoundaries, setInstances);
+		Tree_Update(m_hUnreferenced, m_mapUnreferenced, setInstances);
 
 		pController->onInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
