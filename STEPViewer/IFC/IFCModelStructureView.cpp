@@ -835,36 +835,25 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			return;
 		}
 
-		for (auto pInstance : pModel->getInstances())
-		{
-			//#todo#mappeditems		
-			pTargetInstance = _ptr<_ifc_instance>(pInstance);
+		//for (auto pInstance : pModel->getInstances())
+		//{
+		//	//#todo#mappeditems		
+		//	_ptr<_ifc_instance> ifcInstance(pInstance);
 
-			//
-			// Model
-			//
+		//	if (ifcInstance->getEntityName() == itCommand2Entity->second)
+		//	{
+		//		ifcInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
 
-			if (pTargetInstance->getEntityName() == itCommand2Entity->second)
-			{
-				pTargetInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);				
+		//		int iImage = ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 
-				int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+		//		HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hItem);
+		//		ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-				//#todo
-				/*auto itInstanceItems = m_mapInstanceItems.find(pTargetInstance);
-				ASSERT(itInstanceItems != m_mapInstanceItems.end());
+		//		m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
+		//	}
+		//} // for (auto pInstance = ...
 
-				for (auto hInstance : itInstanceItems->second)
-				{
-					m_pTreeCtrl->SetItemImage(hInstance, iImage, iImage);
-
-					Tree_UpdateChildren(hInstance);
-					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
-				}*/
-			}
-		} // for (auto pInstance = ...
-
-		Tree_Update(m_pTreeCtrl->GetRootItem());
+		Tree_Update(m_hModel);
 
 		pController->onInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
