@@ -267,9 +267,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		auto pModelData = Model_GetData(pModel);
 		ASSERT(pModelData != nullptr);
 
-		Tree_EnsureVisible(pModelData, m_pSelectedInstance);
-		Tree_Select(true);
-	}	
+		Tree_EnsureVisible(pModelData, m_pSelectedInstance);		
+	}
+
+	Tree_Select(true);
 }
 
 /*virtual*/ void CIFCModelStructureView::Load() /*override*/
@@ -527,9 +528,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
+		Tree_Select(false);
+
 		m_pSelectedInstance = m_pTreeCtrl->GetItemData(hItem) != NULL ?
 			(_ifc_instance*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
+
+		Tree_Select(true);
 
 		pController->selectInstance(this, m_pSelectedInstance);
 	}
