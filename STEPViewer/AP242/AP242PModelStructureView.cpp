@@ -87,6 +87,51 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	delete m_pSearchDialog;
 }
 
+/*virtual*/ void CAP242PModelStructureView::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int /*iFlag*/) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	//
+	// Model
+	//
+
+	_ptr<_ap242_instance> apProductInstance(pInstance);
+
+	auto itInstance2Item = m_mapInstance2Item.find(pInstance);
+	if (itInstance2Item == m_mapInstance2Item.end())
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	HTREEITEM hItem = itInstance2Item->second;
+	ASSERT(hItem != NULL);
+
+	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
+	if (pItemData == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	//
+	// UI
+	//
+	
+	int iImage = apProductInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+	m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
+
+	Model_EnableChildren(pItemData, apProductInstance->getEnable());
+
+	Tree_UpdateChildren(hItem);
+	Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+}
+
 /*virtual*/ void CAP242PModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)

@@ -58,6 +58,7 @@ public: // Methods
 	virtual ~CAP242PModelStructureView();	
 
 	// _view
+	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag) override;
 	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CModelStructureViewBase
