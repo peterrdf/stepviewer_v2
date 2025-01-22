@@ -110,8 +110,8 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 	{
 		if (bFirstFile)
 		{
-			auto pModel = _ap_model_factory::load(this, model, true, false);
-			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
+			auto pModel = _ap_model_factory::load(this, model, vecModels.size() > 1, false);
+			if ((vecModels.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 			{
 				delete pModel;
 
@@ -124,8 +124,8 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 		}
 		else
 		{
-			auto pModel = _ap_model_factory::load(this, model, true, false);
-			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
+			auto pModel = _ap_model_factory::load(this, model, vecModels.size() > 1, false);
+			if ((vecModels.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 			{
 				delete pModel;
 
@@ -148,8 +148,6 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
-	ON_COMMAND(ID_FILE_OPEN_MULTIPLE_IFC, &CMySTEPViewerDoc::OnFileOpenMultipleIFC)
-	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN_MULTIPLE_IFC, &CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC)
 END_MESSAGE_MAP()
 
 
@@ -287,20 +285,37 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), 	OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SUPPORTED_FILES);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
 	}
 
-	OnOpenDocument(dlgFile.GetPathName());
+	vector<CString> vecModels;
+	POSITION pos(dlgFile.GetStartPosition());
+	while (pos != nullptr)
+	{
+		CString strFileName = dlgFile.GetNextPathName(pos);
+		vecModels.push_back(strFileName);
+	}
+
+	OpenModels(vecModels);
+
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += vecModels[0];
+	strTitle += L", ...";
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(vecModels[0]);
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
 {
 	zoomOut();
 }
-
 
 void CMySTEPViewerDoc::DeleteContents()
 {
@@ -322,38 +337,4 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
-}
-
-void CMySTEPViewerDoc::OnFileOpenMultipleIFC()
-{
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, IFC_FILES);
-	if (dlgFile.DoModal() != IDOK)
-	{
-		return;
-	}
-
-	vector<CString> vecModels;
-	POSITION pos(dlgFile.GetStartPosition());
-	while (pos != nullptr)
-	{
-		CString strFileName = dlgFile.GetNextPathName(pos);
-		vecModels.push_back(strFileName);
-	}	
-
-	OpenModels(vecModels);
-
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += vecModels[0];
-	strTitle += L", ...";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(vecModels[0]);
-}
-
-void CMySTEPViewerDoc::OnUpdateFileOpenMultipleIFC(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TRUE);
 }

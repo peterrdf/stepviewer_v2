@@ -1585,6 +1585,8 @@ _oglView::_oglView()
 {
 	if (getController()->getModels().empty())
 	{
+		_redraw();
+
 		return;
 	}
 

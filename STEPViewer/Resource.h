@@ -167,7 +167,6 @@
 #define ID_VIEW_ISOMETRIC               32825
 #define ID_VIEW_MODELCHECKER            32826
 #define ID_VIEW_MODEL_CHECKER           32827
-#define ID_FILE_OPEN_MULTIPLE_IFC       32830
 
 // Next default values for new objects
 // 

@@ -120,8 +120,6 @@ public: // Methods
 			(strFileSchema.Find(L"AP214") == 0) ||
 			(strFileSchema.Find(L"AP242") == 0))
 		{
-			ASSERT(!bMultipleModels); // Not supported!
-
 			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
@@ -145,8 +143,6 @@ public: // Methods
 		*/
 		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
-			ASSERT(!bMultipleModels); // Not supported!
-
 			auto pModel = new CCIS2Model();
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 

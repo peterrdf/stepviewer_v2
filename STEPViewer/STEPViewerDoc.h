@@ -67,6 +67,4 @@ public:
 	afx_msg void OnViewZoomOut();
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
-	afx_msg void OnFileOpenMultipleIFC();
-	afx_msg void OnUpdateFileOpenMultipleIFC(CCmdUI* pCmdUI);
 };
