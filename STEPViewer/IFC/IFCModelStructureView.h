@@ -90,7 +90,6 @@ private: // Members
 
 	// Cache
 	vector<CModelData*> m_vecModelData;
-	HTREEITEM m_hModel;
 	_ifc_instance* m_pSelectedInstance;
 	
 	// Search
@@ -143,7 +142,7 @@ private: // Methods
 	HTREEITEM Tree_GetModelItem(HTREEITEM hItem) const;
 
 	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
-	void Tree_Update(HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);	
+	void Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);
 	void Tree_Reset(bool bEnable);

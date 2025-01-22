@@ -178,7 +178,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_vecModelData()
-	, m_hModel(NULL)
 	, m_pSelectedInstance(nullptr)
 	, m_pSearchDialog(nullptr)
 {
@@ -407,11 +406,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				if (pModelData->IsProjectItem(hItem))
 				{
-					Tree_Update(pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+					Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
 				}
 				else if (pModelData->IsGroupsItem(hItem))
 				{
-					Tree_Update(pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+					Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
 				}
 
 				pController->onInstancesEnabledStateChanged(this);
@@ -499,11 +498,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 				if (pModelData->IsProjectItem(hItem))
 				{
-					Tree_Update(pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+					Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
 				}
 				else if (pModelData->IsGroupsItem(hItem))
 				{
-					Tree_Update(pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+					Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
 				}
 
 				pController->onInstancesEnabledStateChanged(this);
@@ -813,11 +812,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					if (pModelData->IsProjectItem(hItem))
 					{
-						Tree_Update(pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+						Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
 					}
 					else if (pModelData->IsGroupsItem(hItem))
 					{
-						Tree_Update(pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+						Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -853,11 +852,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					if (pModelData->IsProjectItem(hItem))
 					{
-						Tree_Update(pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+						Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
 					}
 					else if (pModelData->IsGroupsItem(hItem))
 					{
-						Tree_Update(pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+						Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -973,10 +972,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		// UI
 		//
 
-		Tree_Update(pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
-		Tree_Update(pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
-		Tree_Update(pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
-		Tree_Update(pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
+		Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+		Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+		Tree_Update(pModelData->GetModelItem(), pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
+		Tree_Update(pModelData->GetModelItem(), pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
 
 		pController->onInstancesEnabledStateChanged(this);
 	} // if (!bProcessed)
@@ -1004,13 +1003,13 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
-	m_hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	auto pModelData = new CModelData(pModel, m_pTreeCtrl, m_hModel);
+	auto pModelData = new CModelData(pModel, m_pTreeCtrl, hModel);
 	m_vecModelData.push_back(pModelData);
 
 	// Header
-	LoadHeader(m_hModel);
+	LoadHeader(hModel);
 
 	// Project/Units/Unreferenced
 	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), "IFCPROJECT");
@@ -1022,16 +1021,16 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
 		// Load
-		LoadProject(pModelData, m_hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		LoadGroups(pModelData, m_hModel, pModelData->GetGroupsItems());
-		//LoadSpaceBoundaries(pModelData, m_hModel, pModelData->GetSpaceBoundariesItems()); // TEST
-		LoadUnreferencedItems(pModelData, m_hModel, pModelData->GetUnreferencedItems());
+		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
+		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());
+		//LoadSpaceBoundaries(pModelData, hModel, pModelData->GetSpaceBoundariesItems()); // TEST
+		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
-		Tree_Update(m_hModel);
+		Tree_Update(hModel);
 	} // if (iProjectInstancesCount > 0)
 
-	m_pTreeCtrl->Expand(m_hModel, TVE_EXPAND);
+	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 }
 
 void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hModel, SdaiInstance sdaiProjectInstance, ITEMS& mapItems)
@@ -1828,8 +1827,9 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 	m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 }
 
-void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances)
+void CIFCModelStructureView::Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances)
 {
+	ASSERT(hModel != NULL);
 	if (hItem == NULL)
 	{
 		return;
@@ -1872,7 +1872,7 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, ITEMS& mapItems, const
 		Tree_Update(hItem);
 	}
 
-	Tree_Update(m_hModel, false);
+	Tree_Update(hModel, false);
 }
 
 void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
@@ -2098,8 +2098,6 @@ void CIFCModelStructureView::ResetView()
 		delete pModelData;
 	}
 	m_vecModelData.clear();
-
-	m_hModel = NULL;
 
 	m_pSelectedInstance = nullptr;
 
