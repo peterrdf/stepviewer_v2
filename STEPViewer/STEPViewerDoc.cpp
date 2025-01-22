@@ -103,19 +103,32 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 
 void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 {
+	setModel(nullptr);
+
 	bool bFirstFile = true;
 	for (auto model : vecModels)
 	{
 		if (bFirstFile)
 		{
-			setModel(nullptr);
-			setModel(_ap_model_factory::load(this, model, true, false));
+			auto pModel = _ap_model_factory::load(this, model, true, false);
+			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
+			{
+				continue;
+			}
+
+			setModel(pModel);
 
 			bFirstFile = false;
 		}
 		else
 		{
-			addModel(_ap_model_factory::load(this, model, true, false));
+			auto pModel = _ap_model_factory::load(this, model, true, false);
+			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
+			{
+				continue;
+			}
+
+			addModel(pModel);
 		}
 	}
 }

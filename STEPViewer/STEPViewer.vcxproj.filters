@@ -210,13 +210,13 @@
     <ClInclude Include="..\include\_ifc_unit.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_attribute.h">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\_ap_model_factory.h">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_host.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\_attribute.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
