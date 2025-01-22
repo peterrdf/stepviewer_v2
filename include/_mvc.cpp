@@ -700,6 +700,15 @@ _instance* _controller::getSelectedInstance() const
 	return m_pSelectedInstance;
 }
 
+void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onInstanceEnabledStateChanged(pSender, pInstance, iFlag);
+	}
+}
+
 void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
 	auto itView = m_setViews.begin();

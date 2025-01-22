@@ -1524,6 +1524,16 @@ _oglView::_oglView()
 	}
 }
 
+/*virtual*/ void _oglView::onInstanceEnabledStateChanged(_view* pSender, _instance* /*pInstance*/, int /*iFlag*/) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	_redraw();
+}
+
 /*virtual*/ void _oglView::onInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (pSender == this)

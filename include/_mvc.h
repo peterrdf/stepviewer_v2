@@ -161,6 +161,9 @@ public: // Methods
 	virtual void onShowMetaInformation() {}
 	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}
 	virtual void onInstanceSelected(_view* /*pSender*/) {}
+	// 0 - Enable/Disable
+	// 1 - Disable All But This
+	virtual void onInstanceEnabledStateChanged(_view* /*pSender*/, _instance* /*pInstance*/, int /*iFlag*/) {} 
 	virtual void onInstancesEnabledStateChanged(_view* /*pSender*/) {}
 	virtual void onInstanceAttributeEdited(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/, SdaiAttr /*sdaiAttribute*/) {}
 	virtual void onViewRelations(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/) {}
@@ -255,6 +258,7 @@ public: // Methods
 	_instance* getSelectedInstance() const;
 
 	// Events
+	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
 	void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);

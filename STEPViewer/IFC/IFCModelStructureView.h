@@ -101,6 +101,7 @@ public: // Methods
 	virtual ~CIFCModelStructureView();
 
 	// _view
+	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
 	virtual void onInstanceSelected(_view* pSender) override;
 
 	// CModelStructureViewBase

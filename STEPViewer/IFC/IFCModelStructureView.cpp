@@ -238,6 +238,36 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_vecModelData.clear();
 }
 
+/*virtual*/ void CIFCModelStructureView::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	//
+	// Model
+	//
+
+	_ptr<_ifc_instance> ifcInstance(pInstance);
+
+	auto pModel = getController()->getModelByInstance(ifcInstance->getOwlModel());
+	ASSERT(pModel != nullptr);
+
+	auto pModelData = Model_GetData(pModel);
+	ASSERT(pModelData != nullptr);
+
+	//
+	// UI
+	//
+	
+	set<_ifc_instance*> setInstances{ ifcInstance };
+	Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+	Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+	Tree_Update(pModelData->GetModelItem(), pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
+	Tree_Update(pModelData->GetModelItem(), pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
+}
+
 /*virtual*/ void CIFCModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {	
 	if (pSender == this)
@@ -827,7 +857,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
 					}
 
-					pController->onInstancesEnabledStateChanged(this);
+					pController->onInstanceEnabledStateChanged(this, pTargetInstance, 0);
 				}
 				break;
 
