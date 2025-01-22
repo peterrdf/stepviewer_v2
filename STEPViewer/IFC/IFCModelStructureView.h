@@ -145,7 +145,6 @@ private: // Methods
 	void Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);
-	void Tree_Reset(bool bEnable);
 	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	bool Tree_EnsureVisible(CModelData* pModelData, _ifc_instance* pInstance);
 	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
