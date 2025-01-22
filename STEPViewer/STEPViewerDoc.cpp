@@ -113,6 +113,8 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 			auto pModel = _ap_model_factory::load(this, model, true, false);
 			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
 			{
+				delete pModel;
+
 				continue;
 			}
 
@@ -125,6 +127,8 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
 			auto pModel = _ap_model_factory::load(this, model, true, false);
 			if (dynamic_cast<_ifc_model*>(pModel) == nullptr)
 			{
+				delete pModel;
+
 				continue;
 			}
 
