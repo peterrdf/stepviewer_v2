@@ -139,6 +139,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_COMMAND(ID_VIEW_ISOMETRIC, &CMySTEPViewerView::OnViewIsometric)
 	ON_COMMAND(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnInstancesSave)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnUpdateInstancesSave)
+	ON_COMMAND(ID_INSTANCES_ENABLE, &CMySTEPViewerView::OnInstancesEnable)
+	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ENABLE, &CMySTEPViewerView::OnUpdateInstancesEnable)
 	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnUpdateInstancesZoomTo)
 	ON_COMMAND(ID_SHOW_FACES, &CMySTEPViewerView::OnShowFaces)
@@ -533,6 +535,35 @@ void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(bEnable);
+}
+
+void CMySTEPViewerView::OnInstancesEnable()
+{
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+	ASSERT(pDocument->getSelectedInstance() != nullptr);
+
+	pDocument->getSelectedInstance()->setEnable(!pDocument->getSelectedInstance()->getEnable());
+
+	pDocument->onInstanceEnabledStateChanged(this, pDocument->getSelectedInstance(), 0);
+}
+
+void CMySTEPViewerView::OnUpdateInstancesEnable(CCmdUI* pCmdUI)
+{
+	BOOL bEnable = FALSE;
+	BOOL bCheck = FALSE;
+
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	if ((pDocument != nullptr) && (pDocument->getSelectedInstance() != nullptr))
+	{
+		bEnable = TRUE;
+		bCheck = pDocument->getSelectedInstance()->getEnable() ? TRUE : FALSE;
+	}
+
+	pCmdUI->Enable(bEnable);
+	pCmdUI->SetCheck(bCheck);
 }
 
 void CMySTEPViewerView::OnInstancesZoomTo()

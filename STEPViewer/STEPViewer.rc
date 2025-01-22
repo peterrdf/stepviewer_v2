@@ -591,6 +591,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
+        MENUITEM "Enable",                      ID_INSTANCES_ENABLE
+        MENUITEM SEPARATOR
         POPUP "Projection"
         BEGIN
             MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
@@ -694,10 +696,12 @@ END
 // 312
 //
 
-IDR_TEXTFILE_VERTEX_SHADER2   312                     "res\\vertex_shader2.txt"
+IDR_TEXTFILE_VERTEX_SHADER2 312                     "res\\vertex_shader2.txt"
+
 IDR_TEXTFILE_FRAGMENT_SHADER2 312                     "res\\fragment_shader2.txt"
 
-IDR_TEXTFILE_VERTEX_SHADER3   312                     "res\\Shader.vert"
+IDR_TEXTFILE_VERTEX_SHADER3 312                     "res\\Shader.vert"
+
 IDR_TEXTFILE_FRAGMENT_SHADER3 312                     "res\\Shader.frag"
 
 
