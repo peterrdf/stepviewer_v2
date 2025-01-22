@@ -138,7 +138,7 @@ public: // Methods
 
 		vecGeometries.clear();
 
-		SdaiAggr sdaiGroupAggr = sdaiGetEntityExtentBN(getSdaiModel(), szType);
+		SdaiAggr sdaiGroupAggr = xxxxGetEntityAndSubTypesExtentBN(getSdaiModel(), szType);
 		ASSERT(sdaiGroupAggr != nullptr);
 
 		SdaiInteger iInstancesCount = sdaiGetMemberCount(sdaiGroupAggr);
