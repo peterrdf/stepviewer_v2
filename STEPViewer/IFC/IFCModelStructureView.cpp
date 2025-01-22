@@ -253,6 +253,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
+	Tree_Select(false);
+
 	m_pSelectedInstance = getController()->getSelectedInstance() != nullptr ?
 		dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance()) : 
 		nullptr;
@@ -266,7 +268,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		ASSERT(pModelData != nullptr);
 
 		Tree_EnsureVisible(pModelData, m_pSelectedInstance);
-	}
+		Tree_Select(true);
+	}	
 }
 
 /*virtual*/ void CIFCModelStructureView::Load() /*override*/
@@ -2005,6 +2008,39 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+	}
+}
+
+void CIFCModelStructureView::Tree_Select(bool bEnable)
+{
+	if (m_pSelectedInstance != nullptr)
+	{
+		auto pModel = getController()->getModelByInstance(m_pSelectedInstance->getOwlModel());
+		ASSERT(pModel != nullptr);
+
+		auto pModelData = Model_GetData(pModel);
+		ASSERT(pModelData != nullptr);
+
+		Tree_Select(m_pSelectedInstance, pModelData->GetProjectItems(), bEnable);
+		Tree_Select(m_pSelectedInstance, pModelData->GetGroupsItems(), bEnable);
+		Tree_Select(m_pSelectedInstance, pModelData->GetSpaceBoundariesItems(), bEnable);
+		Tree_Select(m_pSelectedInstance, pModelData->GetUnreferencedItems(), bEnable);
+	}
+}
+
+void CIFCModelStructureView::Tree_Select(_ifc_instance* pInstance, ITEMS& mapItems, bool bEnable)
+{
+	ASSERT(pInstance != nullptr);
+
+	auto itItems = mapItems.find(pInstance);
+	if (itItems == mapItems.end())
+	{
+		return;
+	}
+
+	for (auto hInstance : itItems->second)
+	{
+		m_pTreeCtrl->SetItemState(hInstance, bEnable ? TVIS_BOLD : 0, TVIS_BOLD);
 	}
 }
 
