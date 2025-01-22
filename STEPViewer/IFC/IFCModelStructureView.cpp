@@ -13,10 +13,171 @@
 #include <chrono>
 using namespace std;
 
+CIFCModelStructureView::CModelData::CModelData(_ifc_model* pModel, CTreeCtrlEx* pTreeCtrl, HTREEITEM hModel)
+	: m_pModel(pModel)
+	, m_pTreeCtrl(pTreeCtrl)
+	, m_hModel(hModel)
+	, m_hProject(NULL)
+	, m_hGroups(NULL)
+	, m_hSpaceBoundaries(NULL)
+	, m_hUnreferenced(NULL)
+	, m_mapProject()
+	, m_mapModel()
+	, m_mapGroups()
+	, m_mapSpaceBoundaries()
+	, m_mapUnreferenced()
+{
+	ASSERT(m_pModel != nullptr);
+	ASSERT(m_pTreeCtrl != nullptr);
+	ASSERT(m_hModel != NULL);
+}
+
+/*virtual*/ CIFCModelStructureView::CModelData::~CModelData()
+{
+}
+
+bool CIFCModelStructureView::CModelData::IsProjectItem(HTREEITEM hItem)
+{
+	if (hItem == NULL)
+	{
+		return false;
+	}
+	else if (hItem == m_hProject)
+	{
+		return true;
+	}
+
+	return IsProjectItem(m_pTreeCtrl->GetParentItem(hItem));
+}
+
+bool CIFCModelStructureView::CModelData::IsGroupsItem(HTREEITEM hItem)
+{
+	if (hItem == NULL)
+	{
+		return false;
+	}
+	else if (hItem == m_hGroups)
+	{
+		return true;
+	}
+
+	return IsGroupsItem(m_pTreeCtrl->GetParentItem(hItem));
+}
+
+bool CIFCModelStructureView::CModelData::IsSpaceBoundariesItem(HTREEITEM hItem)
+{
+	if (hItem == NULL)
+	{
+		return false;
+	}
+	else if (hItem == m_hSpaceBoundaries)
+	{
+		return true;
+	}
+
+	return IsSpaceBoundariesItem(m_pTreeCtrl->GetParentItem(hItem));
+}
+
+bool CIFCModelStructureView::CModelData::IsUnreferencedItem(HTREEITEM hItem)
+{
+	if (hItem == NULL)
+	{
+		return false;
+	}
+	else if (hItem == m_hUnreferenced)
+	{
+		return true;
+	}
+
+	return IsUnreferencedItem(m_pTreeCtrl->GetParentItem(hItem));
+}
+
+HTREEITEM CIFCModelStructureView::CModelData::GetModelItem() const
+{
+	return m_hModel;
+}
+
+void CIFCModelStructureView::CModelData::SetProjectItem(HTREEITEM hItem)
+{
+	ASSERT(hItem != NULL);
+	ASSERT(m_hProject == NULL);
+
+	m_hProject = hItem;
+}
+
+HTREEITEM CIFCModelStructureView::CModelData::GetProjectItem() const
+{
+	return m_hProject;
+}
+
+void CIFCModelStructureView::CModelData::SetGroupsItem(HTREEITEM hItem)
+{
+	ASSERT(hItem != NULL);
+	ASSERT(m_hGroups == NULL);
+
+	m_hGroups = hItem;
+}
+
+HTREEITEM CIFCModelStructureView::CModelData::GetGroupsItem() const
+{
+	return m_hGroups;
+}
+
+void CIFCModelStructureView::CModelData::SetSpaceBoundariesItem(HTREEITEM hItem)
+{
+	ASSERT(hItem != NULL);
+	ASSERT(m_hSpaceBoundaries == NULL);
+
+	m_hSpaceBoundaries = hItem;
+}
+
+HTREEITEM CIFCModelStructureView::CModelData::GetSpaceBoundariesItem() const
+{
+	return m_hSpaceBoundaries;
+}
+
+void CIFCModelStructureView::CModelData::SetUnreferencedItem(HTREEITEM hItem)
+{
+	ASSERT(hItem != NULL);
+	ASSERT(m_hUnreferenced == NULL);
+
+	m_hUnreferenced = hItem;
+}
+
+HTREEITEM CIFCModelStructureView::CModelData::GetUnreferencedItem() const
+{
+	return m_hUnreferenced;
+}
+
+CIFCModelStructureView::ITEMS& CIFCModelStructureView::CModelData::GetItems(HTREEITEM hItem)
+{
+	if (IsProjectItem(hItem))
+	{
+		return m_mapProject;
+	}
+	else if (IsGroupsItem(hItem))
+	{
+		return m_mapGroups;
+	}
+	else if (IsSpaceBoundariesItem(hItem))
+	{
+		return m_mapSpaceBoundaries;
+	}
+	else if (IsUnreferencedItem(hItem)) 
+	{
+		return m_mapUnreferenced;
+	}
+
+	ASSERT(hItem == m_hModel);
+
+	return m_mapModel;
+}
+
 // ************************************************************************************************
 CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
+	, m_vecModelData()
 	, m_hModel(NULL)
 	, m_hProject(NULL)
 	, m_hGroups(NULL)
@@ -78,6 +239,12 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pTreeCtrl->SetItemStateProvider(nullptr);
 
 	delete m_pSearchDialog;
+
+	for (auto pModelData : m_vecModelData)
+	{
+		delete pModelData;
+	}
+	m_vecModelData.clear();
 }
 
 /*virtual*/ void CIFCModelStructureView::onInstanceSelected(_view* pSender) /*override*/
@@ -149,33 +316,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 		ASSERT(iImage == iSelectedImage);
 
-		bool bIsProjectItem = Tree_IsProjectItem(hItem);
-		bool bIsGroupsItem = Tree_IsGroupsItem(hItem);
-		bool bIsSpaceBoundariesItem = Tree_IsSpaceBoundariesItem(hItem);
-		bool bIsUnreferencedItem = Tree_IsUnreferencedItem(hItem);
+		auto pModelData = Model_GetData(hItem);
+		ASSERT(pModelData != nullptr);
 
-		ITEMS mapModel; // empty map for root item
-		ITEMS& mapItems = mapModel;
-		if (bIsProjectItem)
-		{
-			mapItems = m_mapProject;
-		}
-		else if (bIsGroupsItem)
-		{
-			mapItems = m_mapGroups;
-		}
-		else if (bIsSpaceBoundariesItem)
-		{
-			mapItems = m_mapSpaceBoundaries;
-		}
-		else if (bIsUnreferencedItem)
-		{
-			mapItems = m_mapUnreferenced;
-		}
-		else
-		{
-			ASSERT(hItem == m_hModel); // Inetrnal error!
-		}
+		ITEMS& mapItems = pModelData->GetItems(hItem);
 
 		switch (iImage)
 		{
@@ -260,11 +404,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 				}
 
-				if (bIsProjectItem)
+				if (pModelData->IsProjectItem(hItem))
 				{
 					Tree_Update(m_hGroups, m_mapGroups, setInstances);
 				}
-				else if (bIsGroupsItem)
+				else if (pModelData->IsGroupsItem(hItem))
 				{
 					Tree_Update(m_hProject, m_mapProject, setInstances);
 				}
@@ -352,11 +496,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 				}
 
-				if (bIsProjectItem)
+				if (pModelData->IsProjectItem(hItem))
 				{
 					Tree_Update(m_hGroups, m_mapGroups, setInstances);
 				}
-				else if (bIsGroupsItem)
+				else if (pModelData->IsGroupsItem(hItem))
 				{
 					Tree_Update(m_hProject, m_mapProject, setInstances);
 				}
@@ -890,6 +1034,9 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	tvInsertStruct.item.lParam = NULL;
 	m_hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
+	auto pModelData = new CModelData(pModel, m_pTreeCtrl, m_hModel);
+	m_vecModelData.push_back(pModelData);
+
 	// Header
 	LoadHeader(m_hModel);
 
@@ -903,10 +1050,10 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
 		// Load
-		LoadProject(pModel, m_hModel, sdaiProjectInstance, m_mapProject);
-		LoadGroups(pModel, m_hModel, m_mapGroups);
-		//LoadSpaceBoundaries(pModel, m_hModel, m_mapSpaceBoundaries); // TEST
-		LoadUnreferencedItems(pModel, m_hModel, m_mapUnreferenced);
+		LoadProject(pModelData, m_hModel, sdaiProjectInstance, pModelData->GetProjectItems());
+		LoadGroups(pModelData, m_hModel, pModelData->GetGroupsItems());
+		//LoadSpaceBoundaries(pModelData, m_hModel, pModelData->GetSpaceBoundariesItems()); // TEST
+		LoadUnreferencedItems(pModelData, m_hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
 		Tree_Update(m_hModel);
@@ -915,7 +1062,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	m_pTreeCtrl->Expand(m_hModel, TVE_EXPAND);
 }
 
-void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, SdaiInstance sdaiProjectInstance, ITEMS& mapItems)
+void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hModel, SdaiInstance sdaiProjectInstance, ITEMS& mapItems)
 {
 	auto pController = getController();
 	if (pController == nullptr)
@@ -925,7 +1072,9 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		return;
 	}	
 
-	auto pGeometry = pModel->getGeometryByInstance(sdaiProjectInstance);
+	ASSERT(pModelData != nullptr);
+
+	auto pGeometry = pModelData->GetModel()->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr)
 	{
 		wstring strItem = _ap_instance::getName(sdaiProjectInstance);
@@ -946,6 +1095,7 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
 		m_hProject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+		pModelData->SetProjectItem(m_hProject);
 
 		// Geometry
 		tvInsertStruct.hParent = m_hProject;
@@ -960,9 +1110,9 @@ void CIFCModelStructureView::LoadProject(_ifc_model* pModel, HTREEITEM hModel, S
 		mapItems[ifcInstance] = vector<HTREEITEM>{ m_hProject };
 
 		// decomposition/contains
-		LoadIsDecomposedBy(pModel, sdaiProjectInstance, m_hProject, mapItems);
-		LoadIsNestedBy(pModel, sdaiProjectInstance, m_hProject, mapItems);
-		LoadContainsElements(pModel, sdaiProjectInstance, m_hProject, mapItems);
+		LoadIsDecomposedBy(pModelData->GetModel(), sdaiProjectInstance, m_hProject, mapItems);
+		LoadIsNestedBy(pModelData->GetModel(), sdaiProjectInstance, m_hProject, mapItems);
+		LoadContainsElements(pModelData->GetModel(), sdaiProjectInstance, m_hProject, mapItems);
 
 		m_pTreeCtrl->Expand(m_hProject, TVE_EXPAND);
 	} // if (itInstance != ...
@@ -1210,12 +1360,12 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 	return hInstance;	
 }
 
-void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems)
+void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
 {
-	ASSERT(pModel != nullptr);
+	ASSERT(pModelData != nullptr);
 
 	vector<_ap_geometry*> vecGeometries;
-	pModel->getGeometriesByType("IFCGROUP", vecGeometries);
+	pModelData->GetModel()->getGeometriesByType("IFCGROUP", vecGeometries);
 
 	if (vecGeometries.empty())
 	{
@@ -1231,6 +1381,7 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel, IT
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
 	m_hGroups = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	pModelData->SetGroupsItem(m_hGroups);
 
 	for (auto pGeometry : vecGeometries)
 	{
@@ -1280,23 +1431,23 @@ void CIFCModelStructureView::LoadGroups(_ifc_model* pModel, HTREEITEM hModel, IT
 				SdaiInstance sdaiRelatedObject = 0;
 				sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, i, sdaiINSTANCE, &sdaiRelatedObject);
 
-				LoadInstance(pModel, sdaiRelatedObject, hInstance, mapItems);
+				LoadInstance(pModelData->GetModel(), sdaiRelatedObject, hInstance, mapItems);
 			} // for (SdaiInteger i = ...
 		} // if (sdaiIsGroupedByInstance != 0)
 	} // for (SdaiInteger iGroupInstance = ...
 }
 
-void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems)
+void CIFCModelStructureView::LoadSpaceBoundaries(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
 {
-	ASSERT(pModel != nullptr);
+	ASSERT(pModelData != nullptr);
 
-	if (sdaiGetMemberCount(sdaiGetEntityExtentBN(pModel->getSdaiModel(), "IFCRELSPACEBOUNDARY")) == 0)
+	if (sdaiGetMemberCount(sdaiGetEntityExtentBN(pModelData->GetModel()->getSdaiModel(), "IFCRELSPACEBOUNDARY")) == 0)
 	{
 		return;
 	}
 
 	vector<_ap_geometry*> vecGeometries;
-	pModel->getGeometriesByType("IFCBUILDINGSTOREY", vecGeometries);
+	pModelData->GetModel()->getGeometriesByType("IFCBUILDINGSTOREY", vecGeometries);
 
 	if (vecGeometries.empty())
 	{
@@ -1312,6 +1463,7 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
 	m_hSpaceBoundaries = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	pModelData->SetSpaceBoundariesItem(m_hSpaceBoundaries);
 
 	for (auto pGeometry : vecGeometries)
 	{
@@ -1345,7 +1497,7 @@ void CIFCModelStructureView::LoadSpaceBoundaries(_ifc_model* pModel, HTREEITEM h
 			mapItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
 		}
 
-		LoadBuildingStoreyChildren(pModel, ifcInstance->getSdaiInstance(), hInstance, mapItems);
+		LoadBuildingStoreyChildren(pModelData->GetModel(), ifcInstance->getSdaiInstance(), hInstance, mapItems);
 	} // for (SdaiInteger iBuildingStoreyInstance = ...
 }
 
@@ -1391,12 +1543,12 @@ void CIFCModelStructureView::LoadBuildingStoreyChildren(_ifc_model* pModel, Sdai
 	} // for (SdaiInteger i = ...	
 }
 
-void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM hModel, ITEMS& mapItems)
+void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
 {
-	ASSERT(pModel != nullptr);
+	ASSERT(pModelData != nullptr);
 
 	map<wstring, vector<_ifc_instance*>> mapUnreferencedItems;
-	for (auto pGeometry : pModel->getGeometries())
+	for (auto pGeometry : pModelData->GetModel()->getGeometries())
 	{
 		if (!pGeometry->hasGeometry())
 		{
@@ -1442,6 +1594,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
 	tvInsertStruct.item.lParam = NULL;
 	m_hUnreferenced = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+	pModelData->SetUnreferencedItem(m_hUnreferenced);
 
 	map<wstring, vector<_ifc_instance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
 	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++)
@@ -1486,6 +1639,29 @@ void CIFCModelStructureView::LoadUnreferencedItems(_ifc_model* pModel, HTREEITEM
 	} // for (; itUnreferencedItems != ...
 }
 
+CIFCModelStructureView::CModelData* CIFCModelStructureView::Model_GetData(HTREEITEM hItem)
+{
+	HTREEITEM hModel = Tree_GetModelItem(hItem);
+	if (hModel == NULL)
+	{
+		ASSERT(FALSE);
+
+		return nullptr;
+	}
+
+	auto itModelData = find_if(m_vecModelData.begin(), m_vecModelData.end(), [&](CModelData* pModelData)
+		{
+			return pModelData->GetModelItem() == hModel;
+		});
+
+	if (itModelData != m_vecModelData.end())
+	{
+		return *itModelData;
+	}
+
+	return nullptr;
+}
+
 void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren)
 {
 	if (hItem == nullptr)
@@ -1520,6 +1696,19 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable,
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
+}
+
+HTREEITEM CIFCModelStructureView::Tree_GetModelItem(HTREEITEM hItem) const
+{
+	ASSERT(hItem != NULL);
+
+	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+	if (hParent == NULL)
+	{
+		return hItem;
+	}
+
+	return Tree_GetModelItem(hParent);
 }
 
 bool CIFCModelStructureView::Tree_IsProjectItem(HTREEITEM hItem)
@@ -1969,6 +2158,12 @@ void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 
 void CIFCModelStructureView::ResetView()
 {
+	for (auto pModelData : m_vecModelData)
+	{
+		delete pModelData;
+	}
+	m_vecModelData.clear();
+
 	m_hModel = NULL;
 	m_hProject = NULL;
 	m_hGroups = NULL;
