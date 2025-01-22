@@ -91,14 +91,6 @@ private: // Members
 	// Cache
 	vector<CModelData*> m_vecModelData;
 	HTREEITEM m_hModel;
-	HTREEITEM m_hProject;
-	HTREEITEM m_hGroups;
-	HTREEITEM m_hSpaceBoundaries;
-	HTREEITEM m_hUnreferenced;
-	ITEMS m_mapProject;
-	ITEMS m_mapGroups;
-	ITEMS m_mapSpaceBoundaries;
-	ITEMS m_mapUnreferenced;
 	_ifc_instance* m_pSelectedInstance;
 	
 	// Search
@@ -145,14 +137,10 @@ private: // Methods
 	void LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
 
 	CModelData* Model_GetData(HTREEITEM hItem);
+	CModelData* Model_GetData(_model* pModel);
 	void Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren);	
 
 	HTREEITEM Tree_GetModelItem(HTREEITEM hItem) const;
-
-	bool Tree_IsProjectItem(HTREEITEM hItem);
-	bool Tree_IsGroupsItem(HTREEITEM hItem);
-	bool Tree_IsSpaceBoundariesItem(HTREEITEM hItem);
-	bool Tree_IsUnreferencedItem(HTREEITEM hItem);
 
 	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
 	void Tree_Update(HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);	
@@ -160,7 +148,7 @@ private: // Methods
 	void Tree_UpdateParents(HTREEITEM hItem);
 	void Tree_Reset(bool bEnable);
 	void Tree_Reset(HTREEITEM hItem, bool bEnable);
-	bool Tree_EnsureVisible(_ifc_instance* pInstance);
+	bool Tree_EnsureVisible(CModelData* pModelData, _ifc_instance* pInstance);
 	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
 
 	void ResetView();
