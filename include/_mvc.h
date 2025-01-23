@@ -94,6 +94,7 @@ public: // Methods
 
 	void scale();
 	virtual void zoomTo(_instance* pInstance);
+	virtual void zoomToInstances(const set<_instance*>& setInstances);
 	virtual void zoomOut();
 
 	_instance* getInstanceByID(int64_t iID) const;	
@@ -244,6 +245,7 @@ public: // Methods
 
 	// Zoom
 	void zoomToSelectedInstance();
+	void zoomToInstances(const set<_instance*>& setInstances);
 	void zoomOut();
 
 	// Save	

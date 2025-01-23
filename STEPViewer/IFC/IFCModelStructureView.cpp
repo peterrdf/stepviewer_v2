@@ -1688,6 +1688,35 @@ CIFCModelStructureView::CModelData* CIFCModelStructureView::Model_GetData(_model
 	return nullptr;
 }
 
+void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, set<_instance*>& setChildren)
+{
+	if (hItem == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (!m_pTreeCtrl->ItemHasChildren(hItem))
+	{
+		return;
+	}
+
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
+	while (hChild != nullptr)
+	{
+		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
+		if (pInstance != nullptr)
+		{
+			setChildren.insert(pInstance);
+		}
+
+		Model_GetChildren(hChild, setChildren);
+
+		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+	} // while (hChild != nullptr)
+}
+
 void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren)
 {
 	if (hItem == nullptr)
@@ -1705,11 +1734,6 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable,
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		int iImage, iSelectedImage = -1;
-		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
 		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
 		{

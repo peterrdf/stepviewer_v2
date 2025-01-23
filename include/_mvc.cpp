@@ -162,6 +162,51 @@ void _model::scale()
 	TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
+/*virtual*/ void _model::zoomToInstances(const set<_instance*>& setInstances)
+{
+	assert(!setInstances.empty());
+
+	// World
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pInstance : setInstances)
+	{
+		pInstance->getGeometry()->calculateMinMaxTransform(
+			this,
+			pInstance,
+			m_fXmin, m_fXmax,
+			m_fYmin, m_fYmax,
+			m_fZmin, m_fZmax);
+	}
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.f;
+		m_fXmax = 1.f;
+		m_fYmin = -1.f;
+		m_fYmax = 1.f;
+		m_fZmin = -1.f;
+		m_fZmax = 1.f;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+}
+
 /*virtual*/ void _model::zoomTo(_instance* pInstance)
 {
 	assert(pInstance != nullptr);
@@ -353,7 +398,7 @@ void _model::addInstance(_instance* pInstance)
 
 	m_vecInstances.push_back(pInstance);
 
-	ASSERT(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
+	assert(m_mapID2Instance.find(pInstance->getID()) == m_mapID2Instance.end());
 	m_mapID2Instance[pInstance->getID()] = pInstance;
 }
 
@@ -591,12 +636,44 @@ void _controller::zoomToSelectedInstance()
 	auto pModel = getModelByInstance(m_pSelectedInstance->getOwlModel());
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 
 		return;
 	}
 
 	pModel->zoomTo(m_pSelectedInstance);
+
+	for (auto pM : m_vecModels)
+	{
+		if (pM != pModel)
+		{
+			pM->setDimensions(pModel);
+		}
+	}
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onWorldDimensionsChanged();
+	}
+}
+
+void _controller::zoomToInstances(const set<_instance*>& setInstances)
+{
+	if (setInstances.empty())
+	{
+		return;
+	}
+
+	auto pModel = getModelByInstance((*setInstances.begin())->getOwlModel());
+	if (pModel == nullptr)
+	{
+		assert(FALSE);
+
+		return;
+	}
+
+	pModel->zoomToInstances(setInstances);
 
 	for (auto pM : m_vecModels)
 	{
