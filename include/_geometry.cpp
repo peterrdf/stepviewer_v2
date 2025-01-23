@@ -79,21 +79,21 @@ _geometry::_geometry(OwlInstance owlInstance)
 {
 	assert(iInstance != 0);
 
-	_vector3d vecOriginalBBMin;
-	_vector3d vecOriginalBBMax;
+	_vector3d vecBBMin;
+	_vector3d vecBBMax;
 	if (GetInstanceGeometryClass(iInstance) &&
 		GetBoundingBox(
 			iInstance,
-			(double*)&vecOriginalBBMin,
-			(double*)&vecOriginalBBMax))
+			(double*)&vecBBMin,
+			(double*)&vecBBMax))
 	{
-		dXmin = fmin(dXmin, vecOriginalBBMin.x);
-		dYmin = fmin(dYmin, vecOriginalBBMin.y);
-		dZmin = fmin(dZmin, vecOriginalBBMin.z);
+		dXmin = fmin(dXmin, vecBBMin.x);
+		dYmin = fmin(dYmin, vecBBMin.y);
+		dZmin = fmin(dZmin, vecBBMin.z);
 
-		dXmax = fmax(dXmax, vecOriginalBBMax.x);
-		dYmax = fmax(dYmax, vecOriginalBBMax.y);
-		dZmax = fmax(dZmax, vecOriginalBBMax.z);
+		dXmax = fmax(dXmax, vecBBMax.x);
+		dYmax = fmax(dYmax, vecBBMax.y);
+		dZmax = fmax(dZmax, vecBBMax.z);
 	}
 }
 
