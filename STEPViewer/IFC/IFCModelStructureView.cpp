@@ -688,6 +688,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	ASSERT(pModelData != nullptr);
 
 	ITEMS& mapItems = pModelData->GetItems(hItem);
+
+	// Zoom to
+	set<_instance*> setInstances;
 		
 	// ENTITY : VISIBLE COUNT
 	map<wstring, long> mapEntity2VisibleCount;
@@ -746,15 +749,31 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			}
 		} // if (pTargetInstance->hasGeometry())
 		else 
-		{
+		{			
+			Model_GetChildren(hItem, setInstances);
+
 			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 			pMenu = menuMain.GetSubMenu(0);
+
+			// Zoom to
+			if (setInstances.empty())
+			{
+				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO_CHILDREN, MF_BYCOMMAND | MF_DISABLED);
+			}
 		}
 	} // if (pTargetInstance != nullptr)
 	else
 	{
+		Model_GetChildren(hItem, setInstances);
+
 		VERIFY(menuMain.LoadMenuW(IDR_POPUP_META_DATA));
 		pMenu = menuMain.GetSubMenu(0);
+
+		// Zoom to
+		if (setInstances.empty())
+		{
+			pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO_CHILDREN, MF_BYCOMMAND | MF_DISABLED);
+		}
 	}
 
 	// Entities
@@ -938,9 +957,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			{
 				case ID_INSTANCES_ZOOM_TO_CHILDREN:
 				{
-					set<_instance*> setInstances;
-					Model_GetChildren(hItem, setInstances);
-
 					pController->zoomToInstances(setInstances);
 				}
 				break;
