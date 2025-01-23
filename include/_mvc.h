@@ -96,7 +96,6 @@ public: // Methods
 	virtual void zoomTo(_instance* pInstance);
 	virtual void zoomOut();
 
-	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	_instance* getInstanceByID(int64_t iID) const;	
 
 protected: // Methods
@@ -115,6 +114,8 @@ public: // Properties
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 	
+	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	void setDimensions(_model* pSource);
 	double getOriginalBoundingSphereDiameter() const { return m_dOriginalBoundingSphereDiameter; }
 	float getBoundingSphereDiameter() const { return m_fBoundingSphereDiameter; }
 

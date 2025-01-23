@@ -256,16 +256,6 @@ void _model::scale()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-{
-	fXmin = m_fXmin;
-	fXmax = m_fXmax;
-	fYmin = m_fYmin;
-	fYmax = m_fYmax;
-	fZmin = m_fZmin;
-	fZmax = m_fZmax;
-}
-
 _instance* _model::getInstanceByID(int64_t iID) const
 {
 	auto itInstance = m_mapID2Instance.find(iID);
@@ -386,6 +376,29 @@ void _model::addInstance(_instance* pInstance)
 	}
 	m_vecInstances.clear();
 	m_mapID2Instance.clear();
+}
+
+void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
+{
+	fXmin = m_fXmin;
+	fXmax = m_fXmax;
+	fYmin = m_fYmin;
+	fYmax = m_fYmax;
+	fZmin = m_fZmin;
+	fZmax = m_fZmax;
+}
+
+void _model::setDimensions(_model* pSource)
+{
+	assert(pSource != nullptr);
+
+	m_fXmin = pSource->m_fXmin;
+	m_fXmax = pSource->m_fXmax;
+	m_fYmin = pSource->m_fYmin;
+	m_fYmax = pSource->m_fYmax;
+	m_fZmin = pSource->m_fZmin;
+	m_fZmax = pSource->m_fZmax;
+	m_fBoundingSphereDiameter = pSource->m_fBoundingSphereDiameter;
 }
 
 // ************************************************************************************************
@@ -585,6 +598,14 @@ void _controller::zoomToSelectedInstance()
 
 	pModel->zoomTo(m_pSelectedInstance);
 
+	for (auto pM : m_vecModels)
+	{
+		if (pM != pModel)
+		{
+			pM->setDimensions(pModel);
+		}
+	}
+
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
@@ -594,7 +615,10 @@ void _controller::zoomToSelectedInstance()
 
 void _controller::zoomOut()
 {
-	getModel()->zoomOut();
+	for (auto pModel : m_vecModels)
+	{
+		pModel->zoomOut();
+	}	
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
