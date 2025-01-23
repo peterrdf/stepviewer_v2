@@ -168,7 +168,16 @@ CIFCModelStructureView::ITEMS& CIFCModelStructureView::CModelData::GetItems(HTRE
 		return m_mapUnreferenced;
 	}
 
-	ASSERT(hItem == m_hModel);
+	HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+	while (hParent != NULL)
+	{
+		hItem = hParent;
+
+		hParent = m_pTreeCtrl->GetParentItem(hItem);
+	}
+
+	ASSERT((m_pTreeCtrl->GetItemText(hItem) == L"Header") ||
+		(hItem == m_hModel));
 
 	return m_mapModel;
 }
@@ -674,10 +683,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pTreeCtrl->SetFocus();
 
 	auto pTargetInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
-	if (pTargetInstance == nullptr)
-	{
-		return;
-	}
 
 	auto pModelData = Model_GetData(hItem);
 	ASSERT(pModelData != nullptr);
@@ -931,6 +936,15 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		{
 			switch (uiCommand)
 			{
+				case ID_INSTANCES_ZOOM_TO_CHILDREN:
+				{
+					set<_instance*> setInstances;
+					Model_GetChildren(hItem, setInstances);
+
+					pController->zoomToInstances(setInstances);
+				}
+				break;
+
 				case ID_VIEW_ZOOM_OUT:
 				{
 					pController->zoomOut();
@@ -955,6 +969,15 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	{
 		switch (uiCommand)
 		{
+			case ID_INSTANCES_ZOOM_TO_CHILDREN:
+			{
+				set<_instance*> setInstances;
+				Model_GetChildren(hItem, setInstances);
+
+				pController->zoomToInstances(setInstances);
+			}
+			break;
+
 			case ID_VIEW_ZOOM_OUT:
 			{
 				pController->zoomOut();

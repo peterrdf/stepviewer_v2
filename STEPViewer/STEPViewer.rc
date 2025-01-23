@@ -576,6 +576,7 @@ IDR_POPUP_INSTANCES_NO_GEOMETRY MENU
 BEGIN
     POPUP "Instances"
     BEGIN
+        MENUITEM "Zoom to children",            ID_INSTANCES_ZOOM_TO_CHILDREN
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
         MENUITEM "View Attributes",             IDS_VIEW_IFC_RELATIONS
@@ -623,6 +624,7 @@ IDR_POPUP_META_DATA MENU
 BEGIN
     POPUP "Metadata"
     BEGIN
+        MENUITEM "Zoom to children",            ID_INSTANCES_ZOOM_TO_CHILDREN
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
     END
 END
