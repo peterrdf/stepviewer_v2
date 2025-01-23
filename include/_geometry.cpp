@@ -519,6 +519,48 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
+	assert(m_pmtxOriginalBBTransformation == nullptr);
+	m_pmtxOriginalBBTransformation = new _matrix();
+
+	assert(m_pvecOriginalBBMin == nullptr);
+	m_pvecOriginalBBMin = new _vector3d();
+
+	assert(m_pvecOriginalBBMax == nullptr);
+	m_pvecOriginalBBMax = new _vector3d();
+
+	assert(m_pmtxBBTransformation == nullptr);
+	m_pmtxBBTransformation = new _matrix();
+
+	assert(m_pvecBBMin == nullptr);
+	m_pvecBBMin = new _vector3d();
+
+	assert(m_pvecBBMax == nullptr);
+	m_pvecBBMax = new _vector3d();
+
+	assert(m_pvecAABBMin == nullptr);
+	m_pvecAABBMin = new _vector3d();
+
+	assert(m_pvecAABBMax == nullptr);
+	m_pvecAABBMax = new _vector3d();
+
+	GetBoundingBox(
+		getOwlInstance(),
+		(double*)m_pmtxOriginalBBTransformation,
+		(double*)m_pvecOriginalBBMin,
+		(double*)m_pvecOriginalBBMax);
+
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
+	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
+	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+
+	if (!GetBoundingBox(
+		getOwlInstance(),
+		(double*)m_pvecAABBMin,
+		(double*)m_pvecAABBMax))
+	{
+		return;
+	}
+
 	if (!calculateInstance(m_pVertexBuffer, m_pIndexBuffer))
 	{
 		return;
