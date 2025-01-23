@@ -690,7 +690,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	ITEMS& mapItems = pModelData->GetItems(hItem);
 
 	// Zoom to
-	set<_instance*> setInstances;
+	set<_instance*> setZoomToInstances;
 		
 	// ENTITY : VISIBLE COUNT
 	map<wstring, long> mapEntity2VisibleCount;
@@ -750,13 +750,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		} // if (pTargetInstance->hasGeometry())
 		else 
 		{			
-			Model_GetChildren(hItem, setInstances);
+			Model_GetChildren(hItem, true, setZoomToInstances);
 
 			VERIFY(menuMain.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 			pMenu = menuMain.GetSubMenu(0);
 
 			// Zoom to
-			if (setInstances.empty())
+			if (setZoomToInstances.empty())
 			{
 				pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO_CHILDREN, MF_BYCOMMAND | MF_DISABLED);
 			}
@@ -764,13 +764,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	} // if (pTargetInstance != nullptr)
 	else
 	{
-		Model_GetChildren(hItem, setInstances);
+		Model_GetChildren(hItem, true, setZoomToInstances);
 
 		VERIFY(menuMain.LoadMenuW(IDR_POPUP_META_DATA));
 		pMenu = menuMain.GetSubMenu(0);
 
 		// Zoom to
-		if (setInstances.empty())
+		if (setZoomToInstances.empty())
 		{
 			pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO_CHILDREN, MF_BYCOMMAND | MF_DISABLED);
 		}
@@ -957,7 +957,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			{
 				case ID_INSTANCES_ZOOM_TO_CHILDREN:
 				{
-					pController->zoomToInstances(setInstances);
+					pController->zoomToInstances(setZoomToInstances);
 				}
 				break;
 
@@ -987,10 +987,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		{
 			case ID_INSTANCES_ZOOM_TO_CHILDREN:
 			{
-				set<_instance*> setInstances;
-				Model_GetChildren(hItem, setInstances);
-
-				pController->zoomToInstances(setInstances);
+				pController->zoomToInstances(setZoomToInstances);
 			}
 			break;
 
@@ -1727,7 +1724,7 @@ CIFCModelStructureView::CModelData* CIFCModelStructureView::Model_GetData(_model
 	return nullptr;
 }
 
-void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, set<_instance*>& setChildren)
+void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, bool bEnabledOnly, set<_instance*>& setChildren)
 {
 	if (hItem == nullptr)
 	{
@@ -1747,10 +1744,20 @@ void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, set<_instance*>&
 		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
 		if (pInstance != nullptr)
 		{
-			setChildren.insert(pInstance);
+			if (bEnabledOnly)
+			{
+				if (pInstance->getEnable())
+				{
+					setChildren.insert(pInstance);
+				}			
+			}
+			else
+			{
+				setChildren.insert(pInstance);
+			}
 		}
 
-		Model_GetChildren(hChild, setChildren);
+		Model_GetChildren(hChild, bEnabledOnly, setChildren);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)

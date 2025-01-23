@@ -138,7 +138,7 @@ private: // Methods
 
 	CModelData* Model_GetData(HTREEITEM hItem);
 	CModelData* Model_GetData(_model* pModel);
-	void Model_GetChildren(HTREEITEM hItem, set<_instance*>& setChildren);
+	void Model_GetChildren(HTREEITEM hItem, bool bEnabledOnly, set<_instance*>& setChildren);
 	void Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren);	
 
 	HTREEITEM Tree_GetModelItem(HTREEITEM hItem) const;
