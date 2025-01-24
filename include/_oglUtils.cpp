@@ -1439,6 +1439,7 @@ _oglView::_oglView()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pPointedInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
+	, m_bMultiSelect(false)
 	, m_tmShowTooltip(clock())
 {
 	m_pSelectedInstanceMaterial = new _material();
@@ -2764,7 +2765,10 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 
 				_redraw();
 
-				getController()->selectInstance(this, m_pSelectedInstance);
+				getController()->selectInstance(
+					this, 
+					m_pSelectedInstance, 
+					m_bMultiSelect ? GetKeyState(VK_CONTROL) & 0x8000 : false);
 			} // if (m_pSelectedInstance != ...
 		}
 	} // if (enEvent == meLBtnDown)

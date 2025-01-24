@@ -2440,10 +2440,9 @@ protected: // Members
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
 	_instance* m_pPointedInstance;
 	_instance* m_pSelectedInstance;
-
-	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
+	bool m_bMultiSelect;
 
 	// Tooltip
 	clock_t m_tmShowTooltip;

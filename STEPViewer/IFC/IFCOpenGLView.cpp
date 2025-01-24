@@ -19,6 +19,8 @@ CIFCOpenGLView::CIFCOpenGLView(CWnd* pWnd)
 #endif
 		TEXTFILE,
 		false);
+
+	m_bMultiSelect = true;
 }
 
 CIFCOpenGLView::~CIFCOpenGLView()
