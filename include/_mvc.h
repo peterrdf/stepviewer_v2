@@ -244,7 +244,7 @@ public: // Methods
 	}
 
 	// Zoom
-	void zoomToSelectedInstance();
+	void zoomToInstance(_instance* pInstance);
 	void zoomToInstances(const set<_instance*>& setInstances);
 	void zoomOut();
 

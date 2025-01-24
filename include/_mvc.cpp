@@ -629,13 +629,11 @@ const set<_view*>& _controller::getViews()
 	return m_setViews;
 }
 
-void _controller::zoomToSelectedInstance()
+void _controller::zoomToInstance(_instance* pInstance)
 {
-	assert(m_vecSelectedInstances.size() == 1);
+	assert(pInstance != nullptr);
 
-	auto pSelectedInstance = m_vecSelectedInstances.front();
-
-	auto pModel = getModelByInstance(pSelectedInstance->getOwlModel());
+	auto pModel = getModelByInstance(pInstance->getOwlModel());
 	if (pModel == nullptr)
 	{
 		assert(FALSE);
@@ -643,7 +641,7 @@ void _controller::zoomToSelectedInstance()
 		return;
 	}
 
-	pModel->zoomTo(pSelectedInstance);
+	pModel->zoomTo(pInstance);
 
 	for (auto pM : m_vecModels)
 	{
