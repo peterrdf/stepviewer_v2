@@ -454,6 +454,7 @@ _controller::_controller()
 	, m_bUpdatingModel(false)
 	, m_pTargetInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
+	, m_vecSelectedInstances()
 {
 }
 
@@ -704,6 +705,54 @@ void _controller::zoomOut()
 	}
 }
 
+void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
+{
+	if (m_bUpdatingModel)
+	{
+		return;
+	}
+
+	if (m_pTargetInstance == pInstance)
+	{
+		return;
+	}
+
+	m_pTargetInstance = pInstance;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onTargetInstanceChanged(pSender);
+	}
+}
+
+void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd/* = false*/)
+{
+	if (m_bUpdatingModel)
+	{
+		return;
+	}
+
+	if (!bAdd || (pInstance == nullptr))
+	{
+		m_vecSelectedInstances.clear();
+	}
+
+	if ((pInstance != nullptr) &&
+		(find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+	{
+		m_vecSelectedInstances.push_back(pInstance);
+	}
+
+	m_pSelectedInstance = pInstance;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onInstanceSelected(pSender);
+	}
+}
+
 void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
@@ -752,53 +801,6 @@ void _controller::saveInstance(OwlInstance owlInstance)
 	strValidFileName.Replace(_T("\t"), _T("-"));
 
 	return (LPCWSTR)strValidFileName;
-}
-
-void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
-{
-	if (m_bUpdatingModel)
-	{
-		return;
-	}
-
-	if (m_pTargetInstance == pInstance)
-	{
-		return;
-	}
-
-	m_pTargetInstance = pInstance;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onTargetInstanceChanged(pSender);
-	}
-}
-
-_instance* _controller::getTargetInstance() const
-{
-	return m_pTargetInstance;
-}
-
-void _controller::selectInstance(_view* pSender, _instance* pInstance)
-{
-	if (m_bUpdatingModel)
-	{
-		return;
-	}
-
-	m_pSelectedInstance = pInstance;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onInstanceSelected(pSender);
-	}
-}
-
-_instance* _controller::getSelectedInstance() const
-{
-	return m_pSelectedInstance;
 }
 
 void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag)

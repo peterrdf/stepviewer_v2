@@ -90,7 +90,7 @@ private: // Members
 
 	// Cache
 	vector<CModelData*> m_vecModelData;
-	_ifc_instance* m_pSelectedInstance;
+	vector<_instance*> m_vecSelectedInstances;
 	
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;

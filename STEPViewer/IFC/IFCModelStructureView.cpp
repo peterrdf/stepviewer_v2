@@ -187,7 +187,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_vecModelData()
-	, m_pSelectedInstance(nullptr)
+	, m_vecSelectedInstances()
 	, m_pSearchDialog(nullptr)
 {
 	m_pImageList = new CImageList();
@@ -294,19 +294,19 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 	Tree_Select(false);
 
-	m_pSelectedInstance = getController()->getSelectedInstance() != nullptr ?
-		dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance()) : 
-		nullptr;
+	m_vecSelectedInstances = pController->getSelectedInstances();
 
-	if (m_pSelectedInstance != nullptr)
+	if (!m_vecSelectedInstances.empty())
 	{
-		auto pModel = pController->getModelByInstance(m_pSelectedInstance->getOwlModel());
+		_ptr<_ifc_instance> ifcInstance(m_vecSelectedInstances.back());
+
+		auto pModel = pController->getModelByInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
 		ASSERT(pModelData != nullptr);
 
-		Tree_EnsureVisible(pModelData, m_pSelectedInstance);		
+		Tree_EnsureVisible(pModelData, ifcInstance);
 	}
 
 	Tree_Select(true);
@@ -567,15 +567,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL))
 	{
-		Tree_Select(false);
-
-		m_pSelectedInstance = m_pTreeCtrl->GetItemData(hItem) != NULL ?
+		auto pSelectedInstance = m_pTreeCtrl->GetItemData(hItem) != NULL ?
 			(_ifc_instance*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
 
-		Tree_Select(true);
-
-		pController->selectInstance(this, m_pSelectedInstance);
+		pController->selectInstance(nullptr/*update this view*/, pSelectedInstance);
 	}
 }
 
@@ -2118,18 +2114,20 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 
 void CIFCModelStructureView::Tree_Select(bool bEnable)
 {
-	if (m_pSelectedInstance != nullptr)
+	for (auto pInstance : m_vecSelectedInstances)
 	{
-		auto pModel = getController()->getModelByInstance(m_pSelectedInstance->getOwlModel());
+		_ptr<_ifc_instance> ifcInstance(pInstance);
+
+		auto pModel = getController()->getModelByInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
 		ASSERT(pModelData != nullptr);
 
-		Tree_Select(m_pSelectedInstance, pModelData->GetProjectItems(), bEnable);
-		Tree_Select(m_pSelectedInstance, pModelData->GetGroupsItems(), bEnable);
-		Tree_Select(m_pSelectedInstance, pModelData->GetSpaceBoundariesItems(), bEnable);
-		Tree_Select(m_pSelectedInstance, pModelData->GetUnreferencedItems(), bEnable);
+		Tree_Select(ifcInstance, pModelData->GetProjectItems(), bEnable);
+		Tree_Select(ifcInstance, pModelData->GetGroupsItems(), bEnable);
+		Tree_Select(ifcInstance, pModelData->GetSpaceBoundariesItems(), bEnable);
+		Tree_Select(ifcInstance, pModelData->GetUnreferencedItems(), bEnable);
 	}
 }
 
@@ -2216,7 +2214,7 @@ void CIFCModelStructureView::ResetView()
 	}
 	m_vecModelData.clear();
 
-	m_pSelectedInstance = nullptr;
+	m_vecSelectedInstances.clear();
 
 	m_pTreeCtrl->DeleteAllItems();
 

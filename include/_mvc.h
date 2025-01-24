@@ -206,6 +206,7 @@ private: // Members
 
 	// Selection
 	_instance* m_pSelectedInstance;
+	vector<_instance*> m_vecSelectedInstances;
 
 public: // Methods
 
@@ -248,19 +249,20 @@ public: // Methods
 	void zoomToInstances(const set<_instance*>& setInstances);
 	void zoomOut();
 
+	// Selection
+	void setTargetInstance(_view* pSender, _instance* pInstance);
+	_instance* getTargetInstance() const { return m_pTargetInstance; }
+	void selectInstance(_view* pSender, _instance* pInstance, bool bAdd = false);
+	_instance* getSelectedInstance() const { return m_pSelectedInstance; }
+	const vector<_instance*>& getSelectedInstances() const { return m_vecSelectedInstances; }
+
 	// Save	
 	void saveInstance(OwlInstance owlInstance);
 	virtual void saveSelectedInstance();
 	static wstring validateFileName(const wchar_t* szFileName);
 
 	// Events
-	void showMetaInformation(_instance* /*pInstance*/) { assert(false); }
-	void setTargetInstance(_view* pSender, _instance* pInstance);
-	_instance* getTargetInstance() const;
-	void selectInstance(_view* pSender, _instance* pInstance);
-	_instance* getSelectedInstance() const;
-
-	// Events
+	void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }
 	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
@@ -276,6 +278,6 @@ public: // Properties
 
 	_model* getModel() const; // kept for backward compatibility
 	const vector<_model*>& getModels() const { return m_vecModels; }	
-	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
+	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }	
 };
 
