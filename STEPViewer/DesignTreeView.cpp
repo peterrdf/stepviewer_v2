@@ -84,33 +84,43 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pSelectedInstance == nullptr)
+	if (pController->getSelectedInstances().empty())
 	{
 		return;
 	}
 
-	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
-	if (pModel == nullptr)
+	for (auto pInstance : pController->getSelectedInstances())
 	{
-		ASSERT(FALSE);
+		auto pSelectedInstance = dynamic_cast<_ap_instance*>(pInstance);
+		if (pSelectedInstance == nullptr)
+		{
+			ASSERT(FALSE);
 
-		return;
-	}
-		
-	HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL_DESIGN_TREE_VIEW, IMAGE_MODEL_DESIGN_TREE_VIEW);
+			continue;
+		}
 
-	OwlInstance owlInstance = 0;
-	owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &owlInstance);
+		auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
 
-	if (owlInstance == 0)
-	{
-		return;
-	}
+			continue;
+		}
 
-	AddInstance(hModel, owlInstance);
+		HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL_DESIGN_TREE_VIEW, IMAGE_MODEL_DESIGN_TREE_VIEW);
 
-	m_treeCtrl.Expand(hModel, TVE_EXPAND);
+		OwlInstance owlInstance = 0;
+		owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &owlInstance);
+
+		if (owlInstance == 0)
+		{
+			return;
+		}
+
+		AddInstance(hModel, owlInstance);
+
+		m_treeCtrl.Expand(hModel, TVE_EXPAND);
+	} // for (auto pInstance : ...
 }
 
 /*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
@@ -296,13 +306,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 		return;
 	}
 
-	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pSelectedInstance == nullptr)
-	{
-		return;
-	}
-
-	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
+	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(GetModel(owlInstance)));
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
