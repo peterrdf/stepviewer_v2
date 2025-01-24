@@ -612,27 +612,27 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
-		auto pPopup = menu.GetSubMenu(0);
+		auto pMenu = menu.GetSubMenu(0);
 
 		// Zoom to
 		if (!pTargetInstance->getEnable())
 		{
-			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
+			pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		// Save
 		if (!pTargetInstance->getEnable())
 		{
-			pPopup->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
+			pMenu->EnableMenuItem(ID_INSTANCES_SAVE, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		// Enable
 		if (pTargetInstance->getEnable())
 		{
-			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
+			pMenu->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 		}
 
-		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
+		UINT uiCommand = pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
 		if (uiCommand == 0)
 		{
 			return;
@@ -734,9 +734,11 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_META_DATA));
 
-		auto pPopup = menu.GetSubMenu(0);
+		auto pMenu = menu.GetSubMenu(0);
 
-		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
+		pMenu->EnableMenuItem(ID_INSTANCES_ZOOM_TO_CHILDREN, MF_BYCOMMAND | MF_DISABLED);
+
+		UINT uiCommand = pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, m_pTreeCtrl);
 		if (uiCommand == 0)
 		{
 			return;
