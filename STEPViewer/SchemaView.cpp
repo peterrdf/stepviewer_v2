@@ -422,6 +422,9 @@ void CSchemaView::ResetView()
 	for (auto pModel : pController->getModels())
 	{
 		LoadModel(_ptr<_ap_model>(pModel));
+
+		//#todo load on demand
+		break;
 	}	
 }
 

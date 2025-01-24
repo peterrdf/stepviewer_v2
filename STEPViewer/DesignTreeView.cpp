@@ -67,9 +67,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	if (pSender == this)
 	{
 		return;
-	}
-
-	ResetView();
+	}	
 		
 	auto pController = getController();
 	if (pController == nullptr)
@@ -78,6 +76,8 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		return;
 	}
+
+	ResetView();
 
 	if (pController->getModels().empty())
 	{
@@ -89,17 +89,12 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	for (auto pInstance : pController->getSelectedInstances())
+	map<_ap_model*, vector<SdaiInstance>> mapInstances;
+	for (auto pInstance : getController()->getSelectedInstances())
 	{
-		auto pSelectedInstance = dynamic_cast<_ap_instance*>(pInstance);
-		if (pSelectedInstance == nullptr)
-		{
-			ASSERT(FALSE);
+		_ptr<_ap_instance> apInstance(pInstance);
 
-			continue;
-		}
-
-		auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
+		auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(apInstance->getOwlModel()));
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);
@@ -107,20 +102,36 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			continue;
 		}
 
-		HTREEITEM hModel = m_treeCtrl.InsertItem(pModel->getPath(), IMAGE_MODEL_DESIGN_TREE_VIEW, IMAGE_MODEL_DESIGN_TREE_VIEW);
-
-		OwlInstance owlInstance = 0;
-		owlBuildInstance(pModel->getSdaiModel(), pSelectedInstance->getSdaiInstance(), &owlInstance);
-
-		if (owlInstance == 0)
+		auto itInstances = mapInstances.find(pModel);
+		if (itInstances != mapInstances.end())
 		{
-			return;
+			itInstances->second.push_back(apInstance->getSdaiInstance());
+		}
+		else
+		{
+			mapInstances[pModel] = vector<SdaiInstance>{ apInstance->getSdaiInstance() };
+		}
+	}
+
+	for (auto itInstances : mapInstances)
+	{
+		HTREEITEM hModel = m_treeCtrl.InsertItem(itInstances.first->getPath(), IMAGE_MODEL_DESIGN_TREE_VIEW, IMAGE_MODEL_DESIGN_TREE_VIEW);
+
+		for (auto sdaiInstance : itInstances.second)
+		{
+			OwlInstance owlInstance = 0;
+			owlBuildInstance(itInstances.first->getSdaiModel(), sdaiInstance, &owlInstance);
+
+			if (owlInstance == 0)
+			{
+				continue;
+			}
+
+			AddInstance(hModel, owlInstance);
 		}
 
-		AddInstance(hModel, owlInstance);
-
 		m_treeCtrl.Expand(hModel, TVE_EXPAND);
-	} // for (auto pInstance : ...
+	} // for (auto itInstances : ...
 }
 
 /*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
