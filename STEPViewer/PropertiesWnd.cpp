@@ -91,6 +91,21 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 	}
 }
 
+_ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
+{
+	for (auto pModel : getController()->getModels())
+	{
+		_ptr<_ap_model> apModel(pModel);
+
+		if (apModel->getSdaiModel() == sdaiModel)
+		{
+			return apModel;
+		}
+	}
+
+	return nullptr;
+}
+
 /*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
 	auto pController = getController();
@@ -799,43 +814,52 @@ void CPropertiesWnd::LoadInstanceProperties()
 		return;
 	}	
 
-	if (getController()->getSelectedInstance() == nullptr)
+	if (getController()->getSelectedInstances().empty())
 	{
 		return;
 	}
 
-	_ptr<_ap_model> model(pController->getModel());
-	if (!model)
+	for (auto pInstance : getController()->getSelectedInstances())
 	{
-		return;
-	}
+		_ptr<_ap_instance> apInstance(pInstance);
 
-	switch (model.p()->getAP())
-	{
-		case enumAP::STEP:
+		auto pModel = GetModelByInstance(sdaiGetInstanceModel(apInstance->getSdaiInstance()));
+		if (pModel == nullptr)
 		{
-			LoadSTEPInstanceProperties();
+			return;
 		}
-		break;
 
-		case enumAP::IFC:
+		switch (pModel->getAP())
 		{
-			LoadIFCInstanceProperties();
-		}
-		break;
+			case enumAP::STEP:
+			{
+				ASSERT(getController()->getSelectedInstances().size() == 1);
 
-		case enumAP::CIS2:
-		{
-			LoadCIS2InstanceProperties();
-		}
-		break;
+				LoadSTEPInstanceProperties();
+			}
+			break;
 
-		default:
-		{
-			ASSERT(FALSE); // Unknown
-		}
-		break;
-	} // switch (model.p()->GetType())
+			case enumAP::IFC:
+			{
+				LoadIFCInstanceProperties(pModel, apInstance);
+			}
+			break;
+
+			case enumAP::CIS2:
+			{
+				ASSERT(getController()->getSelectedInstances().size() == 1);
+
+				LoadCIS2InstanceProperties();
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE); // Unknown
+			}
+			break;
+		} // switch (pModel->getAP())
+	} // for (auto pInstance : ...
 }
 
 void CPropertiesWnd::LoadSTEPInstanceProperties()
@@ -995,18 +1019,13 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	m_wndPropList.AddProperty(pInstanceGroup);
 }
 
-void CPropertiesWnd::LoadIFCInstanceProperties()
+void CPropertiesWnd::LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance)
 {
+	ASSERT(pModel != nullptr);
+	ASSERT(pInstance != nullptr);
+
 	auto pController = getController();
 	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->getModel();
-	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1022,14 +1041,6 @@ void CPropertiesWnd::LoadIFCInstanceProperties()
 	}
 
 	auto pPropertyProvider = pIFCModel->getPropertyProvider();
-
-	auto pInstance = dynamic_cast<_ifc_instance*>(getController()->getSelectedInstance());
-	if (pInstance == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
 
 	auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pInstance->getSdaiInstance());
 	if (pPropertySetCollection == nullptr)

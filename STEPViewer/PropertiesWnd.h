@@ -62,12 +62,14 @@ public: // Methods
 	virtual void onInstanceSelected(_view* pSender);
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
+private: // Methods
+
+	_ap_model* GetModelByInstance(SdaiModel sdaiModel);
+
 protected: // Methods
 
 	// Support for properties
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
-
-private: // Methods
 
 // Construction
 public:
@@ -109,7 +111,7 @@ protected:
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
 	void LoadSTEPInstanceProperties();
-	void LoadIFCInstanceProperties();
+	void LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance);
 	void LoadCIS2InstanceProperties();
 	void SetPropListFont();
 
