@@ -255,6 +255,7 @@ public: // Methods
 	void selectInstance(_view* pSender, _instance* pInstance, bool bAdd = false);
 	_instance* getSelectedInstance() const { return m_pSelectedInstance; }
 	const vector<_instance*>& getSelectedInstances() const { return m_vecSelectedInstances; }
+	bool isInstanceSelected(_instance* pInstance) const;
 
 	// Save	
 	void saveInstance(OwlInstance owlInstance);

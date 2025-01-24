@@ -1438,7 +1438,6 @@ _oglView::_oglView()
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pPointedInstance(nullptr)
-	, m_pSelectedInstance(nullptr)
 	, m_bMultiSelect(false)
 	, m_tmShowTooltip(clock())
 {
@@ -1509,20 +1508,7 @@ _oglView::_oglView()
 		return;
 	}
 
-	if (getController() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pSelectedInstance = getController()->getSelectedInstance();
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_pSelectedInstance = pSelectedInstance;
-
-		_redraw();
-	}
+	_redraw();
 }
 
 /*virtual*/ void _oglView::onInstanceEnabledStateChanged(_view* pSender, _instance* /*pInstance*/, int /*iFlag*/) /*override*/
@@ -1613,7 +1599,6 @@ _oglView::_oglView()
 
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = nullptr;
-	m_pSelectedInstance = nullptr;
 
 	float fWorldXmin = FLT_MAX;
 	float fWorldXmax = -FLT_MAX;
@@ -2036,7 +2021,7 @@ void _oglView::_drawInstancesFrameBuffer()
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
 					const _material* pMaterial =
-						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
 						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
@@ -2360,7 +2345,7 @@ void _oglView::_drawPoints(_model* pModel)
 				for (auto pCohort : pGeometry->pointsCohorts())
 				{
 					const _material* pMaterial =
-						pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
 						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
@@ -2759,15 +2744,13 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 	{
 		if (point == m_ptStartMousePosition)
 		{
-			if (m_pSelectedInstance != m_pPointedInstance)
+			if (!getController()->isInstanceSelected(m_pPointedInstance))
 			{
-				m_pSelectedInstance = m_pPointedInstance;
-
 				_redraw();
 
 				getController()->selectInstance(
 					this, 
-					m_pSelectedInstance, 
+					m_pPointedInstance,
 					m_bMultiSelect ? GetKeyState(VK_CONTROL) & 0x8000 : false);
 			} // if (m_pSelectedInstance != ...
 		}

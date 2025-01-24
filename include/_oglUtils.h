@@ -2439,7 +2439,6 @@ protected: // Members
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
 	_instance* m_pPointedInstance;
-	_instance* m_pSelectedInstance;
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 	bool m_bMultiSelect;

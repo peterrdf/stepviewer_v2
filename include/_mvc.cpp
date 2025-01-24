@@ -753,6 +753,16 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 	}
 }
 
+bool _controller::isInstanceSelected(_instance* pInstance) const
+{
+	if (pInstance == nullptr)
+	{
+		return false;
+	}
+
+	return find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) != m_vecSelectedInstances.end();
+}
+
 void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
