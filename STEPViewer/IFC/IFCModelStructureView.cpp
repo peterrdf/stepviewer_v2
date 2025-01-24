@@ -571,7 +571,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			(_ifc_instance*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
 
-		pController->selectInstance(nullptr/*update this view*/, pSelectedInstance, GetKeyState(VK_CONTROL) & 0x8000);
+		pController->selectInstance(
+			nullptr/*update this view if needed*/, 
+			pSelectedInstance, 
+			GetKeyState(VK_CONTROL) & 0x8000);
 	}
 }
 

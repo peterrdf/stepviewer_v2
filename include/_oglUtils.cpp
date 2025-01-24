@@ -2744,15 +2744,10 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 	{
 		if (point == m_ptStartMousePosition)
 		{
-			if (!getController()->isInstanceSelected(m_pPointedInstance))
-			{
-				_redraw();
-
-				getController()->selectInstance(
-					this, 
-					m_pPointedInstance,
-					m_bMultiSelect ? GetKeyState(VK_CONTROL) & 0x8000 : false);
-			} // if (m_pSelectedInstance != ...
+			getController()->selectInstance(
+				nullptr/*update this view if needed*/,
+				m_pPointedInstance,
+				m_bMultiSelect ? GetKeyState(VK_CONTROL) & 0x8000 : false);
 		}
 	} // if (enEvent == meLBtnDown)
 

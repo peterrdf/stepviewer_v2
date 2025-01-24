@@ -476,6 +476,7 @@ void _controller::setModel(_model* pModel)
 
 	m_pSelectedInstance = nullptr;
 	m_pTargetInstance = nullptr;
+	m_vecSelectedInstances.clear();
 
 	m_bUpdatingModel = true;
 
@@ -518,6 +519,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
 	m_pSelectedInstance = nullptr;
 	m_pTargetInstance = nullptr;
+	m_vecSelectedInstances.clear();
 
 	m_bUpdatingModel = true;
 
@@ -733,23 +735,30 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 		return;
 	}
 
+	bool bNotify = false;
+
 	if (!bAdd || (pInstance == nullptr))
 	{
+		bNotify = !m_vecSelectedInstances.empty();
+
 		m_vecSelectedInstances.clear();
 	}
 
 	if ((pInstance != nullptr) &&
 		(find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
 	{
+		bNotify = true;
+
 		m_vecSelectedInstances.push_back(pInstance);
 	}
 
-	m_pSelectedInstance = pInstance;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
+	if (bNotify)
 	{
-		(*itView)->onInstanceSelected(pSender);
+		auto itView = m_setViews.begin();
+		for (; itView != m_setViews.end(); itView++)
+		{
+			(*itView)->onInstanceSelected(pSender);
+		}
 	}
 }
 
