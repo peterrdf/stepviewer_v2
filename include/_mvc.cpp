@@ -453,7 +453,6 @@ _controller::_controller()
 	, m_pSettingsStorage(new _settings_storage())
 	, m_bUpdatingModel(false)
 	, m_pTargetInstance(nullptr)
-	, m_pSelectedInstance(nullptr)
 	, m_vecSelectedInstances()
 {
 }
@@ -474,7 +473,6 @@ void _controller::setModel(_model* pModel)
 		m_vecModels.push_back(pModel);
 	}
 
-	m_pSelectedInstance = nullptr;
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
 
@@ -517,7 +515,6 @@ _instance* _controller::loadInstance(int64_t iInstance)
 		return nullptr;
 	}
 
-	m_pSelectedInstance = nullptr;
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
 
@@ -634,9 +631,11 @@ const set<_view*>& _controller::getViews()
 
 void _controller::zoomToSelectedInstance()
 {
-	assert(m_pSelectedInstance != nullptr);
+	assert(m_vecSelectedInstances.size() == 1);
 
-	auto pModel = getModelByInstance(m_pSelectedInstance->getOwlModel());
+	auto pSelectedInstance = m_vecSelectedInstances.front();
+
+	auto pModel = getModelByInstance(pSelectedInstance->getOwlModel());
 	if (pModel == nullptr)
 	{
 		assert(FALSE);
@@ -644,7 +643,7 @@ void _controller::zoomToSelectedInstance()
 		return;
 	}
 
-	pModel->zoomTo(m_pSelectedInstance);
+	pModel->zoomTo(pSelectedInstance);
 
 	for (auto pM : m_vecModels)
 	{
@@ -760,6 +759,23 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 			(*itView)->onInstanceSelected(pSender);
 		}
 	}
+}
+
+_instance* _controller::getSelectedInstance() const 
+{ 
+	if (m_vecSelectedInstances.empty())
+	{
+		return nullptr;
+	}
+
+	if (m_vecSelectedInstances.size() == 1)
+	{
+		return m_vecSelectedInstances.front();
+	}
+
+	assert(false); // Internal error: multi select mode!
+
+	return nullptr; 
 }
 
 bool _controller::isInstanceSelected(_instance* pInstance) const

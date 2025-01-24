@@ -205,7 +205,6 @@ private: // Members
 	_instance* m_pTargetInstance;
 
 	// Selection
-	_instance* m_pSelectedInstance;
 	vector<_instance*> m_vecSelectedInstances;
 
 public: // Methods
@@ -253,7 +252,7 @@ public: // Methods
 	void setTargetInstance(_view* pSender, _instance* pInstance);
 	_instance* getTargetInstance() const { return m_pTargetInstance; }
 	void selectInstance(_view* pSender, _instance* pInstance, bool bAdd = false);
-	_instance* getSelectedInstance() const { return m_pSelectedInstance; }
+	_instance* getSelectedInstance() const; // kept for backward compatibility
 	const vector<_instance*>& getSelectedInstances() const { return m_vecSelectedInstances; }
 	bool isInstanceSelected(_instance* pInstance) const;
 
