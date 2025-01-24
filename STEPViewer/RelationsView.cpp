@@ -52,15 +52,41 @@ static char THIS_FILE[]=__FILE__;
 		return;
 	}
 
-	vector<SdaiInstance> vecInstances;
+	ResetView();
 
-	auto pInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pInstance != nullptr)
+	if (getController()->getSelectedInstances().empty())
 	{
-		vecInstances.push_back(pInstance->getSdaiInstance());
+		return;
+	}
+
+	map<_ap_model*, vector<SdaiInstance>> mapInstances;
+	for (auto pInstance : getController()->getSelectedInstances())
+	{
+		_ptr<_ap_instance> apInstance(pInstance);
+
+		auto pModel = GetModelByInstance(sdaiGetInstanceModel(apInstance->getSdaiInstance()));
+		if (pModel == nullptr)
+		{
+			ASSERT(FALSE);
+
+			continue;
+		}
+
+		auto itInstances = mapInstances.find(pModel);
+		if (itInstances != mapInstances.end())
+		{
+			itInstances->second.push_back(apInstance->getSdaiInstance());
+		}
+		else
+		{
+			mapInstances[pModel] = vector<SdaiInstance>{ apInstance->getSdaiInstance() };
+		}
 	}
 	
-	LoadInstances(vecInstances);
+	for (auto itInstances : mapInstances)
+	{
+		LoadInstances(itInstances.first, itInstances.second);
+	}	
 }
 
 /*virtual*/ void CRelationsView::onViewRelations(_view* pSender, SdaiInstance sdaiInstance) /*override*/
@@ -166,58 +192,42 @@ static char THIS_FILE[]=__FILE__;
 
 /*virtual*/ BOOL CRelationsView::ProcessSearch(int iFilter, const CString& strSearchText) /*override*/
 {
+	auto pController = getController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
+
 	// ExpressID
 	if (iFilter == (int)enumSearchFilter::ExpressID)
 	{
-		auto pController = getController();
-		if (pController == nullptr)
-		{
-			ASSERT(FALSE);
+		int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
-			return FALSE;
+		for (auto pModel : pController->getModels())
+		{
+			auto pAPModel = dynamic_cast<_ap_model*>(pModel);
+			if (pAPModel == nullptr)
+			{
+				continue;
+			}
+
+			SdaiInstance sdaiInstance = internalGetInstanceFromP21Line(pAPModel->getSdaiModel(), iExpressID);
+			if (sdaiInstance != 0)
+			{
+				pController->onViewRelations(
+					nullptr, /*Attributes View will be updated also*/
+					sdaiInstance);
+
+				return TRUE;
+			}
 		}
 
-		auto pIFCModel = dynamic_cast<_ifc_model*>(GetModel());
-		if (pIFCModel == nullptr)
-		{
-			return FALSE;
-		}
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
 
-		switch (pIFCModel->getAP())
-		{
-			case enumAP::STEP:
-			{
-				ASSERT(FALSE); // TODO
-			}
-			break;
-
-			case enumAP::IFC:
-			{
-				int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
-
-				SdaiInstance sdaiInstance = internalGetInstanceFromP21Line(pIFCModel->getSdaiModel(), iExpressID);
-				if (sdaiInstance != 0)
-				{
-					pController->onViewRelations(
-						nullptr,  /*Attributes View will be updated also*/
-						sdaiInstance);
-				}
-				else
-				{
-					::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
-				}
-			}
-			break;
-
-			default:
-			{
-				ASSERT(FALSE); // Unknown
-			}
-			break;
-		} // switch (pIFCModel->getAP())
-
-		return TRUE;
-	} // if (iFilter == (int)enumSearchFilter::ExpressID)
+		return FALSE;
+	}
 
 	return FALSE;
 }
@@ -245,52 +255,23 @@ static char THIS_FILE[]=__FILE__;
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-_model* CRelationsView::GetModel() const
+_ap_model* CRelationsView::GetModelByInstance(SdaiModel sdaiModel)
 {
-	auto pController = getController();
-	if (pController == nullptr)
+	for (auto pModel : getController()->getModels())
 	{
-		ASSERT(FALSE);
+		_ptr<_ap_model> apModel(pModel);
 
-		return nullptr;
-	}
-
-	if (pController->getModels().empty())
-	{
-		return nullptr;
-	}
-
-	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pSelectedInstance != nullptr)
-	{
-		auto pModel = pController->getModelByInstance(pSelectedInstance->getOwlModel());
-		if (pModel == nullptr)
+		if (apModel->getSdaiModel() == sdaiModel)
 		{
-			ASSERT(FALSE);
-
-			return nullptr;
+			return apModel;
 		}
-
-		return pModel;
-	}
-
-	if (pController->getModels().size() == 1)
-	{
-		return pController->getModels()[0];
 	}
 
 	return nullptr;
 }
 
-void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances)
+void CRelationsView::LoadInstances(_ap_model* pModel, const vector<SdaiInstance>& vecInstances)
 {
-	ResetView();
-
-	auto pModel = GetModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}
 
 	// ******************************************************************************************** //
 	// Model
@@ -322,9 +303,16 @@ void CRelationsView::LoadProperties(SdaiEntity sdaiEntity, const vector<SdaiInst
 {
 	ResetView();
 
-	auto pModel = GetModel();
+	if ((sdaiEntity == 0) || vecSdaiInstances.empty())
+	{
+		return;
+	}
+
+	auto pModel = GetModelByInstance(engiGetEntityModel(sdaiEntity));
 	if (pModel == nullptr)
 	{
+		ASSERT(FALSE);
+
 		return;
 	}
 

@@ -167,9 +167,9 @@ public: // Methods
 
 private: // Methods
 
-	_model* GetModel() const;
+	_ap_model* GetModelByInstance(SdaiModel sdaiModel);
 	
-	void LoadInstances(const vector<SdaiInstance>& vecInstances);
+	void LoadInstances(_ap_model* pModel, const vector<SdaiInstance>& vecInstances);
 	void LoadProperties(SdaiEntity sdaiEntity, const vector<SdaiInstance>& vecSdaiInstances);
 	void LoadInstance(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent);
 	SdaiInteger GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
