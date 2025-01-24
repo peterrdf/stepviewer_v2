@@ -594,7 +594,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}	
 
-	return pInstance == pController->getSelectedInstance();
+	auto vecSelectedInstances = pController->getSelectedInstances();
+	if (vecSelectedInstances.empty())
+	{
+		return false;
+	}
+
+	return find(vecSelectedInstances.begin(), vecSelectedInstances.end(), pInstance) != vecSelectedInstances.end();
 }
 
 /*virtual*/ CTreeCtrlEx* CIFCModelStructureView::GetTreeView() /*override*/
