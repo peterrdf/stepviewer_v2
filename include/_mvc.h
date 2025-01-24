@@ -258,7 +258,7 @@ public: // Methods
 
 	// Save	
 	void saveInstance(OwlInstance owlInstance);
-	virtual void saveSelectedInstance();
+	virtual void saveInstance(_instance* pInstance);
 	static wstring validateFileName(const wchar_t* szFileName);
 
 	// Events

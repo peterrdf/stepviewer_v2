@@ -17,7 +17,7 @@ class CMySTEPViewerDoc
 public: // Methods
 
 	// _controller
-	virtual void saveSelectedInstance() override;
+	virtual void saveInstance(_instance* pInstance) override;
 
 	void OpenModels(vector<CString>& vecModels);
 

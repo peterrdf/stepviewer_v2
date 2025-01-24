@@ -22,16 +22,16 @@ TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*
 TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
-/*virtual*/ void CMySTEPViewerDoc::saveSelectedInstance() /*override*/
+/*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
 	ASSERT(getModel() != nullptr);
 
-	if (getSelectedInstance() == nullptr)
+	if (pInstance == nullptr)
 	{
 		return;
 	} 
 
-	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(getSelectedInstance())->getName().c_str()).c_str();
+	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName().c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
@@ -42,7 +42,7 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 		return;
 	}
 
-	auto pAPInstance = dynamic_cast<_ap_instance*>(getSelectedInstance());
+	auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
 	if (pAPInstance == nullptr)
 	{
 		ASSERT(FALSE);
@@ -53,7 +53,7 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 	OwlModel owlModel = getModel()->getOwlModel();
 	ASSERT(owlModel != 0);
 
-	OwlInstance owlInstance = getSelectedInstance()->getOwlInstance();
+	OwlInstance owlInstance = pInstance->getOwlInstance();
 	if (owlInstance == 0)
 	{
 		owlInstance = _ap_geometry::buildOwlInstance(pAPInstance->getSdaiInstance());

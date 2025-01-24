@@ -808,11 +808,11 @@ void _controller::saveInstance(OwlInstance owlInstance)
 	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName());
 }
 
-/*virtual*/ void _controller::saveSelectedInstance()
+/*virtual*/ void _controller::saveInstance(_instance* pInstance)
 {
-	assert(getSelectedInstance() != nullptr);
+	assert(pInstance != nullptr);
 
-	saveInstance(getSelectedInstance()->getOwlInstance());
+	saveInstance(pInstance->getOwlInstance());
 }
 
 /*static*/ wstring _controller::validateFileName(const wchar_t* szFileName)

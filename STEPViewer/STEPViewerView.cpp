@@ -515,23 +515,16 @@ void CMySTEPViewerView::OnInstancesSave()
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument); 
 	
-	pDocument->saveSelectedInstance();
+	pDocument->saveInstance(pDocument->getSelectedInstances().front());
 }
 
 void CMySTEPViewerView::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = FALSE;
-
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	if ((pDocument != nullptr) &&
-		(pDocument->getSelectedInstances().size() == 1))
-	{
-		bEnable = TRUE;
-	}
-
-	pCmdUI->Enable(bEnable);
+	pCmdUI->Enable((pDocument->getSelectedInstances().size() == 1) &&
+		pDocument->getSelectedInstances().front()->getEnable());
 }
 
 void CMySTEPViewerView::OnInstancesEnable()
@@ -549,17 +542,14 @@ void CMySTEPViewerView::OnInstancesEnable()
 
 void CMySTEPViewerView::OnUpdateInstancesEnable(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = TRUE;
-
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	if ((pDocument != nullptr) && !pDocument->getSelectedInstances().empty())
+	BOOL bEnable = !pDocument->getSelectedInstances().empty() ? TRUE : FALSE;
+
+	for (auto pInstance : pDocument->getSelectedInstances())
 	{
-		for (auto pInstance : pDocument->getSelectedInstances())
-		{
-			bEnable &= pInstance->getEnable() ? TRUE : FALSE;
-		}
+		bEnable &= pInstance->getEnable() ? TRUE : FALSE;
 	}
 
 	pCmdUI->Enable(bEnable);
@@ -585,17 +575,14 @@ void CMySTEPViewerView::OnInstancesZoomTo()
 
 void CMySTEPViewerView::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
-	BOOL bEnable = FALSE;
-
 	auto pDocument = GetDocument();
 	ASSERT_VALID(pDocument);
 
-	if ((pDocument != nullptr) && !pDocument->getSelectedInstances().empty())
+	BOOL bEnable = FALSE;
+
+	for (auto pInstance : pDocument->getSelectedInstances())
 	{
-		for (auto pInstance : pDocument->getSelectedInstances())
-		{
-			bEnable |= pInstance->getEnable() ? TRUE : FALSE;
-		}
+		bEnable |= pInstance->getEnable() ? TRUE : FALSE;
 	}
 
 	pCmdUI->Enable(bEnable);
