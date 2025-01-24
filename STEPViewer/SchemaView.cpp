@@ -419,30 +419,10 @@ void CSchemaView::ResetView()
 		return;
 	}
 
-	_ap_model* pModel = nullptr;
-
-	auto pSelectedInstance = dynamic_cast<_ap_instance*>(pController->getSelectedInstance());
-	if (pSelectedInstance != nullptr)
+	for (auto pModel : pController->getModels())
 	{
-		pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(pSelectedInstance->getOwlModel()));
-		if (pModel == nullptr)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-	}
-	else if (pController->getModels().size() == 1)
-	{
-		pModel = dynamic_cast<_ap_model*>(pController->getModels()[0]);
-	}
-
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	LoadModel(pModel);
+		LoadModel(_ptr<_ap_model>(pModel));
+	}	
 }
 
 void CSchemaView::AdjustLayout()
