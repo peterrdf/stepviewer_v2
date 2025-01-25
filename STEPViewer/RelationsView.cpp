@@ -417,7 +417,7 @@ void CRelationsView::LoadInstance(SdaiEntity sdaiEntity, SdaiInstance sdaiInstan
 		// Pending load
 		tvInsertStruct.hParent = hInstance;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvInsertStruct.item.pszText = strPage.GetBuffer();
 		tvInsertStruct.item.cChildren = 1;
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_ATTRIBUTES;
@@ -1454,8 +1454,7 @@ void CRelationsView::OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult)
 
 	ASSERT(iImage == iSelectedImage);
 
-	if (
-		((iImage == IMAGE_INSTANCE) || (iImage == IMAGE_ATTRIBUTES)) && 
+	if (((iImage == IMAGE_INSTANCE) || (iImage == IMAGE_ATTRIBUTES)) && 
 		(pNMTreeView->itemNew.cChildren == 1))
 	{
 		HTREEITEM hChild = m_treeCtrl.GetChildItem(pNMTreeView->itemNew.hItem);

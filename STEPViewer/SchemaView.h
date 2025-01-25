@@ -38,6 +38,8 @@ private: // Classes
 
 private: // Members
 
+	map<HTREEITEM, _ap_model*> m_mapModels;
+
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
@@ -55,7 +57,7 @@ protected:
 
 private: // Methods	
 
-	void LoadModel(_ap_model* pModel);
+	HTREEITEM LoadModel(_ap_model* pModel);
 	void LoadAttributes(_entity* pEntity, HTREEITEM hParent);
 	void LoadEntity(_entity* pEntity, HTREEITEM hParent);
 	pair<int, int> GetInstancesCount(_entity* pEntity) const;

@@ -110,56 +110,26 @@ static char THIS_FILE[]=__FILE__;
 }
 
 // ************************************************************************************************
-void CSchemaView::LoadModel(_ap_model* pModel)
+HTREEITEM CSchemaView::LoadModel(_ap_model* pModel)
 {
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
-		return;
+		return NULL;
 	}
 
-	/**********************************************************************************************
-	* Model
-	*/		
+	// Model	
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL_SCHEMA_VIEW;
 	tvInsertStruct.item.lParam = NULL;
+	tvInsertStruct.item.cChildren = INT_MAX;
 
-	HTREEITEM hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
-	//*********************************************************************************************
-
-	// Roots **************************************************************************************
-	auto pEntityProvider = pModel->getEntityProvider();
-	if ((pEntityProvider == nullptr) || pEntityProvider->getEntities().empty())
-	{
-		return;
-	}
-
-	auto& mapEntities = pEntityProvider->getEntities();
-
-	map<wstring, _entity *> mapRoots;
-	for (auto itEntity : mapEntities)
-	{
-		if (itEntity.second->hasParent())
-		{
-			continue;
-		}
-
-		mapRoots[itEntity.second->getName()] = itEntity.second;
-	}	
-
-	for (auto itRoot : mapRoots)
-	{
-		LoadEntity(itRoot.second, hModel);
-	}
-	// ********************************************************************************************	
-
-	m_treeCtrl.Expand(hModel, TVE_EXPAND);
+	return m_treeCtrl.InsertItem(&tvInsertStruct);
 }
 
 void CSchemaView::LoadAttributes(_entity* pEntity, HTREEITEM hParent)
@@ -315,13 +285,54 @@ void CSchemaView::OnNMRClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	VERIFY(menu.DestroyMenu());
 }
 
-void CSchemaView::OnTVNItemexpandingTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+void CSchemaView::OnTVNItemexpandingTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+
 	*pResult = 0;
+
+	int iImage, iSelectedImage = -1;
+	m_treeCtrl.GetItemImage(pNMTreeView->itemNew.hItem, iImage, iSelectedImage);
+
+	ASSERT(iImage == iSelectedImage);
+
+	if ((iImage == IMAGE_MODEL_SCHEMA_VIEW) &&
+		(m_treeCtrl.GetNextItem(pNMTreeView->itemNew.hItem, TVGN_CHILD) == NULL))
+	{
+		HTREEITEM hModel = pNMTreeView->itemNew.hItem;
+
+		auto itModel = m_mapModels.find(hModel);
+		ASSERT(itModel != m_mapModels.end());
+
+		auto pEntityProvider = itModel->second->getEntityProvider();
+		if ((pEntityProvider == nullptr) || pEntityProvider->getEntities().empty())
+		{
+			return;
+		}
+
+		auto& mapEntities = pEntityProvider->getEntities();
+
+		map<wstring, _entity*> mapRoots;
+		for (auto itEntity : mapEntities)
+		{
+			if (itEntity.second->hasParent())
+			{
+				continue;
+			}
+
+			mapRoots[itEntity.second->getName()] = itEntity.second;
+		}
+
+		for (auto itRoot : mapRoots)
+		{
+			LoadEntity(itRoot.second, hModel);
+		}		
+	} // if ((iImage == IMAGE_MODEL_SCHEMA_VIEW) && ...
 }
 
 CSchemaView::CSchemaView()
-	: m_pSearchDialog(nullptr)
+	: m_mapModels()
+	, m_pSearchDialog(nullptr)
 {
 }
 
@@ -404,6 +415,8 @@ void CSchemaView::OnSize(UINT nType, int cx, int cy)
 
 void CSchemaView::ResetView()
 {
+	m_mapModels.clear();
+
 	m_treeCtrl.DeleteAllItems();	
 
 	auto pController = getController();
@@ -419,13 +432,25 @@ void CSchemaView::ResetView()
 		return;
 	}
 
+	HTREEITEM hFirstModel = NULL;
 	for (auto pModel : pController->getModels())
 	{
-		LoadModel(_ptr<_ap_model>(pModel));
+		_ptr<_ap_model> apModel(pModel);
 
-		//#todo load on demand
-		break;
-	}	
+		HTREEITEM hModel = LoadModel(apModel);
+
+		m_mapModels[hModel] = apModel;
+
+		if (hFirstModel == NULL)
+		{
+			hFirstModel = hModel;
+		}
+	}
+
+	if (hFirstModel != NULL)
+	{
+		m_treeCtrl.Expand(hFirstModel, TVE_EXPAND);
+	}
 }
 
 void CSchemaView::AdjustLayout()
