@@ -466,12 +466,20 @@ _controller::_controller()
 
 void _controller::setModel(_model* pModel)
 {
-	clean();
-
+	vector<_model*> vecModels;
 	if (pModel != nullptr)
 	{
-		m_vecModels.push_back(pModel);
+		vecModels.push_back(pModel);
 	}
+
+	setModels(vecModels);
+}
+
+void _controller::setModels(const vector<_model*>& vecModels)
+{
+	clean();
+
+	m_vecModels = vecModels;
 
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();

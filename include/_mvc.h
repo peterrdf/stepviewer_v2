@@ -213,6 +213,7 @@ public: // Methods
 	virtual ~_controller();
 
 	void setModel(_model* pModel);
+	void setModels(const vector<_model*>& vecModels);
 	void addModel(_model* pModel);
 	_instance* loadInstance(int64_t iInstance);
 

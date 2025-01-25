@@ -40,7 +40,7 @@ class _ap_model_factory
 
 public: // Methods
 
-	static _ap_model* load(_controller* pController, const wchar_t* szModel, bool bMultipleModels, bool bLoadInstancesOnDemand)
+	static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
 	{
 #ifdef _USE_LIBZIP
 		fs::path pathModel = szModel;
@@ -59,7 +59,7 @@ public: // Methods
 			}
 
 			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
-			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+			pModel->attachModel(szModel, sdaiModel, pWorld);
 
 			return pModel;
 		} // IFCZIP
@@ -77,8 +77,6 @@ public: // Methods
 				return nullptr;
 			}
 
-			ASSERT(!bMultipleModels); // Not supported!
-			
 			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
@@ -132,7 +130,7 @@ public: // Methods
 		if (strFileSchema.Find(L"IFC") == 0)
 		{
 			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
-			pModel->attachModel(szModel, sdaiModel, bMultipleModels ? pController->getModel() : nullptr);
+			pModel->attachModel(szModel, sdaiModel, pWorld);
 
 			return pModel;
 		}

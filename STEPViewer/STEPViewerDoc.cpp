@@ -101,39 +101,27 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 	SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
 }
 
-void CMySTEPViewerDoc::OpenModels(vector<CString>& vecModels)
+void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 {
 	setModel(nullptr);
 
-	bool bFirstFile = true;
-	for (auto model : vecModels)
+	vector<_model*> vecModels;
+	for (auto strPath : vecPaths)
 	{
-		if (bFirstFile)
+		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 		{
-			auto pModel = _ap_model_factory::load(this, model, vecModels.size() > 1, false);
-			if ((vecModels.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
-			{
-				delete pModel;
+			delete pModel;
 
-				continue;
-			}
-
-			setModel(pModel);
-
-			bFirstFile = false;
+			continue;
 		}
-		else
-		{
-			auto pModel = _ap_model_factory::load(this, model, vecModels.size() > 1, false);
-			if ((vecModels.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
-			{
-				delete pModel;
 
-				continue;
-			}
+		vecModels.push_back(pModel);
+	}
 
-			addModel(pModel);
-		}
+	if (!vecModels.empty())
+	{
+		setModels(vecModels);
 	}
 }
 
@@ -262,7 +250,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(_ap_model_factory::load(this, lpszPathName, false, false));
+	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
 
 	// Title
 	CString strTitle = AfxGetAppName();

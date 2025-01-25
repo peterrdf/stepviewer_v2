@@ -19,7 +19,7 @@ public: // Methods
 	// _controller
 	virtual void saveInstance(_instance* pInstance) override;
 
-	void OpenModels(vector<CString>& vecModels);
+	void OpenModels(vector<CString>& vecPaths);
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();
