@@ -2262,7 +2262,6 @@ protected: // Members
 	// Selection
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
-	GLfloat m_fPointedInstanceTransparency;
 	bool m_bMultiSelect;
 
 public: // Methods

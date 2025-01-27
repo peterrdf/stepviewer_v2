@@ -28,7 +28,6 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
 	, m_pSelectedInstanceMaterial(new _material())
-	, m_fPointedInstanceTransparency(1.f)
 	, m_pPointedInstanceMaterial(new _material())
 	, m_bMultiSelect(false)
 {
@@ -79,13 +78,12 @@ _oglRendererSettings::_oglRendererSettings()
 		1.f,
 		nullptr);
 
-	m_fPointedInstanceTransparency = 1.f;
 	m_pPointedInstanceMaterial->init(
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
-		m_fPointedInstanceTransparency,
+		m_fGhostViewTransparency,
 		nullptr);
 }
 
