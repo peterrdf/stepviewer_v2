@@ -1613,6 +1613,8 @@ _oglView::_oglView()
 	{
 		case enumApplicationProperty::Projection:
 		case enumApplicationProperty::View:
+		case enumApplicationProperty::GhostView:
+		case enumApplicationProperty::GhostViewTransparency:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::CullFaces:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:

@@ -151,6 +151,38 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 				}
 				break;
 
+				case enumApplicationProperty::GhostView:
+				{
+					pRenderer->setGhostView(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::GhostView);
+				}
+				break;
+
+				case enumApplicationProperty::GhostViewTransparency:
+				{
+					float fTransparency = (float)_wtof((LPCTSTR)strValue);
+
+					// Validate
+					if (fTransparency > 1.f)
+					{
+						fTransparency = 1.f;
+
+						pApplicationProperty->SetValue(fTransparency);
+					}
+					else if (fTransparency < 0.f)
+					{
+						fTransparency = 0.f;
+
+						pApplicationProperty->SetValue(fTransparency);
+					}
+
+					pRenderer->setGhostViewTransparency((float)atof(CW2A((LPCWSTR)strValue)));
+
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::GhostViewTransparency);
+				}
+				break;
+
 				case enumApplicationProperty::CullFaces:
 				{
 					pRenderer->setCullFacesMode(strValue);
@@ -499,6 +531,26 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 #pragma region View
 	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Ghost View"),
+			pRenderer->getShowFaces(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Ghost View"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::GhostView));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Ghost View Transparency"),
+			(_variant_t)pRenderer->getGhostViewTransparency(),
+			_T("Ghost View Transparency"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::GhostViewTransparency));
+		pProperty->AllowEdit(TRUE);
+		pViewGroup->AddSubItem(pProperty);
+	}
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"),
