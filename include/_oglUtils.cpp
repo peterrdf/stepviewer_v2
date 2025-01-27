@@ -10,6 +10,8 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_fYAngle(0.f)
 	, m_fZAngle(0.f)
 	, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+	, m_bGhostView(TRUE)
+	, m_fGhostViewTransparency(1.f)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
 	, m_bShowFacesPolygons(FALSE)
@@ -25,11 +27,66 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bScaleVectors(FALSE)
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
+	, m_pSelectedInstanceMaterial(new _material())
+	, m_fPointedInstanceTransparency(1.f)
+	, m_pPointedInstanceMaterial(new _material())
+	, m_bMultiSelect(false)
 {
+	_reset();
 }
 
 /*virtual*/ _oglRendererSettings::~_oglRendererSettings()
 {
+	delete m_pSelectedInstanceMaterial;
+	delete m_pPointedInstanceMaterial;
+}
+
+/*virtual*/ void _oglRendererSettings::_reset()
+{
+	// Projection
+	m_enProjection = enumProjection::Perspective;
+
+	// Rotation
+	m_enRotationMode = enumRotationMode::XYZ;
+	m_fXAngle = 0.f;
+	m_fYAngle = 0.f;
+	m_fZAngle = 0.f;
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+	// UI
+	m_bGhostView = TRUE;
+	m_fGhostViewTransparency = .50f;
+	m_bShowFaces = TRUE;
+	m_strCullFaces = CULL_FACES_NONE;
+	m_bShowFacesPolygons = FALSE;
+	m_bShowConceptualFacesPolygons = TRUE;
+	m_bShowLines = TRUE;
+	m_bShowPoints = TRUE;
+	m_bShowBoundingBoxes = FALSE;
+	m_bShowNormalVectors = FALSE;
+	m_bShowTangenVectors = FALSE;
+	m_bShowBiNormalVectors = FALSE;
+	m_bScaleVectors = FALSE;
+	m_bShowCoordinateSystem = TRUE;
+	m_bShowNavigator = TRUE;
+
+	// Selection
+	m_pSelectedInstanceMaterial->init(
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f,
+		nullptr);
+
+	m_fPointedInstanceTransparency = 1.f;
+	m_pPointedInstanceMaterial->init(
+		.0f, .0f, 1.f,
+		.0f, .0f, 1.f,
+		.0f, .0f, 1.f,
+		.0f, .0f, 1.f,
+		m_fPointedInstanceTransparency,
+		nullptr);
 }
 
 void _oglRendererSettings::_setView(enumView enView)
@@ -334,6 +391,28 @@ void _oglRendererSettings::_setView(enumView enView)
 {
 	{
 		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bGhostView);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_bGhostView = strValue == "TRUE";
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_fGhostViewTransparency);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty())
+		{
+			m_fGhostViewTransparency = (float)atof(strValue.c_str());
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
 		strSettingName += NAMEOFVAR(m_bShowFaces);
 
 		string strValue = loadSetting(strSettingName);
@@ -518,6 +597,36 @@ BOOL _oglRendererSettings::getShowFaces(_model* pModel)
 	}
 
 	return TRUE;
+}
+
+void _oglRendererSettings::setGhostView(BOOL bValue)
+{
+	m_bGhostView = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bGhostView);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getGhostView() const
+{
+	return m_bGhostView;
+}
+
+void _oglRendererSettings::setGhostViewTransparency(GLfloat fTransparency)
+{
+	m_fGhostViewTransparency = fTransparency;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_fGhostViewTransparency);
+
+	saveSetting(strSettingName, to_string(m_fGhostViewTransparency));
+}
+
+GLfloat _oglRendererSettings::getGhostViewTransparency() const
+{
+	return m_fGhostViewTransparency;
 }
 
 void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
@@ -772,7 +881,8 @@ BOOL _oglRendererSettings::getShowNavigator() const
 
 // ************************************************************************************************
 _oglRenderer::_oglRenderer()
-	: m_pWnd(nullptr)
+	: _oglRendererSettings()
+	, m_pWnd(nullptr)
 	, m_toolTipCtrl()
 	, m_pOGLContext(nullptr)
 	, m_pOGLProgram(nullptr)
@@ -1347,36 +1457,13 @@ void _oglRenderer::_pan(float fX, float fY)
 
 void _oglRenderer::_reset()
 {
-	// Projection
-	m_enProjection = enumProjection::Perspective;
-
-	// Rotation
-	m_enRotationMode = enumRotationMode::XYZ;
-	m_fXAngle = 0.f;
-	m_fYAngle = 0.f;
-	m_fZAngle = 0.f;
-	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+	_oglRendererSettings::_reset();
 
 	// Translation
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = -5.f;
 	m_fScaleFactor = 2.f;
-
-	// UI
-	m_bShowFaces = TRUE;
-	m_strCullFaces = CULL_FACES_NONE;
-	m_bShowFacesPolygons = FALSE;
-	m_bShowConceptualFacesPolygons = TRUE;
-	m_bShowLines = TRUE;
-	m_bShowPoints = TRUE;
-	m_bShowBoundingBoxes = FALSE;
-	m_bShowNormalVectors = FALSE;
-	m_bShowTangenVectors = FALSE;
-	m_bShowBiNormalVectors = FALSE;
-	m_bScaleVectors = FALSE;
-	m_bShowCoordinateSystem = TRUE;
-	m_bShowNavigator = TRUE;
 
 	_redraw();
 }
@@ -1434,30 +1521,14 @@ void _oglRenderer::_hideTooltip()
 
 // ************************************************************************************************
 _oglView::_oglView()
-	: m_ptStartMousePosition(-1, -1)
+	: _oglRenderer()
+	, _view()
+	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pPointedInstance(nullptr)
-	, m_bMultiSelect(false)
+	, m_pPointedInstance(nullptr)	
 	, m_tmShowTooltip(clock())
-{
-	m_pSelectedInstanceMaterial = new _material();
-	m_pSelectedInstanceMaterial->init(
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f,
-		nullptr);
-
-	m_pPointedInstanceMaterial = new _material();
-	m_pPointedInstanceMaterial->init(
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.33f, .33f, .33f,
-		.66f,
-		nullptr);
+{	
 }
 
 /*virtual*/ _oglView::~_oglView()
@@ -2025,22 +2096,33 @@ void _oglView::_drawInstancesFrameBuffer()
 						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
+					float fTransparency = pMaterial->getA();
+					if (m_bGhostView)
+					{
+						if ((pMaterial != m_pSelectedInstanceMaterial) && 
+							(pMaterial != m_pPointedInstanceMaterial) &&
+							(fTransparency > m_fGhostViewTransparency))
+						{
+							fTransparency = m_fGhostViewTransparency;
+						}
+					}
+
 					if (bTransparent)
 					{
-						if (pMaterial->getA() == 1.0)
+						if (fTransparency == 1.0f)
 						{
 							continue;
 						}
 					}
 					else
 					{
-						if (pMaterial->getA() < 1.0)
+						if (fTransparency < 1.0f)
 						{
 							continue;
 						}
 					}
 
-					m_pOGLProgram->_setMaterial(pMaterial);
+					m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,

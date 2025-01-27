@@ -1247,10 +1247,22 @@ public: // Methods
 	{
 		assert(pMaterial != nullptr);
 
-		_setAmbientColor(pMaterial);
-		_setTransparency(pMaterial->getA());
+		_setAmbientColor(pMaterial);		
 		_setDiffuseColor(pMaterial);
 		_setSpecularColor(pMaterial);
+
+		_setTransparency(pMaterial->getA());
+	}
+
+	void _setMaterial(const _material* pMaterial, float fTransparency)
+	{
+		assert(pMaterial != nullptr);
+
+		_setAmbientColor(pMaterial);		
+		_setDiffuseColor(pMaterial);
+		_setSpecularColor(pMaterial);
+
+		_setTransparency(fTransparency);
 	}
 };
 
@@ -2229,6 +2241,8 @@ protected: // Members
 	_quaterniond m_rotation;
 
 	// View
+	BOOL m_bGhostView;
+	GLfloat m_fGhostViewTransparency;
 	BOOL m_bShowFaces;
 	CString m_strCullFaces;
 	BOOL m_bShowFacesPolygons;
@@ -2245,10 +2259,18 @@ protected: // Members
 	BOOL m_bShowCoordinateSystem;
 	BOOL m_bShowNavigator;
 
+	// Selection
+	_material* m_pSelectedInstanceMaterial;
+	_material* m_pPointedInstanceMaterial;
+	GLfloat m_fPointedInstanceTransparency;
+	bool m_bMultiSelect;
+
 public: // Methods
 
 	_oglRendererSettings();
 	virtual ~_oglRendererSettings();
+
+	virtual void _reset();
 
 	void _setView(enumView enView);
 
@@ -2267,6 +2289,12 @@ public: // Properties
 
 	enumRotationMode _getRotationMode() const;
 	void _setRotationMode(enumRotationMode enRotationMode);
+
+	void setGhostView(BOOL bValue);
+	BOOL getGhostView() const;
+
+	void setGhostViewTransparency(GLfloat fTransparency);
+	GLfloat getGhostViewTransparency() const;
 	
 	void setShowFaces(BOOL bValue);
 	BOOL getShowFaces(_model* pModel);
@@ -2373,6 +2401,9 @@ public: // Methods
 	_oglRenderer();
 	virtual ~_oglRenderer();
 
+	// _oglRendererSettings
+	virtual void _reset() override;
+
 	void _initialize(CWnd* pWnd,
 		int iSamples,
 		int iVertexShader,
@@ -2405,9 +2436,7 @@ private: //  Methods
 public: // Methods
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/);
-	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);
-
-	void _reset();
+	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);	
 
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText);
 	void _hideTooltip();
@@ -2438,10 +2467,7 @@ protected: // Members
 
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
-	_instance* m_pPointedInstance;
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
-	bool m_bMultiSelect;
+	_instance* m_pPointedInstance;	
 
 	// Tooltip
 	clock_t m_tmShowTooltip;
