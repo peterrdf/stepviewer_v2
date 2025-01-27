@@ -2106,6 +2106,10 @@ void _oglView::_drawInstancesFrameBuffer()
 							fTransparency = m_fGhostViewTransparency;
 						}
 					}
+					else if (pMaterial == m_pPointedInstanceMaterial)
+					{
+						fTransparency = m_fGhostViewTransparency;
+					}
 
 					if (bTransparent)
 					{
