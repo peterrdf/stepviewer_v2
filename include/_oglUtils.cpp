@@ -10,7 +10,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_fYAngle(0.f)
 	, m_fZAngle(0.f)
 	, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
-	, m_bGhostView(TRUE)
+	, m_bGhostView(FALSE)
 	, m_fGhostViewTransparency(1.f)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
@@ -53,7 +53,7 @@ _oglRendererSettings::_oglRendererSettings()
 	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
 	// UI
-	m_bGhostView = TRUE;
+	m_bGhostView = FALSE;
 	m_fGhostViewTransparency = .50f;
 	m_bShowFaces = TRUE;
 	m_strCullFaces = CULL_FACES_NONE;
@@ -2063,6 +2063,8 @@ void _oglView::_drawInstancesFrameBuffer()
 	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
 	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
+	bool bGhostView = m_bGhostView && !getController()->getSelectedInstances().empty();
+
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2116,7 +2118,7 @@ void _oglView::_drawInstancesFrameBuffer()
 						pCohortMaterial;
 
 					float fTransparency = pMaterial->getA();
-					if (m_bGhostView)
+					if (bGhostView)
 					{
 						if ((pMaterial != m_pSelectedInstanceMaterial) && 
 							(pMaterial != m_pPointedInstanceMaterial) &&
