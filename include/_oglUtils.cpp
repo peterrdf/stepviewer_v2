@@ -877,6 +877,17 @@ BOOL _oglRendererSettings::getShowNavigator() const
 	return m_bShowNavigator;
 }
 
+void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
+{
+	m_pSelectedInstanceMaterial->init(
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		fTransparency,
+		nullptr);
+}
+
 // ************************************************************************************************
 _oglRenderer::_oglRenderer()
 	: _oglRendererSettings()

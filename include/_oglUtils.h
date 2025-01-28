@@ -2339,6 +2339,9 @@ public: // Properties
 
 	void setShowNavigator(BOOL bValue);
 	BOOL getShowNavigator() const;
+
+	void setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
+	_material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
 };
 
 // ************************************************************************************************
