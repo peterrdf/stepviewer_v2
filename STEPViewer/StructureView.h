@@ -30,8 +30,9 @@ private: // Members
 
 public: // Methods
 
-	// CViewBase
-	virtual void onModelLoaded();	
+	// _view
+	virtual void preModelLoaded() override;
+	virtual void onModelLoaded() override;
 
 // Construction
 public:

@@ -21,8 +21,16 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CStructureView::onModelLoaded()
+// ************************************************************************************************
+/*virtual*/ void CStructureView::preModelLoaded() /*override*/
+{
+	if (m_pSTEPTreeView != nullptr)
+	{
+		m_pSTEPTreeView->preModelLoaded();
+	}
+}
+
+/*virtual*/ void CStructureView::onModelLoaded() /*override*/
 {
 	auto pController = getController();
 	if (pController == nullptr)
@@ -35,7 +43,7 @@ static char THIS_FILE[]=__FILE__;
 	enumAP enAP = enumAP::STEP;
 	if (!pController->getModels().empty())
 	{
-		_ptr<_ap_model> apModel(pController->getModels().back());
+		_ptr<_ap_model> apModel(pController->getModels().front());
 		ASSERT(apModel);
 
 		enAP = apModel->getAP();
@@ -78,9 +86,7 @@ static char THIS_FILE[]=__FILE__;
 	} // switch (enAP)
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CStructureView
-
+// ************************************************************************************************
 CStructureView::CStructureView()
 	: m_pSTEPTreeView(nullptr)
 {}

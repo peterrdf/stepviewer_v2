@@ -158,7 +158,8 @@ public: // Methods
 		return pController->getModel()->as<Model>();
 	}
 
-	// Events	
+	// Events
+	virtual void preModelLoaded() {}
 	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
 	virtual void onWorldDimensionsChanged() {}

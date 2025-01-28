@@ -477,6 +477,14 @@ void _controller::setModel(_model* pModel)
 
 void _controller::setModels(const vector<_model*>& vecModels)
 {
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->preModelLoaded();
+	}
+
 	clean();
 
 	m_vecModels = vecModels;
@@ -484,9 +492,7 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
 
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
+	itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onModelLoaded();
@@ -499,9 +505,9 @@ void _controller::addModel(_model* pModel)
 {
 	assert(pModel != nullptr);
 
-	m_vecModels.push_back(pModel);
-
 	m_bUpdatingModel = true;
+
+	m_vecModels.push_back(pModel);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -523,10 +529,10 @@ _instance* _controller::loadInstance(int64_t iInstance)
 		return nullptr;
 	}
 
+	m_bUpdatingModel = true;
+
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
-
-	m_bUpdatingModel = true;
 
 	auto pInstance = getModel()->loadInstance(iInstance);
 

@@ -49,7 +49,13 @@ public: // Methods
 	}
 
 	// _view
-	virtual void onControllerChanged()
+	virtual void preModelLoaded() override
+	{
+		m_pTreeCtrl->DeleteAllItems();
+	}
+
+	// _view
+	virtual void onControllerChanged() override
 	{
 		ASSERT(getController() != nullptr);
 
