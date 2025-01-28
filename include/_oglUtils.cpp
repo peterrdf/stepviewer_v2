@@ -83,7 +83,7 @@ _oglRendererSettings::_oglRendererSettings()
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
-		m_fGhostViewTransparency,
+		1.f,
 		nullptr);
 }
 
