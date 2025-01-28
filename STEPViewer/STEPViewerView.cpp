@@ -141,6 +141,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMySTEPViewerView::OnUpdateInstancesSave)
 	ON_COMMAND(ID_INSTANCES_ENABLE, &CMySTEPViewerView::OnInstancesEnable)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ENABLE, &CMySTEPViewerView::OnUpdateInstancesEnable)
+	ON_COMMAND(ID_3DVIEW_OVERRIDE_MATERIAL, &CMySTEPViewerView::OnOverrideMaterial)
+	ON_UPDATE_COMMAND_UI(ID_3DVIEW_OVERRIDE_MATERIAL, &CMySTEPViewerView::OnUpdateOverrideMaterial)
 	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnUpdateInstancesZoomTo)
 	ON_COMMAND(ID_SHOW_FACES, &CMySTEPViewerView::OnShowFaces)
@@ -554,6 +556,47 @@ void CMySTEPViewerView::OnUpdateInstancesEnable(CCmdUI* pCmdUI)
 
 	pCmdUI->Enable(bEnable);
 	pCmdUI->SetCheck(bEnable);
+}
+
+void CMySTEPViewerView::OnOverrideMaterial()
+{
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	vector<_instance*> vecInstances = pDocument->getSelectedInstances();
+	vecInstances.erase(remove_if(vecInstances.begin(), vecInstances.end(), [&](_instance* pInstance)
+		{
+			return !pInstance->getEnable();
+		}), vecInstances.end());
+
+	ASSERT(!vecInstances.empty());
+
+	m_pOpenGLView->addUserDefinedMaterial(
+		vecInstances, 
+		GetRValue(colorDialog.GetColor()) / 255.f,
+		GetGValue(colorDialog.GetColor()) / 255.f,
+		GetBValue(colorDialog.GetColor()) / 255.f);
+}
+
+void CMySTEPViewerView::OnUpdateOverrideMaterial(CCmdUI* pCmdUI)
+{
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	BOOL bEnable = !pDocument->getSelectedInstances().empty() ? TRUE : FALSE;
+
+	for (auto pInstance : pDocument->getSelectedInstances())
+	{
+		bEnable &= pInstance->getEnable() ? TRUE : FALSE;
+	}
+
+	pCmdUI->Enable(bEnable);
 }
 
 void CMySTEPViewerView::OnInstancesZoomTo()

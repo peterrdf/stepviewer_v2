@@ -2463,6 +2463,9 @@ class _oglView
 
 protected: // Members
 
+	// Override the material
+	map<_instance*, _material*> m_mapUserDefinedMaterials;
+
 	// Mouse
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;	
@@ -2527,5 +2530,8 @@ public: // Methods
 
 	void _onMouseMoveEvent(UINT nFlags, CPoint point);
 	void _onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+
+	void addUserDefinedMaterial(const vector<_instance*>& vecInstances, float fR, float fG, float fB);
+	void removeUserDefinedMaterials();
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL

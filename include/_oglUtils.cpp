@@ -1535,6 +1535,7 @@ void _oglRenderer::_hideTooltip()
 _oglView::_oglView()
 	: _oglRenderer()
 	, _view()
+	, m_mapUserDefinedMaterials()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -1550,6 +1551,8 @@ _oglView::_oglView()
 	_destroy();
 
 	delete m_pInstanceSelectionFrameBuffer;
+
+	removeUserDefinedMaterials();
 }
 
 /*virtual*/ void _oglView::onWorldDimensionsChanged() /*override*/
@@ -2105,10 +2108,17 @@ void _oglView::_drawInstancesFrameBuffer()
 				{
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
+					auto pCohortMaterial = pCohort->getMaterial();
+					auto itUserDefinedMaterial = m_mapUserDefinedMaterials.find(pInstance);
+					if (itUserDefinedMaterial != m_mapUserDefinedMaterials.end())
+					{
+						pCohortMaterial = itUserDefinedMaterial->second;
+					}
+
 					const _material* pMaterial =
 						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
 						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-						pCohort->getMaterial();
+						pCohortMaterial;
 
 					float fTransparency = pMaterial->getA();
 					if (m_bGhostView)
@@ -2883,4 +2893,41 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 		assert(false);
 		break;
 	} // switch (enEvent)
+}
+
+void _oglView::addUserDefinedMaterial(const vector<_instance*>& vecInstances, float fR, float fG, float fB)
+{
+	for (auto pInstance : vecInstances)
+	{
+		auto pMaterial = new _material();
+		pMaterial->init(
+			fR, fG, fB,
+			fR, fG, fB,
+			fR, fG, fB,
+			fR, fG, fB,
+			1.f,
+			nullptr);
+
+		auto itUserDefinedMaterial = m_mapUserDefinedMaterials.find(pInstance);
+		if (itUserDefinedMaterial != m_mapUserDefinedMaterials.end())
+		{
+			delete itUserDefinedMaterial->second;
+			itUserDefinedMaterial->second = pMaterial;
+		}
+		else
+		{
+			m_mapUserDefinedMaterials[pInstance] = pMaterial;
+		}
+	}
+
+	_redraw();
+}
+
+void _oglView::removeUserDefinedMaterials()
+{
+	for (auto itUserDefinedMaterial : m_mapUserDefinedMaterials)
+	{
+		delete itUserDefinedMaterial.second;
+	}
+	m_mapUserDefinedMaterials.clear();
 }

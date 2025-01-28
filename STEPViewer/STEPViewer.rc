@@ -576,7 +576,7 @@ IDR_POPUP_INSTANCES_NO_GEOMETRY MENU
 BEGIN
     POPUP "Instances"
     BEGIN
-        MENUITEM "Zoom to tree",    ID_INSTANCES_ZOOM_TO_CHILDREN
+        MENUITEM "Zoom to tree",                ID_INSTANCES_ZOOM_TO_CHILDREN
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
         MENUITEM "View Attributes",             IDS_VIEW_IFC_RELATIONS
@@ -593,6 +593,9 @@ BEGIN
         MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Enable",                      ID_INSTANCES_ENABLE
+        MENUITEM SEPARATOR
+        MENUITEM "Override material",           ID_3DVIEW_OVERRIDE_MATERIAL
+        MENUITEM "Reset materials",             ID_3DVIEW_RESET_MATERIALS
         MENUITEM SEPARATOR
         POPUP "Projection"
         BEGIN
@@ -624,7 +627,7 @@ IDR_POPUP_META_DATA MENU
 BEGIN
     POPUP "Metadata"
     BEGIN
-        MENUITEM "Zoom to tree",    ID_INSTANCES_ZOOM_TO_CHILDREN
+        MENUITEM "Zoom to tree",                ID_INSTANCES_ZOOM_TO_CHILDREN
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
     END
 END
