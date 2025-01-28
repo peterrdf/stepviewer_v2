@@ -106,6 +106,7 @@ public:
 	afx_msg void OnUpdateShowLines(CCmdUI* pCmdUI);
 	afx_msg void OnShowPoints();
 	afx_msg void OnUpdateShowPoints(CCmdUI* pCmdUI);
+	afx_msg void OnViewReset();
 };
 
 #ifndef _DEBUG  // debug version in STEPViewerView.cpp

@@ -484,6 +484,7 @@ BEGIN
             MENUITEM "Lines",                       ID_SHOW_LINES
             MENUITEM "Points",                      ID_SHOW_POINTS
         END
+        MENUITEM "Reset",                       ID_VIEW_RESET
         MENUITEM SEPARATOR
         MENUITEM "Model Checker",               ID_VIEW_MODEL_CHECKER
     END
@@ -620,6 +621,7 @@ BEGIN
             MENUITEM "Lines",                       ID_SHOW_LINES
             MENUITEM "Points",                      ID_SHOW_POINTS
         END
+        MENUITEM "Reset",                       ID_VIEW_RESET
     END
 END
 

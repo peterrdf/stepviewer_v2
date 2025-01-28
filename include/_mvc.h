@@ -11,6 +11,7 @@ using namespace std;
 // ************************************************************************************************
 enum class enumApplicationProperty : int
 {
+	All, // Reset
 	Projection,
 	View,
 	GhostView,
@@ -39,7 +40,7 @@ enum class enumApplicationProperty : int
 	Brightness,
 	Gamma,
 	VisibleValuesCountLimit,
-	ScalelAndCenter,
+	ScalelAndCenter,	
 };
 
 // ************************************************************************************************

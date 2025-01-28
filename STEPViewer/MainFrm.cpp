@@ -221,6 +221,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_BACK);
 	lstBasicCommands.AddTail(ID_VIEW_ISOMETRIC);
 	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
+	lstBasicCommands.AddTail(ID_VIEW_RESET);
 	lstBasicCommands.AddTail(ID_VIEW_CENTER_ALL_GEOMETRY);
 	lstBasicCommands.AddTail(ID_VIEW_MODEL_CHECKER);
 

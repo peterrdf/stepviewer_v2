@@ -534,7 +534,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Ghost View"),
-			pRenderer->getShowFaces(pController->getModel()) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Ghost View"),
+			pRenderer->getGhostView() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Ghost View"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::GhostView));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);

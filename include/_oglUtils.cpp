@@ -50,7 +50,7 @@ _oglRendererSettings::_oglRendererSettings()
 	m_fXAngle = 0.f;
 	m_fYAngle = 0.f;
 	m_fZAngle = 0.f;
-	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+	m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
 
 	// UI
 	m_bGhostView = FALSE;
@@ -1468,11 +1468,32 @@ void _oglRenderer::_reset()
 {
 	_oglRendererSettings::_reset();
 
-	// Translation
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = -5.f;
-	m_fScaleFactor = 2.f;
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	_getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
+
+	m_fScaleFactor = fWorldBoundingSphereDiameter;
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
@@ -1621,6 +1642,7 @@ _oglView::_oglView()
 
 	switch (enApplicationProperty)
 	{
+		case enumApplicationProperty::All:
 		case enumApplicationProperty::Projection:
 		case enumApplicationProperty::View:
 		case enumApplicationProperty::GhostView:

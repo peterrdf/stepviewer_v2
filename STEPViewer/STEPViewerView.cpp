@@ -155,6 +155,7 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_LINES, &CMySTEPViewerView::OnUpdateShowLines)
 	ON_COMMAND(ID_SHOW_POINTS, &CMySTEPViewerView::OnShowPoints)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_POINTS, &CMySTEPViewerView::OnUpdateShowPoints)
+	ON_COMMAND(ID_VIEW_RESET, &CMySTEPViewerView::OnViewReset)
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
@@ -729,4 +730,15 @@ void CMySTEPViewerView::OnUpdateShowPoints(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(pRendererSettings != nullptr);
+}
+
+void CMySTEPViewerView::OnViewReset()
+{
+	auto pRendererSettings = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
+	if (pRendererSettings != nullptr)
+	{
+		pRendererSettings->_reset();
+
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::All);
+	}
 }
