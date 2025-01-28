@@ -94,6 +94,8 @@ public:
 	afx_msg void OnUpdateInstancesEnable(CCmdUI* pCmdUI);
 	afx_msg void OnOverrideMaterial();
 	afx_msg void OnUpdateOverrideMaterial(CCmdUI* pCmdUI);
+	afx_msg void OnResetMaterials();
+	afx_msg void OnUpdateResetMaterials(CCmdUI* pCmdUI);
 	afx_msg void OnInstancesZoomTo();
 	afx_msg void OnUpdateInstancesZoomTo(CCmdUI* pCmdUI);
 	afx_msg void OnShowFaces();

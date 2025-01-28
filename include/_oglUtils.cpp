@@ -2897,6 +2897,8 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 
 void _oglView::addUserDefinedMaterial(const vector<_instance*>& vecInstances, float fR, float fG, float fB)
 {
+	assert(!vecInstances.empty());
+
 	for (auto pInstance : vecInstances)
 	{
 		auto pMaterial = new _material();
@@ -2925,9 +2927,16 @@ void _oglView::addUserDefinedMaterial(const vector<_instance*>& vecInstances, fl
 
 void _oglView::removeUserDefinedMaterials()
 {
+	bool bRedraw = !m_mapUserDefinedMaterials.empty();
+
 	for (auto itUserDefinedMaterial : m_mapUserDefinedMaterials)
 	{
 		delete itUserDefinedMaterial.second;
 	}
 	m_mapUserDefinedMaterials.clear();
+
+	if (bRedraw)
+	{
+		_redraw();
+	}	
 }

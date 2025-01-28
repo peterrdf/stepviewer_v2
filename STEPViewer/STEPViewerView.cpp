@@ -143,6 +143,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ENABLE, &CMySTEPViewerView::OnUpdateInstancesEnable)
 	ON_COMMAND(ID_3DVIEW_OVERRIDE_MATERIAL, &CMySTEPViewerView::OnOverrideMaterial)
 	ON_UPDATE_COMMAND_UI(ID_3DVIEW_OVERRIDE_MATERIAL, &CMySTEPViewerView::OnUpdateOverrideMaterial)
+	ON_COMMAND(ID_3DVIEW_RESET_MATERIALS, &CMySTEPViewerView::OnResetMaterials)
+	ON_UPDATE_COMMAND_UI(ID_3DVIEW_RESET_MATERIALS, &CMySTEPViewerView::OnUpdateResetMaterials)
 	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnInstancesZoomTo)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMySTEPViewerView::OnUpdateInstancesZoomTo)
 	ON_COMMAND(ID_SHOW_FACES, &CMySTEPViewerView::OnShowFaces)
@@ -597,6 +599,19 @@ void CMySTEPViewerView::OnUpdateOverrideMaterial(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(bEnable);
+}
+
+void CMySTEPViewerView::OnResetMaterials()
+{
+	m_pOpenGLView->removeUserDefinedMaterials();
+}
+
+void CMySTEPViewerView::OnUpdateResetMaterials(CCmdUI* pCmdUI)
+{
+	auto pDocument = GetDocument();
+	ASSERT_VALID(pDocument);
+
+	pCmdUI->Enable(!m_pOpenGLView->getUserDefinedMaterials().empty() ? TRUE : FALSE);
 }
 
 void CMySTEPViewerView::OnInstancesZoomTo()

@@ -2533,5 +2533,9 @@ public: // Methods
 
 	void addUserDefinedMaterial(const vector<_instance*>& vecInstances, float fR, float fG, float fB);
 	void removeUserDefinedMaterials();
+
+public: // Properties
+
+	const map<_instance*, _material*>& getUserDefinedMaterials() const { return m_mapUserDefinedMaterials; }
 };
 #endif // #if defined _MFC_VER || defined _AFXDLL
