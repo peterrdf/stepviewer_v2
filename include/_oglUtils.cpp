@@ -31,7 +31,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_pPointedInstanceMaterial(new _material())
 	, m_bMultiSelect(false)
 {
-	_reset();
+	_reset(false);
 }
 
 /*virtual*/ _oglRendererSettings::~_oglRendererSettings()
@@ -40,7 +40,7 @@ _oglRendererSettings::_oglRendererSettings()
 	delete m_pPointedInstanceMaterial;
 }
 
-/*virtual*/ void _oglRendererSettings::_reset()
+/*virtual*/ void _oglRendererSettings::_reset(bool bRedraw/* = true*/)
 {
 	// Projection
 	m_enProjection = enumProjection::Perspective;
@@ -1464,9 +1464,9 @@ void _oglRenderer::_pan(float fX, float fY)
 	} // switch (nChar)
 }
 
-void _oglRenderer::_reset()
+void _oglRenderer::_reset(bool bRedraw/* = true*/)
 {
-	_oglRendererSettings::_reset();
+	_oglRendererSettings::_reset(bRedraw);
 
 	// Translation
 	m_fXTranslation = 0.f;
@@ -1474,7 +1474,10 @@ void _oglRenderer::_reset()
 	m_fZTranslation = -5.f;
 	m_fScaleFactor = 2.f;
 
-	_redraw();
+	if (bRedraw)
+	{
+		_redraw();
+	}	
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
