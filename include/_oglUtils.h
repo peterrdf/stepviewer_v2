@@ -2269,7 +2269,7 @@ public: // Methods
 	_oglRendererSettings();
 	virtual ~_oglRendererSettings();
 
-	virtual void _reset(bool bRedraw = true);
+	virtual void _reset();
 
 	void _setView(enumView enView);
 
@@ -2404,7 +2404,7 @@ public: // Methods
 	virtual ~_oglRenderer();
 
 	// _oglRendererSettings
-	virtual void _reset(bool bRedraw = true) override;
+	virtual void _reset() override;
 
 	void _initialize(CWnd* pWnd,
 		int iSamples,
