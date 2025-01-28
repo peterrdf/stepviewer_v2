@@ -608,9 +608,6 @@ void CMySTEPViewerView::OnResetMaterials()
 
 void CMySTEPViewerView::OnUpdateResetMaterials(CCmdUI* pCmdUI)
 {
-	auto pDocument = GetDocument();
-	ASSERT_VALID(pDocument);
-
 	pCmdUI->Enable(!m_pOpenGLView->getUserDefinedMaterials().empty() ? TRUE : FALSE);
 }
 
