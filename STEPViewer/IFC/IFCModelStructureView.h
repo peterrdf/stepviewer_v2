@@ -132,8 +132,6 @@ private: // Methods
 	void LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
 	HTREEITEM LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems, bool bLoadChildren = true);
 	void LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
-	void LoadSpaceBoundaries(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
-	void LoadBuildingStoreyChildren(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hBuildingStorey, ITEMS& mapItems);
 	void LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
 
 	CModelData* Model_GetData(HTREEITEM hItem);
