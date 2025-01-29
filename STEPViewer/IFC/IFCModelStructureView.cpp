@@ -1101,8 +1101,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 
 		// Load
 		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());
-		//LoadSpaceBoundaries(pModelData, hModel, pModelData->GetSpaceBoundariesItems()); // TEST
+		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());		
 		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
@@ -1316,21 +1315,21 @@ void CIFCModelStructureView::LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdai
 {
 	ASSERT(pModel != nullptr);
 
-	SdaiAggr sdaiContainsElementsAggr = nullptr;
-	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiContainsElementsAggr);
+	SdaiAggr sdaiBoundedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiBoundedByAggr);
 
-	if (sdaiContainsElementsAggr == nullptr)
+	if (sdaiBoundedByAggr == nullptr)
 	{
 		return;
 	}
 
 	SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELSPACEBOUNDARY");
 
-	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
+	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
 	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i)
 	{
 		SdaiInstance sdaiBoundedByInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
 
 		if (sdaiGetInstanceType(sdaiBoundedByInstance) != sdaiRelSpaceBoundaryEntity)
 		{
@@ -1405,6 +1404,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		LoadIsDecomposedBy(pModel, sdaiInstance, hInstance, mapItems);
 		LoadIsNestedBy(pModel, sdaiInstance, hInstance, mapItems);
 		LoadContainsElements(pModel, sdaiInstance, hInstance, mapItems);
+		LoadBoundedBy(pModel, sdaiInstance, hInstance, mapItems);
 	}		
 
 	return hInstance;	

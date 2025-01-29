@@ -137,6 +137,7 @@ void _ifc_model::getObjectsReferencedState()
 		getObjectsReferencedStateIsNestedBy(sdaiProjectInstance);
 		getObjectsReferencedStateContainsElements(sdaiProjectInstance);
 		getObjectsReferencedStateHasAssignments(sdaiProjectInstance);
+		getObjectsReferencedStateBoundedBy(sdaiProjectInstance);
 
 		// Disable Unreferenced instances
 		for (auto pGeometry : getGeometries())
@@ -162,6 +163,7 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 		getObjectsReferencedStateIsNestedBy(sdaiInstance);
 		getObjectsReferencedStateContainsElements(sdaiInstance);
 		getObjectsReferencedStateHasAssignments(sdaiInstance);
+		getObjectsReferencedStateBoundedBy(sdaiInstance);
 	}
 	else
 	{
@@ -169,10 +171,10 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	}
 }
 
-void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance)
 {
 	SdaiAggr sdaiIsDecomposedByAggr = nullptr;
-	sdaiGetAttrBN(iInstance, "IsDecomposedBy", sdaiAGGR, &sdaiIsDecomposedByAggr);
+	sdaiGetAttrBN(sdaiInstance, "IsDecomposedBy", sdaiAGGR, &sdaiIsDecomposedByAggr);
 	if (sdaiIsDecomposedByAggr == nullptr)
 	{
 		return;
@@ -204,12 +206,12 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance iInstance)
 	} // for (SdaiInteger i = ...
 }
 
-void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(sdaiInstance != 0);
 
 	SdaiAggr sdaiIsNestedByAggr = nullptr;
-	sdaiGetAttrBN(iInstance, "IsNestedBy", sdaiAGGR, &sdaiIsNestedByAggr);
+	sdaiGetAttrBN(sdaiInstance, "IsNestedBy", sdaiAGGR, &sdaiIsNestedByAggr);
 	if (sdaiIsNestedByAggr == nullptr)
 	{
 		return;
@@ -220,15 +222,15 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 	SdaiInteger iIsNestedByMembersCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
 	for (SdaiInteger i = 0; i < iIsNestedByMembersCount; ++i)
 	{
-		SdaiInstance sdaiIsDecomposedByInstance = 0;
-		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
-		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelNestsEntity)
+		SdaiInstance sdaiIsNestedByInstance = 0;
+		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
+		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity)
 		{
 			continue;
 		}
 
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
-		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
+		sdaiGetAttrBN(sdaiIsNestedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
 		SdaiInteger iRelatedObjectsMembersCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsMembersCount; ++j)
@@ -238,15 +240,15 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance iInstance)
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
 		} // for (SdaiInteger j = ...
-	} // for (int64_t i = ...
+	} // for (SdaiInteger i = ...
 }
 
-void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(sdaiInstance != 0);
 
 	SdaiAggr sdaiContainsElementsAggr = nullptr;
-	sdaiGetAttrBN(iInstance, "ContainsElements", sdaiAGGR, &sdaiContainsElementsAggr);
+	sdaiGetAttrBN(sdaiInstance, "ContainsElements", sdaiAGGR, &sdaiContainsElementsAggr);
 	if (sdaiContainsElementsAggr == nullptr)
 	{
 		return;
@@ -279,12 +281,12 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance iInstanc
 	} // for (SdaiInteger i = ...
 }
 
-void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
+void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance)
 {
-	ASSERT(iInstance != 0);
+	ASSERT(sdaiInstance != 0);
 
 	SdaiAggr sdaiContainsElementsAggr = nullptr;
-	sdaiGetAttrBN(iInstance, "HasAssignments", sdaiAGGR, &sdaiContainsElementsAggr);
+	sdaiGetAttrBN(sdaiInstance, "HasAssignments", sdaiAGGR, &sdaiContainsElementsAggr);
 	if (sdaiContainsElementsAggr == nullptr)
 	{
 		return;
@@ -304,6 +306,31 @@ void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance iInstance)
 			getObjectsReferencedStateRecursively(sdaiRelatingProductInstance);
 		}			
 	} // for (SdaiInteger i = ...
+}
+
+void _ifc_model::getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance)
+{
+	ASSERT(sdaiInstance != 0);
+
+	SdaiAggr sdaiBoundedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiBoundedByAggr);
+
+	if (sdaiBoundedByAggr == nullptr)
+	{
+		return;
+	}
+
+	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
+	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i)
+	{
+		SdaiInstance sdaiBoundedByInstance = 0;
+		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+
+		if (sdaiIsKindOfBN(sdaiBoundedByInstance, "IFCRELSPACEBOUNDARY"))
+		{
+			getObjectsReferencedStateRecursively(sdaiBoundedByInstance);
+		}
+	}
 }
 
 void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements)
