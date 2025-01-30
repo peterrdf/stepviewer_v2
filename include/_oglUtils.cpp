@@ -2825,7 +2825,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel());
 			assert(pModel != nullptr);
 
-			CString strInstanceMetaData;
+			wstring strInstanceMetaData = m_pPointedInstance->getName();
 
 			GLdouble dX = 0.;
 			GLdouble dY = 0.;
@@ -2841,7 +2841,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
 				GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
-				strInstanceMetaData += L"X/Y/Z: ";
+				strInstanceMetaData += L"\n\nX/Y/Z: ";
 				strInstanceMetaData += to_wstring(dWorldX).c_str();
 				strInstanceMetaData += L", ";
 				strInstanceMetaData += to_wstring(dWorldY).c_str();
@@ -2849,9 +2849,15 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				strInstanceMetaData += to_wstring(dWorldZ).c_str();				
 			} // if (getOGLPos( ...
 
+			if (strInstanceMetaData.size() >= 250)
+			{
+				strInstanceMetaData = strInstanceMetaData.substr(0, 250);
+				strInstanceMetaData += L"...";
+			}
+
 			m_tmShowTooltip = clock();
 
-			_showTooltip(L"Information", strInstanceMetaData);
+			_showTooltip(L"Information", strInstanceMetaData.c_str());
 		} // if (timeSpan >= ...
 	} // if (m_pPointedInstance != nullptr)
 	else

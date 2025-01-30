@@ -23,7 +23,7 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
 	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
 
-	wstring getName() const
+	virtual wstring getName() const override
 	{
 		return getName(getSdaiInstance());
 	}
