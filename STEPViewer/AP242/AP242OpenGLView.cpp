@@ -25,6 +25,13 @@ CAP242OpenGLView::~CAP242OpenGLView()
 {
 }
 
+/*virtual*/ void CAP242OpenGLView::_reset() /*override*/
+{
+	_oglRenderer::_reset();
+
+	m_strCullFaces = CULL_FACES_FRONT;
+}
+
 
 
 
