@@ -1484,6 +1484,11 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 	tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
 	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
+	// Show
+	m_pTreeCtrl->SetItemState(
+		hInstance,
+		pGeometry->getShow() ? 0 : TVIS_CUT, TVIS_CUT);
+
 	// Geometry
 	tvInsertStruct.hParent = hInstance;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
