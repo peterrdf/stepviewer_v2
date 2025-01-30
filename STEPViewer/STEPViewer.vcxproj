@@ -597,8 +597,6 @@
     <ClInclude Include="..\include\_host.h" />
     <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_ap242_draughting_model.h" />
-    <ClInclude Include="..\include\glext.h" />
-    <ClInclude Include="..\include\wglext.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_ap242_geometry.h" />
     <ClInclude Include="..\include\_ap242_instance.h" />

@@ -120,12 +120,6 @@
     <ClInclude Include="..\include\_settings_storage.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\glext.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\wglext.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="CIS2\CIS2Model.h">
       <Filter>CIS2</Filter>
     </ClInclude>
