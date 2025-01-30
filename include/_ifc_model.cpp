@@ -446,6 +446,10 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	CString strEntity = (LPWSTR)CA2W(szEntityName);
 	strEntity.MakeUpper();
 
+	pGeometry->setShow(
+		(strEntity == L"IFCRELSPACEBOUNDARY") ||
+		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
 	pInstance->setEnable(
 		(strEntity == L"IFCSPACE") ||
 		(strEntity == L"IFCRELSPACEBOUNDARY") ||

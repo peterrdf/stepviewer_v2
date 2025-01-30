@@ -2494,6 +2494,7 @@ public: // Methods
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag) override;
 	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
+	virtual void onInstancesShowStateChanged(_view* pSender) override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	virtual void onControllerChanged() override;
 

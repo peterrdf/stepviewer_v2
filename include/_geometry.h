@@ -153,6 +153,7 @@ private: // Members
 	_vertices_f* m_pVertexBuffer; // Vertices
 	_indices_i32* m_pIndexBuffer; // Indices
 	int64_t m_iConceptualFacesCount; // Conceptual faces	
+	bool m_bShow;
 	
 	// BB/AABB
 	_matrix* m_pmtxOriginalBBTransformation;
@@ -320,6 +321,8 @@ public: // Properties
 	int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
 	uint32_t getVertexLength() { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
 	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
+	bool getShow() const { return m_bShow; }
+	void setShow(bool bShow) { m_bShow = bShow; }
 	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
 	// BB

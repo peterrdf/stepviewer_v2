@@ -1633,6 +1633,16 @@ _oglView::_oglView()
 	_redraw();
 }
 
+/*virtual*/ void _oglView::onInstancesShowStateChanged(_view* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	_redraw();
+}
+
 /*virtual*/ void _oglView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
@@ -2093,6 +2103,11 @@ void _oglView::_drawInstancesFrameBuffer()
 
 		for (auto pGeometry : itCohort.second)
 		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
 			if (pGeometry->concFacesCohorts().empty())
 			{
 				continue;
@@ -2246,6 +2261,11 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 
 		for (auto pGeometry : itCohort.second)
 		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
 			if (pGeometry->concFacePolygonsCohorts().empty())
 			{
 				continue;
@@ -2343,6 +2363,11 @@ void _oglView::_drawLines(_model* pModel)
 
 		for (auto pGeometry : itCohort.second)
 		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
 			if (pGeometry->linesCohorts().empty())
 			{
 				continue;
@@ -2441,6 +2466,11 @@ void _oglView::_drawPoints(_model* pModel)
 
 		for (auto pGeometry : itCohort.second)
 		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
 			if (pGeometry->pointsCohorts().empty())
 			{
 				continue;
@@ -2585,6 +2615,11 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 
 		for (auto pGeometry : itCohort.second)
 		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
 			if (pGeometry->getTriangles().empty())
 			{
 				continue;

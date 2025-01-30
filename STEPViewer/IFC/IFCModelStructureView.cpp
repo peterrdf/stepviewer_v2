@@ -697,8 +697,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	// Zoom to
 	set<_instance*> setZoomToInstances;
 		
-	// ENTITY : VISIBLE COUNT
-	map<wstring, long> mapEntity2VisibleCount;
+	// ENTITY : ENBABLE COUNT
+	map<wstring, long> mapEntity2EnableCount;
+	map<wstring, long> mapEntity2ShowCount;
 	for (auto pGeometry : pModelData->GetModel()->getGeometries())
 	{
 		if (!pGeometry->hasGeometry())
@@ -711,18 +712,30 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 		const wchar_t* szEntityName = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
 
-		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
-		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
+		// Enable
+		auto itEntity2EnableCount = mapEntity2EnableCount.find(szEntityName);
+		if (itEntity2EnableCount == mapEntity2EnableCount.end())
 		{
-			mapEntity2VisibleCount[szEntityName] = pGeometry->getEnabledInstancesCount();
+			mapEntity2EnableCount[szEntityName] = pGeometry->getEnabledInstancesCount();
 		}
 		else
 		{
-			itEntity2VisibleCount->second += pGeometry->getEnabledInstancesCount();
+			itEntity2EnableCount->second += pGeometry->getEnabledInstancesCount();
+		}
+
+		// Show
+		auto itEntity2ShowCount = mapEntity2ShowCount.find(szEntityName);
+		if (itEntity2ShowCount == mapEntity2ShowCount.end())
+		{
+			mapEntity2ShowCount[szEntityName] = pGeometry->getShow() ? 1 : 0;
+		}
+		else
+		{
+			itEntity2ShowCount->second += pGeometry->getShow() ? 1 : 0;
 		}
 	} // for (; itInstance != ...
 
-	ASSERT(!mapEntity2VisibleCount.empty());
+	ASSERT(!mapEntity2EnableCount.empty());
 
 	// Build menu
 	CMenu menuMain;
@@ -781,32 +794,51 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		}
 	}
 
-	// Entities
-	CMenu menuEntities;
-	VERIFY(menuEntities.CreatePopupMenu());
+	// Enable Entities
+	CMenu menuEnableEntities;
+	VERIFY(menuEnableEntities.CreatePopupMenu());
 
 	UINT uiID = 1;
-	map<UINT, wstring> mapCommand2Entity;
-	for (auto itEntity2VisibleCount = mapEntity2VisibleCount.begin();
-		itEntity2VisibleCount != mapEntity2VisibleCount.end();
-		itEntity2VisibleCount++)
+	map<UINT, wstring> mapCommand2EnableEntity;
+	for (auto itEntity2EnableCount = mapEntity2EnableCount.begin();
+		itEntity2EnableCount != mapEntity2EnableCount.end();
+		itEntity2EnableCount++)
 	{
-		mapCommand2Entity[uiID] = itEntity2VisibleCount->first;
+		mapCommand2EnableEntity[uiID] = itEntity2EnableCount->first;
 
-		menuEntities.AppendMenu(
-			MF_STRING | (itEntity2VisibleCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
+		menuEnableEntities.AppendMenu(
+			MF_STRING | (itEntity2EnableCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
 			uiID++,
-			itEntity2VisibleCount->first.c_str());
+			itEntity2EnableCount->first.c_str());
+	}
+
+	// Show Entities
+	CMenu menuShowEntities;
+	VERIFY(menuShowEntities.CreatePopupMenu());
+
+	map<UINT, wstring> mapCommand2ShowEntity;
+	for (auto itEntity2ShowCount = mapEntity2ShowCount.begin();
+		itEntity2ShowCount != mapEntity2ShowCount.end();
+		itEntity2ShowCount++)
+	{
+		mapCommand2ShowEntity[uiID] = itEntity2ShowCount->first;
+
+		menuShowEntities.AppendMenu(
+			MF_STRING | (itEntity2ShowCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
+			uiID++,
+			itEntity2ShowCount->first.c_str());
 	}
 
 	if (pMenu != nullptr)
 	{
 		pMenu->AppendMenu(MF_SEPARATOR, 0, L"");
-		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEntities.GetSafeHmenu(), L"Entities");
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEnableEntities.GetSafeHmenu(), L"Enable Entities");
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuShowEntities.GetSafeHmenu(), L"Show Entities");
 	}
 	else
 	{
-		pMenu = &menuEntities;
+		pMenu = &menuEnableEntities;
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuShowEntities.GetSafeHmenu(), L"Show Entities");
 	}
 
 	// Show
@@ -1013,50 +1045,78 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	// Enable Entity command
 	if (!bExecuted)
 	{
-		auto itCommand2Entity = mapCommand2Entity.find(uiCommand);
-		if (itCommand2Entity == mapCommand2Entity.end())
+		// Enable
+		auto itCommand2EnableEntity = mapCommand2EnableEntity.find(uiCommand);
+		if (itCommand2EnableEntity != mapCommand2EnableEntity.end())
 		{
-			ASSERT(FALSE); // Internal error!
-
-			return;
-		}
-
-		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(itCommand2Entity->second);
-		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())
-		{
-			ASSERT(FALSE); // Internal error!
-
-			return;
-		}
-
-		//
-		// Model
-		//
-
-		set<_ifc_instance*> setInstances;
-		for (auto pInstance : pModelData->GetModel()->getInstances())
-		{
-			//#todo#mappeditems		
-			_ptr<_ifc_instance> ifcInstance(pInstance);
-
-			if (ifcInstance->getEntityName() == itCommand2Entity->second)
+			auto itEntity2EnableCount = mapEntity2EnableCount.find(itCommand2EnableEntity->second);
+			if (itEntity2EnableCount == mapEntity2EnableCount.end())
 			{
-				ifcInstance->setEnable(itEntity2VisibleCount->second > 0 ? false : true);
+				ASSERT(FALSE); // Internal error!
 
-				setInstances.insert(ifcInstance);
+				return;
 			}
-		} // for (auto pInstance = ...
 
-		//
-		// UI
-		//
+			//
+			// Model
+			//
 
-		Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
-		Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
-		Tree_Update(pModelData->GetModelItem(), pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
-		Tree_Update(pModelData->GetModelItem(), pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
+			set<_ifc_instance*> setInstances;
+			for (auto pInstance : pModelData->GetModel()->getInstances())
+			{
+				//#todo#mappeditems		
+				_ptr<_ifc_instance> ifcInstance(pInstance);
 
-		pController->onInstancesEnabledStateChanged(this);
+				if (ifcInstance->getEntityName() == itCommand2EnableEntity->second)
+				{
+					ifcInstance->setEnable(itEntity2EnableCount->second > 0 ? false : true);
+
+					setInstances.insert(ifcInstance);
+				}
+			}
+
+			//
+			// UI
+			//
+
+			Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+			Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+			Tree_Update(pModelData->GetModelItem(), pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
+			Tree_Update(pModelData->GetModelItem(), pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
+
+			pController->onInstancesEnabledStateChanged(this);
+		} // Enable
+		else
+		{
+			auto itCommand2ShowEntity = mapCommand2ShowEntity.find(uiCommand);
+			if (itCommand2ShowEntity != mapCommand2ShowEntity.end())
+			{
+				auto itEntity2ShowCount = mapEntity2ShowCount.find(itCommand2ShowEntity->second);
+				if (itEntity2ShowCount == mapEntity2ShowCount.end())
+				{
+					ASSERT(FALSE); // Internal error!
+
+					return;
+				}
+
+				//
+				// Model
+				//
+
+				for (auto pGeometry : pModelData->GetModel()->getGeometries())
+				{
+					_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
+
+					if (szEntityName == itCommand2ShowEntity->second)
+					{
+						ifcGeometry->setShow(itEntity2ShowCount->second > 0 ? false : true);
+					}
+				}
+
+				pController->onInstancesShowStateChanged(this);
+			} // Show
+		} // else Enable
 	} // if (!bProcessed)
 }
 

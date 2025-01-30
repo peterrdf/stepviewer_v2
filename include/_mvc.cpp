@@ -868,6 +868,15 @@ void _controller::onInstancesEnabledStateChanged(_view* pSender)
 	}
 }
 
+void _controller::onInstancesShowStateChanged(_view* pSender)
+{
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onInstancesShowStateChanged(pSender);
+	}
+}
+
 void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
