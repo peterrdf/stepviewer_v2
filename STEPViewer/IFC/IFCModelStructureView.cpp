@@ -810,9 +810,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		ASSERT(itEntity2ShowCount != mapEntity2ShowCount.end());
 
 		wstring strMenuItem = itEntity2EnableCount->first;
-		strMenuItem += L" (";
-		strMenuItem += itEntity2ShowCount->second > 0 ? L"visible" : L"hidden";
-		strMenuItem += L")";
+		if (itEntity2ShowCount->second == 0)
+		{
+			strMenuItem += L" (hidden)";
+		}
 
 		menuEnableEntities.AppendMenu(
 			MF_STRING | (itEntity2EnableCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
@@ -835,9 +836,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		ASSERT(itEntity2EnableCount != mapEntity2EnableCount.end());
 
 		wstring strMenuItem = itEntity2EnableCount->first;
-		strMenuItem += L" (";
-		strMenuItem += itEntity2EnableCount->second > 0 ? L"enabled" : L"disabled";
-		strMenuItem += L")";
+		if (itEntity2EnableCount->second == 0)
+		{
+			strMenuItem += L" (disabled)";
+		}
 
 		menuShowEntities.AppendMenu(
 			MF_STRING | (itEntity2ShowCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
