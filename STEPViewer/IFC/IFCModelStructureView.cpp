@@ -850,13 +850,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	if (pMenu != nullptr)
 	{
 		pMenu->AppendMenu(MF_SEPARATOR, 0, L"");
-		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEnableEntities.GetSafeHmenu(), L"Enable Entities");
 		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuShowEntities.GetSafeHmenu(), L"Show Entities");
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEnableEntities.GetSafeHmenu(), L"Enable Entities");		
 	}
 	else
 	{
-		pMenu = &menuEnableEntities;
-		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuShowEntities.GetSafeHmenu(), L"Show Entities");
+		pMenu = &menuShowEntities;
+		pMenu->AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)menuEnableEntities.GetSafeHmenu(), L"Enable Entities");
 	}
 
 	// Show
