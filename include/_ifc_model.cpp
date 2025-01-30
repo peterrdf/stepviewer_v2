@@ -104,12 +104,8 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	if (!m_bLoadInstancesOnDemand)
 	{
 		retrieveGeometryRecursively(sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-
 		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
-
-		retrieveGeometry("IFCRELVOIDSELEMENT", DEFAULT_CIRCLE_SEGMENTS);
-		//retrieveGeometry("IFCELEMENT", DEFAULT_CIRCLE_SEGMENTS);		
 
 		getObjectsReferencedState();
 	}
@@ -356,10 +352,10 @@ void _ifc_model::getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance)
 		SdaiInstance sdaiHasOpeningsInstance = 0;
 		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 
-		if (sdaiIsKindOfBN(sdaiHasOpeningsInstance, "IFCRELVOIDSELEMENT"))
-		{
-			getObjectsReferencedStateRecursively(sdaiHasOpeningsInstance);
-		}
+		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
+		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
+
+		getObjectsReferencedStateRecursively(sdaiRelatedOpeningElementInstance);
 	}
 }
 

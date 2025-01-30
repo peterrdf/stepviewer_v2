@@ -1352,20 +1352,16 @@ void CIFCModelStructureView::LoadHasOpenings(_ifc_model* pModel, SdaiInstance sd
 		return;
 	}
 
-	SdaiEntity sdaiRelVoidsElementEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELVOIDSELEMENT");
-
 	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
 	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i)
 	{
 		SdaiInstance sdaiHasOpeningsInstance = 0;
 		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 
-		if (sdaiGetInstanceType(sdaiHasOpeningsInstance) != sdaiRelVoidsElementEntity)
-		{
-			continue;
-		}
+		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
+		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
 
-		LoadInstance(pModel, sdaiHasOpeningsInstance, hParent, mapItems);
+		LoadInstance(pModel, sdaiRelatedOpeningElementInstance, hParent, mapItems);
 	}
 }
 
