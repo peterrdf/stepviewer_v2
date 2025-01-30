@@ -108,6 +108,9 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
+		retrieveGeometry("IFCRELVOIDSELEMENT", DEFAULT_CIRCLE_SEGMENTS);
+		//retrieveGeometry("IFCELEMENT", DEFAULT_CIRCLE_SEGMENTS);		
+
 		getObjectsReferencedState();
 	}
 
@@ -138,6 +141,7 @@ void _ifc_model::getObjectsReferencedState()
 		getObjectsReferencedStateContainsElements(sdaiProjectInstance);
 		getObjectsReferencedStateHasAssignments(sdaiProjectInstance);
 		getObjectsReferencedStateBoundedBy(sdaiProjectInstance);
+		getObjectsReferencedStateHasOpenings(sdaiProjectInstance);
 
 		// Disable Unreferenced instances
 		for (auto pGeometry : getGeometries())
@@ -152,7 +156,7 @@ void _ifc_model::getObjectsReferencedState()
 
 void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	auto pGeometry = getGeometryByInstance(sdaiInstance);
 	if (pGeometry != nullptr)
@@ -164,10 +168,11 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 		getObjectsReferencedStateContainsElements(sdaiInstance);
 		getObjectsReferencedStateHasAssignments(sdaiInstance);
 		getObjectsReferencedStateBoundedBy(sdaiInstance);
+		getObjectsReferencedStateHasOpenings(sdaiInstance);
 	}
 	else
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 }
 
@@ -208,7 +213,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstan
 
 void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiIsNestedByAggr = nullptr;
 	sdaiGetAttrBN(sdaiInstance, "IsNestedBy", sdaiAGGR, &sdaiIsNestedByAggr);
@@ -245,7 +250,7 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 
 void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiContainsElementsAggr = nullptr;
 	sdaiGetAttrBN(sdaiInstance, "ContainsElements", sdaiAGGR, &sdaiContainsElementsAggr);
@@ -283,7 +288,7 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInst
 
 void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiContainsElementsAggr = nullptr;
 	sdaiGetAttrBN(sdaiInstance, "HasAssignments", sdaiAGGR, &sdaiContainsElementsAggr);
@@ -310,7 +315,7 @@ void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstan
 
 void _ifc_model::getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance)
 {
-	ASSERT(sdaiInstance != 0);
+	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiBoundedByAggr = nullptr;
 	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiBoundedByAggr);
@@ -329,6 +334,31 @@ void _ifc_model::getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance)
 		if (sdaiIsKindOfBN(sdaiBoundedByInstance, "IFCRELSPACEBOUNDARY"))
 		{
 			getObjectsReferencedStateRecursively(sdaiBoundedByInstance);
+		}
+	}
+}
+
+void _ifc_model::getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance)
+{
+	assert(sdaiInstance != 0);
+
+	SdaiAggr sdaiHasOpeningsAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "HasOpenings", sdaiAGGR, &sdaiHasOpeningsAggr);
+
+	if (sdaiHasOpeningsAggr == nullptr)
+	{
+		return;
+	}
+
+	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
+	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i)
+	{
+		SdaiInstance sdaiHasOpeningsInstance = 0;
+		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+
+		if (sdaiIsKindOfBN(sdaiHasOpeningsInstance, "IFCRELVOIDSELEMENT"))
+		{
+			getObjectsReferencedStateRecursively(sdaiHasOpeningsInstance);
 		}
 	}
 }

@@ -68,6 +68,7 @@ private: // Methods
 	void getObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance);
+	void getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance);
 
 	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);

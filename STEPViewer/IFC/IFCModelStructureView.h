@@ -130,6 +130,7 @@ private: // Methods
 	void LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
 	void LoadContainsElements(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
 	void LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
+	void LoadHasOpenings(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems);
 	HTREEITEM LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems, bool bLoadChildren = true);
 	void LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
 	void LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);

@@ -1340,6 +1340,35 @@ void CIFCModelStructureView::LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdai
 	}
 }
 
+void CIFCModelStructureView::LoadHasOpenings(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems)
+{
+	ASSERT(pModel != nullptr);
+
+	SdaiAggr sdaiHasOpeningsAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "HasOpenings", sdaiAGGR, &sdaiHasOpeningsAggr);
+
+	if (sdaiHasOpeningsAggr == nullptr)
+	{
+		return;
+	}
+
+	SdaiEntity sdaiRelVoidsElementEntity = sdaiGetEntity(pModel->getSdaiModel(), "IFCRELVOIDSELEMENT");
+
+	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
+	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i)
+	{
+		SdaiInstance sdaiHasOpeningsInstance = 0;
+		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+
+		if (sdaiGetInstanceType(sdaiHasOpeningsInstance) != sdaiRelVoidsElementEntity)
+		{
+			continue;
+		}
+
+		LoadInstance(pModel, sdaiHasOpeningsInstance, hParent, mapItems);
+	}
+}
+
 HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance sdaiInstance, HTREEITEM hParent, ITEMS& mapItems, bool bLoadChildren/* = true*/)
 {
 	ASSERT(pModel != nullptr);
@@ -1405,6 +1434,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		LoadIsNestedBy(pModel, sdaiInstance, hInstance, mapItems);
 		LoadContainsElements(pModel, sdaiInstance, hInstance, mapItems);
 		LoadBoundedBy(pModel, sdaiInstance, hInstance, mapItems);
+		LoadHasOpenings(pModel, sdaiInstance, hInstance, mapItems);
 	}		
 
 	return hInstance;	
