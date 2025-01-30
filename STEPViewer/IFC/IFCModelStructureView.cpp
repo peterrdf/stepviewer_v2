@@ -806,10 +806,18 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	{
 		mapCommand2EnableEntity[uiID] = itEntity2EnableCount->first;
 
+		auto itEntity2ShowCount = mapEntity2ShowCount.find(itEntity2EnableCount->first);
+		ASSERT(itEntity2ShowCount != mapEntity2ShowCount.end());
+
+		wstring strMenuItem = itEntity2EnableCount->first;
+		strMenuItem += L" (";
+		strMenuItem += itEntity2ShowCount->second > 0 ? L"visible" : L"hidden";
+		strMenuItem += L")";
+
 		menuEnableEntities.AppendMenu(
 			MF_STRING | (itEntity2EnableCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
 			uiID++,
-			itEntity2EnableCount->first.c_str());
+			strMenuItem.c_str());
 	}
 
 	// Show Entities
@@ -823,10 +831,18 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	{
 		mapCommand2ShowEntity[uiID] = itEntity2ShowCount->first;
 
+		auto itEntity2EnableCount = mapEntity2EnableCount.find(itEntity2ShowCount->first);
+		ASSERT(itEntity2EnableCount != mapEntity2EnableCount.end());
+
+		wstring strMenuItem = itEntity2EnableCount->first;
+		strMenuItem += L" (";
+		strMenuItem += itEntity2EnableCount->second > 0 ? L"enabled" : L"disabled";
+		strMenuItem += L")";
+
 		menuShowEntities.AppendMenu(
 			MF_STRING | (itEntity2ShowCount->second > 0 ? MF_CHECKED : MF_UNCHECKED),
 			uiID++,
-			itEntity2ShowCount->first.c_str());
+			strMenuItem.c_str());
 	}
 
 	if (pMenu != nullptr)
