@@ -149,6 +149,8 @@ private: // Methods
 	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Tree_Select(bool bEnable);
 	void Tree_Select(_ifc_instance* pInstance, ITEMS& mapItems, bool bEnable);
+	void Tree_Show(const set<_ifc_instance*>& setInstances);
+	void Tree_Show(_ifc_instance* pInstance, ITEMS& mapItems);
 	bool Tree_EnsureVisible(CModelData* pModelData, _ifc_instance* pInstance);
 	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
 
