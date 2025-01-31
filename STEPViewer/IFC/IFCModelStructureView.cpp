@@ -278,12 +278,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 }
 
 /*virtual*/ void CIFCModelStructureView::onInstanceSelected(_view* pSender) /*override*/
-{	
-	if (pSender == this)
-	{
-		return;
-	}
-
+{
 	auto pController = getController();
 	if (pController == nullptr)
 	{
@@ -306,7 +301,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		auto pModelData = Model_GetData(pModel);
 		ASSERT(pModelData != nullptr);
 
-		Tree_EnsureVisible(pModelData, ifcInstance);
+		if (pSender != this)
+		{
+			Tree_EnsureVisible(pModelData, ifcInstance);
+		}		
 	}
 
 	Tree_Select(true);
@@ -572,7 +570,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			nullptr;
 
 		pController->selectInstance(
-			nullptr/*update this view if needed*/, 
+			this, 
 			pSelectedInstance, 
 			GetKeyState(VK_CONTROL) & 0x8000);
 	}
@@ -1969,7 +1967,19 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEM
 			HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
 			ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-			int iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+			int iImage, iSelectedImage = -1;
+			m_pTreeCtrl->GetItemImage(hGeometry, iImage, iSelectedImage);
+
+			ASSERT(iImage == iSelectedImage);
+			if (iImage == IMAGE_NO_GEOMETRY)
+			{
+				ASSERT(!pInstance->hasGeometry());
+
+				// Keep the image
+				continue;
+			}
+
+			iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 
 			m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
 
