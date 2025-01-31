@@ -20,13 +20,16 @@ public:  // Methods
 
 public: // Properties
 
-	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
-	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
-
+	// _instance
 	virtual wstring getName() const override
 	{
 		return getName(getSdaiInstance());
 	}
+
+	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
+	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
+	SdaiEntity getSdaiEntity() const { return getSdaiEntity(getSdaiInstance()); }
+	const wchar_t* getEntityName() const { return getEntityName(getSdaiInstance()); }
 
 	static wstring getName(SdaiInstance sdaiInstance)
 	{
@@ -65,21 +68,11 @@ public: // Properties
 
 		return strUniqueName;
 	}	
-
-	SdaiEntity getSdaiEntity() const
-	{
-		return getSdaiEntity(getSdaiInstance());
-	}
-
-	static SdaiEntity getSdaiEntity(SdaiInstance sdaiInstance)
+	
+	static SdaiEntity getSdaiEntity(SdaiInstance sdaiInstance) 
 	{
 		return sdaiGetInstanceType(sdaiInstance);
-	}
-
-	const wchar_t* getEntityName() const
-	{
-		return getEntityName(getSdaiInstance());
-	}
+	}	
 
 	static const wchar_t* getEntityName(SdaiInstance sdaiInstance)
 	{
