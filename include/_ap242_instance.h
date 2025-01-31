@@ -17,5 +17,10 @@ public:  // Methods
 
 public:  // Properties
 
+public: // Properties
+
+	// _instance
+	virtual wstring getName() const override;
+
 	_ap242_product_definition* getProductDefinition() const;
 };
