@@ -19,7 +19,14 @@
 
 // ************************************************************************************************
 TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
-TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
+
+#ifdef _ENABLE_BCF
+#define BCF_FILES "BCF files (*.bcf; * bcfzip)|*.bcf; *.bcfzip|"
+#else
+#define BCF_FILES
+#endif
+
+TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|" BCF_FILES "All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -112,11 +119,12 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 		{
 			delete pModel;
-
 			continue;
 		}
 
-		vecModels.push_back(pModel);
+		if (pModel) {
+			vecModels.push_back(pModel);
+		}
 	}
 
 	if (!vecModels.empty())

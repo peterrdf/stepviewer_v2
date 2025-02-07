@@ -452,5 +452,6 @@
     <None Include="res\Shader.vert">
       <Filter>res</Filter>
     </None>
+    <None Include="InstallBCF.bat" />
   </ItemGroup>
 </Project>

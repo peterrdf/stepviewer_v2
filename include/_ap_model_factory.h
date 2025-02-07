@@ -6,6 +6,9 @@
 #ifdef _CIS2_EXPERIMENTAL
 #include "CIS2Model.h"
 #endif
+#ifdef _ENABLE_BCF
+#include "bcfAPI.h"
+#endif
 
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
@@ -83,6 +86,37 @@ public: // Methods
 			return pModel;
 		} // STEPZIP
 #endif // _USE_LIBZIP
+
+#ifdef _ENABLE_BCF
+		/*
+		* BCF
+		*/
+		if (pathModel.extension().string() == ".bcf" || pathModel.extension().string() == ".bcfzip")
+		{
+			auto bcf = BCFProject::Create();
+			if (!bcf) {
+				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to initialize BCF.", L"Error", MB_ICONERROR | MB_OK);
+				return nullptr;
+			}
+
+			if (!bcf->ReadFile(pathModel.string().c_str(), true))
+			{
+				CString details (bcf->GetErrors());
+				CString msg;
+				msg.Format(L"Failed to read BCF: %s", msg.GetString());
+				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), msg, L"Error", MB_ICONERROR | MB_OK);
+				bcf->Delete();
+				return nullptr;
+			}
+
+			bcf->Delete();
+			return nullptr;
+			//auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
+			//pModel->attachModel(szModel, sdaiModel, pWorld);
+
+			//return pModel;
+		} // BCF
+#endif
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0)
