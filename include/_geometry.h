@@ -146,6 +146,9 @@ private: // Members
 
 	// Metadata
 	OwlInstance m_owlInstance;
+
+protected: // Members
+
 	wstring m_strName;
 	wstring m_strUniqueName;
 

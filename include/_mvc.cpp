@@ -804,11 +804,8 @@ void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 
-	wstring strName;
-	wstring strUniqueName;
-	_rdf_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
-
-	CString strValidFileName = validateFileName(strUniqueName.c_str()).c_str();
+	wstring strName = _rdf_instance::getName(owlInstance);
+	CString strValidFileName = validateFileName(strName.c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,

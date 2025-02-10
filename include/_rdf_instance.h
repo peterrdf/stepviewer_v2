@@ -11,63 +11,11 @@ public:  // Methods
 
 	_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
 		: _instance(iID, pGeometry, pTransformationMatrix)
-	{
-	}
+	{}
 
 	virtual ~_rdf_instance()
-	{
-	}
-
-	static void buildInstanceNames(OwlModel owlModel, OwlInstance owlInstance, wstring& strName, wstring& strUniqueName)
-	{
-		ASSERT(owlModel != 0);
-		ASSERT(owlInstance != 0);
-
-		OwlClass owlClass = GetInstanceClass(owlInstance);
-		ASSERT(owlClass != 0);
-
-		wchar_t* szClassName = nullptr;
-		GetNameOfClassW(owlClass, &szClassName);
-
-		wchar_t* szName = nullptr;
-		GetNameOfInstanceW(owlInstance, &szName);
-
-		if (szName == nullptr)
-		{
-			RdfProperty rdfTagProperty = GetPropertyByName(owlModel, "tag");
-			if (rdfTagProperty != 0)
-			{
-				SetCharacterSerialization(owlModel, 0, 0, false);
-
-				int64_t iCard = 0;
-				wchar_t** szValue = nullptr;
-				GetDatatypeProperty(owlInstance, rdfTagProperty, (void**)&szValue, &iCard);
-
-				if (iCard == 1)
-				{
-					szName = szValue[0];
-				}
-
-				SetCharacterSerialization(owlModel, 0, 0, true);
-			}
-		} // if (szName == nullptr)
-
-		wchar_t szUniqueName[200];
-
-		if (szName != nullptr)
-		{
-			strName = szName;
-			swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
-		}
-		else
-		{
-			strName = szClassName;
-			swprintf(szUniqueName, 200, L"#%lld (%s)", owlInstance, szClassName);
-		}
-
-		strUniqueName = szUniqueName;
-	}
-
+	{}
+	
 public: // Properties
 
 	OwlInstance getOwlInstance() const { return getGeometryAs<_rdf_geometry>()->getOwlInstance(); }

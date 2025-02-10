@@ -71,7 +71,7 @@ public: // Properties
 	template<typename T>
 	T* getGeometryAs() const { return dynamic_cast<T*>(getGeometry()); }
 	bool getEnable() const { return m_bEnable; }
-	void setEnable(bool bEnable) { m_bEnable = bEnable; }
+	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	_matrix4x4* getTransformationMatrix() const { return m_pTransformationMatrix; }
 
 	OwlModel getOwlModel() { return getGeometry()->getOwlModel(); }
