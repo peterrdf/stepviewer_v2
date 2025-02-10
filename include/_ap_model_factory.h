@@ -7,7 +7,7 @@
 #include "CIS2Model.h"
 #endif
 #ifdef _ENABLE_BCF
-#include "bcfAPI.h"
+#include "BCF/BCFView.h"
 #endif
 
 #include <experimental/filesystem>
@@ -43,7 +43,7 @@ class _ap_model_factory
 
 public: // Methods
 
-	static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
+	static _ap_model* load(CMySTEPViewerDoc& doc, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
 	{
 #ifdef _USE_LIBZIP
 		fs::path pathModel = szModel;
@@ -93,28 +93,8 @@ public: // Methods
 		*/
 		if (pathModel.extension().string() == ".bcf" || pathModel.extension().string() == ".bcfzip")
 		{
-			auto bcf = BCFProject::Create();
-			if (!bcf) {
-				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to initialize BCF.", L"Error", MB_ICONERROR | MB_OK);
-				return nullptr;
-			}
-
-			if (!bcf->ReadFile(pathModel.string().c_str(), true))
-			{
-				CString details (bcf->GetErrors());
-				CString msg;
-				msg.Format(L"Failed to read BCF: %s", msg.GetString());
-				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), msg, L"Error", MB_ICONERROR | MB_OK);
-				bcf->Delete();
-				return nullptr;
-			}
-
-			bcf->Delete();
+			new CBCFView(doc, szModel);
 			return nullptr;
-			//auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
-			//pModel->attachModel(szModel, sdaiModel, pWorld);
-
-			//return pModel;
 		} // BCF
 #endif
 

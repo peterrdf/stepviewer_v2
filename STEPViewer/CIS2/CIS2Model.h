@@ -4,15 +4,9 @@
 #include "CIS2DesignPart.h"
 #include "CIS2Representation.h"
 
-#include <string>
-#include <map>
-#include <set>
-using namespace std;
-
 // ************************************************************************************************
 class CCIS2Model : public _ap_model
 {
-
 private: // Members
 
 	// Load

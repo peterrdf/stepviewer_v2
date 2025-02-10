@@ -37,6 +37,10 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
 #include <list>
+#include <string>
+#include <map>
+#include <set>
+using namespace std;
 
 #ifdef _UNICODE
 #if defined _M_IX86
@@ -56,3 +60,10 @@
 
 #include "engine.h"
 #include "stepengine.h"
+
+#ifdef _ENABLE_BCF
+#include "bcfAPI.h"
+#endif
+
+extern CString FromUTF8(const char* utf8);
+extern std::string ToUTF8(const wchar_t* utf16);
