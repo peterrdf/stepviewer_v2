@@ -15,13 +15,20 @@ private: // Members
 public: // Methods
 
 	template<typename Tin>
-	_ptr(Tin* pTin)
+	_ptr(Tin* pTin, bool bValidate = true)
 		: m_pTout(nullptr)
 	{
-		assert(pTin != nullptr);
+		if (bValidate)
+		{
+			assert(pTin != nullptr);
+		}		
 
 		m_pTout = dynamic_cast<Tout*>(pTin);
-		assert(m_pTout != nullptr);
+
+		if (bValidate)
+		{
+			assert(m_pTout != nullptr);
+		}
 	}
 
 	virtual ~_ptr()

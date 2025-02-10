@@ -451,9 +451,9 @@ _controller::_controller()
 	: m_vecModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
-	, m_bUpdatingModel(false)
-	, m_pTargetInstance(nullptr)
+	, m_bUpdatingModel(false)	
 	, m_vecSelectedInstances()
+	, m_pTargetInstance(nullptr)
 {
 }
 
@@ -488,9 +488,9 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	clean();
 
 	m_vecModels = vecModels;
-
-	m_pTargetInstance = nullptr;
+	
 	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
 
 	itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -531,8 +531,8 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
 	m_bUpdatingModel = true;
 
-	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
 
 	auto pInstance = getModel()->loadInstance(iInstance);
 
@@ -883,35 +883,6 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onApplicationPropertyChanged(pSender, enApplicationProperty);
-	}
-}
-
-void _controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onViewRelations(pSender, sdaiInstance);
-	}
-}
-
-void _controller::onViewRelations(_view* pSender, _entity* pEntity)
-{
-	m_pTargetInstance = nullptr;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onViewRelations(pSender, pEntity);
-	}
-}
-
-void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onInstanceAttributeEdited(pSender, sdaiInstance, sdaiAttr);
 	}
 }
 

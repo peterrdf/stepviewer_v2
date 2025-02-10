@@ -51,7 +51,7 @@ public: // Methods
 // ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
-	, public _view
+	, public _ap_view
 {
 
 public: // Methods

@@ -52,7 +52,7 @@ enum class enumRelationsViewMode : int
 // ************************************************************************************************
 class CRelationsView 
 	: public CDockablePane
-	, public _view
+	, public _ap_view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -154,6 +154,8 @@ public: // Methods
 	// _view
 	virtual void onModelLoaded() override;
 	virtual void onInstanceSelected(_view* pSender) override;
+
+	// _ap_view
 	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
 	virtual void onViewRelations(_view* pSender, _entity* pEntity) override;
 

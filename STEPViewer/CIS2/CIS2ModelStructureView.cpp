@@ -322,7 +322,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	auto pController = getController();
+	auto pController = getAPController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);

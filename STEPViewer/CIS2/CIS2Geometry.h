@@ -1,7 +1,7 @@
 #ifndef CIS2_GEOMETRY_H
 #define CIS2_GEOMETRY_H
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 #include "_oglUtils.h"
 
 #include "engine.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "_entity.h"
 #include "_geometry.h"
 #include "_settings_storage.h"
 
@@ -172,9 +171,6 @@ public: // Methods
 	virtual void onInstanceEnabledStateChanged(_view* /*pSender*/, _instance* /*pInstance*/, int /*iFlag*/) {} 
 	virtual void onInstancesEnabledStateChanged(_view* /*pSender*/) {}
 	virtual void onInstancesShowStateChanged(_view* /*pSender*/) {}
-	virtual void onInstanceAttributeEdited(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/, SdaiAttr /*sdaiAttribute*/) {}
-	virtual void onViewRelations(_view* /*pSender*/, SdaiInstance /*sdaiInstance*/) {}
-	virtual void onViewRelations(_view* /*pSender*/, _entity* /*pEntity*/) {}
 	virtual void onApplicationPropertyChanged(_view* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/) {}
 	virtual void onControllerChanged() {}
 
@@ -200,17 +196,18 @@ private: // Members
 
 	vector<_model*> m_vecModels;
 	set<_view*> m_setViews;
-	_settings_storage* m_pSettingsStorage;	
+	_settings_storage* m_pSettingsStorage;
 
-private: // Members	
-
-	bool m_bUpdatingModel; // Disable all notifications
-
-	// Target
-	_instance* m_pTargetInstance;
+	// Disable all notifications	
+	bool m_bUpdatingModel; 
 
 	// Selection
 	vector<_instance*> m_vecSelectedInstances;
+
+protected:
+
+	// Target
+	_instance* m_pTargetInstance;
 
 public: // Methods
 
@@ -273,10 +270,7 @@ public: // Methods
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onInstancesShowStateChanged(_view* pSender);
 	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
-	void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
-	void onViewRelations(_view* pSender, _entity* pEntity);
-	void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr);
-
+	
 protected: // Methods
 
 	virtual void clean();

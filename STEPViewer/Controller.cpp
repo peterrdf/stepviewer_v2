@@ -3,7 +3,7 @@
 
 // ************************************************************************************************
 CController::CController()
-	: _controller()
+	: _ap_controller()
 {
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
