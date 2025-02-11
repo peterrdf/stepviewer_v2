@@ -21,7 +21,7 @@ class CStructureViewToolBar : public CMFCToolBar
 // Model Structure
 class CStructureView
 	: public CDockablePane
-	, public _view
+	, public _ap_view
 {
 
 private: // Members

@@ -312,6 +312,51 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return itInstance->second;
 }
 
+/*static*/ wstring _model::getInstanceName(OwlInstance owlInstance)
+{
+	CString strName;
+	strName.Format(_T("#%lld"), owlInstance);
+
+	strName += L" ";
+	strName += getInstanceClassName(owlInstance);
+
+	return (LPCWSTR)strName;
+}
+
+/*static*/ const wchar_t* _model::getInstanceClassName(OwlInstance owlInstance)
+{
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(GetInstanceClass(owlInstance), &szClassName);
+
+	return szClassName;
+}
+
+/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName)
+{
+	OwlInstance* piValues = nullptr;
+	int64_t	iCard = 0;
+	GetObjectProperty(
+		owlInstance,
+		GetPropertyByName(GetModel(owlInstance), szPropertyName),
+		&piValues,
+		&iCard);
+
+	return (iCard == 1) ? piValues[0] : 0;
+}
+
+/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName)
+{
+	double* pdValues = nullptr;
+	int64_t	iCard = 0;
+	GetDatatypeProperty(
+		owlInstance,
+		GetPropertyByName(GetModel(owlInstance), szPropertyName),
+		(void**)&pdValues,
+		&iCard);
+
+	return (iCard == 1) ? pdValues[0] : 0.;
+}
+
 void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (owlInstance == 0)
@@ -451,9 +496,9 @@ _controller::_controller()
 	: m_vecModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
-	, m_bUpdatingModel(false)
-	, m_pTargetInstance(nullptr)
+	, m_bUpdatingModel(false)	
 	, m_vecSelectedInstances()
+	, m_pTargetInstance(nullptr)
 {
 }
 
@@ -488,9 +533,9 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	clean();
 
 	m_vecModels = vecModels;
-
-	m_pTargetInstance = nullptr;
+	
 	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
 
 	itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -531,8 +576,8 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
 	m_bUpdatingModel = true;
 
-	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
 
 	auto pInstance = getModel()->loadInstance(iInstance);
 
@@ -804,11 +849,8 @@ void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 
-	wstring strName;
-	wstring strUniqueName;
-	_rdf_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
-
-	CString strValidFileName = validateFileName(strUniqueName.c_str()).c_str();
+	wstring strName = _model::getInstanceName(owlInstance);
+	CString strValidFileName = validateFileName(strName.c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
@@ -883,35 +925,6 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onApplicationPropertyChanged(pSender, enApplicationProperty);
-	}
-}
-
-void _controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onViewRelations(pSender, sdaiInstance);
-	}
-}
-
-void _controller::onViewRelations(_view* pSender, _entity* pEntity)
-{
-	m_pTargetInstance = nullptr;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onViewRelations(pSender, pEntity);
-	}
-}
-
-void _controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr)
-{
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onInstanceAttributeEdited(pSender, sdaiInstance, sdaiAttr);
 	}
 }
 

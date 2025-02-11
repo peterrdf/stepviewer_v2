@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 
 // ************************************************************************************************
 class CMySTEPViewerDoc;

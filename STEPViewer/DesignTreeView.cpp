@@ -269,7 +269,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, OwlInstance owlInstance)
 	/*
 	* The instances will be loaded on demand
 	*/
-	wstring strItem = _rdf_instance::getName(owlInstance);
+	wstring strItem = _model::getInstanceName(owlInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
  	tvInsertStruct.hParent = hParent;

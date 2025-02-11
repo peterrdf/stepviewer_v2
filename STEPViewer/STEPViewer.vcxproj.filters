@@ -338,6 +338,9 @@
     <ClCompile Include="..\include\_attribute.cpp">
       <Filter>include</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\_ap_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="STEPViewer.rc">

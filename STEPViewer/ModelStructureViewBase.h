@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 
 #include "TreeCtrlEx.h"
 
@@ -27,7 +27,7 @@
 #define IMAGE_NO_GEOMETRY	5
 
 // ************************************************************************************************
-class CModelStructureViewBase : public _view
+class CModelStructureViewBase : public _ap_view
 {
 
 protected: // Members
@@ -37,7 +37,7 @@ protected: // Members
 public: // Methods
 
 	CModelStructureViewBase(CTreeCtrlEx* pTreeCtrl)
-		: _view()
+		: _ap_view()
 		, m_pTreeCtrl(pTreeCtrl)
 	{
 		ASSERT(m_pTreeCtrl != nullptr);

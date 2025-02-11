@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 #include "CIS2DesignPart.h"
 #include "CIS2Representation.h"
 

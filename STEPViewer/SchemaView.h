@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
@@ -24,7 +24,7 @@ class CSchemaViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 class CSchemaView 
 	: public CDockablePane
-	, public _view
+	, public _ap_view
 	, public CSearchTreeCtrlDialogSite
 {
 
