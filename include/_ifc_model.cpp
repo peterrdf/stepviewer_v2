@@ -437,22 +437,15 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			auto pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
 			if (pMappedItemGeometry == nullptr)
 			{
-				//wchar_t* szName = _entity::getName(sdaiGetInstanceType(pMappedItem->ifcRepresentationInstance));
 				pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
-				pMappedItemGeometry->setShow(true);
-				pMappedItemGeometry->m_bIsReferenced = true;
-
-				//pMappedItemGeometry = new _ifc_geometry(0, pMappedItem->ifcRepresentationInstance, vector<_ifc_geometry*>());
-				//addGeometry(pMappedItemGeometry);
-
-				
+				pMappedItemGeometry->m_bIsReferenced = true;				
 			}
 
 			vecMappedItems.push_back(pMappedItemGeometry);
 
 			auto pInstance = createInstance(_model::getNextInstanceID(), pMappedItemGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
 			addInstance(pInstance);
-			/*pInstance->setEnable(true);
+
 			pInstance->setEnable(
 				(strEntity == L"IFCSPACE") ||
 				(strEntity == L"IFCRELSPACEBOUNDARY") ||
@@ -460,18 +453,27 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 				(strEntity == L"IFCALIGNMENTVERTICAL") ||
 				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 				(strEntity == L"IFCALIGNMENTSEGMENT") ||
-				(strEntity == L"IFCALIGNMENTCANT") ? false : true);*/
+				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
 		}
 
 		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedItems);
 		addGeometry(pGeometry);
-		//pGeometry->setShow(
-		//	(strEntity == L"IFCRELSPACEBOUNDARY") ||
-		//	(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
+		pGeometry->setShow(
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 
 		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
 		addInstance(pInstance);
-		pInstance->setEnable(true);
+
+		pInstance->setEnable(
+			(strEntity == L"IFCSPACE") ||
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ||
+			(strEntity == L"IFCALIGNMENTVERTICAL") ||
+			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+			(strEntity == L"IFCALIGNMENTSEGMENT") ||
+			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
 
 		return pGeometry;
 	}
@@ -493,14 +495,6 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 	if (!bMappedItem)
 	{
-		/*CString strEntity = (LPWSTR)CA2W(szEntityName);
-		strEntity.MakeUpper();
-
-		if (strEntity == L"IFCFACETEDBREP")
-		{
-			TRACE(L"");
-		}*/
-
 		pGeometry->setShow(
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
