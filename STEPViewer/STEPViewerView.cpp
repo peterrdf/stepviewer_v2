@@ -156,12 +156,17 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerView, CView)
 	ON_COMMAND(ID_SHOW_POINTS, &CMySTEPViewerView::OnShowPoints)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_POINTS, &CMySTEPViewerView::OnUpdateShowPoints)
 	ON_COMMAND(ID_VIEW_RESET, &CMySTEPViewerView::OnViewReset)
+	ON_COMMAND(ID_FILE_OPENBCF, OnOpenBCF)
+	ON_UPDATE_COMMAND_UI(ID_FILE_OPENBCF, OnUpdateOpenBCF)
+	ON_COMMAND(ID_FILE_NEWBCF, OnNewBCF)
+	ON_UPDATE_COMMAND_UI(ID_FILE_NEWBCF, OnUpdateNewBCF)
 END_MESSAGE_MAP()
 
 // CMySTEPViewerView construction/destruction
 
 CMySTEPViewerView::CMySTEPViewerView()
 	: m_pOpenGLView(nullptr)
+	, m_wndBCFView(*this)
 {}
 
 CMySTEPViewerView::~CMySTEPViewerView()
@@ -741,4 +746,44 @@ void CMySTEPViewerView::OnViewReset()
 
 		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::All);
 	}
+}
+
+void CMySTEPViewerView::OnOpenBCF()
+{
+	TCHAR BCF_FILES[] = _T("BCF files (*.bcf; * bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_PATHMUSTEXIST, BCF_FILES);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	auto path = dlgFile.GetPathName();
+	m_wndBCFView.OpenBCFProject(path);
+}
+
+void CMySTEPViewerView::OnUpdateOpenBCF(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
+}
+
+void CMySTEPViewerView::OnNewBCF()
+{
+	m_wndBCFView.OpenBCFProject(NULL);
+}
+
+void CMySTEPViewerView::OnUpdateNewBCF(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
+}
+
+void CMySTEPViewerView::SetBCFView(
+	BCFCamera camera,
+	BCFPoint& viewPoint,
+	BCFPoint& direction,
+	BCFPoint& upVector,
+	double viewToWorldScale,
+	double fieldOfView,
+	double aspectRatio)
+{
+	//TODO
 }

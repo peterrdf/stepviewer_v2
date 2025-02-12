@@ -8,6 +8,7 @@
 #include "_oglUtils.h"
 
 #include "Controller.h"
+#include "BCF\BCFView.h"
 
 // ************************************************************************************************
 class CMySTEPViewerView 
@@ -38,6 +39,7 @@ public:
 
 // Operations
 public:
+	void SetBCFView (BCFCamera camera, BCFPoint& viewPoint,	BCFPoint& direction, BCFPoint& upVector, double viewToWorldScale, double fieldOfView, double aspectRatio);
 
 // Overrides
 public:
@@ -60,11 +62,10 @@ protected:
 
 // Generated message map functions
 protected:
+	DECLARE_MESSAGE_MAP()
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	DECLARE_MESSAGE_MAP()
-public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -107,6 +108,13 @@ public:
 	afx_msg void OnShowPoints();
 	afx_msg void OnUpdateShowPoints(CCmdUI* pCmdUI);
 	afx_msg void OnViewReset();
+	afx_msg void OnOpenBCF();
+	afx_msg void OnUpdateOpenBCF(CCmdUI* pCmdUI);
+	afx_msg void OnNewBCF();
+	afx_msg void OnUpdateNewBCF(CCmdUI* pCmdUI);
+
+private:
+	CBCFView            m_wndBCFView;
 };
 
 #ifndef _DEBUG  // debug version in STEPViewerView.cpp

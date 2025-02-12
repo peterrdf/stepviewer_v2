@@ -6,6 +6,7 @@
 #include "STEPViewer.h"
 #include "afxdialogex.h"
 #include "STEPViewerDoc.h"
+#include "STEPViewerView.h"
 #include "_ap_model_factory.h"
 #include "BCF\BCFView.h"
 
@@ -22,9 +23,9 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 END_MESSAGE_MAP()
 
 
-CBCFView::CBCFView(CMySTEPViewerDoc& doc)
+CBCFView::CBCFView(CMySTEPViewerView& view)
 	: CDialogEx(IDD_BCF, AfxGetMainWnd())
-	, m_doc (doc)
+	, m_view (view)
 	, m_bcfProject(NULL)
 	, m_strTopicType(_T(""))
 	, m_strTopicStage(_T(""))
@@ -73,9 +74,12 @@ void CBCFView::CloseBCFProject()
 
 void CBCFView::SetModelsExternallyManaged(std::vector <_model*>& models)
 {
-	//do not delete models, just set new list
-	m_doc.editModelList().clear();
-	m_doc.setModels(models);
+	auto doc = m_view.GetDocument();
+	if (doc) {
+		//do not delete models, just set new list
+		doc->editModelList().clear();
+		doc->setModels(models);
+	}
 }
 
 void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
@@ -90,8 +94,11 @@ void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 		return;
 	}
 
-	std::swap(m_preloadedModels, m_doc.editModelList());
-	m_doc.setModel(NULL);
+	auto doc = m_view.GetDocument();
+	if (doc) {
+		std::swap(m_preloadedModels, doc->editModelList());
+		doc->setModel(NULL);
+	}
 
 	//auto user = AfxGetApp()->GetProfileString(L"BCF", L"User");
 	//if (user.IsEmpty()) {
@@ -372,6 +379,9 @@ void CBCFView::OnSelchangeCommentsList()
 	}
 	else {
 		m_strCommentText = FromUTF8(comment->GetText());
+		if (auto vp = comment->GetViewPoint()) {
+			SetActiveViewPoint(vp);
+		}
 	}
 
 	UpdateData(FALSE);
@@ -406,4 +416,22 @@ void CBCFView::SetActiveModels(BCFTopic* topic)
 	}
 
 	SetModelsExternallyManaged(activeModels);
+}
+
+void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)
+{
+	if (vp) {
+		BCFCamera camera = vp->GetCameraType();
+		BCFPoint viewPoint;
+		BCFPoint direction;
+		BCFPoint upVector;
+		vp->GetCameraViewPoint(viewPoint);
+		vp->GetCameraDirection(direction);
+		vp->GetCameraUpVector(upVector);
+		double viewToWorldScale = vp->GetViewToWorldScale();
+		double fieldOfView = vp->GetFieldOfView();
+		double aspectRatio = vp->GetAspectRatio();
+
+		m_view.SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+	}
 }

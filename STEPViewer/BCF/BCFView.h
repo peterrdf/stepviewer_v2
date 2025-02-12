@@ -3,6 +3,8 @@
 #include "afxdialogex.h"
 #include "bcfAPI.h"
 
+class CMySTEPViewerView;
+
 // CBCFView dialog
 
 class CBCFView : public CDialogEx
@@ -10,7 +12,7 @@ class CBCFView : public CDialogEx
 	DECLARE_DYNAMIC(CBCFView)
 
 public:
-	CBCFView(CMySTEPViewerDoc& doc);   // standard constructor
+	CBCFView(CMySTEPViewerView& view);   // standard constructor
 	virtual ~CBCFView();
 
 	void OpenBCFProject(LPCTSTR bcfFilePath);
@@ -39,9 +41,10 @@ private:
 	void SetActiveTopic(BCFTopic* topic);
 	void SetActiveModels(BCFTopic* topic);
 	void SetModelsExternallyManaged(std::vector<_model*>& models);
+	void SetActiveViewPoint(BCFViewPoint* vp);
 
 private:
-	CMySTEPViewerDoc&				m_doc;
+	CMySTEPViewerView&				m_view;
 	BCFProject*						m_bcfProject;
 	std::vector<_model*>			m_preloadedModels;
 	std::map<BCFFile*, _model*>		m_loadedModels;

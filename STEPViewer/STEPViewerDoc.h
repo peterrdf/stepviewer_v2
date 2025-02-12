@@ -7,7 +7,6 @@
 
 #include "Controller.h"
 #include "ModelCheckDlg.h"
-#include "BCF\BCFView.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
@@ -54,7 +53,6 @@ public:
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
-	CBCFView            m_wndBCFView;
 
 // Generated message map functions
 protected:
@@ -63,10 +61,6 @@ protected:
 	afx_msg void OnViewZoomOut();
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
-	afx_msg void OnOpenBCF();
-	afx_msg void OnUpdateOpenBCF(CCmdUI* pCmdUI);
-	afx_msg void OnNewBCF();
-	afx_msg void OnUpdateNewBCF(CCmdUI* pCmdUI);
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler

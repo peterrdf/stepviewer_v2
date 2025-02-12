@@ -20,8 +20,6 @@
 // ************************************************************************************************
 TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
 
-TCHAR BCF_FILES[] = _T("BCF files (*.bcf; * bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
-
 TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
@@ -140,17 +138,12 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
-	ON_COMMAND(ID_FILE_OPENBCF, OnOpenBCF)
-	ON_UPDATE_COMMAND_UI(ID_FILE_OPENBCF, OnUpdateOpenBCF)
-	ON_COMMAND(ID_FILE_NEWBCF, OnNewBCF)
-	ON_UPDATE_COMMAND_UI(ID_FILE_NEWBCF, OnUpdateNewBCF)
 END_MESSAGE_MAP()
 
 
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
-	:m_wndBCFView(*this)
 {
 }
 
@@ -336,29 +329,3 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(visible);
 }
 
-void CMySTEPViewerDoc::OnOpenBCF()
-{
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_PATHMUSTEXIST, BCF_FILES);
-	if (dlgFile.DoModal() != IDOK)
-	{
-		return;
-	}
-
-	auto path = dlgFile.GetPathName();
-	m_wndBCFView.OpenBCFProject(path);
-}
-
-void CMySTEPViewerDoc::OnUpdateOpenBCF(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
-}
-
-void CMySTEPViewerDoc::OnNewBCF()
-{
-	m_wndBCFView.OpenBCFProject(NULL);
-}
-
-void CMySTEPViewerDoc::OnUpdateNewBCF(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
-}
