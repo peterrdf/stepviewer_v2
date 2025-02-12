@@ -25,6 +25,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	, m_sdaiReinforcingElementEntity(0)
 	, m_sdaiTransportElementEntity(0)
 	, m_sdaiVirtualElementEntity(0)
+	, m_mapMapping()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)	
 {
@@ -64,6 +65,8 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 /*virtual*/ void _ifc_model::clean(bool bCloseModel/* = true*/) /*override*/
 {
 	_ap_model::clean(bCloseModel);
+
+	m_mapMapping.clear();
 
 	if (bCloseModel)
 	{
@@ -428,25 +431,27 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	CString strEntity = (LPWSTR)CA2W(szEntityName);
 	strEntity.MakeUpper();
 
-	//#todo#mappeditems
 	auto mappedItems = RecognizeMappedItems(sdaiInstance);
 	if (mappedItems != nullptr)
 	{
-		vector<_ifc_geometry*> vecMappedItems;
+		int64_t iParenInstanceID = _model::getNextInstanceID();
+
+		vector<_ifc_geometry*> vecMappedGeometries;
+		vector<_ifc_instance*> vecMappedInstances;
 		for (auto pMappedItem : mappedItems->mappedItems) 
 		{
-			auto pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
-			if (pMappedItemGeometry == nullptr)
+			auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
+			if (pMappedGeometry == nullptr)
 			{
-				pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));							
+				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
 			}
 
-			vecMappedItems.push_back(pMappedItemGeometry);
+			vecMappedGeometries.push_back(pMappedGeometry);
 
-			auto pInstance = createInstance(_model::getNextInstanceID(), pMappedItemGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
-			addInstance(pInstance);
+			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
+			addInstance(pMappedInstance);
 
-			pInstance->setEnable(
+			pMappedInstance->setEnable(
 				(strEntity == L"IFCSPACE") ||
 				(strEntity == L"IFCRELSPACEBOUNDARY") ||
 				(strEntity == L"IFCOPENINGELEMENT") ||
@@ -454,16 +459,20 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 				(strEntity == L"IFCALIGNMENTSEGMENT") ||
 				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
-		}
 
-		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedItems);
+			vecMappedInstances.push_back(pMappedInstance);
+		} // for (auto pMappedItem : ...
+
+		// Referenced By Geometry
+		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
 		addGeometry(pGeometry);
 
 		pGeometry->setShow(
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 
-		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+		// Referenced By Instance
+		auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
 		addInstance(pInstance);
 
 		pInstance->setEnable(
@@ -474,6 +483,12 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 			(strEntity == L"IFCALIGNMENTSEGMENT") ||
 			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+
+		for (auto pMappedInstance : vecMappedInstances)
+		{
+			pMappedInstance->m_pReferencedBy = pInstance;
+			m_mapMapping[pMappedInstance] = pInstance;
+		}
 
 		return pGeometry;
 	}

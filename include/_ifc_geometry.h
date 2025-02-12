@@ -9,14 +9,14 @@ class _ifc_geometry : public _ap_geometry
 
 private: // Members
 
-	vector<_ifc_geometry*> m_vecMappedItems;
+	vector<_ifc_geometry*> m_vecMappedGeometries;
 
 	bool m_bIsMappedItem;
 	bool m_bIsReferenced;
 
 public: // Methods
 
-	_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedItems);
+	_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries);
 	virtual ~_ifc_geometry();
 
 protected: // Methods
