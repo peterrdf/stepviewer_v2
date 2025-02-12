@@ -2,11 +2,15 @@
 #include "_ifc_geometry.h"
 
 // ************************************************************************************************
-_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedItems)
 	: _ap_geometry(owlInstance, sdaiInstance)
+	, m_vecMappedItems(vecMappedItems)
 	, m_bIsReferenced(false)
 {
-	calculate();
+	if (m_vecMappedItems.empty())
+	{
+		calculate();
+	}	
 }
 
 /*virtual*/ _ifc_geometry::~_ifc_geometry()
@@ -26,4 +30,22 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 /*virtual*/ void _ifc_geometry::postCalculate() /*override*/
 {
 	cleanCachedGeometry();
+}
+
+/*virtual*/ bool _ifc_geometry::hasGeometry() const /*override*/
+{
+	if (!m_vecMappedItems.empty())
+	{
+		for (auto pMappedItem : m_vecMappedItems)
+		{
+			if (pMappedItem->hasGeometry())
+			{
+				return true;
+			}			
+		}
+
+		return false;
+	}
+
+	return _geometry::hasGeometry();
 }

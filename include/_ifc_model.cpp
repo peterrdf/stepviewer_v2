@@ -115,7 +115,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance);
+	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>());
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
@@ -168,8 +168,7 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	}
 	else
 	{
-		//#todo#mappeditems
-		//assert(FALSE);
+		assert(FALSE);
 	}
 }
 
@@ -374,7 +373,7 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 		SdaiInstance sdaiInstance = 0;
 		engiGetAggrElement(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
 
-		loadGeometry(szEntityName, sdaiInstance, iCircleSegements);
+		loadGeometry(szEntityName, sdaiInstance, false, iCircleSegements);
 	}
 }
 
@@ -418,16 +417,64 @@ void _ifc_model::retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiIn
 	}
 }
 
-_geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments)
+_geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments)
 {
-	//#todo#mappeditems
-	auto mappedItems = RecognizeMappedItems(sdaiInstance);
-
 	auto pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr)
 	{
 		return pGeometry;
-	}	
+	}
+
+	CString strEntity = (LPWSTR)CA2W(szEntityName);
+	strEntity.MakeUpper();
+
+	//#todo#mappeditems
+	auto mappedItems = RecognizeMappedItems(sdaiInstance);
+	if (mappedItems != nullptr)
+	{
+		vector<_ifc_geometry*> vecMappedItems;
+		for (auto pMappedItem : mappedItems->mappedItems) {
+			auto pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
+			if (pMappedItemGeometry == nullptr)
+			{
+				//wchar_t* szName = _entity::getName(sdaiGetInstanceType(pMappedItem->ifcRepresentationInstance));
+				pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
+				pMappedItemGeometry->setShow(true);
+				pMappedItemGeometry->m_bIsReferenced = true;
+
+				//pMappedItemGeometry = new _ifc_geometry(0, pMappedItem->ifcRepresentationInstance, vector<_ifc_geometry*>());
+				//addGeometry(pMappedItemGeometry);
+
+				
+			}
+
+			vecMappedItems.push_back(pMappedItemGeometry);
+
+			auto pInstance = createInstance(_model::getNextInstanceID(), pMappedItemGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
+			addInstance(pInstance);
+			/*pInstance->setEnable(true);
+			pInstance->setEnable(
+				(strEntity == L"IFCSPACE") ||
+				(strEntity == L"IFCRELSPACEBOUNDARY") ||
+				(strEntity == L"IFCOPENINGELEMENT") ||
+				(strEntity == L"IFCALIGNMENTVERTICAL") ||
+				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+				(strEntity == L"IFCALIGNMENTSEGMENT") ||
+				(strEntity == L"IFCALIGNMENTCANT") ? false : true);*/
+		}
+
+		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedItems);
+		addGeometry(pGeometry);
+		//pGeometry->setShow(
+		//	(strEntity == L"IFCRELSPACEBOUNDARY") ||
+		//	(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
+		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+		addInstance(pInstance);
+		pInstance->setEnable(true);
+
+		return pGeometry;
+	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (owlInstance != 0)
@@ -442,37 +489,24 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	}
 
 	pGeometry = createGeometry(owlInstance, sdaiInstance);
-	addGeometry(pGeometry);
+	addGeometry(pGeometry);	
 
-	CString strEntity = (LPWSTR)CA2W(szEntityName);
-	strEntity.MakeUpper();
-
-	pGeometry->setShow(
-		(strEntity == L"IFCRELSPACEBOUNDARY") ||
-		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
-
-	//#todo#mappeditems
-	if (mappedItems != nullptr)
+	if (!bMappedItem)
 	{
-		for (auto pMappedItem : mappedItems->mappedItems) {
-			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
-			addInstance(pInstance);			
+		/*CString strEntity = (LPWSTR)CA2W(szEntityName);
+		strEntity.MakeUpper();
 
-			pInstance->setEnable(
-				(strEntity == L"IFCSPACE") ||
-				(strEntity == L"IFCRELSPACEBOUNDARY") ||
-				(strEntity == L"IFCOPENINGELEMENT") ||
-				(strEntity == L"IFCALIGNMENTVERTICAL") ||
-				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-				(strEntity == L"IFCALIGNMENTSEGMENT") ||
-				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
-		}/**/
-	}
-	else
-	{
+		if (strEntity == L"IFCFACETEDBREP")
+		{
+			TRACE(L"");
+		}*/
+
+		pGeometry->setShow(
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
 		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
-		addInstance(pInstance);		
-
+		addInstance(pInstance);
 		pInstance->setEnable(
 			(strEntity == L"IFCSPACE") ||
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||

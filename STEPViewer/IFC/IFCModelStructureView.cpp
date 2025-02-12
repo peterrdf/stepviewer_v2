@@ -1124,15 +1124,18 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 					//#todo#mappeditems
-					ASSERT(pGeometry->getInstances().size() == 1);
-					_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-					if (szEntityName == itCommand2ShowEntity->second)
+					//ASSERT(pGeometry->getInstances().size() == 1);
+					for (auto pInstance : pGeometry->getInstances())
 					{
-						ifcGeometry->setShow(itEntity2ShowCount->second > 0 ? false : true);
+						_ptr<_ifc_instance> ifcInstance(pInstance);
+						if (szEntityName == itCommand2ShowEntity->second)
+						{
+							ifcGeometry->setShow(itEntity2ShowCount->second > 0 ? false : true);
 
-						setInstances.insert(ifcInstance);
+							setInstances.insert(ifcInstance);
+						}
 					}
+					
 				}
 
 				Tree_Show(setInstances);

@@ -131,7 +131,7 @@ private: // Methods
 
 	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
 	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
-	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments);
+	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
 
 	////////////////////
 	//#todo#mappeditems
