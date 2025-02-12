@@ -60,5 +60,19 @@ private:
 	CTabCtrl m_wndTab;
 	CStatic m_wndAuthor;
 	CString m_strAuthor;
+	CEdit m_wndDue;
+	CString m_strDue;
+	CEdit m_wndDescription;
+	CString m_strDescription;
+	CEdit m_wndTitle;
+	CString m_strTitle;
+	CEdit m_wndSnippetReference;
+	CString m_strSnippetReference;
+	CEdit m_wndSnippetSchema;
+	CString m_strSnippetSchema;
+	CEdit m_wndIndex;
+	CString m_strIndex;
+	CEdit m_wndServerIndex;
+	CString m_strServerId;
 };
 

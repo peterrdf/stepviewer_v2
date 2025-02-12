@@ -30,6 +30,13 @@ CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	, m_strPriority(_T(""))
 	, m_strSnippetType(_T(""))
 	, m_strAuthor(_T(""))
+	, m_strDue(_T(""))
+	, m_strDescription(_T(""))
+	, m_strTitle(_T(""))
+	, m_strSnippetReference(_T(""))
+	, m_strSnippetSchema(_T(""))
+	, m_strIndex(_T(""))
+	, m_strServerId(_T(""))
 {
 }
 
@@ -116,6 +123,20 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB, m_wndTab);
 	DDX_Control(pDX, IDC_AUTHOR, m_wndAuthor);
 	DDX_Text(pDX, IDC_AUTHOR, m_strAuthor);
+	DDX_Control(pDX, IDC_TOPIC_DUE, m_wndDue);
+	DDX_Text(pDX, IDC_TOPIC_DUE, m_strDue);
+	DDX_Control(pDX, IDC_TOPIC_DESCRIPTION, m_wndDescription);
+	DDX_Text(pDX, IDC_TOPIC_DESCRIPTION, m_strDescription);
+	DDX_Control(pDX, IDC_TOPIC_TITLE, m_wndTitle);
+	DDX_Text(pDX, IDC_TOPIC_TITLE, m_strTitle);
+	DDX_Control(pDX, IDC_SNIPPET_REFERENCE, m_wndSnippetReference);
+	DDX_Text(pDX, IDC_SNIPPET_REFERENCE, m_strSnippetReference);
+	DDX_Control(pDX, IDC_SNIPPET_SCHEMA, m_wndSnippetSchema);
+	DDX_Text(pDX, IDC_SNIPPET_SCHEMA, m_strSnippetSchema);
+	DDX_Control(pDX, IDC_TOPIC_INDEX, m_wndIndex);
+	DDX_Text(pDX, IDC_TOPIC_INDEX, m_strIndex);
+	DDX_Control(pDX, IDC_TOPIC_SERVER_ID, m_wndServerIndex);
+	DDX_Text(pDX, IDC_TOPIC_SERVER_ID, m_strServerId);
 }
 
 void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -249,19 +270,32 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 		m_strAuthor.Append(modifier);
 	}
 
+	m_strTitle = FromUTF8(topic->GetTitle());
+	m_strDescription = FromUTF8(topic->GetDescription());
+
 	m_strTopicType = FromUTF8(topic->GetTopicType());
 	m_strTopicStage = FromUTF8(topic->GetStage());
 	m_strTopicStatus = FromUTF8(topic->GetTopicStatus());
 	m_strAssigned = FromUTF8(topic->GetAssignedTo());
 	m_strPriority = FromUTF8(topic->GetPriority());
-	
+	m_strDue = FromUTF8(topic->GetDueDate());
+
+	m_strIndex.Format(L"%d", topic->GetIndex());
+	m_strServerId = FromUTF8(topic->GetServerAssignedId());
+
 	auto snippet = topic->GetBimSnippet(false);
 	m_wndSnippetType.EnableWindow(snippet != NULL);
+	m_wndSnippetReference.EnableWindow(snippet!=NULL);
+	m_wndSnippetSchema.EnableWindow(snippet != NULL);
 	if (snippet) {
 		m_strSnippetType = FromUTF8(snippet->GetSnippetType());
+		m_strSnippetReference = FromUTF8(snippet->GetReference());
+		m_strSnippetSchema = FromUTF8(snippet->GetReferenceSchema());
 	}
 	else {
 		m_strSnippetType.Empty();
+		m_strSnippetReference.Empty();
+		m_strSnippetSchema.Empty();
 	}
 
 	UpdateData(FALSE);

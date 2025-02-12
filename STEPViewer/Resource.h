@@ -140,7 +140,7 @@
 #define IDC_TOPIC_PRIORITY              1017
 #define IDC_TOPIC_SERVER_ID             1018
 #define IDC_TOPIC_DESCRIPTION           1019
-#define IDC_TOPIC_SERVER_DUE            1021
+#define IDC_TOPIC_DUE            1021
 #define IDC_TOPIC_INDEX                 1022
 #define IDC_SNIPPET_TYPE                1023
 #define IDC_SNIPPET_REFERENCE           1024
