@@ -433,7 +433,8 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	if (mappedItems != nullptr)
 	{
 		vector<_ifc_geometry*> vecMappedItems;
-		for (auto pMappedItem : mappedItems->mappedItems) {
+		for (auto pMappedItem : mappedItems->mappedItems) 
+		{
 			auto pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
 			if (pMappedItemGeometry == nullptr)
 			{

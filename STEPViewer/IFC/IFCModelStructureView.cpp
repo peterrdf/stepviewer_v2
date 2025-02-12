@@ -1185,10 +1185,10 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		SdaiInstance sdaiProjectInstance = 0;
 		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
-		// Load//#todo#mappeditems
-		//LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		//LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());		
-		//LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
+		// Load
+		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
+		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());		
+		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
 		Tree_Update(hModel);
@@ -1614,13 +1614,11 @@ void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREE
 		}
 
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-
-		//#todo#mappeditems
-		ASSERT(pGeometry->getInstances().size() == 1);
-		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
 		if (!ifcGeometry->getIsReferenced())
 		{
+			ASSERT(pGeometry->getInstances().size() == 1);
+			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
+
 			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
