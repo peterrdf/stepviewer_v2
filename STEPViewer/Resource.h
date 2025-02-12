@@ -132,7 +132,7 @@
 #define IDC_EDIT_SEARCH_TEXT            1007
 #define IDC_COMBO_SEARCH_FILTER         1008
 #define IDC_COMBO_INSTANCES             1009
-#define IDC_TOPIC_NUMBER                1012
+#define IDC_TOPICS                      1012
 #define IDC_TOPIC_TYPE                  1013
 #define IDC_TOPIC_STAGE                 1014
 #define IDC_TOPIC_TITLE                 1015
@@ -156,6 +156,7 @@
 #define IDC_SAVE                        1035
 #define IDC_PROJECT_INFO                1037
 #define IDC_EDIT7                       1038
+#define IDC_AUTHOR                      1039
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -198,14 +199,16 @@
 #define ID_3DVIEW_OVERRIDE_MATERIAL     32837
 #define ID_3DVIEW_RESET_MATERIALS       32838
 #define ID_VIEW_RESET                   32839
+#define ID_FILE_OPENBCF                 32841
+#define ID_FILE_NEWBCF                  32842
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        353
-#define _APS_NEXT_COMMAND_VALUE         32841
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_COMMAND_VALUE         32843
+#define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

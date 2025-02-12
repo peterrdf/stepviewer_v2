@@ -7,6 +7,7 @@
 
 #include "Controller.h"
 #include "ModelCheckDlg.h"
+#include "BCF\BCFView.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
@@ -48,23 +49,27 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
+	CBCFView            m_wndBCFView;
 
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnFileOpen();
+	afx_msg void OnViewZoomOut();
+	afx_msg void OnViewModelChecker();
+	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
+	afx_msg void OnOpenBCF();
+	afx_msg void OnUpdateOpenBCF(CCmdUI* pCmdUI);
+	afx_msg void OnNewBCF();
+	afx_msg void OnUpdateNewBCF(CCmdUI* pCmdUI);
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
-public:
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-	afx_msg void OnFileOpen();
-	afx_msg void OnViewZoomOut();
-	afx_msg void OnViewModelChecker();
-	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
 };

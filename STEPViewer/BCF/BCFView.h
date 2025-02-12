@@ -1,5 +1,4 @@
 #pragma once
-#ifdef _ENABLE_BCF
 
 #include "afxdialogex.h"
 #include "bcfAPI.h"
@@ -13,8 +12,10 @@ class CBCFView : public CDialogEx
 	DECLARE_DYNAMIC(CBCFView)
 
 public:
-	CBCFView(CMySTEPViewerDoc& doc, LPCTSTR bcfFilePath);   // standard constructor
+	CBCFView(CMySTEPViewerDoc& doc);   // standard constructor
 	virtual ~CBCFView();
+
+	void OpenBCFProject(LPCTSTR bcfFilePath);
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -24,22 +25,40 @@ public:
 protected:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void PostNcDestroy();
 
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
+	afx_msg void OnSelchangeTopic();
 
 private:
-	bool LoadBCFProject();
+	void CloseBCFProject();
+	void LoadProjectToView();
+	void InsertTopicToList(int item, BCFTopic* topic);
+	void FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion);
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
+	void SetActiveTopic(BCFTopic* topic);
 
 private:
 	CMySTEPViewerDoc& m_doc;
-	CString           m_bcfFilePath;
 	BCFProject*		  m_bcfProject;
 
 private:
 	CComboBox m_wndTopics;
+	CComboBox m_wndTopicType;
+	CString m_strTopicType;
+	CComboBox m_wndTopicStage;
+	CString m_strTopicStage;
+	CComboBox m_wndTopicStatus;
+	CString m_strTopicStatus;
+	CComboBox m_wndAssigned;
+	CString m_strAssigned;
+	CComboBox m_wndPriority;
+	CString m_strPriority;
+	CComboBox m_wndSnippetType;
+	CString m_strSnippetType;
+	CTabCtrl m_wndTab;
+	CStatic m_wndAuthor;
+	CString m_strAuthor;
 };
 
-#endif //_ENABLE_BCF

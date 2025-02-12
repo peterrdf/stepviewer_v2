@@ -60,10 +60,7 @@ using namespace std;
 
 #include "engine.h"
 #include "stepengine.h"
-
-#ifdef _ENABLE_BCF
 #include "bcfAPI.h"
-#endif
 
 extern CString FromUTF8(const char* utf8);
 extern std::string ToUTF8(const wchar_t* utf16);

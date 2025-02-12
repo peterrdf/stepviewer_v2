@@ -213,6 +213,9 @@
     <ClInclude Include="..\include\_host.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -337,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_attribute.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFView.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

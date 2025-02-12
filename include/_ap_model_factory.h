@@ -6,9 +6,6 @@
 #ifdef _CIS2_EXPERIMENTAL
 #include "CIS2Model.h"
 #endif
-#ifdef _ENABLE_BCF
-#include "BCF/BCFView.h"
-#endif
 
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
@@ -86,17 +83,6 @@ public: // Methods
 			return pModel;
 		} // STEPZIP
 #endif // _USE_LIBZIP
-
-#ifdef _ENABLE_BCF
-		/*
-		* BCF
-		*/
-		if (pathModel.extension().string() == ".bcf" || pathModel.extension().string() == ".bcfzip")
-		{
-			new CBCFView(doc, szModel);
-			return nullptr;
-		} // BCF
-#endif
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0)

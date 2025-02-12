@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#ifdef _ENABLE_BCF
-
 #include "STEPViewer.h"
 #include "afxdialogex.h"
 #include "BCF\BCFView.h"
@@ -16,19 +14,32 @@ IMPLEMENT_DYNAMIC(CBCFView, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_WM_CLOSE()
+	ON_CBN_SELCHANGE(IDC_TOPICS, &CBCFView::OnSelchangeTopic)
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
-CBCFView::CBCFView(CMySTEPViewerDoc& doc, LPCTSTR bcfFilePath)
+CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	: CDialogEx(IDD_BCF, AfxGetMainWnd())
 	, m_doc (doc)
-	, m_bcfFilePath(bcfFilePath)
 	, m_bcfProject(NULL)
+	, m_strTopicType(_T(""))
+	, m_strTopicStage(_T(""))
+	, m_strTopicStatus(_T(""))
+	, m_strAssigned(_T(""))
+	, m_strPriority(_T(""))
+	, m_strSnippetType(_T(""))
+	, m_strAuthor(_T(""))
 {
-	Create(IDD_BCF, AfxGetMainWnd());
 }
 
 CBCFView::~CBCFView()
+{
+	ASSERT(!m_bcfProject);
+	CloseBCFProject();
+}
+
+void CBCFView::CloseBCFProject()
 {
 	if (m_bcfProject) {
 		ShowLog(false);
@@ -39,23 +50,86 @@ CBCFView::~CBCFView()
 	}
 }
 
-void CBCFView::PostNcDestroy()
+void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 {
-	CDialogEx::PostNcDestroy();
+	ASSERT(!m_bcfProject);
+	CloseBCFProject();
 
-	delete this;
+	//
+	m_bcfProject = BCFProject::Create();
+	if (!m_bcfProject) {
+		AfxMessageBox(L"Failed to initialize BCF.");
+		return;
+	}
+
+	//auto user = AfxGetApp()->GetProfileString(L"BCF", L"User");
+	//if (user.IsEmpty()) {
+	//	AfxMessageBox(L"Enter your user name on Project Info dialog", MB_ICONEXCLAMATION | MB_OK);
+	//}
+	//m_bcfProject->SetOptions(user, )
+
+	if (bcfFilePath) {
+		//open existing
+		if (!m_bcfProject->ReadFile(ToUTF8(bcfFilePath).c_str(), true))
+		{
+			ShowLog(true);
+			CloseBCFProject();
+			return;
+		}
+	}
+	else {
+		//create new, at least one topic is required
+		m_bcfProject->TopicAdd(NULL, NULL, NULL);
+	}
+	ShowLog(false);
+
+	if (!IsWindow(GetSafeHwnd())) {
+		Create(IDD_BCF, AfxGetMainWnd());
+	}
+	ShowWindow(SW_SHOW);
+
+	//
+	CString title;
+	title.Format(L"BCF-XML %s", bcfFilePath ? bcfFilePath : L"<New>");
+	SetWindowText(title);
+
+	LoadProjectToView();
 }
+
 
 void CBCFView::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TOPIC_NUMBER, m_wndTopics);
+	DDX_Control(pDX, IDC_TOPICS, m_wndTopics);
+	DDX_Control(pDX, IDC_TOPIC_TYPE, m_wndTopicType);
+	DDX_CBString(pDX, IDC_TOPIC_TYPE, m_strTopicType);
+	DDX_Control(pDX, IDC_TOPIC_STAGE, m_wndTopicStage);
+	DDX_CBString(pDX, IDC_TOPIC_STAGE, m_strTopicStage);
+	DDX_Control(pDX, IDC_TOPIC_STATUS, m_wndTopicStatus);
+	DDX_CBString(pDX, IDC_TOPIC_STATUS, m_strTopicStatus);
+	DDX_Control(pDX, IDC_TOPIC_ASSIGNED, m_wndAssigned);
+	DDX_CBString(pDX, IDC_TOPIC_ASSIGNED, m_strAssigned);
+	DDX_Control(pDX, IDC_TOPIC_PRIORITY, m_wndPriority);
+	DDX_CBString(pDX, IDC_TOPIC_PRIORITY, m_strPriority);
+	DDX_Control(pDX, IDC_SNIPPET_TYPE, m_wndSnippetType);
+	DDX_CBString(pDX, IDC_SNIPPET_TYPE, m_strSnippetType);
+	DDX_Control(pDX, IDC_TAB, m_wndTab);
+	DDX_Control(pDX, IDC_AUTHOR, m_wndAuthor);
+	DDX_Text(pDX, IDC_AUTHOR, m_strAuthor);
+}
+
+void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CDialogEx::OnShowWindow(bShow, nStatus);
+	if (!bShow) {
+		CloseBCFProject();
+	}
 }
 
 void CBCFView::OnClose()
 {
 	CDialogEx::OnClose();
-	DestroyWindow();
+	CloseBCFProject();
 }
 
 
@@ -63,56 +137,65 @@ BOOL CBCFView::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	//
-	//
-	if (!LoadBCFProject())
-	{
-		EndDialog(IDCANCEL);
-		return TRUE;
-	}
-	
-	//
-	//
-	ShowWindow(SW_SHOW);
+	m_wndTab.InsertItem(0, L"Labels");
+	m_wndTab.InsertItem(0, L"Related topic");
+	m_wndTab.InsertItem(0, L"Links");
+	m_wndTab.InsertItem(0, L"Documents");
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
-bool CBCFView::LoadBCFProject()
+void CBCFView::LoadProjectToView()
 {
 	CWaitCursor wait;
 
-	m_bcfProject = BCFProject::Create();
-	if (!m_bcfProject) {
-		AfxMessageBox(L"Failed to initialize BCF.");
-	}
 
-	if (!m_bcfProject->ReadFile(ToUTF8(m_bcfFilePath).c_str(), true))
-	{
-		ShowLog(true);
-		EndDialog(IDCANCEL);
-		return TRUE;
-	}
-	ShowLog(false);
+	//load extensions
+	//
+	FillFromExtension(m_wndTopicType, BCFTopicTypes);
+	FillFromExtension(m_wndTopicStatus, BCFTopicStatuses);
+	FillFromExtension(m_wndPriority, BCFPriorities);
+	FillFromExtension(m_wndAssigned, BCFUsers);
+	FillFromExtension(m_wndSnippetType, BCFSnippetTypes);
+	FillFromExtension(m_wndTopicStage, BCFStages);
 
+	// load topics
+	//
 	m_wndTopics.ResetContent();
 
 	BCFTopic* topic = NULL;
 	for (uint16_t i = 0; topic = m_bcfProject->TopicGetAt(i); i++) {
-		CString guid = FromUTF8((topic->GetGuid()));
-		CString text;
-		text.Format(L"#%d: %s", (int)i+1, guid.GetString());
-		int item = m_wndTopics.AddString(text);
-		m_wndTopics.SetItemData(item, (DWORD_PTR)topic);
+		InsertTopicToList(i, topic);
 	}
 	m_wndTopics.AddString(L"<New>");
-
 	m_wndTopics.SetCurSel(0);
-
-	return true;
+	OnSelchangeTopic();
 }
 
+void CBCFView::InsertTopicToList(int item, BCFTopic* topic)
+{
+	CString guid = FromUTF8((topic->GetGuid()));
+	CString text;
+	text.Format(L"#%d: %s", item + 1, guid.GetString());
+	m_wndTopics.InsertString(item, text);
+	m_wndTopics.SetItemData(item, (DWORD_PTR)topic);
+}
+
+void CBCFView::FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion)
+{
+	wnd.ResetContent();
+
+	if (m_bcfProject) {
+		auto& extensions = m_bcfProject->GetExtensions();
+
+		uint16_t ind = 0;
+		while (auto elem = extensions.GetElement(enumeraion, ind++)) {
+			wnd.AddString(FromUTF8(elem));
+		}
+	}
+}
 
 void CBCFView::ShowLog(bool knownError)
 {
@@ -133,6 +216,54 @@ void CBCFView::ShowLog(bool knownError)
 }
 
 
-#endif //_ENABLE_BCF
+void CBCFView::OnSelchangeTopic()
+{
+	auto item = m_wndTopics.GetCurSel();
+	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
 
+	if (!topic) {
+		auto sel = m_wndTopics.GetCurSel();
+		if (IDYES == AfxMessageBox(L"Do you want to create new topic?", MB_ICONQUESTION | MB_YESNO)) {
+			topic = m_bcfProject->TopicAdd(NULL, NULL, NULL);
+			InsertTopicToList(sel, topic);
+		}
+		else {
+			sel = 0;
+		}
+		m_wndTopics.SetCurSel(sel);
+		topic = (BCFTopic*)m_wndTopics.GetItemData(sel);
+	}
+
+	if (topic) { 
+		SetActiveTopic(topic);
+	}
+}
+
+void CBCFView::SetActiveTopic(BCFTopic* topic)
+{
+	//
+	m_strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
+	if (*topic->GetModifiedAuthor()) {
+		CString modifier;
+		modifier.Format(L", modified by % s at % s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
+		m_strAuthor.Append(modifier);
+	}
+
+	m_strTopicType = FromUTF8(topic->GetTopicType());
+	m_strTopicStage = FromUTF8(topic->GetStage());
+	m_strTopicStatus = FromUTF8(topic->GetTopicStatus());
+	m_strAssigned = FromUTF8(topic->GetAssignedTo());
+	m_strPriority = FromUTF8(topic->GetPriority());
+	
+	auto snippet = topic->GetBimSnippet(false);
+	m_wndSnippetType.EnableWindow(snippet != NULL);
+	if (snippet) {
+		m_strSnippetType = FromUTF8(snippet->GetSnippetType());
+	}
+	else {
+		m_strSnippetType.Empty();
+	}
+
+	UpdateData(FALSE);
+}
 
