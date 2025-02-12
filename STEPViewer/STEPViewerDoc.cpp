@@ -111,7 +111,7 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 	vector<_model*> vecModels;
 	for (auto strPath : vecPaths)
 	{
-		auto pModel = _ap_model_factory::load(*this, strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
 		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 		{
 			delete pModel;
@@ -259,7 +259,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(_ap_model_factory::load(*this, lpszPathName, false, nullptr, false));
+	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
 
 	// Title
 	CString strTitle = AfxGetAppName();

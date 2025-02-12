@@ -5,6 +5,8 @@
 
 #include "STEPViewer.h"
 #include "afxdialogex.h"
+#include "STEPViewerDoc.h"
+#include "_ap_model_factory.h"
 #include "BCF\BCFView.h"
 
 
@@ -56,7 +58,24 @@ void CBCFView::CloseBCFProject()
 			ShowLog(true);
 		}
 		m_bcfProject = NULL;
+
+		SetModelsExternallyManaged(m_preloadedModels);
+		m_preloadedModels.clear(); //lave to manage by m_doc
+
+		for (auto& item : m_loadedModels) {
+			if (item.second) {
+				delete item.second;
+			}
+		}
+		m_loadedModels.clear();
 	}
+}
+
+void CBCFView::SetModelsExternallyManaged(std::vector <_model*>& models)
+{
+	//do not delete models, just set new list
+	m_doc.editModelList().clear();
+	m_doc.setModels(models);
 }
 
 void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
@@ -70,6 +89,9 @@ void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 		AfxMessageBox(L"Failed to initialize BCF.");
 		return;
 	}
+
+	std::swap(m_preloadedModels, m_doc.editModelList());
+	m_doc.setModel(NULL);
 
 	//auto user = AfxGetApp()->GetProfileString(L"BCF", L"User");
 	//if (user.IsEmpty()) {
@@ -272,6 +294,8 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 		return;
 	}
 
+	SetActiveModels(topic);
+
 	//
 	m_strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
 	if (*topic->GetModifiedAuthor()) {
@@ -351,4 +375,35 @@ void CBCFView::OnSelchangeCommentsList()
 	}
 
 	UpdateData(FALSE);
+}
+
+void CBCFView::SetActiveModels(BCFTopic* topic)
+{
+	std::vector<_model*> activeModels = m_preloadedModels; //copy is intentional
+
+	uint16_t i = 0;
+	while (BCFFile* file = topic->FileGetAt(i++)) {
+		_model* model = NULL;
+		
+		auto it = m_loadedModels.find(file);
+		if (it != m_loadedModels.end()) {
+			model = it->second;
+		}
+		else {
+			auto path = FromUTF8(file->GetReference());
+			model = _ap_model_factory::load(path, true, nullptr, false);
+			if (!model) {
+				CString msg;
+				msg.Format(L"Failed to read file: %s", path.GetString());
+				AfxMessageBox(msg, MB_ICONEXCLAMATION);
+			}
+			m_loadedModels[file] = model;
+		}
+
+		if (model) {
+			activeModels.push_back(model);
+		}
+	}
+
+	SetModelsExternallyManaged(activeModels);
 }

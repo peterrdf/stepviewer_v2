@@ -284,7 +284,8 @@ protected: // Methods
 public: // Properties
 
 	_model* getModel() const; // kept for backward compatibility
-	const vector<_model*>& getModels() const { return m_vecModels; }	
+	const vector<_model*>& getModels() const { return m_vecModels; }
+	vector<_model*>& editModelList() { return m_vecModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }	
 };
 

@@ -3,8 +3,6 @@
 #include "afxdialogex.h"
 #include "bcfAPI.h"
 
-class CMySTEPViewerDoc;
-
 // CBCFView dialog
 
 class CBCFView : public CDialogEx
@@ -39,10 +37,14 @@ private:
 	void FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion);
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
 	void SetActiveTopic(BCFTopic* topic);
+	void SetActiveModels(BCFTopic* topic);
+	void SetModelsExternallyManaged(std::vector<_model*>& models);
 
 private:
-	CMySTEPViewerDoc& m_doc;
-	BCFProject*		  m_bcfProject;
+	CMySTEPViewerDoc&				m_doc;
+	BCFProject*						m_bcfProject;
+	std::vector<_model*>			m_preloadedModels;
+	std::map<BCFFile*, _model*>		m_loadedModels;
 
 private:
 	CComboBox m_wndTopics;

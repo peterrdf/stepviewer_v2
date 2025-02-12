@@ -20,10 +20,10 @@ namespace fs = std::experimental::filesystem;
 const int_t	BLOCK_LENGTH_READ = 20000; // MAX: 65535
 
 // ************************************************************************************************
-zip_file* g_pZipFile = nullptr;
+static zip_file* g_pZipFile = nullptr;
 
 // ************************************************************************************************
-int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
+static int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 {
 	if (g_pZipFile == nullptr) 
 	{
@@ -40,7 +40,7 @@ class _ap_model_factory
 
 public: // Methods
 
-	static _ap_model* load(CMySTEPViewerDoc& doc, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
+	static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
 	{
 #ifdef _USE_LIBZIP
 		fs::path pathModel = szModel;
