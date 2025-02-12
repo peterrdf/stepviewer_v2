@@ -1182,10 +1182,10 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		SdaiInstance sdaiProjectInstance = 0;
 		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
-		// Load
-		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());		
-		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
+		// Load//#todo#mappeditems
+		//LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
+		//LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());		
+		//LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
 		Tree_Update(hModel);

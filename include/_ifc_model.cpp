@@ -168,7 +168,8 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	}
 	else
 	{
-		assert(FALSE);
+		//#todo#mappeditems
+		//assert(FALSE);
 	}
 }
 
@@ -419,11 +420,14 @@ void _ifc_model::retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiIn
 
 _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments)
 {
+	//#todo#mappeditems
+	auto mappedItems = RecognizeMappedItems(sdaiInstance);
+
 	auto pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr)
 	{
 		return pGeometry;
-	}
+	}	
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (owlInstance != 0)
@@ -440,9 +444,6 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	pGeometry = createGeometry(owlInstance, sdaiInstance);
 	addGeometry(pGeometry);
 
-	auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
-	addInstance(pInstance);
-
 	CString strEntity = (LPWSTR)CA2W(szEntityName);
 	strEntity.MakeUpper();
 
@@ -450,14 +451,37 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		(strEntity == L"IFCRELSPACEBOUNDARY") ||
 		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 
-	pInstance->setEnable(
-		(strEntity == L"IFCSPACE") ||
-		(strEntity == L"IFCRELSPACEBOUNDARY") ||
-		(strEntity == L"IFCOPENINGELEMENT") ||
-		(strEntity == L"IFCALIGNMENTVERTICAL") ||
-		(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-		(strEntity == L"IFCALIGNMENTSEGMENT") ||
-		(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+	//#todo#mappeditems
+	if (mappedItems != nullptr)
+	{
+		for (auto pMappedItem : mappedItems->mappedItems) {
+			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
+			addInstance(pInstance);			
+
+			pInstance->setEnable(
+				(strEntity == L"IFCSPACE") ||
+				(strEntity == L"IFCRELSPACEBOUNDARY") ||
+				(strEntity == L"IFCOPENINGELEMENT") ||
+				(strEntity == L"IFCALIGNMENTVERTICAL") ||
+				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+				(strEntity == L"IFCALIGNMENTSEGMENT") ||
+				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		}/**/
+	}
+	else
+	{
+		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+		addInstance(pInstance);		
+
+		pInstance->setEnable(
+			(strEntity == L"IFCSPACE") ||
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ||
+			(strEntity == L"IFCALIGNMENTVERTICAL") ||
+			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+			(strEntity == L"IFCALIGNMENTSEGMENT") ||
+			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+	}	
 
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
@@ -467,6 +491,247 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 	return pGeometry;
 }
+
+//#todo#mappeditems
+void	_ifc_model::ParseMappedItem(
+	SdaiModel						ifcModel,
+	SdaiInstance					ifcMappedItemInstance,
+	std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData
+)
+{
+	OwlModel	owlModel = 0;
+	owlGetModel(ifcModel, &owlModel);
+
+	assert(sdaiGetInstanceType(ifcMappedItemInstance) == sdaiGetEntity(ifcModel, "IFCMAPPEDITEM"));
+
+	SdaiInstance	ifcStyledItemInstance = 0;
+	sdaiGetAttrBN(ifcMappedItemInstance, "StyledByItem", sdaiINSTANCE, &ifcStyledItemInstance);
+
+	STRUCT_MATERIAL* material = nullptr;
+	if (ifcStyledItemInstance) {
+		assert(sdaiGetInstanceType(ifcStyledItemInstance) == sdaiGetEntity(ifcModel, "IFCSTYLEDITEM"));
+		OwlInstance		owlInstanceMaterial = 0;
+		owlBuildInstance(ifcModel, ifcStyledItemInstance, &owlInstanceMaterial);
+		if (owlInstanceMaterial) {
+			assert(GetInstanceClass(owlInstanceMaterial) == GetClassByName(owlModel, "Material"));
+			material = new STRUCT_MATERIAL;
+			material->ambient = GetMaterialColorAmbient(owlInstanceMaterial);
+			material->diffuse = GetMaterialColorDiffuse(owlInstanceMaterial);
+			material->emissive = GetMaterialColorEmissive(owlInstanceMaterial);
+			material->specular = GetMaterialColorSpecular(owlInstanceMaterial);
+		}
+	}
+
+	SdaiInstance	ifcRepresentationMapInstance = 0;
+	sdaiGetAttrBN(ifcMappedItemInstance, "MappingSource", sdaiINSTANCE, &ifcRepresentationMapInstance);
+
+	SdaiInstance	ifcCartesianTransformationOperatorInstance = 0;
+	sdaiGetAttrBN(ifcMappedItemInstance, "MappingTarget", sdaiINSTANCE, &ifcCartesianTransformationOperatorInstance);
+
+	OwlInstance		owlInstanceCartesianTransformationOperatorMatrix = 0;
+	owlBuildInstance(ifcModel, ifcCartesianTransformationOperatorInstance, &owlInstanceCartesianTransformationOperatorMatrix);
+
+	if (GetInstanceClass(owlInstanceCartesianTransformationOperatorMatrix) == GetClassByName(owlModel, "Transformation"))
+		owlInstanceCartesianTransformationOperatorMatrix = GetObjectProperty(owlInstanceCartesianTransformationOperatorMatrix, GetPropertyByName(owlModel, "matrix"));
+	assert(GetInstanceClass(owlInstanceCartesianTransformationOperatorMatrix) == GetClassByName(owlModel, "Matrix"));
+
+	SdaiInstance	ifcAxis2PlacementInstance = 0;
+	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappingOrigin", sdaiINSTANCE, &ifcAxis2PlacementInstance);
+
+	OwlInstance		owlInstanceAxis2PlacementMatrix = 0;
+	owlBuildInstance(ifcModel, ifcAxis2PlacementInstance, &owlInstanceAxis2PlacementMatrix);
+	assert(GetInstanceClass(owlInstanceAxis2PlacementMatrix) == GetClassByName(owlModel, "Matrix"));
+
+	SdaiInstance	ifcRepresentationInstance = 0;
+	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappedRepresentation", sdaiINSTANCE, &ifcRepresentationInstance);
+
+	OwlInstance		owlInstanceMatrix;
+	if (owlInstanceCartesianTransformationOperatorMatrix && owlInstanceAxis2PlacementMatrix) {
+		OwlInstance	owlInstanceMatrixMultiplication = CreateInstance(GetClassByName(owlModel, "MatrixMultiplication"));
+		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(owlModel, "firstMatrix"), owlInstanceCartesianTransformationOperatorMatrix);
+		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(owlModel, "secondMatrix"), owlInstanceAxis2PlacementMatrix);
+		owlInstanceMatrix = owlInstanceMatrixMultiplication;
+	}
+	else {
+		owlInstanceMatrix = owlInstanceCartesianTransformationOperatorMatrix & owlInstanceAxis2PlacementMatrix;
+	}
+
+	SdaiAggr	itemsAGGR = nullptr;
+	sdaiGetAttrBN(ifcRepresentationInstance, "Items", sdaiAGGR, &itemsAGGR);
+	SdaiInteger	noItemsAGGR = sdaiGetMemberCount(itemsAGGR);
+	if (noItemsAGGR) {
+		for (SdaiInteger index = 0; index < noItemsAGGR; index++) {
+			SdaiInstance	ifcRepresentationItemInstance = 0;
+			sdaiGetAggrByIndex(itemsAGGR, index, sdaiINSTANCE, &ifcRepresentationItemInstance);
+
+			STRUCT_INTERNAL* mappedItemData = new STRUCT_INTERNAL;
+			mappedItemData->owlInstanceMatrix = owlInstanceMatrix;
+			mappedItemData->ifcRepresentationInstance = ifcRepresentationItemInstance;
+#ifdef _DEBUG
+			mappedItemData->ifcMappedItemInstance = ifcMappedItemInstance;
+#endif // _DEBUG
+			mappedItemData->material = material;
+			(*pVectorMappedItemData).push_back(mappedItemData);
+		}
+	}
+	else {
+		//		assert(noItemsAGGR == 2);
+
+		STRUCT_INTERNAL* mappedItemData = new STRUCT_INTERNAL;
+		mappedItemData->owlInstanceMatrix = owlInstanceMatrix;
+		mappedItemData->ifcRepresentationInstance = ifcRepresentationInstance;
+#ifdef _DEBUG
+		mappedItemData->ifcMappedItemInstance = ifcMappedItemInstance;
+#endif // _DEBUG
+		mappedItemData->material = material;
+		(*pVectorMappedItemData).push_back(mappedItemData);
+	}
+}
+
+//#todo#mappeditems
+STRUCT_IFC_PRODUCT* _ifc_model::RecognizeMappedItems(
+	SdaiInstance	ifcProductInstance
+)
+{
+	SdaiModel		ifcModel = sdaiGetInstanceModel(ifcProductInstance);
+
+	assert(ifcModel && ifcProductInstance);
+
+	std::vector<STRUCT_INTERNAL*> vectorMappedItemData;
+
+	{
+		//
+		//	If this object has opening elements mapped items should be ignored
+		//
+		SdaiAggr	hasOpeningsAGGR = nullptr;
+		sdaiGetAttrBN(ifcProductInstance, "HasOpenings", sdaiAGGR, &hasOpeningsAGGR);
+		if (hasOpeningsAGGR && sdaiGetMemberCount(hasOpeningsAGGR))
+			return	nullptr;
+	}
+
+	//{
+		SdaiEntity		ifcMappedItemEntity = sdaiGetEntity(ifcModel, "IFCMAPPEDITEM");
+
+		SdaiInstance	ifcProductRepresentationInstance = 0;
+		sdaiGetAttrBN(ifcProductInstance, "Representation", sdaiINSTANCE, &ifcProductRepresentationInstance);
+
+		if (ifcProductRepresentationInstance) {
+			SdaiAggr	ifcRepresentationInstanceAGGR = nullptr;
+			sdaiGetAttrBN(ifcProductRepresentationInstance, "Representations", sdaiAGGR, &ifcRepresentationInstanceAGGR);
+
+			SdaiInteger	noIfcRepresentationInstanceAGGR = sdaiGetMemberCount(ifcRepresentationInstanceAGGR);
+			for (SdaiInteger index = 0; index < noIfcRepresentationInstanceAGGR; index++) {
+				SdaiInstance	ifcRepresentationInstance = 0;
+				sdaiGetAggrByIndex(ifcRepresentationInstanceAGGR, index, sdaiINSTANCE, &ifcRepresentationInstance);
+
+				char* representationIdentifier = nullptr;
+				sdaiGetAttrBN(ifcRepresentationInstance, "RepresentationIdentifier", sdaiSTRING, &representationIdentifier);
+				if (Equals(representationIdentifier, "Body")) {
+					SdaiAggr	ifcRepresentationItemInstanceAGGR = nullptr;
+					sdaiGetAttrBN(ifcRepresentationInstance, "Items", sdaiAGGR, &ifcRepresentationItemInstanceAGGR);
+
+					SdaiInteger	noIfcRepresentationItemInstanceAGGR = sdaiGetMemberCount(ifcRepresentationItemInstanceAGGR);
+					for (SdaiInteger i = 0; i < noIfcRepresentationItemInstanceAGGR; i++) {
+						SdaiInstance	ifcRepresentationItemInstance = 0;
+						sdaiGetAggrByIndex(ifcRepresentationItemInstanceAGGR, i, sdaiINSTANCE, &ifcRepresentationItemInstance);
+
+						if (sdaiGetInstanceType(ifcRepresentationItemInstance) == ifcMappedItemEntity) {
+							ParseMappedItem(ifcModel, ifcRepresentationItemInstance, &vectorMappedItemData);
+						}
+						else
+							return	nullptr;
+					}
+				}
+			}
+		}
+	//}
+
+	if (vectorMappedItemData.size()) {
+		STRUCT_IFC_PRODUCT* myIfcProduct = new STRUCT_IFC_PRODUCT();
+		myIfcProduct->ifcProductInstance = ifcProductInstance;
+#ifdef _DEBUG
+		myIfcProduct->ifcProductInstance__expressID = internalGetP21Line(myIfcProduct->ifcProductInstance);
+#endif // _DEBUG
+
+		OwlModel	owlModel = 0;
+		owlGetModel(ifcModel, &owlModel);
+
+		SdaiInstance	ifcObjectPlacementInstance = 0;
+		sdaiGetAttrBN(ifcProductInstance, "ObjectPlacement", sdaiINSTANCE, &ifcObjectPlacementInstance);
+
+		OwlInstance		owlInstanceObjectPlacementMatrix = 0;
+		owlBuildInstance(ifcModel, ifcObjectPlacementInstance, &owlInstanceObjectPlacementMatrix);
+
+		assert(GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(owlModel, "Matrix") ||
+			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(owlModel, "InverseMatrix") ||
+			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(owlModel, "MatrixMultiplication"));
+
+		for (auto mappedItemData = vectorMappedItemData.begin(); mappedItemData != vectorMappedItemData.end(); ++mappedItemData) {
+			OwlInstance	owlInstanceMatrixMultiplication = CreateInstance(GetClassByName(owlModel, "MatrixMultiplication"));
+			SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(owlModel, "firstMatrix"), (*mappedItemData)->owlInstanceMatrix);
+			SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(owlModel, "secondMatrix"), owlInstanceObjectPlacementMatrix);
+
+			InferenceInstance(owlInstanceMatrixMultiplication);
+
+			double* values = nullptr;
+			int64_t	card = 0;
+			GetDatatypeProperty(owlInstanceMatrixMultiplication, GetPropertyByName(owlModel, "coordinates"), (void**)&values, &card);
+			if (card == 12) {
+				STRUCT_MAPPED_ITEM* myMappedItem = new STRUCT_MAPPED_ITEM;
+				myMappedItem->ifcRepresentationInstance = (*mappedItemData)->ifcRepresentationInstance;
+
+				//			FILE* fp = 0;
+				//			fopen_s(&fp, "d:\\0002\\OUT9871.TXT", "a");
+				//			if (fp) {
+				//				fprintf(fp, "  %I64i\n", myMappedItem->ifcRepresentationInstance);
+				//				fclose(fp);
+				//			}
+				//			else {
+				//				assert(false);
+				//			}
+			//CNT++;
+#ifdef _DEBUG
+				myMappedItem->ifcRepresentationInstance__expressID = internalGetP21Line(myMappedItem->ifcRepresentationInstance);
+				myMappedItem->ifcMappedItemInstance__expressID = internalGetP21Line((*mappedItemData)->ifcMappedItemInstance);
+#endif // _DEBUG
+
+				memcpy(myMappedItem->matrixCoordinates, values, 12 * sizeof(double));
+
+				//				myMappedItem->matrixCoordinatesOpenGL_16[0]  =   myMappedItem->matrixCoordinates[0];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[1]  = - myMappedItem->matrixCoordinates[2];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[2]  =   myMappedItem->matrixCoordinates[1];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[3]  =   0.;
+
+				//				myMappedItem->matrixCoordinatesOpenGL_16[4]  =   myMappedItem->matrixCoordinates[3];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[5]  = - myMappedItem->matrixCoordinates[5];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[6]  =   myMappedItem->matrixCoordinates[4];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[7]  =   0.;
+
+				//				myMappedItem->matrixCoordinatesOpenGL_16[8]  =   myMappedItem->matrixCoordinates[6];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[9]  = - myMappedItem->matrixCoordinates[8];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[10] =   myMappedItem->matrixCoordinates[7];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[11] =   0.;
+
+				//				myMappedItem->matrixCoordinatesOpenGL_16[12] =   myMappedItem->matrixCoordinates[9];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[13] = - myMappedItem->matrixCoordinates[11];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[14] =   myMappedItem->matrixCoordinates[10];
+				//				myMappedItem->matrixCoordinatesOpenGL_16[15] =   1.;
+
+				myIfcProduct->mappedItems.push_back(myMappedItem);
+			}
+			else {
+				assert(false);
+				delete	myIfcProduct;
+				return	nullptr;
+			}
+		}
+
+		return	myIfcProduct;
+	}
+
+	return	nullptr;
+}
+
 
 _ifc_unit_provider* _ifc_model::getUnitProvider() 
 { 
