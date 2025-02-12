@@ -11,6 +11,7 @@ private: // Members
 
 	vector<_ifc_geometry*> m_vecMappedItems;
 
+	bool m_bIsMappedItem;
 	bool m_bIsReferenced;
 
 public: // Methods
@@ -27,5 +28,6 @@ protected: // Methods
 
 public: // Properties
 
+	bool getIsMappedItem() const { return m_bIsMappedItem; }
 	bool getIsReferenced() const { return m_bIsReferenced; }
 };

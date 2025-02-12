@@ -5,6 +5,7 @@
 _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedItems)
 	: _ap_geometry(owlInstance, sdaiInstance)
 	, m_vecMappedItems(vecMappedItems)
+	, m_bIsMappedItem(false)
 	, m_bIsReferenced(false)
 {
 	if (m_vecMappedItems.empty())

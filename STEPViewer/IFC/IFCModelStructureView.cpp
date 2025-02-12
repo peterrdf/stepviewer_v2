@@ -705,10 +705,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			continue;
 		}
 
-		_ptr<_ap_geometry> apGeometry(pGeometry);
-		ASSERT(apGeometry);
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		if (ifcGeometry->getIsMappedItem())
+		{
+			continue;
+		}
 
-		const wchar_t* szEntityName = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 		// Enable
 		auto itEntity2EnableCount = mapEntity2EnableCount.find(szEntityName);
@@ -1123,8 +1126,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
-					//#todo#mappeditems
-					//ASSERT(pGeometry->getInstances().size() == 1);
+					ASSERT(pGeometry->getInstances().size() == 1); // Error: IFCMAPPEDITEM
 					for (auto pInstance : pGeometry->getInstances())
 					{
 						_ptr<_ifc_instance> ifcInstance(pInstance);

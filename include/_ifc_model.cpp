@@ -438,8 +438,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			auto pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
 			if (pMappedItemGeometry == nullptr)
 			{
-				pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
-				pMappedItemGeometry->m_bIsReferenced = true;				
+				pMappedItemGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));							
 			}
 
 			vecMappedItems.push_back(pMappedItemGeometry);
@@ -510,7 +509,12 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 			(strEntity == L"IFCALIGNMENTSEGMENT") ||
 			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
-	}	
+	}
+	else
+	{
+		pGeometry->m_bIsMappedItem = true;
+		pGeometry->m_bIsReferenced = true;
+	}
 
 	// Restore circleSegments()
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
