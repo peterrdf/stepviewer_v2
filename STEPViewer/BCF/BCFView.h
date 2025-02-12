@@ -30,6 +30,7 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnSelchangeTopic();
+	afx_msg void OnSelchangeCommentsList();
 
 private:
 	void CloseBCFProject();
@@ -74,5 +75,8 @@ private:
 	CString m_strIndex;
 	CEdit m_wndServerIndex;
 	CString m_strServerId;
+	CListBox m_wndCommentsList;
+	CEdit m_wndCommentText;
+	CString m_strCommentText;
 };
 

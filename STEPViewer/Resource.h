@@ -140,7 +140,7 @@
 #define IDC_TOPIC_PRIORITY              1017
 #define IDC_TOPIC_SERVER_ID             1018
 #define IDC_TOPIC_DESCRIPTION           1019
-#define IDC_TOPIC_DUE            1021
+#define IDC_TOPIC_DUE                   1021
 #define IDC_TOPIC_INDEX                 1022
 #define IDC_SNIPPET_TYPE                1023
 #define IDC_SNIPPET_REFERENCE           1024
@@ -148,6 +148,7 @@
 #define IDC_SNIPPET_REFERENCE_BROWSE    1026
 #define IDC_SNIPPET_SCHEMA_BROWSE       1027
 #define IDC_TOPIC_COMMENTS              1028
+#define IDC_TOPIC_COMMENT_TEXT          1028
 #define IDC_COMMENT_ADD                 1029
 #define IDC_TAB                         1031
 #define IDC_MULTI_LIST                  1032
@@ -157,6 +158,8 @@
 #define IDC_PROJECT_INFO                1037
 #define IDC_EDIT7                       1038
 #define IDC_AUTHOR                      1039
+#define IDC_LIST1                       1042
+#define IDC_COMMENTS_LIST               1042
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -208,7 +211,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        353
 #define _APS_NEXT_COMMAND_VALUE         32843
-#define _APS_NEXT_CONTROL_VALUE         1040
+#define _APS_NEXT_CONTROL_VALUE         1043
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

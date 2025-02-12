@@ -16,6 +16,7 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_WM_CLOSE()
 	ON_CBN_SELCHANGE(IDC_TOPICS, &CBCFView::OnSelchangeTopic)
 	ON_WM_SHOWWINDOW()
+	ON_LBN_SELCHANGE(IDC_COMMENTS_LIST, &CBCFView::OnSelchangeCommentsList)
 END_MESSAGE_MAP()
 
 
@@ -37,6 +38,7 @@ CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	, m_strSnippetSchema(_T(""))
 	, m_strIndex(_T(""))
 	, m_strServerId(_T(""))
+	, m_strCommentText(_T(""))
 {
 }
 
@@ -137,6 +139,9 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_TOPIC_INDEX, m_strIndex);
 	DDX_Control(pDX, IDC_TOPIC_SERVER_ID, m_wndServerIndex);
 	DDX_Text(pDX, IDC_TOPIC_SERVER_ID, m_strServerId);
+	DDX_Control(pDX, IDC_TOPIC_COMMENT_TEXT, m_wndCommentText);
+	DDX_Text(pDX, IDC_TOPIC_COMMENT_TEXT, m_strCommentText);
+	DDX_Control(pDX, IDC_COMMENTS_LIST, m_wndCommentsList);
 }
 
 void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -262,6 +267,11 @@ void CBCFView::OnSelchangeTopic()
 
 void CBCFView::SetActiveTopic(BCFTopic* topic)
 {
+	ASSERT(topic);
+	if (!topic) {
+		return;
+	}
+
 	//
 	m_strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
 	if (*topic->GetModifiedAuthor()) {
@@ -283,6 +293,30 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 	m_strIndex.Format(L"%d", topic->GetIndex());
 	m_strServerId = FromUTF8(topic->GetServerAssignedId());
 
+	m_wndCommentsList.ResetContent();
+	m_strCommentText.Empty();
+	uint16_t i = 0;
+	while (auto comment = topic->CommentGetAt(i++)) {
+		CString text;
+		text.Format(L"#%d created by %s at %s",
+			(int)i,
+			FromUTF8(comment->GetAuthor()).GetString(),
+			FromUTF8(comment->GetDate())
+		);
+		if (*comment->GetModifiedAuthor()) {
+			CString modifier;
+			modifier.Format(L", modified by %s at %s",
+				FromUTF8(comment->GetModifiedAuthor()).GetString(),
+				FromUTF8(comment->GetModifiedDate()).GetString()
+			);
+			text.Append(modifier);
+		}
+		auto item = m_wndCommentsList.AddString(text);
+		m_wndCommentsList.SetItemDataPtr(item, comment);
+	}
+	m_wndCommentsList.AddString(L"<My new comment>");
+	m_wndCommentsList.SetCurSel(0);
+
 	auto snippet = topic->GetBimSnippet(false);
 	m_wndSnippetType.EnableWindow(snippet != NULL);
 	m_wndSnippetReference.EnableWindow(snippet!=NULL);
@@ -299,5 +333,22 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 	}
 
 	UpdateData(FALSE);
+	OnSelchangeCommentsList();
 }
 
+
+void CBCFView::OnSelchangeCommentsList()
+{
+	auto item = m_wndCommentsList.GetCurSel();
+	auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(item);
+
+	if (!comment) {
+		m_strCommentText.Empty();
+		//TODO
+	}
+	else {
+		m_strCommentText = FromUTF8(comment->GetText());
+	}
+
+	UpdateData(FALSE);
+}
