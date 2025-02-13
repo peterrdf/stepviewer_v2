@@ -177,6 +177,35 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 		getObjectsReferencedState();
+
+#ifdef _DEBUG
+		int64_t iGeometriesCount = 0;
+		int64_t iMappedItemsCount = 0;
+		int64_t iMappedInstancesCount = 0;
+
+		for (auto pGeometry : getGeometries())
+		{
+			if (!pGeometry->hasGeometry() || pGeometry->isPlaceholder())
+			{
+				continue;
+			}
+
+			_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+			if (ifcGeometry->getIsMappedItem())
+			{
+				iMappedItemsCount++;
+				iMappedInstancesCount += (int64_t)pGeometry->getInstances().size();
+			}
+			else
+			{
+				iGeometriesCount++;
+			}	
+		}
+
+		TRACE(L"\n*** _ifc_model *** Geometries : %lld", iGeometriesCount);
+		TRACE(L"\n*** _ifc_model *** Mapped Items : %lld", iMappedItemsCount);
+		TRACE(L"\n*** _ifc_model *** Mapped Instances : %lld", iMappedInstancesCount);
+#endif // _DEBUG		 
 	}
 
 	scale();
