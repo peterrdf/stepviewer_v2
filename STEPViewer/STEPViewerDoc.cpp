@@ -167,6 +167,7 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
+	ON_COMMAND(ID_FILE_NEW, OnFileNew)
 END_MESSAGE_MAP()
 
 
@@ -306,6 +307,13 @@ BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
 	ASSERT(FALSE); // TODO
 
 	return TRUE;
+}
+
+void CMySTEPViewerDoc::OnFileNew()
+{
+	m_wndBCFView.DeleteContent();
+	m_wndBCFView.CreateNewProject();
+	m_wndBCFView.Show();
 }
 
 void CMySTEPViewerDoc::OnFileOpen()
