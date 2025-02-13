@@ -61,6 +61,75 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	return pInstance;
 }
 
+/*virtual*/ void _ifc_model::zoomToInstances(const set<_instance*>& setInstances) /*override*/
+{
+	assert(!setInstances.empty());
+
+	// World
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pInstance : setInstances)
+	{
+		if (pInstance->getGeometry()->isPlaceholder())
+		{
+			_ptr<_ifc_geometry> ifcGeometry(pInstance->getGeometry());
+			assert(!ifcGeometry->m_vecMappedGeometries.empty());
+
+			for (auto pMappedItemGeometry : ifcGeometry->m_vecMappedGeometries)
+			{
+				for (auto pMappedItemInstance : pMappedItemGeometry->getInstances())
+				{
+					if (pMappedItemInstance->getOwner() == pInstance)
+					{
+						pMappedItemGeometry->calculateMinMaxTransform(
+							this,
+							pMappedItemInstance,
+							m_fXmin, m_fXmax,
+							m_fYmin, m_fYmax,
+							m_fZmin, m_fZmax);
+					}
+				}
+			}
+		} // if (pInstance->getGeometry()->isPlaceholder())
+		else
+		{
+			pInstance->getGeometry()->calculateMinMaxTransform(
+				this,
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}		
+	} // for (auto pInstance : ...
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.f;
+		m_fXmax = 1.f;
+		m_fYmin = -1.f;
+		m_fYmax = 1.f;
+		m_fZmin = -1.f;
+		m_fZmax = 1.f;
+	}
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+}
+
 /*virtual*/ void _ifc_model::clean(bool bCloseModel/* = true*/) /*override*/
 {
 	_ap_model::clean(bCloseModel);
