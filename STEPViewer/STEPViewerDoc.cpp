@@ -18,8 +18,10 @@
 #endif
 
 // ************************************************************************************************
-TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
-TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
+TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
+TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
+TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
+TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -136,6 +138,10 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
+	ON_COMMAND(ID_FILE_SAVE, &CMySTEPViewerDoc::OnFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMySTEPViewerDoc::OnUpdateFileSave)
+	ON_COMMAND(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnFileSaveAs)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnUpdateFileSaveAs)
 END_MESSAGE_MAP()
 
 
@@ -265,16 +271,9 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-BOOL CMySTEPViewerDoc::OnSaveDocument(LPCTSTR /*lpszPathName*/)
-{
-	ASSERT(FALSE); // TODO
-
-	return TRUE;
-}
-
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SUPPORTED_FILES);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_FILES_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -326,4 +325,56 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
+}
+
+void CMySTEPViewerDoc::OnFileSave()
+{
+	_ptr<_ap_model> apModel(getModel());
+
+	CString strFiler;
+	CString strExtension;
+	if (apModel->getAP() == enumAP::STEP)
+	{
+		strFiler = SAVE_STEP_FILTER;
+		strExtension = L"ifc";
+	}
+	else if (apModel->getAP() == enumAP::IFC)
+	{
+		strFiler = SAVE_IFC_FILTER;
+		strExtension = L"step";
+	}
+	else  if (apModel->getAP() == enumAP::CIS2)
+	{
+		strFiler = SAVE_CIS2_FILTER;
+		strExtension = L"stp";
+	}
+	else
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	CFileDialog dlgFile(FALSE, strExtension, apModel->getPath(), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, strFiler);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	sdaiSaveModelBNUnicode(apModel->getSdaiModel(), (LPCWSTR)dlgFile.GetPathName());
+}
+
+void CMySTEPViewerDoc::OnUpdateFileSave(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModels().size() == 1);
+}
+
+void CMySTEPViewerDoc::OnFileSaveAs()
+{
+	OnFileSave();
+}
+
+void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModels().size() == 1);
 }

@@ -62,9 +62,12 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	afx_msg void OnFileOpen();
 	afx_msg void OnViewZoomOut();
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
+	afx_msg void OnFileSave();
+	afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
+	afx_msg void OnFileSaveAs();
+	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
 };
