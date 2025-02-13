@@ -842,7 +842,8 @@ bool _controller::isInstanceSelected(_instance* pInstance) const
 		return false;
 	}
 
-	return find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) != m_vecSelectedInstances.end();
+	return find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), 
+		(pInstance->getOwner() != nullptr ? pInstance->getOwner() : pInstance)) != m_vecSelectedInstances.end();
 }
 
 void _controller::saveInstance(OwlInstance owlInstance)

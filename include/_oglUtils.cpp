@@ -2149,9 +2149,13 @@ void _oglView::_drawInstancesFrameBuffer()
 						pCohortMaterial = itUserDefinedMaterial->second;
 					}
 
+					bool bIsInstancePointed = m_pPointedInstance != nullptr ?
+						pInstance->getOwner() != nullptr ? pInstance->getOwner() == m_pPointedInstance : pInstance == m_pPointedInstance :
+						false;
+
 					const _material* pMaterial =
 						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
-						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						bIsInstancePointed ? m_pPointedInstanceMaterial :
 						pCohortMaterial;
 
 					float fTransparency = pMaterial->getA();
@@ -2503,9 +2507,13 @@ void _oglView::_drawPoints(_model* pModel)
 #endif
 				for (auto pCohort : pGeometry->pointsCohorts())
 				{
+					bool bIsInstancePointed = m_pPointedInstance != nullptr ?
+						pInstance->getOwner() != nullptr ? pInstance->getOwner() == m_pPointedInstance : pInstance == m_pPointedInstance :
+						false;
+
 					const _material* pMaterial =
 						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
-						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						bIsInstancePointed ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
 					m_pOGLProgram->_setAmbientColor(
@@ -2807,6 +2815,11 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 			pPointedInstance = getController()->getInstanceByID(iInstanceID);
 			ASSERT(pPointedInstance != nullptr);
+		}
+
+		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr))
+		{
+			pPointedInstance = pPointedInstance->getOwner();
 		}
 
 		if (m_pPointedInstance != pPointedInstance)

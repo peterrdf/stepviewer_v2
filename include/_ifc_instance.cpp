@@ -5,6 +5,7 @@
 // ************************************************************************************************
 _ifc_instance::_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
 	: _ap_instance(iID, pGeometry, pTransformationMatrix)
+	, m_pOwner(nullptr)
 {
 }
 
@@ -12,3 +13,7 @@ _ifc_instance::_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* 
 {
 }
 
+/*virtual*/ _instance* _ifc_instance::getOwner() const /*override*/
+{
+	return m_pOwner;
+}

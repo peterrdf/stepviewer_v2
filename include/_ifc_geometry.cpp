@@ -2,11 +2,16 @@
 #include "_ifc_geometry.h"
 
 // ************************************************************************************************
-_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries)
 	: _ap_geometry(owlInstance, sdaiInstance)
+	, m_vecMappedGeometries(vecMappedGeometries)
+	, m_bIsMappedItem(false)
 	, m_bIsReferenced(false)
 {
-	calculate();
+	if (m_vecMappedGeometries.empty())
+	{
+		calculate();
+	}
 }
 
 /*virtual*/ _ifc_geometry::~_ifc_geometry()
@@ -26,4 +31,27 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
 /*virtual*/ void _ifc_geometry::postCalculate() /*override*/
 {
 	cleanCachedGeometry();
+}
+
+/*virtual*/ bool _ifc_geometry::hasGeometry() const /*override*/
+{
+	if (!m_vecMappedGeometries.empty())
+	{
+		for (auto pMappedGeometry : m_vecMappedGeometries)
+		{
+			if (pMappedGeometry->hasGeometry())
+			{
+				return true;
+			}			
+		}
+
+		return false;
+	}
+
+	return _geometry::hasGeometry();
+}
+
+/*virtual*/ bool _ifc_geometry::isPlaceholder() const /*override*/
+{
+	return !m_vecMappedGeometries.empty();
 }

@@ -314,6 +314,7 @@ public: // Properties
 	OwlClass getClassInstance() { return ::GetInstanceClass(getOwlInstance()); }
 	virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
 	bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }
+	virtual bool isPlaceholder() const { return false; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 
@@ -326,7 +327,7 @@ public: // Properties
 	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool getShow() const { return m_bShow; }
 	void setShow(bool bShow) { m_bShow = bShow; }
-	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
+	virtual bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
 	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }

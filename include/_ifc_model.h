@@ -10,6 +10,46 @@
 using namespace std;
 
 // ************************************************************************************************
+static bool	Equals(const char* txtI, const char* txtII)
+{
+	if (txtI && txtII) {
+		size_t	i = 0;
+		while (txtI[i] && txtII[i])
+			if (txtI[i] != txtII[i])
+				return	false;
+			else
+				i++;
+		if (txtII[i] == 0)
+			return	true;
+	}
+	return  false;
+}
+
+struct STRUCT_MATERIAL {
+	uint32_t ambient;
+	uint32_t diffuse;
+	uint32_t emissive;
+	uint32_t specular;
+};
+
+struct STRUCT_INTERNAL {
+	SdaiInstance ifcRepresentationInstance;
+	OwlInstance owlInstanceMatrix;
+	//STRUCT_MATERIAL* material;
+};
+
+struct STRUCT_MAPPED_ITEM {
+	SdaiInstance ifcRepresentationInstance;
+	double matrixCoordinates[12];
+	//STRUCT_MATERIAL* material;
+};
+
+struct STRUCT_IFC_PRODUCT {
+	SdaiInstance ifcProductInstance;
+	std::vector<STRUCT_MAPPED_ITEM*> mappedItems;
+};
+
+// ************************************************************************************************
 class _ifc_geometry;
 class _ifc_instance;
 
@@ -73,7 +113,10 @@ private: // Methods
 
 	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
 	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
-	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments);
+	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+
+	STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
+	void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);
 
 public: // Properties
 
