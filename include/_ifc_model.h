@@ -96,8 +96,6 @@ private: // Members
 	SdaiEntity m_sdaiTransportElementEntity;
 	SdaiEntity m_sdaiVirtualElementEntity;
 
-	map<_ifc_instance*, _ifc_instance*> m_mapMapping; // Mapped Item Instance : Reference By Instance
-
 	_ifc_unit_provider* m_pUnitProvider;
 	_ifc_property_provider* m_pPropertyProvider;	
 

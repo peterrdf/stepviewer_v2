@@ -25,7 +25,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	, m_sdaiReinforcingElementEntity(0)
 	, m_sdaiTransportElementEntity(0)
 	, m_sdaiVirtualElementEntity(0)
-	, m_mapMapping()
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)	
 {
@@ -65,8 +64,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 /*virtual*/ void _ifc_model::clean(bool bCloseModel/* = true*/) /*override*/
 {
 	_ap_model::clean(bCloseModel);
-
-	m_mapMapping.clear();
 
 	if (bCloseModel)
 	{
@@ -487,7 +484,6 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		for (auto pMappedInstance : vecMappedInstances)
 		{
 			pMappedInstance->m_pOwner = pInstance;
-			m_mapMapping[pMappedInstance] = pInstance;
 		}
 
 		return pGeometry;
