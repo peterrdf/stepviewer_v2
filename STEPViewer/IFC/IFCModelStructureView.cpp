@@ -1084,6 +1084,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			for (auto pInstance : pModelData->GetModel()->getInstances())
 			{
 				_ptr<_ifc_instance> ifcInstance(pInstance);
+				if (ifcInstance->getOwner() != nullptr)
+				{
+					continue;
+				}
+
 				if (ifcInstance->getEntityName() == itCommand2EnableEntity->second)
 				{
 					ifcInstance->setEnable(itEntity2EnableCount->second > 0 ? false : true);
@@ -1124,8 +1129,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				for (auto pGeometry : pModelData->GetModel()->getGeometries())
 				{
 					_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-					ASSERT(!ifcGeometry->getIsMappedItem());
-					ASSERT(pGeometry->getInstances().size() == 1);
+					if (ifcGeometry->getIsMappedItem())
+					{
+						continue;
+					}
 
 					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
@@ -1138,8 +1145,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 							setInstances.insert(ifcInstance);
 						}
-					}
-					
+					}					
 				}
 
 				Tree_Show(setInstances);
