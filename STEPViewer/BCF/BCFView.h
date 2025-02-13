@@ -31,6 +31,10 @@ protected:
 	afx_msg void OnClose();
 	afx_msg void OnSelchangeTopic();
 	afx_msg void OnSelchangeCommentsList();
+	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnClickedButtonAddMulti();
+	afx_msg void OnClickedButtonRemoveMulti();
+	afx_msg void OnSelchangeMultiList();
 
 private:
 	void CloseBCFProject();
@@ -42,6 +46,11 @@ private:
 	void SetActiveModels(BCFTopic* topic);
 	void SetModelsExternallyManaged(std::vector<_model*>& models);
 	void SetActiveViewPoint(BCFViewPoint* vp);
+	void FillMultiList();
+	void FillLabels(BCFTopic* topic);
+	void FillRelated(BCFTopic* topic);
+	void FillLinks(BCFTopic* topic);
+	void FillDocuments(BCFTopic* topic);
 
 private:
 	CMySTEPViewerView&				m_view;
@@ -83,5 +92,8 @@ private:
 	CListBox m_wndCommentsList;
 	CEdit m_wndCommentText;
 	CString m_strCommentText;
+	CListBox m_wndMultiList;
+	CButton m_wndAddMulti;
+	CButton m_wndRemoveMulti;
 };
 

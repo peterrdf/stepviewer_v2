@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 #include "STEPViewer.h"
 #include "afxdialogex.h"
 #include "STEPViewerDoc.h"
@@ -10,6 +13,11 @@
 #include "_ap_model_factory.h"
 #include "BCF\BCFView.h"
 
+ 
+#define TAB_Labels			3
+#define TAB_Related			2
+#define TAB_Links			1
+#define TAB_Documents		0
 
 // CBCFView dialog
 
@@ -20,6 +28,10 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_TOPICS, &CBCFView::OnSelchangeTopic)
 	ON_WM_SHOWWINDOW()
 	ON_LBN_SELCHANGE(IDC_COMMENTS_LIST, &CBCFView::OnSelchangeCommentsList)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CBCFView::OnSelchangeTab)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CBCFView::OnClickedButtonAddMulti)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CBCFView::OnClickedButtonRemoveMulti)
+	ON_LBN_SELCHANGE(IDC_MULTI_LIST, &CBCFView::OnSelchangeMultiList)
 END_MESSAGE_MAP()
 
 
@@ -171,6 +183,9 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TOPIC_COMMENT_TEXT, m_wndCommentText);
 	DDX_Text(pDX, IDC_TOPIC_COMMENT_TEXT, m_strCommentText);
 	DDX_Control(pDX, IDC_COMMENTS_LIST, m_wndCommentsList);
+	DDX_Control(pDX, IDC_MULTI_LIST, m_wndMultiList);
+	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAddMulti);
+	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemoveMulti);
 }
 
 void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -354,8 +369,10 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 	m_wndSnippetSchema.EnableWindow(snippet != NULL);
 	if (snippet) {
 		m_strSnippetType = FromUTF8(snippet->GetSnippetType());
-		m_strSnippetReference = FromUTF8(snippet->GetReference());
-		m_strSnippetSchema = FromUTF8(snippet->GetReferenceSchema());
+		fs::path path = snippet->GetReference();
+		m_strSnippetReference = FromUTF8(path.filename().string().c_str());
+		path = snippet->GetReferenceSchema();
+		m_strSnippetSchema = FromUTF8(path.filename().string().c_str());
 	}
 	else {
 		m_strSnippetType.Empty();
@@ -364,7 +381,9 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 	}
 
 	UpdateData(FALSE);
+
 	OnSelchangeCommentsList();
+	FillMultiList();
 }
 
 
@@ -434,4 +453,132 @@ void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)
 
 		m_view.SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 	}
+}
+
+void CBCFView::OnSelchangeTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	FillMultiList();
+	*pResult = 0;
+}
+
+void CBCFView::FillMultiList()
+{
+	m_wndMultiList.ResetContent();
+
+	auto item = m_wndTopics.GetCurSel();
+	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
+
+	if (topic) {
+		switch (m_wndTab.GetCurSel()) {
+		case TAB_Labels:
+			FillLabels(topic);
+			break;
+		case TAB_Related:
+			FillRelated(topic);
+			break;
+		case TAB_Links:
+			FillLinks(topic);
+			break;
+		case TAB_Documents:
+			FillDocuments(topic);
+			break;
+		default:
+			ASSERT(FALSE);
+		}
+	}
+
+	m_wndAddMulti.EnableWindow(topic != NULL);
+	
+	OnSelchangeMultiList();
+}
+
+void CBCFView::FillLabels(BCFTopic* topic)
+{
+	m_wndMultiList.ResetContent();
+	int i = 0;
+	while (auto label = topic->LabelGetAt(i++)) {
+		m_wndMultiList.AddString(FromUTF8(label));
+	}
+}
+
+void CBCFView::FillRelated(BCFTopic* topic)
+{
+	int i = 0;
+	while (auto related = topic->RelatedTopicGetAt(i++)) {
+		auto item = m_wndMultiList.AddString(FromUTF8(related->GetTitle()));
+		m_wndMultiList.SetItemDataPtr(item, related);
+	}
+}
+
+void CBCFView::FillLinks(BCFTopic* topic)
+{
+	int i = 0;
+	while (auto link = topic->ReferenceLinkGetAt(i++)) {
+		m_wndMultiList.AddString(FromUTF8(link));
+	}
+}
+
+void CBCFView::FillDocuments(BCFTopic* topic)
+{
+	int i = 0;
+	while (auto doc = topic->DocumentReferenceGetAt(i++)) {
+		CString text = FromUTF8(doc->GetDescription());
+		if (!text.IsEmpty()) {
+			text.Append(L": ");
+		}
+		fs::path path = doc->GetFilePath();
+		text += FromUTF8(path.filename().string().c_str());
+		auto item = m_wndMultiList.AddString(text);
+		m_wndMultiList.SetItemDataPtr(item, doc);
+	}
+}
+
+
+void CBCFView::OnClickedButtonAddMulti()
+{
+	auto item = m_wndTopics.GetCurSel();
+	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
+
+	if (topic) {
+		switch (m_wndTab.GetCurSel()) {
+		case TAB_Labels:
+			break;
+		case TAB_Related:
+			break;
+		case TAB_Links:
+			break;
+		case TAB_Documents:
+			break;
+		default:
+			ASSERT(FALSE);
+		}
+	}
+}
+
+
+void CBCFView::OnClickedButtonRemoveMulti()
+{
+	auto item = m_wndTopics.GetCurSel();
+	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
+
+	if (topic) {
+		switch (m_wndTab.GetCurSel()) {
+		case TAB_Labels:
+			break;
+		case TAB_Related:
+			break;
+		case TAB_Links:
+			break;
+		case TAB_Documents:
+			break;
+		default:
+			ASSERT(FALSE);
+		}
+	}
+}
+
+
+void CBCFView::OnSelchangeMultiList()
+{
+	m_wndRemoveMulti.EnableWindow(m_wndMultiList.GetCurSel() != LB_ERR);
 }
