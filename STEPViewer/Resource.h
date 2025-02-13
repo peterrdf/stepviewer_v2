@@ -207,8 +207,6 @@
 #define ID_3DVIEW_OVERRIDE_MATERIAL     32837
 #define ID_3DVIEW_RESET_MATERIALS       32838
 #define ID_VIEW_RESET                   32839
-#define ID_FILE_OPENBCF                 32841
-#define ID_FILE_NEWBCF                  32842
 
 // Next default values for new objects
 // 

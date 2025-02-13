@@ -20,7 +20,7 @@
 // ************************************************************************************************
 TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
 
-TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
+TCHAR SUPPORTED_FILES[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -104,27 +104,56 @@ TCHAR SUPPORTED_FILES[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip
 
 void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 {
-	setModel(nullptr);
+	m_wndBCFView.DeleteContent(); 
 
 	vector<_model*> vecModels;
 	for (auto strPath : vecPaths)
 	{
-		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
-		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
-		{
-			delete pModel;
-			continue;
+		if (m_wndBCFView.ReadBCFFile(strPath)) {
+			//do nothing
 		}
+		else {
+			auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+			if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
+			{
+				delete pModel;
+				continue;
+			}
 
-		if (pModel) {
-			vecModels.push_back(pModel);
+			if (pModel) {
+				vecModels.push_back(pModel);
+			}
 		}
 	}
 
 	if (!vecModels.empty())
 	{
-		setModels(vecModels);
+		if (!getModels().empty()) {
+			if (IDYES != AfxMessageBox(L"Do you want to append content?\n(Answer 'No' will close early opened models)", MB_ICONQUESTION | MB_YESNO)) {
+				deleteAllModels();
+			}
+		}
+		addModels(vecModels);
 	}
+
+	if (m_wndBCFView.HasContent()) {
+		m_wndBCFView.Show();
+	}
+
+	SetTitle(NULL);
+}
+
+void CMySTEPViewerDoc::SetTitle(LPCTSTR /*lpszTitle*/)
+{
+	CString strTitle;
+	for (auto m : getModels()) {
+		if (!strTitle.IsEmpty()) {
+			strTitle += L", ";
+		}
+		strTitle += fs::path(m->getPath()).filename().wstring().c_str();
+	}
+
+	__super::SetTitle(strTitle);
 }
 
 
@@ -144,6 +173,7 @@ END_MESSAGE_MAP()
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
+	: m_wndBCFView(*this)
 {
 }
 
@@ -249,6 +279,7 @@ void CMySTEPViewerDoc::Dump(CDumpContext& dc) const
 
 BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
+#if 0
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
@@ -262,6 +293,10 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// MRU
 	AfxGetApp()->AddToRecentFileList(lpszPathName);
+#endif
+	vector<CString> lst;
+	lst.push_back(lpszPathName);
+	OpenModels(lst);
 
 	return TRUE;
 }
@@ -287,19 +322,10 @@ void CMySTEPViewerDoc::OnFileOpen()
 	{
 		CString strFileName = dlgFile.GetNextPathName(pos);
 		vecModels.push_back(strFileName);
+		AfxGetApp()->AddToRecentFileList(strFileName);
 	}
 
 	OpenModels(vecModels);
-
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += vecModels[0];
-	strTitle += L", ...";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(vecModels[0]);
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
@@ -309,9 +335,11 @@ void CMySTEPViewerDoc::OnViewZoomOut()
 
 void CMySTEPViewerDoc::DeleteContents()
 {
+	m_wndBCFView.DeleteContent();
 	m_wndModelChecker.Hide(true);
 	__super::DeleteContents();
 }
+
 
 void CMySTEPViewerDoc::OnViewModelChecker()
 {

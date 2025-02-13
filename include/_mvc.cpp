@@ -466,18 +466,16 @@ _controller::_controller()
 
 void _controller::setModel(_model* pModel)
 {
-	vector<_model*> vecModels;
-	if (pModel != nullptr)
-	{
-		vecModels.push_back(pModel);
-	}
-
-	setModels(vecModels);
+	deleteAllModels();
+	addModel(pModel);
 }
 
-void _controller::setModels(const vector<_model*>& vecModels)
+void _controller::deleteAllModels()
 {
 	m_bUpdatingModel = true;
+
+	m_pTargetInstance = nullptr;
+	m_vecSelectedInstances.clear();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -487,7 +485,32 @@ void _controller::setModels(const vector<_model*>& vecModels)
 
 	clean();
 
-	m_vecModels = vecModels;
+	m_bUpdatingModel = false;
+}
+
+void _controller::addModels(const vector<_model*>& vecModels)
+{
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->preModelLoaded();
+	}
+
+	for (auto newModel : vecModels) {
+		
+		//replace early opened path
+		for (auto it = m_vecModels.begin(); it != m_vecModels.end(); it++) {
+			if (0 == wcscmp((*it)->getPath(), newModel->getPath())) {
+				delete* it;
+				m_vecModels.erase(it);
+				break;
+			}
+		}
+
+		m_vecModels.push_back(newModel);
+	}
 
 	m_pTargetInstance = nullptr;
 	m_vecSelectedInstances.clear();
@@ -503,19 +526,11 @@ void _controller::setModels(const vector<_model*>& vecModels)
 
 void _controller::addModel(_model* pModel)
 {
-	assert(pModel != nullptr);
-
-	m_bUpdatingModel = true;
-
-	m_vecModels.push_back(pModel);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onModelLoaded();
+	if (pModel) {
+		vector<_model*> vecModels;
+		vecModels.push_back(pModel);
+		addModels(vecModels);
 	}
-
-	m_bUpdatingModel = false;
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)

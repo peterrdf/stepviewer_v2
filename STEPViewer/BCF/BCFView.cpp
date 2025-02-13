@@ -33,9 +33,9 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 END_MESSAGE_MAP()
 
 
-CBCFView::CBCFView(CMySTEPViewerView& view)
+CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	: CDialogEx(IDD_BCF, AfxGetMainWnd())
-	, m_view (view)
+	, m_doc (doc)
 	, m_bcfProject(NULL)
 	, m_strTopicType(_T(""))
 	, m_strTopicStage(_T(""))
@@ -58,10 +58,10 @@ CBCFView::CBCFView(CMySTEPViewerView& view)
 CBCFView::~CBCFView()
 {
 	ASSERT(!m_bcfProject);
-	CloseBCFProject();
+	DeleteContent();
 }
 
-void CBCFView::CloseBCFProject()
+void CBCFView::DeleteContent()
 {
 	if (m_bcfProject) {
 		ShowLog(false);
@@ -79,61 +79,78 @@ void CBCFView::CloseBCFProject()
 			}
 		}
 		m_loadedModels.clear();
+
+		if (GetSafeHwnd()) {
+			ShowWindow(SW_HIDE);
+		}
 	}
 }
 
 void CBCFView::SetModelsExternallyManaged(std::vector <_model*>& models)
 {
-	auto doc = m_view.GetDocument();
-	if (doc) {
-		//do not delete models, just set new list
-		doc->editModelList().clear();
-		doc->setModels(models);
+	//do not delete models, just set new list
+	m_doc.editModelList().clear();
+	m_doc.addModels(models);
+}
+
+bool CBCFView::CreateNewProject()
+{
+	if (!m_bcfProject) {
+		m_bcfProject = BCFProject::Create();
+		if (!m_bcfProject) {
+			AfxMessageBox(L"Failed to initialize BCF Project");
+		}
+		return m_bcfProject != NULL;
+	}
+	else {
+		return false;
 	}
 }
 
-void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
+bool CBCFView::ReadBCFFile(LPCTSTR bcfFilePath)
 {
-	ASSERT(!m_bcfProject);
-	CloseBCFProject();
-
-	// create and read BCF project
-	//
-	m_bcfProject = BCFProject::Create();
-	if (!m_bcfProject) {
-		AfxMessageBox(L"Failed to initialize BCF.");
-		return;
+	fs::path path = bcfFilePath;
+	auto ext = path.extension();
+	if (ext != ".bcf" && ext != ".bcfzip") {
+		return false;
 	}
 
-	if (bcfFilePath) {
-		//open existing
-		if (!m_bcfProject->ReadFile(ToUTF8(bcfFilePath).c_str(), true))
-		{
-			ShowLog(true);
-			CloseBCFProject();
-			return;
+	bool isnew = CreateNewProject();
+
+	if (!m_bcfProject->ReadFile(ToUTF8(bcfFilePath).c_str(), true))
+	{
+		ShowLog(true);
+		if (isnew) {
+			DeleteContent();
 		}
-		ShowLog(false);
+		return false;
 	}
 
-	CBCFProjInfo projInfo (*m_bcfProject, &m_view);
+	ShowLog(false);
+	return true;
+}
+
+bool CBCFView::Show()
+{
+	if (!m_bcfProject) {
+		return false;
+	}
+
+	CBCFProjInfo projInfo(*m_bcfProject, GetView());
 	if (IDOK != projInfo.DoModal()) {
-		CloseBCFProject();
-		return;
+		DeleteContent();
+		return false;
 	}
 
-	if (!bcfFilePath) {
-		//create new, at least one topic is required
+	//create new, at least one topic is required
+	if (!m_bcfProject->TopicGetAt(0)) {
 		m_bcfProject->TopicAdd(NULL, NULL, NULL);
 	}
 
 	// prepare model views
 	//
-	auto doc = m_view.GetDocument();
-	if (doc) {
-		std::swap(m_preloadedModels, doc->editModelList());
-		doc->setModel(NULL);
-	}
+	std::swap(m_preloadedModels, m_doc.editModelList());
+	m_doc.setModel(NULL);
 
 	//show view
 	if (!IsWindow(GetSafeHwnd())) {
@@ -143,10 +160,12 @@ void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 
 	//
 	CString title;
-	title.Format(L"BCF-XML %s", bcfFilePath ? bcfFilePath : L"<New>");
+	title.Format(L"BCF-XML %s", m_bcfFilePath.IsEmpty() ? L"<New>" : m_bcfFilePath);
 	SetWindowText(title);
 
 	LoadProjectToView();
+
+	return true;
 }
 
 
@@ -195,14 +214,14 @@ void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialogEx::OnShowWindow(bShow, nStatus);
 	if (!bShow) {
-		CloseBCFProject();
+		DeleteContent();
 	}
 }
 
 void CBCFView::OnClose()
 {
 	CDialogEx::OnClose();
-	CloseBCFProject();
+	DeleteContent();
 }
 
 
@@ -443,19 +462,33 @@ void CBCFView::SetActiveModels(BCFTopic* topic)
 void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)
 {
 	if (vp) {
-		BCFCamera camera = vp->GetCameraType();
-		BCFPoint viewPoint;
-		BCFPoint direction;
-		BCFPoint upVector;
-		vp->GetCameraViewPoint(viewPoint);
-		vp->GetCameraDirection(direction);
-		vp->GetCameraUpVector(upVector);
-		double viewToWorldScale = vp->GetViewToWorldScale();
-		double fieldOfView = vp->GetFieldOfView();
-		double aspectRatio = vp->GetAspectRatio();
+		if (auto view = GetView()) {
+			BCFCamera camera = vp->GetCameraType();
+			BCFPoint viewPoint;
+			BCFPoint direction;
+			BCFPoint upVector;
+			vp->GetCameraViewPoint(viewPoint);
+			vp->GetCameraDirection(direction);
+			vp->GetCameraUpVector(upVector);
+			double viewToWorldScale = vp->GetViewToWorldScale();
+			double fieldOfView = vp->GetFieldOfView();
+			double aspectRatio = vp->GetAspectRatio();
 
-		m_view.SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+			view->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+		}
 	}
+}
+
+CMySTEPViewerView* CBCFView::GetView()
+{
+	auto pos = m_doc.GetFirstViewPosition();
+	while (auto view = m_doc.GetNextView(pos)) {
+		auto stview = dynamic_cast<CMySTEPViewerView*>(view);
+		if (stview) {
+			return stview;
+		}
+	}
+	return NULL;
 }
 
 void CBCFView::OnSelchangeTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)

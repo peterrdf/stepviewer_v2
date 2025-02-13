@@ -2,6 +2,7 @@
 
 #include "bcfAPI.h"
 
+class CMySTEPViewerDoc;
 class CMySTEPViewerView;
 
 // CBCFView dialog
@@ -11,10 +12,14 @@ class CBCFView : public CDialogEx
 	DECLARE_DYNAMIC(CBCFView)
 
 public:
-	CBCFView(CMySTEPViewerView& view);   // standard constructor
+	CBCFView(CMySTEPViewerDoc& doc);
 	virtual ~CBCFView();
 
-	void OpenBCFProject(LPCTSTR bcfFilePath);
+	void DeleteContent();
+	bool ReadBCFFile(LPCTSTR bcfFilePath);
+	bool CreateNewProject(); //
+	bool HasContent() { return m_bcfProject != NULL; }
+	bool Show();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -36,7 +41,7 @@ protected:
 	afx_msg void OnSelchangeMultiList();
 
 private:
-	void CloseBCFProject();
+	CMySTEPViewerView* GetView();
 	void LoadProjectToView();
 	void InsertTopicToList(int item, BCFTopic* topic);
 	void FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion);
@@ -52,8 +57,9 @@ private:
 	void FillDocuments(BCFTopic* topic);
 
 private:
-	CMySTEPViewerView&				m_view;
+	CMySTEPViewerDoc&				m_doc;
 	BCFProject*						m_bcfProject;
+	CString							m_bcfFilePath;
 	std::vector<_model*>			m_preloadedModels;
 	std::map<BCFFile*, _model*>		m_loadedModels;
 

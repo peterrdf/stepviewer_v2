@@ -8,7 +8,6 @@
 #include "_oglUtils.h"
 
 #include "Controller.h"
-#include "BCF\BCFView.h"
 
 // ************************************************************************************************
 class CMySTEPViewerView 
@@ -108,13 +107,6 @@ protected:
 	afx_msg void OnShowPoints();
 	afx_msg void OnUpdateShowPoints(CCmdUI* pCmdUI);
 	afx_msg void OnViewReset();
-	afx_msg void OnOpenBCF();
-	afx_msg void OnUpdateOpenBCF(CCmdUI* pCmdUI);
-	afx_msg void OnNewBCF();
-	afx_msg void OnUpdateNewBCF(CCmdUI* pCmdUI);
-
-private:
-	CBCFView            m_wndBCFView;
 };
 
 #ifndef _DEBUG  // debug version in STEPViewerView.cpp

@@ -7,6 +7,7 @@
 
 #include "Controller.h"
 #include "ModelCheckDlg.h"
+#include "BCF\BCFView.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
@@ -36,6 +37,8 @@ public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 	virtual void DeleteContents();
+	virtual void SetTitle(LPCTSTR lpszTitle);
+
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
@@ -53,6 +56,7 @@ public:
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
+	CBCFView            m_wndBCFView;
 
 // Generated message map functions
 protected:
