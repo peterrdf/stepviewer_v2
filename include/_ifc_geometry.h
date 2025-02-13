@@ -25,6 +25,7 @@ protected: // Methods
 	virtual void preCalculate() override;
 	virtual void postCalculate() override;
 	virtual bool hasGeometry() const override;
+	virtual bool isPlaceholder() const override;
 
 public: // Properties
 

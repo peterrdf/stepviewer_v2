@@ -486,7 +486,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 		for (auto pMappedInstance : vecMappedInstances)
 		{
-			pMappedInstance->m_pReferencedBy = pInstance;
+			pMappedInstance->m_pOwner = pInstance;
 			m_mapMapping[pMappedInstance] = pInstance;
 		}
 

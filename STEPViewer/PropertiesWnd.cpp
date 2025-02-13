@@ -893,15 +893,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			case enumAP::IFC:
 			{
-				_ptr<_ifc_instance> ifcInstance(pInstance);
-				if (ifcInstance->getReferencedBy() != nullptr)
-				{
-					LoadIFCInstanceProperties(pModel, ifcInstance->getReferencedBy());
-				}
-				else
-				{
-					LoadIFCInstanceProperties(pModel, apInstance);
-				}
+				LoadIFCInstanceProperties(pModel, apInstance);
 			}
 			break;
 

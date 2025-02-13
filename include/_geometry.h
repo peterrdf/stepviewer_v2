@@ -314,6 +314,7 @@ public: // Properties
 	OwlClass getClassInstance() { return ::GetInstanceClass(getOwlInstance()); }
 	virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
 	bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }
+	virtual bool isPlaceholder() const { return false; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 

@@ -12,14 +12,14 @@ class _ifc_instance : public _ap_instance
 
 private: // Members
 
-	_ifc_instance* m_pReferencedBy;
+	// not null when this instance is IfcMappedItem
+	_ifc_instance* m_pOwner;
 
 public:  // Methods
 
 	_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~_ifc_instance();
 
-public: // Properties
-
-	_ifc_instance* getReferencedBy() const { return m_pReferencedBy; }
+	// _instance
+	virtual _instance* getOwner() const override;
 };
