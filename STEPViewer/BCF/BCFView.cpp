@@ -3,14 +3,11 @@
 
 #include "stdafx.h"
 
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-
 #include "STEPViewer.h"
-#include "afxdialogex.h"
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
 #include "_ap_model_factory.h"
+#include "BCF\BCFProjInfo.h"
 #include "BCF\BCFView.h"
 
  
@@ -32,6 +29,7 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CBCFView::OnClickedButtonAddMulti)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CBCFView::OnClickedButtonRemoveMulti)
 	ON_LBN_SELCHANGE(IDC_MULTI_LIST, &CBCFView::OnSelchangeMultiList)
+	ON_BN_CLICKED(IDC_PROJECT_INFO, &CBCFView::OnClickedProjectInfo)
 END_MESSAGE_MAP()
 
 
@@ -99,24 +97,13 @@ void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 	ASSERT(!m_bcfProject);
 	CloseBCFProject();
 
+	// create and read BCF project
 	//
 	m_bcfProject = BCFProject::Create();
 	if (!m_bcfProject) {
 		AfxMessageBox(L"Failed to initialize BCF.");
 		return;
 	}
-
-	auto doc = m_view.GetDocument();
-	if (doc) {
-		std::swap(m_preloadedModels, doc->editModelList());
-		doc->setModel(NULL);
-	}
-
-	//auto user = AfxGetApp()->GetProfileString(L"BCF", L"User");
-	//if (user.IsEmpty()) {
-	//	AfxMessageBox(L"Enter your user name on Project Info dialog", MB_ICONEXCLAMATION | MB_OK);
-	//}
-	//m_bcfProject->SetOptions(user, )
 
 	if (bcfFilePath) {
 		//open existing
@@ -126,13 +113,29 @@ void CBCFView::OpenBCFProject(LPCTSTR bcfFilePath)
 			CloseBCFProject();
 			return;
 		}
+		ShowLog(false);
 	}
-	else {
+
+	CBCFProjInfo projInfo (*m_bcfProject, &m_view);
+	if (IDOK != projInfo.DoModal()) {
+		CloseBCFProject();
+		return;
+	}
+
+	if (!bcfFilePath) {
 		//create new, at least one topic is required
 		m_bcfProject->TopicAdd(NULL, NULL, NULL);
 	}
-	ShowLog(false);
 
+	// prepare model views
+	//
+	auto doc = m_view.GetDocument();
+	if (doc) {
+		std::swap(m_preloadedModels, doc->editModelList());
+		doc->setModel(NULL);
+	}
+
+	//show view
 	if (!IsWindow(GetSafeHwnd())) {
 		Create(IDD_BCF, AfxGetMainWnd());
 	}
@@ -581,4 +584,13 @@ void CBCFView::OnClickedButtonRemoveMulti()
 void CBCFView::OnSelchangeMultiList()
 {
 	m_wndRemoveMulti.EnableWindow(m_wndMultiList.GetCurSel() != LB_ERR);
+}
+
+
+void CBCFView::OnClickedProjectInfo()
+{
+	if (m_bcfProject) {
+		CBCFProjInfo projInfo(*m_bcfProject, this);
+		projInfo.DoModal();
+	}
 }

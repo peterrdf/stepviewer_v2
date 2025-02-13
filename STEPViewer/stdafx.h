@@ -21,10 +21,9 @@
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
-
+#include <afxdialogex.h>
 
 #include <afxdisp.h>        // MFC Automation classes
-
 
 
 #ifndef _AFX_NO_OLE_SUPPORT
@@ -41,6 +40,9 @@
 #include <map>
 #include <set>
 using namespace std;
+
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 
 #ifdef _UNICODE
 #if defined _M_IX86

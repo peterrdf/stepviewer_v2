@@ -626,6 +626,7 @@
     <ClInclude Include="..\include\_ifc_unit.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
+    <ClInclude Include="BCF\BCFProjInfo.h" />
     <ClInclude Include="BCF\BCFView.h" />
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Geometry.h" />
@@ -882,6 +883,7 @@
     </ClCompile>
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />
+    <ClCompile Include="BCF\BCFProjInfo.cpp" />
     <ClCompile Include="BCF\BCFView.cpp" />
     <ClCompile Include="CIS2\CIS2DesignPart.cpp" />
     <ClCompile Include="CIS2\CIS2Geometry.cpp" />

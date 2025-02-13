@@ -120,6 +120,7 @@
 #define IDR_TEXTFILE_VERTEX_SHADER3     349
 #define IDR_TEXTFILE_FRAGMENT_SHADER3   350
 #define IDD_BCF                         351
+#define IDD_BCF_PROJINFO                353
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -160,6 +161,10 @@
 #define IDC_AUTHOR                      1039
 #define IDC_LIST1                       1042
 #define IDC_COMMENTS_LIST               1042
+#define IDC_USERNAME                    1043
+#define IDC_PROJECTID                   1044
+#define IDC_EDIT3                       1045
+#define IDC_PROJECTNAME                 1045
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -209,9 +214,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        353
+#define _APS_NEXT_RESOURCE_VALUE        355
 #define _APS_NEXT_COMMAND_VALUE         32843
-#define _APS_NEXT_CONTROL_VALUE         1043
+#define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

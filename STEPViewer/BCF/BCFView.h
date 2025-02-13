@@ -1,6 +1,5 @@
 #pragma once
 
-#include "afxdialogex.h"
 #include "bcfAPI.h"
 
 class CMySTEPViewerView;
@@ -95,5 +94,7 @@ private:
 	CListBox m_wndMultiList;
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
+public:
+	afx_msg void OnClickedProjectInfo();
 };
 

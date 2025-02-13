@@ -216,6 +216,9 @@
     <ClInclude Include="BCF\BCFView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFProjInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -342,6 +345,9 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="BCF\BCFView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFProjInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
