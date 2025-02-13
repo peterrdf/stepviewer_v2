@@ -9,12 +9,8 @@
 #include <set>
 using namespace std;
 
-///////////////////////////////////////////////////
-//#todo#mappeditems
-static bool	Equals(
-	const char* txtI,
-	const char* txtII
-)
+// ************************************************************************************************
+static bool	Equals(const char* txtI, const char* txtII)
 {
 	if (txtI && txtII) {
 		size_t	i = 0;
@@ -29,43 +25,29 @@ static bool	Equals(
 	return  false;
 }
 
-struct	STRUCT_MATERIAL {
-	uint32_t							ambient;
-	uint32_t							diffuse;
-	uint32_t							emissive;
-	uint32_t							specular;
+struct STRUCT_MATERIAL {
+	uint32_t ambient;
+	uint32_t diffuse;
+	uint32_t emissive;
+	uint32_t specular;
 };
 
-struct	STRUCT_INTERNAL {
-	SdaiInstance		ifcRepresentationInstance;
-#ifdef _DEBUG
-	SdaiInstance		ifcMappedItemInstance;
-#endif // _DEBUG
-	OwlInstance			owlInstanceMatrix;
-
-	STRUCT_MATERIAL* material;
+struct STRUCT_INTERNAL {
+	SdaiInstance ifcRepresentationInstance;
+	OwlInstance owlInstanceMatrix;
+	//STRUCT_MATERIAL* material;
 };
 
-struct	STRUCT_MAPPED_ITEM {
-	SdaiInstance						ifcRepresentationInstance;
-#ifdef _DEBUG
-		int_t								ifcRepresentationInstance__expressID;
-		int_t								ifcMappedItemInstance__expressID;
-#endif // _DEBUG
-	double								matrixCoordinates[12];
-	//	double								matrixCoordinatesOpenGL_16[16];
-
-	STRUCT_MATERIAL* material;
+struct STRUCT_MAPPED_ITEM {
+	SdaiInstance ifcRepresentationInstance;
+	double matrixCoordinates[12];
+	//STRUCT_MATERIAL* material;
 };
 
-struct	STRUCT_IFC_PRODUCT {
-	SdaiInstance						ifcProductInstance;
-#ifdef _DEBUG
-	int_t								ifcProductInstance__expressID;
-#endif // _DEBUG
-	std::vector<STRUCT_MAPPED_ITEM*>	mappedItems;
+struct STRUCT_IFC_PRODUCT {
+	SdaiInstance ifcProductInstance;
+	std::vector<STRUCT_MAPPED_ITEM*> mappedItems;
 };
-
 
 // ************************************************************************************************
 class _ifc_geometry;
@@ -133,17 +115,8 @@ private: // Methods
 	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
 	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
 
-	////////////////////
-	//#todo#mappeditems
-	STRUCT_IFC_PRODUCT* RecognizeMappedItems(
-		SdaiInstance	ifcProductInstance
-	);
-
-	void	ParseMappedItem(
-		SdaiModel						ifcModel,
-		SdaiInstance					ifcMappedItemInstance,
-		std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData
-	);
+	STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
+	void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);
 
 public: // Properties
 

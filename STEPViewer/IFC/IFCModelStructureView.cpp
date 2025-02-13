@@ -1124,9 +1124,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				for (auto pGeometry : pModelData->GetModel()->getGeometries())
 				{
 					_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+					ASSERT(!ifcGeometry->getIsMappedItem());
+					ASSERT(pGeometry->getInstances().size() == 1);
+
 					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
-					ASSERT(pGeometry->getInstances().size() == 1); // Error: IFCMAPPEDITEM
 					for (auto pInstance : pGeometry->getInstances())
 					{
 						_ptr<_ifc_instance> ifcInstance(pInstance);
@@ -1216,12 +1218,10 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 	{
 		wstring strItem = _ap_instance::getName(sdaiProjectInstance);
 
-		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		ASSERT(!ifcGeometry->getIsMappedItem());
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-		_ptr<_ap_geometry> apGeometry(pGeometry);
-		ASSERT(apGeometry);
 
 		// Project
 		TV_INSERTSTRUCT tvInsertStruct;
@@ -1465,8 +1465,10 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		return NULL;
 	}
 
-	//#todo#mappeditems
+	_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+	ASSERT(!ifcGeometry->getIsMappedItem());
 	ASSERT(pGeometry->getInstances().size() == 1);
+
 	_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 	if (!ifcInstance)
 	{
@@ -1553,12 +1555,10 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 
 	for (auto pGeometry : vecGeometries)
 	{		
-		_ptr<_ifc_geometry> ifcGeometry(pGeometry);	
-
-		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		ASSERT(!ifcGeometry->getIsMappedItem());
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-		ASSERT(ifcInstance);
 
 		wstring strItem = _ap_instance::getName(ifcInstance->getSdaiInstance());
 
