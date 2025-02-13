@@ -692,29 +692,7 @@ void _controller::zoomToInstance(_instance* pInstance)
 {
 	assert(pInstance != nullptr);
 
-	auto pModel = getModelByInstance(pInstance->getOwlModel());
-	if (pModel == nullptr)
-	{
-		assert(FALSE);
-
-		return;
-	}
-
-	pModel->zoomTo(pInstance);
-
-	for (auto pM : m_vecModels)
-	{
-		if (pM != pModel)
-		{
-			pM->setDimensions(pModel);
-		}
-	}
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onWorldDimensionsChanged();
-	}
+	zoomToInstances(set<_instance*>{ pInstance });
 }
 
 void _controller::zoomToInstances(const set<_instance*>& setInstances)
