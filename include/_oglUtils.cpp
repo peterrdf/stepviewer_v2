@@ -2809,6 +2809,11 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			ASSERT(pPointedInstance != nullptr);
 		}
 
+		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr))
+		{
+			pPointedInstance = pPointedInstance->getOwner();
+		}
+
 		if (m_pPointedInstance != pPointedInstance)
 		{
 			m_pPointedInstance = pPointedInstance;
