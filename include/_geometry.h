@@ -212,11 +212,6 @@ public: // Methods
 		double& dYmin, double& dYmax,
 		double& dZmin, double& dZmax);
 
-	void calculateMinMax(
-		float& fXmin, float& fXmax,
-		float& fYmin, float& fYmax,
-		float& fZmin, float& fZmax);
-
 	void calculateMinMaxTransform(
 		const _matrix4x4* pTransformationMatrix,
 		float& fXmin, float& fXmax,
