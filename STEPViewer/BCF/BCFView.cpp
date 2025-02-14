@@ -30,6 +30,17 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CBCFView::OnClickedButtonRemoveMulti)
 	ON_LBN_SELCHANGE(IDC_MULTI_LIST, &CBCFView::OnSelchangeMultiList)
 	ON_BN_CLICKED(IDC_PROJECT_INFO, &CBCFView::OnClickedProjectInfo)
+	ON_EN_KILLFOCUS(IDC_TOPIC_TITLE, &CBCFView::OnKillfocusEdit)
+	ON_EN_KILLFOCUS(IDC_TOPIC_DESCRIPTION, &CBCFView::OnKillfocusEdit)
+	ON_CBN_KILLFOCUS(IDC_TOPIC_TYPE, &CBCFView::OnKillfocusEdit)
+	ON_CBN_KILLFOCUS(IDC_TOPIC_STAGE, &CBCFView::OnKillfocusEdit)
+	ON_CBN_KILLFOCUS(IDC_TOPIC_STATUS, &CBCFView::OnKillfocusEdit)
+	ON_CBN_KILLFOCUS(IDC_TOPIC_ASSIGNED, &CBCFView::OnKillfocusEdit)
+	ON_CBN_KILLFOCUS(IDC_TOPIC_PRIORITY, &CBCFView::OnKillfocusEdit)
+	ON_EN_KILLFOCUS(IDC_TOPIC_DUE, &CBCFView::OnKillfocusEdit)
+	ON_EN_KILLFOCUS(IDC_TOPIC_INDEX, &CBCFView::OnKillfocusEdit)
+	ON_EN_KILLFOCUS(IDC_TOPIC_SERVER_ID, &CBCFView::OnKillfocusEdit)
+	ON_EN_KILLFOCUS(IDC_TOPIC_COMMENT_TEXT, &CBCFView::OnKillfocusTopicCommentText)
 END_MESSAGE_MAP()
 
 
@@ -37,21 +48,6 @@ CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	: CDialogEx(IDD_BCF, AfxGetMainWnd())
 	, m_doc (doc)
 	, m_bcfProject(NULL)
-	, m_strTopicType(_T(""))
-	, m_strTopicStage(_T(""))
-	, m_strTopicStatus(_T(""))
-	, m_strAssigned(_T(""))
-	, m_strPriority(_T(""))
-	, m_strSnippetType(_T(""))
-	, m_strAuthor(_T(""))
-	, m_strDue(_T(""))
-	, m_strDescription(_T(""))
-	, m_strTitle(_T(""))
-	, m_strSnippetReference(_T(""))
-	, m_strSnippetSchema(_T(""))
-	, m_strIndex(_T(""))
-	, m_strServerId(_T(""))
-	, m_strCommentText(_T(""))
 {
 }
 
@@ -127,6 +123,7 @@ bool CBCFView::ReadBCFFile(LPCTSTR bcfFilePath)
 	}
 
 	ShowLog(false);
+	m_bcfFilePath = bcfFilePath;
 	return true;
 }
 
@@ -144,7 +141,7 @@ bool CBCFView::Show()
 
 	//create new, at least one topic is required
 	if (!m_bcfProject->TopicGetAt(0)) {
-		m_bcfProject->TopicAdd(NULL, NULL, NULL);
+		CreateNewTopic();
 	}
 
 	// prepare model views
@@ -187,7 +184,6 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_CBString(pDX, IDC_SNIPPET_TYPE, m_strSnippetType);
 	DDX_Control(pDX, IDC_TAB, m_wndTab);
 	DDX_Control(pDX, IDC_AUTHOR, m_wndAuthor);
-	DDX_Text(pDX, IDC_AUTHOR, m_strAuthor);
 	DDX_Control(pDX, IDC_TOPIC_DUE, m_wndDue);
 	DDX_Text(pDX, IDC_TOPIC_DUE, m_strDue);
 	DDX_Control(pDX, IDC_TOPIC_DESCRIPTION, m_wndDescription);
@@ -203,7 +199,6 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TOPIC_SERVER_ID, m_wndServerIndex);
 	DDX_Text(pDX, IDC_TOPIC_SERVER_ID, m_strServerId);
 	DDX_Control(pDX, IDC_TOPIC_COMMENT_TEXT, m_wndCommentText);
-	DDX_Text(pDX, IDC_TOPIC_COMMENT_TEXT, m_strCommentText);
 	DDX_Control(pDX, IDC_COMMENTS_LIST, m_wndCommentsList);
 	DDX_Control(pDX, IDC_MULTI_LIST, m_wndMultiList);
 	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAddMulti);
@@ -224,6 +219,17 @@ void CBCFView::OnClose()
 	DeleteContent();
 }
 
+
+void CBCFView::OnCancel()
+{
+	//CDialogEx::OnCancel();
+}
+
+
+void CBCFView::OnOK()
+{
+	//CDialogEx::OnOK();
+}
 
 BOOL CBCFView::OnInitDialog()
 {
@@ -246,12 +252,7 @@ void CBCFView::LoadProjectToView()
 
 	//load extensions
 	//
-	FillFromExtension(m_wndTopicType, BCFTopicTypes);
-	FillFromExtension(m_wndTopicStatus, BCFTopicStatuses);
-	FillFromExtension(m_wndPriority, BCFPriorities);
-	FillFromExtension(m_wndAssigned, BCFUsers);
-	FillFromExtension(m_wndSnippetType, BCFSnippetTypes);
-	FillFromExtension(m_wndTopicStage, BCFStages);
+	LoadExtensions();
 
 	// load topics
 	//
@@ -263,6 +264,7 @@ void CBCFView::LoadProjectToView()
 	}
 	m_wndTopics.AddString(L"<New>");
 	m_wndTopics.SetCurSel(0);
+
 	OnSelchangeTopic();
 }
 
@@ -275,8 +277,21 @@ void CBCFView::InsertTopicToList(int item, BCFTopic* topic)
 	m_wndTopics.SetItemData(item, (DWORD_PTR)topic);
 }
 
-void CBCFView::FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion)
+void CBCFView::LoadExtensions()
 {
+	LoadExtension(m_wndTopicType, BCFTopicTypes);
+	LoadExtension(m_wndTopicStatus, BCFTopicStatuses);
+	LoadExtension(m_wndPriority, BCFPriorities);
+	LoadExtension(m_wndAssigned, BCFUsers);
+	LoadExtension(m_wndSnippetType, BCFSnippetTypes);
+	LoadExtension(m_wndTopicStage, BCFStages);
+}
+
+void CBCFView::LoadExtension(CComboBox& wnd, BCFEnumeration enumeraion)
+{
+	CString txt;
+	wnd.GetWindowText(txt);
+
 	wnd.ResetContent();
 
 	if (m_bcfProject) {
@@ -287,6 +302,8 @@ void CBCFView::FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion)
 			wnd.AddString(FromUTF8(elem));
 		}
 	}
+
+	wnd.SetWindowText(txt);
 }
 
 void CBCFView::ShowLog(bool knownError)
@@ -310,43 +327,80 @@ void CBCFView::ShowLog(bool knownError)
 
 void CBCFView::OnSelchangeTopic()
 {
-	auto item = m_wndTopics.GetCurSel();
-	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
+	auto index = m_wndTopics.GetCurSel();
+	auto topic = (BCFTopic*)m_wndTopics.GetItemData(index);
 
 	if (!topic) {
-		auto sel = m_wndTopics.GetCurSel();
 		if (IDYES == AfxMessageBox(L"Do you want to create new topic?", MB_ICONQUESTION | MB_YESNO)) {
-			topic = m_bcfProject->TopicAdd(NULL, NULL, NULL);
-			InsertTopicToList(sel, topic);
+			topic = CreateNewTopic();
+			if (topic) {
+				InsertTopicToList(index, topic);
+			}
 		}
 		else {
-			sel = 0;
+			index = 0;
 		}
-		m_wndTopics.SetCurSel(sel);
-		topic = (BCFTopic*)m_wndTopics.GetItemData(sel);
+		m_wndTopics.SetCurSel(index);
+		topic = (BCFTopic*)m_wndTopics.GetItemData(index);
 	}
 
-	if (topic) { 
-		SetActiveTopic(topic);
-	}
+	LoadActiveTopic();
+
+	m_wndTitle.SetFocus();
 }
 
-void CBCFView::SetActiveTopic(BCFTopic* topic)
+BCFTopic* CBCFView::GetActiveTopic()
 {
-	ASSERT(topic);
+	if (m_bcfProject) {
+		auto index = m_wndTopics.GetCurSel();
+		auto topic = (BCFTopic*)m_wndTopics.GetItemData(index);
+		return topic;
+	}
+	return NULL;
+}
+
+void CBCFView::FillTopicAuthor(BCFTopic* topic)
+{
+	CString strAuthor;
+
+	strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
+	if (*topic->GetModifiedAuthor()) {
+		CString modifier;
+		modifier.Format(L", modified by % s at % s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
+		strAuthor.Append(modifier);
+	}
+
+	m_wndAuthor.SetWindowText(strAuthor);
+}
+
+BCFTopic* CBCFView::CreateNewTopic()
+{
+	if (!m_bcfProject) {
+		return NULL;
+	}
+
+	auto topic = m_bcfProject->TopicAdd(NULL, NULL, NULL);
+
+	for (auto model : m_doc.getModels()) {
+		auto path = model->getPath();
+		topic->FileAdd(ToUTF8(path).c_str(), false);
+	}
+
+	ShowLog(false);
+
+	return topic;
+}
+
+void CBCFView::LoadActiveTopic()
+{
+	auto topic = GetActiveTopic();
 	if (!topic) {
 		return;
 	}
 
 	SetActiveModels(topic);
 
-	//
-	m_strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
-	if (*topic->GetModifiedAuthor()) {
-		CString modifier;
-		modifier.Format(L", modified by % s at % s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
-		m_strAuthor.Append(modifier);
-	}
+	FillTopicAuthor(topic);
 
 	m_strTitle = FromUTF8(topic->GetTitle());
 	m_strDescription = FromUTF8(topic->GetDescription());
@@ -360,30 +414,6 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 
 	m_strIndex.Format(L"%d", topic->GetIndex());
 	m_strServerId = FromUTF8(topic->GetServerAssignedId());
-
-	m_wndCommentsList.ResetContent();
-	m_strCommentText.Empty();
-	uint16_t i = 0;
-	while (auto comment = topic->CommentGetAt(i++)) {
-		CString text;
-		text.Format(L"#%d created by %s at %s",
-			(int)i,
-			FromUTF8(comment->GetAuthor()).GetString(),
-			FromUTF8(comment->GetDate())
-		);
-		if (*comment->GetModifiedAuthor()) {
-			CString modifier;
-			modifier.Format(L", modified by %s at %s",
-				FromUTF8(comment->GetModifiedAuthor()).GetString(),
-				FromUTF8(comment->GetModifiedDate()).GetString()
-			);
-			text.Append(modifier);
-		}
-		auto item = m_wndCommentsList.AddString(text);
-		m_wndCommentsList.SetItemDataPtr(item, comment);
-	}
-	m_wndCommentsList.AddString(L"<My new comment>");
-	m_wndCommentsList.SetCurSel(0);
 
 	auto snippet = topic->GetBimSnippet(false);
 	m_wndSnippetType.EnableWindow(snippet != NULL);
@@ -404,28 +434,130 @@ void CBCFView::SetActiveTopic(BCFTopic* topic)
 
 	UpdateData(FALSE);
 
-	OnSelchangeCommentsList();
+	LoadComments(topic);
 	FillMultiList();
 }
 
 
+void CBCFView::UpdateActiveTopic()
+{
+	auto topic = GetActiveTopic();
+	if (!topic) {
+		return;
+	}
+
+	UpdateData();
+
+	bool ok = topic->SetTitle(ToUTF8(m_strTitle).c_str());
+	ok = topic->SetDescription(ToUTF8(m_strDescription).c_str());
+	ok = topic->SetTopicType(ToUTF8(m_strTopicType).c_str()) && ok;
+	ok = topic->SetStage(ToUTF8(m_strTopicStage).c_str()) && ok;
+	ok = topic->SetTopicStatus(ToUTF8(m_strTopicStatus).c_str()) && ok;
+	ok = topic->SetAssignedTo(ToUTF8(m_strAssigned).c_str()) && ok;
+	ok = topic->SetPriority(ToUTF8(m_strPriority).c_str()) && ok;
+	ok = topic->SetDueDate(ToUTF8(m_strDue).c_str()) && ok;
+	ok = topic->SetIndex(_wtoi(m_strIndex)) && ok;
+	ok = topic->SetServerAssignedId(ToUTF8(m_strServerId).c_str()) && ok;
+
+	ShowLog(!ok);
+	if (!ok) {
+		LoadActiveTopic(); //restore data was not set
+	}
+
+	FillTopicAuthor(topic);
+	LoadExtensions();
+}
+
+
+void CBCFView::LoadComments(BCFTopic* topic, int select)
+{
+	m_wndCommentsList.ResetContent();
+
+	uint16_t i = 0;
+	while (auto comment = topic->CommentGetAt(i++)) {
+		CString text;
+		text.Format(L"#%d created by %s at %s",
+			(int)i,
+			FromUTF8(comment->GetAuthor()).GetString(),
+			FromUTF8(comment->GetDate())
+		);
+		if (*comment->GetModifiedAuthor()) {
+			CString modifier;
+			modifier.Format(L", modified by %s at %s",
+				FromUTF8(comment->GetModifiedAuthor()).GetString(),
+				FromUTF8(comment->GetModifiedDate()).GetString()
+			);
+			text.Append(modifier);
+		}
+		auto item = m_wndCommentsList.AddString(text);
+		m_wndCommentsList.SetItemDataPtr(item, comment);
+	}
+	m_wndCommentsList.AddString(L"<My new comment>");
+
+	m_wndCommentsList.SetCurSel(select);
+	OnSelchangeCommentsList();
+}
+
+void CBCFView::UpateActiveComment()
+{
+	auto topic = GetActiveTopic();
+	if (!topic) {
+		return;
+	}
+
+	auto indComment = m_wndCommentsList.GetCurSel();
+	auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment);
+
+	CString newText;
+	m_wndCommentText.GetWindowText(newText);
+	newText.Trim();
+
+	bool ok = true;
+	if (!comment && !newText.IsEmpty()) {
+		ok = CreateNewComment(topic, newText);
+	}
+	else if (comment) {
+		ok = comment->SetText(ToUTF8(newText).c_str());
+	}
+
+	ShowLog(!ok);
+
+	LoadComments(topic, indComment);
+}
+
+bool CBCFView::CreateNewComment(BCFTopic* topic, CString& text)
+{
+	auto comment = topic->CommentAdd();
+
+	if (comment) {
+		
+		//TODO - save viewpoint
+
+		return comment->SetText(ToUTF8(text).c_str());
+	}
+
+	return false;
+}
+
 void CBCFView::OnSelchangeCommentsList()
 {
+	if (!m_bcfProject) {
+		return;
+	}
 	auto item = m_wndCommentsList.GetCurSel();
 	auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(item);
 
-	if (!comment) {
-		m_strCommentText.Empty();
-		//TODO
-	}
-	else {
-		m_strCommentText = FromUTF8(comment->GetText());
+	if (comment) {
+		CString strCommentText = FromUTF8(comment->GetText());
+		m_wndCommentText.SetWindowText(strCommentText);
+
 		if (auto vp = comment->GetViewPoint()) {
 			SetActiveViewPoint(vp);
 		}
 	}
-
-	UpdateData(FALSE);
+	else {
+		m_wndCommentText.SetWindowText(L""); //new comment
+	}
 }
 
 void CBCFView::SetActiveModels(BCFTopic* topic)
@@ -501,8 +633,7 @@ void CBCFView::FillMultiList()
 {
 	m_wndMultiList.ResetContent();
 
-	auto item = m_wndTopics.GetCurSel();
-	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
+	auto topic = GetActiveTopic();
 
 	if (topic) {
 		switch (m_wndTab.GetCurSel()) {
@@ -626,4 +757,14 @@ void CBCFView::OnClickedProjectInfo()
 		CBCFProjInfo projInfo(*m_bcfProject, this);
 		projInfo.DoModal();
 	}
+}
+
+void CBCFView::OnKillfocusEdit()
+{
+	UpdateActiveTopic();
+}
+
+void CBCFView::OnKillfocusTopicCommentText()
+{
+	UpateActiveComment();
 }

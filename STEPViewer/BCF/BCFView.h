@@ -29,6 +29,8 @@ public:
 protected:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void OnCancel();
+	virtual void OnOK();
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
@@ -39,14 +41,23 @@ protected:
 	afx_msg void OnClickedButtonAddMulti();
 	afx_msg void OnClickedButtonRemoveMulti();
 	afx_msg void OnSelchangeMultiList();
+	afx_msg void OnClickedProjectInfo();
+	afx_msg void OnKillfocusEdit();
 
 private:
 	CMySTEPViewerView* GetView();
 	void LoadProjectToView();
 	void InsertTopicToList(int item, BCFTopic* topic);
-	void FillFromExtension(CComboBox& wnd, BCFEnumeration enumeraion);
+	void LoadExtensions();
+	void LoadExtension(CComboBox& wnd, BCFEnumeration enumeraion);
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
-	void SetActiveTopic(BCFTopic* topic);
+	BCFTopic* GetActiveTopic();
+	void LoadActiveTopic();
+	BCFTopic* CreateNewTopic();
+	void UpdateActiveTopic();
+	void LoadComments(BCFTopic* topic, int select = 0);
+	void UpateActiveComment();
+	bool CreateNewComment(BCFTopic* topic, CString& text);
 	void SetActiveModels(BCFTopic* topic);
 	void SetModelsExternallyManaged(std::vector<_model*>& models);
 	void SetActiveViewPoint(BCFViewPoint* vp);
@@ -55,6 +66,7 @@ private:
 	void FillRelated(BCFTopic* topic);
 	void FillLinks(BCFTopic* topic);
 	void FillDocuments(BCFTopic* topic);
+	void FillTopicAuthor(BCFTopic* topic);
 
 private:
 	CMySTEPViewerDoc&				m_doc;
@@ -79,7 +91,6 @@ private:
 	CString m_strSnippetType;
 	CTabCtrl m_wndTab;
 	CStatic m_wndAuthor;
-	CString m_strAuthor;
 	CEdit m_wndDue;
 	CString m_strDue;
 	CEdit m_wndDescription;
@@ -96,11 +107,10 @@ private:
 	CString m_strServerId;
 	CListBox m_wndCommentsList;
 	CEdit m_wndCommentText;
-	CString m_strCommentText;
 	CListBox m_wndMultiList;
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
 public:
-	afx_msg void OnClickedProjectInfo();
+	afx_msg void OnKillfocusTopicCommentText();
 };
 

@@ -503,7 +503,7 @@ void _controller::addModels(const vector<_model*>& vecModels)
 		//replace early opened path
 		for (auto it = m_vecModels.begin(); it != m_vecModels.end(); it++) {
 			if (0 == wcscmp((*it)->getPath(), newModel->getPath())) {
-				delete* it;
+				//need to keep? delete* it;
 				m_vecModels.erase(it);
 				break;
 			}
