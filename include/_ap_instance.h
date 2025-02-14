@@ -18,6 +18,56 @@ public:  // Methods
 	{
 	}
 
+	virtual void saveInstance(const wchar_t* szPath)
+	{
+		OwlInstance owlInstance = getOwlInstance();
+		if (owlInstance == 0)
+		{
+			owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
+			ASSERT(owlInstance != 0);
+		}
+
+		OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+		ASSERT(owlMatrixInstance != 0);
+
+		vector<double> vecMatrix
+		{
+			getTransformationMatrix()->_11,
+			getTransformationMatrix()->_12,
+			getTransformationMatrix()->_13,
+			getTransformationMatrix()->_21,
+			getTransformationMatrix()->_22,
+			getTransformationMatrix()->_23,
+			getTransformationMatrix()->_31,
+			getTransformationMatrix()->_32,
+			getTransformationMatrix()->_33,
+			getTransformationMatrix()->_41,
+			getTransformationMatrix()->_42,
+			getTransformationMatrix()->_43,
+		};
+
+		SetDatatypeProperty(
+			owlMatrixInstance,
+			GetPropertyByName(getOwlModel(), "coordinates"),
+			vecMatrix.data(),
+			vecMatrix.size());
+
+		OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+		ASSERT(owlTransformationInstance != 0);
+
+		SetObjectProperty(
+			owlTransformationInstance,
+			GetPropertyByName(getOwlModel(), "object"),
+			owlInstance);
+
+		SetObjectProperty(
+			owlTransformationInstance,
+			GetPropertyByName(getOwlModel(), "matrix"),
+			owlMatrixInstance);
+
+		SaveInstanceTreeW(owlTransformationInstance, szPath);
+	}
+
 public: // Properties
 
 	// _instance

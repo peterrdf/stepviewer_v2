@@ -52,55 +52,7 @@ TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifcz
 		return;
 	}
 
-	OwlModel owlModel = getModel()->getOwlModel();
-	ASSERT(owlModel != 0);
-
-	OwlInstance owlInstance = pInstance->getOwlInstance();
-	if (owlInstance == 0)
-	{
-		owlInstance = _ap_geometry::buildOwlInstance(pAPInstance->getSdaiInstance());
-		ASSERT(owlInstance != 0);
-	}
-
-	OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
-	ASSERT(owlMatrixInstance != 0);
-
-	vector<double> vecMatrix
-	{
-		pAPInstance->getTransformationMatrix()->_11,
-		pAPInstance->getTransformationMatrix()->_12,
-		pAPInstance->getTransformationMatrix()->_13,
-		pAPInstance->getTransformationMatrix()->_21,
-		pAPInstance->getTransformationMatrix()->_22,
-		pAPInstance->getTransformationMatrix()->_23,
-		pAPInstance->getTransformationMatrix()->_31,
-		pAPInstance->getTransformationMatrix()->_32,
-		pAPInstance->getTransformationMatrix()->_33,
-		pAPInstance->getTransformationMatrix()->_41,
-		pAPInstance->getTransformationMatrix()->_42,
-		pAPInstance->getTransformationMatrix()->_43,
-	};
-
-	SetDatatypeProperty(
-		owlMatrixInstance,
-		GetPropertyByName(owlModel, "coordinates"),
-		vecMatrix.data(),
-		vecMatrix.size());
-
-	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
-	ASSERT(owlTransformationInstance != 0);
-
-	SetObjectProperty(
-		owlTransformationInstance,
-		GetPropertyByName(owlModel, "object"),
-		owlInstance);
-
-	SetObjectProperty(
-		owlTransformationInstance,
-		GetPropertyByName(owlModel, "matrix"),
-		owlMatrixInstance);
-
-	SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
+	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 }
 
 void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)

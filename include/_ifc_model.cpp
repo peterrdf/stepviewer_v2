@@ -202,9 +202,9 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			}	
 		}
 
-		TRACE(L"\n*** _ifc_model *** Geometries : %lld", iGeometriesCount);
-		TRACE(L"\n*** _ifc_model *** Mapped Items : %lld", iMappedItemsCount);
-		TRACE(L"\n*** _ifc_model *** Mapped Instances : %lld", iMappedInstancesCount);
+		TRACE(L"\n*** _ifc_model *** Geometries: %lld", iGeometriesCount);
+		TRACE(L"\n*** _ifc_model *** Mapped Items: %lld", iMappedItemsCount);
+		TRACE(L"\n*** _ifc_model *** Mapped Instances: %lld", iMappedInstancesCount);
 #endif // _DEBUG		 
 	}
 
