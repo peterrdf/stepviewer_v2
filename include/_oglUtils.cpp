@@ -587,14 +587,9 @@ void _oglRendererSettings::setShowFaces(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowFaces(_model* pModel)
+BOOL _oglRendererSettings::getShowFaces()
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowFaces;
-	}
-
-	return TRUE;
+	return m_bShowFaces;
 }
 
 void _oglRendererSettings::setGhostView(BOOL bValue)
@@ -637,14 +632,9 @@ void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
 	saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
 }
 
-LPCTSTR _oglRendererSettings::getCullFacesMode(_model* pModel) const
+LPCTSTR _oglRendererSettings::getCullFacesMode() const
 {
-	if (pModel != nullptr)
-	{
-		return m_strCullFaces;
-	}
-
-	return CULL_FACES_NONE;
+	return m_strCullFaces;
 }
 
 void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
@@ -657,14 +647,9 @@ void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowFacesPolygons(_model* pModel) const
+BOOL _oglRendererSettings::getShowFacesPolygons() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowFacesPolygons;
-	}
-
-	return FALSE;
+	return m_bShowFacesPolygons;
 }
 
 void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
@@ -677,14 +662,9 @@ void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowConceptualFacesPolygons(_model* pModel) const
+BOOL _oglRendererSettings::getShowConceptualFacesPolygons() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowConceptualFacesPolygons;
-	}
-
-	return TRUE;
+	return m_bShowConceptualFacesPolygons;
 }
 
 void _oglRendererSettings::setShowLines(BOOL bValue)
@@ -697,14 +677,9 @@ void _oglRendererSettings::setShowLines(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowLines(_model* pModel) const
+BOOL _oglRendererSettings::getShowLines() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowLines;
-	}
-
-	return TRUE;
+	return m_bShowLines;
 }
 
 void _oglRendererSettings::setLineWidth(GLfloat fWidth)
@@ -727,14 +702,9 @@ void _oglRendererSettings::setShowPoints(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowPoints(_model* pModel) const
+BOOL _oglRendererSettings::getShowPoints() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowPoints;
-	}
-
-	return TRUE;
+	return m_bShowPoints;
 }
 
 void _oglRendererSettings::setPointSize(GLfloat fSize)
@@ -757,14 +727,9 @@ void _oglRendererSettings::setShowBoundingBoxes(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowBoundingBoxes(_model* pModel) const
+BOOL _oglRendererSettings::getShowBoundingBoxes() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowBoundingBoxes;
-	}
-
-	return FALSE;
+	return m_bShowBoundingBoxes;
 }
 
 void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
@@ -777,14 +742,9 @@ void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowNormalVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowNormalVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowNormalVectors;
-	}
-
-	return FALSE;
+	return m_bShowNormalVectors;
 }
 
 void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
@@ -797,14 +757,9 @@ void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowTangentVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowTangentVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowTangenVectors;
-	}
-
-	return FALSE;
+	return m_bShowTangenVectors;
 }
 
 void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
@@ -817,14 +772,9 @@ void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowBiNormalVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowBiNormalVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowBiNormalVectors;
-	}
-
-	return FALSE;
+	return m_bShowBiNormalVectors;
 }
 
 void _oglRendererSettings::setScaleVectors(BOOL bValue)
@@ -837,14 +787,9 @@ void _oglRendererSettings::setScaleVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getScaleVectors(_model* pModel) const
+BOOL _oglRendererSettings::getScaleVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bScaleVectors;
-	}
-
-	return FALSE;
+	return m_bScaleVectors;
 }
 
 void _oglRendererSettings::setShowCoordinateSystem(BOOL bValue)
@@ -2053,7 +1998,7 @@ void _oglView::_drawInstancesFrameBuffer()
 		return;
 	}
 
-	if (!getShowFaces(pModel))
+	if (!getShowFaces())
 	{
 		return;
 	}
@@ -2065,7 +2010,7 @@ void _oglView::_drawInstancesFrameBuffer()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	CString strCullFaces = getCullFacesMode(pModel);
+	CString strCullFaces = getCullFacesMode();
 
 	if (bTransparent)
 	{
@@ -2231,7 +2176,7 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 		return;
 	}
 
-	if (!getShowConceptualFacesPolygons(pModel))
+	if (!getShowConceptualFacesPolygons())
 	{
 		return;
 	}
@@ -2333,7 +2278,7 @@ void _oglView::_drawLines(_model* pModel)
 		return;
 	}
 
-	if (!getShowLines(pModel))
+	if (!getShowLines())
 	{
 		return;
 	}
@@ -2435,7 +2380,7 @@ void _oglView::_drawPoints(_model* pModel)
 		return;
 	}
 
-	if (!getShowPoints(pModel))
+	if (!getShowPoints())
 	{
 		return;
 	}
