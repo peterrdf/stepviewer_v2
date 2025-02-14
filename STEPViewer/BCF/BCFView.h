@@ -33,7 +33,6 @@ protected:
 	virtual void OnOK();
 
 	DECLARE_MESSAGE_MAP()
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnSelchangeTopic();
 	afx_msg void OnSelchangeCommentsList();
@@ -43,6 +42,8 @@ protected:
 	afx_msg void OnSelchangeMultiList();
 	afx_msg void OnClickedProjectInfo();
 	afx_msg void OnKillfocusEdit();
+	afx_msg void OnKillfocusTopicCommentText();
+	afx_msg void OnClickedSave();
 
 private:
 	CMySTEPViewerView* GetView();
@@ -66,7 +67,13 @@ private:
 	void FillRelated(BCFTopic* topic);
 	void FillLinks(BCFTopic* topic);
 	void FillDocuments(BCFTopic* topic);
+	void AddLabel(BCFTopic* topic);
+	void AddRelated(BCFTopic* topic);
+	void AddLink(BCFTopic* topic);
+	void AddDocument(BCFTopic* topic);
+
 	void FillTopicAuthor(BCFTopic* topic);
+	void SaveBCFFile();
 
 private:
 	CMySTEPViewerDoc&				m_doc;
@@ -110,7 +117,5 @@ private:
 	CListBox m_wndMultiList;
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
-public:
-	afx_msg void OnKillfocusTopicCommentText();
 };
 

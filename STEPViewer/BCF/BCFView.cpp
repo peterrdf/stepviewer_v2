@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_EN_KILLFOCUS(IDC_TOPIC_INDEX, &CBCFView::OnKillfocusEdit)
 	ON_EN_KILLFOCUS(IDC_TOPIC_SERVER_ID, &CBCFView::OnKillfocusEdit)
 	ON_EN_KILLFOCUS(IDC_TOPIC_COMMENT_TEXT, &CBCFView::OnKillfocusTopicCommentText)
+	ON_BN_CLICKED(IDC_SAVE, &CBCFView::OnClickedSave)
 END_MESSAGE_MAP()
 
 
@@ -203,14 +204,6 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MULTI_LIST, m_wndMultiList);
 	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAddMulti);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemoveMulti);
-}
-
-void CBCFView::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-	CDialogEx::OnShowWindow(bShow, nStatus);
-	if (!bShow) {
-		DeleteContent();
-	}
 }
 
 void CBCFView::OnClose()
@@ -631,6 +624,7 @@ void CBCFView::OnSelchangeTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 void CBCFView::FillMultiList()
 {
+	auto sel = m_wndMultiList.GetCurSel();
 	m_wndMultiList.ResetContent();
 
 	auto topic = GetActiveTopic();
@@ -656,6 +650,9 @@ void CBCFView::FillMultiList()
 
 	m_wndAddMulti.EnableWindow(topic != NULL);
 	
+	if (sel != LB_ERR) {
+		m_wndMultiList.SetCurSel(sel);
+	}
 	OnSelchangeMultiList();
 }
 
@@ -709,19 +706,44 @@ void CBCFView::OnClickedButtonAddMulti()
 	if (topic) {
 		switch (m_wndTab.GetCurSel()) {
 		case TAB_Labels:
+			AddLabel(topic);
 			break;
 		case TAB_Related:
+			AddRelated(topic);
 			break;
 		case TAB_Links:
+			AddLink(topic);
 			break;
 		case TAB_Documents:
+			AddDocument(topic);
 			break;
 		default:
 			ASSERT(FALSE);
 		}
+
+		FillMultiList();
 	}
 }
 
+void CBCFView::AddLabel(BCFTopic* topic)
+{
+
+}
+
+void CBCFView::AddRelated(BCFTopic* topic)
+{
+
+}
+
+void CBCFView::AddLink(BCFTopic* topic)
+{
+
+}
+
+void CBCFView::AddDocument(BCFTopic* topic)
+{
+
+}
 
 void CBCFView::OnClickedButtonRemoveMulti()
 {
@@ -767,4 +789,33 @@ void CBCFView::OnKillfocusEdit()
 void CBCFView::OnKillfocusTopicCommentText()
 {
 	UpateActiveComment();
+}
+
+
+void CBCFView::OnClickedSave()
+{
+	SaveBCFFile();
+}
+
+void CBCFView::SaveBCFFile()
+{
+	if (!m_bcfProject) {
+		return;
+	}
+
+	LPCTSTR fileTypes = _T("BCF files (*.bcf)|*.bcf|All Files (*.*)|*.*||");
+
+	CFileDialog dlgFile(FALSE, L"bcf", _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, fileTypes);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	m_bcfFilePath = dlgFile.GetPathName();
+
+	bool ok = m_bcfProject->WriteFile(ToUTF8(m_bcfFilePath).c_str(), BCFVer_3_0);
+
+	ShowLog(!ok);
+
+	LoadProjectToView();
 }
