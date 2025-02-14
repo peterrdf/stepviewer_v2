@@ -109,9 +109,14 @@ void _geometry::calculateMinMaxTransform(
 		return;
 	}
 
-	if (m_pvecAABBMin) {
+	if ((m_pvecAABBMin == nullptr) || (m_pvecAABBMax == nullptr))
+	{
+		assert(m_vecTriangles.empty());
 
- {
+		return;
+	}
+
+	{
 		_vector3 vecPoint = { m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMin->z };
 		if (pTransformationMatrix != nullptr)
 		{
@@ -229,151 +234,7 @@ void _geometry::calculateMinMaxTransform(
 		fYmax = (float)fmax(fYmax, vecPoint.y);
 		fZmin = (float)fmin(fZmin, vecPoint.z);
 		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}	//	*/
 	}
-	else {
-		assert(m_vecTriangles.empty());
-	}
-
-
-/*	const uint32_t VERTEX_LENGTH = getVertexLength();
-
-	// Triangles
-	if (!m_vecTriangles.empty())
-	{
-		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
-		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
-				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
-				iIndex++)
-			{
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iTriangle = ...
-	} // if (!m_vecTriangles.empty())	
-
-	// Conceptual faces polygons
-	if (!m_vecConcFacePolygons.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
-				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecConcFacePolygons.empty())
-
-	// Lines
-	if (!m_vecLines.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
-				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if (m_pIndexBuffer->data()[iIndex] == -1)
-				{
-					continue;
-				}
-
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecLines.empty())
-
-	// Points
-	if (!m_vecPoints.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex();
-				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
-				iIndex++)
-			{
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecPoints.empty())	//	*/
-
-
-	//int oo = 0;
 }
 
 void _geometry::calculateMinMaxTransform(
