@@ -192,7 +192,7 @@ static char THIS_FILE[]=__FILE__;
 
 /*virtual*/ BOOL CRelationsView::ProcessSearch(int iFilter, const CString& strSearchText) /*override*/
 {
-	auto pController = getController();
+	auto pController = getAPController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);

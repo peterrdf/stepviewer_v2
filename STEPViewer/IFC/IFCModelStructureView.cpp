@@ -663,7 +663,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	auto pController = getController();
+	auto pController = getAPController();
 	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
@@ -705,10 +705,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			continue;
 		}
 
-		_ptr<_ap_geometry> apGeometry(pGeometry);
-		ASSERT(apGeometry);
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		if (ifcGeometry->getIsMappedItem())
+		{
+			continue;
+		}
 
-		const wchar_t* szEntityName = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 		// Enable
 		auto itEntity2EnableCount = mapEntity2EnableCount.find(szEntityName);
@@ -1081,6 +1084,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			for (auto pInstance : pModelData->GetModel()->getInstances())
 			{
 				_ptr<_ifc_instance> ifcInstance(pInstance);
+				if (ifcInstance->getOwner() != nullptr)
+				{
+					continue;
+				}
+
 				if (ifcInstance->getEntityName() == itCommand2EnableEntity->second)
 				{
 					ifcInstance->setEnable(itEntity2EnableCount->second > 0 ? false : true);
@@ -1121,18 +1129,23 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				for (auto pGeometry : pModelData->GetModel()->getGeometries())
 				{
 					_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+					if (ifcGeometry->getIsMappedItem())
+					{
+						continue;
+					}
+
 					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
-					//#todo#mappeditems
-					ASSERT(pGeometry->getInstances().size() == 1);
-					_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-					if (szEntityName == itCommand2ShowEntity->second)
+					for (auto pInstance : pGeometry->getInstances())
 					{
-						ifcGeometry->setShow(itEntity2ShowCount->second > 0 ? false : true);
+						_ptr<_ifc_instance> ifcInstance(pInstance);
+						if (szEntityName == itCommand2ShowEntity->second)
+						{
+							ifcGeometry->setShow(itEntity2ShowCount->second > 0 ? false : true);
 
-						setInstances.insert(ifcInstance);
-					}
+							setInstances.insert(ifcInstance);
+						}
+					}					
 				}
 
 				Tree_Show(setInstances);
@@ -1211,12 +1224,10 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 	{
 		wstring strItem = _ap_instance::getName(sdaiProjectInstance);
 
-		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		ASSERT(!ifcGeometry->getIsMappedItem());
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-		_ptr<_ap_geometry> apGeometry(pGeometry);
-		ASSERT(apGeometry);
 
 		// Project
 		TV_INSERTSTRUCT tvInsertStruct;
@@ -1460,8 +1471,10 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 		return NULL;
 	}
 
-	//#todo#mappeditems
+	_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+	ASSERT(!ifcGeometry->getIsMappedItem());
 	ASSERT(pGeometry->getInstances().size() == 1);
+
 	_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 	if (!ifcInstance)
 	{
@@ -1548,12 +1561,10 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 
 	for (auto pGeometry : vecGeometries)
 	{		
-		_ptr<_ifc_geometry> ifcGeometry(pGeometry);	
-
-		//#todo#mappeditems
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		ASSERT(!ifcGeometry->getIsMappedItem());
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-		ASSERT(ifcInstance);
 
 		wstring strItem = _ap_instance::getName(ifcInstance->getSdaiInstance());
 
@@ -1611,13 +1622,11 @@ void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREE
 		}
 
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-
-		//#todo#mappeditems
-		ASSERT(pGeometry->getInstances().size() == 1);
-		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
 		if (!ifcGeometry->getIsReferenced())
 		{
+			ASSERT(pGeometry->getInstances().size() == 1);
+			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
+
 			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);

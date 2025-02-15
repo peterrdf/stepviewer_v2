@@ -66,6 +66,10 @@ protected:
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
 	afx_msg void OnFileNew();
+	afx_msg void OnFileSave();
+	afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
+	afx_msg void OnFileSaveAs();
+	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler

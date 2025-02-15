@@ -24,7 +24,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
-	, public _view
+	, public _ap_view
 	, public CSearchTreeCtrlDialogSite
 {
 

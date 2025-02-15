@@ -18,10 +18,10 @@
 #endif
 
 // ************************************************************************************************
-TCHAR IFC_FILES[] = _T("IFC Files (*.ifc; *.ifczip)|*.ifc; *.ifczip|All Files (*.*)|*.*||");
-
-TCHAR SUPPORTED_FILES[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
-
+TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
+TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
+TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
+TCHAR OPEN_FILES_FILTER[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
@@ -51,55 +51,7 @@ TCHAR SUPPORTED_FILES[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.i
 		return;
 	}
 
-	OwlModel owlModel = getModel()->getOwlModel();
-	ASSERT(owlModel != 0);
-
-	OwlInstance owlInstance = pInstance->getOwlInstance();
-	if (owlInstance == 0)
-	{
-		owlInstance = _ap_geometry::buildOwlInstance(pAPInstance->getSdaiInstance());
-		ASSERT(owlInstance != 0);
-	}
-
-	OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
-	ASSERT(owlMatrixInstance != 0);
-
-	vector<double> vecMatrix
-	{
-		pAPInstance->getTransformationMatrix()->_11,
-		pAPInstance->getTransformationMatrix()->_12,
-		pAPInstance->getTransformationMatrix()->_13,
-		pAPInstance->getTransformationMatrix()->_21,
-		pAPInstance->getTransformationMatrix()->_22,
-		pAPInstance->getTransformationMatrix()->_23,
-		pAPInstance->getTransformationMatrix()->_31,
-		pAPInstance->getTransformationMatrix()->_32,
-		pAPInstance->getTransformationMatrix()->_33,
-		pAPInstance->getTransformationMatrix()->_41,
-		pAPInstance->getTransformationMatrix()->_42,
-		pAPInstance->getTransformationMatrix()->_43,
-	};
-
-	SetDatatypeProperty(
-		owlMatrixInstance,
-		GetPropertyByName(owlModel, "coordinates"),
-		vecMatrix.data(),
-		vecMatrix.size());
-
-	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
-	ASSERT(owlTransformationInstance != 0);
-
-	SetObjectProperty(
-		owlTransformationInstance,
-		GetPropertyByName(owlModel, "object"),
-		owlInstance);
-
-	SetObjectProperty(
-		owlTransformationInstance,
-		GetPropertyByName(owlModel, "matrix"),
-		owlMatrixInstance);
-
-	SaveInstanceTreeW(owlTransformationInstance, dlgFile.GetPathName());
+	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 }
 
 void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
@@ -167,7 +119,11 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMySTEPViewerDoc::OnViewZoomOut)
 	ON_COMMAND(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnViewModelChecker)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODEL_CHECKER, &CMySTEPViewerDoc::OnUpdateViewModelChecker)
-	ON_COMMAND(ID_FILE_NEW, OnFileNew)
+	ON_COMMAND(ID_FILE_NEW, &CMySTEPViewerDoc::OnFileNew)
+	ON_COMMAND(ID_FILE_SAVE, &CMySTEPViewerDoc::OnFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMySTEPViewerDoc::OnUpdateFileSave)
+	ON_COMMAND(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnFileSaveAs)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnUpdateFileSaveAs)
 END_MESSAGE_MAP()
 
 
@@ -180,6 +136,7 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
 {	
+	TRACE(L"CMySTEPViewerDoc::~CMySTEPViewerDoc()");
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
@@ -316,9 +273,10 @@ void CMySTEPViewerDoc::OnFileNew()
 	m_wndBCFView.Show();
 }
 
+
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SUPPORTED_FILES);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_FILES_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -363,5 +321,58 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 {
 	auto visible = m_wndModelChecker.IsVisible();
 	pCmdUI->SetCheck(visible);
+}
+
+
+void CMySTEPViewerDoc::OnFileSave()
+{
+	_ptr<_ap_model> apModel(getModel());
+
+	CString strFiler;
+	CString strExtension;
+	if (apModel->getAP() == enumAP::STEP)
+	{
+		strFiler = SAVE_STEP_FILTER;
+		strExtension = L"ifc";
+	}
+	else if (apModel->getAP() == enumAP::IFC)
+	{
+		strFiler = SAVE_IFC_FILTER;
+		strExtension = L"step";
+	}
+	else  if (apModel->getAP() == enumAP::CIS2)
+	{
+		strFiler = SAVE_CIS2_FILTER;
+		strExtension = L"stp";
+	}
+	else
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	CFileDialog dlgFile(FALSE, strExtension, apModel->getPath(), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, strFiler);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	sdaiSaveModelBNUnicode(apModel->getSdaiModel(), (LPCWSTR)dlgFile.GetPathName());
+}
+
+void CMySTEPViewerDoc::OnUpdateFileSave(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModels().size() == 1);
+}
+
+void CMySTEPViewerDoc::OnFileSaveAs()
+{
+	OnFileSave();
+}
+
+void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModels().size() == 1);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ap_model.h"
+#include "_ap_mvc.h"
 #include "_ifc_unit.h"
 #include "_ifc_property.h"
 
@@ -8,6 +8,46 @@
 #include <map>
 #include <set>
 using namespace std;
+
+// ************************************************************************************************
+static bool	Equals(const char* txtI, const char* txtII)
+{
+	if (txtI && txtII) {
+		size_t	i = 0;
+		while (txtI[i] && txtII[i])
+			if (txtI[i] != txtII[i])
+				return	false;
+			else
+				i++;
+		if (txtII[i] == 0)
+			return	true;
+	}
+	return  false;
+}
+
+struct STRUCT_MATERIAL {
+	uint32_t ambient;
+	uint32_t diffuse;
+	uint32_t emissive;
+	uint32_t specular;
+};
+
+struct STRUCT_INTERNAL {
+	SdaiInstance ifcRepresentationInstance;
+	OwlInstance owlInstanceMatrix;
+	//STRUCT_MATERIAL* material;
+};
+
+struct STRUCT_MAPPED_ITEM {
+	SdaiInstance ifcRepresentationInstance;
+	_matrix4x3 matrix;
+	//STRUCT_MATERIAL* material;
+};
+
+struct STRUCT_IFC_PRODUCT {
+	SdaiInstance ifcProductInstance;
+	std::vector<STRUCT_MAPPED_ITEM*> mappedItems;
+};
 
 // ************************************************************************************************
 class _ifc_geometry;
@@ -39,7 +79,9 @@ private: // Members
 	SdaiEntity m_sdaiVirtualElementEntity;
 
 	_ifc_unit_provider* m_pUnitProvider;
-	_ifc_property_provider* m_pPropertyProvider;	
+	_ifc_property_provider* m_pPropertyProvider;
+
+	vector<pair<_instance*, STRUCT_MAPPED_ITEM*>> m_vecMappedItemPendingUpdate;
 
 public: // Methods
 
@@ -50,6 +92,7 @@ protected: // Methods
 
 	// _model
 	virtual _instance* loadInstance(int64_t iInstance) override;
+	virtual void zoomToInstances(const set<_instance*>& setInstances) override;
 	virtual void clean(bool bCloseModel = true) override;
 
 	// _ap_model
@@ -73,7 +116,10 @@ private: // Methods
 
 	void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
 	void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
-	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, SdaiInteger iCircleSegments);
+	_geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+
+	STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
+	void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);
 
 public: // Properties
 
