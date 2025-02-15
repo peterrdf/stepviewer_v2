@@ -188,7 +188,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			if (!pGeometry->hasGeometry() || pGeometry->isPlaceholder())
 			{
 				continue;
-			}
+	}
 
 			_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 			if (ifcGeometry->getIsMappedItem())
@@ -529,10 +529,16 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	auto pProduct = recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr)
 	{
+		double arOffset[3] = { 0., 0., 0. };
+		GetVertexBufferOffset(getOwlModel(), arOffset);
+
+		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
+
 		int64_t iParenInstanceID = _model::getNextInstanceID();
 
 		vector<_ifc_geometry*> vecMappedGeometries;
 		vector<_ifc_instance*> vecMappedInstances;
+
 		for (auto pMappedItem : pProduct->mappedItems)
 		{
 			auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
@@ -543,17 +549,18 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 			vecMappedGeometries.push_back(pMappedGeometry);
 
-			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, (_matrix4x3*)pMappedItem->matrixCoordinates);
+			_matrix4x3Inverse(&pMappedItem->matrix);
+
+			pMappedItem->matrix._41 -= arOffset[0];
+			pMappedItem->matrix._42 -= arOffset[1];
+			pMappedItem->matrix._43 -= arOffset[2];
+
+			_matrix4x3Inverse(&pMappedItem->matrix);
+
+			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, &pMappedItem->matrix);
 			addInstance(pMappedInstance);
 
-			pMappedInstance->setEnable(
-				(strEntity == L"IFCSPACE") ||
-				(strEntity == L"IFCRELSPACEBOUNDARY") ||
-				(strEntity == L"IFCOPENINGELEMENT") ||
-				(strEntity == L"IFCALIGNMENTVERTICAL") ||
-				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-				(strEntity == L"IFCALIGNMENTSEGMENT") ||
-				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+			pMappedInstance->setEnable(true);
 
 			vecMappedInstances.push_back(pMappedInstance);
 
@@ -589,11 +596,13 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			pMappedInstance->m_pOwner = pInstance;
 		}
 
+		SetVertexBufferOffset(getOwlModel(), arOffset);
+
 		return pGeometry;
-	}
+	} // if (pProduct != nullptr)
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
-	if (owlInstance != 0)
+	if (!bMappedItem && owlInstance != 0)
 	{
 		preLoadInstance(owlInstance);
 	}
@@ -794,10 +803,10 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 			double* values = nullptr;
 			int64_t	card = 0;
 			GetDatatypeProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "coordinates"), (void**)&values, &card);
-			if (card == 12) {
+			if (card == sizeof(_matrix4x3) / sizeof(double)) {
 				STRUCT_MAPPED_ITEM* myMappedItem = new STRUCT_MAPPED_ITEM;
 				myMappedItem->ifcRepresentationInstance = (*mappedItemData)->ifcRepresentationInstance;
-				memcpy(myMappedItem->matrixCoordinates, values, 12 * sizeof(double));
+				memcpy(&myMappedItem->matrix, values, sizeof(_matrix4x3));
 				myIfcProduct->mappedItems.push_back(myMappedItem);
 			}
 			else {

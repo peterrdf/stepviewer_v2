@@ -40,7 +40,7 @@ struct STRUCT_INTERNAL {
 
 struct STRUCT_MAPPED_ITEM {
 	SdaiInstance ifcRepresentationInstance;
-	double matrixCoordinates[12];
+	_matrix4x3 matrix;
 	//STRUCT_MATERIAL* material;
 };
 

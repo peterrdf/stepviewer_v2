@@ -407,14 +407,14 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 	assert(m_pvecOriginalBBMax == nullptr);
 	m_pvecOriginalBBMax = new _vector3d();
 
-//	assert(m_pmtxBBTransformation == nullptr);
-//	m_pmtxBBTransformation = new _matrix();
+	assert(m_pmtxBBTransformation == nullptr);
+	m_pmtxBBTransformation = new _matrix();
 
-//	assert(m_pvecBBMin == nullptr);
-//	m_pvecBBMin = new _vector3d();
+	assert(m_pvecBBMin == nullptr);
+	m_pvecBBMin = new _vector3d();
 
-//	assert(m_pvecBBMax == nullptr);
-//	m_pvecBBMax = new _vector3d();
+	assert(m_pvecBBMax == nullptr);
+	m_pvecBBMax = new _vector3d();
 
 	assert(m_pvecAABBMin == nullptr);
 	m_pvecAABBMin = new _vector3d();
@@ -427,15 +427,15 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 		return;
 	}
 
-//	GetBoundingBox(
-//		getOwlInstance(),
-//		(double*)m_pmtxOriginalBBTransformation,
-//		(double*)m_pvecOriginalBBMin,
-//		(double*)m_pvecOriginalBBMax);
+	GetBoundingBox(
+		getOwlInstance(),
+		(double*)m_pmtxOriginalBBTransformation,
+		(double*)m_pvecOriginalBBMin,
+		(double*)m_pvecOriginalBBMax);
 
-//	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
-//	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
-//	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
+	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
+	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
 	if (!GetBoundingBox(
 		getOwlInstance(),
@@ -445,19 +445,16 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 		return;
 	}
 
-	double	offset[3];
-	GetVertexBufferOffset(getOwlModel(), offset);
+	double arOffset[3];
+	GetVertexBufferOffset(getOwlModel(), arOffset);
 
-	m_pvecAABBMin->x += offset[0];
-	m_pvecAABBMin->y += offset[1];
-	m_pvecAABBMin->z += offset[2];
+	m_pvecAABBMin->x += arOffset[0];
+	m_pvecAABBMin->y += arOffset[1];
+	m_pvecAABBMin->z += arOffset[2];
 
-	m_pvecAABBMax->x += offset[0];
-	m_pvecAABBMax->y += offset[1];
-	m_pvecAABBMax->z += offset[2];
-
-//	memcpy(m_pvecAABBMinTranslate, m_pvecAABBMin, sizeof(_vector3d));
-//	memcpy(m_pvecAABBMaxTranslate, m_pvecAABBMax, sizeof(_vector3d));
+	m_pvecAABBMax->x += arOffset[0];
+	m_pvecAABBMax->y += arOffset[1];
+	m_pvecAABBMax->z += arOffset[2];
 
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;
@@ -1118,14 +1115,14 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
 	delete m_pvecOriginalBBMax;
 	m_pvecOriginalBBMax = nullptr;
 
-//	delete m_pmtxBBTransformation;
-//	m_pmtxBBTransformation = nullptr;
+	delete m_pmtxBBTransformation;
+	m_pmtxBBTransformation = nullptr;
 
-//	delete m_pvecBBMin;
-//	m_pvecBBMin = nullptr;
+	delete m_pvecBBMin;
+	m_pvecBBMin = nullptr;
 
-//	delete m_pvecBBMax;
-//	m_pvecBBMax = nullptr;
+	delete m_pvecBBMax;
+	m_pvecBBMax = nullptr;
 
 	delete m_pvecAABBMin;
 	m_pvecAABBMin = nullptr;
