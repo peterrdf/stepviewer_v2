@@ -47,7 +47,7 @@ CController* CMySTEPViewerView::getController()
 	enumAP enAP = enumAP::STEP;
 	if (!pController->getModels().empty())
 	{
-		_ptr<_ap_model> apModel(pController->getModels().back());
+		_ptr<_ap_model> apModel(pController->getModels().back().get());
 		ASSERT(apModel);
 		
 		enAP = apModel->getAP();

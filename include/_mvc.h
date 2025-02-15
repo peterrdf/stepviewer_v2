@@ -53,6 +53,9 @@ class _model
 {
 	friend class _controller;
 
+public:
+	typedef shared_ptr<_model>  Ptr;
+
 protected: // Members
 
 	wstring m_strPath;
@@ -195,10 +198,12 @@ public: // Properties
 // ************************************************************************************************
 class _controller
 {
+public:
+	typedef vector<_model::Ptr>		   ModelsList;
 
 private: // Members
 
-	vector<_model*> m_vecModels;
+	ModelsList  m_vecModels;
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;
 
@@ -218,10 +223,15 @@ public: // Methods
 	_controller();
 	virtual ~_controller();
 
-	void setModel(_model* pModel);
-	void addModels(const vector<_model*>& vecModels);
-	void addModel(_model* pModel);
+	void addModels(const ModelsList& vecModels);
 	void deleteAllModels();
+	const ModelsList& getModels() const { return m_vecModels; }
+
+	_model* getModel() const; // kept for backward compatibility
+#if _NOT_USED_
+	void setModel(_model** ppModel);
+	void addModel(_model** ppModel);
+#endif
 
 	_instance* loadInstance(int64_t iInstance);
 
@@ -283,9 +293,6 @@ protected: // Methods
 
 public: // Properties
 
-	_model* getModel() const; // kept for backward compatibility
-	const vector<_model*>& getModels() const { return m_vecModels; }
-	vector<_model*>& editModelList() { return m_vecModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }	
 };
 

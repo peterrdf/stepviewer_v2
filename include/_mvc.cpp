@@ -509,11 +509,13 @@ _controller::_controller()
 	delete m_pSettingsStorage;
 }
 
-void _controller::setModel(_model* pModel)
+#if _NOT_USED_
+void _controller::setModel(_model** ppModel)
 {
 	deleteAllModels();
-	addModel(pModel);
+	addModel(ppModel);
 }
+#endif
 
 void _controller::deleteAllModels()
 {
@@ -533,7 +535,7 @@ void _controller::deleteAllModels()
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModels(const vector<_model*>& vecModels)
+void _controller::addModels(const ModelsList& vecModels)
 {
 	m_bUpdatingModel = true;
 
@@ -545,10 +547,9 @@ void _controller::addModels(const vector<_model*>& vecModels)
 
 	for (auto newModel : vecModels) {
 		
-		//replace early opened path
+		//replace early opened with the same path
 		for (auto it = m_vecModels.begin(); it != m_vecModels.end(); it++) {
 			if (0 == wcscmp((*it)->getPath(), newModel->getPath())) {
-				//need to keep? delete* it;
 				m_vecModels.erase(it);
 				break;
 			}
@@ -570,14 +571,20 @@ void _controller::addModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModel(_model* pModel)
+#if _NOT_USED_
+void _controller::addModel(_model** ppModel)
 {
-	if (pModel) {
-		vector<_model*> vecModels;
-		vecModels.push_back(pModel);
+	if (ppModel && *ppModel) {
+		ModelsList vecModels;
+
+		_model::Ptr ptr (*ppModel);
+		vecModels.push_back(ptr);
+		*ppModel = NULL; //consumed and will be managed by shared ptr
+		
 		addModels(vecModels);
 	}
 }
+#endif
 
 _instance* _controller::loadInstance(int64_t iInstance)
 {
@@ -656,14 +663,14 @@ _model* _controller::getModelByInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
-	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel)
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model::Ptr pModel)
 		{
-			return pModel->getOwlModel() == owlModel;
+			return pModel.get()->getOwlModel() == owlModel;
 		});
 
 	if (itModel != m_vecModels.end())
 	{
-		return *itModel;
+		return itModel->get();
 	}
 
 	return nullptr;
@@ -730,7 +737,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 
 	for (auto pM : m_vecModels)
 	{
-		if (pM != pModel)
+		if (pM.get() != pModel)
 		{
 			pM->setDimensions(pModel);
 		}
@@ -925,10 +932,6 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 
 /*virtual*/ void _controller::clean()
 {
-	for (auto pModel : m_vecModels)
-	{
-		delete pModel;
-	}
 	m_vecModels.clear();
 
 	s_iInstanceID = 1;
@@ -938,7 +941,7 @@ _model* _controller::getModel() const
 { 
 	if (!m_vecModels.empty())
 	{
-		return m_vecModels.front();
+		return m_vecModels.front().get();
 	}
 
 	return nullptr; 

@@ -43,7 +43,7 @@ static char THIS_FILE[]=__FILE__;
 	enumAP enAP = enumAP::STEP;
 	if (!pController->getModels().empty())
 	{
-		_ptr<_ap_model> apModel(pController->getModels().front());
+		_ptr<_ap_model> apModel(pController->getModels().front().get());
 		ASSERT(apModel);
 
 		enAP = apModel->getAP();

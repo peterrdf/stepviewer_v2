@@ -435,7 +435,7 @@ void CSchemaView::ResetView()
 	HTREEITEM hFirstModel = NULL;
 	for (auto pModel : pController->getModels())
 	{
-		_ptr<_ap_model> apModel(pModel);
+		_ptr<_ap_model> apModel(pModel.get());
 
 		HTREEITEM hModel = LoadModel(apModel);
 

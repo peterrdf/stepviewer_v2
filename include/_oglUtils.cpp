@@ -1950,12 +1950,12 @@ void _oglView::_drawFaces()
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_drawFaces(pModel, false);
+		_drawFaces(pModel.get(), false);
 	}
 
 	for (auto pModel : getController()->getModels())
 	{
-		_drawFaces(pModel, true);
+		_drawFaces(pModel.get(), true);
 	}
 }
 
@@ -1963,7 +1963,7 @@ void _oglView::_drawConceptualFacesPolygons()
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_drawConceptualFacesPolygons(pModel);
+		_drawConceptualFacesPolygons(pModel.get());
 	}
 }
 
@@ -1971,7 +1971,7 @@ void _oglView::_drawLines()
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_drawLines(pModel);
+		_drawLines(pModel.get());
 	}
 }
 
@@ -1979,7 +1979,7 @@ void _oglView::_drawPoints()
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_drawPoints(pModel);
+		_drawPoints(pModel.get());
 	}
 }
 
@@ -1987,7 +1987,7 @@ void _oglView::_drawInstancesFrameBuffer()
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_drawInstancesFrameBuffer(pModel);
+		_drawInstancesFrameBuffer(pModel.get());
 	}
 }
 

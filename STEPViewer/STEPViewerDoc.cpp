@@ -58,14 +58,14 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 {
 	m_wndBCFView.DeleteContent(); 
 
-	vector<_model*> vecModels;
+	ModelsList vecModels;
 	for (auto strPath : vecPaths)
 	{
 		if (m_wndBCFView.ReadBCFFile(strPath)) {
 			//do nothing
 		}
 		else {
-			auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+			auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front().get() : nullptr, false);
 			if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
 			{
 				delete pModel;
@@ -73,7 +73,7 @@ void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
 			}
 
 			if (pModel) {
-				vecModels.push_back(pModel);
+				vecModels.push_back(_model::Ptr(pModel));
 			}
 		}
 	}
@@ -143,8 +143,6 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
-	setModel(nullptr);
 
 	return TRUE;
 }

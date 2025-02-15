@@ -68,27 +68,15 @@ void CBCFView::DeleteContent()
 		}
 		m_bcfProject = NULL;
 
-		SetModelsExternallyManaged(m_preloadedModels);
-		m_preloadedModels.clear(); //lave to manage by m_doc
+		m_doc.deleteAllModels();
+		m_doc.addModels(m_preloadedModels);
 
-		for (auto& item : m_loadedModels) {
-			if (item.second) {
-				delete item.second;
-			}
-		}
 		m_loadedModels.clear();
 
 		if (GetSafeHwnd()) {
 			ShowWindow(SW_HIDE);
 		}
 	}
-}
-
-void CBCFView::SetModelsExternallyManaged(std::vector <_model*>& models)
-{
-	//do not delete models, just set new list
-	m_doc.editModelList().clear();
-	m_doc.addModels(models);
 }
 
 bool CBCFView::CreateNewProject()
@@ -148,8 +136,8 @@ bool CBCFView::Show()
 
 	// prepare model views
 	//
-	std::swap(m_preloadedModels, m_doc.editModelList());
-	m_doc.setModel(NULL);
+	m_preloadedModels = m_doc.getModels(); //list copy intentionals
+	m_doc.deleteAllModels();
 
 	//show view
 	if (!IsWindow(GetSafeHwnd())) {
@@ -556,29 +544,30 @@ void CBCFView::OnSelchangeCommentsList()
 
 void CBCFView::SetActiveModels(BCFTopic* topic)
 {
-	std::vector<_model*> activeModels = m_preloadedModels; //copy is intentional
+	auto topicModels = m_preloadedModels; //list copy is intentional
 
 	uint16_t i = 0;
 	while (BCFBimFile* file = topic->GetBimFile(i++)) {
-		_model* model = NULL;
 		
 		auto it = m_loadedModels.find(file);
-		if (it != m_loadedModels.end()) {
-			model = it->second;
-		}
-		else {
+		if (it == m_loadedModels.end()) {
+
 			auto path = FromUTF8(file->GetReference());
-			model = _ap_model_factory::load(path, true, nullptr, false);
+			auto p = _ap_model_factory::load(path, true, nullptr, false);
 			//model may be NULL, assume message was shown while load
-			m_loadedModels[file] = model;
+
+			_model::Ptr ptr (p);
+			
+			it = m_loadedModels.insert(LoadedFiles::value_type(file, ptr)).first;
 		}
 
-		if (model) {
-			activeModels.push_back(model);
+		if (it->second.get()) {
+			topicModels.push_back(it->second);
 		}
 	}
 
-	SetModelsExternallyManaged(activeModels);
+	m_doc.deleteAllModels();
+	m_doc.addModels(topicModels);
 }
 
 void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)

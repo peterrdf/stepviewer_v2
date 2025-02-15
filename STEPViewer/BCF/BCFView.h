@@ -1,10 +1,10 @@
 #pragma once
 
 #include "bcfAPI.h"
+#include "_mvc.h"
 
 class CMySTEPViewerDoc;
 class CMySTEPViewerView;
-class _model;
 
 
 class CBCFView : public CDialogEx
@@ -29,7 +29,10 @@ public:
 	enum { IDD = IDD_BCF_VIEW };
 #endif
 
-protected:
+private:
+	typedef std::map<BCFBimFile*, _model::Ptr> LoadedFiles;
+
+private:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnCancel();
@@ -61,7 +64,6 @@ private:
 	void UpateActiveComment();
 	bool CreateNewComment(BCFTopic* topic, CString& text);
 	void SetActiveModels(BCFTopic* topic);
-	void SetModelsExternallyManaged(std::vector<_model*>& models);
 	void SetActiveViewPoint(BCFViewPoint* vp);
 	void FillMultiList();
 	void FillLabels(BCFTopic* topic);
@@ -81,11 +83,11 @@ private:
 	void SaveBCFFile();
 
 private:
-	CMySTEPViewerDoc&				m_doc;
-	BCFProject*						m_bcfProject;
-	CString							m_bcfFilePath;
-	std::vector<_model*>			m_preloadedModels;
-	std::map<BCFBimFile*, _model*>	m_loadedModels;
+	CMySTEPViewerDoc&		m_doc;
+	BCFProject*				m_bcfProject;
+	CString					m_bcfFilePath;
+	_controller::ModelsList	m_preloadedModels;
+	LoadedFiles				m_loadedModels;
 
 private:
 	CComboBox m_wndTopics;
