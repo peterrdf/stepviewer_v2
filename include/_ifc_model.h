@@ -79,7 +79,9 @@ private: // Members
 	SdaiEntity m_sdaiVirtualElementEntity;
 
 	_ifc_unit_provider* m_pUnitProvider;
-	_ifc_property_provider* m_pPropertyProvider;	
+	_ifc_property_provider* m_pPropertyProvider;
+
+	vector<pair<_instance*, STRUCT_MAPPED_ITEM*>> m_vecMappedItemPendingUpdate;
 
 public: // Methods
 

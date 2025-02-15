@@ -26,7 +26,8 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	, m_sdaiTransportElementEntity(0)
 	, m_sdaiVirtualElementEntity(0)
 	, m_pUnitProvider(nullptr)
-	, m_pPropertyProvider(nullptr)	
+	, m_pPropertyProvider(nullptr)
+	, m_vecMappedItemPendingUpdate()
 {
 }
 
@@ -142,6 +143,8 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		delete m_pPropertyProvider;
 		m_pPropertyProvider = nullptr;
 	}
+
+	m_vecMappedItemPendingUpdate.clear();
 }
 
 /*virtual*/ void _ifc_model::attachModelCore() /*override*/
@@ -178,6 +181,32 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 
 		getObjectsReferencedState();
 
+		// Post-processing
+		if (!m_vecMappedItemPendingUpdate.empty())
+		{
+			double arOffset[3] = { 0., 0., 0. };
+			GetVertexBufferOffset(getOwlModel(), arOffset);
+			ASSERT((arOffset[0] != 0.) || (arOffset[1] != 0.) || (arOffset[2] != 0.));
+
+			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+			for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate)
+			{
+				auto pMappedItem = pMappedItemPendingUpdate.second;
+
+				_matrix4x3Inverse(&pMappedItem->matrix);
+				pMappedItem->matrix._41 -= arOffset[0] / dScaleFactor;
+				pMappedItem->matrix._42 -= arOffset[1] / dScaleFactor;
+				pMappedItem->matrix._43 -= arOffset[2] / dScaleFactor;
+				_matrix4x3Inverse(&pMappedItem->matrix);
+
+				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+				delete pMappedItem;
+			}
+		}		
+
+		scale();
+
 #ifdef _DEBUG
 		int64_t iGeometriesCount = 0;
 		int64_t iMappedItemsCount = 0;
@@ -188,7 +217,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			if (!pGeometry->hasGeometry() || pGeometry->isPlaceholder())
 			{
 				continue;
-	}
+			}
 
 			_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 			if (ifcGeometry->getIsMappedItem())
@@ -207,8 +236,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		TRACE(L"\n*** _ifc_model *** Mapped Instances: %lld", iMappedInstancesCount);
 #endif // _DEBUG		 
 	}
-
-	scale();
 }
 
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
@@ -531,7 +558,6 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	{
 		double arOffset[3] = { 0., 0., 0. };
 		GetVertexBufferOffset(getOwlModel(), arOffset);
-
 		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
 
 		int64_t iParenInstanceID = _model::getNextInstanceID();
@@ -549,39 +575,51 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 			vecMappedGeometries.push_back(pMappedGeometry);
 
-			_matrix4x3Inverse(&pMappedItem->matrix);
+			bool bTransformationUpdated = true;
+			if ((arOffset[0] != 0.) || (arOffset[1] != 0.) || (arOffset[2] != 0.))
+			{
+				_matrix4x3Inverse(&pMappedItem->matrix);
 
-			pMappedItem->matrix._41 -= arOffset[0];
-			pMappedItem->matrix._42 -= arOffset[1];
-			pMappedItem->matrix._43 -= arOffset[2];
+				pMappedItem->matrix._41 -= arOffset[0];
+				pMappedItem->matrix._42 -= arOffset[1];
+				pMappedItem->matrix._43 -= arOffset[2];
 
-			_matrix4x3Inverse(&pMappedItem->matrix);
+				_matrix4x3Inverse(&pMappedItem->matrix);				
+			} // if ((arOffset[0] != 0.) ||  ...
+			else
+			{
+				bTransformationUpdated = false;
+			}			
 
 			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, &pMappedItem->matrix);
+			pMappedInstance->setEnable(true);
 			addInstance(pMappedInstance);
 
-			pMappedInstance->setEnable(true);
-
 			vecMappedInstances.push_back(pMappedInstance);
+		
+			if (bTransformationUpdated)
+			{
+				delete pMappedItem;
 
-			delete pMappedItem;
+				continue;
+			}
+
+			// Pending update
+			m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });
 		} // for (auto pMappedItem : ...
 
 		delete pProduct;
 		pProduct = nullptr;
 
-		// Referenced By Geometry
+		// Owner
 		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
-		addGeometry(pGeometry);
-
 		pGeometry->setShow(
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+		addGeometry(pGeometry);
 
-		// Referenced By Instance
+		// Owner
 		auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
-		addInstance(pInstance);
-
 		pInstance->setEnable(
 			(strEntity == L"IFCSPACE") ||
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
@@ -590,6 +628,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 			(strEntity == L"IFCALIGNMENTSEGMENT") ||
 			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		addInstance(pInstance);
 
 		for (auto pMappedInstance : vecMappedInstances)
 		{
@@ -622,8 +661,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 
-		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
-		addInstance(pInstance);
+		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);		
 		pInstance->setEnable(
 			(strEntity == L"IFCSPACE") ||
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
@@ -632,6 +670,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 			(strEntity == L"IFCALIGNMENTSEGMENT") ||
 			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		addInstance(pInstance);
 	}
 	else
 	{
