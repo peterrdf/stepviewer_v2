@@ -87,7 +87,9 @@ public: // Methods
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0)
 		{
-			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+			CString msg;
+			msg.Format(L"Failed to open the model file '%s'.", szModel);
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), msg, L"Error", MB_ICONERROR | MB_OK);
 
 			return nullptr;
 		}

@@ -4,8 +4,8 @@
 
 class CMySTEPViewerDoc;
 class CMySTEPViewerView;
+class _model;
 
-// CBCFView dialog
 
 class CBCFView : public CDialogEx
 {
@@ -21,9 +21,12 @@ public:
 	bool HasContent() { return m_bcfProject != NULL; }
 	bool Show();
 
+	BCFTopic* GetActiveTopic();
+	void ShowLog(bool knownError); //false: show log if any, not neccessary error
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_BCF };
+	enum { IDD = IDD_BCF_VIEW };
 #endif
 
 protected:
@@ -51,8 +54,6 @@ private:
 	void InsertTopicToList(int item, BCFTopic* topic);
 	void LoadExtensions();
 	void LoadExtension(CComboBox& wnd, BCFEnumeration enumeraion);
-	void ShowLog(bool knownError); //false: show log if any, not neccessary error
-	BCFTopic* GetActiveTopic();
 	void LoadActiveTopic();
 	BCFTopic* CreateNewTopic();
 	void UpdateActiveTopic();
@@ -71,6 +72,10 @@ private:
 	void AddRelated(BCFTopic* topic);
 	void AddLink(BCFTopic* topic);
 	void AddDocument(BCFTopic* topic);
+	void RemoveLabel(BCFTopic* topic);
+	void RemoveRelated(BCFTopic* topic);
+	void RemoveLink(BCFTopic* topic);
+	void RemoveDocument(BCFTopic* topic);
 
 	void FillTopicAuthor(BCFTopic* topic);
 	void SaveBCFFile();
@@ -80,7 +85,7 @@ private:
 	BCFProject*						m_bcfProject;
 	CString							m_bcfFilePath;
 	std::vector<_model*>			m_preloadedModels;
-	std::map<BCFFile*, _model*>		m_loadedModels;
+	std::map<BCFBimFile*, _model*>	m_loadedModels;
 
 private:
 	CComboBox m_wndTopics;

@@ -9,6 +9,7 @@
 #include "_ap_model_factory.h"
 #include "BCF\BCFProjInfo.h"
 #include "BCF\BCFView.h"
+#include "BCF\BCFAddLabel.h"
 
  
 #define TAB_Labels			3
@@ -46,7 +47,7 @@ END_MESSAGE_MAP()
 
 
 CBCFView::CBCFView(CMySTEPViewerDoc& doc)
-	: CDialogEx(IDD_BCF, AfxGetMainWnd())
+	: CDialogEx(IDD_BCF_VIEW, AfxGetMainWnd())
 	, m_doc (doc)
 	, m_bcfProject(NULL)
 {
@@ -141,7 +142,7 @@ bool CBCFView::Show()
 	}
 
 	//create new, at least one topic is required
-	if (!m_bcfProject->TopicGetAt(0)) {
+	if (!m_bcfProject->GetTopic(0)) {
 		CreateNewTopic();
 	}
 
@@ -152,7 +153,7 @@ bool CBCFView::Show()
 
 	//show view
 	if (!IsWindow(GetSafeHwnd())) {
-		Create(IDD_BCF, AfxGetMainWnd());
+		Create(IDD_BCF_VIEW, AfxGetMainWnd());
 	}
 	ShowWindow(SW_SHOW);
 
@@ -252,7 +253,7 @@ void CBCFView::LoadProjectToView()
 	m_wndTopics.ResetContent();
 
 	BCFTopic* topic = NULL;
-	for (uint16_t i = 0; topic = m_bcfProject->TopicGetAt(i); i++) {
+	for (uint16_t i = 0; topic = m_bcfProject->GetTopic(i); i++) {
 		InsertTopicToList(i, topic);
 	}
 	m_wndTopics.AddString(L"<New>");
@@ -372,11 +373,11 @@ BCFTopic* CBCFView::CreateNewTopic()
 		return NULL;
 	}
 
-	auto topic = m_bcfProject->TopicAdd(NULL, NULL, NULL);
+	auto topic = m_bcfProject->AddTopic(NULL, NULL, NULL);
 
 	for (auto model : m_doc.getModels()) {
 		auto path = model->getPath();
-		topic->FileAdd(ToUTF8(path).c_str(), false);
+		topic->AddBimFile(ToUTF8(path).c_str(), false);
 	}
 
 	ShowLog(false);
@@ -467,7 +468,7 @@ void CBCFView::LoadComments(BCFTopic* topic, int select)
 	m_wndCommentsList.ResetContent();
 
 	uint16_t i = 0;
-	while (auto comment = topic->CommentGetAt(i++)) {
+	while (auto comment = topic->GetComment(i++)) {
 		CString text;
 		text.Format(L"#%d created by %s at %s",
 			(int)i,
@@ -520,7 +521,7 @@ void CBCFView::UpateActiveComment()
 
 bool CBCFView::CreateNewComment(BCFTopic* topic, CString& text)
 {
-	auto comment = topic->CommentAdd();
+	auto comment = topic->AddComment();
 
 	if (comment) {
 		
@@ -558,7 +559,7 @@ void CBCFView::SetActiveModels(BCFTopic* topic)
 	std::vector<_model*> activeModels = m_preloadedModels; //copy is intentional
 
 	uint16_t i = 0;
-	while (BCFFile* file = topic->FileGetAt(i++)) {
+	while (BCFBimFile* file = topic->GetBimFile(i++)) {
 		_model* model = NULL;
 		
 		auto it = m_loadedModels.find(file);
@@ -568,11 +569,7 @@ void CBCFView::SetActiveModels(BCFTopic* topic)
 		else {
 			auto path = FromUTF8(file->GetReference());
 			model = _ap_model_factory::load(path, true, nullptr, false);
-			if (!model) {
-				CString msg;
-				msg.Format(L"Failed to read file: %s", path.GetString());
-				AfxMessageBox(msg, MB_ICONEXCLAMATION);
-			}
+			//model may be NULL, assume message was shown while load
 			m_loadedModels[file] = model;
 		}
 
@@ -660,7 +657,7 @@ void CBCFView::FillLabels(BCFTopic* topic)
 {
 	m_wndMultiList.ResetContent();
 	int i = 0;
-	while (auto label = topic->LabelGetAt(i++)) {
+	while (auto label = topic->GetLabel(i++)) {
 		m_wndMultiList.AddString(FromUTF8(label));
 	}
 }
@@ -668,7 +665,7 @@ void CBCFView::FillLabels(BCFTopic* topic)
 void CBCFView::FillRelated(BCFTopic* topic)
 {
 	int i = 0;
-	while (auto related = topic->RelatedTopicGetAt(i++)) {
+	while (auto related = topic->GetRelatedTopic(i++)) {
 		auto item = m_wndMultiList.AddString(FromUTF8(related->GetTitle()));
 		m_wndMultiList.SetItemDataPtr(item, related);
 	}
@@ -677,7 +674,7 @@ void CBCFView::FillRelated(BCFTopic* topic)
 void CBCFView::FillLinks(BCFTopic* topic)
 {
 	int i = 0;
-	while (auto link = topic->ReferenceLinkGetAt(i++)) {
+	while (auto link = topic->GetReferenceLink(i++)) {
 		m_wndMultiList.AddString(FromUTF8(link));
 	}
 }
@@ -685,7 +682,7 @@ void CBCFView::FillLinks(BCFTopic* topic)
 void CBCFView::FillDocuments(BCFTopic* topic)
 {
 	int i = 0;
-	while (auto doc = topic->DocumentReferenceGetAt(i++)) {
+	while (auto doc = topic->GetDocumentReference(i++)) {
 		CString text = FromUTF8(doc->GetDescription());
 		if (!text.IsEmpty()) {
 			text.Append(L": ");
@@ -727,7 +724,8 @@ void CBCFView::OnClickedButtonAddMulti()
 
 void CBCFView::AddLabel(BCFTopic* topic)
 {
-
+	CBCFAddLabel dlg(*this);
+	dlg.DoModal();
 }
 
 void CBCFView::AddRelated(BCFTopic* topic)
@@ -753,18 +751,51 @@ void CBCFView::OnClickedButtonRemoveMulti()
 	if (topic) {
 		switch (m_wndTab.GetCurSel()) {
 		case TAB_Labels:
+			RemoveLabel(topic);
 			break;
 		case TAB_Related:
+			RemoveRelated(topic);
 			break;
 		case TAB_Links:
+			RemoveLink(topic);
 			break;
 		case TAB_Documents:
+			RemoveDocument(topic);
 			break;
 		default:
 			ASSERT(FALSE);
 		}
+
+		FillMultiList();
 	}
 }
+
+void CBCFView::RemoveLabel(BCFTopic* topic)
+{
+	auto sel = m_wndMultiList.GetCurSel();
+	if (sel != LB_ERR) {
+		CString label;
+		m_wndMultiList.GetText(sel, label);
+		if (IDYES == AfxMessageBox(L"Do you want to delete label " + label + L"?", MB_YESNO)) {
+			if (!topic->RemoveLabel(ToUTF8(label).c_str())) {
+				ShowLog(true);
+			}
+		}
+	}
+}
+
+void CBCFView::RemoveRelated(BCFTopic* topic)
+{
+}
+
+void CBCFView::RemoveLink(BCFTopic* topic)
+{
+}
+
+void CBCFView::RemoveDocument(BCFTopic* topic)
+{
+}
+
 
 
 void CBCFView::OnSelchangeMultiList()
