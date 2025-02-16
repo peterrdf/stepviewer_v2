@@ -144,9 +144,6 @@
     <ClInclude Include="..\include\_ap_instance.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ap_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_ap_geometry.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -211,6 +208,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_host.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
