@@ -2032,13 +2032,6 @@ void _oglView::_drawInstancesFrameBuffer()
 #else
 	m_pOGLProgram->_enableLighting(true);
 #endif
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	bool bGhostView = m_bGhostView && !getController()->getSelectedInstances().empty();
 
@@ -2067,12 +2060,8 @@ void _oglView::_drawInstancesFrameBuffer()
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2196,14 +2185,6 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2229,12 +2210,8 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2298,14 +2275,6 @@ void _oglView::_drawLines(_model* pModel)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2331,12 +2300,8 @@ void _oglView::_drawLines(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2401,14 +2366,6 @@ void _oglView::_drawPoints(_model* pModel)
 #endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2434,12 +2391,8 @@ void _oglView::_drawPoints(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2554,14 +2507,6 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 #endif
 	m_pOGLProgram->_setTransparency(1.f);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2587,12 +2532,8 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS

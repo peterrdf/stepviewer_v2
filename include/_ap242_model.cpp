@@ -97,12 +97,7 @@ void _ap242_model::loadProductDefinitions()
 
 _ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance)
 {
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
-	if (owlInstance != 0)
-	{
-		preLoadInstance(owlInstance);
-	}
-
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);	
 	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance);
 	addGeometry(pGeometry);
 

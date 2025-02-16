@@ -238,36 +238,15 @@ void _geometry::calculateMinMaxTransform(
 }
 
 void _geometry::calculateMinMaxTransform(
-	_model* pModel,
 	_instance* pInstance,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax)
 {
-	assert(pModel != nullptr);
 	assert(pInstance != nullptr);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
-	glm::mat4 matInstanceTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-	glm::mat4 matFinalTransformation = glm::identity<glm::mat4>();
-	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	matFinalTransformation = matFinalTransformation * matInstanceTransformation;
-	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-	double arTransformation[16] = { 0.0 };
-	const float* pRawData = (const float*)glm::value_ptr(matFinalTransformation);
-	for (int i = 0; i < 16; ++i)
-		arTransformation[i] = pRawData[i];
-
 	calculateMinMaxTransform(
-		(const _matrix4x4*)arTransformation,
+		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
