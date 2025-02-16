@@ -166,6 +166,7 @@ public: // Methods
 	virtual void preModelLoaded() {}
 	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
+	virtual void postModelLoaded() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onShowMetaInformation() {}
 	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}

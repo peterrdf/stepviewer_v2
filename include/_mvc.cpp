@@ -538,6 +538,12 @@ void _controller::setModels(const vector<_model*>& vecModels)
 		(*itView)->onModelLoaded();
 	}
 
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->postModelLoaded();
+	}
+
 	m_bUpdatingModel = false;
 }
 

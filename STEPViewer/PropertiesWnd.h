@@ -57,9 +57,9 @@ class CPropertiesWnd
 public: // Methods
 
 	// _view
-	virtual void onModelLoaded();
-	virtual void onShowMetaInformation();
-	virtual void onInstanceSelected(_view* pSender);
+	virtual void postModelLoaded() override;
+	virtual void onShowMetaInformation() override;
+	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 private: // Methods
