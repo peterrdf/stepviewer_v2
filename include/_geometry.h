@@ -207,16 +207,23 @@ public: // Methods
 	virtual ~_geometry();
 
 	void calculateBB(
-		const _matrix4x4* pTransformationMatrix,
-		float& fXmin, float& fXmax,
-		float& fYmin, float& fYmax,
-		float& fZmin, float& fZmax);
-
-	void calculateBB(
 		_instance* pInstance,
 		float& fXmin, float& fXmax,
 		float& fYmin, float& fYmax,
-		float& fZmin, float& fZmax);
+		float& fZmin, float& fZmax) const;
+
+	void calculateBB(
+		const _matrix4x4* pTransformationMatrix,
+		float& fXmin, float& fXmax,
+		float& fYmin, float& fYmax,
+		float& fZmin, float& fZmax) const;
+	
+	void calculateBB(
+		const _matrix4x4* pTransformationMatrix,
+		_vector3d* pvecAABB,
+		float& fXmin, float& fXmax,
+		float& fYmin, float& fYmax,
+		float& fZmin, float& fZmax) const;
 
 	void scale(float fScaleFactor);
 	void translate(float fX, float fY, float fZ);

@@ -73,149 +73,10 @@ _geometry::_geometry(OwlInstance owlInstance)
 }
 
 void _geometry::calculateBB(
-	const _matrix4x4* pTransformationMatrix,
-	float& fXmin, float& fXmax,
-	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
-{
-	if (!hasGeometry())
-	{
-		return;
-	}
-
-	if ((m_pvecAABBMin == nullptr) || (m_pvecAABBMax == nullptr))
-	{
-		assert(m_vecTriangles.empty());
-
-		return;
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMin->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMax->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMin->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMax->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMin->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMax->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMin->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-
-	{
-		_vector3 vecPoint = { m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMax->z };
-		if (pTransformationMatrix != nullptr)
-		{
-			_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-		}
-
-		fXmin = (float)fmin(fXmin, vecPoint.x);
-		fXmax = (float)fmax(fXmax, vecPoint.x);
-		fYmin = (float)fmin(fYmin, vecPoint.y);
-		fYmax = (float)fmax(fYmax, vecPoint.y);
-		fZmin = (float)fmin(fZmin, vecPoint.z);
-		fZmax = (float)fmax(fZmax, vecPoint.z);
-	}
-}
-
-void _geometry::calculateBB(
 	_instance* pInstance,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
+	float& fZmin, float& fZmax) const
 {
 	assert(pInstance != nullptr);
 
@@ -224,6 +85,60 @@ void _geometry::calculateBB(
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
+}
+
+void _geometry::calculateBB(
+	const _matrix4x4* pTransformationMatrix,
+	float& fXmin, float& fXmax,
+	float& fYmin, float& fYmax,
+	float& fZmin, float& fZmax) const
+{
+	if (!hasGeometry())
+	{
+		return;
+	}
+
+	if ((m_pvecAABBMin == nullptr) || (m_pvecAABBMax == nullptr))
+	{
+		return;
+	}
+
+	calculateBB(
+		pTransformationMatrix,
+		m_pvecAABBMin,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		pTransformationMatrix,
+		m_pvecAABBMax,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+}
+
+void _geometry::calculateBB(
+	const _matrix4x4* pTransformationMatrix,
+	_vector3d* pvecAABB,
+	float& fXmin, float& fXmax,
+	float& fYmin, float& fYmax,
+	float& fZmin, float& fZmax) const
+{
+	assert(pvecAABB != nullptr);
+
+	_vector3 vecPoint = { pvecAABB->x, pvecAABB->y, pvecAABB->z };
+	if (pTransformationMatrix != nullptr)
+	{
+		_transform(&vecPoint, pTransformationMatrix, &vecPoint);
+	}
+
+	fXmin = (float)fmin(fXmin, vecPoint.x);
+	fXmax = (float)fmax(fXmax, vecPoint.x);
+	fYmin = (float)fmin(fYmin, vecPoint.y);
+	fYmax = (float)fmax(fYmax, vecPoint.y);
+	fZmin = (float)fmin(fZmin, vecPoint.z);
+	fZmax = (float)fmax(fZmax, vecPoint.z);
 }
 
 void _geometry::scale(float fScaleFactor)
