@@ -57,7 +57,7 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ************************************************************************************************
-/*virtual*/ void CPropertiesWnd::onModelLoaded()
+/*virtual*/ void CPropertiesWnd::postModelLoaded()
 {
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 

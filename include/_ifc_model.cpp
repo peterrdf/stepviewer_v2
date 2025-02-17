@@ -91,7 +91,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 					if (pMappedItemInstance->getOwner() == pInstance)
 					{
 						pMappedItemGeometry->calculateMinMaxTransform(
-							this,
 							pMappedItemInstance,
 							m_fXmin, m_fXmax,
 							m_fYmin, m_fYmax,
@@ -103,7 +102,6 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		else
 		{
 			pInstance->getGeometry()->calculateMinMaxTransform(
-				this,
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -193,11 +191,9 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			{
 				auto pMappedItem = pMappedItemPendingUpdate.second;
 
-				_matrix4x3Inverse(&pMappedItem->matrix);
-				pMappedItem->matrix._41 -= arOffset[0] / dScaleFactor;
-				pMappedItem->matrix._42 -= arOffset[1] / dScaleFactor;
-				pMappedItem->matrix._43 -= arOffset[2] / dScaleFactor;
-				_matrix4x3Inverse(&pMappedItem->matrix);
+				pMappedItem->matrix._41 += arOffset[0] / dScaleFactor;
+				pMappedItem->matrix._42 += arOffset[1] / dScaleFactor;
+				pMappedItem->matrix._43 += arOffset[2] / dScaleFactor;
 
 				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
 
@@ -573,36 +569,13 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
 			}
 
-			vecMappedGeometries.push_back(pMappedGeometry);
+			vecMappedGeometries.push_back(pMappedGeometry);		
 
-			bool bTransformationUpdated = true;
-			if ((arOffset[0] != 0.) || (arOffset[1] != 0.) || (arOffset[2] != 0.))
-			{
-				_matrix4x3Inverse(&pMappedItem->matrix);
-
-				pMappedItem->matrix._41 -= arOffset[0];
-				pMappedItem->matrix._42 -= arOffset[1];
-				pMappedItem->matrix._43 -= arOffset[2];
-
-				_matrix4x3Inverse(&pMappedItem->matrix);				
-			} // if ((arOffset[0] != 0.) ||  ...
-			else
-			{
-				bTransformationUpdated = false;
-			}			
-
-			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, &pMappedItem->matrix);
+			auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, nullptr);
 			pMappedInstance->setEnable(true);
 			addInstance(pMappedInstance);
 
 			vecMappedInstances.push_back(pMappedInstance);
-		
-			if (bTransformationUpdated)
-			{
-				delete pMappedItem;
-
-				continue;
-			}
 
 			// Pending update
 			m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });

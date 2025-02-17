@@ -231,8 +231,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 /*virtual*/ CIFCModelStructureView::~CIFCModelStructureView()
 {
-	m_pTreeCtrl->SetImageList(nullptr, TVSIL_NORMAL);
-
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;	
 

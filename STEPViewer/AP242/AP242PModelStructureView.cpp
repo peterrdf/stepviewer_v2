@@ -67,8 +67,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 /*virtual*/ CAP242PModelStructureView::~CAP242PModelStructureView()
 {
-	m_pTreeCtrl->SetImageList(nullptr, TVSIL_NORMAL);
-
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;
 

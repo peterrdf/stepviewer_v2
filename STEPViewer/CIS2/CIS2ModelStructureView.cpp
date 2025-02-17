@@ -61,8 +61,6 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CCIS2ModelStructureView::~CCIS2ModelStructureView()
 {
-	m_pTreeCtrl->SetImageList(nullptr, TVSIL_NORMAL);
-
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;	
 
