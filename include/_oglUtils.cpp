@@ -866,6 +866,12 @@ _oglRenderer::_oglRenderer()
 	, m_fScaleFactorMin(0.f)
 	, m_fScaleFactorMax(2.f)
 	, m_fScaleFactorInterval(2.f)
+	, m_bCameraSettings(false)	
+	, m_vecViewPoint({ 0., 0, 0. })
+	, m_vecDirection({ 0., 0, 0. })
+	, m_vecUpVector({ 0., 0, 0. })
+	, m_dFieldOfView(0.)
+	, m_dAspectRatio(0.)
 {
 	_setView(enumView::Isometric);
 }
@@ -1047,8 +1053,8 @@ void _oglRenderer::_prepare(
 	// aspect   - Aspect ratio of the viewport
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	GLdouble fovY = m_bCameraSettings ? m_dFieldOfView : 45.0;
+	GLdouble aspect = m_bCameraSettings ? m_dAspectRatio : (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -1231,6 +1237,31 @@ void _oglRenderer::_panMouseRButton(float fX, float fY)
 	_pan(
 		m_fPanXInterval * fX,
 		m_fPanYInterval * -fY);
+}
+
+void _oglRenderer::_setCameraSettings(
+	bool bPerspective,	
+	double arViewPoint[3],
+	double arDirection[3],
+	double arUpVector[3],
+	double dViewToWorldScale,
+	double dFieldOfView,
+	double dAspectRatio)
+{
+	m_bCameraSettings = true;
+
+	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;	
+
+	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
+	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
+	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
+
+	m_fScaleFactor = (float)dViewToWorldScale;
+
+	m_dFieldOfView = dFieldOfView;
+	m_dAspectRatio = dAspectRatio;
+
+	_redraw();
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
@@ -1439,6 +1470,13 @@ void _oglRenderer::_reset()
 	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
 	m_fScaleFactor = fWorldBoundingSphereDiameter;
+
+	m_bCameraSettings = false;	
+	m_vecViewPoint = { 0., 0, 0. };
+	m_vecDirection = { 0., 0, 0. };
+	m_vecUpVector = { 0., 0, 0. };
+	m_dFieldOfView = 0.;
+	m_dAspectRatio = 0.;
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
