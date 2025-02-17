@@ -1248,11 +1248,23 @@ void _oglRenderer::_setCameraSettings(
 	double dFieldOfView,
 	double dAspectRatio)
 {
+	_reset();
+
 	m_bCameraSettings = true;
 
 	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;	
 
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
 	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
+	m_fXTranslation = (float)(arViewPoint[0] - vecVertexBufferOffset.x) / dScaleFactor;
+	m_fYTranslation = (float)(arViewPoint[1] - vecVertexBufferOffset.y) / dScaleFactor;
+	m_fZTranslation = (float)(arViewPoint[2] - vecVertexBufferOffset.z) / dScaleFactor;
+
 	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
 	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
 
