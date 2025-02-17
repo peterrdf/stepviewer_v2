@@ -206,12 +206,6 @@ public: // Methods
 	_geometry(OwlInstance iInstance);
 	virtual ~_geometry();
 
-	static void calculateBBMinMax(
-		OwlInstance iInstance,
-		double& dXmin, double& dXmax,
-		double& dYmin, double& dYmax,
-		double& dZmin, double& dZmax);
-
 	void calculateMinMaxTransform(
 		const _matrix4x4* pTransformationMatrix,
 		float& fXmin, float& fXmax,

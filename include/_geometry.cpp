@@ -72,32 +72,6 @@ _geometry::_geometry(OwlInstance owlInstance)
 	clean();
 }
 
-/*static*/ void _geometry::calculateBBMinMax(
-	OwlInstance iInstance,
-	double& dXmin, double& dXmax,
-	double& dYmin, double& dYmax,
-	double& dZmin, double& dZmax)
-{
-	assert(iInstance != 0);
-
-	_vector3d vecBBMin;
-	_vector3d vecBBMax;
-	if (GetInstanceGeometryClass(iInstance) &&
-		GetBoundingBox(
-			iInstance,
-			(double*)&vecBBMin,
-			(double*)&vecBBMax))
-	{
-		dXmin = fmin(dXmin, vecBBMin.x);
-		dYmin = fmin(dYmin, vecBBMin.y);
-		dZmin = fmin(dZmin, vecBBMin.z);
-
-		dXmax = fmax(dXmax, vecBBMax.x);
-		dYmax = fmax(dYmax, vecBBMax.y);
-		dZmax = fmax(dZmax, vecBBMax.z);
-	}
-}
-
 void _geometry::calculateMinMaxTransform(
 	const _matrix4x4* pTransformationMatrix,
 	float& fXmin, float& fXmax,
