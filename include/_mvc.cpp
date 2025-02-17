@@ -51,7 +51,7 @@ void _model::scale()
 
 			for (auto pInstance : pGeometry->getInstances())
 			{
-				pGeometry->calculateMinMaxTransform(
+				pGeometry->calculateBB(
 					pInstance,
 					m_fXmin, m_fXmax,
 					m_fYmin, m_fYmax,
@@ -125,7 +125,7 @@ void _model::scale()
 				continue;
 			}
 
-			pGeometry->calculateMinMaxTransform(
+			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -177,7 +177,7 @@ void _model::scale()
 
 	for (auto pInstance : setInstances)
 	{
-		pInstance->getGeometry()->calculateMinMaxTransform(
+		pInstance->getGeometry()->calculateBB(
 			pInstance,
 			m_fXmin, m_fXmax,
 			m_fYmin, m_fYmax,
@@ -220,7 +220,7 @@ void _model::scale()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	pInstance->getGeometry()->calculateMinMaxTransform(
+	pInstance->getGeometry()->calculateBB(
 		pInstance,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,
@@ -268,7 +268,7 @@ void _model::scale()
 				continue;
 			}
 
-			pGeometry->calculateMinMaxTransform(
+			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,

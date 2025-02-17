@@ -72,7 +72,7 @@ _geometry::_geometry(OwlInstance owlInstance)
 	clean();
 }
 
-void _geometry::calculateMinMaxTransform(
+void _geometry::calculateBB(
 	const _matrix4x4* pTransformationMatrix,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
@@ -211,7 +211,7 @@ void _geometry::calculateMinMaxTransform(
 	}
 }
 
-void _geometry::calculateMinMaxTransform(
+void _geometry::calculateBB(
 	_instance* pInstance,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
@@ -219,7 +219,7 @@ void _geometry::calculateMinMaxTransform(
 {
 	assert(pInstance != nullptr);
 
-	calculateMinMaxTransform(
+	calculateBB(
 		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,

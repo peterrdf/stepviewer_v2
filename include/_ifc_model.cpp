@@ -90,7 +90,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 				{
 					if (pMappedItemInstance->getOwner() == pInstance)
 					{
-						pMappedItemGeometry->calculateMinMaxTransform(
+						pMappedItemGeometry->calculateBB(
 							pMappedItemInstance,
 							m_fXmin, m_fXmax,
 							m_fYmin, m_fYmax,
@@ -101,7 +101,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		} // if (pInstance->getGeometry()->isPlaceholder())
 		else
 		{
-			pInstance->getGeometry()->calculateMinMaxTransform(
+			pInstance->getGeometry()->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
