@@ -19,6 +19,9 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 #endif
 		TEXTFILE,
 		false);
+
+	// Default settings
+	m_strCullFaces = CULL_FACES_FRONT;
 }
 
 CAP242OpenGLView::~CAP242OpenGLView()
