@@ -1264,9 +1264,7 @@ void _oglRenderer::_setCameraSettings(
 	glm::vec3 vecEulerAngles = directionToEulerAngles(
 		glm::vec3(arDirection[0], arDirection[1], arDirection[2]),
 		glm::vec3(arUpVector[0], arUpVector[1], arUpVector[2]));
-	m_fXAngle = glm::degrees(vecEulerAngles[0]);
-	m_fYAngle = glm::degrees(vecEulerAngles[1]);
-	m_fZAngle = glm::degrees(vecEulerAngles[2]);
+	m_rotation = _quaterniond::toQuaternion(vecEulerAngles.x, vecEulerAngles.y, vecEulerAngles.z);
 
 	m_fScaleFactor = (float)dViewToWorldScale;
 
