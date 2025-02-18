@@ -32,16 +32,12 @@ public: // Methods
 	
 	static GLsizei getVerticesCountLimit(GLint iVertexLengthBytes)
 	{
-#ifdef WIN64
 		return numeric_limits<GLint>::max() / iVertexLengthBytes;
-#else
-		return 6500000;
-#endif
 	}
 
 	static GLsizei getIndicesCountLimit()
 	{
-		return 64800;
+		return numeric_limits<GLint>::max();
 	}
 
 #if defined _MFC_VER || defined _AFXDLL
