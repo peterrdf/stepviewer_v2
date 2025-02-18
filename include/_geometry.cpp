@@ -80,7 +80,7 @@ void _geometry::calculateBB(
 {
 	assert(pInstance != nullptr);
 
-	if (!hasGeometry())
+	if (!hasGeometry() || isPlaceholder() || ignoreBB())
 	{
 		return;
 	}

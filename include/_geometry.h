@@ -238,10 +238,8 @@ protected: // Methods
 	}
 
 	virtual void preCalculate()	{}
-
 	virtual void calculateCore();
-
-	virtual void postCalculate() {}
+	virtual void postCalculate() {}	
 
 	void addTriangles(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
 	{
@@ -326,6 +324,7 @@ public: // Properties
 	_vector3d* getBBMax() const { return m_pvecBBMax; }
 	_vector3d* getAABBMin() const { return m_pvecAABBMin; }
 	_vector3d* getAABBMax() const { return m_pvecAABBMax; }
+	virtual bool ignoreBB() const { return false; }
 
 	// Primitives
 	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
