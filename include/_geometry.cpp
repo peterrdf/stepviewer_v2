@@ -80,19 +80,6 @@ void _geometry::calculateBB(
 {
 	assert(pInstance != nullptr);
 
-	calculateBB(
-		pInstance->getTransformationMatrix(),
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax);
-}
-
-void _geometry::calculateBB(
-	const _matrix4x4* pTransformationMatrix,
-	float& fXmin, float& fXmax,
-	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax) const
-{
 	if (!hasGeometry())
 	{
 		return;
@@ -104,30 +91,70 @@ void _geometry::calculateBB(
 	}
 
 	calculateBB(
-		pTransformationMatrix,
-		m_pvecAABBMin,
+		m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
 
 	calculateBB(
-		pTransformationMatrix,
-		m_pvecAABBMax,
+		m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
 }
 
 void _geometry::calculateBB(
+	double dX, double dY, double dZ,
 	const _matrix4x4* pTransformationMatrix,
-	_vector3d* pvecAABB,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
 	float& fZmin, float& fZmax) const
 {
-	assert(pvecAABB != nullptr);
-
-	_vector3 vecPoint = { pvecAABB->x, pvecAABB->y, pvecAABB->z };
+	_vector3 vecPoint = { dX, dY, dZ };
 	if (pTransformationMatrix != nullptr)
 	{
 		_transform(&vecPoint, pTransformationMatrix, &vecPoint);
