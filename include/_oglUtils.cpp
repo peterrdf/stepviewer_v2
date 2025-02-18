@@ -866,10 +866,7 @@ _oglRenderer::_oglRenderer()
 	, m_fScaleFactorMin(0.f)
 	, m_fScaleFactorMax(2.f)
 	, m_fScaleFactorInterval(2.f)
-	, m_bCameraSettings(false)	
-	, m_vecViewPoint({ 0., 0, 0. })
-	, m_vecDirection({ 0., 0, 0. })
-	, m_vecUpVector({ 0., 0, 0. })
+	, m_bCameraSettings(false)
 	, m_dFieldOfView(0.)
 	, m_dAspectRatio(0.)
 {
@@ -1260,13 +1257,16 @@ void _oglRenderer::_setCameraSettings(
 
 	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
 
-	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
 	m_fXTranslation = (float)(arViewPoint[0] - vecVertexBufferOffset.x) / dScaleFactor;
 	m_fYTranslation = (float)(arViewPoint[1] - vecVertexBufferOffset.y) / dScaleFactor;
 	m_fZTranslation = (float)(arViewPoint[2] - vecVertexBufferOffset.z) / dScaleFactor;
 
-	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
-	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
+	glm::vec3 vecEulerAngles = directionToEulerAngles(
+		glm::vec3(arDirection[0], arDirection[1], arDirection[2]),
+		glm::vec3(arUpVector[0], arUpVector[1], arUpVector[2]));
+	m_fXAngle = glm::degrees(vecEulerAngles[0]);
+	m_fYAngle = glm::degrees(vecEulerAngles[1]);
+	m_fZAngle = glm::degrees(vecEulerAngles[2]);
 
 	m_fScaleFactor = (float)dViewToWorldScale;
 
@@ -1483,10 +1483,7 @@ void _oglRenderer::_reset()
 
 	m_fScaleFactor = fWorldBoundingSphereDiameter;
 
-	m_bCameraSettings = false;	
-	m_vecViewPoint = { 0., 0, 0. };
-	m_vecDirection = { 0., 0, 0. };
-	m_vecUpVector = { 0., 0, 0. };
+	m_bCameraSettings = false;
 	m_dFieldOfView = 0.;
 	m_dAspectRatio = 0.;
 }

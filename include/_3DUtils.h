@@ -1,7 +1,30 @@
 #pragma once
 
+#include "vec3.hpp"
+#include "mat3x3.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
+
 // ************************************************************************************************
 #define PI 3.14159265
+
+// ************************************************************************************************
+static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
+{
+	glm::vec3 dir = glm::normalize(direction);
+	glm::vec3 up = glm::normalize(upVector);
+
+	// Y1
+	glm::vec3 right = glm::normalize(glm::cross(up, dir));
+
+	// ortho up
+	up = glm::cross(dir, right);
+
+	glm::mat3 rotationMatrix = glm::mat3(right, up, dir);
+	glm::vec3 eulerAngles = glm::eulerAngles(glm::quat_cast(rotationMatrix));
+
+	return eulerAngles;
+}
 
 // ************************************************************************************************
 struct _vector3d

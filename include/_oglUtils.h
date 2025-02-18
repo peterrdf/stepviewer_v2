@@ -2400,9 +2400,6 @@ protected: // Members
 
 	// Camera
 	bool m_bCameraSettings;	
-	_vector3d m_vecViewPoint;
-	_vector3d m_vecDirection;
-	_vector3d m_vecUpVector;
 	double m_dFieldOfView;
 	double m_dAspectRatio;
 
