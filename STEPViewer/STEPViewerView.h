@@ -38,7 +38,8 @@ public:
 
 // Operations
 public:
-	void SetBCFView (BCFCamera camera, BCFPoint& viewPoint,	BCFPoint& direction, BCFPoint& upVector, double viewToWorldScale, double fieldOfView, double aspectRatio);
+	void SetBCFView(BCFCamera camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double viewToWorldScale, double fieldOfView, double aspectRatio);
+	void GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio);
 
 // Overrides
 public:

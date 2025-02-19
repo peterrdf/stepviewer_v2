@@ -175,8 +175,9 @@
 #define IDC_EDIT_PATH                   1048
 #define IDC_BUTTON_BROWSE               1049
 #define IDC_EDIT_DESCRIPTION            1050
-#define IDC_CHECK1                      1051
 #define IDC_CHECK_EXTERNAL              1051
+#define IDC_BUTTON1                     1052
+#define IDC_UPDATE_VIEWPOINT            1052
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -226,7 +227,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        363
 #define _APS_NEXT_COMMAND_VALUE         32843
-#define _APS_NEXT_CONTROL_VALUE         1052
+#define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

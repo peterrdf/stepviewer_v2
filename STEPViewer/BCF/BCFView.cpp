@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_EN_KILLFOCUS(IDC_TOPIC_SERVER_ID, &CBCFView::OnKillfocusEdit)
 	ON_EN_KILLFOCUS(IDC_TOPIC_COMMENT_TEXT, &CBCFView::OnKillfocusTopicCommentText)
 	ON_BN_CLICKED(IDC_SAVE, &CBCFView::OnClickedSave)
+	ON_BN_CLICKED(IDC_UPDATE_VIEWPOINT, &CBCFView::OnClickedUpdateViewpoint)
 END_MESSAGE_MAP()
 
 
@@ -195,6 +196,7 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MULTI_LIST, m_wndMultiList);
 	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAddMulti);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemoveMulti);
+	DDX_Control(pDX, IDC_UPDATE_VIEWPOINT, m_wndUpdateViewPoint);
 }
 
 void CBCFView::OnClose()
@@ -497,11 +499,17 @@ void CBCFView::UpateActiveComment()
 	newText.Trim();
 
 	bool ok = true;
+
 	if (!comment && !newText.IsEmpty()) {
-		ok = CreateNewComment(topic, newText);
+		comment = topic->AddComment();
+		if (comment)
+			ok = UpdateViewPoint(comment) && ok;
+		else
+			ok = false;
 	}
-	else if (comment) {
-		ok = comment->SetText(ToUTF8(newText).c_str());
+
+	if (comment) {
+		ok = comment->SetText(ToUTF8(newText).c_str()) && ok;
 	}
 
 	ShowLog(!ok);
@@ -509,39 +517,68 @@ void CBCFView::UpateActiveComment()
 	LoadComments(topic, indComment);
 }
 
-bool CBCFView::CreateNewComment(BCFTopic* topic, CString& text)
+bool CBCFView::UpdateViewPoint(BCFComment* comment)
 {
-	auto comment = topic->AddComment();
+	bool ok = true;
 
-	if (comment) {
-		
-		//TODO - save viewpoint
+	if (auto view = GetView()) {
+	
+		auto vp = comment->GetViewPoint();
+		if (!vp) {
+			vp = comment->GetTopic().AddViewPoint();
+			if (vp) {
+				ok = comment->SetViewPoint(vp) && ok;
+			}
+			else {
+				ok = false;
+			}
+		}
 
-		return comment->SetText(ToUTF8(text).c_str());
+		if (vp) {
+			BCFCamera camera = BCFCameraOrthogonal;
+			BCFPoint viewPoint;
+			BCFPoint direction;
+			BCFPoint upVector;
+			double viewToWorldScale = 1;
+			double fieldOfView = 90;
+			double aspectRatio = 1;
+
+			view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+
+			ok = vp->SetCameraType(camera) && ok;
+			ok = vp->SetCameraViewPoint(&viewPoint) && ok;
+			ok = vp->SetCameraUpVector(&upVector) && ok;
+			ok = vp->SetViewToWorldScale(viewToWorldScale) && ok;
+			ok = vp->SetFieldOfView(fieldOfView) && ok;
+			ok = vp->SetAspectRatio(aspectRatio) && ok;
+		}
 	}
 
-	return false;
+	return ok;
 }
 
 void CBCFView::OnSelchangeCommentsList()
 {
-	if (!m_bcfProject) {
-		return;
-	}
-	auto item = m_wndCommentsList.GetCurSel();
-	auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(item);
+	BCFComment* comment = NULL;
+	if (m_bcfProject) {
 
-	if (comment) {
-		CString strCommentText = FromUTF8(comment->GetText());
-		m_wndCommentText.SetWindowText(strCommentText);
+		auto item = m_wndCommentsList.GetCurSel();
+		comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(item);
 
-		if (auto vp = comment->GetViewPoint()) {
-			SetActiveViewPoint(vp);
+		if (comment) {
+			CString strCommentText = FromUTF8(comment->GetText());
+			m_wndCommentText.SetWindowText(strCommentText);
+
+			if (auto vp = comment->GetViewPoint()) {
+				SetActiveViewPoint(vp);
+			}
+		}
+		else {
+			m_wndCommentText.SetWindowText(L""); //new comment
 		}
 	}
-	else {
-		m_wndCommentText.SetWindowText(L""); //new comment
-	}
+
+	m_wndUpdateViewPoint.EnableWindow(comment != NULL);
 }
 
 void CBCFView::SetActiveModels(BCFTopic* topic)
@@ -882,4 +919,12 @@ void CBCFView::SaveBCFFile()
 	ShowLog(!ok);
 
 	LoadProjectToView();
+}
+
+void CBCFView::OnClickedUpdateViewpoint()
+{
+	auto indComment = m_wndCommentsList.GetCurSel();
+	if (auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment)) {
+		UpdateViewPoint(comment);
+	}
 }

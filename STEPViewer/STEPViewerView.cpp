@@ -795,3 +795,16 @@ void CMySTEPViewerView::SetBCFView(
 			aspectRatio);
 	}	
 }
+
+void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio)
+{
+	camera = BCFCameraOrthogonal;
+	memset(&viewPoint, 0, sizeof(BCFPoint));
+	memset(&direction, 0, sizeof(BCFPoint));
+	direction.xyz[0] = 1;
+	memset(&upVector, 0, sizeof(BCFPoint));
+	upVector.xyz[2] = 1;
+	viewToWorldScale = 1;
+	fieldOfView = 90;
+	aspectRatio = 1;
+}

@@ -50,6 +50,7 @@ private:
 	afx_msg void OnKillfocusEdit();
 	afx_msg void OnKillfocusTopicCommentText();
 	afx_msg void OnClickedSave();
+	afx_msg void OnClickedUpdateViewpoint();
 
 private:
 	CMySTEPViewerView* GetView();
@@ -62,7 +63,7 @@ private:
 	void UpdateActiveTopic();
 	void LoadComments(BCFTopic* topic, int select = 0);
 	void UpateActiveComment();
-	bool CreateNewComment(BCFTopic* topic, CString& text);
+	bool UpdateViewPoint(BCFComment* comment);
 	void SetActiveModels(BCFTopic* topic);
 	void SetActiveViewPoint(BCFViewPoint* vp);
 	void FillMultiList();
@@ -124,5 +125,6 @@ private:
 	CListBox m_wndMultiList;
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
+	CButton m_wndUpdateViewPoint;
 };
 
