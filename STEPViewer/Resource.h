@@ -176,7 +176,6 @@
 #define IDC_BUTTON_BROWSE               1049
 #define IDC_EDIT_DESCRIPTION            1050
 #define IDC_CHECK_EXTERNAL              1051
-#define IDC_BUTTON1                     1052
 #define IDC_UPDATE_VIEWPOINT            1052
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
@@ -220,13 +219,17 @@
 #define ID_3DVIEW_OVERRIDE_MATERIAL     32837
 #define ID_3DVIEW_RESET_MATERIALS       32838
 #define ID_VIEW_RESET                   32839
+#define ID_FILE_BCF                     32843
+#define ID_BCF_OPEN                     32844
+#define ID_BCF_NEW                      32845
+#define ID_BCF_ADDBIMFILE               32846
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        363
-#define _APS_NEXT_COMMAND_VALUE         32843
+#define _APS_NEXT_COMMAND_VALUE         32847
 #define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

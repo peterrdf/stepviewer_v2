@@ -15,12 +15,12 @@ public:
 	CBCFView(CMySTEPViewerDoc& doc);
 	virtual ~CBCFView();
 
-	void DeleteContent();
-	bool ReadBCFFile(LPCTSTR bcfFilePath);
-	bool CreateNewProject(); //
-	bool HasContent() { return m_bcfProject != NULL; }
-	bool Show();
+public:
 
+	void NewBCF();
+	void OpenBCF();
+
+public:
 	BCFTopic* GetActiveTopic();
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
 
@@ -53,6 +53,9 @@ private:
 	afx_msg void OnClickedUpdateViewpoint();
 
 private:
+	void DeleteContent();
+	bool ReadBCFFile(LPCTSTR bcfFilePath);
+	bool Show();
 	CMySTEPViewerView* GetView();
 	void LoadProjectToView();
 	void InsertTopicToList(int item, BCFTopic* topic);

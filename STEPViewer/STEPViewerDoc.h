@@ -70,6 +70,10 @@ protected:
 	afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
+	afx_msg void OnBCFNew();
+	afx_msg void OnBCFOpen();
+	afx_msg void OnUpdateBCFNew(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBCFOpen(CCmdUI* pCmdUI);
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler

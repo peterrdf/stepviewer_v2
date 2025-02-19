@@ -82,41 +82,56 @@ void CBCFView::DeleteContent()
 	}
 }
 
-bool CBCFView::CreateNewProject()
+void CBCFView::NewBCF()
 {
-	if (!m_bcfProject) {
-		m_bcfProject = BCFProject::Create();
-		if (!m_bcfProject) {
-			AfxMessageBox(L"Failed to initialize BCF Project");
-		}
-		return m_bcfProject != NULL;
+	DeleteContent();
+
+	m_bcfProject = BCFProject::Create();
+	if (m_bcfProject) {
+		Show();
 	}
 	else {
-		return false;
+		AfxMessageBox(L"Failed to initialize BCF Project");
+	}
+}
+
+void CBCFView::OpenBCF()
+{
+	auto filter = L"BCF files (*.bcf;*.bcfzip)|*.bcf;*.bcfzip|All files (*.*)|*.*||";
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST, filter);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	DeleteContent();
+
+	m_bcfProject = BCFProject::Create();
+	if (m_bcfProject) {
+		Show();
+		ReadBCFFile(dlgFile.GetPathName());
+	}
+	else {
+		AfxMessageBox(L"Failed to initialize BCF Project");
 	}
 }
 
 bool CBCFView::ReadBCFFile(LPCTSTR bcfFilePath)
 {
-	fs::path path = bcfFilePath;
-	auto ext = path.extension();
-	if (ext != ".bcf" && ext != ".bcfzip") {
+	if (!m_bcfProject) {
 		return false;
 	}
-
-	bool isnew = CreateNewProject();
 
 	if (!m_bcfProject->ReadFile(ToUTF8(bcfFilePath).c_str(), true))
 	{
 		ShowLog(true);
-		if (isnew) {
-			DeleteContent();
-		}
+		DeleteContent();
 		return false;
 	}
 
 	ShowLog(false);
 	m_bcfFilePath = bcfFilePath;
+
 	return true;
 }
 
