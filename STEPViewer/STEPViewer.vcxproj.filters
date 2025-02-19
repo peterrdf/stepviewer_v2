@@ -225,6 +225,9 @@
     <ClInclude Include="BCF\BCFAddRelatedTopic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFAddReferenceLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -363,6 +366,9 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="BCF\BCFAddRelatedTopic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddReferenceLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -16,7 +16,7 @@ public:
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ADDRELATEDTOPIC };
+	enum { IDD = IDD_BCF_ADDRELATEDTOPIC };
 #endif
 
 protected:

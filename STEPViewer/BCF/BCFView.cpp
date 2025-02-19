@@ -11,6 +11,7 @@
 #include "BCF\BCFView.h"
 #include "BCF\BCFAddLabel.h"
 #include "BCF\BCFAddRelatedTopic.h"
+#include "BCF\BCFAddReferenceLink.h"
 
  
 #define TAB_Labels			3
@@ -727,7 +728,8 @@ void CBCFView::AddRelated(BCFTopic* topic)
 
 void CBCFView::AddLink(BCFTopic* topic)
 {
-
+	CBCFAddReferenceLink dlg(*this);
+	dlg.DoModal();
 }
 
 void CBCFView::AddDocument(BCFTopic* topic)
@@ -791,6 +793,16 @@ void CBCFView::RemoveRelated(BCFTopic* topic)
 
 void CBCFView::RemoveLink(BCFTopic* topic)
 {
+	auto sel = m_wndMultiList.GetCurSel();
+	if (sel != LB_ERR) {
+		CString link;
+		m_wndMultiList.GetText(sel, link);
+		if (IDYES == AfxMessageBox(L"Do you want to delete reference link '" + link + L"'?", MB_YESNO)) {
+			if (!topic->RemoveReferenceLink(ToUTF8(link).c_str())) {
+				ShowLog(true);
+			}
+		}
+	}
 }
 
 void CBCFView::RemoveDocument(BCFTopic* topic)

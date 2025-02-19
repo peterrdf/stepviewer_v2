@@ -10,7 +10,7 @@
 IMPLEMENT_DYNAMIC(CBCFAddRelatedTopic, CDialogEx)
 
 CBCFAddRelatedTopic::CBCFAddRelatedTopic(CBCFView& bcfView)
-	: CDialogEx(IDD_ADDRELATEDTOPIC, &bcfView)
+	: CDialogEx(IDD_BCF_ADDRELATEDTOPIC, &bcfView)
 	, m_view(bcfView)
 {
 
@@ -96,12 +96,15 @@ void CBCFAddRelatedTopic::OnOK()
 		auto t = (BCFTopic*)m_wndListTopic.GetItemData(item);
 		if (t) {
 			if (auto topic = m_view.GetActiveTopic()) {
-				topic->AddRelatedTopic(t);
+				if (topic->AddRelatedTopic(t)) {
+					CDialogEx::OnOK();
+				}
+				else{
+					m_view.ShowLog(true);
+				}
 			}
 		}
 	}
-
-	CDialogEx::OnOK();
 }
 
 

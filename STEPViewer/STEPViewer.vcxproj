@@ -627,6 +627,7 @@
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
     <ClInclude Include="BCF\BCFAddLabel.h" />
+    <ClInclude Include="BCF\BCFAddReferenceLink.h" />
     <ClInclude Include="BCF\BCFAddRelatedTopic.h" />
     <ClInclude Include="BCF\BCFProjInfo.h" />
     <ClInclude Include="BCF\BCFView.h" />
@@ -900,6 +901,7 @@
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />
     <ClCompile Include="BCF\BCFAddLabel.cpp" />
+    <ClCompile Include="BCF\BCFAddReferenceLink.cpp" />
     <ClCompile Include="BCF\BCFAddRelatedTopic.cpp" />
     <ClCompile Include="BCF\BCFProjInfo.cpp" />
     <ClCompile Include="BCF\BCFView.cpp" />
