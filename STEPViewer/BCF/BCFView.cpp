@@ -10,6 +10,7 @@
 #include "BCF\BCFProjInfo.h"
 #include "BCF\BCFView.h"
 #include "BCF\BCFAddLabel.h"
+#include "BCF\BCFAddRelatedTopic.h"
 
  
 #define TAB_Labels			3
@@ -614,7 +615,7 @@ void CBCFView::FillMultiList()
 	m_wndMultiList.ResetContent();
 
 	auto topic = GetActiveTopic();
-
+	
 	if (topic) {
 		switch (m_wndTab.GetCurSel()) {
 		case TAB_Labels:
@@ -655,7 +656,8 @@ void CBCFView::FillRelated(BCFTopic* topic)
 {
 	int i = 0;
 	while (auto related = topic->GetRelatedTopic(i++)) {
-		auto item = m_wndMultiList.AddString(FromUTF8(related->GetTitle()));
+		auto text = CBCFAddRelatedTopic::FormatText(*related);
+		auto item = m_wndMultiList.AddString(text);
 		m_wndMultiList.SetItemDataPtr(item, related);
 	}
 }
@@ -719,7 +721,8 @@ void CBCFView::AddLabel(BCFTopic* topic)
 
 void CBCFView::AddRelated(BCFTopic* topic)
 {
-
+	CBCFAddRelatedTopic dlg(*this);
+	dlg.DoModal();
 }
 
 void CBCFView::AddLink(BCFTopic* topic)
@@ -775,6 +778,15 @@ void CBCFView::RemoveLabel(BCFTopic* topic)
 
 void CBCFView::RemoveRelated(BCFTopic* topic)
 {
+	auto sel = m_wndMultiList.GetCurSel();
+	if (sel != LB_ERR) {
+		auto t = (BCFTopic*)m_wndMultiList.GetItemDataPtr(sel);
+		if (t) {
+			if (!topic->RemoveRelatedTopic(t)) {
+				ShowLog(true);
+			}
+		}
+	}
 }
 
 void CBCFView::RemoveLink(BCFTopic* topic)

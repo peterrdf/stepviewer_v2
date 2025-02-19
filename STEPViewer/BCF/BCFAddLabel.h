@@ -1,10 +1,7 @@
 #pragma once
 #include "afxdialogex.h"
 
-#include "bcfAPI.h"
 class CBCFView;
-
-// CBCFAddLabel dialog
 
 class CBCFAddLabel : public CDialogEx
 {

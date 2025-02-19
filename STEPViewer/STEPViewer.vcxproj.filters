@@ -222,6 +222,9 @@
     <ClInclude Include="..\include\_ap_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFAddRelatedTopic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -358,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_ap_mvc.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddRelatedTopic.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

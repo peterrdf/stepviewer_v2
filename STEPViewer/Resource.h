@@ -122,6 +122,7 @@
 #define IDD_BCF_VIEW                    351
 #define IDD_BCF_PROJINFO                353
 #define IDD_BCF_ADDLABEL                355
+#define IDD_ADDRELATEDTOPIC             357
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -162,6 +163,7 @@
 #define IDC_AUTHOR                      1039
 #define IDC_LIST1                       1042
 #define IDC_COMMENTS_LIST               1042
+#define IDC_LIST_TOPIC                  1042
 #define IDC_USERNAME                    1043
 #define IDC_PROJECTID                   1044
 #define IDC_EDIT3                       1045
@@ -214,7 +216,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        357
+#define _APS_NEXT_RESOURCE_VALUE        359
 #define _APS_NEXT_COMMAND_VALUE         32843
 #define _APS_NEXT_CONTROL_VALUE         1047
 #define _APS_NEXT_SYMED_VALUE           313
