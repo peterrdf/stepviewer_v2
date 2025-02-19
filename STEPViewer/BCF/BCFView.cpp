@@ -12,7 +12,7 @@
 #include "BCF\BCFAddLabel.h"
 #include "BCF\BCFAddRelatedTopic.h"
 #include "BCF\BCFAddReferenceLink.h"
-
+#include "BCF\BCFAddDocumentReference.h"
  
 #define TAB_Labels			3
 #define TAB_Related			2
@@ -671,17 +671,23 @@ void CBCFView::FillLinks(BCFTopic* topic)
 	}
 }
 
+static CString GetDocumentText(BCFDocumentReference* doc)
+{
+	CString text = FromUTF8(doc->GetDescription());
+	if (!text.IsEmpty()) {
+		text.Append(L": ");
+	}
+	fs::path path = doc->GetFilePath();
+	text += FromUTF8(path.filename().string().c_str());
+
+	return text;
+}
+
 void CBCFView::FillDocuments(BCFTopic* topic)
 {
 	int i = 0;
 	while (auto doc = topic->GetDocumentReference(i++)) {
-		CString text = FromUTF8(doc->GetDescription());
-		if (!text.IsEmpty()) {
-			text.Append(L": ");
-		}
-		fs::path path = doc->GetFilePath();
-		text += FromUTF8(path.filename().string().c_str());
-		auto item = m_wndMultiList.AddString(text);
+		auto item = m_wndMultiList.AddString(GetDocumentText(doc));
 		m_wndMultiList.SetItemDataPtr(item, doc);
 	}
 }
@@ -734,7 +740,8 @@ void CBCFView::AddLink(BCFTopic* topic)
 
 void CBCFView::AddDocument(BCFTopic* topic)
 {
-
+	CBCFAddDocumentReference dlg(*this);
+	dlg.DoModal();
 }
 
 void CBCFView::OnClickedButtonRemoveMulti()
@@ -807,6 +814,19 @@ void CBCFView::RemoveLink(BCFTopic* topic)
 
 void CBCFView::RemoveDocument(BCFTopic* topic)
 {
+	auto sel = m_wndMultiList.GetCurSel();
+	if (sel != LB_ERR) {
+		auto doc = (BCFDocumentReference*)m_wndMultiList.GetItemDataPtr(sel);
+		if (doc) {
+			CString quest;
+			quest.Format(L"Do you want to remove reference to document '%s'?", GetDocumentText(doc).GetString());
+			if (IDYES == AfxMessageBox(quest, MB_YESNO)) {
+				if (!doc->Remove()) {
+					ShowLog(true);
+				}
+			}
+		}
+	}
 }
 
 

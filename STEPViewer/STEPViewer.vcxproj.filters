@@ -228,6 +228,9 @@
     <ClInclude Include="BCF\BCFAddReferenceLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFAddDocumentReference.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -369,6 +372,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BCF\BCFAddReferenceLink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddDocumentReference.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

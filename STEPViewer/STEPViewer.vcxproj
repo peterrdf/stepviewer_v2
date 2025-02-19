@@ -626,6 +626,7 @@
     <ClInclude Include="..\include\_ifc_unit.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
+    <ClInclude Include="BCF\BCFAddDocumentReference.h" />
     <ClInclude Include="BCF\BCFAddLabel.h" />
     <ClInclude Include="BCF\BCFAddReferenceLink.h" />
     <ClInclude Include="BCF\BCFAddRelatedTopic.h" />
@@ -900,6 +901,7 @@
     </ClCompile>
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />
+    <ClCompile Include="BCF\BCFAddDocumentReference.cpp" />
     <ClCompile Include="BCF\BCFAddLabel.cpp" />
     <ClCompile Include="BCF\BCFAddReferenceLink.cpp" />
     <ClCompile Include="BCF\BCFAddRelatedTopic.cpp" />
