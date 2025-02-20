@@ -52,13 +52,13 @@ static int64_t s_iInstanceID = 1;
 class _model
 {
 	friend class _controller;
-
 public:
-	typedef shared_ptr<_model>  Ptr;
+	static long ms_objectCounter;
 
 protected: // Members
 
 	wstring m_strPath;
+	wstring m_strTitle;
 
 	const _model* m_pWorld;
 
@@ -123,6 +123,9 @@ public: // Properties
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
+	
+	const wchar_t* getTitle() const { return m_strTitle.empty() ? m_strPath.c_str() : m_strTitle.c_str(); }
+	void setTitle(const wchar_t* title) { m_strTitle.assign(title); }
 	
 	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void setDimensions(_model* pSource);
@@ -199,12 +202,12 @@ public: // Properties
 // ************************************************************************************************
 class _controller
 {
-public:
-	typedef vector<_model::Ptr>		   ModelsList;
 
 private: // Members
 
-	ModelsList  m_vecModels;
+	vector<_model*> m_vecModels;
+	bool            m_bOwnsModels; //is the controller responsible to dispose models
+
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;
 
@@ -224,15 +227,13 @@ public: // Methods
 	_controller();
 	virtual ~_controller();
 
-	void addModels(const ModelsList& vecModels);
-	void deleteAllModels();
-	const ModelsList& getModels() const { return m_vecModels; }
+	void setOwnsModelsOff(vector<_model*>& detahed);
+	void setOwnsModelsOn();
 
-	_model* getModel() const; // kept for backward compatibility
-#if _NOT_USED_
-	void setModel(_model** ppModel);
-	void addModel(_model** ppModel);
-#endif
+	void setModel(_model* pModel);
+	void addModels(const vector<_model*>& vecModels);
+	void addModel(_model* pModel);
+	void deleteAllModels();
 
 	_instance* loadInstance(int64_t iInstance);
 
@@ -294,6 +295,9 @@ protected: // Methods
 
 public: // Properties
 
+	_model* getModel() const; // kept for backward compatibility
+	const vector<_model*>& getModels() const { return m_vecModels; }
+	vector<_model*>& editModelList() { return m_vecModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }	
 };
 

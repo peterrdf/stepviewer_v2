@@ -58,93 +58,83 @@ CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 
 CBCFView::~CBCFView()
 {
-	ASSERT(!m_bcfProject);
-	DeleteContent();
+	Close();
 }
 
-void CBCFView::DeleteContent()
+bool CBCFView::IsBCF(LPCTSTR filePath)
 {
+	auto len = wcslen(filePath);
+
+	if (len >= 4 && 0 == wcscmp(filePath + len - 4, L".bcf"))
+		return true;
+
+	if (len >= 4 && 0 == wcscmp(filePath + len - 7, L".bcfzip"))
+		return true;
+
+	return false;
+}
+
+void CBCFView::Close()
+{
+	//close project
 	if (m_bcfProject) {
 		ShowLog(false);
 		if (!m_bcfProject->Delete()) {
 			ShowLog(true);
 		}
 		m_bcfProject = NULL;
+	}
 
-		m_doc.deleteAllModels();
-		m_doc.addModels(m_preloadedModels);
+	//free models
+	m_doc.setOwnsModelsOn();
+	m_mapBimFiles.clear();
+	for (auto item : m_loadedModels) {
+		delete item;
+	}
+	m_loadedModels.clear();
 
-		m_loadedModels.clear();
-
-		if (GetSafeHwnd()) {
-			ShowWindow(SW_HIDE);
-		}
+	//hide window
+	if (GetSafeHwnd()) {
+		ShowWindow(SW_HIDE);
 	}
 }
 
-void CBCFView::NewBCF()
-{
-	DeleteContent();
 
+void CBCFView::Open(LPCTSTR filePath)
+{
+	//clean old data
+	Close();
+
+	//
+	m_doc.setOwnsModelsOff(m_loadedModels);
+
+	m_bcfFilePath = filePath ? filePath : L"";
+
+	//
+	//open BCF project
+	//
 	m_bcfProject = BCFProject::Create();
-	if (m_bcfProject) {
-		Show();
-	}
-	else {
+	if (!m_bcfProject) {
 		AfxMessageBox(L"Failed to initialize BCF Project");
-	}
-}
-
-void CBCFView::OpenBCF()
-{
-	auto filter = L"BCF files (*.bcf;*.bcfzip)|*.bcf;*.bcfzip|All files (*.*)|*.*||";
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST, filter);
-	if (dlgFile.DoModal() != IDOK)
-	{
+		Close();
 		return;
 	}
 
-	DeleteContent();
-
-	m_bcfProject = BCFProject::Create();
-	if (m_bcfProject) {
-		Show();
-		ReadBCFFile(dlgFile.GetPathName());
-	}
-	else {
-		AfxMessageBox(L"Failed to initialize BCF Project");
-	}
-}
-
-bool CBCFView::ReadBCFFile(LPCTSTR bcfFilePath)
-{
-	if (!m_bcfProject) {
-		return false;
+	if (!m_bcfFilePath.IsEmpty()) {
+		CWaitCursor wait;
+		if (!m_bcfProject->ReadFile(ToUTF8(m_bcfFilePath).c_str(), true))
+		{
+			ShowLog(true);
+			Close();
+			return;
+		}
 	}
 
-	if (!m_bcfProject->ReadFile(ToUTF8(bcfFilePath).c_str(), true))
-	{
-		ShowLog(true);
-		DeleteContent();
-		return false;
-	}
-
-	ShowLog(false);
-	m_bcfFilePath = bcfFilePath;
-
-	return true;
-}
-
-bool CBCFView::Show()
-{
-	if (!m_bcfProject) {
-		return false;
-	}
-
+	//
 	CBCFProjInfo projInfo(*m_bcfProject, GetView());
 	if (IDOK != projInfo.DoModal()) {
-		DeleteContent();
-		return false;
+		Close();
+		return;
 	}
 
 	//create new, at least one topic is required
@@ -152,27 +142,69 @@ bool CBCFView::Show()
 		CreateNewTopic();
 	}
 
-	// prepare model views
-	//
-	m_preloadedModels = m_doc.getModels(); //list copy intentionals
-	m_doc.deleteAllModels();
-
 	//show view
 	if (!IsWindow(GetSafeHwnd())) {
 		Create(IDD_BCF_VIEW, AfxGetMainWnd());
 	}
 	ShowWindow(SW_SHOW);
 
-	//
-	CString title;
-	title.Format(L"BCF-XML %s", m_bcfFilePath.IsEmpty() ? L"<New>" : m_bcfFilePath);
-	SetWindowText(title);
-
 	LoadProjectToView();
-
-	return true;
 }
 
+
+void CBCFView::OnOpenModels(vector<_model*>& vecModels)
+{
+	if (!m_bcfProject || vecModels.empty()) {
+		return;
+	}
+
+	auto topic = GetActiveTopic();
+	ASSERT(topic);
+
+	bool ok = true;
+
+	for (auto model : vecModels) {
+		if (model) {
+			m_loadedModels.push_back(model);
+
+			auto path = ToUTF8(model->getPath());
+			
+			if (topic) {
+				auto file = FindBimFileByPath(topic, path.c_str());
+				if (!file) {
+					file = topic->AddBimFile(path.c_str(), false);
+				}
+
+				if (file) {
+					m_mapBimFiles[file] = model;
+				}
+				else {
+					ok = false;
+				}
+			}
+		}
+	}
+	
+	if (topic)
+		SetActiveModels(topic);
+	
+	vecModels.clear();
+	ShowLog(!ok);
+}
+
+BCFBimFile* CBCFView::FindBimFileByPath(BCFTopic* topic, const char* searchPath)
+{
+	if (topic) {
+		int i = 0;
+		while (auto file = topic->GetBimFile(i++)) {
+			auto refPath = file->GetReference();
+			if (0 == strcmp(searchPath, refPath)) {
+				return file;
+			}
+		}
+	}
+	return NULL;
+}
 
 void CBCFView::DoDataExchange(CDataExchange* pDX)
 {
@@ -217,7 +249,7 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 void CBCFView::OnClose()
 {
 	CDialogEx::OnClose();
-	DeleteContent();
+	Close();
 }
 
 
@@ -250,6 +282,10 @@ void CBCFView::LoadProjectToView()
 {
 	CWaitCursor wait;
 
+	//
+	CString title;
+	title.Format(L"BCF-XML %s", m_bcfFilePath.IsEmpty() ? L"<New>" : m_bcfFilePath);
+	SetWindowText(title);
 
 	//load extensions
 	//
@@ -380,14 +416,38 @@ BCFTopic* CBCFView::CreateNewTopic()
 		return NULL;
 	}
 
-	auto topic = m_bcfProject->AddTopic(NULL, NULL, NULL);
+	BCFTopic* topic = NULL;
+	bool ok = false;
+	
+	if (topic = m_bcfProject->AddTopic(NULL, NULL, NULL))
+	{
+		ok = true;
 
-	for (auto model : m_doc.getModels()) {
-		auto path = model->getPath();
-		topic->AddBimFile(ToUTF8(path).c_str(), false);
+		if (m_loadedModels.size() > 0) {
+			CString ask = L"Do you want to associate new topic with loaded BIMs?";
+
+			for (auto model : m_loadedModels) {
+				ask += L"  ";
+				ask += model->getTitle();
+			}
+
+			if (IDYES == AfxMessageBox(ask, MB_YESNO)) {
+
+				for (auto model : m_loadedModels) {
+					auto path = model->getPath();
+
+					if (auto file = topic->AddBimFile(ToUTF8(path).c_str(), false)) {
+						m_mapBimFiles[file] = model;
+					}
+					else {
+						ok = false;
+					}
+				}
+			}
+		}
 	}
 
-	ShowLog(false);
+	ShowLog(!ok);
 
 	return topic;
 }
@@ -598,30 +658,34 @@ void CBCFView::OnSelchangeCommentsList()
 
 void CBCFView::SetActiveModels(BCFTopic* topic)
 {
-	auto topicModels = m_preloadedModels; //list copy is intentional
+	std::vector<_model*> activeModels;
 
 	uint16_t i = 0;
 	while (BCFBimFile* file = topic->GetBimFile(i++)) {
+		_model* model = NULL;
 		
-		auto it = m_loadedModels.find(file);
-		if (it == m_loadedModels.end()) {
-
+		auto it = m_mapBimFiles.find(file);
+		if (it != m_mapBimFiles.end()) {
+			model = it->second;
+		}
+		else {
 			auto path = FromUTF8(file->GetReference());
-			auto p = _ap_model_factory::load(path, true, nullptr, false);
+			model = _ap_model_factory::load(path, true, nullptr, false);
+			if (model) {
+				m_loadedModels.push_back(model);
+			}
 			//model may be NULL, assume message was shown while load
-
-			_model::Ptr ptr (p);
-			
-			it = m_loadedModels.insert(LoadedFiles::value_type(file, ptr)).first;
+			m_mapBimFiles[file] = model;
 		}
 
-		if (it->second.get()) {
-			topicModels.push_back(it->second);
+		if (model) {
+			model->setTitle(FromUTF8(file->GetFilename()));
+			activeModels.push_back(model);
 		}
 	}
 
 	m_doc.deleteAllModels();
-	m_doc.addModels(topicModels);
+	m_doc.addModels(activeModels);
 }
 
 void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)

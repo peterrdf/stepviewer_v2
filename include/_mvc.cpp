@@ -2,6 +2,8 @@
 #include "_mvc.h"
 #include "_rdf_instance.h"
 
+long _model::ms_objectCounter = 0;
+
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
@@ -19,11 +21,14 @@ _model::_model()
 	, m_vecGeometries()
 	, m_vecInstances()
 {
+	ms_objectCounter++;
 }
 
 /*virtual*/ _model::~_model()
 {
 	clean();
+
+	ms_objectCounter--;
 }
 
 void _model::scale()
@@ -489,6 +494,7 @@ void _model::setDimensions(_model* pSource)
 // ************************************************************************************************
 _controller::_controller()
 	: m_vecModels()
+	, m_bOwnsModels(true)
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
 	, m_bUpdatingModel(false)	
@@ -500,17 +506,39 @@ _controller::_controller()
 /*virtual*/ _controller::~_controller()
 {
 	clean();
+	ASSERT(_model::ms_objectCounter == 0); //all models are destroyed
 
 	delete m_pSettingsStorage;
 }
 
-#if _NOT_USED_
-void _controller::setModel(_model** ppModel)
+void _controller::setModel(_model* pModel)
 {
 	deleteAllModels();
-	addModel(ppModel);
+	addModel(pModel);
 }
-#endif
+
+
+void _controller::setOwnsModelsOff(vector<_model*>& detahed)
+{
+	if (m_bOwnsModels) {
+		//if there were onwed models, detach it and let caller manages it
+		detahed = m_vecModels;
+	}
+
+	m_bOwnsModels = false;
+}
+
+void _controller::setOwnsModelsOn()
+{
+	if (!m_bOwnsModels) {
+		//if there were some unmanaged models, remove it to avoid disposing
+		deleteAllModels();
+		vector<_model*> empty;
+		addModels(empty);
+	}
+
+	m_bOwnsModels = true;
+}
 
 void _controller::deleteAllModels()
 {
@@ -530,7 +558,7 @@ void _controller::deleteAllModels()
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModels(const ModelsList& vecModels)
+void _controller::addModels(const vector<_model*>& vecModels)
 {
 	m_bUpdatingModel = true;
 
@@ -542,9 +570,12 @@ void _controller::addModels(const ModelsList& vecModels)
 
 	for (auto newModel : vecModels) {
 		
-		//replace early opened with the same path
+		//replace early opened path
 		for (auto it = m_vecModels.begin(); it != m_vecModels.end(); it++) {
 			if (0 == wcscmp((*it)->getPath(), newModel->getPath())) {
+				if (m_bOwnsModels) {
+					delete* it;
+				}
 				m_vecModels.erase(it);
 				break;
 			}
@@ -572,20 +603,14 @@ void _controller::addModels(const ModelsList& vecModels)
 	m_bUpdatingModel = false;
 }
 
-#if _NOT_USED_
-void _controller::addModel(_model** ppModel)
+void _controller::addModel(_model* pModel)
 {
-	if (ppModel && *ppModel) {
-		ModelsList vecModels;
-
-		_model::Ptr ptr (*ppModel);
-		vecModels.push_back(ptr);
-		*ppModel = NULL; //consumed and will be managed by shared ptr
-		
+	if (pModel) {
+		vector<_model*> vecModels;
+		vecModels.push_back(pModel);
 		addModels(vecModels);
 	}
 }
-#endif
 
 _instance* _controller::loadInstance(int64_t iInstance)
 {
@@ -664,14 +689,14 @@ _model* _controller::getModelByInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
-	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model::Ptr pModel)
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel)
 		{
-			return pModel.get()->getOwlModel() == owlModel;
+			return pModel->getOwlModel() == owlModel;
 		});
 
 	if (itModel != m_vecModels.end())
 	{
-		return itModel->get();
+		return *itModel;
 	}
 
 	return nullptr;
@@ -738,7 +763,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 
 	for (auto pM : m_vecModels)
 	{
-		if (pM.get() != pModel)
+		if (pM != pModel)
 		{
 			pM->setDimensions(pModel);
 		}
@@ -933,6 +958,12 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
 
 /*virtual*/ void _controller::clean()
 {
+	if (m_bOwnsModels) {
+		for (auto pModel : m_vecModels)
+		{
+			delete pModel;
+		}
+	}
 	m_vecModels.clear();
 
 	s_iInstanceID = 1;
@@ -942,7 +973,7 @@ _model* _controller::getModel() const
 { 
 	if (!m_vecModels.empty())
 	{
-		return m_vecModels.front().get();
+		return m_vecModels.front();
 	}
 
 	return nullptr; 

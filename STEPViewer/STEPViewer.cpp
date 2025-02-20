@@ -144,7 +144,6 @@ BOOL CMySTEPViewerApp::InitInstance()
 
 int CMySTEPViewerApp::ExitInstance()
 {
-	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 
 	return CWinAppEx::ExitInstance();

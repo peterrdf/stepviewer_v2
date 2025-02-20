@@ -1,10 +1,10 @@
 #pragma once
 
 #include "bcfAPI.h"
-#include "_mvc.h"
 
 class CMySTEPViewerDoc;
 class CMySTEPViewerView;
+class _model;
 
 
 class CBCFView : public CDialogEx
@@ -16,23 +16,31 @@ public:
 	virtual ~CBCFView();
 
 public:
+/// <summary>
+/// API
+/// </summary>
+	bool IsBCF(LPCTSTR filePath);
 
-	void NewBCF();
-	void OpenBCF();
+	//activates BCF view with the BCF file or new when NULL
+	void Open(LPCTSTR filePath);
+
+	//if BCF view want to consume opened models, STEPViewerDoc should not manage them
+	void OnOpenModels(vector<_model*>& vecModels);
+
+	void Close();
 
 public:
+	//services for other dialogs
 	BCFTopic* GetActiveTopic();
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
 
+public:
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_BCF_VIEW };
 #endif
 
-private:
-	typedef std::map<BCFBimFile*, _model::Ptr> LoadedFiles;
-
-private:
+protected:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnCancel();
@@ -53,9 +61,6 @@ private:
 	afx_msg void OnClickedUpdateViewpoint();
 
 private:
-	void DeleteContent();
-	bool ReadBCFFile(LPCTSTR bcfFilePath);
-	bool Show();
 	CMySTEPViewerView* GetView();
 	void LoadProjectToView();
 	void InsertTopicToList(int item, BCFTopic* topic);
@@ -82,16 +87,16 @@ private:
 	void RemoveRelated(BCFTopic* topic);
 	void RemoveLink(BCFTopic* topic);
 	void RemoveDocument(BCFTopic* topic);
-
+	BCFBimFile* FindBimFileByPath(BCFTopic* topic, const char* searchPath);
 	void FillTopicAuthor(BCFTopic* topic);
 	void SaveBCFFile();
 
 private:
-	CMySTEPViewerDoc&		m_doc;
-	BCFProject*				m_bcfProject;
-	CString					m_bcfFilePath;
-	_controller::ModelsList	m_preloadedModels;
-	LoadedFiles				m_loadedModels;
+	CMySTEPViewerDoc&				m_doc;
+	BCFProject*						m_bcfProject;
+	CString							m_bcfFilePath;
+	std::vector<_model*>			m_loadedModels;
+	std::map<BCFBimFile*, _model*>	m_mapBimFiles;
 
 private:
 	CComboBox m_wndTopics;

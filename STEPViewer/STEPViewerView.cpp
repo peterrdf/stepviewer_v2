@@ -47,7 +47,7 @@ CController* CMySTEPViewerView::getController()
 	enumAP enAP = enumAP::STEP;
 	if (!pController->getModels().empty())
 	{
-		_ptr<_ap_model> apModel(pController->getModels().back().get());
+		_ptr<_ap_model> apModel(pController->getModels().back());
 		ASSERT(apModel);
 		
 		enAP = apModel->getAP();
@@ -387,13 +387,9 @@ void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
-	if (vecFiles.size() == 1)
+	if (pDoc)
 	{
-		pDoc->OnOpenDocument(vecFiles[0]);
-	}
-	else
-	{
-		pDoc->OpenModels(vecFiles);
+		pDoc->OpenFiles(vecFiles);
 	}
 }
 

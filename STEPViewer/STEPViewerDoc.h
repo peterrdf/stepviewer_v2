@@ -20,7 +20,7 @@ public: // Methods
 	// _controller
 	virtual void saveInstance(_instance* pInstance) override;
 
-	void OpenModels(vector<CString>& vecPaths);
+	void OpenFiles(vector<CString>& vecPaths);
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();
@@ -53,6 +53,7 @@ public:
 #endif
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
+	virtual void OnCloseDocument();
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
@@ -62,6 +63,7 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnFileOpen();
+	afx_msg void OnUpdateFileOpen(CCmdUI* pCmdUI);
 	afx_msg void OnViewZoomOut();
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
@@ -71,12 +73,15 @@ protected:
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
 	afx_msg void OnBCFNew();
-	afx_msg void OnBCFOpen();
+	afx_msg void OnBCFAddBim();
 	afx_msg void OnUpdateBCFNew(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateBCFOpen(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBCFAddBim(CCmdUI* pCmdUI);
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+
+private:
+	void DoFileOpen(LPCTSTR fileFilter);
 };

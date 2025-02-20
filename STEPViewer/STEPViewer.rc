@@ -644,11 +644,8 @@ BEGIN
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
         MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
-        POPUP "BCF"
-        BEGIN
-            MENUITEM "New",                         ID_BCF_NEW
-            MENUITEM "Open...",                     ID_BCF_OPEN
-        END
+        MENUITEM "New BCF package",             ID_BCF_NEW
+        MENUITEM "Add BIM file to BCF topic...", 32847
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
