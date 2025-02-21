@@ -13,6 +13,7 @@
 #include "BCF\BCFAddRelatedTopic.h"
 #include "BCF\BCFAddReferenceLink.h"
 #include "BCF\BCFAddDocumentReference.h"
+#include "BCF\BCFBimFiles.h"
  
 #define TAB_Labels			3
 #define TAB_Related			2
@@ -46,6 +47,7 @@ BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
 	ON_EN_KILLFOCUS(IDC_TOPIC_COMMENT_TEXT, &CBCFView::OnKillfocusTopicCommentText)
 	ON_BN_CLICKED(IDC_SAVE, &CBCFView::OnClickedSave)
 	ON_BN_CLICKED(IDC_UPDATE_VIEWPOINT, &CBCFView::OnClickedUpdateViewpoint)
+	ON_BN_CLICKED(IDC_BUTTON_BIMS, &CBCFView::OnClickedButtonBims)
 END_MESSAGE_MAP()
 
 
@@ -137,11 +139,6 @@ void CBCFView::Open(LPCTSTR filePath)
 		return;
 	}
 
-	//create new, at least one topic is required
-	if (!m_bcfProject->GetTopic(0)) {
-		CreateNewTopic();
-	}
-
 	//show view
 	if (!IsWindow(GetSafeHwnd())) {
 		Create(IDD_BCF_VIEW, AfxGetMainWnd());
@@ -186,7 +183,7 @@ void CBCFView::OnOpenModels(vector<_model*>& vecModels)
 	}
 	
 	if (topic)
-		SetActiveModels(topic);
+		ViewTopicModels(topic);
 	
 	vecModels.clear();
 	ShowLog(!ok);
@@ -364,14 +361,19 @@ void CBCFView::ShowLog(bool knownError)
 
 void CBCFView::OnSelchangeTopic()
 {
+	if (!m_bcfProject) {
+		return;
+	}
 	auto index = m_wndTopics.GetCurSel();
 	auto topic = (BCFTopic*)m_wndTopics.GetItemData(index);
 
 	if (!topic) {
-		if (IDYES == AfxMessageBox(L"Do you want to create new topic?", MB_ICONQUESTION | MB_YESNO)) {
+		if (!m_bcfProject->GetTopic(0) //at least one topic must exist
+			|| IDYES == AfxMessageBox(L"Do you want to create new topic?", MB_ICONQUESTION | MB_YESNO)) {
 			topic = CreateNewTopic();
 			if (topic) {
 				InsertTopicToList(index, topic);
+				PostMessage(WM_COMMAND, IDC_BUTTON_BIMS);
 			}
 		}
 		else {
@@ -416,38 +418,9 @@ BCFTopic* CBCFView::CreateNewTopic()
 		return NULL;
 	}
 
-	BCFTopic* topic = NULL;
-	bool ok = false;
-	
-	if (topic = m_bcfProject->AddTopic(NULL, NULL, NULL))
-	{
-		ok = true;
+	auto topic = m_bcfProject->AddTopic(NULL, NULL, NULL);
 
-		if (m_loadedModels.size() > 0) {
-			CString ask = L"Do you want to associate new topic with loaded BIMs?";
-
-			for (auto model : m_loadedModels) {
-				ask += L"  ";
-				ask += model->getTitle();
-			}
-
-			if (IDYES == AfxMessageBox(ask, MB_YESNO)) {
-
-				for (auto model : m_loadedModels) {
-					auto path = model->getPath();
-
-					if (auto file = topic->AddBimFile(ToUTF8(path).c_str(), false)) {
-						m_mapBimFiles[file] = model;
-					}
-					else {
-						ok = false;
-					}
-				}
-			}
-		}
-	}
-
-	ShowLog(!ok);
+	ShowLog(!topic);
 
 	return topic;
 }
@@ -459,7 +432,7 @@ void CBCFView::LoadActiveTopic()
 		return;
 	}
 
-	SetActiveModels(topic);
+	ViewTopicModels(topic);
 
 	FillTopicAuthor(topic);
 
@@ -656,31 +629,58 @@ void CBCFView::OnSelchangeCommentsList()
 	m_wndUpdateViewPoint.EnableWindow(comment != NULL);
 }
 
-void CBCFView::SetActiveModels(BCFTopic* topic)
+_model* CBCFView::GetBimModel(BCFBimFile& file)
 {
-	std::vector<_model*> activeModels;
+	_model* model = NULL;
 
-	uint16_t i = 0;
-	while (BCFBimFile* file = topic->GetBimFile(i++)) {
-		_model* model = NULL;
+	auto it = m_mapBimFiles.find(&file);
+	if (it != m_mapBimFiles.end()) {
+
+		model = it->second;
+	}
+	else {
+
+		auto path = FromUTF8(file.GetReference());
 		
-		auto it = m_mapBimFiles.find(file);
-		if (it != m_mapBimFiles.end()) {
-			model = it->second;
+		for (auto m : m_loadedModels) {
+			if (m && m->getPath() == path) {
+				model = m;
+				break;
+			}
 		}
-		else {
-			auto path = FromUTF8(file->GetReference());
+
+		if (!model) {
 			model = _ap_model_factory::load(path, true, nullptr, false);
+			//model may be NULL, assume message was shown while load
 			if (model) {
 				m_loadedModels.push_back(model);
 			}
-			//model may be NULL, assume message was shown while load
-			m_mapBimFiles[file] = model;
 		}
 
-		if (model) {
-			model->setTitle(FromUTF8(file->GetFilename()));
-			activeModels.push_back(model);
+		m_mapBimFiles[&file] = model;
+	}
+
+	if (model) {
+		auto title = file.GetFilename();
+		model->setTitle(FromUTF8(title));
+	}
+
+	return model;
+}
+
+void CBCFView::ViewTopicModels(BCFTopic* topic)
+{
+	std::vector<_model*> activeModels;
+
+	if (topic) {
+		uint16_t i = 0;
+		while (BCFBimFile* file = topic->GetBimFile(i++)) {
+
+			_model* model = GetBimModel(*file);
+
+			if (model) {
+				activeModels.push_back(model);
+			}
 		}
 	}
 
@@ -773,7 +773,7 @@ void CBCFView::FillRelated(BCFTopic* topic)
 {
 	int i = 0;
 	while (auto related = topic->GetRelatedTopic(i++)) {
-		auto text = CBCFAddRelatedTopic::FormatText(*related);
+		auto text = GetTopicDisplayName(*related);
 		auto item = m_wndMultiList.AddString(text);
 		m_wndMultiList.SetItemDataPtr(item, related);
 	}
@@ -1006,4 +1006,30 @@ void CBCFView::OnClickedUpdateViewpoint()
 	if (auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment)) {
 		UpdateViewPoint(comment);
 	}
+}
+
+CString CBCFView::GetTopicDisplayName(BCFTopic& topic)
+{
+	int i = 0;
+	auto& bcfProject = topic.GetProject();
+	while (auto t = bcfProject.GetTopic(i++)) {
+		if (t == &topic) {
+			break;
+		}
+	}
+
+	auto guid = FromUTF8(topic.GetGuid());
+	auto title = FromUTF8(topic.GetTitle());
+
+	CString text;
+	text.Format(L"#%d: %s - %s", i, guid.GetString(), title.GetString());
+
+	return text;
+}
+
+
+void CBCFView::OnClickedButtonBims()
+{
+	CBCFBimFiles dlg(*this);
+	dlg.DoModal();
 }

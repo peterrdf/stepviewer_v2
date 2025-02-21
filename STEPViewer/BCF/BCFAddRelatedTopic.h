@@ -5,9 +5,6 @@ class CBCFView;
 class CBCFAddRelatedTopic : public CDialogEx
 {
 public:
-	static CString FormatText(BCFTopic& topic);
-
-public:
 	DECLARE_DYNAMIC(CBCFAddRelatedTopic)
 
 public:

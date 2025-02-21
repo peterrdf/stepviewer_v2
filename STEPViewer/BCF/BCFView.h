@@ -32,7 +32,16 @@ public:
 public:
 	//services for other dialogs
 	BCFTopic* GetActiveTopic();
+	
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
+
+	std::vector<_model*>& Models() { return m_loadedModels; }
+
+	_model* GetBimModel(BCFBimFile& file);
+
+	void ViewTopicModels(BCFTopic* topic);
+
+	CString GetTopicDisplayName(BCFTopic& topic);
 
 public:
 // Dialog Data
@@ -72,7 +81,6 @@ private:
 	void LoadComments(BCFTopic* topic, int select = 0);
 	void UpateActiveComment();
 	bool UpdateViewPoint(BCFComment* comment);
-	void SetActiveModels(BCFTopic* topic);
 	void SetActiveViewPoint(BCFViewPoint* vp);
 	void FillMultiList();
 	void FillLabels(BCFTopic* topic);
@@ -134,5 +142,7 @@ private:
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
 	CButton m_wndUpdateViewPoint;
+public:
+	afx_msg void OnClickedButtonBims();
 };
 

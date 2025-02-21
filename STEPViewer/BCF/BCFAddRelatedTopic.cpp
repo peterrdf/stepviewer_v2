@@ -57,7 +57,7 @@ BOOL CBCFAddRelatedTopic::OnInitDialog()
 	i = 0;
 	while (auto t = bcfProject.GetTopic(i++)) {
 		if (exist.find(t) == exist.end()) {
-			CString text = FormatText(*t);
+			CString text = m_view.GetTopicDisplayName(*t);
 			auto item = m_wndListTopic.AddString(text);
 			m_wndListTopic.SetItemDataPtr(item, t);
 		}
@@ -67,25 +67,6 @@ BOOL CBCFAddRelatedTopic::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-CString CBCFAddRelatedTopic::FormatText(BCFTopic& topic)
-{
-	int i = 0;
-	auto& bcfProject = topic.GetProject();
-	while (auto t = bcfProject.GetTopic(i++)) {
-		if (t == &topic) {
-			break;
-		}
-	}
-
-	auto guid = FromUTF8(topic.GetGuid());
-	auto title = FromUTF8(topic.GetTitle());
-	
-	CString text;
-	text.Format(L"#%d: %s - %s", i, guid.GetString(), title.GetString());
-
-	return text;
 }
 
 

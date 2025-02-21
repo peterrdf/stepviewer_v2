@@ -125,7 +125,7 @@ public: // Properties
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 	
 	const wchar_t* getTitle() const { return m_strTitle.empty() ? m_strPath.c_str() : m_strTitle.c_str(); }
-	void setTitle(const wchar_t* title) { m_strTitle.assign(title); }
+	void setTitle(const wchar_t* title) { if (title) m_strTitle.assign(title); else m_strTitle.clear(); }
 	
 	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void setDimensions(_model* pSource);

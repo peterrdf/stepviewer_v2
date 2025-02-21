@@ -125,6 +125,7 @@
 #define IDD_BCF_ADDRELATEDTOPIC         357
 #define IDD_BCF_ADDREFERENCELINK        359
 #define IDD_BCF_ADDOCUMENT              361
+#define IDD_BCF_TOPICFILES              363
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -166,6 +167,7 @@
 #define IDC_LIST1                       1042
 #define IDC_COMMENTS_LIST               1042
 #define IDC_LIST_TOPIC                  1042
+#define IDC_FILE_LIST                   1042
 #define IDC_USERNAME                    1043
 #define IDC_PROJECTID                   1044
 #define IDC_EDIT3                       1045
@@ -177,6 +179,8 @@
 #define IDC_EDIT_DESCRIPTION            1050
 #define IDC_CHECK_EXTERNAL              1051
 #define IDC_UPDATE_VIEWPOINT            1052
+#define IDC_BUTTON1                     1054
+#define IDC_BUTTON_BIMS                 1054
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -228,9 +232,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        363
+#define _APS_NEXT_RESOURCE_VALUE        365
 #define _APS_NEXT_COMMAND_VALUE         32848
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif
