@@ -183,6 +183,7 @@ _attribute_provider* _ap_model::getAttributeProvider()
 
 // ************************************************************************************************
 _ap_view::_ap_view()
+	: _view()
 {
 }
 
