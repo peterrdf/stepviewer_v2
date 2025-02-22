@@ -2,6 +2,7 @@
 #include "BCFViewPointMgr.h"
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
+#include "_ifc_instance.h"
 
 
 void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
@@ -60,6 +61,7 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 
 			ok = vp->SetCameraType(camera) && ok;
 			ok = vp->SetCameraViewPoint(&viewPoint) && ok;
+			ok = vp->SetCameraDirection(&direction) && ok;
 			ok = vp->SetCameraUpVector(&upVector) && ok;
 			ok = vp->SetViewToWorldScale(viewToWorldScale) && ok;
 			ok = vp->SetFieldOfView(fieldOfView) && ok;
@@ -140,5 +142,23 @@ _instance* CBCFViewPointMgr::SearchIfcComponent(const char* ifcGuid)
 
 bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 {
-	return true;
+	bool ok = true;
+
+	while (auto sel = vp.GetSelection(0)) {
+		ok = sel->Remove() && ok;
+	}
+
+
+	for (auto inst : m_view.GetViewerDoc().getSelectedInstances()) {
+		if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
+			if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+				const char* globalId = NULL;
+				if (sdaiGetAttrBN(sdaiInst, "GlobalId", sdaiSTRING, &globalId) && globalId && *globalId) {
+					ok = vp.AddSelection(globalId) && ok;
+				}
+			}
+		}
+	}
+	
+	return ok;
 }
