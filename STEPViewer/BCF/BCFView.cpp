@@ -54,6 +54,7 @@ END_MESSAGE_MAP()
 CBCFView::CBCFView(CMySTEPViewerDoc& doc)
 	: CDialogEx(IDD_BCF_VIEW, AfxGetMainWnd())
 	, m_doc (doc)
+	, m_viewPointMgr(*this)
 	, m_bcfProject(NULL)
 {
 }
@@ -133,7 +134,7 @@ void CBCFView::Open(LPCTSTR filePath)
 	}
 
 	//
-	CBCFProjInfo projInfo(*m_bcfProject, GetView());
+	CBCFProjInfo projInfo(*m_bcfProject, AfxGetMainWnd());
 	if (IDOK != projInfo.DoModal()) {
 		Close();
 		return;
@@ -551,7 +552,7 @@ void CBCFView::UpateActiveComment()
 	if (!comment && !newText.IsEmpty()) {
 		comment = topic->AddComment();
 		if (comment)
-			ok = UpdateViewPoint(comment) && ok;
+			ok = m_viewPointMgr.SaveCurrentViewToComent(*comment) && ok;
 		else
 			ok = false;
 	}
@@ -565,45 +566,6 @@ void CBCFView::UpateActiveComment()
 	LoadComments(topic, indComment);
 }
 
-bool CBCFView::UpdateViewPoint(BCFComment* comment)
-{
-	bool ok = true;
-
-	if (auto view = GetView()) {
-	
-		auto vp = comment->GetViewPoint();
-		if (!vp) {
-			vp = comment->GetTopic().AddViewPoint();
-			if (vp) {
-				ok = comment->SetViewPoint(vp) && ok;
-			}
-			else {
-				ok = false;
-			}
-		}
-
-		if (vp) {
-			BCFCamera camera = BCFCameraOrthogonal;
-			BCFPoint viewPoint;
-			BCFPoint direction;
-			BCFPoint upVector;
-			double viewToWorldScale = 1;
-			double fieldOfView = 90;
-			double aspectRatio = 1;
-
-			view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
-
-			ok = vp->SetCameraType(camera) && ok;
-			ok = vp->SetCameraViewPoint(&viewPoint) && ok;
-			ok = vp->SetCameraUpVector(&upVector) && ok;
-			ok = vp->SetViewToWorldScale(viewToWorldScale) && ok;
-			ok = vp->SetFieldOfView(fieldOfView) && ok;
-			ok = vp->SetAspectRatio(aspectRatio) && ok;
-		}
-	}
-
-	return ok;
-}
 
 void CBCFView::OnSelchangeCommentsList()
 {
@@ -617,9 +579,7 @@ void CBCFView::OnSelchangeCommentsList()
 			CString strCommentText = FromUTF8(comment->GetText());
 			m_wndCommentText.SetWindowText(strCommentText);
 
-			if (auto vp = comment->GetViewPoint()) {
-				SetActiveViewPoint(vp);
-			}
+			m_viewPointMgr.SetViewFromComment(*comment);
 		}
 		else {
 			m_wndCommentText.SetWindowText(L""); //new comment
@@ -627,6 +587,8 @@ void CBCFView::OnSelchangeCommentsList()
 	}
 
 	m_wndUpdateViewPoint.EnableWindow(comment != NULL);
+	
+	ShowLog(false);
 }
 
 _model* CBCFView::GetBimModel(BCFBimFile& file)
@@ -688,27 +650,8 @@ void CBCFView::ViewTopicModels(BCFTopic* topic)
 	m_doc.addModels(activeModels);
 }
 
-void CBCFView::SetActiveViewPoint(BCFViewPoint* vp)
-{
-	if (vp) {
-		if (auto view = GetView()) {
-			BCFCamera camera = vp->GetCameraType();
-			BCFPoint viewPoint;
-			BCFPoint direction;
-			BCFPoint upVector;
-			vp->GetCameraViewPoint(viewPoint);
-			vp->GetCameraDirection(direction);
-			vp->GetCameraUpVector(upVector);
-			double viewToWorldScale = vp->GetViewToWorldScale();
-			double fieldOfView = vp->GetFieldOfView();
-			double aspectRatio = vp->GetAspectRatio();
 
-			view->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
-		}
-	}
-}
-
-CMySTEPViewerView* CBCFView::GetView()
+CMySTEPViewerView* CBCFView::GetViewerView()
 {
 	auto pos = m_doc.GetFirstViewPosition();
 	while (auto view = m_doc.GetNextView(pos)) {
@@ -1004,7 +947,8 @@ void CBCFView::OnClickedUpdateViewpoint()
 {
 	auto indComment = m_wndCommentsList.GetCurSel();
 	if (auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment)) {
-		UpdateViewPoint(comment);
+		bool ok = m_viewPointMgr.SaveCurrentViewToComent(*comment);
+		ShowLog(!ok);
 	}
 }
 

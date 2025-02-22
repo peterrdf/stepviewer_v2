@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bcfAPI.h"
+#include "BCFViewPointMgr.h"
 
 class CMySTEPViewerDoc;
 class CMySTEPViewerView;
@@ -31,6 +32,10 @@ public:
 
 public:
 	//services for other dialogs
+	CMySTEPViewerDoc& GetViewerDoc() { return m_doc; }
+
+	CMySTEPViewerView* GetViewerView();
+
 	BCFTopic* GetActiveTopic();
 	
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
@@ -68,9 +73,9 @@ protected:
 	afx_msg void OnKillfocusTopicCommentText();
 	afx_msg void OnClickedSave();
 	afx_msg void OnClickedUpdateViewpoint();
+	afx_msg void OnClickedButtonBims();
 
 private:
-	CMySTEPViewerView* GetView();
 	void LoadProjectToView();
 	void InsertTopicToList(int item, BCFTopic* topic);
 	void LoadExtensions();
@@ -80,8 +85,6 @@ private:
 	void UpdateActiveTopic();
 	void LoadComments(BCFTopic* topic, int select = 0);
 	void UpateActiveComment();
-	bool UpdateViewPoint(BCFComment* comment);
-	void SetActiveViewPoint(BCFViewPoint* vp);
 	void FillMultiList();
 	void FillLabels(BCFTopic* topic);
 	void FillRelated(BCFTopic* topic);
@@ -101,8 +104,11 @@ private:
 
 private:
 	CMySTEPViewerDoc&				m_doc;
-	BCFProject*						m_bcfProject;
 	CString							m_bcfFilePath;
+
+	BCFProject*						m_bcfProject;
+
+	CBCFViewPointMgr				m_viewPointMgr;
 	std::vector<_model*>			m_loadedModels;
 	std::map<BCFBimFile*, _model*>	m_mapBimFiles;
 
@@ -142,7 +148,5 @@ private:
 	CButton m_wndAddMulti;
 	CButton m_wndRemoveMulti;
 	CButton m_wndUpdateViewPoint;
-public:
-	afx_msg void OnClickedButtonBims();
 };
 

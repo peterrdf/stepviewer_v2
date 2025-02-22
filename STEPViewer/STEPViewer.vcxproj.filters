@@ -234,6 +234,9 @@
     <ClInclude Include="BCF\BCFBimFiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFViewPointMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -381,6 +384,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BCF\BCFBimFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFViewPointMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

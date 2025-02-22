@@ -1,5 +1,4 @@
 #pragma once
-#include "afxdialogex.h"
 
 class CBCFView;
 
