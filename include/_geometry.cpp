@@ -287,10 +287,10 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
 /*virtual*/ void _geometry::calculateCore()
 {
-	ASSERT(m_pVertexBuffer == nullptr);
+	assert(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
 
-	ASSERT(m_pIndexBuffer == nullptr);
+	assert(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
 	assert(m_pmtxOriginalBBTransformation == nullptr);

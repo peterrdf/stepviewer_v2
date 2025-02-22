@@ -28,6 +28,9 @@
     <Filter Include="res">
       <UniqueIdentifier>{267c8570-e195-4a20-a677-44a28b597ec6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\stb">
+      <UniqueIdentifier>{6c1cc022-5a9b-4dcb-980f-fd2e20b2da5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -213,6 +216,12 @@
     <ClInclude Include="..\include\_ap_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\stb\stb_easy_font.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_image.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -341,6 +350,9 @@
     <ClCompile Include="..\include\_ap_mvc.cpp">
       <Filter>include</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image.cpp">
+      <Filter>include\stb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="STEPViewer.rc">
@@ -454,6 +466,9 @@
     </None>
     <None Include="res\Shader.vert">
       <Filter>res</Filter>
+    </None>
+    <None Include="..\include\stb\.editorconfig">
+      <Filter>include\stb</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include "_geometry.h"
 #include "_settings_storage.h"
+#include "_texture.h"
 
 #include <set>
 #include <string>
@@ -79,6 +80,8 @@ private: // Members
 	vector<_instance*> m_vecInstances;
 	map<int64_t, _instance*> m_mapID2Instance;
 
+	map<wstring, _texture*> m_mapTextures;
+
 public: // Methods
 
 	_model();
@@ -105,6 +108,9 @@ public: // Methods
 	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName);
 	static double getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName);
 
+	_texture* getTexture(const wstring& strTexture);
+	virtual _texture* getDefaultTexture() { return nullptr; };
+
 protected: // Methods
 
 	void setVertexBufferOffset(OwlInstance owlInstance);
@@ -118,6 +124,7 @@ public: // Properties
 
 	virtual OwlModel getOwlModel() const PURE;
 
+	bool isDecoration() const { return m_strPath.empty(); }
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 	

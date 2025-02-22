@@ -1607,6 +1607,11 @@ _oglView::_oglView()
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::ShowNormalVectors:
+		case enumApplicationProperty::ShowTangenVectors:
+		case enumApplicationProperty::ShowBiNormalVectors:
+		case enumApplicationProperty::ScaleVectors:
+		case enumApplicationProperty::ShowBoundingBoxes:
 		case enumApplicationProperty::RotationMode:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
@@ -1929,11 +1934,14 @@ _oglView::_oglView()
 		return;
 	}
 
-	// Scene
+	// Models
 	_drawFaces();
 	_drawConceptualFacesPolygons();
 	_drawLines();
 	_drawPoints();
+
+	// Decorations, e.g. Coordinate System, Navigation, Vectors, etc.
+	_drawDecorations();
 
 	// OpenGL
 	SwapBuffers(*pDC);
@@ -2122,7 +2130,25 @@ void _oglView::_drawInstancesFrameBuffer()
 						}
 					}
 
-					m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
+					_texture* pTexture = nullptr;
+					if (pMaterial->hasTexture())
+					{
+						pTexture = pModel->getTexture(pMaterial->texture());
+					}
+						
+					if (pTexture != nullptr)
+					{											
+						m_pOGLProgram->_enableTexture(true);
+						
+						glActiveTexture(GL_TEXTURE0);
+						glBindTexture(GL_TEXTURE_2D, pTexture->getName());
+						
+						m_pOGLProgram->_setSampler(0);
+					}
+					else
+					{			
+						m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
+					}
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,
@@ -2130,6 +2156,11 @@ void _oglView::_drawInstancesFrameBuffer()
 						GL_UNSIGNED_INT,
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
+
+					if (pTexture != nullptr)
+					{
+						m_pOGLProgram->_enableTexture(false);
+					}
 				}
 			} // auto pInstance : ...			
 		} // for (auto pGeometry : ...

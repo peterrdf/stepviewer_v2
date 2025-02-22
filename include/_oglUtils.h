@@ -2506,6 +2506,7 @@ public: // Methods
 
 protected: // Methods
 
+	virtual void _drawDecorations() {}
 	virtual void _postDraw();
 
 	void _drawFaces();
