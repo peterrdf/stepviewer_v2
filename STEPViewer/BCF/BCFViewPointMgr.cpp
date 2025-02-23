@@ -3,7 +3,12 @@
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
 #include "_ifc_instance.h"
+#include "_ifc_model.h"
 
+#define IFC_ROOT "IfcRoot"
+#define IFC_SPACE "IfcSpace"
+#define IFC_OPENING "IfcOpeningElement"
+#define GLOBAL_ID "GlobalId"
 
 void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 {
@@ -25,6 +30,7 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 		}
 		
 		ViewSelection(*vp);
+		ApplyVisibilityToViewer(*vp);
 	}
 }
 
@@ -68,7 +74,8 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 			ok = vp->SetAspectRatio(aspectRatio) && ok;
 		}
 
-		SaveSelection(*vp);
+		ok = SaveSelection(*vp) && ok;
+		ok = SaveVisibility(*vp) && ok;
 	}
 
 	return ok;
@@ -109,24 +116,21 @@ _instance* CBCFViewPointMgr::SearchComponent(BCFComponent& comp)
 
 _instance* CBCFViewPointMgr::SearchIfcComponent(const char* ifcGuid)
 {
-	for (auto amodel : m_view.GetViewerDoc().getModels()) {
-		if (auto model = dynamic_cast<_ap_model*>(amodel)) {
-			if (model->getAP() == enumAP::IFC) {
-				if (auto sdaiModel = model->getSdaiModel()) {
+	for (auto model : m_view.GetViewerDoc().getModels()) {
+		if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
+			if (auto sdaiModel = ifcModel->getSdaiModel()) {
+				if (auto rootEntity = sdaiGetEntity(sdaiModel, IFC_ROOT)) {
+					if (auto globalIdAttr = sdaiGetAttrDefinition(rootEntity, GLOBAL_ID)) {
 
-					if (auto rootEntity = sdaiGetEntity(sdaiModel, "IfcRoot")) {
-						if (auto globalIdAttr = sdaiGetAttrDefinition(rootEntity, "GlobalId")) {
+						for (auto inst : ifcModel->getInstances()) {
+							if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
+								if (auto sdaiInst = apInst->getSdaiInstance()) {
 
-							for (auto inst : model->getInstances()) {
-								if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
-									if (auto sdaiInst = apInst->getSdaiInstance()) {
+									const char* globalId = NULL;
+									if (sdaiGetAttr(sdaiInst, globalIdAttr, sdaiSTRING, &globalId) && globalId) {
 
-										const char* globalId = NULL;
-										if (sdaiGetAttr(sdaiInst, globalIdAttr, sdaiSTRING, &globalId) && globalId) {
-
-											if (0 == strcmp(ifcGuid, globalId)) {
-												return inst;
-											}
+										if (0 == strcmp(ifcGuid, globalId)) {
+											return inst;
 										}
 									}
 								}
@@ -144,21 +148,182 @@ bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 {
 	bool ok = true;
 
-	while (auto sel = vp.GetSelection(0)) {
-		ok = sel->Remove() && ok;
+	int i = 0;
+	while (auto sel = vp.GetSelection(i)) {
+		if (!sel->Remove()) {
+			ok = false;
+			i++;
+		}
 	}
-
 
 	for (auto inst : m_view.GetViewerDoc().getSelectedInstances()) {
 		if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
 			if (auto sdaiInst = ifcInst->getSdaiInstance()) {
 				const char* globalId = NULL;
-				if (sdaiGetAttrBN(sdaiInst, "GlobalId", sdaiSTRING, &globalId) && globalId && *globalId) {
+				if (sdaiGetAttrBN(sdaiInst, GLOBAL_ID, sdaiSTRING, &globalId) && globalId && *globalId) {
 					ok = vp.AddSelection(globalId) && ok;
 				}
 			}
 		}
 	}
 	
+	return ok;
+}
+
+void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint& vp)
+{
+	std::unordered_set<_instance*> exceptions;
+	int i = 0;
+	while (auto comp = vp.GetException(i++)) {
+		if (auto inst = SearchComponent(*comp)) {
+			exceptions.insert(inst);
+		}
+	}
+
+	for (auto model : m_view.GetViewerDoc().getModels()) {
+		if (model) {
+
+			SdaiEntity space = NULL;
+			SdaiEntity opening = NULL;
+			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
+				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
+					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
+				}
+			}
+
+			for (auto inst : model->getInstances()) {
+
+				bool visible = vp.GetDefaultVisibility();
+
+				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
+					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+						if (sdaiIsInstanceOf(sdaiInst, space)) {
+							visible = vp.GetSpaceVisible();
+						}
+						else if (sdaiIsInstanceOf(sdaiInst, opening)) {
+							visible = vp.GetOpeningsVisible();
+						}
+						else if (IsSpaceBoundary(sdaiInst)) {
+							visible = vp.GetSpaceBoundariesVisible();
+						}
+					}
+				}
+
+				if (exceptions.find(inst) != exceptions.end()) {
+					visible = !visible;
+				}
+
+				inst->setVisible(visible);
+			}
+		}
+	}
+}
+
+bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
+{
+	bool ok = true;
+
+	int allInstances[2] = { 0,0 };
+	int spaces[2] = { 0,0 };
+	int boundaries[2] = { 0, 0 };
+	int openings[2] = { 0, 0 };
+
+	// calculate visible/invisible instances
+	//
+	for (auto model : m_view.GetViewerDoc().getModels()) {
+		if (model) {
+
+			SdaiEntity space = NULL;
+			SdaiEntity opening = NULL;
+			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
+				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
+					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
+				}
+			}
+
+			for (auto inst : model->getInstances()) {
+
+				int ind = inst->getVisible() ? 0 : 1;
+
+				allInstances[ind]++;
+
+				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
+					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+						if (sdaiIsInstanceOf(sdaiInst, space)) {
+							spaces[ind]++;
+						}
+						else if (sdaiIsInstanceOf(sdaiInst, opening)) {
+							openings[ind]++;
+						}
+						else if (IsSpaceBoundary(sdaiInst)) {
+							boundaries[ind]++;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// set default visibilities
+	//
+	ok = vp.SetDefaultVisibility(allInstances[0] >= allInstances[1]) && ok;
+	ok = vp.SetSpaceVisible(spaces[0] > spaces[1]) && ok;
+	ok = vp.SetSpaceBoundariesVisible(boundaries[0] > boundaries[1]) && ok;
+	ok = vp.SetOpeningsVisible(openings[0] > openings[1]) && ok;
+
+	//set exceptions
+	//
+	int i = 0;
+	while (auto exception = vp.GetException(i)) {
+		if (!exception->Remove()) {
+			ok = false;
+			i++;
+		}
+	}
+
+	for (auto model : m_view.GetViewerDoc().getModels()) {
+		if (model) {
+			SdaiEntity space = NULL;
+			SdaiEntity opening = NULL;
+			SdaiAttr attrGlobalId = NULL;
+			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
+				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
+					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
+
+					if (auto root = sdaiGetEntity(sdaiModel, IFC_ROOT))
+						attrGlobalId = sdaiGetAttrDefinition(root, GLOBAL_ID);
+				}
+			}
+
+			for (auto inst : model->getInstances()) {
+
+				bool visible = vp.GetDefaultVisibility();
+
+				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
+					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+						if (sdaiIsInstanceOf(sdaiInst, space)) {
+							visible = vp.GetSpaceVisible();
+						}
+						else if (sdaiIsInstanceOf(sdaiInst, opening)) {
+							visible = vp.GetOpeningsVisible();
+						}
+						else if (IsSpaceBoundary(sdaiInst)) {
+							visible = vp.GetSpaceBoundariesVisible();
+						}
+
+						if (visible != inst->getVisible()) {
+							const char* globalId = NULL;
+							if (sdaiGetAttr(sdaiInst, attrGlobalId, sdaiSTRING, &globalId) && globalId && *globalId)
+								ok = vp.AddException(globalId) && ok;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return ok;
 }

@@ -46,7 +46,7 @@ BOOL CBCFAddRelatedTopic::OnInitDialog()
 		EndDialog(IDCANCEL);
 	}
 
-	std::set<BCFTopic*> exist;
+	std::unordered_set<BCFTopic*> exist;
 	int i = 0;
 	while (auto t = topic->GetRelatedTopic(i++)) {
 		exist.insert(t);

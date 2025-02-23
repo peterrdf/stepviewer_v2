@@ -47,7 +47,7 @@ BOOL CBCFAddLabel::OnInitDialog()
 		EndDialog(IDCANCEL);
 	}
 
-	std::set<std::string> exist;
+	std::unordered_set<std::string> exist;
 	int i = 0;
 	while (auto label = topic->GetLabel(i++)) {
 		exist.insert(label);

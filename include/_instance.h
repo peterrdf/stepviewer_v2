@@ -84,4 +84,7 @@ public: // Properties
 	OwlModel getOwlModel() { return getGeometry()->getOwlModel(); }
 	OwlInstance getOwlInstance() const { return getGeometry()->getOwlInstance(); }
 	bool hasGeometry() const { return getGeometry()->hasGeometry(); }
+
+	void setVisible(bool visible) {/*TODO*/ }
+	bool getVisible() {/*TODO*/ return true; }
 };
