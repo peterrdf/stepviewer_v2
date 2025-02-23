@@ -276,7 +276,7 @@ public: // Methods
 	_instance* getSelectedInstance() const; // kept for backward compatibility
 	const vector<_instance*>& getSelectedInstances() const { return m_vecSelectedInstances; }
 	bool isInstanceSelected(_instance* pInstance) const;
-
+	
 	// Save	
 	void saveInstance(OwlInstance owlInstance);
 	virtual void saveInstance(_instance* pInstance);
@@ -299,5 +299,13 @@ public: // Properties
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	vector<_model*>& editModelList() { return m_vecModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }	
+
+public:
+	// Coloring - TODO
+	typedef std::map<COLORREF, std::list<_instance*>> Coloring;
+	Coloring& getInstanceColoring() { return m_coloring; }
+	void applyInstanceColoring() {/*TODO, called after updated coloring*/ }
+private:
+	Coloring m_coloring;
 };
 

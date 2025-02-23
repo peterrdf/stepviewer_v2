@@ -29,7 +29,8 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 			viewer->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 		}
 		
-		ViewSelection(*vp);
+		ApplySelectionToViewer(*vp);
+		ApplyColoringToViewer(*vp);
 		ApplyVisibilityToViewer(*vp);
 	}
 }
@@ -75,6 +76,7 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 		}
 
 		ok = SaveSelection(*vp) && ok;
+		ok = SaveColoring(*vp) && ok;
 		ok = SaveVisibility(*vp) && ok;
 	}
 
@@ -82,7 +84,7 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 
 }
 
-void CBCFViewPointMgr::ViewSelection(BCFViewPoint& vp)
+void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint& vp)
 {
 	auto& viewer = m_view.GetViewerDoc();
 	viewer.selectInstance(NULL, NULL);
@@ -157,18 +159,164 @@ bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 	}
 
 	for (auto inst : m_view.GetViewerDoc().getSelectedInstances()) {
-		if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
-			if (auto sdaiInst = ifcInst->getSdaiInstance()) {
-				const char* globalId = NULL;
-				if (sdaiGetAttrBN(sdaiInst, GLOBAL_ID, sdaiSTRING, &globalId) && globalId && *globalId) {
-					ok = vp.AddSelection(globalId) && ok;
-				}
-			}
+		if (auto globalId = GetGlobalId(inst)) {
+			ok = vp.AddSelection(globalId) && ok;
 		}
 	}
 	
 	return ok;
 }
+
+const char* CBCFViewPointMgr::GetGlobalId(_instance* inst)
+{
+	if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
+		if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+			const char* globalId = NULL;
+			if (sdaiGetAttrBN(sdaiInst, GLOBAL_ID, sdaiSTRING, &globalId) && globalId && *globalId) {
+				return globalId;
+			}
+		}
+	}
+	return NULL;
+}
+
+void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint& vp)
+{
+	auto& viewer = m_view.GetViewerDoc();
+	auto& coloring = m_view.GetViewerDoc().getInstanceColoring();
+	coloring.clear();
+
+	int i = 0;
+	while (auto bcfcoloring = vp.GetColoring(i++)) {
+		if (bcfcoloring) {
+			if (auto strcolor = bcfcoloring->GetColor()) {
+				
+				auto clrref = GetColorRef(strcolor);
+				auto& instanceList = coloring[clrref];
+
+				int j = 0;
+				while (auto comp = bcfcoloring->GetComponent(j++)) {
+					if (auto inst = SearchComponent(*comp)) {
+						instanceList.push_back(inst);
+					}
+				}
+			}
+		}
+	}
+
+	m_view.GetViewerDoc().applyInstanceColoring();
+}
+
+
+bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
+{
+	bool ok = true;
+
+	int i = 0;
+	while (auto bcfcoloring = vp.GetColoring(i)) {
+		if (!bcfcoloring->Remove()) {
+			ok = false;
+			i++;
+		}
+	}
+
+	for (auto& coloring : m_view.GetViewerDoc().getInstanceColoring()) {
+
+		auto clr = GetColorStr(coloring.first);
+		
+		if (auto bcfcoloring = vp.AddColoring(clr.c_str())) {
+
+			for (auto inst : coloring.second) {
+				if (auto globalId = GetGlobalId(inst)) {
+					ok = bcfcoloring->AddComponent(globalId) && ok;
+				}
+			}
+		}
+		else {
+			ok = false;
+		}
+	}
+
+	return ok;
+}
+
+static BYTE GetByte(const char* str)
+{
+	BYTE v = 0;
+
+	for (int i = 0; i < 2; i++) {
+		v *= 16;
+
+		if (str[i] >= '0' && str[i] <= '9') {
+			v += str[i] - '0';
+		}
+		else if (str[i] >= 'A' && str[i] <= 'F') {
+			v += str[i] - 'A' + 10;
+		}
+		else if (str[i] >= 'a' && str[i] <= 'f') {
+			v += str[i] - 'a' + 10;
+		}
+	}
+
+	return v;
+}
+
+
+COLORREF CBCFViewPointMgr::GetColorRef(const char* strcolor)
+{
+	COLORREF clr = 0;
+
+	auto len = strlen(strcolor);
+	
+	int i = 0;
+
+	if (len == 8) {
+		BYTE b = GetByte(strcolor);
+		clr = b << 24;
+		i += 2;
+	}
+
+	BYTE shift = 0;
+	while (i + 1 < len) {
+		BYTE b = GetByte(strcolor + i);
+
+		clr |= (COLORREF)b << shift;
+
+		i += 2;
+		shift += 8;
+	}
+
+	return clr;
+}
+
+static COLORREF GetComponent(COLORREF clr, BYTE shift, char buff[3])
+{
+	auto comp = (clr >> shift) & 0xFF;
+	sprintf_s(buff, 3, "%02X", comp);
+	return comp;
+}
+
+//#define GetGValue(rgb)      (LOBYTE(((WORD)(rgb)) >> 8))
+
+std::string CBCFViewPointMgr::GetColorStr(COLORREF clr)
+{
+	char str[9];
+
+	int i = 0;
+	if (GetComponent(clr, 24, str)) {
+		i += 2;
+	}
+	
+	for (BYTE shift = 0; shift <= 16; shift+=8) {
+		GetComponent(clr, shift, str + i);
+		i += 2;
+	}
+
+	str[i] = 0;
+
+	return str;
+}
+
 
 void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint& vp)
 {
