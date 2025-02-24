@@ -104,9 +104,12 @@ void CBCFView::Close()
 
 bool CBCFView::SaveModified()
 {
-	if (m_bcfProject && m_bcfProject->IsDirty()) {
-		if (IDNO != AfxMessageBox(L"BCF data are modified. Do you want to save before continue?", MB_YESNO)) {
-			PostMessage(WM_COMMAND, IDC_SAVE);
+	if (m_bcfProject && m_bcfProject->IsModified()) {
+		auto answer = AfxMessageBox(L"BCF data are modified. Do you want to save before continue?", MB_YESNOCANCEL);
+		if (IDNO != answer) {
+			if (IDYES == answer) {
+				PostMessage(WM_COMMAND, IDC_SAVE);
+			}
 			return false;
 		}
 	}
@@ -257,6 +260,8 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 
 void CBCFView::OnClose()
 {
+	m_wndCommentsList.SetFocus(); //to last upate from edit field
+
 	if (SaveModified()) {
 		CDialogEx::OnClose();
 		Close();
@@ -419,7 +424,7 @@ void CBCFView::FillTopicAuthor(BCFTopic* topic)
 	strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
 	if (*topic->GetModifiedAuthor()) {
 		CString modifier;
-		modifier.Format(L", modified by % s at % s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
+		modifier.Format(L", modified by %s at %s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
 		strAuthor.Append(modifier);
 	}
 
