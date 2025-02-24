@@ -106,6 +106,7 @@ protected: // Methods
 private: // Methods
 
 	void getObjectsReferencedState();
+	void getObjectsReferencedStateGroups();
 	void getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance);
 	void getObjectsReferencedStateContainsElements(SdaiInstance sdaiInstance);

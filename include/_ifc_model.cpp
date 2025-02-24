@@ -271,28 +271,38 @@ void _ifc_model::getObjectsReferencedState()
 			}
 		}
 	} // if (iMembersCount > 0)
+
+	getObjectsReferencedStateGroups();
 }
 
-void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
+void _ifc_model::getObjectsReferencedStateGroups()
 {
-	assert(sdaiInstance != 0);
+	vector<_ap_geometry*> vecGeometries;
+	getGeometriesByType("IFCGROUP", vecGeometries);
 
-	auto pGeometry = getGeometryByInstance(sdaiInstance);
-	if (pGeometry != nullptr)
+	for (auto pGeometry : vecGeometries)
 	{
-		_ptr<_ifc_geometry>(pGeometry)->m_bIsReferenced = true;
+		SdaiInstance sdaiIsGroupedByInstance = 0;
+		sdaiGetAttrBN(pGeometry->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
+		if (sdaiIsGroupedByInstance != 0)
+		{
+			SdaiAggr sdaiRelatedObjectsAggr = nullptr;
+			sdaiGetAttrBN(sdaiIsGroupedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
-		getObjectsReferencedStateIsDecomposedBy(sdaiInstance);
-		getObjectsReferencedStateIsNestedBy(sdaiInstance);
-		getObjectsReferencedStateContainsElements(sdaiInstance);
-		getObjectsReferencedStateHasAssignments(sdaiInstance);
-		getObjectsReferencedStateBoundedBy(sdaiInstance);
-		getObjectsReferencedStateHasOpenings(sdaiInstance);
-	}
-	else
-	{
-		assert(FALSE);
-	}
+			SdaiInteger iRelatedObjectsCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+			for (SdaiInteger i = 0; i < iRelatedObjectsCount; i++)
+			{
+				SdaiInstance sdaiRelatedObject = 0;
+				sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, i, sdaiINSTANCE, &sdaiRelatedObject);
+
+				auto pRelatedObjectGeometry = getGeometryByInstance(sdaiRelatedObject);
+				if (pRelatedObjectGeometry != nullptr)
+				{
+					_ptr<_ifc_geometry>(pRelatedObjectGeometry)->m_bIsReferenced = true;
+				}				
+			} // for (SdaiInteger i = ...
+		} // if (sdaiIsGroupedByInstance != 0)
+	} // for (auto pGeometry : ...
 }
 
 void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance)
@@ -479,6 +489,28 @@ void _ifc_model::getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance)
 		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
 
 		getObjectsReferencedStateRecursively(sdaiRelatedOpeningElementInstance);
+	}
+}
+
+void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
+{
+	assert(sdaiInstance != 0);
+
+	auto pGeometry = getGeometryByInstance(sdaiInstance);
+	if (pGeometry != nullptr)
+	{
+		_ptr<_ifc_geometry>(pGeometry)->m_bIsReferenced = true;
+
+		getObjectsReferencedStateIsDecomposedBy(sdaiInstance);
+		getObjectsReferencedStateIsNestedBy(sdaiInstance);
+		getObjectsReferencedStateContainsElements(sdaiInstance);
+		getObjectsReferencedStateHasAssignments(sdaiInstance);
+		getObjectsReferencedStateBoundedBy(sdaiInstance);
+		getObjectsReferencedStateHasOpenings(sdaiInstance);
+	}
+	else
+	{
+		assert(FALSE);
 	}
 }
 
