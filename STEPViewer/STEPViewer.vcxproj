@@ -334,7 +334,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>stepengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -352,7 +352,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;RDFBCF_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2;./../bcfEngine</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -362,8 +362,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ifcengine.lib;bcfEngine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ifcengine.lib;bcfEngine.x64Sd.lib;opengl32.lib;glu32.lib;glew32.lib;libz-static.lib;libzip-static.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -393,7 +393,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>cis2engine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -514,7 +514,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>stepengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -545,7 +545,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ifcengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -576,7 +576,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>cis2engine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
