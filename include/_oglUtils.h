@@ -2467,7 +2467,7 @@ protected: // Members
 	CPoint m_ptPrevMousePosition;	
 
 	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
+	_oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
 	_instance* m_pPointedInstance;	
 
 	// Tooltip
@@ -2496,19 +2496,15 @@ public: // Methods
 
 	virtual void _load();
 
-protected: // Methods
-
-	virtual bool _preDraw();
-
-public: // Methods
-
 	virtual void _draw(CDC* pDC);
 
 protected: // Methods
 
-	virtual void _drawDecorations() {}
-	virtual void _postDraw();
-
+	virtual bool _prepareScene();
+	virtual void _preDraw() {}
+	virtual void _postDraw() {}
+	virtual void _drawBuffers();
+	
 	void _drawFaces();
 	void _drawConceptualFacesPolygons();
 	void _drawLines();
@@ -2520,6 +2516,8 @@ protected: // Methods
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
 	void _drawInstancesFrameBuffer(_model* pModel);	
+
+	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
 	// http://nehe.gamedev.net/article/using_gluunproject/16013/
 	bool getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
