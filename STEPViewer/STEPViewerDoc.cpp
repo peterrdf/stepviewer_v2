@@ -110,6 +110,16 @@ void CMySTEPViewerDoc::SetTitle(LPCTSTR /*lpszTitle*/)
 	__super::SetTitle(strTitle);
 }
 
+BOOL CMySTEPViewerDoc::SaveModified()
+{
+	if (!m_wndBCFView.SaveModified()) {
+		return FALSE;
+	}
+
+	return __super::SaveModified();
+}
+
+
 
 // ************************************************************************************************
 // CMySTEPViewerDoc

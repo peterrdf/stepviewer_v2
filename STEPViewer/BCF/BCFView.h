@@ -28,6 +28,8 @@ public:
 	//if BCF view want to consume opened models, STEPViewerDoc should not manage them
 	void OnOpenModels(vector<_model*>& vecModels);
 
+	bool SaveModified();
+
 	void Close();
 
 public:

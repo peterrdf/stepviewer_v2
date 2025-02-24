@@ -102,6 +102,17 @@ void CBCFView::Close()
 	}
 }
 
+bool CBCFView::SaveModified()
+{
+	if (m_bcfProject && m_bcfProject->IsDirty()) {
+		if (IDNO != AfxMessageBox(L"BCF data are modified. Do you want to save before continue?", MB_YESNO)) {
+			PostMessage(WM_COMMAND, IDC_SAVE);
+			return false;
+		}
+	}
+	return true;
+}
+
 
 void CBCFView::Open(LPCTSTR filePath)
 {
@@ -246,8 +257,10 @@ void CBCFView::DoDataExchange(CDataExchange* pDX)
 
 void CBCFView::OnClose()
 {
-	CDialogEx::OnClose();
-	Close();
+	if (SaveModified()) {
+		CDialogEx::OnClose();
+		Close();
+	}
 }
 
 
