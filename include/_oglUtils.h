@@ -2515,7 +2515,6 @@ protected: // Methods
 	void _drawConceptualFacesPolygons(_model* pModel);
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
-	void _drawInstancesFrameBuffer(_model* pModel);	
 
 	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
