@@ -2506,15 +2506,11 @@ protected: // Methods
 	virtual void _drawBuffers();
 	
 	void _drawFaces();
+	void _drawFaces(bool bTransparent);
 	void _drawConceptualFacesPolygons();
 	void _drawLines();
 	void _drawPoints();
 	void _drawInstancesFrameBuffer();
-
-	void _drawFaces(_model* pModel, bool bTransparent);	
-	void _drawConceptualFacesPolygons(_model* pModel);
-	void _drawLines(_model* pModel);
-	void _drawPoints(_model* pModel);
 
 	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
