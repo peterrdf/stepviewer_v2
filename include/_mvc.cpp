@@ -669,6 +669,11 @@ void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float
 	fWorldZmax = -FLT_MAX;
 	for (auto pModel : getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		float fXmin = FLT_MAX;
 		float fXmax = -FLT_MAX;
 		float fYmin = FLT_MAX;
@@ -989,8 +994,10 @@ _model* _controller::getModel() const
 { 
 	if (!m_vecModels.empty())
 	{
+		assert(m_vecModels.size() == 1);
+
 		return m_vecModels.front();
-	}
+	}	
 
 	return nullptr; 
 }

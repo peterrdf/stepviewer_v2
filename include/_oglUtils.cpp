@@ -1694,6 +1694,11 @@ _oglView::_oglView()
 		
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		// VBO
 		GLuint iVerticesCount = 0;
 		vector<_geometry*> vecGeometriesCohort;
@@ -1961,11 +1966,21 @@ void _oglView::_drawFaces()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawFaces(pModel, false);
 	}
 
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawFaces(pModel, true);
 	}
 }
@@ -1974,6 +1989,11 @@ void _oglView::_drawConceptualFacesPolygons()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawConceptualFacesPolygons(pModel);
 	}
 }
@@ -1982,6 +2002,11 @@ void _oglView::_drawLines()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawLines(pModel);
 	}
 }
@@ -1990,6 +2015,11 @@ void _oglView::_drawPoints()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawPoints(pModel);
 	}
 }
@@ -1998,6 +2028,11 @@ void _oglView::_drawInstancesFrameBuffer()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		_drawInstancesFrameBuffer(pModel);
 	}
 }
@@ -2517,6 +2552,11 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	{
 		for (auto pM : getController()->getModels())
 		{
+			if (!pM->getEnable())
+			{
+				continue;
+			}
+
 			for (auto pGeometry : pM->getGeometries())
 			{
 				if (pGeometry->getTriangles().empty())

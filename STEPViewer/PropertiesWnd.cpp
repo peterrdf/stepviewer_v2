@@ -95,8 +95,12 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_ptr<_ap_model> apModel(pModel);
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
 
+		_ptr<_ap_model> apModel(pModel);
 		if (apModel->getSdaiModel() == sdaiModel)
 		{
 			return apModel;

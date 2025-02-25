@@ -2288,6 +2288,11 @@ void CIFCModelStructureView::ResetView()
 
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		LoadModel(_ptr<_ifc_model>(pModel));
 	}	
 }

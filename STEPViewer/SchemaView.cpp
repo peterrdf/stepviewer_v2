@@ -435,8 +435,12 @@ void CSchemaView::ResetView()
 	HTREEITEM hFirstModel = NULL;
 	for (auto pModel : pController->getModels())
 	{
-		_ptr<_ap_model> apModel(pModel);
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
 
+		_ptr<_ap_model> apModel(pModel);
 		HTREEITEM hModel = LoadModel(apModel);
 
 		m_mapModels[hModel] = apModel;

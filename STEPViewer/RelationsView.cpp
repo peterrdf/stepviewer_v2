@@ -207,6 +207,11 @@ static char THIS_FILE[]=__FILE__;
 
 		for (auto pModel : pController->getModels())
 		{
+			if (!pModel->getEnable())
+			{
+				continue;
+			}
+
 			auto pAPModel = dynamic_cast<_ap_model*>(pModel);
 			if (pAPModel == nullptr)
 			{
@@ -259,8 +264,12 @@ _ap_model* CRelationsView::GetModelByInstance(SdaiModel sdaiModel)
 {
 	for (auto pModel : getController()->getModels())
 	{
-		_ptr<_ap_model> apModel(pModel);
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
 
+		_ptr<_ap_model> apModel(pModel);
 		if (apModel->getSdaiModel() == sdaiModel)
 		{
 			return apModel;
