@@ -465,7 +465,7 @@ void CBCFView::LoadActiveTopic()
 	m_strPriority = FromUTF8(topic->GetPriority());
 	m_strDue = FromUTF8(topic->GetDueDate());
 
-	m_strIndex.Format(L"%d", topic->GetIndex());
+	m_strIndex = FromUTF8(topic->GetIndexStr());
 	m_strServerId = FromUTF8(topic->GetServerAssignedId());
 
 	auto snippet = topic->GetBimSnippet(false);
@@ -509,7 +509,12 @@ void CBCFView::UpdateActiveTopic()
 	ok = topic->SetAssignedTo(ToUTF8(m_strAssigned).c_str()) && ok;
 	ok = topic->SetPriority(ToUTF8(m_strPriority).c_str()) && ok;
 	ok = topic->SetDueDate(ToUTF8(m_strDue).c_str()) && ok;
-	ok = topic->SetIndex(_wtoi(m_strIndex)) && ok;
+	if (m_strIndex.IsEmpty()) {
+		ok = topic->SetIndexStr(ToUTF8(m_strIndex).c_str()) && ok;
+	}
+	else {
+		ok = topic->SetIndex(_wtoi(m_strIndex)) && ok;
+	}
 	ok = topic->SetServerAssignedId(ToUTF8(m_strServerId).c_str()) && ok;
 
 	ShowLog(!ok);
