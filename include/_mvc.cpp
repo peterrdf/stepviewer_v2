@@ -623,13 +623,6 @@ void _controller::addModel(_model* pModel)
 	m_bUpdatingModel = false;
 }
 
-void _controller::detachModels()
-{
-	m_vecModels.clear();
-
-	s_iInstanceID = 1;
-}
-
 _instance* _controller::loadInstance(int64_t iInstance)
 {
 	assert(iInstance != 0);
