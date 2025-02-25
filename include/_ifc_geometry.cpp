@@ -58,6 +58,11 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 
 /*virtual*/ bool _ifc_geometry::ignoreBB() const /*override*/
 {
+	if (_geometry::ignoreBB())
+	{
+		return true;
+	}
+
 	if (sdaiGetEntity(getSdaiModel(), "IfcCurveSegment") == sdaiGetInstanceType(getSdaiInstance()))
 	{
 		return true;
