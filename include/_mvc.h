@@ -57,6 +57,7 @@ class _model
 protected: // Members
 
 	wstring m_strPath;
+	bool m_bEnable;
 
 	const _model* m_pWorld;
 
@@ -126,6 +127,8 @@ public: // Properties
 
 	bool isDecoration() const { return m_strPath.empty(); }
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
+	bool getEnable() const { return m_bEnable; }
+	void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 	
 	void getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;

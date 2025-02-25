@@ -5,6 +5,7 @@
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
+	, m_bEnable(true)
 	, m_pWorld(nullptr)
 	, m_mapID2Instance()
 	, m_bUpdteVertexBuffers(true)
