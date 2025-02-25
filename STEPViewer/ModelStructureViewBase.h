@@ -73,9 +73,8 @@ public: // Methods
 
 protected: // Methods
 
-	void LoadHeader(HTREEITEM hParent)
+	void LoadHeader(_ap_model* pModel, HTREEITEM hParent)
 	{
-		auto pModel = getModelAs<_ap_model>();
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);

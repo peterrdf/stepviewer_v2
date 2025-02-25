@@ -156,19 +156,6 @@ public: // Methods
 	{
 	}
 
-	// Model
-	template<class Model>
-	Model* getModelAs()
-	{
-		auto pController = getController();
-		if (pController == nullptr)
-		{
-			return nullptr;
-		}
-
-		return pController->getModel()->as<Model>();
-	}
-
 	// Events
 	virtual void preModelLoaded() {}
 	virtual void onModelLoaded() {}

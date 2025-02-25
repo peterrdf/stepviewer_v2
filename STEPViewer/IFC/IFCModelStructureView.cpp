@@ -1182,7 +1182,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	m_vecModelData.push_back(pModelData);
 
 	// Header
-	LoadHeader(hModel);
+	LoadHeader(pModel, hModel);
 
 	// Project/Units/Unreferenced
 	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(pModel->getSdaiModel(), "IFCPROJECT");

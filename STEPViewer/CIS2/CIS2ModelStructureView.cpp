@@ -328,7 +328,9 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	auto pModel = getModelAs<CCIS2Model>();
+	ASSERT(pController->getModels().size() == 1);
+
+	auto pModel = _ptr<CCIS2Model>(pController->getModels()[0]);
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -682,7 +684,7 @@ void CCIS2ModelStructureView::LoadModel(CCIS2Model* pModel)
 	/*
 	* Header
 	*/
-	LoadHeader(hModel);
+	LoadHeader(pModel, hModel);
 
 	//
 	// Design Parts & Representations
@@ -1236,7 +1238,17 @@ void CCIS2ModelStructureView::ResetView()
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	auto pModel = getModelAs<CCIS2Model>();
+	auto pController = getAPController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	ASSERT(pController->getModels().size() == 1);
+
+	auto pModel = _ptr<CCIS2Model>(pController->getModels()[0]);
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

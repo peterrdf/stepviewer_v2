@@ -576,7 +576,14 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	auto pModel = getModelAs<_ap242_model>();
+	if (pController->getModels().empty())
+	{
+		return;
+	}
+
+	ASSERT(pController->getModels().size() == 1);
+
+	auto pModel = _ptr<_ap242_model>(pController->getModels()[0]);
 	if (pModel == nullptr)
 	{
 		return;
@@ -773,9 +780,22 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 void CAP242PModelStructureView::LoadModel()
 {
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto pController = getAPController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
 
-	auto pModel = getModelAs<_ap242_model>();
+		return;
+	}
+
+	if (pController->getModels().empty())
+	{
+		return;
+	}
+
+	ASSERT(pController->getModels().size() == 1);
+
+	auto pModel = _ptr<_ap242_model>(pController->getModels()[0]);
 	if (pModel == nullptr)
 	{
 		return;
@@ -786,12 +806,14 @@ void CAP242PModelStructureView::LoadModel()
 		return;
 	}
 
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	m_bInitInProgress = true;
 
 	/*
 	* Model
 	*/
-	auto pModelItemData = new CAP242ItemData(nullptr, (int64_t*)pModel, enumAP242ItemDataType::Model);
+	auto pModelItemData = new CAP242ItemData(nullptr, (int64_t*)pModel.p(), enumAP242ItemDataType::Model);
 	m_vecItemData.push_back(pModelItemData);
 
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -807,7 +829,7 @@ void CAP242PModelStructureView::LoadModel()
 	pModelItemData->TreeItem() = hModel;
 
 	// Header
-	LoadHeader(hModel);
+	LoadHeader(pModel, hModel);
 
 	//
 	// Roots

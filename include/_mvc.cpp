@@ -112,6 +112,7 @@ void _model::scale()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
+	int64_t iEnabledInstances = 0;
 	for (auto pGeometry : m_vecGeometries)
 	{
 		if (!pGeometry->hasGeometry())
@@ -121,6 +122,13 @@ void _model::scale()
 
 		for (auto pInstance : pGeometry->getInstances())
 		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			iEnabledInstances++;
+
 			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
@@ -128,6 +136,27 @@ void _model::scale()
 				m_fZmin, m_fZmax);
 		}
 	}
+
+	// Special case:  all instances are disabled
+	if (iEnabledInstances == 0)
+	{
+		for (auto pGeometry : m_vecGeometries)
+		{
+			if (!pGeometry->hasGeometry())
+			{
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances())
+			{
+				pGeometry->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+		}
+	} // if (iEnabledInstances == 0)
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
