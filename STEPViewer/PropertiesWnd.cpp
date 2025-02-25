@@ -924,7 +924,9 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		return;
 	}
 
-	_ptr<_ap_model> model(pController->getModel());
+	ASSERT(pController->getModels().size() == 1);
+
+	_ptr<_ap_model> model(pController->getModels()[0]);
 	if (!model)
 	{
 		return;
@@ -1134,7 +1136,9 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 		return;
 	}
 
-	auto pModel = pController->getModel();
+	ASSERT(pController->getModels().size() == 1);
+
+	auto pModel = pController->getModels()[0];
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);

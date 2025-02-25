@@ -137,7 +137,7 @@ void _model::scale()
 		}
 	}
 
-	// Special case:  all instances are disabled
+	// Special case: all instances are disabled
 	if (iEnabledInstances == 0)
 	{
 		for (auto pGeometry : m_vecGeometries)
@@ -645,7 +645,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 	m_vecSelectedInstances.clear();
 	m_pTargetInstance = nullptr;
 
-	auto pInstance = getModel()->loadInstance(iInstance);
+	auto pInstance = getModels()[0]->loadInstance(iInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)

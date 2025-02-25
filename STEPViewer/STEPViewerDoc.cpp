@@ -26,8 +26,6 @@ TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifcz
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
-	ASSERT(getModel() != nullptr);
-
 	if (pInstance == nullptr)
 	{
 		return;
@@ -281,7 +279,7 @@ void CMySTEPViewerDoc::OnUpdateViewModelChecker(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnFileSave()
 {
-	_ptr<_ap_model> apModel(getModel());
+	_ptr<_ap_model> apModel(getModels()[0]);
 
 	CString strFiler;
 	CString strExtension;
