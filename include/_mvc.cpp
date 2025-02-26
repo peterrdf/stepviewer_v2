@@ -623,6 +623,51 @@ void _controller::addModel(_model* pModel)
 	m_bUpdatingModel = false;
 }
 
+void _controller::disableAllButTheseModels(const vector<_model*>& vecModels)
+{
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->preModelLoaded();
+	}
+
+	// Disable all
+	for (auto pModel : m_vecModels)
+	{
+		pModel->setEnable(false);
+	}
+
+	// Add if needed and Enable
+	for (auto pModel : vecModels)
+	{
+		if (find(m_vecModels.begin(), m_vecModels.end(), pModel) == m_vecModels.end())
+		{
+			m_vecModels.push_back(pModel);
+		}
+
+		pModel->setEnable(true);
+	}
+
+	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->postModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
 _instance* _controller::loadInstance(int64_t iInstance)
 {
 	assert(iInstance != 0);

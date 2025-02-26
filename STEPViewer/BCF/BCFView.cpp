@@ -87,13 +87,7 @@ void CBCFView::Close()
 		}
 		m_bcfProject = NULL;
 	}
-
-	//free models
-	//m_doc.setOwnsModelsOn();
-	m_mapBimFiles.clear();
-	for (auto item : m_loadedModels) {
-		delete item;
-	}
+	
 	m_loadedModels.clear();
 
 	//hide window
@@ -669,8 +663,7 @@ void CBCFView::ViewTopicModels(BCFTopic* topic)
 		}
 	}
 
-	//m_doc.deleteAllModels();
-	//m_doc.addModels(activeModels);
+	m_doc.disableAllButTheseModels(activeModels);
 }
 
 
