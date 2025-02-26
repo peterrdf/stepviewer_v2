@@ -110,6 +110,7 @@
 #define IDS_VIEW_GEOMETRY               340
 #define IDS_VIEW_INSTANCE_PROPERTIES    341
 #define IDC_TREE_IFC                    342
+#define IDC_TOPIC_STATUS                342
 #define IDS_SCHEMA_VIEW                 343
 #define ID_VIEW_SCHEMA                  344
 #define ID_VIEW_RELATIONS               345
@@ -118,6 +119,13 @@
 #define IDR_POPUP_META_DATA             348
 #define IDR_TEXTFILE_VERTEX_SHADER3     349
 #define IDR_TEXTFILE_FRAGMENT_SHADER3   350
+#define IDD_BCF_VIEW                    351
+#define IDD_BCF_PROJINFO                353
+#define IDD_BCF_ADDLABEL                355
+#define IDD_BCF_ADDRELATEDTOPIC         357
+#define IDD_BCF_ADDREFERENCELINK        359
+#define IDD_BCF_ADDOCUMENT              361
+#define IDD_BCF_TOPICFILES              363
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -130,6 +138,49 @@
 #define IDC_EDIT_SEARCH_TEXT            1007
 #define IDC_COMBO_SEARCH_FILTER         1008
 #define IDC_COMBO_INSTANCES             1009
+#define IDC_TOPICS                      1012
+#define IDC_TOPIC_TYPE                  1013
+#define IDC_TOPIC_STAGE                 1014
+#define IDC_TOPIC_TITLE                 1015
+#define IDC_TOPIC_ASSIGNED              1016
+#define IDC_TOPIC_PRIORITY              1017
+#define IDC_TOPIC_SERVER_ID             1018
+#define IDC_TOPIC_DESCRIPTION           1019
+#define IDC_TOPIC_DUE                   1021
+#define IDC_TOPIC_INDEX                 1022
+#define IDC_SNIPPET_TYPE                1023
+#define IDC_SNIPPET_REFERENCE           1024
+#define IDC_SNIPPET_SCHEMA              1025
+#define IDC_SNIPPET_REFERENCE_BROWSE    1026
+#define IDC_SNIPPET_SCHEMA_BROWSE       1027
+#define IDC_TOPIC_COMMENTS              1028
+#define IDC_TOPIC_COMMENT_TEXT          1028
+#define IDC_COMMENT_ADD                 1029
+#define IDC_TAB                         1031
+#define IDC_MULTI_LIST                  1032
+#define IDC_BUTTON_ADD                  1033
+#define IDC_BUTTON_REMOVE               1034
+#define IDC_SAVE                        1035
+#define IDC_PROJECT_INFO                1037
+#define IDC_EDIT7                       1038
+#define IDC_AUTHOR                      1039
+#define IDC_LIST1                       1042
+#define IDC_COMMENTS_LIST               1042
+#define IDC_LIST_TOPIC                  1042
+#define IDC_FILE_LIST                   1042
+#define IDC_USERNAME                    1043
+#define IDC_PROJECTID                   1044
+#define IDC_EDIT3                       1045
+#define IDC_PROJECTNAME                 1045
+#define IDC_COMBO_LABELS                1046
+#define IDC_EDIT1                       1047
+#define IDC_EDIT_PATH                   1048
+#define IDC_BUTTON_BROWSE               1049
+#define IDC_EDIT_DESCRIPTION            1050
+#define IDC_CHECK_EXTERNAL              1051
+#define IDC_UPDATE_VIEWPOINT            1052
+#define IDC_BUTTON1                     1054
+#define IDC_BUTTON_BIMS                 1054
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -172,14 +223,18 @@
 #define ID_3DVIEW_OVERRIDE_MATERIAL     32837
 #define ID_3DVIEW_RESET_MATERIALS       32838
 #define ID_VIEW_RESET                   32839
+#define ID_FILE_BCF                     32843
+#define ID_BCF_NEW                      32845
+#define ID_BCF_ADDBIMFILE               32846
+#define ID_BCF_ADDBIM                   32847
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        351
-#define _APS_NEXT_COMMAND_VALUE         32841
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_RESOURCE_VALUE        365
+#define _APS_NEXT_COMMAND_VALUE         32848
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

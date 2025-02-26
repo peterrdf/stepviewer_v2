@@ -248,7 +248,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -274,7 +274,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -300,7 +300,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -326,7 +326,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -352,9 +352,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;RDFBCF_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -362,8 +362,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ifcengine.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ifcengine.lib;bcfEngine.x64Sd.lib;opengl32.lib;glu32.lib;glew32.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -382,7 +382,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -412,7 +412,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -442,7 +442,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -472,7 +472,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -502,7 +502,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -533,7 +533,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -564,7 +564,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -625,6 +625,14 @@
     <ClInclude Include="..\include\_ifc_unit.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
+    <ClInclude Include="BCF\BCFAddDocumentReference.h" />
+    <ClInclude Include="BCF\BCFAddLabel.h" />
+    <ClInclude Include="BCF\BCFAddReferenceLink.h" />
+    <ClInclude Include="BCF\BCFAddRelatedTopic.h" />
+    <ClInclude Include="BCF\BCFBimFiles.h" />
+    <ClInclude Include="BCF\BCFProjInfo.h" />
+    <ClInclude Include="BCF\BCFView.h" />
+    <ClInclude Include="BCF\BCFViewPointMgr.h" />
     <ClInclude Include="CIS2\CIS2DesignPart.h" />
     <ClInclude Include="CIS2\CIS2Geometry.h" />
     <ClInclude Include="CIS2\CIS2Instance.h" />
@@ -908,6 +916,14 @@
     </ClCompile>
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />
+    <ClCompile Include="BCF\BCFAddDocumentReference.cpp" />
+    <ClCompile Include="BCF\BCFAddLabel.cpp" />
+    <ClCompile Include="BCF\BCFAddReferenceLink.cpp" />
+    <ClCompile Include="BCF\BCFAddRelatedTopic.cpp" />
+    <ClCompile Include="BCF\BCFBimFiles.cpp" />
+    <ClCompile Include="BCF\BCFProjInfo.cpp" />
+    <ClCompile Include="BCF\BCFView.cpp" />
+    <ClCompile Include="BCF\BCFViewPointMgr.cpp" />
     <ClCompile Include="CIS2\CIS2DesignPart.cpp" />
     <ClCompile Include="CIS2\CIS2Geometry.cpp" />
     <ClCompile Include="CIS2\CIS2Instance.cpp" />
