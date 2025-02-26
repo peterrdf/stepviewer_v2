@@ -32,9 +32,10 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 			//viewer->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 		}
 		
-		ApplySelectionToViewer(*vp);
-		ApplyColoringToViewer(*vp);
-		ApplyVisibilityToViewer(*vp);
+		//#tbd
+		//ApplySelectionToViewer(*vp);
+		//ApplyColoringToViewer(*vp);
+		//ApplyVisibilityToViewer(*vp);
 	}
 }
 
