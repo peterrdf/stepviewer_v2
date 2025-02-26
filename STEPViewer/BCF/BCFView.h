@@ -46,7 +46,7 @@ public:
 	
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
 
-	std::vector<_model*>& Models() { return m_loadedModels; }
+	//std::vector<_model*>& Models() { return m_loadedModels; }//#tbd
 
 	_model* GetBimModel(BCFBimFile& file);
 
@@ -115,7 +115,7 @@ private:
 	BCFProject*						m_bcfProject;
 
 	CBCFViewPointMgr				m_viewPointMgr;
-	std::vector<_model*>			m_loadedModels;
+	//std::vector<_model*>			m_loadedModels;//#tbd
 	std::map<BCFBimFile*, _model*>	m_mapBimFiles;
 
 private:

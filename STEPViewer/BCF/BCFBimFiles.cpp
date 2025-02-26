@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "STEPViewer.h"
+#include "STEPViewerDoc.h"
 #include "_mvc.h"
 #include "_ap_model_factory.h"
 #include "BCFBimFiles.h"
@@ -83,11 +84,12 @@ void CBCFBimFiles::FillFileList(BCFTopic& topic)
 
 	m_fileList.ResetContent();
 
-	for (auto model : m_view.Models()) {
+	for (auto model : m_view.GetViewerDoc().getModels()) {
 		if (model) {
-			/*auto item = m_fileList.AddString(model->getTitle());
+			//auto item = m_fileList.AddString(model->getTitle()); //#tbd
+			auto item = m_fileList.AddString(model->getPath()); //#tbd
 			m_fileList.SetItemDataPtr(item, model);
-			m_fileList.SetCheck(item, m_usedModels.find(model) != m_usedModels.end());*/
+			m_fileList.SetCheck(item, m_usedModels.find(model) != m_usedModels.end());/**/
 		}
 	}
 
@@ -120,7 +122,7 @@ void CBCFBimFiles::OnOK()
 	if (!model)
 		return;
 		
-	m_view.Models().push_back(model);
+	m_view.GetViewerDoc().addModel(model);
 
 	AddBimFile(*topic, *model);
 

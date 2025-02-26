@@ -88,7 +88,8 @@ void CBCFView::Close()
 		m_bcfProject = NULL;
 	}
 	
-	m_loadedModels.clear();
+	//#tbd
+	//m_loadedModels.clear();
 
 	//hide window
 	if (GetSafeHwnd()) {
@@ -160,7 +161,7 @@ void CBCFView::Open(LPCTSTR filePath)
 
 void CBCFView::OnOpenModels(vector<_model*>& vecModels)
 {
-	if (!m_bcfProject || vecModels.empty()) {
+	/*if (!m_bcfProject || vecModels.empty()) {
 		return;
 	}
 
@@ -195,7 +196,7 @@ void CBCFView::OnOpenModels(vector<_model*>& vecModels)
 		ViewTopicModels(topic);
 	
 	vecModels.clear();
-	ShowLog(!ok);
+	ShowLog(!ok);*/
 }
 
 BCFBimFile* CBCFView::FindBimFileByPath(BCFTopic* topic, const char* searchPath)
@@ -621,18 +622,19 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 
 		auto path = FromUTF8(file.GetReference());
 		
-		for (auto m : m_loadedModels) {
-			if (m && m->getPath() == path) {
+		for (auto m : m_doc.getModels()) {
+			if (m && m->getPath() == path) {//#tbd
 				model = m;
 				break;
 			}
 		}
 
-		if (!model) {
+		if (!model) { 
 			model = _ap_model_factory::load(path, true, nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
-				m_loadedModels.push_back(model);
+				//m_loadedModels.push_back(model);//#tbd
+				m_doc.addModel(model);
 			}
 		}
 
