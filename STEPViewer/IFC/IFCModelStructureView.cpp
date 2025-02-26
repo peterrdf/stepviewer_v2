@@ -1464,7 +1464,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 	auto pGeometry = pModel->getGeometryByInstance(sdaiInstance);
 	if (pGeometry == nullptr)
 	{
-		ASSERT(FALSE);
+		ASSERT(!sdaiIsKindOfBN(sdaiInstance, "IFCPRODUCT"));
 
 		return NULL;
 	}

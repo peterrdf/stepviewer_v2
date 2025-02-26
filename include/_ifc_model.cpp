@@ -510,7 +510,7 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
 	}
 	else
 	{
-		assert(FALSE);
+		ASSERT(!sdaiIsKindOfBN(sdaiInstance, "IFCPRODUCT"));
 	}
 }
 
