@@ -7,6 +7,7 @@
 
 #include "Controller.h"
 #include "ModelCheckDlg.h"
+#include "BCF\BCFView.h"
 
 // ------------------------------------------------------------------------------------------------
 class CMySTEPViewerDoc
@@ -19,7 +20,7 @@ public: // Methods
 	// _controller
 	virtual void saveInstance(_instance* pInstance) override;
 
-	void OpenModels(vector<CString>& vecPaths);
+	void OpenModels(const vector<CString>& vecPaths);
 
 protected: // create from serialization only
 	CMySTEPViewerDoc();
@@ -51,6 +52,7 @@ public:
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
+	CBCFView            m_wndBCFView;
 
 // Generated message map functions
 protected:

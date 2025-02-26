@@ -21,7 +21,8 @@
 TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
 TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
 TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
-TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
+TCHAR OPEN_FILES_FILTER[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
+TCHAR OPEN_MODEL_FILTER[] = _T("Design model files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -53,9 +54,27 @@ TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifcz
 	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 }
 
-void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
+void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
 	setModel(nullptr);
+
+	//
+	// BCF
+	//
+
+	for (auto strPath : vecPaths)
+	{
+		if (m_wndBCFView.IsBCF(strPath))
+		{
+			m_wndBCFView.Open(strPath);
+
+			return;
+		}
+	}
+
+	//
+	// STEP/IFC/CIS2
+	//
 
 	vector<_model*> vecModels;
 	for (auto strPath : vecPaths)
@@ -98,6 +117,7 @@ END_MESSAGE_MAP()
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
+	: m_wndBCFView(*this)
 {
 }
 

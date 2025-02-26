@@ -387,14 +387,7 @@ void CMySTEPViewerView::OnDropFiles(HDROP hDropInfo)
 	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
-	if (vecFiles.size() == 1)
-	{
-		pDoc->OnOpenDocument(vecFiles[0]);
-	}
-	else
-	{
-		pDoc->OpenModels(vecFiles);
-	}
+	pDoc->OpenModels(vecFiles);
 }
 
 BOOL CMySTEPViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
