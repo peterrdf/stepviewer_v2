@@ -20,10 +20,10 @@ namespace fs = std::experimental::filesystem;
 const int_t	BLOCK_LENGTH_READ = 20000; // MAX: 65535
 
 // ************************************************************************************************
-zip_file* g_pZipFile = nullptr;
+static zip_file* g_pZipFile = nullptr;
 
 // ************************************************************************************************
-int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
+static int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
 {
 	if (g_pZipFile == nullptr) 
 	{
