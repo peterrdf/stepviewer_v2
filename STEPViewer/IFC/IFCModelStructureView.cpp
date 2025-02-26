@@ -1585,8 +1585,14 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 		tvInsertStruct.item.lParam = NULL;
 		m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-		assert(mapItems.find(ifcInstance) == mapItems.end());
-		mapItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
+		if (mapItems.find(ifcInstance) == mapItems.end())
+		{
+			mapItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
+		}
+		else
+		{
+			mapItems.at(ifcInstance).push_back(hInstance);
+		}		
 		
 		SdaiInstance sdaiIsGroupedByInstance = 0;
 		sdaiGetAttrBN(ifcInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
