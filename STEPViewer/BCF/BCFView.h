@@ -29,9 +29,6 @@ public:
 	//activates BCF view with the BCF file or new when NULL
 	void Open(LPCTSTR filePath);
 
-	//if BCF view want to consume opened models, STEPViewerDoc should not manage them
-	void OnOpenModels(vector<_model*>& vecModels);
-
 	bool SaveModified();
 
 	void Close();
@@ -45,8 +42,6 @@ public:
 	BCFTopic* GetActiveTopic();
 	
 	void ShowLog(bool knownError); //false: show log if any, not neccessary error
-
-	//std::vector<_model*>& Models() { return m_loadedModels; }//#tbd
 
 	_model* GetBimModel(BCFBimFile& file);
 
@@ -115,7 +110,6 @@ private:
 	BCFProject*						m_bcfProject;
 
 	CBCFViewPointMgr				m_viewPointMgr;
-	//std::vector<_model*>			m_loadedModels;//#tbd
 	std::map<BCFBimFile*, _model*>	m_mapBimFiles;
 
 private:

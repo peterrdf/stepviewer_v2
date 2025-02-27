@@ -88,9 +88,6 @@ void CBCFView::Close()
 		m_bcfProject = NULL;
 	}
 	
-	//#tbd
-	//m_loadedModels.clear();
-
 	//hide window
 	if (GetSafeHwnd()) {
 		ShowWindow(SW_HIDE);
@@ -116,9 +113,6 @@ void CBCFView::Open(LPCTSTR filePath)
 {
 	//clean old data
 	Close();
-
-	//
-	//m_doc.setOwnsModelsOff(m_loadedModels);
 
 	m_bcfFilePath = filePath ? filePath : L"";
 
@@ -156,47 +150,6 @@ void CBCFView::Open(LPCTSTR filePath)
 	ShowWindow(SW_SHOW);
 
 	LoadProjectToView();
-}
-
-
-void CBCFView::OnOpenModels(vector<_model*>& vecModels)
-{
-	/*if (!m_bcfProject || vecModels.empty()) {
-		return;
-	}
-
-	auto topic = GetActiveTopic();
-	ASSERT(topic);
-
-	bool ok = true;
-
-	for (auto model : vecModels) {
-		if (model) {
-			m_loadedModels.push_back(model);
-
-			auto path = ToUTF8(model->getPath());
-			
-			if (topic) {
-				auto file = FindBimFileByPath(topic, path.c_str());
-				if (!file) {
-					file = topic->AddBimFile(path.c_str(), false);
-				}
-
-				if (file) {
-					m_mapBimFiles[file] = model;
-				}
-				else {
-					ok = false;
-				}
-			}
-		}
-	}
-	
-	if (topic)
-		ViewTopicModels(topic);
-	
-	vecModels.clear();
-	ShowLog(!ok);*/
 }
 
 BCFBimFile* CBCFView::FindBimFileByPath(BCFTopic* topic, const char* searchPath)
@@ -633,7 +586,6 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
-				//m_loadedModels.push_back(model);//#tbd
 				m_doc.addModel(model);
 			}
 		}
@@ -642,8 +594,7 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 	}
 
 	if (model) {
-		auto title = file.GetFilename();
-		//model->setTitle(FromUTF8(title));
+		model->setPath(FromUTF8(file.GetFilename()));
 	}
 
 	return model;

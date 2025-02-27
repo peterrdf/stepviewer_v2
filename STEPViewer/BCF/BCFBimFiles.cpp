@@ -60,11 +60,6 @@ BOOL CBCFBimFiles::OnInitDialog()
 
 void CBCFBimFiles::FillFileList(BCFTopic& topic)
 {
-	//update titles
-	/*for (auto model : m_view.Models()) {
-		model->setTitle(NULL);
-	}*/
-
 	//get used models
 	m_usedModels.clear();
 	int i = 0;
@@ -86,10 +81,9 @@ void CBCFBimFiles::FillFileList(BCFTopic& topic)
 
 	for (auto model : m_view.GetViewerDoc().getModels()) {
 		if (model) {
-			//auto item = m_fileList.AddString(model->getTitle()); //#tbd
-			auto item = m_fileList.AddString(model->getPath()); //#tbd
+			auto item = m_fileList.AddString(model->getPath());
 			m_fileList.SetItemDataPtr(item, model);
-			m_fileList.SetCheck(item, m_usedModels.find(model) != m_usedModels.end());/**/
+			m_fileList.SetCheck(item, m_usedModels.find(model) != m_usedModels.end());
 		}
 	}
 
@@ -101,7 +95,6 @@ void CBCFBimFiles::FillFileList(BCFTopic& topic)
 
 	m_fileList.SetRedraw(TRUE);
 }
-
 
 void CBCFBimFiles::OnOK()
 {
