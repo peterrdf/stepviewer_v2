@@ -194,9 +194,9 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 				pMappedItem->matrix._42 += arOffset[1];
 				pMappedItem->matrix._43 += arOffset[2];
 
-				pMappedItem->matrix._41 += dScaleFactor;
-				pMappedItem->matrix._42 += dScaleFactor;
-				pMappedItem->matrix._43 += dScaleFactor;
+				pMappedItem->matrix._41 /= dScaleFactor;
+				pMappedItem->matrix._42 /= dScaleFactor;
+				pMappedItem->matrix._43 /= dScaleFactor;
 
 				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
 
