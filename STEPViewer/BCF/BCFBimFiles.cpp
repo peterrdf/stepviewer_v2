@@ -104,28 +104,36 @@ void CBCFBimFiles::OnOK()
 		return;
 
 	TCHAR szFilters[] = _T("BIM Files (*.ifc;*.ifczip)|*.ifc;*.ifczip|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(TRUE, NULL, NULL, OFN_FILEMUSTEXIST, szFilters);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, szFilters);
 	if (dlgFile.DoModal() != IDOK)
+	{
 		return;
+	}
 
-	auto path = dlgFile.GetPathName();
+	POSITION pos(dlgFile.GetStartPosition());
+	while (pos != nullptr)
+	{
+		CString strPath = dlgFile.GetNextPathName(pos);
 
-	auto model = _ap_model_factory::load(path, false, !m_view.GetViewerDoc().getModels().empty() ? m_view.GetViewerDoc().getModels()[0] : nullptr, false);
-	//model may be NULL, assume message was shown while load
-	if (!model)
-		return;
-		
-	m_view.GetViewerDoc().addModel(model);
+		auto pModel = _ap_model_factory::load(strPath, false, !m_view.GetViewerDoc().getModels().empty() ? m_view.GetViewerDoc().getModels()[0] : nullptr, false);
+		if (pModel->getAP() != enumAP::IFC)
+		{
+			delete pModel;
 
-	AddBimFile(*topic, *model);
+			continue;
+		}
+
+		AddBimFile(*topic, *pModel);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(strPath);
+	}
 
 	FillFileList(*topic);
 
 	m_view.ViewTopicModels(topic);
 
 	m_view.ShowLog(false);
-		
-	//CDialogEx::OnOK();
 }
 
 void CBCFBimFiles::AddBimFile(BCFTopic& topic, _model& model)

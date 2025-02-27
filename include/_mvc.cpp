@@ -606,23 +606,6 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModel(_model* pModel)
-{
-	assert(pModel != nullptr);
-
-	m_bUpdatingModel = true;
-
-	m_vecModels.push_back(pModel);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onModelLoaded();
-	}
-
-	m_bUpdatingModel = false;
-}
-
 void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 {
 	m_bUpdatingModel = true;
