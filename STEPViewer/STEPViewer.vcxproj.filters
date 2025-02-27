@@ -31,6 +31,9 @@
     <Filter Include="include\stb">
       <UniqueIdentifier>{6c1cc022-5a9b-4dcb-980f-fd2e20b2da5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BCF">
+      <UniqueIdentifier>{cff48f62-afa3-4926-a12d-bf85abd51b35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -222,6 +225,30 @@
     <ClInclude Include="..\include\stb\stb_image.h">
       <Filter>include\stb</Filter>
     </ClInclude>
+    <ClInclude Include="BCF\BCFAddDocumentReference.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddLabel.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddReferenceLink.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddRelatedTopic.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFBimFiles.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFProjInfo.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFView.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFViewPointMgr.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -352,6 +379,30 @@
     </ClCompile>
     <ClCompile Include="..\include\stb\stb_image.cpp">
       <Filter>include\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddDocumentReference.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddLabel.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddReferenceLink.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddRelatedTopic.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFBimFiles.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFProjInfo.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFView.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFViewPointMgr.cpp">
+      <Filter>BCF</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
