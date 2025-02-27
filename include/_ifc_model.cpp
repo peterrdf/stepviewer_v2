@@ -185,22 +185,23 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			double arOffset[3] = { 0., 0., 0. };
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
-			if ((arOffset[0] != 0.) || (arOffset[1] != 0.) || (arOffset[2] != 0.))
+			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+			for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate)
 			{
-				double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
-				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate)
-				{
-					auto pMappedItem = pMappedItemPendingUpdate.second;
+				auto pMappedItem = pMappedItemPendingUpdate.second;
 
-					pMappedItem->matrix._41 += arOffset[0] / dScaleFactor;
-					pMappedItem->matrix._42 += arOffset[1] / dScaleFactor;
-					pMappedItem->matrix._43 += arOffset[2] / dScaleFactor;
+				pMappedItem->matrix._41 += arOffset[0];
+				pMappedItem->matrix._42 += arOffset[1];
+				pMappedItem->matrix._43 += arOffset[2];
 
-					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+				pMappedItem->matrix._41 += dScaleFactor;
+				pMappedItem->matrix._42 += dScaleFactor;
+				pMappedItem->matrix._43 += dScaleFactor;
 
-					delete pMappedItem;
-				}
-			}			
+				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+				delete pMappedItem;
+			}
 		}		
 
 		scale();
