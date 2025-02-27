@@ -630,7 +630,7 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 		}
 
 		if (!model) { 
-			model = _ap_model_factory::load(path, true, nullptr, false);
+			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
 				//m_loadedModels.push_back(model);//#tbd

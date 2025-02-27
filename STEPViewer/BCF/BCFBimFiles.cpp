@@ -117,7 +117,7 @@ void CBCFBimFiles::OnOK()
 
 	auto path = dlgFile.GetPathName();
 
-	auto model = _ap_model_factory::load(path, true, nullptr, false);
+	auto model = _ap_model_factory::load(path, false, !m_view.GetViewerDoc().getModels().empty() ? m_view.GetViewerDoc().getModels()[0] : nullptr, false);
 	//model may be NULL, assume message was shown while load
 	if (!model)
 		return;
