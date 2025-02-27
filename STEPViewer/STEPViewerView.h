@@ -38,6 +38,9 @@ public:
 
 // Operations
 public:
+	void SetBCFView(BCFCamera camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double viewToWorldScale, double fieldOfView, double aspectRatio);
+	void ResetBCFView();
+	void GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio);
 
 // Overrides
 public:
@@ -114,3 +117,13 @@ inline CMySTEPViewerDoc* CMySTEPViewerView::GetDocument() const
    { return reinterpret_cast<CMySTEPViewerDoc*>(m_pDocument); }
 #endif
 
+void SetBCFView(
+	BCFCamera camera,
+	BCFPoint& viewPoint,
+	BCFPoint& direction,
+	BCFPoint& upVector,
+	double viewToWorldScale,
+	double fieldOfView,
+	double aspectRatio);
+void ResetBCFView();
+void GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio);

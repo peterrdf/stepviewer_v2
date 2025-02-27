@@ -15,30 +15,29 @@
 
 void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 {
-	if (auto vp = comment.GetViewPoint()) {
-		if (auto viewer = m_view.GetViewerView()) {
-
-			//set camera
-			BCFCamera camera = vp->GetCameraType();
-			BCFPoint viewPoint;
-			BCFPoint direction;
-			BCFPoint upVector;
-			vp->GetCameraViewPoint(viewPoint);
-			vp->GetCameraDirection(direction);
-			vp->GetCameraUpVector(upVector);
-			double viewToWorldScale = vp->GetViewToWorldScale();
-			double fieldOfView = vp->GetFieldOfView();
-			double aspectRatio = vp->GetAspectRatio();
-			//viewer->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
-		}
+	if (auto commentViewPoint = comment.GetViewPoint()) {
+		//set camera
+		BCFCamera camera = commentViewPoint->GetCameraType();
+		BCFPoint viewPoint;
+		BCFPoint direction;
+		BCFPoint upVector;
+		commentViewPoint->GetCameraViewPoint(viewPoint);
+		commentViewPoint->GetCameraDirection(direction);
+		commentViewPoint->GetCameraUpVector(upVector);
+		double viewToWorldScale = commentViewPoint->GetViewToWorldScale();
+		double fieldOfView = commentViewPoint->GetFieldOfView();
+		double aspectRatio = commentViewPoint->GetAspectRatio();
+		m_view.GetViewerView()->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 		
 		//#tbd
-		//ApplySelectionToViewer(*vp);
-		//ApplyColoringToViewer(*vp);
-		//ApplyVisibilityToViewer(*vp);
+		//ApplySelectionToViewer(*commentViewPoint);
+		//ApplyColoringToViewer(*commentViewPoint);
+		//ApplyVisibilityToViewer(*commentViewPoint);
+	}
+	else {
+		m_view.GetViewerView()->ResetBCFView();
 	}
 }
-
 
 bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 {
