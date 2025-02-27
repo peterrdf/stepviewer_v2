@@ -255,6 +255,9 @@ void CMySTEPViewerDoc::OnFileOpen()
 	{
 		CString strFileName = dlgFile.GetNextPathName(pos);
 		vecModels.push_back(strFileName);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(vecModels[0]);
 	}
 
 	OpenModels(vecModels);
@@ -263,11 +266,8 @@ void CMySTEPViewerDoc::OnFileOpen()
 	CString strTitle = AfxGetAppName();
 	strTitle += L" - ";
 	strTitle += vecModels[0];
-	strTitle += L", ...";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(vecModels[0]);
+	strTitle += vecModels.size() > 1 ? L", ..." : L"";
+	AfxGetMainWnd()->SetWindowTextW(strTitle);	
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
