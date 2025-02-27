@@ -127,11 +127,11 @@ void CBCFBimFiles::OnOK()
 
 		// MRU
 		AfxGetApp()->AddToRecentFileList(strPath);
-	}
-
-	FillFileList(*topic);
+	}	
 
 	m_view.ViewTopicModels(topic);
+
+	FillFileList(*topic);
 
 	m_view.ShowLog(false);
 }
