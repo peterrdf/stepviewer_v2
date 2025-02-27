@@ -665,7 +665,7 @@ void CBCFView::ViewTopicModels(BCFTopic* topic)
 		}
 	}
 
-	m_doc.disableAllButTheseModels(activeModels);
+	m_doc.enableModelsAddIfNeeded(activeModels);
 }
 
 

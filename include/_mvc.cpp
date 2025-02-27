@@ -623,7 +623,7 @@ void _controller::addModel(_model* pModel)
 	m_bUpdatingModel = false;
 }
 
-void _controller::disableAllButTheseModels(const vector<_model*>& vecModels)
+void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 {
 	m_bUpdatingModel = true;
 

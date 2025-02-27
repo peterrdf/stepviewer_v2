@@ -219,7 +219,7 @@ public: // Methods
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);	
 	void addModel(_model* pModel);
-	void disableAllButTheseModels(const vector<_model*>& vecModels);
+	void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
 	_instance* loadInstance(int64_t iInstance);
 
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
