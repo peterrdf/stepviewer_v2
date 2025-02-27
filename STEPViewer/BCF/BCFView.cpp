@@ -572,12 +572,11 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 		model = it->second;
 	}
 	else {
-
 		auto path = FromUTF8(file.GetReference());
 		
-		for (auto m : m_doc.getModels()) {
-			if (m && m->getPath() == path) {//#tbd
-				model = m;
+		for (auto pModel : m_doc.getModels()) {
+			if (pModel->getPath() == path) {//#tbd
+				model = pModel;
 				break;
 			}
 		}
@@ -586,11 +585,9 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
-				m_doc.addModel(model);
-			}
+				m_mapBimFiles[&file] = model;
+			}	
 		}
-
-		m_mapBimFiles[&file] = model;
 	}
 
 	if (model) {
@@ -618,7 +615,6 @@ void CBCFView::ViewTopicModels(BCFTopic* topic)
 
 	m_doc.enableModelsAddIfNeeded(activeModels);
 }
-
 
 CMySTEPViewerView* CBCFView::GetViewerView()
 {
@@ -719,7 +715,6 @@ void CBCFView::FillDocuments(BCFTopic* topic)
 		m_wndMultiList.SetItemDataPtr(item, doc);
 	}
 }
-
 
 void CBCFView::OnClickedButtonAddMulti()
 {
