@@ -276,6 +276,21 @@ void CMySTEPViewerDoc::DeleteContents()
 	__super::DeleteContents();
 }
 
+void CMySTEPViewerDoc::OnCloseDocument()
+{
+	m_wndBCFView.Close();
+	__super::OnCloseDocument();
+}
+
+BOOL CMySTEPViewerDoc::SaveModified()
+{
+	if (!m_wndBCFView.SaveModified()) {
+		return FALSE;
+	}
+
+	return __super::SaveModified();
+}
+
 void CMySTEPViewerDoc::OnViewModelChecker()
 {
 	if (m_wndModelChecker.IsVisible()) {

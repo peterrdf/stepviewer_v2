@@ -37,6 +37,8 @@ public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 	virtual void DeleteContents();
+	virtual void OnCloseDocument();
+	virtual BOOL SaveModified(); // return TRUE if ok to continue
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
