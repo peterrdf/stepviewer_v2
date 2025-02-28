@@ -22,7 +22,7 @@ private:
 	void ApplyColoringToViewer(BCFViewPoint& vp);
 	bool SaveColoring(BCFViewPoint& vp);
 
-	void ApplyVisibilityToViewer(BCFViewPoint& vp);
+	void ApplyVisibilityToViewer(BCFViewPoint* vp);
 	bool SaveVisibility(BCFViewPoint& vp);
 
 	_instance* SearchComponent(BCFComponent& comp);
