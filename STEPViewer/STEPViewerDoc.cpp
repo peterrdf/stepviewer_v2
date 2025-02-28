@@ -57,6 +57,8 @@ TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
 
 void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
+	m_wndBCFView.Close();
+
 	setModel(nullptr);
 
 	vector<_model*> vecModels;
@@ -118,7 +120,9 @@ CMySTEPViewerDoc::~CMySTEPViewerDoc()
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
-		return FALSE;
+		return FALSE;	
+
+	m_wndBCFView.Close();
 
 	setModel(nullptr);
 
@@ -215,6 +219,8 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
+
+	m_wndBCFView.Close();
 
 	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
 
