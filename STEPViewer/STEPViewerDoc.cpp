@@ -18,14 +18,6 @@
 #endif
 
 // ************************************************************************************************
-TCHAR OPEN_BCF_FILTER[] = _T("BCF Packages (*.bcf; *.bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
-TCHAR OPEN_FILES_FILTER[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
-TCHAR OPEN_MODEL_FILTER[] = _T("Design model files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
-TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
-TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
-TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
-
-// ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
 	if (pInstance == nullptr)
@@ -238,7 +230,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_MODEL_FILTER);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, DESIGN_MODELS_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -315,17 +307,17 @@ void CMySTEPViewerDoc::OnFileSave()
 	CString strExtension;
 	if (apModel->getAP() == enumAP::STEP)
 	{
-		strFiler = SAVE_STEP_FILTER;
+		strFiler = STEP_MODELS_FILTER;
 		strExtension = L"ifc";
 	}
 	else if (apModel->getAP() == enumAP::IFC)
 	{
-		strFiler = SAVE_IFC_FILTER;
+		strFiler = IFC_MODELS_FILTER;
 		strExtension = L"step";
 	}
 	else  if (apModel->getAP() == enumAP::CIS2)
 	{
-		strFiler = SAVE_CIS2_FILTER;
+		strFiler = CIS2_MODELS_FILTER;
 		strExtension = L"stp";
 	}
 	else
@@ -361,7 +353,7 @@ void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnBcfAddbim()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SAVE_IFC_FILTER);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, BIM_MODELS_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -408,7 +400,7 @@ void CMySTEPViewerDoc::OnUpdateBcfNew(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnBcfOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, OPEN_BCF_FILTER);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, BCF_PACKAGES_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;

@@ -103,8 +103,7 @@ void CBCFBimFiles::OnOK()
 	if (!topic)
 		return;
 
-	TCHAR szFilters[] = _T("BIM Files (*.ifc;*.ifczip)|*.ifc;*.ifczip|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, szFilters);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, BIM_MODELS_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
