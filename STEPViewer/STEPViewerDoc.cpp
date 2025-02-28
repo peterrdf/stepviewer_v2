@@ -346,22 +346,49 @@ void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnBcfAddbim()
 {
-	// TODO: Add your command handler code here
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, SAVE_IFC_FILTER);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	POSITION pos(dlgFile.GetStartPosition());
+	while (pos != nullptr)
+	{
+		CString strPath = dlgFile.GetNextPathName(pos);
+
+		auto pModel = _ap_model_factory::load(strPath, false, !getModels().empty() ? getModels()[0] : nullptr, false);
+		if (pModel->getAP() != enumAP::IFC)
+		{
+			delete pModel;
+
+			continue;
+		}
+
+		m_wndBCFView.GetActiveTopic()->AddBimFile(ToUTF8(pModel->getPath()).c_str(), false);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(strPath);
+	}
+
+	m_wndBCFView.ViewTopicModels(m_wndBCFView.GetActiveTopic());
 }
 
 void CMySTEPViewerDoc::OnUpdateBcfAddbim(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(m_wndBCFView.GetActiveTopic() != NULL);
 }
 
 void CMySTEPViewerDoc::OnBcfNew()
 {
-	// TODO: Add your command handler code here
+	m_wndBCFView.Open(NULL);
+
+	setModel(nullptr);
 }
 
 void CMySTEPViewerDoc::OnUpdateBcfNew(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
 }
 
 void CMySTEPViewerDoc::OnBcfOpen()
