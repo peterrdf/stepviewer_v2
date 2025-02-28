@@ -15,6 +15,9 @@ copy %RDF_BCF_ENGINE%bcfEngine\bcfAPI.h %ProjectDir%..\bcfEngine /Y
 REM copy %RDF_BCF_ENGINE%output\bcfEngine.dll %ProjectDir%..\bcfEngine\%Platform%
 REM copy %RDF_BCF_ENGINE%output\bcfEngine.x64S.lib %ProjectDir%..\bcfEngine /Y
 copy %RDF_BCF_ENGINE%output\bcfEngine.x64Sd.lib %ProjectDir%..\bcfEngine /Y
+copy %RDF_BCF_ENGINE%output\bcfEngine.x64S.lib %ProjectDir%..\bcfEngine /Y
+copy %RDF_BCF_ENGINE%output\bcfEngine.Win32Sd.lib %ProjectDir%..\bcfEngine /Y
+copy %RDF_BCF_ENGINE%output\bcfEngine.Win32S.lib %ProjectDir%..\bcfEngine /Y
 REM copy %RDF_BCF_ENGINE%output\zip.dll %ProjectDir%..\bcfEngine\%Platform%
 REM copy %RDF_BCF_ENGINE%output\zlib.dll %ProjectDir%..\bcfEngine\%Platform%
 

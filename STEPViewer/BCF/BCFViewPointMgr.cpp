@@ -89,7 +89,7 @@ void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint& vp)
 	auto& viewer = m_view.GetViewerDoc();
 	viewer.selectInstance(NULL, NULL);
 
-	int i = 0;
+	uint16_t i = 0;
 	while (auto comp = vp.GetSelection(i++)) {
 		if (comp) {
 			if (auto inst = SearchComponent(*comp)) {
@@ -150,7 +150,7 @@ bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 {
 	bool ok = true;
 
-	int i = 0;
+	uint16_t i = 0;
 	while (auto sel = vp.GetSelection(i)) {
 		if (!sel->Remove()) {
 			ok = false;
@@ -182,11 +182,10 @@ const char* CBCFViewPointMgr::GetGlobalId(_instance* inst)
 
 void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint& vp)
 {
-	auto& viewer = m_view.GetViewerDoc();
 	auto& coloring = m_view.GetViewerDoc().getInstanceColoring();
 	coloring.clear();
 
-	int i = 0;
+	uint16_t i = 0;
 	while (auto bcfcoloring = vp.GetColoring(i++)) {
 		if (bcfcoloring) {
 			if (auto strcolor = bcfcoloring->GetColor()) {
@@ -194,7 +193,7 @@ void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint& vp)
 				auto clrref = GetColorRef(strcolor);
 				auto& instanceList = coloring[clrref];
 
-				int j = 0;
+				uint16_t j = 0;
 				while (auto comp = bcfcoloring->GetComponent(j++)) {
 					if (auto inst = SearchComponent(*comp)) {
 						instanceList.push_back(inst);
@@ -212,7 +211,7 @@ bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 {
 	bool ok = true;
 
-	int i = 0;
+	uint16_t i = 0;
 	while (auto bcfcoloring = vp.GetColoring(i)) {
 		if (!bcfcoloring->Remove()) {
 			ok = false;
@@ -321,7 +320,7 @@ std::string CBCFViewPointMgr::GetColorStr(COLORREF clr)
 void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint& vp)
 {
 	std::unordered_set<_instance*> exceptions;
-	int i = 0;
+	uint16_t i = 0;
 	while (auto comp = vp.GetException(i++)) {
 		if (auto inst = SearchComponent(*comp)) {
 			exceptions.insert(inst);
@@ -423,7 +422,7 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 	//set exceptions
 	//
-	int i = 0;
+	uint16_t i = 0;
 	while (auto exception = vp.GetException(i)) {
 		if (!exception->Remove()) {
 			ok = false;

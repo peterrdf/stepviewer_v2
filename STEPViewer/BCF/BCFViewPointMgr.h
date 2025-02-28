@@ -25,7 +25,7 @@ private:
 	_instance* SearchComponent(BCFComponent& comp);
 	_instance* SearchIfcComponent(const char* ifcGuid);
 
-	bool IsSpaceBoundary(SdaiInstance inst) { return false; /*TODO*/ }
+	bool IsSpaceBoundary(SdaiInstance ) { return false; /*TODO*/ }
 
 	const char* GetGlobalId(_instance* inst);
 

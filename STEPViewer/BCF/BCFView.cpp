@@ -207,7 +207,7 @@ void CBCFView::OnOpenModels(vector<_model*>& vecModels)
 BCFBimFile* CBCFView::FindBimFileByPath(BCFTopic* topic, const char* searchPath)
 {
 	if (topic) {
-		int i = 0;
+		uint16_t i = 0;
 		while (auto file = topic->GetBimFile(i++)) {
 			auto refPath = file->GetReference();
 			if (0 == strcmp(searchPath, refPath)) {
@@ -312,7 +312,7 @@ void CBCFView::LoadProjectToView()
 	m_wndTopics.ResetContent();
 
 	BCFTopic* topic = NULL;
-	for (uint16_t i = 0; topic = m_bcfProject->GetTopic(i); i++) {
+	for (uint16_t i = 0; NULL!=(topic = m_bcfProject->GetTopic(i)); i++) {
 		InsertTopicToList(i, topic);
 	}
 	m_wndTopics.AddString(L"<New>");
@@ -537,7 +537,7 @@ void CBCFView::LoadComments(BCFTopic* topic, int select)
 		text.Format(L"#%d created by %s at %s",
 			(int)i,
 			FromUTF8(comment->GetAuthor()).GetString(),
-			FromUTF8(comment->GetDate())
+			FromUTF8(comment->GetDate()).GetString()
 		);
 		if (*comment->GetModifiedAuthor()) {
 			CString modifier;
@@ -729,7 +729,7 @@ void CBCFView::FillMultiList()
 void CBCFView::FillLabels(BCFTopic* topic)
 {
 	m_wndMultiList.ResetContent();
-	int i = 0;
+	uint16_t i = 0;
 	while (auto label = topic->GetLabel(i++)) {
 		m_wndMultiList.AddString(FromUTF8(label));
 	}
@@ -737,7 +737,7 @@ void CBCFView::FillLabels(BCFTopic* topic)
 
 void CBCFView::FillRelated(BCFTopic* topic)
 {
-	int i = 0;
+	uint16_t i = 0;
 	while (auto related = topic->GetRelatedTopic(i++)) {
 		auto text = GetTopicDisplayName(*related);
 		auto item = m_wndMultiList.AddString(text);
@@ -747,7 +747,7 @@ void CBCFView::FillRelated(BCFTopic* topic)
 
 void CBCFView::FillLinks(BCFTopic* topic)
 {
-	int i = 0;
+	uint16_t i = 0;
 	while (auto link = topic->GetReferenceLink(i++)) {
 		m_wndMultiList.AddString(FromUTF8(link));
 	}
@@ -767,7 +767,7 @@ static CString GetDocumentText(BCFDocumentReference* doc)
 
 void CBCFView::FillDocuments(BCFTopic* topic)
 {
-	int i = 0;
+	uint16_t i = 0;
 	while (auto doc = topic->GetDocumentReference(i++)) {
 		auto item = m_wndMultiList.AddString(GetDocumentText(doc));
 		m_wndMultiList.SetItemDataPtr(item, doc);
@@ -802,25 +802,25 @@ void CBCFView::OnClickedButtonAddMulti()
 	}
 }
 
-void CBCFView::AddLabel(BCFTopic* topic)
+void CBCFView::AddLabel(BCFTopic*)
 {
 	CBCFAddLabel dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddRelated(BCFTopic* topic)
+void CBCFView::AddRelated(BCFTopic*)
 {
 	CBCFAddRelatedTopic dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddLink(BCFTopic* topic)
+void CBCFView::AddLink(BCFTopic*)
 {
 	CBCFAddReferenceLink dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddDocument(BCFTopic* topic)
+void CBCFView::AddDocument(BCFTopic*)
 {
 	CBCFAddDocumentReference dlg(*this);
 	dlg.DoModal();
@@ -894,7 +894,7 @@ void CBCFView::RemoveLink(BCFTopic* topic)
 	}
 }
 
-void CBCFView::RemoveDocument(BCFTopic* topic)
+void CBCFView::RemoveDocument(BCFTopic*)
 {
 	auto sel = m_wndMultiList.GetCurSel();
 	if (sel != LB_ERR) {
@@ -977,7 +977,7 @@ void CBCFView::OnClickedUpdateViewpoint()
 
 CString CBCFView::GetTopicDisplayName(BCFTopic& topic)
 {
-	int i = 0;
+	uint16_t i = 0;
 	auto& bcfProject = topic.GetProject();
 	while (auto t = bcfProject.GetTopic(i++)) {
 		if (t == &topic) {

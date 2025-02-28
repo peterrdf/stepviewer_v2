@@ -66,7 +66,7 @@ void CBCFBimFiles::FillFileList(BCFTopic& topic)
 
 	//get used models
 	m_usedModels.clear();
-	int i = 0;
+	uint16_t i = 0;
 	while (BCFBimFile* file = topic.GetBimFile(i++)) {
 		if (auto model = m_view.GetBimModel(*file)) {
 			auto& f = m_usedModels[model];

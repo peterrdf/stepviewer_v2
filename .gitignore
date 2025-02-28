@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -53,3 +53,8 @@
 /x64/Debug/STEPViewer_CIS2.settings
 /x64/Debug_ifcengine/STEPViewer_STEP.settings
 /x64/Debug_ifcengine/STEPViewer_IFC.settings
+x64/Debug_ifcengine/IFCViewerCGL.exp
+x64/Debug_ifcengine/IFCViewerCGL.lib
+x64/Release_ifcengine/IFCViewerCGL.exe
+x64/Release_ifcengine/IFCViewerCGL.exp
+x64/Release_ifcengine/IFCViewerCGL.lib

@@ -47,7 +47,7 @@ BOOL CBCFAddRelatedTopic::OnInitDialog()
 	}
 
 	std::unordered_set<BCFTopic*> exist;
-	int i = 0;
+	uint16_t i = 0;
 	while (auto t = topic->GetRelatedTopic(i++)) {
 		exist.insert(t);
 	}
