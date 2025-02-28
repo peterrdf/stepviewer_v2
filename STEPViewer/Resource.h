@@ -225,15 +225,15 @@
 #define ID_VIEW_RESET                   32839
 #define ID_FILE_BCF                     32843
 #define ID_BCF_NEW                      32845
-#define ID_BCF_ADDBIMFILE               32846
 #define ID_BCF_ADDBIM                   32847
+#define ID_BCF_OPEN                     32849
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        365
-#define _APS_NEXT_COMMAND_VALUE         32848
+#define _APS_NEXT_COMMAND_VALUE         32850
 #define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

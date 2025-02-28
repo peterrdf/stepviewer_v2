@@ -674,6 +674,7 @@ BEGIN
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
         MENUITEM SEPARATOR
         MENUITEM "New BCF package",             ID_BCF_NEW
+        MENUITEM "Open BCF package...",         ID_BCF_OPEN
         MENUITEM "Add BIM file to BCF topic...", ID_BCF_ADDBIM
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT

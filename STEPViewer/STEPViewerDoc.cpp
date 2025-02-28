@@ -18,11 +18,12 @@
 #endif
 
 // ************************************************************************************************
+TCHAR OPEN_BCF_FILTER[] = _T("BCF Packages (*.bcf; *.bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
+TCHAR OPEN_FILES_FILTER[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
+TCHAR OPEN_MODEL_FILTER[] = _T("Design model files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
 TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
 TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
-TCHAR OPEN_FILES_FILTER[] = _T("Supported files (*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip; *.bcf; *.bcfzip|All Files (*.*)|*.*||");
-TCHAR OPEN_MODEL_FILTER[] = _T("Design model files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -111,6 +112,12 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMySTEPViewerDoc::OnUpdateFileSave)
 	ON_COMMAND(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnFileSaveAs)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnUpdateFileSaveAs)
+	ON_COMMAND(ID_BCF_ADDBIM, &CMySTEPViewerDoc::OnBcfAddbim)
+	ON_UPDATE_COMMAND_UI(ID_BCF_ADDBIM, &CMySTEPViewerDoc::OnUpdateBcfAddbim)
+	ON_COMMAND(ID_BCF_NEW, &CMySTEPViewerDoc::OnBcfNew)
+	ON_UPDATE_COMMAND_UI(ID_BCF_NEW, &CMySTEPViewerDoc::OnUpdateBcfNew)
+	ON_COMMAND(ID_BCF_OPEN, &CMySTEPViewerDoc::OnBcfOpen)
+	ON_UPDATE_COMMAND_UI(ID_BCF_OPEN, &CMySTEPViewerDoc::OnUpdateBcfOpen)
 END_MESSAGE_MAP()
 
 
@@ -243,7 +250,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_FILES_FILTER);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_MODEL_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -347,4 +354,44 @@ void CMySTEPViewerDoc::OnFileSaveAs()
 void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(getModels().size() == 1);
+}
+
+void CMySTEPViewerDoc::OnBcfAddbim()
+{
+	// TODO: Add your command handler code here
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfAddbim(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
+
+void CMySTEPViewerDoc::OnBcfNew()
+{
+	// TODO: Add your command handler code here
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfNew(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
+
+void CMySTEPViewerDoc::OnBcfOpen()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, OPEN_BCF_FILTER);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	CString strPath = dlgFile.GetPathName();
+	if (m_wndBCFView.IsBCF(strPath))
+	{
+		m_wndBCFView.Open(strPath);
+	}
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfOpen(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(TRUE);
 }

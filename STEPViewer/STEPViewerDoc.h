@@ -72,4 +72,10 @@ public:
 	afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
+	afx_msg void OnBcfAddbim();
+	afx_msg void OnUpdateBcfAddbim(CCmdUI* pCmdUI);
+	afx_msg void OnBcfNew();
+	afx_msg void OnUpdateBcfNew(CCmdUI* pCmdUI);
+	afx_msg void OnBcfOpen();
+	afx_msg void OnUpdateBcfOpen(CCmdUI* pCmdUI);
 };
