@@ -986,6 +986,19 @@ void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInst
 	}
 }
 
+void _controller::resetInstancesEnabledState(_view* pSender)
+{
+	for (auto pModel : m_vecModels)
+	{
+		if (pModel->getEnable())
+		{
+			pModel->resetInstancesEnabledState();
+		}
+	}
+
+	onInstancesEnabledStateChanged(pSender);
+}
+
 void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
 	auto itView = m_setViews.begin();

@@ -376,12 +376,12 @@ void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint* vp)
 				}
 			}
 		}
+
+		m_view.GetViewerDoc().onInstancesEnabledStateChanged(nullptr);
 	}
 	else {
-		//reset
-	}	
-	
-	m_view.GetViewerDoc().onInstancesEnabledStateChanged(nullptr);
+		m_view.GetViewerDoc().resetInstancesEnabledState(nullptr);
+	}
 }
 
 bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
@@ -409,7 +409,7 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 			for (auto inst : model->getInstances()) {
 
-				int ind = 1;// inst->getVisible() ? 0 : 1;
+				int ind = inst->getEnable() ? 0 : 1;
 
 				allInstances[ind]++;
 
@@ -478,11 +478,11 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 							visible = vp.GetSpaceBoundariesVisible();
 						}
 
-						/*if (visible != inst->getVisible()) {
+						if (visible != inst->getEnable()) {
 							const char* globalId = NULL;
 							if (sdaiGetAttr(sdaiInst, attrGlobalId, sdaiSTRING, &globalId) && globalId && *globalId)
 								ok = vp.AddException(globalId) && ok;
-						}*/
+						}
 					}
 				}
 			}

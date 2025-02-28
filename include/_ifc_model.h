@@ -93,6 +93,7 @@ protected: // Methods
 	// _model
 	virtual _instance* loadInstance(int64_t iInstance) override;
 	virtual void zoomToInstances(const set<_instance*>& setInstances) override;
+	virtual void resetInstancesEnabledState() override;
 	virtual void clean(bool bCloseModel = true) override;
 
 	// _ap_model

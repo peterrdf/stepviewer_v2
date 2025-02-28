@@ -112,6 +112,8 @@ public: // Methods
 	_texture* getTexture(const wstring& strTexture);
 	virtual _texture* getDefaultTexture() { return nullptr; };
 
+	virtual void resetInstancesEnabledState() { assert(false); }
+
 protected: // Methods
 
 	void setVertexBufferOffset(OwlInstance owlInstance);
@@ -271,9 +273,10 @@ public: // Methods
 	// Events
 	void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }	
 	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
+	void resetInstancesEnabledState(_view* pSender);
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onInstancesShowStateChanged(_view* pSender);
-	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);	
 	
 protected: // Methods
 

@@ -129,6 +129,33 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
+/*virtual*/ void _ifc_model::resetInstancesEnabledState() /*override*/ 
+{
+	for (auto pInstance : getInstances())
+	{
+		_ptr<_ifc_instance> ifcInstance(pInstance);
+		if (ifcInstance->getOwner() == nullptr)
+		{
+			CString strEntity = ifcInstance->getEntityName();
+			strEntity.MakeUpper();
+
+			pInstance->setEnable(
+				(strEntity == L"IFCSPACE") ||
+				(strEntity == L"IFCRELSPACEBOUNDARY") ||
+				(strEntity == L"IFCOPENINGELEMENT") ||
+				(strEntity == L"IFCALIGNMENTVERTICAL") ||
+				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+				(strEntity == L"IFCALIGNMENTSEGMENT") ||
+				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		}
+		else
+		{
+			// Mapped Item
+			pInstance->setEnable(true);
+		}
+	}
+}
+
 /*virtual*/ void _ifc_model::clean(bool bCloseModel/* = true*/) /*override*/
 {
 	_ap_model::clean(bCloseModel);
