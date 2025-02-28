@@ -857,6 +857,17 @@ void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
 
 void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd/* = false*/)
 {
+	vector<_instance*> vecInstance;
+	if (pInstance != nullptr)
+	{
+		vecInstance.push_back(pInstance);
+	}
+
+	selectInstances(pSender, vecInstance, bAdd);
+}
+
+void _controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/)
+{
 	if (m_bUpdatingModel)
 	{
 		return;
@@ -864,19 +875,21 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 
 	bool bNotify = false;
 
-	if (!bAdd || (pInstance == nullptr))
+	if (!bAdd || vecInstance.empty())
 	{
 		bNotify = !m_vecSelectedInstances.empty();
 
 		m_vecSelectedInstances.clear();
 	}
 
-	if ((pInstance != nullptr) &&
-		(find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+	for (auto pInstance : vecInstance)
 	{
-		bNotify = true;
+		if ((find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+		{
+			bNotify = true;
 
-		m_vecSelectedInstances.push_back(pInstance);
+			m_vecSelectedInstances.push_back(pInstance);
+		}
 	}
 
 	if (bNotify)

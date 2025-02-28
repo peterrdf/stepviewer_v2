@@ -29,13 +29,14 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 		double aspectRatio = commentViewPoint->GetAspectRatio();
 		m_view.GetViewerView()->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 		
-		//#tbd
-		//ApplySelectionToViewer(*commentViewPoint);
+		ApplySelectionToViewer(commentViewPoint);
 		//ApplyColoringToViewer(*commentViewPoint);
 		//ApplyVisibilityToViewer(*commentViewPoint);
 	}
 	else {
 		m_view.GetViewerView()->ResetBCFView();
+
+		ApplySelectionToViewer(nullptr);
 	}
 }
 
@@ -87,19 +88,22 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 
 }
 
-void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint& vp)
+void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint* vp)
 {
-	auto& viewer = m_view.GetViewerDoc();
-	viewer.selectInstance(NULL, NULL);
+	vector<_instance*> vecInstances;
 
-	int i = 0;
-	while (auto comp = vp.GetSelection(i++)) {
-		if (comp) {
-			if (auto inst = SearchComponent(*comp)) {
-				viewer.selectInstance(NULL, inst, true);
+	if (vp != nullptr) {
+		int i = 0;
+		while (auto comp = vp->GetSelection(i++)) {
+			if (comp) {
+				if (auto inst = SearchComponent(*comp)) {
+					vecInstances.push_back(inst);
+				}
 			}
 		}
 	}
+
+	m_view.GetViewerDoc().selectInstances(nullptr, vecInstances);
 }
 
 _instance* CBCFViewPointMgr::SearchComponent(BCFComponent& comp)

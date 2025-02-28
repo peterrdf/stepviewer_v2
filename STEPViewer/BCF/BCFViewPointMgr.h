@@ -16,7 +16,7 @@ public:
 	bool SaveCurrentViewToComent(BCFComment& comment);
 
 private:
-	void ApplySelectionToViewer(BCFViewPoint& vp);
+	void ApplySelectionToViewer(BCFViewPoint* vp);
 	bool SaveSelection(BCFViewPoint& vp);
 
 	void ApplyColoringToViewer(BCFViewPoint& vp);
