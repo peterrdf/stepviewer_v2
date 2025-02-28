@@ -575,7 +575,7 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 		auto path = FromUTF8(file.GetReference());
 		
 		for (auto pModel : m_doc.getModels()) {
-			if (pModel->getPath() == path) {//#tbd
+			if (pModel->getPath() == path) {
 				model = pModel;
 				break;
 			}
@@ -588,10 +588,6 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 				m_mapBimFiles[&file] = model;
 			}	
 		}
-	}
-
-	if (model) {
-		model->setPath(FromUTF8(file.GetFilename()));
 	}
 
 	return model;
