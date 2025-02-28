@@ -59,24 +59,6 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
 	setModel(nullptr);
 
-	//
-	// BCF
-	//
-
-	for (auto strPath : vecPaths)
-	{
-		if (m_wndBCFView.IsBCF(strPath))
-		{
-			m_wndBCFView.Open(strPath);
-
-			return;
-		}
-	}
-
-	//
-	// STEP/IFC/CIS2
-	//
-
 	vector<_model*> vecModels;
 	for (auto strPath : vecPaths)
 	{
