@@ -129,7 +129,6 @@ public: // Properties
 
 	bool isDecoration() const { return m_strPath.empty(); }
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
-	void setPath(const wchar_t* szPath) { m_strPath = szPath; }
 	bool getEnable() const { return m_bEnable; }
 	void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }

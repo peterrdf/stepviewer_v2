@@ -136,17 +136,7 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 		_ptr<_ifc_instance> ifcInstance(pInstance);
 		if (ifcInstance->getOwner() == nullptr)
 		{
-			CString strEntity = ifcInstance->getEntityName();
-			strEntity.MakeUpper();
-
-			pInstance->setEnable(
-				(strEntity == L"IFCSPACE") ||
-				(strEntity == L"IFCRELSPACEBOUNDARY") ||
-				(strEntity == L"IFCOPENINGELEMENT") ||
-				(strEntity == L"IFCALIGNMENTVERTICAL") ||
-				(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-				(strEntity == L"IFCALIGNMENTSEGMENT") ||
-				(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+			ifcInstance->setDefaultEnabledState();
 		}
 		else
 		{
@@ -608,8 +598,8 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		return pGeometry;
 	}
 
-	CString strEntity = (LPWSTR)CA2W(szEntityName);
-	strEntity.MakeUpper();
+	wstring strEntity = (LPWSTR)CA2W(szEntityName);
+	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::toupper);
 
 	auto pProduct = recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr)
@@ -655,14 +645,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 		// Owner
 		auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
-		pInstance->setEnable(
-			(strEntity == L"IFCSPACE") ||
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ||
-			(strEntity == L"IFCALIGNMENTVERTICAL") ||
-			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-			(strEntity == L"IFCALIGNMENTSEGMENT") ||
-			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		pInstance->setDefaultEnabledState();
 		addInstance(pInstance);
 
 		for (auto pMappedInstance : vecMappedInstances)
@@ -697,14 +680,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 
 		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);		
-		pInstance->setEnable(
-			(strEntity == L"IFCSPACE") ||
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ||
-			(strEntity == L"IFCALIGNMENTVERTICAL") ||
-			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
-			(strEntity == L"IFCALIGNMENTSEGMENT") ||
-			(strEntity == L"IFCALIGNMENTCANT") ? false : true);
+		pInstance->setDefaultEnabledState();
 		addInstance(pInstance);
 	}
 	else

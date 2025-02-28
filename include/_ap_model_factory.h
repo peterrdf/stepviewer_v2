@@ -101,22 +101,22 @@ public: // Methods
 			return nullptr;
 		}
 
-		CString strFileSchema = szFileSchema;
-		strFileSchema.MakeUpper();
+		wstring strFileSchema = szFileSchema;
+		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::toupper);
 
 		/*
 		* STEP
 		*/
-		if ((strFileSchema.Find(L"CONFIG_CONTROL_DESIGN") == 0) ||
-			(strFileSchema.Find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
-			(strFileSchema.Find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
-			(strFileSchema.Find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
-			(strFileSchema.Find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
-			(strFileSchema.Find(L"AUTOMOTIVE_DESIGN") == 0) ||
-			(strFileSchema.Find(L"AP203") == 0) || 
-			(strFileSchema.Find(L"AP209") == 0) ||
-			(strFileSchema.Find(L"AP214") == 0) ||
-			(strFileSchema.Find(L"AP242") == 0))
+		if ((strFileSchema.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
+			(strFileSchema.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
+			(strFileSchema.find(L"AUTOMOTIVE_DESIGN") == 0) ||
+			(strFileSchema.find(L"AP203") == 0) ||
+			(strFileSchema.find(L"AP209") == 0) ||
+			(strFileSchema.find(L"AP214") == 0) ||
+			(strFileSchema.find(L"AP242") == 0))
 		{
 			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
@@ -127,7 +127,7 @@ public: // Methods
 		/*
 		* IFC
 		*/
-		if (strFileSchema.Find(L"IFC") == 0)
+		if (strFileSchema.find(L"IFC") == 0)
 		{
 			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, pWorld);
@@ -139,7 +139,7 @@ public: // Methods
 		/*
 		* CIS2
 		*/
-		if (strFileSchema.Find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
+		if (strFileSchema.find(L"STRUCTURAL_FRAME_SCHEMA") == 0)
 		{
 			auto pModel = new CCIS2Model();
 			pModel->attachModel(szModel, sdaiModel, nullptr);
