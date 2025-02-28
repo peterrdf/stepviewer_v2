@@ -63,7 +63,7 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 		return true;
 	}
 
-	if (sdaiGetEntity(getSdaiModel(), "IfcCurveSegment") == sdaiGetInstanceType(getSdaiInstance()))
+	if (sdaiGetEntity(getSdaiModel(), "IfcAlignmentSegment") == sdaiGetInstanceType(getSdaiInstance()))
 	{
 		return true;
 	}
