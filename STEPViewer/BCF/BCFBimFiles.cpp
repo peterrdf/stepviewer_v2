@@ -113,17 +113,9 @@ void CBCFBimFiles::OnOK()
 	POSITION pos(dlgFile.GetStartPosition());
 	while (pos != nullptr)
 	{
-		CString strPath = dlgFile.GetNextPathName(pos);
+		CString strPath = dlgFile.GetNextPathName(pos);		
 
-		auto pModel = _ap_model_factory::load(strPath, false, !m_view.GetViewerDoc().getModels().empty() ? m_view.GetViewerDoc().getModels()[0] : nullptr, false);
-		if (pModel->getAP() != enumAP::IFC)
-		{
-			delete pModel;
-
-			continue;
-		}
-
-		AddBimFile(*topic, *pModel);
+		AddBimFile(*topic, strPath);
 
 		// MRU
 		AfxGetApp()->AddToRecentFileList(strPath);
@@ -136,9 +128,9 @@ void CBCFBimFiles::OnOK()
 	m_view.ShowLog(false);
 }
 
-void CBCFBimFiles::AddBimFile(BCFTopic& topic, _model& model)
+void CBCFBimFiles::AddBimFile(BCFTopic& topic, const CString& strPath)
 {
-	auto file = topic.AddBimFile(ToUTF8(model.getPath()).c_str(), false);
+	auto file = topic.AddBimFile(ToUTF8(strPath).c_str(), false);
 	if (!file) {
 		m_view.ShowLog(true);
 		return;
@@ -159,7 +151,7 @@ void CBCFBimFiles::OnCheckFileList()
 			if (m_fileList.GetCheck(i)) {
 				if (found == m_usedModels.end()) {
 
-					AddBimFile(*topic, *model);
+					AddBimFile(*topic, model->getPath());
 					FillFileList(*topic);
 					m_view.ViewTopicModels(topic);
 				}

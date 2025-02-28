@@ -564,7 +564,7 @@ void CBCFView::OnSelchangeCommentsList()
 
 _model* CBCFView::GetBimModel(BCFBimFile& file)
 {
-	_model* model = NULL;
+	_model* model = nullptr;
 
 	auto it = m_mapBimFiles.find(&file);
 	if (it != m_mapBimFiles.end()) {
@@ -585,8 +585,15 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
-				m_mapBimFiles[&file] = model;
-			}	
+				_ptr<_ap_model> apModel(model);
+				if (apModel->getAP() == enumAP::IFC) {
+					m_mapBimFiles[&file] = model;
+				}
+				else {
+					delete model;
+					model = nullptr;
+				}
+			}
 		}
 	}
 

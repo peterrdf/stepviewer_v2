@@ -30,7 +30,7 @@ private:
 
 private:
 	void FillFileList(BCFTopic& topic);
-	void AddBimFile(BCFTopic& topic, _model& model);
+	void AddBimFile(BCFTopic& topic, const CString& strPath);
 
 private:
 	CBCFView&     m_view;
