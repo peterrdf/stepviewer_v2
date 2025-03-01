@@ -737,13 +737,13 @@ void CMySTEPViewerView::OnViewReset()
 }
 
 void CMySTEPViewerView::SetBCFView(
-	BCFCamera camera,
-	BCFPoint& viewPoint,
-	BCFPoint& direction,
-	BCFPoint& upVector,
-	double viewToWorldScale,
-	double fieldOfView,
-	double aspectRatio)
+	BCFCamera /*camera*/,
+	BCFPoint& /*viewPoint*/,
+	BCFPoint& /*direction*/,
+	BCFPoint& /*upVector*/,
+	double /*viewToWorldScale*/,
+	double /*fieldOfView*/,
+	double /*aspectRatio*/)
 {
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)

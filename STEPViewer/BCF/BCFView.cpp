@@ -260,7 +260,7 @@ void CBCFView::LoadProjectToView()
 	m_wndTopics.ResetContent();
 
 	BCFTopic* topic = NULL;
-	for (uint16_t i = 0; topic = m_bcfProject->GetTopic(i); i++) {
+	for (uint16_t i = 0; (topic = m_bcfProject->GetTopic(i)); i++) {
 		InsertTopicToList(i, topic);
 	}
 	m_wndTopics.AddString(L"<New>");
@@ -484,15 +484,14 @@ void CBCFView::LoadComments(BCFTopic* topic, int select)
 		CString text;
 		text.Format(L"#%d created by %s at %s",
 			(int)i,
-			FromUTF8(comment->GetAuthor()).GetString(),
-			FromUTF8(comment->GetDate())
+			(LPCWSTR)FromUTF8(comment->GetAuthor()),
+			(LPCWSTR)FromUTF8(comment->GetDate())
 		);
 		if (*comment->GetModifiedAuthor()) {
 			CString modifier;
 			modifier.Format(L", modified by %s at %s",
-				FromUTF8(comment->GetModifiedAuthor()).GetString(),
-				FromUTF8(comment->GetModifiedDate()).GetString()
-			);
+				(LPCWSTR)FromUTF8(comment->GetModifiedAuthor()),
+				(LPCWSTR)FromUTF8(comment->GetModifiedDate()));
 			text.Append(modifier);
 		}
 		auto item = m_wndCommentsList.AddString(text);
@@ -746,25 +745,25 @@ void CBCFView::OnClickedButtonAddMulti()
 	}
 }
 
-void CBCFView::AddLabel(BCFTopic* topic)
+void CBCFView::AddLabel(BCFTopic* /*topic*/)
 {
 	CBCFAddLabel dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddRelated(BCFTopic* topic)
+void CBCFView::AddRelated(BCFTopic* /*topic*/)
 {
 	CBCFAddRelatedTopic dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddLink(BCFTopic* topic)
+void CBCFView::AddLink(BCFTopic* /*topic*/)
 {
 	CBCFAddReferenceLink dlg(*this);
 	dlg.DoModal();
 }
 
-void CBCFView::AddDocument(BCFTopic* topic)
+void CBCFView::AddDocument(BCFTopic* /*topic*/)
 {
 	CBCFAddDocumentReference dlg(*this);
 	dlg.DoModal();
@@ -838,7 +837,7 @@ void CBCFView::RemoveLink(BCFTopic* topic)
 	}
 }
 
-void CBCFView::RemoveDocument(BCFTopic* topic)
+void CBCFView::RemoveDocument(BCFTopic* /*topic*/)
 {
 	auto sel = m_wndMultiList.GetCurSel();
 	if (sel != LB_ERR) {

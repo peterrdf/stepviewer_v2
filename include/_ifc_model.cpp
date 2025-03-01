@@ -599,7 +599,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	}
 
 	wstring strEntity = (LPWSTR)CA2W(szEntityName);
-	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::toupper);
+	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
 	auto pProduct = recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr)

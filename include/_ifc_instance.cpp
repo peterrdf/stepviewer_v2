@@ -23,7 +23,7 @@ _ifc_instance::_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* 
 void _ifc_instance::setDefaultEnabledState()
 {
 	wstring strEntity = getEntityName();
-	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::toupper);
+	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
 	setEnable(
 		(strEntity == L"IFCSPACE") ||

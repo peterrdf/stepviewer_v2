@@ -102,7 +102,7 @@ public: // Methods
 		}
 
 		wstring strFileSchema = szFileSchema;
-		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::toupper);
+		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::towupper);
 
 		/*
 		* STEP
