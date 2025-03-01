@@ -320,7 +320,7 @@ COLORREF CBCFViewPointMgr::GetColorRef(const char* strcolor)
 	}
 
 	BYTE shift = 0;
-	while (i + 1 < len) {
+	while (i + 1 < (int)len) {
 		BYTE b = GetByte(strcolor + i);
 
 		clr |= (COLORREF)b << shift;
@@ -338,8 +338,6 @@ static COLORREF GetComponent(COLORREF clr, BYTE shift, char buff[3])
 	sprintf_s(buff, 3, "%02X", comp);
 	return comp;
 }
-
-//#define GetGValue(rgb)      (LOBYTE(((WORD)(rgb)) >> 8))
 
 std::string CBCFViewPointMgr::GetColorStr(COLORREF clr)
 {
