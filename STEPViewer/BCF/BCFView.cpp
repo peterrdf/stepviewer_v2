@@ -906,8 +906,6 @@ void CBCFView::SaveBCFFile()
 	bool ok = m_bcfProject->WriteFile(ToUTF8(m_bcfFilePath).c_str(), BCFVer_3_0);
 
 	ShowLog(!ok);
-
-	LoadProjectToView();
 }
 
 void CBCFView::OnClickedUpdateViewpoint()

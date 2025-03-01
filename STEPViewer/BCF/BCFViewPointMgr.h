@@ -19,7 +19,7 @@ private:
 	void ApplySelectionToViewer(BCFViewPoint* vp);
 	bool SaveSelection(BCFViewPoint& vp);
 
-	void ApplyColoringToViewer(BCFViewPoint& vp);
+	void ApplyColoringToViewer(BCFViewPoint* vp);
 	bool SaveColoring(BCFViewPoint& vp);
 
 	void ApplyVisibilityToViewer(BCFViewPoint* vp);

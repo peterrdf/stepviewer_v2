@@ -5,6 +5,7 @@
 #include "BCFView.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_oglUtils.h"
 
 #include <unordered_set>
 
@@ -30,14 +31,14 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 		m_view.GetViewerView()->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 		
 		ApplySelectionToViewer(commentViewPoint);
-		//ApplyColoringToViewer(*commentViewPoint);
+		ApplyColoringToViewer(commentViewPoint);
 		ApplyVisibilityToViewer(commentViewPoint);
 	}
 	else {
 		m_view.GetViewerView()->ResetBCFView();
 
 		ApplySelectionToViewer(nullptr);
-		//ApplyColoringToViewer(*commentViewPoint);
+		ApplyColoringToViewer(nullptr);
 		ApplyVisibilityToViewer(nullptr);
 	}
 }
@@ -70,7 +71,7 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 			double fieldOfView = 90;
 			double aspectRatio = 1;
 
-			//view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+			view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
 
 			ok = vp->SetCameraType(camera) && ok;
 			ok = vp->SetCameraViewPoint(&viewPoint) && ok;
@@ -189,39 +190,72 @@ const char* CBCFViewPointMgr::GetGlobalId(_instance* inst)
 	return NULL;
 }
 
-void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint& vp)
+void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint* vp)
 {
-	/*auto& viewer = m_view.GetViewerDoc();
-	auto& coloring = m_view.GetViewerDoc().getInstanceColoring();
-	coloring.clear();
+	auto pOGLView = m_view.GetViewerDoc().getViewAs<_oglView>();
+	if (pOGLView == nullptr)
+	{
+		ASSERT(FALSE);
 
-	int i = 0;
-	while (auto bcfcoloring = vp.GetColoring(i++)) {
-		if (bcfcoloring) {
-			if (auto strcolor = bcfcoloring->GetColor()) {
-				
-				auto clrref = GetColorRef(strcolor);
-				auto& instanceList = coloring[clrref];
+		return;
+	}
 
-				int j = 0;
-				while (auto comp = bcfcoloring->GetComponent(j++)) {
-					if (auto inst = SearchComponent(*comp)) {
-						instanceList.push_back(inst);
+	pOGLView->removeUserDefinedMaterials();
+
+	if (vp != nullptr) {
+		int i = 0;
+		while (auto bcfcoloring = vp->GetColoring(i++)) {
+			if (bcfcoloring) {
+				if (auto strcolor = bcfcoloring->GetColor()) {
+					auto clrref = GetColorRef(strcolor);
+
+					int j = 0;
+					vector<_instance*> vecInstances;
+					while (auto comp = bcfcoloring->GetComponent(j++)) {
+						if (auto inst = SearchComponent(*comp)) {
+							vecInstances.push_back(inst);
+						}
 					}
+					pOGLView->addUserDefinedMaterial(vecInstances, GetRValue(clrref), GetGValue(clrref), GetBValue(clrref));
 				}
 			}
 		}
 	}
-
-	m_view.GetViewerDoc().applyInstanceColoring();*/
 }
 
 
 bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 {
+	auto pOGLView = m_view.GetViewerDoc().getViewAs<_oglView>();
+	if (pOGLView == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return false;
+	}
+
+	map<COLORREF, list<_instance*>> mapColoring;
+	for (auto itUserDefinedMaterial : pOGLView->getUserDefinedMaterials())
+	{
+		COLORREF color = RGB(
+			itUserDefinedMaterial.second->getDiffuseColor().r(), 
+			itUserDefinedMaterial.second->getDiffuseColor().g(), 
+			itUserDefinedMaterial.second->getDiffuseColor().b());
+
+		auto itColoring = mapColoring.find(color);
+		if (itColoring != mapColoring.end())
+		{
+			itColoring->second.push_back(itUserDefinedMaterial.first);
+		}
+		else
+		{
+			mapColoring[color] = list<_instance*>{ itUserDefinedMaterial.first };
+		}
+	}
+
 	bool ok = true;
 
-	/*int i = 0;
+	int i = 0;
 	while (auto bcfcoloring = vp.GetColoring(i)) {
 		if (!bcfcoloring->Remove()) {
 			ok = false;
@@ -229,7 +263,7 @@ bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 		}
 	}
 
-	for (auto& coloring : m_view.GetViewerDoc().getInstanceColoring()) {
+	for (auto& coloring : mapColoring) {
 
 		auto clr = GetColorStr(coloring.first);
 		
@@ -244,7 +278,7 @@ bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 		else {
 			ok = false;
 		}
-	}*/
+	}
 
 	return ok;
 }
