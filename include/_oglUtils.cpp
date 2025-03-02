@@ -866,6 +866,12 @@ _oglRenderer::_oglRenderer()
 	, m_fScaleFactorMin(0.f)
 	, m_fScaleFactorMax(2.f)
 	, m_fScaleFactorInterval(2.f)
+	, m_bCameraSettings(false)
+	, m_vecViewPoint({ 0., 0, 0. })
+	, m_vecDirection({ 0., 0, 0. })
+	, m_vecUpVector({ 0., 0, 0. })
+	, m_dFieldOfView(0.)
+	, m_dAspectRatio(0.)
 {
 	_setView(enumView::Isometric);
 }
@@ -1047,8 +1053,8 @@ void _oglRenderer::_prepare(
 	// aspect   - Aspect ratio of the viewport
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	GLdouble fovY = m_bCameraSettings ? m_dFieldOfView : 45.0;
+	GLdouble aspect = m_bCameraSettings ? m_dAspectRatio : (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -1092,13 +1098,16 @@ void _oglRenderer::_prepare(
 	// Model-View Matrix
 	m_matModelView = glm::identity<glm::mat4>();
 
-	if (bApplyTranslations)
+	if (!m_bCameraSettings)
 	{
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
-	}
-	else
-	{
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		if (bApplyTranslations)
+		{
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		}
+		else
+		{
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		}
 	}
 
 	float fXTranslation = fXmin;
@@ -1114,6 +1123,21 @@ void _oglRenderer::_prepare(
 	fZTranslation = -fZTranslation;
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+	if (m_bCameraSettings)
+	{
+		glm::vec3 cam(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z);
+		glm::vec3 camDelta(m_fZTranslation, m_fZTranslation, m_fZTranslation);
+		cam *= camDelta;
+
+		glm::vec3 dir = glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z);
+		glm::vec3 center = glm::vec3((m_fXmin + m_fXmax) / 2.f, (m_fYmin + m_fYmax) / 2.f, (m_fZmin + m_fZmax) / 2.f);
+
+		m_matModelView = glm::lookAt(
+			cam,
+			dir,
+			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+	}
 
 	if (m_enRotationMode == enumRotationMode::XY)
 	{
@@ -1231,6 +1255,78 @@ void _oglRenderer::_panMouseRButton(float fX, float fY)
 	_pan(
 		m_fPanXInterval * fX,
 		m_fPanYInterval * -fY);
+}
+
+void _oglRenderer::_setCameraSettings(
+	bool bPerspective,
+	double arViewPoint[3],
+	double arDirection[3],
+	double arUpVector[3],
+	double dViewToWorldScale,
+	double dFieldOfView,
+	double dAspectRatio)
+{
+	_reset();
+
+	m_bCameraSettings = true;
+
+	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;
+
+	// glm::LookAt
+	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
+	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
+	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
+
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
+	m_vecViewPoint.x = (float)(m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
+	m_vecViewPoint.y = (float)(m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
+	m_vecViewPoint.z = (float)(m_vecViewPoint.z + vecVertexBufferOffset.z) / dScaleFactor;
+
+	m_vecDirection.x = (float)(m_vecDirection.x + vecVertexBufferOffset.x) / dScaleFactor;
+	m_vecDirection.y = (float)(m_vecDirection.y + vecVertexBufferOffset.y) / dScaleFactor;
+	m_vecDirection.z = (float)(m_vecDirection.z + vecVertexBufferOffset.z) / dScaleFactor;
+
+	//m_vecUpVector.x = (float)(m_vecUpVector.x + vecVertexBufferOffset.x) / dScaleFactor;
+	//m_vecUpVector.y = (float)(m_vecUpVector.y + vecVertexBufferOffset.y) / dScaleFactor;
+	//m_vecUpVector.z = (float)(m_vecUpVector.z + vecVertexBufferOffset.z) / dScaleFactor;
+
+	m_fZTranslation = 5.1f;// DEFAULT_TRANSLATION;
+
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+	//m_enRotationMode = enumRotationMode::XY;
+
+	// glm::frustum
+	/*auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
+	m_fXTranslation = (float)(arViewPoint[0] - vecVertexBufferOffset.x) / dScaleFactor;
+	m_fYTranslation = (float)(arViewPoint[1] - vecVertexBufferOffset.y) / dScaleFactor;
+	m_fZTranslation = (float)(arViewPoint[2] - vecVertexBufferOffset.z) / dScaleFactor;*/
+
+	/*glm::vec3 vecEulerAngles = directionToEulerAngles(
+		glm::vec3(arDirection[0], arDirection[1], arDirection[2]),
+		glm::vec3(arUpVector[0], arUpVector[1], arUpVector[2]));*/
+		//m_rotation = _quaterniond::toQuaternion(vecEulerAngles.x, vecEulerAngles.y, vecEulerAngles.z);
+
+		/*m_enRotationMode = enumRotationMode::XY;
+		m_fXAngle = glm::degrees(vecEulerAngles.x);
+		m_fYAngle = glm::degrees(vecEulerAngles.y);
+		m_fZAngle = glm::degrees(vecEulerAngles.z);*/
+
+	m_fScaleFactor = (float)dViewToWorldScale;
+
+	m_dFieldOfView = dFieldOfView;// *1.5;///???????????????????????????????
+	m_dAspectRatio = dAspectRatio;
+
+	_redraw();
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
@@ -1439,6 +1535,13 @@ void _oglRenderer::_reset()
 	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
 	m_fScaleFactor = fWorldBoundingSphereDiameter;
+
+	m_bCameraSettings = false;
+	m_vecViewPoint = { 0., 0, 0. };
+	m_vecDirection = { 0., 0, 0. };
+	m_vecUpVector = { 0., 0, 0. };
+	m_dFieldOfView = 0.;
+	m_dAspectRatio = 0.;
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)

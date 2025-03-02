@@ -2394,6 +2394,14 @@ protected: // Members
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
 
+	// Camera
+	bool m_bCameraSettings;
+	_vector3d m_vecViewPoint;
+	_vector3d m_vecDirection;
+	_vector3d m_vecUpVector;
+	double m_dFieldOfView;
+	double m_dAspectRatio;
+
 public: // Methods
 
 	_oglRenderer();
@@ -2424,6 +2432,15 @@ public: // Methods
 	void _rotateMouseLButton(float fXAngle, float fYAngle);
 	void _zoomMouseMButton(LONG lDelta);
 	void _panMouseRButton(float fX, float fY);
+
+	void _setCameraSettings(
+		bool bPerspective,		
+		double arViewPoint[3],
+		double arDirection[3],
+		double arUpVector[3],
+		double dViewToWorldScale,
+		double dFieldOfView,
+		double dAspectRatio);
 
 private: //  Methods
 
@@ -2504,7 +2521,7 @@ protected: // Methods
 	virtual void _preDraw() {}
 	virtual void _postDraw() {}
 	virtual void _drawBuffers();
-	
+
 	void _drawFaces();
 	void _drawFaces(bool bTransparent);
 	void _drawConceptualFacesPolygons();

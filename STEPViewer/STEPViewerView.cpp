@@ -737,29 +737,25 @@ void CMySTEPViewerView::OnViewReset()
 }
 
 void CMySTEPViewerView::SetBCFView(
-	BCFCamera /*camera*/,
-	BCFPoint& /*viewPoint*/,
-	BCFPoint& /*direction*/,
-	BCFPoint& /*upVector*/,
-	double /*viewToWorldScale*/,
-	double /*fieldOfView*/,
-	double /*aspectRatio*/)
+	BCFCamera camera,
+	BCFPoint& viewpoint,
+	BCFPoint& direction,
+	BCFPoint& upVector,
+	double viewToWorldScale,
+	double fieldOfView,
+	double aspectRatio)
 {
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)
 	{
-		pRenderer->_setView(enumView::Front);//test
-		pRenderer->_redraw();
-
-		//#todo
-		/*pRenderer->_setCameraSettings(
+		pRenderer->_setCameraSettings(
 			camera == BCFCamera::BCFCameraPerspective,
-			viewPoint.xyz,
+			viewpoint.xyz,
 			direction.xyz,
 			upVector.xyz,
 			viewToWorldScale,
 			fieldOfView,
-			aspectRatio);*/
+			aspectRatio);
 	}
 }
 
