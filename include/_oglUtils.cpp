@@ -1296,31 +1296,6 @@ void _oglRenderer::_setCameraSettings(
 	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
 
-	float fWorldXmin = FLT_MAX;
-	float fWorldXmax = -FLT_MAX;
-	float fWorldYmin = FLT_MAX;
-	float fWorldYmax = -FLT_MAX;
-	float fWorldZmin = FLT_MAX;
-	float fWorldZmax = -FLT_MAX;
-	_getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
-
-	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
-	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
-	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
-
-	m_fXTranslation = fWorldXmin;
-	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fWorldYmin;
-	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fWorldZmin;
-	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
-
 	if (m_vecViewPoint.z > 0.)
 	{
 		m_fZTranslation = -m_fZTranslation;
