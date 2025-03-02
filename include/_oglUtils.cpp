@@ -1131,8 +1131,6 @@ void _oglRenderer::_prepare(
 		cam *= camForward;
 
 		glm::vec3 dir = glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z);
-		glm::vec3 dirMove(m_fXTranslation, m_fYTranslation, 0);
-		dir *= dirMove;
 
 		m_matModelView = glm::lookAt(
 			cam,
@@ -1307,6 +1305,18 @@ void _oglRenderer::_setCameraSettings(
 	_redraw();
 }
 
+void _oglRenderer::_getCameraSettings(
+	bool& bPerspective,
+	double arViewPoint[3],
+	double arDirection[3],
+	double arUpVector[3],
+	double& dViewToWorldScale,
+	double& dFieldOfView,
+	double& dAspectRatio)
+{
+
+}
+
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
 {
 	m_fXAngle += fXAngle * (180.f / (float)M_PI);
@@ -1343,16 +1353,16 @@ void _oglRenderer::_zoom(float fZTranslation)
 				fZTranslation = -fZTranslation;
 			}
 
-			float fNewZTranslation = m_fZTranslation + fZTranslation;
-			//#todo
-			/*if ((fNewZTranslation >= m_fZoomMax) ||
-				(fNewZTranslation <= m_fZoomMin))
-			{
-				return;
-			}*/
+				float fNewZTranslation = m_fZTranslation + fZTranslation;
+				//#todo
+				/*if ((fNewZTranslation >= m_fZoomMax) ||
+					(fNewZTranslation <= m_fZoomMin))
+				{
+					return;
+				}*/
 
-			m_fZTranslation = fNewZTranslation;
-		}
+				m_fZTranslation = fNewZTranslation;
+			}
 		break;
 
 		case enumProjection::Orthographic:

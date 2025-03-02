@@ -2442,6 +2442,15 @@ public: // Methods
 		double dFieldOfView,
 		double dAspectRatio);
 
+	void _getCameraSettings(
+		bool& bPerspective,
+		double arViewPoint[3],
+		double arDirection[3],
+		double arUpVector[3],
+		double& dViewToWorldScale,
+		double& dFieldOfView,
+		double& dAspectRatio);
+
 private: //  Methods
 
 	void _rotate(float fXAngle, float fYAngle);
