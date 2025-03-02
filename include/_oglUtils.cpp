@@ -1362,6 +1362,11 @@ void _oglRenderer::_zoom(float fZTranslation)
 	{
 		case enumProjection::Perspective:
 		{
+			if (m_bCameraSettings && (m_vecViewPoint.z > 0.))
+			{
+				fZTranslation = -fZTranslation;
+			}
+
 			float fNewZTranslation = m_fZTranslation + fZTranslation;
 			//#todo
 			/*if ((fNewZTranslation >= m_fZoomMax) ||
