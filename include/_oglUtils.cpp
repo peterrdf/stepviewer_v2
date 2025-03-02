@@ -1291,40 +1291,42 @@ void _oglRenderer::_setCameraSettings(
 	m_vecDirection.y = (float)(m_vecDirection.y + vecVertexBufferOffset.y) / dScaleFactor;
 	m_vecDirection.z = (float)(m_vecDirection.z + vecVertexBufferOffset.z) / dScaleFactor;
 
-	//m_vecUpVector.x = (float)(m_vecUpVector.x + vecVertexBufferOffset.x) / dScaleFactor;
-	//m_vecUpVector.y = (float)(m_vecUpVector.y + vecVertexBufferOffset.y) / dScaleFactor;
-	//m_vecUpVector.z = (float)(m_vecUpVector.z + vecVertexBufferOffset.z) / dScaleFactor;
-
-	m_fZTranslation = 5.1f;// DEFAULT_TRANSLATION;
-
-	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
-	//m_enRotationMode = enumRotationMode::XY;
-
-	// glm::frustum
-	/*auto pWorld = _getController()->getModel();
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
-
-	m_fXTranslation = (float)(arViewPoint[0] - vecVertexBufferOffset.x) / dScaleFactor;
-	m_fYTranslation = (float)(arViewPoint[1] - vecVertexBufferOffset.y) / dScaleFactor;
-	m_fZTranslation = (float)(arViewPoint[2] - vecVertexBufferOffset.z) / dScaleFactor;*/
-
-	/*glm::vec3 vecEulerAngles = directionToEulerAngles(
-		glm::vec3(arDirection[0], arDirection[1], arDirection[2]),
-		glm::vec3(arUpVector[0], arUpVector[1], arUpVector[2]));*/
-		//m_rotation = _quaterniond::toQuaternion(vecEulerAngles.x, vecEulerAngles.y, vecEulerAngles.z);
-
-		/*m_enRotationMode = enumRotationMode::XY;
-		m_fXAngle = glm::degrees(vecEulerAngles.x);
-		m_fYAngle = glm::degrees(vecEulerAngles.y);
-		m_fZAngle = glm::degrees(vecEulerAngles.z);*/
-
 	m_fScaleFactor = (float)dViewToWorldScale;
 
-	m_dFieldOfView = dFieldOfView;// *1.5;///???????????????????????????????
+	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	_getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	m_fXTranslation = fWorldXmin;
+	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fWorldYmin;
+	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fWorldZmin;
+	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
+
+	if (m_vecViewPoint.z > 0.)
+	{
+		m_fZTranslation = -m_fZTranslation;
+	}	
+
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
 	_redraw();
 }
