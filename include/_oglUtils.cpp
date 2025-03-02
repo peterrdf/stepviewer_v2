@@ -1313,36 +1313,31 @@ void _oglRenderer::_getCameraSettings(
 	double& dFieldOfView,
 	double& dAspectRatio)
 {
-	auto pWorld = _getController()->getModel();
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+	bPerspective = m_enProjection == enumProjection::Perspective;
 
-	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+	arViewPoint[0] = -m_matModelView[3][0];
+	arViewPoint[1] = -m_matModelView[3][1];
+	arViewPoint[2] = -m_matModelView[3][2];
+
+	arDirection[0] = -m_matModelView[2][0];
+	arDirection[1] = -m_matModelView[2][1];
+	arDirection[2] = -m_matModelView[2][2];
+
+	arUpVector[0] = m_matModelView[0][0];
+	arUpVector[1] = m_matModelView[0][1];
+	arUpVector[2] = m_matModelView[0][2];
+
+	dViewToWorldScale = m_fScaleFactor;
 
 	if (m_bCameraSettings)
 	{
-		bPerspective = m_enProjection == enumProjection::Perspective;	
-
-		arViewPoint[0] = -m_matModelView[3][0];
-		arViewPoint[1] = -m_matModelView[3][1];
-		arViewPoint[2] = -m_matModelView[3][2];
-
-		arDirection[0] = -m_matModelView[2][0];
-		arDirection[1] = -m_matModelView[2][1];
-		arDirection[2] = -m_matModelView[2][2];
-
-		arUpVector[0] = m_matModelView[0][0];
-		arUpVector[1] = m_matModelView[0][1];
-		arUpVector[2] = m_matModelView[0][2];
-
-		dViewToWorldScale = m_fScaleFactor;
-
 		dFieldOfView = m_dFieldOfView;
 		dAspectRatio = m_dAspectRatio;
 	}
 	else
 	{
-		assert(0);
+		dFieldOfView = 45.0;
+		dAspectRatio = 1.;
 	}
 }
 
