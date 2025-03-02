@@ -1125,13 +1125,14 @@ void _oglRenderer::_prepare(
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 	if (m_bCameraSettings)
-	{
+	{		
 		glm::vec3 cam(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z);
-		glm::vec3 camDelta(m_fZTranslation, m_fZTranslation, m_fZTranslation);
-		cam *= camDelta;
+		glm::vec3 camForward(m_fZTranslation, m_fZTranslation, m_fZTranslation);
+		cam *= camForward;
 
 		glm::vec3 dir = glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z);
-		glm::vec3 center = glm::vec3((m_fXmin + m_fXmax) / 2.f, (m_fYmin + m_fYmax) / 2.f, (m_fZmin + m_fZmax) / 2.f);
+		glm::vec3 dirMove(m_fXTranslation, m_fYTranslation, 0);
+		dir *= dirMove;
 
 		m_matModelView = glm::lookAt(
 			cam,
@@ -1382,8 +1383,8 @@ void _oglRenderer::_pan(float fX, float fY)
 	bool bRedraw = false;
 
 	float fNewXTranslation = m_fXTranslation + fX;
-	if ((fNewXTranslation < m_fPanXMax) &&
-		(fNewXTranslation > m_fPanXMin))
+	if (m_bCameraSettings || ((fNewXTranslation < m_fPanXMax) &&
+		(fNewXTranslation > m_fPanXMin)))
 	{
 		m_fXTranslation += fX;
 
@@ -1391,8 +1392,8 @@ void _oglRenderer::_pan(float fX, float fY)
 	}
 
 	float fNewYTranslation = m_fYTranslation + fY;
-	if ((fNewYTranslation < m_fPanYMax) &&
-		(fNewYTranslation > m_fPanYMin))
+	if (m_bCameraSettings || ((fNewYTranslation < m_fPanYMax) &&
+		(fNewYTranslation > m_fPanYMin)))
 	{
 		m_fYTranslation += fY;
 
