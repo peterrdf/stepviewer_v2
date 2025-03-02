@@ -764,20 +764,26 @@ void CMySTEPViewerView::ResetBCFView()
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)
 	{
-		pRenderer->_setView(enumView::Isometric);
+		pRenderer->_reset();
 		pRenderer->_redraw();
 	}
 }
 
 void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio)
 {
-	camera = BCFCameraOrthogonal;
-	memset(&viewPoint, 0, sizeof(BCFPoint));
-	memset(&direction, 0, sizeof(BCFPoint));
-	direction.xyz[0] = 1;
-	memset(&upVector, 0, sizeof(BCFPoint));
-	upVector.xyz[2] = 1;
-	viewToWorldScale = 1;
-	fieldOfView = 90;
-	aspectRatio = 1;
+	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
+	if (pRenderer != nullptr)
+	{
+		bool bPerspective = false;
+		pRenderer->_getCameraSettings(
+			bPerspective,
+			viewPoint.xyz,
+			direction.xyz,
+			upVector.xyz,
+			viewToWorldScale,
+			fieldOfView,
+			aspectRatio);
+
+		camera = bPerspective ? BCFCamera::BCFCameraPerspective : BCFCamera::BCFCameraOrthogonal;
+	}
 }

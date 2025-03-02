@@ -1267,20 +1267,19 @@ void _oglRenderer::_setCameraSettings(
 {
 	_reset();
 
-	m_bCameraSettings = true;
-
-	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;
-
-	// glm::LookAt
-	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
-	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
-	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
-
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
+	m_bCameraSettings = true;
+
+	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;
+
+	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
+	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
+	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };	
 
 	m_vecViewPoint.x = (float)(m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
 	m_vecViewPoint.y = (float)(m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
@@ -1314,7 +1313,37 @@ void _oglRenderer::_getCameraSettings(
 	double& dFieldOfView,
 	double& dAspectRatio)
 {
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
 
+	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
+	if (m_bCameraSettings)
+	{
+		bPerspective = m_enProjection == enumProjection::Perspective;	
+
+		arViewPoint[0] = -m_matModelView[3][0];
+		arViewPoint[1] = -m_matModelView[3][1];
+		arViewPoint[2] = -m_matModelView[3][2];
+
+		arDirection[0] = -m_matModelView[2][0];
+		arDirection[1] = -m_matModelView[2][1];
+		arDirection[2] = -m_matModelView[2][2];
+
+		arUpVector[0] = m_matModelView[0][0];
+		arUpVector[1] = m_matModelView[0][1];
+		arUpVector[2] = m_matModelView[0][2];
+
+		dViewToWorldScale = m_fScaleFactor;
+
+		dFieldOfView = m_dFieldOfView;
+		dAspectRatio = m_dAspectRatio;
+	}
+	else
+	{
+		assert(0);
+	}
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
