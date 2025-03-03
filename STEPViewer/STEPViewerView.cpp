@@ -9,6 +9,7 @@
 #include "STEPViewer.h"
 #endif
 
+#include "_ap_mvc.h"
 #include "_ptr.h"
 
 #include "STEPViewerDoc.h"
@@ -748,6 +749,9 @@ void CMySTEPViewerView::SetBCFView(
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)
 	{
+		double dLengthConversionFactor = getProjectUnitConversionFactor(
+			_ptr<_ap_model>(getController()->getModel())->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		pRenderer->_setCameraSettings(
 			camera == BCFCamera::BCFCameraPerspective,
 			viewpoint.xyz,
@@ -755,7 +759,8 @@ void CMySTEPViewerView::SetBCFView(
 			upVector.xyz,
 			viewToWorldScale,
 			fieldOfView,
-			aspectRatio);
+			aspectRatio,
+			dLengthConversionFactor);
 	}
 }
 
@@ -774,6 +779,9 @@ void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPo
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)
 	{
+		double dLengthConversionFactor = getProjectUnitConversionFactor(
+			_ptr<_ap_model>(getController()->getModel())->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		bool bPerspective = false;
 		pRenderer->_getCameraSettings(
 			bPerspective,
@@ -782,7 +790,8 @@ void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPo
 			upVector.xyz,
 			viewToWorldScale,
 			fieldOfView,
-			aspectRatio);
+			aspectRatio,
+			dLengthConversionFactor);
 
 		camera = bPerspective ? BCFCamera::BCFCameraPerspective : BCFCamera::BCFCameraOrthogonal;
 	}

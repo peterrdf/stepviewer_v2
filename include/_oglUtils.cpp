@@ -1125,16 +1125,10 @@ void _oglRenderer::_prepare(
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 	if (m_bCameraSettings)
-	{		
-		glm::vec3 cam(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z);
-		glm::vec3 camForward(m_fZTranslation, m_fZTranslation, m_fZTranslation);
-		cam *= camForward;
-
-		glm::vec3 dir = glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z);
-
-		m_matModelView = glm::lookAt(
-			cam,
-			dir,
+	{	
+		m_matModelView = glm::lookAt(			
+			glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+			glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z),
 			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
 	}
 
@@ -1263,41 +1257,33 @@ void _oglRenderer::_setCameraSettings(
 	double arUpVector[3],
 	double dViewToWorldScale,
 	double dFieldOfView,
-	double dAspectRatio)
+	double dAspectRatio,
+	double dLengthConversionFactor)
 {
 	_reset();
 
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
-
 	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
 
 	m_bCameraSettings = true;
 
-	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;
+	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;	
 
-	m_vecViewPoint = { arViewPoint[0], arViewPoint[1], arViewPoint[2] };
-	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
-	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };	
-
+	m_vecViewPoint = { arViewPoint[0] / dLengthConversionFactor, arViewPoint[1] / dLengthConversionFactor, arViewPoint[2] / dLengthConversionFactor };
 	m_vecViewPoint.x = (float)(m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
 	m_vecViewPoint.y = (float)(m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
 	m_vecViewPoint.z = (float)(m_vecViewPoint.z + vecVertexBufferOffset.z) / dScaleFactor;
 
-	m_vecDirection.x = (float)(m_vecDirection.x + vecVertexBufferOffset.x) / dScaleFactor;
-	m_vecDirection.y = (float)(m_vecDirection.y + vecVertexBufferOffset.y) / dScaleFactor;
-	m_vecDirection.z = (float)(m_vecDirection.z + vecVertexBufferOffset.z) / dScaleFactor;
+	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
+
+	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };	
 
 	m_fScaleFactor = (float)dViewToWorldScale;
 
 	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
-
-	if (m_vecViewPoint.z > 0.)
-	{
-		m_fZTranslation = -m_fZTranslation;
-	}	
 
 	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
@@ -1311,13 +1297,25 @@ void _oglRenderer::_getCameraSettings(
 	double arUpVector[3],
 	double& dViewToWorldScale,
 	double& dFieldOfView,
-	double& dAspectRatio)
+	double& dAspectRatio,
+	double dLengthConversionFactor)
 {
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+
 	bPerspective = m_enProjection == enumProjection::Perspective;
 
-	arViewPoint[0] = -m_matModelView[3][0];
-	arViewPoint[1] = -m_matModelView[3][1];
-	arViewPoint[2] = -m_matModelView[3][2];
+	arViewPoint[0] = -m_matModelView[3][0] * dScaleFactor;
+	arViewPoint[1] = -m_matModelView[3][1] * dScaleFactor;
+	arViewPoint[2] = -m_matModelView[3][2] * dScaleFactor;
+	arViewPoint[0] -= vecVertexBufferOffset.x;
+	arViewPoint[1] -= vecVertexBufferOffset.y;
+	arViewPoint[2] -= vecVertexBufferOffset.z;
+	arViewPoint[0] *= dLengthConversionFactor;
+	arViewPoint[1] *= dLengthConversionFactor;
+	arViewPoint[2] *= dLengthConversionFactor;
 
 	arDirection[0] = -m_matModelView[2][0];
 	arDirection[1] = -m_matModelView[2][1];
@@ -1372,21 +1370,16 @@ void _oglRenderer::_zoom(float fZTranslation)
 	{
 		case enumProjection::Perspective:
 		{
-			if (m_bCameraSettings && (m_vecViewPoint.z > 0.))
+			float fNewZTranslation = m_fZTranslation + fZTranslation;
+			//#todo
+			/*if ((fNewZTranslation >= m_fZoomMax) ||
+				(fNewZTranslation <= m_fZoomMin))
 			{
-				fZTranslation = -fZTranslation;
-			}
+				return;
+			}*/
 
-				float fNewZTranslation = m_fZTranslation + fZTranslation;
-				//#todo
-				/*if ((fNewZTranslation >= m_fZoomMax) ||
-					(fNewZTranslation <= m_fZoomMin))
-				{
-					return;
-				}*/
-
-				m_fZTranslation = fNewZTranslation;
-			}
+			m_fZTranslation = fNewZTranslation;
+		}
 		break;
 
 		case enumProjection::Orthographic:
@@ -1417,8 +1410,8 @@ void _oglRenderer::_pan(float fX, float fY)
 	bool bRedraw = false;
 
 	float fNewXTranslation = m_fXTranslation + fX;
-	if (m_bCameraSettings || ((fNewXTranslation < m_fPanXMax) &&
-		(fNewXTranslation > m_fPanXMin)))
+	if ((fNewXTranslation < m_fPanXMax) &&
+		(fNewXTranslation > m_fPanXMin))
 	{
 		m_fXTranslation += fX;
 
@@ -1426,8 +1419,8 @@ void _oglRenderer::_pan(float fX, float fY)
 	}
 
 	float fNewYTranslation = m_fYTranslation + fY;
-	if (m_bCameraSettings || ((fNewYTranslation < m_fPanYMax) &&
-		(fNewYTranslation > m_fPanYMin)))
+	if ((fNewYTranslation < m_fPanYMax) &&
+		(fNewYTranslation > m_fPanYMin))
 	{
 		m_fYTranslation += fY;
 

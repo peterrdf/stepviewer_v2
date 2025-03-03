@@ -2440,7 +2440,8 @@ public: // Methods
 		double arUpVector[3],
 		double dViewToWorldScale,
 		double dFieldOfView,
-		double dAspectRatio);
+		double dAspectRatio,
+		double dLengthConversionFactor);
 
 	void _getCameraSettings(
 		bool& bPerspective,
@@ -2449,7 +2450,8 @@ public: // Methods
 		double arUpVector[3],
 		double& dViewToWorldScale,
 		double& dFieldOfView,
-		double& dAspectRatio);
+		double& dAspectRatio,
+		double dLengthConversionFactor);
 
 private: //  Methods
 
