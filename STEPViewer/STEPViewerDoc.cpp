@@ -49,9 +49,16 @@
 
 void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
-	m_wndBCFView.Close();
-
 	setModel(nullptr);
+
+	if ((vecPaths.size() == 1) && m_wndBCFView.IsBCF(vecPaths[0]))
+	{
+		m_wndBCFView.Open(vecPaths[0]);
+
+		return;
+	}
+
+	m_wndBCFView.Close();	
 
 	vector<_model*> vecModels;
 	for (auto strPath : vecPaths)
@@ -112,11 +119,10 @@ CMySTEPViewerDoc::~CMySTEPViewerDoc()
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
-		return FALSE;	
-
-	m_wndBCFView.Close();
+		return FALSE;
 
 	setModel(nullptr);
+	m_wndBCFView.Close();	
 
 	return TRUE;
 }
@@ -219,9 +225,8 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return TRUE;
 	}
 
-	m_wndBCFView.Close();
-
 	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
+	m_wndBCFView.Close();	
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -278,6 +283,7 @@ void CMySTEPViewerDoc::DeleteContents()
 void CMySTEPViewerDoc::OnCloseDocument()
 {
 	m_wndBCFView.Close();
+
 	__super::OnCloseDocument();
 }
 
