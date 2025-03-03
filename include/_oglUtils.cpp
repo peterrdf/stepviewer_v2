@@ -1126,10 +1126,21 @@ void _oglRenderer::_prepare(
 
 	if (m_bCameraSettings)
 	{	
+		if (m_fZTranslation != 0.f)
+		{
+			glm::mat4 matZoom = glm::translate(glm::mat4(1.0f), glm::vec3(m_fZTranslation, m_fZTranslation, m_fZTranslation) * glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z));
+			glm::vec4 eye = matZoom * glm::vec4(glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z), 1.0f);
+			m_vecViewPoint.x = eye.x;
+			m_vecViewPoint.y = eye.y;
+			m_vecViewPoint.z = eye.z;
+
+			m_fZTranslation = 0.f;
+		}
+
 		m_matModelView = glm::lookAt(
 			glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z),
 			glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),			
-			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));		
 	}
 
 	if (!m_bCameraSettings)
@@ -1288,7 +1299,7 @@ void _oglRenderer::_setCameraSettings(
 	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
 
-	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+	m_fZTranslation = 0.f;
 
 	_redraw();
 }
