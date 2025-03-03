@@ -1132,31 +1132,34 @@ void _oglRenderer::_prepare(
 			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
 	}
 
-	if (m_enRotationMode == enumRotationMode::XY)
+	if (!m_bCameraSettings)
 	{
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
-	}
-	else if (m_enRotationMode == enumRotationMode::XYZ)
-	{
-		// Apply rotation...
-		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
-		m_rotation.cross(rotation);
+		if (m_enRotationMode == enumRotationMode::XY)
+		{
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ)
+		{
+			// Apply rotation...
+			_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
+			m_rotation.cross(rotation);
 
-		// ... and reset
-		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+			// ... and reset
+			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
 
-		const double* pRotationMatrix = m_rotation.toMatrix();
-		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
-		delete pRotationMatrix;
+			const double* pRotationMatrix = m_rotation.toMatrix();
+			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
+			delete pRotationMatrix;
 
-		m_matModelView = m_matModelView * matTransformation;
-	}
-	else
-	{
-		assert(false);
-	}
+			m_matModelView = m_matModelView * matTransformation;
+		}
+		else
+		{
+			assert(false);
+		}
+	}	
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
@@ -1265,16 +1268,16 @@ void _oglRenderer::_setCameraSettings(
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
-	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
 
 	m_bCameraSettings = true;
 
 	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;	
 
 	m_vecViewPoint = { arViewPoint[0] / dLengthConversionFactor, arViewPoint[1] / dLengthConversionFactor, arViewPoint[2] / dLengthConversionFactor };
-	m_vecViewPoint.x = (float)(m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
-	m_vecViewPoint.y = (float)(m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
-	m_vecViewPoint.z = (float)(m_vecViewPoint.z + vecVertexBufferOffset.z) / dScaleFactor;
+	m_vecViewPoint.x = (m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
+	m_vecViewPoint.y = (m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
+	m_vecViewPoint.z = (m_vecViewPoint.z + vecVertexBufferOffset.z) / dScaleFactor;
 
 	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
 
@@ -1303,13 +1306,13 @@ void _oglRenderer::_getCameraSettings(
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
-	auto dScaleFactor = (float)pWorld->getOriginalBoundingSphereDiameter() / 2.f;
+	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
 
 	bPerspective = m_enProjection == enumProjection::Perspective;
 
-	arViewPoint[0] = -m_matModelView[3][0] * dScaleFactor;
-	arViewPoint[1] = -m_matModelView[3][1] * dScaleFactor;
-	arViewPoint[2] = -m_matModelView[3][2] * dScaleFactor;
+	arViewPoint[0] = m_vecViewPoint.x * dScaleFactor;
+	arViewPoint[1] = m_vecViewPoint.y * dScaleFactor;
+	arViewPoint[2] = m_vecViewPoint.z * dScaleFactor;
 	arViewPoint[0] -= vecVertexBufferOffset.x;
 	arViewPoint[1] -= vecVertexBufferOffset.y;
 	arViewPoint[2] -= vecVertexBufferOffset.z;
@@ -1317,13 +1320,17 @@ void _oglRenderer::_getCameraSettings(
 	arViewPoint[1] *= dLengthConversionFactor;
 	arViewPoint[2] *= dLengthConversionFactor;
 
-	arDirection[0] = -m_matModelView[2][0];
-	arDirection[1] = -m_matModelView[2][1];
-	arDirection[2] = -m_matModelView[2][2];
+	arDirection[0] = m_vecDirection.x;
+	arDirection[1] = m_vecDirection.y;
+	arDirection[2] = m_vecDirection.z;
 
 	arUpVector[0] = m_matModelView[0][0];
 	arUpVector[1] = m_matModelView[0][1];
 	arUpVector[2] = m_matModelView[0][2];
+
+	arUpVector[0] = m_vecUpVector.x;
+	arUpVector[1] = m_vecUpVector.y;
+	arUpVector[2] = m_vecUpVector.z;
 
 	dViewToWorldScale = m_fScaleFactor;
 
