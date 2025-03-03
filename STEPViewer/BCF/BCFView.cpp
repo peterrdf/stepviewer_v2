@@ -14,6 +14,9 @@
 #include "BCF\BCFAddReferenceLink.h"
 #include "BCF\BCFAddDocumentReference.h"
 #include "BCF\BCFBimFiles.h"
+
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
  
 #define TAB_Labels			3
 #define TAB_Related			2
@@ -581,6 +584,18 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 		}
 
 		if (!model) { 
+			fs::path pathModel((LPCWSTR)path);
+			if (!fs::exists(pathModel))
+			{
+				CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, BIM_MODELS_FILTER);
+				if (dlgFile.DoModal() != IDOK)
+				{
+					return nullptr;
+				}
+
+				path = dlgFile.GetPathName();
+			}
+
 			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 			//model may be NULL, assume message was shown while load
 			if (model) {
