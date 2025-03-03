@@ -583,29 +583,47 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 			}
 		}
 
-		if (!model) { 
-			fs::path pathModel((LPCWSTR)path);
-			if (!fs::exists(pathModel))
+		if (!model) {
+			if (!fs::exists(ToUTF8(path)))
 			{
-				CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, BIM_MODELS_FILTER);
-				if (dlgFile.DoModal() != IDOK)
-				{
-					return nullptr;
+				//we have to ask user to search the BIM file
+				CString msg(L"Can not locate BIM file assigned to the topic.\n\n");
+				if (!path.IsEmpty()) {
+					msg += L"Reference: '" + path + L"'\n";
 				}
+				auto name = FromUTF8(file.GetFilename());
+				if (!name.IsEmpty()) {
+					msg += L"Name: '" + name + L"'\n";
+				}
+				auto ifcProjectGuid = FromUTF8(file.GetIfcProject());
+				if (!ifcProjectGuid.IsEmpty()) {
+					msg += L"IfcProject.GlobalId: '" + ifcProjectGuid + L"'\n";
+				}
+				msg += L"\nDo you want to locate the file manually?";
 
-				path = dlgFile.GetPathName();
+				if (IDNO != AfxMessageBox(msg, MB_YESNO | MB_ICONEXCLAMATION)) {
+
+					CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST, BIM_MODELS_FILTER);
+					if (dlgFile.DoModal() != IDOK)
+					{
+						return nullptr;
+					}
+					path = dlgFile.GetPathName();
+				}
 			}
 
-			model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
-			//model may be NULL, assume message was shown while load
-			if (model) {
-				_ptr<_ap_model> apModel(model);
-				if (apModel->getAP() == enumAP::IFC) {
-					m_mapBimFiles[&file] = model;
-				}
-				else {
-					delete model;
-					model = nullptr;
+			if (fs::exists(ToUTF8(path))) {
+				model = _ap_model_factory::load(path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
+				//model may be NULL, assume message was shown while load
+				if (model) {
+					_ptr<_ap_model> apModel(model);
+					if (apModel->getAP() == enumAP::IFC) {
+						m_mapBimFiles[&file] = model;
+					}
+					else {
+						delete model;
+						model = nullptr;
+					}
 				}
 			}
 		}
