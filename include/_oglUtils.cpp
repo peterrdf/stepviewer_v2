@@ -1321,37 +1321,53 @@ void _oglRenderer::_getCameraSettings(
 
 	bPerspective = m_enProjection == enumProjection::Perspective;
 
-	arViewPoint[0] = m_vecViewPoint.x * dScaleFactor;
-	arViewPoint[1] = m_vecViewPoint.y * dScaleFactor;
-	arViewPoint[2] = m_vecViewPoint.z * dScaleFactor;
-	arViewPoint[0] -= vecVertexBufferOffset.x;
-	arViewPoint[1] -= vecVertexBufferOffset.y;
-	arViewPoint[2] -= vecVertexBufferOffset.z;
-	arViewPoint[0] *= dLengthConversionFactor;
-	arViewPoint[1] *= dLengthConversionFactor;
-	arViewPoint[2] *= dLengthConversionFactor;
-
-	arDirection[0] = m_vecDirection.x;
-	arDirection[1] = m_vecDirection.y;
-	arDirection[2] = m_vecDirection.z;
-
-	arUpVector[0] = m_matModelView[0][0];
-	arUpVector[1] = m_matModelView[0][1];
-	arUpVector[2] = m_matModelView[0][2];
-
-	arUpVector[0] = m_vecUpVector.x;
-	arUpVector[1] = m_vecUpVector.y;
-	arUpVector[2] = m_vecUpVector.z;
-
-	dViewToWorldScale = m_fScaleFactor;
-
 	if (m_bCameraSettings)
 	{
+		arViewPoint[0] = m_vecViewPoint.x * dScaleFactor;
+		arViewPoint[1] = m_vecViewPoint.y * dScaleFactor;
+		arViewPoint[2] = m_vecViewPoint.z * dScaleFactor;
+		arViewPoint[0] -= vecVertexBufferOffset.x;
+		arViewPoint[1] -= vecVertexBufferOffset.y;
+		arViewPoint[2] -= vecVertexBufferOffset.z;
+		arViewPoint[0] *= dLengthConversionFactor;
+		arViewPoint[1] *= dLengthConversionFactor;
+		arViewPoint[2] *= dLengthConversionFactor;
+
+		arDirection[0] = m_vecDirection.x;
+		arDirection[1] = m_vecDirection.y;
+		arDirection[2] = m_vecDirection.z;
+
+		arUpVector[0] = m_vecUpVector.x;
+		arUpVector[1] = m_vecUpVector.y;
+		arUpVector[2] = m_vecUpVector.z;
+
+		dViewToWorldScale = m_fScaleFactor;
+
 		dFieldOfView = m_dFieldOfView;
 		dAspectRatio = m_dAspectRatio;
-	}
+	} // if (m_bCameraSettings)
 	else
 	{
+		arViewPoint[0] = m_fXTranslation * dScaleFactor;
+		arViewPoint[1] = m_fYTranslation * dScaleFactor;
+		arViewPoint[2] = m_fZTranslation * dScaleFactor;
+		arViewPoint[0] -= vecVertexBufferOffset.x;
+		arViewPoint[1] -= vecVertexBufferOffset.y;
+		arViewPoint[2] -= vecVertexBufferOffset.z;
+		arViewPoint[0] *= dLengthConversionFactor;
+		arViewPoint[1] *= dLengthConversionFactor;
+		arViewPoint[2] *= dLengthConversionFactor;
+
+		arDirection[0] = (m_fXmin + m_fXmax) / 2.f;
+		arDirection[1] = (m_fYmin + m_fYmax) / 2.f;
+		arDirection[2] = (m_fZmin + m_fZmax) / 2.f;
+
+		arUpVector[0] = m_matModelView[0][0];
+		arUpVector[1] = m_matModelView[0][1];
+		arUpVector[2] = m_matModelView[0][2];
+
+		dViewToWorldScale = m_fScaleFactor;
+
 		dFieldOfView = 45.0;
 		dAspectRatio = 1.;
 	}
