@@ -1126,9 +1126,9 @@ void _oglRenderer::_prepare(
 
 	if (m_bCameraSettings)
 	{	
-		m_matModelView = glm::lookAt(			
-			glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+		m_matModelView = glm::lookAt(
 			glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z),
+			glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),			
 			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
 	}
 
