@@ -606,18 +606,46 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModel(_model* pModel)
+void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 {
-	assert(pModel != nullptr);
-
 	m_bUpdatingModel = true;
-
-	m_vecModels.push_back(pModel);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
+		(*itView)->preModelLoaded();
+	}
+
+	// Disable all
+	for (auto pModel : m_vecModels)
+	{
+		pModel->setEnable(false);
+	}
+
+	// Add if needed and Enable
+	for (auto pModel : vecModels)
+	{
+		if (find(m_vecModels.begin(), m_vecModels.end(), pModel) == m_vecModels.end())
+		{
+			m_vecModels.push_back(pModel);
+		}
+
+		pModel->setEnable(true);
+	}
+
+	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
 		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->postModelLoaded();
 	}
 
 	m_bUpdatingModel = false;
@@ -829,6 +857,17 @@ void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
 
 void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd/* = false*/)
 {
+	vector<_instance*> vecInstance;
+	if (pInstance != nullptr)
+	{
+		vecInstance.push_back(pInstance);
+	}
+
+	selectInstances(pSender, vecInstance, bAdd);
+}
+
+void _controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/)
+{
 	if (m_bUpdatingModel)
 	{
 		return;
@@ -836,19 +875,21 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 
 	bool bNotify = false;
 
-	if (!bAdd || (pInstance == nullptr))
+	if (!bAdd || vecInstance.empty())
 	{
 		bNotify = !m_vecSelectedInstances.empty();
 
 		m_vecSelectedInstances.clear();
 	}
 
-	if ((pInstance != nullptr) &&
-		(find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+	for (auto pInstance : vecInstance)
 	{
-		bNotify = true;
+		if ((find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+		{
+			bNotify = true;
 
-		m_vecSelectedInstances.push_back(pInstance);
+			m_vecSelectedInstances.push_back(pInstance);
+		}
 	}
 
 	if (bNotify)
@@ -943,6 +984,19 @@ void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInst
 	{
 		(*itView)->onInstanceEnabledStateChanged(pSender, pInstance, iFlag);
 	}
+}
+
+void _controller::resetInstancesEnabledState(_view* pSender)
+{
+	for (auto pModel : m_vecModels)
+	{
+		if (pModel->getEnable())
+		{
+			pModel->resetInstancesEnabledState();
+		}
+	}
+
+	onInstancesEnabledStateChanged(pSender);
 }
 
 void _controller::onInstancesEnabledStateChanged(_view* pSender)

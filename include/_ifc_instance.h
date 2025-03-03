@@ -22,4 +22,6 @@ public:  // Methods
 
 	// _instance
 	virtual _instance* getOwner() const override;
+
+	void setDefaultEnabledState();
 };

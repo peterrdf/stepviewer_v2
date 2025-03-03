@@ -18,12 +18,6 @@
 #endif
 
 // ************************************************************************************************
-TCHAR SAVE_IFC_FILTER[] = _T("IFC Files (*.ifc)|*.ifc|All Files (*.*)|*.*||");
-TCHAR SAVE_STEP_FILTER[] = _T("STEP Files (*.step)|*.step|All Files (*.*)|*.*||");
-TCHAR SAVE_CIS2_FILTER[] = _T("CIS2 Files (*.stp)|*.stp|All Files (*.*)|*.*||");
-TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
-
-// ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
 	if (pInstance == nullptr)
@@ -53,8 +47,10 @@ TCHAR OPEN_FILES_FILTER[] = _T("STEP Files (*.stp; *.step; *.stpz; *.ifc; *.ifcz
 	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 }
 
-void CMySTEPViewerDoc::OpenModels(vector<CString>& vecPaths)
+void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
+	m_wndBCFView.Close();
+
 	setModel(nullptr);
 
 	vector<_model*> vecModels;
@@ -92,12 +88,19 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMySTEPViewerDoc::OnUpdateFileSave)
 	ON_COMMAND(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnFileSaveAs)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CMySTEPViewerDoc::OnUpdateFileSaveAs)
+	ON_COMMAND(ID_BCF_ADDBIM, &CMySTEPViewerDoc::OnBcfAddbim)
+	ON_UPDATE_COMMAND_UI(ID_BCF_ADDBIM, &CMySTEPViewerDoc::OnUpdateBcfAddbim)
+	ON_COMMAND(ID_BCF_NEW, &CMySTEPViewerDoc::OnBcfNew)
+	ON_UPDATE_COMMAND_UI(ID_BCF_NEW, &CMySTEPViewerDoc::OnUpdateBcfNew)
+	ON_COMMAND(ID_BCF_OPEN, &CMySTEPViewerDoc::OnBcfOpen)
+	ON_UPDATE_COMMAND_UI(ID_BCF_OPEN, &CMySTEPViewerDoc::OnUpdateBcfOpen)
 END_MESSAGE_MAP()
 
 
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
+	: m_wndBCFView(*this)
 {
 }
 
@@ -109,7 +112,9 @@ CMySTEPViewerDoc::~CMySTEPViewerDoc()
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
-		return FALSE;
+		return FALSE;	
+
+	m_wndBCFView.Close();
 
 	setModel(nullptr);
 
@@ -207,6 +212,15 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
+	if (m_wndBCFView.IsBCF(lpszPathName))
+	{
+		m_wndBCFView.Open(lpszPathName);
+
+		return TRUE;
+	}
+
+	m_wndBCFView.Close();
+
 	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
 
 	// Title
@@ -223,7 +237,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, OPEN_FILES_FILTER);
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, DESIGN_MODELS_FILTER);
 	if (dlgFile.DoModal() != IDOK)
 	{
 		return;
@@ -235,6 +249,9 @@ void CMySTEPViewerDoc::OnFileOpen()
 	{
 		CString strFileName = dlgFile.GetNextPathName(pos);
 		vecModels.push_back(strFileName);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(vecModels[0]);
 	}
 
 	OpenModels(vecModels);
@@ -243,11 +260,8 @@ void CMySTEPViewerDoc::OnFileOpen()
 	CString strTitle = AfxGetAppName();
 	strTitle += L" - ";
 	strTitle += vecModels[0];
-	strTitle += L", ...";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(vecModels[0]);
+	strTitle += vecModels.size() > 1 ? L", ..." : L"";
+	AfxGetMainWnd()->SetWindowTextW(strTitle);	
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
@@ -259,6 +273,21 @@ void CMySTEPViewerDoc::DeleteContents()
 {
 	m_wndModelChecker.Hide(true);
 	__super::DeleteContents();
+}
+
+void CMySTEPViewerDoc::OnCloseDocument()
+{
+	m_wndBCFView.Close();
+	__super::OnCloseDocument();
+}
+
+BOOL CMySTEPViewerDoc::SaveModified()
+{
+	if (!m_wndBCFView.SaveModified()) {
+		return FALSE;
+	}
+
+	return __super::SaveModified();
 }
 
 void CMySTEPViewerDoc::OnViewModelChecker()
@@ -285,17 +314,17 @@ void CMySTEPViewerDoc::OnFileSave()
 	CString strExtension;
 	if (apModel->getAP() == enumAP::STEP)
 	{
-		strFiler = SAVE_STEP_FILTER;
+		strFiler = STEP_MODELS_FILTER;
 		strExtension = L"ifc";
 	}
 	else if (apModel->getAP() == enumAP::IFC)
 	{
-		strFiler = SAVE_IFC_FILTER;
+		strFiler = IFC_MODELS_FILTER;
 		strExtension = L"step";
 	}
 	else  if (apModel->getAP() == enumAP::CIS2)
 	{
-		strFiler = SAVE_CIS2_FILTER;
+		strFiler = CIS2_MODELS_FILTER;
 		strExtension = L"stp";
 	}
 	else
@@ -327,4 +356,71 @@ void CMySTEPViewerDoc::OnFileSaveAs()
 void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(getModels().size() == 1);
+}
+
+void CMySTEPViewerDoc::OnBcfAddbim()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, BIM_MODELS_FILTER);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	POSITION pos(dlgFile.GetStartPosition());
+	while (pos != nullptr)
+	{
+		CString strPath = dlgFile.GetNextPathName(pos);
+
+		auto pModel = _ap_model_factory::load(strPath, false, !getModels().empty() ? getModels()[0] : nullptr, false);
+		if (pModel->getAP() != enumAP::IFC)
+		{
+			delete pModel;
+
+			continue;
+		}
+
+		m_wndBCFView.GetActiveTopic()->AddBimFile(ToUTF8(pModel->getPath()).c_str(), false);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(strPath);
+	}
+
+	m_wndBCFView.ViewTopicModels(m_wndBCFView.GetActiveTopic());
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfAddbim(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndBCFView.GetActiveTopic() != NULL);
+}
+
+void CMySTEPViewerDoc::OnBcfNew()
+{
+	m_wndBCFView.Open(NULL);
+
+	setModel(nullptr);
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfNew(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_wndBCFView.GetSafeHwnd() || !m_wndBCFView.IsWindowVisible());
+}
+
+void CMySTEPViewerDoc::OnBcfOpen()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, BCF_PACKAGES_FILTER);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	CString strPath = dlgFile.GetPathName();
+	if (m_wndBCFView.IsBCF(strPath))
+	{
+		m_wndBCFView.Open(strPath);
+	}
+}
+
+void CMySTEPViewerDoc::OnUpdateBcfOpen(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(TRUE);
 }

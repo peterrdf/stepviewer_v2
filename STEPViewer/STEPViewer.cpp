@@ -99,11 +99,9 @@ BOOL CMySTEPViewerApp::InitInstance()
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
 	SetRegistryKey(_T("STEPViewr, RDF LTD"));
-	LoadStdProfileSettings(4);  // Load standard INI file options (including MRU)
-
+	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 
 	InitContextMenuManager();
-
 	InitKeyboardManager();
 
 	InitTooltipManager();
@@ -124,12 +122,9 @@ BOOL CMySTEPViewerApp::InitInstance()
 		return FALSE;
 	AddDocTemplate(pDocTemplate);
 
-
 	// Parse command line for standard shell commands, DDE, file open
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
-
-
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.

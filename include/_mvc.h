@@ -112,6 +112,8 @@ public: // Methods
 	_texture* getTexture(const wstring& strTexture);
 	virtual _texture* getDefaultTexture() { return nullptr; };
 
+	virtual void resetInstancesEnabledState() { assert(false); }
+
 protected: // Methods
 
 	void setVertexBufferOffset(OwlInstance owlInstance);
@@ -218,7 +220,7 @@ public: // Methods
 
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);
-	void addModel(_model* pModel);
+	void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
 	_instance* loadInstance(int64_t iInstance);
 
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
@@ -257,6 +259,7 @@ public: // Methods
 	void setTargetInstance(_view* pSender, _instance* pInstance);
 	_instance* getTargetInstance() const { return m_pTargetInstance; }
 	void selectInstance(_view* pSender, _instance* pInstance, bool bAdd = false);
+	void selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd = false);
 	_instance* getSelectedInstance() const; // kept for backward compatibility
 	const vector<_instance*>& getSelectedInstances() const { return m_vecSelectedInstances; }
 	bool isInstanceSelected(_instance* pInstance) const;
@@ -269,9 +272,10 @@ public: // Methods
 	// Events
 	void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }	
 	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
+	void resetInstancesEnabledState(_view* pSender);
 	void onInstancesEnabledStateChanged(_view* pSender);
 	void onInstancesShowStateChanged(_view* pSender);
-	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+	void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);	
 	
 protected: // Methods
 

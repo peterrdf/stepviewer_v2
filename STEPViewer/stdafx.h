@@ -56,3 +56,8 @@
 
 #include "engine.h"
 #include "stepengine.h"
+
+#include <string>
+
+extern CString FromUTF8(const char* utf8);
+extern std::string ToUTF8(const wchar_t* utf16);

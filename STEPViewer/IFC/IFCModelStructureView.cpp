@@ -304,6 +304,19 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			Tree_EnsureVisible(pModelData, ifcInstance);
 		}		
 	}
+	else
+	{
+		for (auto pModel : m_vecModelData)
+		{
+			HTREEITEM hChild = m_pTreeCtrl->GetNextItem(pModel->GetProjectItem(), TVGN_CHILD);
+			while (hChild != nullptr)
+			{
+				m_pTreeCtrl->Expand(hChild, TVE_COLLAPSE);
+
+				hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+			}			
+		}
+	}
 
 	Tree_Select(true);
 }
