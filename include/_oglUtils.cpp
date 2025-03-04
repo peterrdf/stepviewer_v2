@@ -1348,17 +1348,9 @@ void _oglRenderer::_getCameraSettings(
 	} // if (m_bCameraSettings)
 	else
 	{
-		float fWorldXmin = FLT_MAX;
-		float fWorldXmax = -FLT_MAX;
-		float fWorldYmin = FLT_MAX;
-		float fWorldYmax = -FLT_MAX;
-		float fWorldZmin = FLT_MAX;
-		float fWorldZmax = -FLT_MAX;
-		_getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
-
 		arViewPoint[0] = m_fXTranslation * dScaleFactor;
 		arViewPoint[1] = m_fYTranslation * dScaleFactor;
-		arViewPoint[2] = m_fZTranslation * dScaleFactor;
+		arViewPoint[2] = -m_fZTranslation * dScaleFactor;
 		arViewPoint[0] -= vecVertexBufferOffset.x;
 		arViewPoint[1] -= vecVertexBufferOffset.y;
 		arViewPoint[2] -= vecVertexBufferOffset.z;
@@ -1366,16 +1358,14 @@ void _oglRenderer::_getCameraSettings(
 		arViewPoint[1] *= dLengthConversionFactor;
 		arViewPoint[2] *= dLengthConversionFactor;
 
-		arDirection[0] = ((fWorldXmin + fWorldXmax) / 2.) * dScaleFactor;
-		arDirection[1] = ((fWorldYmin + fWorldYmax) / 2.) * dScaleFactor;
-		arDirection[2] = ((fWorldZmin + fWorldZmax) / 2.) * dScaleFactor;
+		arDirection[0] = m_fXTranslation * dScaleFactor;
+		arDirection[1] = m_fYTranslation * dScaleFactor;
+		arDirection[2] = m_fZTranslation * dScaleFactor;
 		arDirection[0] -= vecVertexBufferOffset.x;
 		arDirection[1] -= vecVertexBufferOffset.y;
 		arDirection[2] -= vecVertexBufferOffset.z;
 
-		glm::vec3 dir(arDirection[0], arDirection[1], arDirection[2]);
-		dir = glm::normalize(dir);
-
+		glm::vec3 dir = glm::normalize(glm::vec3(arDirection[0], arDirection[1], arDirection[2]));
 		arDirection[0] = dir.x;
 		arDirection[1] = dir.y;
 		arDirection[2] = dir.z;
