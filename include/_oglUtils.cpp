@@ -1317,7 +1317,7 @@ void _oglRenderer::_getCameraSettings(
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
-	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
+	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;	
 
 	bPerspective = m_enProjection == enumProjection::Perspective;
 
@@ -1341,13 +1341,21 @@ void _oglRenderer::_getCameraSettings(
 		arUpVector[1] = m_vecUpVector.y;
 		arUpVector[2] = m_vecUpVector.z;
 
-		dViewToWorldScale = m_fScaleFactor;
+		dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
 
 		dFieldOfView = m_dFieldOfView;
 		dAspectRatio = m_dAspectRatio;
 	} // if (m_bCameraSettings)
 	else
 	{
+		float fWorldXmin = FLT_MAX;
+		float fWorldXmax = -FLT_MAX;
+		float fWorldYmin = FLT_MAX;
+		float fWorldYmax = -FLT_MAX;
+		float fWorldZmin = FLT_MAX;
+		float fWorldZmax = -FLT_MAX;
+		_getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
 		arViewPoint[0] = m_fXTranslation * dScaleFactor;
 		arViewPoint[1] = m_fYTranslation * dScaleFactor;
 		arViewPoint[2] = m_fZTranslation * dScaleFactor;
@@ -1358,15 +1366,25 @@ void _oglRenderer::_getCameraSettings(
 		arViewPoint[1] *= dLengthConversionFactor;
 		arViewPoint[2] *= dLengthConversionFactor;
 
-		arDirection[0] = (m_fXmin + m_fXmax) / 2.f;
-		arDirection[1] = (m_fYmin + m_fYmax) / 2.f;
-		arDirection[2] = (m_fZmin + m_fZmax) / 2.f;
+		arDirection[0] = ((fWorldXmin + fWorldXmax) / 2.) * dScaleFactor;
+		arDirection[1] = ((fWorldYmin + fWorldYmax) / 2.) * dScaleFactor;
+		arDirection[2] = ((fWorldZmin + fWorldZmax) / 2.) * dScaleFactor;
+		arDirection[0] -= vecVertexBufferOffset.x;
+		arDirection[1] -= vecVertexBufferOffset.y;
+		arDirection[2] -= vecVertexBufferOffset.z;
+
+		glm::vec3 dir(arDirection[0], arDirection[1], arDirection[2]);
+		dir = glm::normalize(dir);
+
+		arDirection[0] = dir.x;
+		arDirection[1] = dir.y;
+		arDirection[2] = dir.z;
 
 		arUpVector[0] = m_matModelView[0][0];
 		arUpVector[1] = m_matModelView[0][1];
 		arUpVector[2] = m_matModelView[0][2];
 
-		dViewToWorldScale = m_fScaleFactor;
+		dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
 
 		dFieldOfView = 45.0;
 		dAspectRatio = 1.;
