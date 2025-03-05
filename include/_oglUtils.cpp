@@ -888,8 +888,8 @@ _oglRenderer::_oglRenderer()
 	, m_vecViewPoint({ 0., 0, 0. })
 	, m_vecDirection({ 0., 0, 0. })
 	, m_vecUpVector({ 0., 0, 0. })
-	, m_dFieldOfView(0.)
-	, m_dAspectRatio(0.)
+	, m_dFieldOfView(45.)
+	, m_dAspectRatio(1.)
 {
 	_setView(enumView::Isometric);
 }
@@ -1071,8 +1071,12 @@ void _oglRenderer::_prepare(
 	// aspect   - Aspect ratio of the viewport
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
-	GLdouble fovY = m_bCameraSettings ? m_dFieldOfView : 45.0;
-	GLdouble aspect = m_bCameraSettings ? m_dAspectRatio : (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	GLdouble fovY = m_dFieldOfView;
+	if (!m_bCameraSettings)
+	{
+		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	}
+	GLdouble aspect = m_dAspectRatio;
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -1318,64 +1322,28 @@ void _oglRenderer::_getCameraSettings(
 
 	bPerspective = m_enProjection == enumProjection::Perspective;
 
-	if (m_bCameraSettings)
-	{
-		arViewPoint[0] = m_vecViewPoint.x * dScaleFactor;
-		arViewPoint[1] = m_vecViewPoint.y * dScaleFactor;
-		arViewPoint[2] = m_vecViewPoint.z * dScaleFactor;
-		arViewPoint[0] -= vecVertexBufferOffset.x;
-		arViewPoint[1] -= vecVertexBufferOffset.y;
-		arViewPoint[2] -= vecVertexBufferOffset.z;
-		arViewPoint[0] *= dLengthConversionFactor;
-		arViewPoint[1] *= dLengthConversionFactor;
-		arViewPoint[2] *= dLengthConversionFactor;
+	arViewPoint[0] = -m_matModelView[3][0] * dScaleFactor;
+	arViewPoint[1] = -m_matModelView[3][1] * dScaleFactor;
+	arViewPoint[2] = -m_matModelView[3][2] * dScaleFactor;
+	arViewPoint[0] -= vecVertexBufferOffset.x;
+	arViewPoint[1] -= vecVertexBufferOffset.y;
+	arViewPoint[2] -= vecVertexBufferOffset.z;
+	arViewPoint[0] *= dLengthConversionFactor;
+	arViewPoint[1] *= dLengthConversionFactor;
+	arViewPoint[2] *= dLengthConversionFactor;
 
-		arDirection[0] = m_vecDirection.x;
-		arDirection[1] = m_vecDirection.y;
-		arDirection[2] = m_vecDirection.z;
+	arDirection[0] = -m_matModelView[2][0];
+	arDirection[1] = -m_matModelView[2][1];
+	arDirection[2] = -m_matModelView[2][2];
 
-		arUpVector[0] = m_vecUpVector.x;
-		arUpVector[1] = m_vecUpVector.y;
-		arUpVector[2] = m_vecUpVector.z;
+	arUpVector[0] = m_matModelView[0][0];
+	arUpVector[1] = m_matModelView[0][1];
+	arUpVector[2] = m_matModelView[0][2];
 
-		dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
+	dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
 
-		dFieldOfView = m_dFieldOfView;
-		dAspectRatio = m_dAspectRatio;
-	} // if (m_bCameraSettings)
-	else
-	{
-		arViewPoint[0] = m_fXTranslation * dScaleFactor;
-		arViewPoint[1] = m_fYTranslation * dScaleFactor;
-		arViewPoint[2] = -m_fZTranslation * dScaleFactor;
-		arViewPoint[0] -= vecVertexBufferOffset.x;
-		arViewPoint[1] -= vecVertexBufferOffset.y;
-		arViewPoint[2] -= vecVertexBufferOffset.z;
-		arViewPoint[0] *= dLengthConversionFactor;
-		arViewPoint[1] *= dLengthConversionFactor;
-		arViewPoint[2] *= dLengthConversionFactor;
-
-		arDirection[0] = m_fXTranslation * dScaleFactor;
-		arDirection[1] = m_fYTranslation * dScaleFactor;
-		arDirection[2] = m_fZTranslation * dScaleFactor;
-		arDirection[0] -= vecVertexBufferOffset.x;
-		arDirection[1] -= vecVertexBufferOffset.y;
-		arDirection[2] -= vecVertexBufferOffset.z;
-
-		glm::vec3 dir = glm::normalize(glm::vec3(arDirection[0], arDirection[1], arDirection[2]));
-		arDirection[0] = dir.x;
-		arDirection[1] = dir.y;
-		arDirection[2] = dir.z;
-
-		arUpVector[0] = m_matModelView[0][0];
-		arUpVector[1] = m_matModelView[0][1];
-		arUpVector[2] = m_matModelView[0][2];
-
-		dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
-
-		dFieldOfView = 45.0;
-		dAspectRatio = 1.;
-	}
+	dFieldOfView = 45.0;
+	dAspectRatio = 1.;
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
@@ -1589,8 +1557,8 @@ void _oglRenderer::_reset()
 	m_vecViewPoint = { 0., 0, 0. };
 	m_vecDirection = { 0., 0, 0. };
 	m_vecUpVector = { 0., 0, 0. };
-	m_dFieldOfView = 0.;
-	m_dAspectRatio = 0.;
+	m_dFieldOfView = 45.;
+	m_dAspectRatio = 1.;
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
