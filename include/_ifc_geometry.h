@@ -9,6 +9,7 @@ class _ifc_geometry : public _ap_geometry
 
 private: // Members
 
+	vector<_ifc_geometry*> m_vecRepresentationGeometries;
 	vector<_ifc_geometry*> m_vecMappedGeometries;
 
 	bool m_bIsMappedItem;

@@ -4,6 +4,7 @@
 // ************************************************************************************************
 _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries)
 	: _ap_geometry(owlInstance, sdaiInstance)
+	, m_vecRepresentationGeometries()
 	, m_vecMappedGeometries(vecMappedGeometries)
 	, m_bIsMappedItem(false)
 	, m_bIsReferenced(false)
@@ -35,6 +36,13 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 
 /*virtual*/ bool _ifc_geometry::hasGeometry() const /*override*/
 {
+	if (!m_vecRepresentationGeometries.empty())
+	{
+		assert(m_vecMappedGeometries.empty());
+
+		return true;
+	}
+
 	if (!m_vecMappedGeometries.empty())
 	{
 		for (auto pMappedGeometry : m_vecMappedGeometries)

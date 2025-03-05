@@ -636,14 +636,14 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		delete pProduct;
 		pProduct = nullptr;
 
-		// Owner
+		// Placeholder
 		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
 		pGeometry->setShow(
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 		addGeometry(pGeometry);
 
-		// Owner
+		// Placeholder
 		auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
 		pInstance->setDefaultEnabledState();
 		addInstance(pInstance);
@@ -658,42 +658,119 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		return pGeometry;
 	} // if (pProduct != nullptr)
 
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
-	if (!bMappedItem && owlInstance != 0)
-	{
-		preLoadInstance(owlInstance);
-	}
+	// NEW ------------------------------------------------------------------------------------------------------------------
+	// Representation
+	pGeometry = createGeometry(0, sdaiInstance);
+	pGeometry->setShow(
+		(strEntity == L"IFCRELSPACEBOUNDARY") ||
+		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+	addGeometry(pGeometry);
 
-	// Set up circleSegments()
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
-	{
-		circleSegments(iCircleSegments, 5);
-	}
+	// Representation
+	auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+	pInstance->setDefaultEnabledState();
+	addInstance(pInstance);
 
-	pGeometry = createGeometry(owlInstance, sdaiInstance);
-	addGeometry(pGeometry);	
+	SdaiInstance ifcProductRepresentationInstance = 0;
+	sdaiGetAttrBN(sdaiInstance/*ifcProductInstance*/, "Representation", sdaiINSTANCE, &ifcProductRepresentationInstance);
 
-	if (!bMappedItem)
-	{
-		pGeometry->setShow(
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+	if (ifcProductRepresentationInstance) {
+		SdaiAggr representationsAggr = nullptr;
+		sdaiGetAttrBN(ifcProductRepresentationInstance, "Representations", sdaiAGGR, &representationsAggr);
 
-		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);		
-		pInstance->setDefaultEnabledState();
-		addInstance(pInstance);
-	}
-	else
-	{
-		pGeometry->m_bIsMappedItem = true;
-		pGeometry->m_bIsReferenced = true;
-	}
+		SdaiInteger representationsAggrCnt = sdaiGetMemberCount(representationsAggr);
+		for (SdaiInteger index = 0; index < representationsAggrCnt; index++) {
+			SdaiInstance ifcRepresentationInstance = 0;
+			sdaiGetAggrByIndex(representationsAggr, index, sdaiINSTANCE, &ifcRepresentationInstance);
 
-	// Restore circleSegments()
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
-	{
-		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+			if (ifcRepresentationInstance) {
+				wchar_t* myRepresentationType = nullptr;
+				sdaiGetAttrBN(ifcRepresentationInstance, "RepresentationType", sdaiUNICODE, &myRepresentationType);
+
+				OwlInstance owlGeometryInstance = 0;
+				owlBuildInstanceInContext(ifcRepresentationInstance, sdaiInstance/*ifcProductInstance*/, &owlGeometryInstance);
+
+				//
+				//  => Geometry (owlGeometryInstance) with label (myRepresentationType)
+				//
+
+				if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+				{
+					circleSegments(iCircleSegments, 5);
+				}
+
+				auto pRepresentationGeometry = createGeometry(owlGeometryInstance, ifcRepresentationInstance);
+				addGeometry(pRepresentationGeometry);
+
+				pGeometry->m_vecRepresentationGeometries.push_back(pRepresentationGeometry);
+
+				if (!bMappedItem)
+				{
+					pRepresentationGeometry->setShow(
+						(strEntity == L"IFCRELSPACEBOUNDARY") ||
+						(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
+					auto pRepresentationInstance = createInstance(_model::getNextInstanceID(), pRepresentationGeometry, nullptr);					
+					pRepresentationInstance->setEnable(true);
+					addInstance(pRepresentationInstance);
+
+					pRepresentationGeometry->m_bIsReferenced = true;
+					pRepresentationInstance->m_pOwner = pInstance;
+					
+				}
+				else
+				{
+					pRepresentationGeometry->m_bIsReferenced = true;
+					pRepresentationGeometry->m_bIsMappedItem = true;					
+				}
+
+				if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+				{
+					circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+				}
+			}
+		}
 	}
+	// NEW ------------------------------------------------------------------------------------------------------------------
+
+	// OLD ------------------------------------------------------------------------------------------------------------------
+	//OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	//if (!bMappedItem && owlInstance != 0)
+	//{
+	//	preLoadInstance(owlInstance);
+	//}
+
+	//// Set up circleSegments()
+	//if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+	//{
+	//	circleSegments(iCircleSegments, 5);
+	//}
+
+	//pGeometry = createGeometry(owlInstance, sdaiInstance);
+	//addGeometry(pGeometry);	
+
+	//if (!bMappedItem)
+	//{
+	//	pGeometry->setShow(
+	//		(strEntity == L"IFCRELSPACEBOUNDARY") ||
+	//		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+
+	//	auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);		
+	//	pInstance->setDefaultEnabledState();
+	//	addInstance(pInstance);
+	//}
+	//else
+	//{
+	//	pGeometry->m_bIsMappedItem = true;
+	//	pGeometry->m_bIsReferenced = true;
+	//}
+
+	//// Restore circleSegments()
+	//if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+	//{
+	//	circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+	//}
+	// OLD ------------------------------------------------------------------------------------------------------------------
 
 	return pGeometry;
 }
