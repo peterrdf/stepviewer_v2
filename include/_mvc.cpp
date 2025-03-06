@@ -46,7 +46,8 @@ void _model::scale()
 
 		for (auto pGeometry : m_vecGeometries)
 		{
-			if (!pGeometry->hasGeometry())
+			if (!pGeometry->hasGeometry() ||
+				pGeometry->ignoreBB())
 			{
 				continue;
 			}
@@ -116,7 +117,9 @@ void _model::scale()
 	int64_t iEnabledInstances = 0;
 	for (auto pGeometry : m_vecGeometries)
 	{
-		if (!pGeometry->hasGeometry())
+		if (!pGeometry->hasGeometry() 
+			|| pGeometry->ignoreBB() ||
+			!pGeometry->getShow())
 		{
 			continue;
 		}
@@ -143,7 +146,9 @@ void _model::scale()
 	{
 		for (auto pGeometry : m_vecGeometries)
 		{
-			if (!pGeometry->hasGeometry())
+			if (!pGeometry->hasGeometry()
+				|| pGeometry->ignoreBB() ||
+				!pGeometry->getShow())
 			{
 				continue;
 			}
