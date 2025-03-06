@@ -20,7 +20,7 @@ _ifc_instance::_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* 
 	return m_pOwner;
 }
 
-void _ifc_instance::setDefaultEnabledState()
+void _ifc_instance::setDefaultEnableState()
 {
 	wstring strEntity = getEntityName();
 	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
