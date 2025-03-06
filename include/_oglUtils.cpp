@@ -1297,10 +1297,19 @@ void _oglRenderer::_setCameraSettings(
 	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
 
-	glm::vec3 eulerAngles = directionToEulerAngles(
+	// I. Rotation and View point
+	glm::mat4 matRotation = glm::lookAt(
+		glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, -m_vecViewPoint.z),
 		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
 		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
-	m_rotation = _quaterniond::toQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+	glm::quat quatRotation = glm::quat_cast(matRotation);
+	m_rotation = _quaterniond(quatRotation.w, quatRotation.x, quatRotation.y, quatRotation.z);
+
+	// II. Only rotation; View point is not set
+	/*glm::vec3 eulerAngles = directionToEulerAngles(
+		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+	m_rotation = _quaterniond::toQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z);*/
 
 	_redraw();
 }
