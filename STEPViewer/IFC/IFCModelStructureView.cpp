@@ -722,7 +722,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			continue;
 		}
 
-		const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = ifcGeometry->getEntityName();
 
 		// Enable
 		auto itEntity2EnableCount = mapEntity2EnableCount.find(szEntityName);
@@ -1145,7 +1145,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						continue;
 					}
 
-					const wchar_t* szEntityName = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
+					const wchar_t* szEntityName = ifcGeometry->getEntityName();
 
 					for (auto pInstance : pGeometry->getInstances())
 					{
@@ -1644,7 +1644,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREE
 			ASSERT(pGeometry->getInstances().size() == 1);
 			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 
-			const wchar_t* szEntity = _ap_instance::getEntityName(ifcGeometry->getSdaiInstance());
+			const wchar_t* szEntity = ifcGeometry->getEntityName();
 
 			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
 			if (itUnreferencedItems == mapUnreferencedItems.end())

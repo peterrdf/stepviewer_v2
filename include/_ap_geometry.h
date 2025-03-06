@@ -89,4 +89,57 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
 	SdaiModel getSdaiModel() const { return sdaiGetInstanceModel(m_sdaiInstance); }
+	SdaiEntity getSdaiEntity() const { return getSdaiEntity(m_sdaiInstance); }
+	const wchar_t* getEntityName() const { return getEntityName(m_sdaiInstance); }
+
+	static wstring getName(SdaiInstance sdaiInstance)
+	{
+		wstring strUniqueName;
+
+		int64_t iExpressID = internalGetP21Line(sdaiInstance);
+		if (iExpressID != 0)
+		{
+			CString strID;
+			strID.Format(_T("#%lld"), iExpressID);
+
+			strUniqueName = strID;
+			strUniqueName += L" ";
+			strUniqueName += getEntityName(sdaiInstance);
+		}
+
+		wchar_t* szName = nullptr;
+		sdaiGetAttrBN(sdaiInstance, "Name", sdaiUNICODE, &szName);
+
+		if ((szName != nullptr) && (wcslen(szName) > 0))
+		{
+			strUniqueName += L" '";
+			strUniqueName += szName;
+			strUniqueName += L"'";
+		}
+
+		wchar_t* szDescription = nullptr;
+		sdaiGetAttrBN(sdaiInstance, "Description", sdaiUNICODE, &szDescription);
+
+		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
+		{
+			strUniqueName += L" (";
+			strUniqueName += szDescription;
+			strUniqueName += L")";
+		}
+
+		return strUniqueName;
+	}
+
+	static SdaiEntity getSdaiEntity(SdaiInstance sdaiInstance)
+	{
+		return sdaiGetInstanceType(sdaiInstance);
+	}
+
+	static const wchar_t* getEntityName(SdaiInstance sdaiInstance)
+	{
+		wchar_t* szEntityName = nullptr;
+		engiGetEntityName(getSdaiEntity(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
+
+		return szEntityName;
+	}
 };

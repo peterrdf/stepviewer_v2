@@ -78,8 +78,8 @@ public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
 	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
-	SdaiEntity getSdaiEntity() const { return getSdaiEntity(getSdaiInstance()); }
-	const wchar_t* getEntityName() const { return getEntityName(getSdaiInstance()); }
+	SdaiEntity getSdaiEntity() const { return getGeometryAs<_ap_geometry>()->getSdaiEntity(); }
+	const wchar_t* getEntityName() const { return getGeometryAs<_ap_geometry>()->getEntityName(); }
 
 	static wstring getName(SdaiInstance sdaiInstance)
 	{
@@ -93,7 +93,7 @@ public: // Properties
 
 			strUniqueName = strID;
 			strUniqueName += L" ";
-			strUniqueName += getEntityName(sdaiInstance);
+			strUniqueName += _ap_geometry::getEntityName(sdaiInstance);
 		}
 
 		wchar_t* szName = nullptr;
@@ -118,17 +118,4 @@ public: // Properties
 
 		return strUniqueName;
 	}	
-	
-	static SdaiEntity getSdaiEntity(SdaiInstance sdaiInstance) 
-	{
-		return sdaiGetInstanceType(sdaiInstance);
-	}	
-
-	static const wchar_t* getEntityName(SdaiInstance sdaiInstance)
-	{
-		wchar_t* szEntityName = nullptr;
-		engiGetEntityName(getSdaiEntity(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
-
-		return szEntityName;
-	}
 };

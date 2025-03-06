@@ -1,6 +1,9 @@
 #include "_host.h"
 #include "_ifc_geometry.h"
 
+#include <algorithm>
+using namespace std;
+
 // ************************************************************************************************
 _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries)
 	: _ap_geometry(owlInstance, sdaiInstance)
@@ -69,4 +72,14 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 	}
 	
 	return false;
+}
+
+void _ifc_geometry::setDefaultShowState()
+{
+	wstring strEntity = getEntityName();
+	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
+
+	setShow(
+		(strEntity == L"IFCRELSPACEBOUNDARY") ||
+		(strEntity == L"IFCOPENINGELEMENT") ? false : true);
 }

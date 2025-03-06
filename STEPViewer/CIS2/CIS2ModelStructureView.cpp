@@ -378,7 +378,7 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		_ptr<_ap_geometry> apGeometry(pGeometry);
 		ASSERT(apGeometry);
 
-		const wchar_t* szEntityName = _ap_instance::getEntityName(apGeometry->getSdaiInstance());
+		const wchar_t* szEntityName = apGeometry->getEntityName();
 
 		auto itEntity2VisibleCount = mapEntity2VisibleCount.find(szEntityName);
 		if (itEntity2VisibleCount == mapEntity2VisibleCount.end())

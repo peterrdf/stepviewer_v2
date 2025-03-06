@@ -28,6 +28,10 @@ protected: // Methods
 	virtual bool isPlaceholder() const override;
 	virtual bool ignoreBB() const override;
 
+public: // Methods
+
+	void setDefaultShowState();
+
 public: // Properties
 
 	bool getIsMappedItem() const { return m_bIsMappedItem; }

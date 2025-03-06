@@ -638,9 +638,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 		// Owner
 		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
-		pGeometry->setShow(
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+		pGeometry->setDefaultShowState();
 		addGeometry(pGeometry);
 
 		// Owner
@@ -675,9 +673,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 
 	if (!bMappedItem)
 	{
-		pGeometry->setShow(
-			(strEntity == L"IFCRELSPACEBOUNDARY") ||
-			(strEntity == L"IFCOPENINGELEMENT") ? false : true);
+		pGeometry->setDefaultShowState();
 
 		auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);		
 		pInstance->setDefaultEnableState();
