@@ -2543,7 +2543,7 @@ protected: // Methods
 	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
 	// http://nehe.gamedev.net/article/using_gluunproject/16013/
-	bool getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
+	bool getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
 
 public: // Methods
 

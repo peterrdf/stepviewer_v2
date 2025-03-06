@@ -2063,6 +2063,16 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
+	// Initialize
+	if (!_prepareScene())
+	{
+		return;
+	}
+
+	// Off-screen
+	_drawBuffers();
+
+	// Restore
 	if (!_prepareScene())
 	{
 		return;
@@ -2080,10 +2090,8 @@ _oglView::_oglView()
 	// Tangent, Normal, Bi-Normal Vectors, etc.
 	_postDraw();
 
-	// OpenGL
-	SwapBuffers(*pDC);
-
-	_drawBuffers();
+	// Update
+	SwapBuffers(*pDC);	
 }
 
 /*virtual*/ void _oglView::_drawBuffers()
@@ -2660,45 +2668,16 @@ void _oglView::_drawInstancesFrameBuffer()
 	_oglUtils::checkForErrors();
 }
 
-bool _oglView::getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
-	if (pModel == nullptr)
-	{
-		return false;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
-	//
-	// Restore Z buffer
-	// 
-
-	_prepare(
-		0, 0,
-		rcClient.Width(), rcClient.Height(),
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
-
-	// Store Matrices
 	GLfloat arModelViewMatrix[16];
 	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
 
 	GLfloat arProjectionMatrix[16];
 	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
-	
-	_draw(m_pWnd->GetDC());
 
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 
@@ -2812,7 +2791,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			GLdouble dX = 0.;
 			GLdouble dY = 0.;
 			GLdouble dZ = 0.;
-			if (getOGLPos(pModel, point.x, point.y, -FLT_MAX, dX, dY, dZ))
+			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
 			{
 				_vector3d vecVertexBufferOffset;
 				GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
