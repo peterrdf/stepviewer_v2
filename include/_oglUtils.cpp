@@ -1642,7 +1642,10 @@ _oglView::_oglView()
 
 	delete m_pSelectInstanceFrameBuffer;
 
-	removeUserDefinedMaterials();
+	for (auto itUserDefinedMaterial : m_mapUserDefinedMaterials)
+	{
+		delete itUserDefinedMaterial.second;
+	}
 }
 
 /*virtual*/ void _oglView::onWorldDimensionsChanged() /*override*/
