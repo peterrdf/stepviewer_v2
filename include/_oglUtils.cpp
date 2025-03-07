@@ -2107,6 +2107,11 @@ void _oglView::_drawFaces()
 
 /*virtual*/ void _oglView::_drawFaces(bool bTransparent)
 {
+	if (!getShowFaces())
+	{
+		return;
+	}
+
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2289,6 +2294,11 @@ void _oglView::_drawFaces()
 
 void _oglView::_drawConceptualFacesPolygons()
 {
+	if (!getShowConceptualFacesPolygons())
+	{
+		return;
+	}
+
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2368,6 +2378,11 @@ void _oglView::_drawConceptualFacesPolygons()
 
 void _oglView::_drawLines()
 {
+	if (!getShowLines())
+	{
+		return;
+	}
+
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2447,6 +2462,11 @@ void _oglView::_drawLines()
 
 void _oglView::_drawPoints()
 {
+	if (!getShowPoints())
+	{
+		return;
+	}
+
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2539,6 +2559,11 @@ void _oglView::_drawPoints()
 
 void _oglView::_drawInstancesFrameBuffer()
 {
+	if (!getShowFaces())
+	{
+		return;
+	}
+
 	//
 	// Create a frame buffer
 	//
