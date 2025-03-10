@@ -9,10 +9,10 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
 	: _ap_instance(iID, pGeometry, pTransformationMatrix)
 	, m_strName(L"")
 {
-	_ptr<_ap242_product_definition> productDefinition(pGeometry);
+	auto pProductDeifnition = getProductDefinition();
 
 	wchar_t szBuffer[512];
-	swprintf(szBuffer, 512, L"#%lld %s %s", productDefinition->getExpressID(), productDefinition->getProductName(), L"(product)");
+	swprintf(szBuffer, 512, L"#%lld %s %s", pProductDeifnition->getExpressID(), pProductDeifnition->getProductName(), L"(product)");
 
 	m_strName = szBuffer;
 }
