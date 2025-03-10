@@ -19,6 +19,7 @@ public:  // Methods
 	
 public: // Properties
 
-	virtual wstring getName() const override { return getGeometry()->getName(); }
-	wstring getUniqueName() const { return getGeometry()->getUniqueName(); }
+	virtual const wchar_t* getName() const override { return getGeometry()->getName(); }
+	const wchar_t* getUniqueName() const { return getGeometry()->getUniqueName(); }
+	bool getDesignTreeConsistency() { return CheckInstanceConsistency(getOwlInstance(), FLAGBIT(0)) == 0; }
 };

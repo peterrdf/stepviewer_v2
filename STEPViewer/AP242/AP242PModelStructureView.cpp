@@ -1018,7 +1018,7 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 	}
 
 	CString strName;
-	strName.Format(L"%s %s (%lld)", pInstance->getName().c_str(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
+	strName.Format(L"%s %s (%lld)", pInstance->getName(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
 
 	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 

@@ -25,7 +25,7 @@
 		return;
 	} 
 
-	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName().c_str()).c_str();
+	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,

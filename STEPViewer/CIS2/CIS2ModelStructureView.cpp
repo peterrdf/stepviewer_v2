@@ -870,7 +870,7 @@ void CCIS2ModelStructureView::LoadInstance(CCIS2Model* pModel, SdaiInstance sdai
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<CCIS2Instance> cis2Instance(pGeometry->getInstances()[0]);
 
-		wstring strItem = _ap_instance::getName(sdaiInstance);
+		wstring strItem = _ap_geometry::getName(sdaiInstance);
 
 		/*
 		* Object
