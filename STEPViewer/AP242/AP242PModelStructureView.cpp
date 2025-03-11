@@ -1001,8 +1001,6 @@ void CAP242PModelStructureView::LoadAssembly(_ap242_model* pModel, _ap242_assemb
 	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pAssembly, enumAP242ItemDataType::Assembly);
 	pParentItemData->Children().push_back(pItemData);
 
-	m_vecItemData.push_back(pItemData);
-
 	m_pTreeCtrl->SetItemData(hAssembly, (DWORD_PTR)pItemData);
 
 	LoadProduct(pModel, pAssembly->getRelatedProductDefinition(), hAssembly);
@@ -1031,8 +1029,6 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::ProductInstance);
 	pParentItemData->Children().push_back(pItemData);
 
-	m_vecItemData.push_back(pItemData);
-
 	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
 
 	ASSERT(m_mapInstance2Item.find(pInstance) == m_mapInstance2Item.end());
@@ -1060,6 +1056,7 @@ void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDr
 
 	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pDraugthingModel, enumAP242ItemDataType::DraughtingModel);
 	pParentItemData->Children().push_back(pItemData);
+
 	m_pTreeCtrl->SetItemData(hDraugthingModel, (DWORD_PTR)pItemData);
 
 	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes())
@@ -1460,4 +1457,8 @@ CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enum
 
 CAP242ItemData::~CAP242ItemData()
 {
+	for (auto pItemData : m_vecChildren)
+	{
+		delete pItemData;
+	}
 }
