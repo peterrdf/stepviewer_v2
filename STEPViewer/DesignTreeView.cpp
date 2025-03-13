@@ -334,20 +334,20 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 		{
 			wstring strProperty = pProperty->getName();
 			strProperty += L" : ";
-			strProperty += pProperty->getTypeName();
+			strProperty += pProperty->getTypeAsString();
 
 			HTREEITEM hProperty = m_treeCtrl.InsertItem(strProperty.c_str(), IMAGE_PROPERTY_DESIGN_TREE_VIEW, IMAGE_PROPERTY_DESIGN_TREE_VIEW, hParent);
 
 			/*
 			* rdfs:range
 			*/
-			vector<int64_t> vecRestrictionClasses;
-
 			wstring strRange = L"rdfs:range : ";
-			strRange += pProperty->getRange(vecRestrictionClasses);
+			strRange += pProperty->getRangeAsString();
 
 			HTREEITEM hRange = m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY_DESIGN_TREE_VIEW, IMAGE_PROPERTY_DESIGN_TREE_VIEW, hProperty);
 
+			vector<OwlClass> vecRestrictionClasses;
+			pProperty->getRangeRestrictions(vecRestrictionClasses);
 			for (auto iRestrictionClass : vecRestrictionClasses)
 			{
 				wchar_t* szClassName = nullptr;

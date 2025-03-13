@@ -4,29 +4,24 @@
 // ************************************************************************************************
 _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	: m_rdfProperty(rdfProperty)
-{}
+{
+	assert(m_rdfProperty != 0);
+}
 
 /*virtual*/ _rdf_property::~_rdf_property()
 {}
 
-/*static*/ wstring _rdf_property::getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
+/*static*/ wstring _rdf_property::getRangeAsString(RdfProperty rdfProperty)
 {
+	assert(rdfProperty != 0);
+
 	wstring strRange = L"unknown";
-	vecRestrictionClasses.clear();
 
 	switch (getType(rdfProperty))
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
 			strRange = L"xsd:object";
-
-			int64_t iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, 0);
-			while (iRestrictionClassInstance != 0)
-			{
-				vecRestrictionClasses.push_back(iRestrictionClassInstance);				
-
-				iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, iRestrictionClassInstance);
-			}
 		}
 		break;
 
@@ -62,7 +57,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 	} // switch (getType())
@@ -72,8 +67,8 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 /*static*/ wstring _rdf_property::getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty)
 {
-	ASSERT(owlInstance != 0);
-	ASSERT(rdfProperty != 0);
+	assert(owlInstance != 0);
+	assert(rdfProperty != 0);
 
 	int64_t iCard = 0;
 	switch (getType(rdfProperty))
@@ -122,17 +117,14 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 	} // switch (getType(rdfProperty))
 
-	OwlClass iInstanceClass = GetInstanceClass(owlInstance);
-	ASSERT(iInstanceClass != 0);
-
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	GetClassPropertyAggregatedCardinalityRestriction(iInstanceClass, rdfProperty, &iMinCard, &iMaxCard);
+	getCardinalityRestriction(owlInstance, rdfProperty, iMinCard, iMaxCard);
 
 	wchar_t szBuffer[100];
 	if ((iMinCard == -1) && (iMaxCard == -1))
@@ -154,7 +146,33 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	return szBuffer;
 }
 
-/*static*/ wstring _rdf_property::getTypeName(RdfPropertyType rdfPropertyType)
+/*static*/ void _rdf_property::getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard)
+{
+	assert(owlInstance != 0);
+	assert(rdfProperty != 0);
+
+	OwlClass owlClass = GetInstanceClass(owlInstance);
+	assert(owlClass != 0);
+
+	iMinCard = -1;
+	iMaxCard = -1;
+	GetClassPropertyAggregatedCardinalityRestriction(owlClass, rdfProperty, &iMinCard, &iMaxCard);
+}
+
+/*static*/ void _rdf_property::getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
+{
+	vecRestrictionClasses.clear();
+
+	OwlClass owlClass = GetRangeRestrictionsByIterator(rdfProperty, 0);
+	while (owlClass != 0)
+	{
+		vecRestrictionClasses.push_back(owlClass);
+
+		owlClass = GetRangeRestrictionsByIterator(rdfProperty, owlClass);
+	}
+}
+
+/*static*/ wstring _rdf_property::getTypeAsString(RdfPropertyType rdfPropertyType)
 {
 	wstring strTypeName = rdfPropertyType == OBJECTPROPERTY_TYPE ?
 		L"owl:ObjectProperty" :
@@ -163,7 +181,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	return strTypeName;
 }
 
-wchar_t* _rdf_property::getName() const
+const wchar_t* _rdf_property::getName() const
 {
 	wchar_t* szName = nullptr;
 	GetNameOfPropertyW(m_rdfProperty, &szName);
@@ -201,7 +219,7 @@ _rdf_property_collection* _rdf_property_provider::getPropertyCollection(OwlInsta
 {
 	if (owlInstance == 0)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 
 		return nullptr;
 	}
@@ -222,7 +240,7 @@ _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInst
 {
 	if (owlInstance == 0)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 
 		return nullptr;
 	}

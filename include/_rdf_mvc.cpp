@@ -61,9 +61,37 @@ _rdf_controller* _rdf_view::getRDFController() const
 _rdf_controller::_rdf_controller()
 	: _controller()
 	, m_iVisibleValuesCountLimit(10000)
+	, m_bScaleAndCenter(true)
+	, m_bModelCoordinateSystem(true)
 {
 }
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
 {
+}
+
+void _rdf_controller::showBaseInformation(_view* pSender, _rdf_instance* pInstance)
+{
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++)
+	{
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView)
+		{
+			rdfView->onShowBaseInformation(pSender, pInstance);
+		}
+	}
+}
+
+void _rdf_controller::showMetaInformation(_view* pSender, _rdf_instance* pInstance)
+{
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++)
+	{
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView)
+		{
+			rdfView->onShowMetaInformation(pSender, pInstance);
+		}
+	}
 }

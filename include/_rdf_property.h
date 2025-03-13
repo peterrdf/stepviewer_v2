@@ -6,7 +6,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class _rdf_property
+class _rdf_property 
 {
 
 private: // Members	
@@ -18,19 +18,23 @@ public: // Methods
 	_rdf_property(RdfProperty rdfProperty);
 	virtual ~_rdf_property();
 
-	wstring getRange(vector<int64_t>& vecRestrictionClasses) const { return getRange(m_rdfProperty, vecRestrictionClasses); }
-	static wstring getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
+	wstring getRangeAsString() const { return getRangeAsString(getRdfProperty()); }
+	static wstring getRangeAsString(RdfProperty rdfProperty);
 	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
+	void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
+	static void getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
+	void getRangeRestrictions(vector<OwlClass>& vecRestrictionClasses) const { getRangeRestrictions(getRdfProperty(), vecRestrictionClasses); };
+	static void getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 
 public: // Properties
 
 	RdfProperty getRdfProperty() const { return m_rdfProperty; }
 	RdfPropertyType getType() const { return getType(m_rdfProperty); }
 	static RdfPropertyType getType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
-	wstring getTypeName() { return getTypeName(getType()); }
-	static wstring getTypeName(RdfPropertyType rdfPropertyType);
-	wchar_t* getName() const;
+	wstring getTypeAsString() { return getTypeAsString(getType()); }
+	static wstring getTypeAsString(RdfPropertyType rdfPropertyType);
+	const wchar_t* getName() const;
 };
 
 // ************************************************************************************************
