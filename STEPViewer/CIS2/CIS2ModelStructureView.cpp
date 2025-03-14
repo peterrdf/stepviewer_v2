@@ -615,7 +615,6 @@ CCIS2ModelStructureView::CCIS2ModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		set<HTREEITEM> m_setParents;
 		for (auto pInstance : pModel->getInstances())
 		{
-			//#todo#mappeditems		
 			pTargetInstance = _ptr<CCIS2Instance>(pInstance);
 
 			if (pTargetInstance->getEntityName() == itCommand2Entity->second)
@@ -866,7 +865,6 @@ void CCIS2ModelStructureView::LoadInstance(CCIS2Model* pModel, SdaiInstance sdai
 	auto pGeometry = pModel->getGeometryByInstance(sdaiInstance);
 	if (pGeometry != nullptr)
 	{
-		//#todo#mappeditems
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<CCIS2Instance> cis2Instance(pGeometry->getInstances()[0]);
 
