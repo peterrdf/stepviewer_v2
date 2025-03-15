@@ -14,7 +14,7 @@ class _rdf_instance;
 class _rdf_model : public _model
 {
 
-private: // Members
+private: // Fields
 
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
@@ -28,16 +28,19 @@ public:  // Methods
 	_rdf_model();
 	virtual ~_rdf_model();
 
-	_rdf_instance* getInstance(OwlInstance owlInstance);
-
-	_rdf_instance* createInstance(OwlClass owlClass);
-	bool deleteInstance(_rdf_instance* pInstance);
-
 protected:
 
 	// _model
 	virtual void addInstance(_instance* pInstance) override;
 	virtual void clean(bool bCloseModel = true) override;
+
+public:  // Methods	
+
+	_rdf_instance* getInstance(OwlInstance owlInstance);
+
+	_rdf_instance* createInstance(OwlClass owlClass);
+	bool deleteInstance(_rdf_instance* pInstance);
+	void recalculate();
 };
 
 // ************************************************************************************************
@@ -70,7 +73,7 @@ public: // Properties
 class _rdf_controller : public _controller
 {
 
-private: // Members
+private: // Fields
 
 	// Selection
 	_rdf_property* m_pSelectedProperty;
@@ -107,6 +110,8 @@ public: // Methods
 	bool deleteInstanceTree(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstanceTreeRecursive(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstances(_view* pSender, const vector<_rdf_instance*>& vecInstances);
+	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
+	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
 public: // Properties
 
