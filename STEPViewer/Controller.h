@@ -7,11 +7,13 @@
 class CController : public _ap_controller
 {
 
-
 public: // Methods
 	
 	CController();	
 	virtual ~CController();
+
+	// _rdf_controller
+	virtual void loadDecorationModels() override;
 };
 
 

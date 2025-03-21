@@ -249,6 +249,12 @@
     <ClInclude Include="BCF\BCFViewPointMgr.h">
       <Filter>BCF</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_rdf_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_class.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -403,6 +409,18 @@
     </ClCompile>
     <ClCompile Include="BCF\BCFViewPointMgr.cpp">
       <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_class.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_instance.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
