@@ -33,6 +33,7 @@ public:  // Methods
 	virtual OwlModel getOwlModel() const override { return m_owlModel; }
 
 	void attachModel(const wchar_t* szPath, OwlModel owlModel);
+	void importModel(const wchar_t* szPath);
 
 protected:
 
@@ -63,7 +64,27 @@ public:  // Methods
 	_rdf_instance* createInstance(OwlClass owlClass);
 	bool deleteInstance(_rdf_instance* pInstance);
 	void resetInstancesDefaultEnableState();
-	void recalculate();
+
+	void reloadGeometries();
+
+	// Helpers
+	static OwlInstance translateTransformation(
+		OwlModel owlModel,
+		OwlInstance owlInstance,
+		double dX, double dY, double dZ);
+	static OwlInstance translateTransformation(
+		OwlModel owlModel,
+		OwlInstance owlInstance,
+		double dX, double dY, double dZ,
+		double d11, double d22, double d33);
+	static OwlInstance rotateTransformation(
+		OwlModel owlModel,
+		OwlInstance owlInstance,
+		double alpha, double beta, double gamma);
+	static OwlInstance scaleTransformation(
+		OwlModel owlModel,
+		OwlInstance OwlInstance, 
+		double dFactor);
 
 public: // Properties
 
@@ -110,7 +131,7 @@ private: // Fields
 	int m_iVisibleValuesCountLimit;
 
 	// OpenGL View
-	bool m_bScaleAndCenter;
+	bool m_bScaleAndCenterAllVisibleGeometry;
 	bool m_bModelCoordinateSystem;
 
 public: // Methods
@@ -124,6 +145,7 @@ public: // Methods
 protected: // Methods
 
 	// _controller
+	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 	virtual void cleanSelection() override;
 
 public: // Methods
@@ -147,8 +169,8 @@ public: // Properties
 
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
 	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
-	bool getScaleAndCenter() const { return m_bScaleAndCenter; }
-	void setScaleAndCenter(bool bNewValue) { m_bScaleAndCenter = bNewValue; }
+	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
+	void setScaleAndCenterAllVisibleGeometry(bool bNewValue) { m_bScaleAndCenterAllVisibleGeometry = bNewValue; }
 	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
 	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
 };

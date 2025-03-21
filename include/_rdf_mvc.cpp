@@ -40,8 +40,6 @@ _rdf_model::_rdf_model()
 			continue;
 		}
 
-		_ptr<_rdf_geometry>(pGeometry)->loadOriginalData();
-
 		for (auto pInstance : pGeometry->getInstances()) {
 			if (!pInstance->getEnable()) {
 				continue;
@@ -178,6 +176,18 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	load();
 }
 
+void _rdf_model::importModel(const wchar_t* szPath)
+{
+	if (m_owlModel == 0) {
+		assert(false);
+		return;
+	}
+
+	ImportModelW(m_owlModel, szPath);
+
+	load();
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);
@@ -257,6 +267,7 @@ void _rdf_model::loadInstances()
 	while (owlInstance != 0) {
 		auto itInstance = m_mapInstances.find(owlInstance);
 		if (itInstance == m_mapInstances.end()) {
+			// Load Model
 			auto pGeometry = new _rdf_geometry(owlInstance);
 			addGeometry(pGeometry);
 
@@ -264,9 +275,8 @@ void _rdf_model::loadInstances()
 			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
 		} else {
-			assert(FALSE);//#todo
 			// Import Model
-			//itInstance->second->recalculate();
+			itInstance->second->recalculate();
 		}
 
 		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
@@ -513,11 +523,124 @@ void _rdf_model::resetInstancesDefaultEnableState()
 	}
 }
 
-void _rdf_model::recalculate()
-{
-	for (auto pInstance : getInstances()) {
-		_ptr<_rdf_instance>(pInstance)->recalculate();
+void _rdf_model::reloadGeometries() {
+	for (auto pGeometry : getGeometries()) {
+		_ptr<_rdf_geometry>(pGeometry)->reload();
 	}
+}
+
+/*static*/ OwlInstance _rdf_model::translateTransformation(
+	OwlModel owlModel,
+	OwlInstance owlInstance,
+	double dX, double dY, double dZ)
+{
+	return translateTransformation(
+		owlModel,
+		owlInstance,
+		dX, dY, dZ,
+		1., 1., 1.);
+}
+
+/*static*/ OwlInstance _rdf_model::translateTransformation(
+	OwlModel owlModel,
+	OwlInstance owlInstance,
+	double dX, double dY, double dZ,
+	double d11, double d22, double d33)
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	vector<double> vecTransformationMatrix =
+	{
+		d11, 0., 0.,
+		0., d22, 0.,
+		0., 0., d33,
+		dX, dY, dZ,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(owlModel, "coordinates"),
+		vecTransformationMatrix.data(),
+		vecTransformationMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
+}
+
+/*static*/ OwlInstance _rdf_model::rotateTransformation(
+	OwlModel owlModel,
+	OwlInstance owlInstance,
+	double alpha, double beta, double gamma)
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
+	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_33"), &matrix._33, 1);
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
+}
+
+/*static*/ OwlInstance _rdf_model::scaleTransformation(
+	OwlModel owlModel, 
+	OwlInstance owlInstance,
+	double dFactor)
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	vector<double> vecTransformationMatrix =
+	{
+		dFactor, 0., 0.,
+		0., dFactor, 0.,
+		0., 0., dFactor,
+		0., 0., 0.,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(owlModel, "coordinates"),
+		vecTransformationMatrix.data(),
+		vecTransformationMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
 }
 
 // ************************************************************************************************
@@ -549,7 +672,7 @@ _rdf_controller::_rdf_controller()
 	: _controller()
 	, m_pSelectedProperty(nullptr)
 	, m_iVisibleValuesCountLimit(10000)
-	, m_bScaleAndCenter(true)
+	, m_bScaleAndCenterAllVisibleGeometry(true)
 	, m_bModelCoordinateSystem(true)
 {
 }
@@ -563,6 +686,21 @@ _rdf_controller::_rdf_controller()
 	_controller::selectInstances(pSender, vecInstance, bAdd);
 
 	m_pSelectedProperty = nullptr;
+}
+
+/*virtual*/ void _rdf_controller::onInstancesEnabledStateChanged(_view* pSender) /*override*/
+{
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
+	}
+	
+	if (m_bScaleAndCenterAllVisibleGeometry) {
+		_ptr<_rdf_model>(getModel())->reloadGeometries();
+		getModel()->scale();
+	}
+
+	_controller::onInstancesEnabledStateChanged(pSender);
 }
 
 /*virtual*/ void _rdf_controller::cleanSelection() /*override*/
@@ -808,13 +946,18 @@ void _rdf_controller::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstan
 
 void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
+	assert(pInstance != nullptr);
+	assert(pProperty != nullptr);
+
 	if (getModel() == nullptr) {
 		assert(false);
 		return;
 	}
 
-	_ptr<_rdf_model>(getModel())->recalculate();
-	if (m_bScaleAndCenter) {
+	pInstance->recalculate();
+
+	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable() ) {
+		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
 

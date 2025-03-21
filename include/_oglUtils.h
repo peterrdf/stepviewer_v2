@@ -1,7 +1,14 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include <afxwin.h>
+#include <atltypes.h>
+#include <afxtooltipctrl.h>
+#endif
+
 #include "_mvc.h"
 #include "_geometry.h"
+#include "_oglScene.h"
 #include "_quaterniond.h"
 
 #include "glew.h"
@@ -40,7 +47,7 @@ public: // Methods
         return numeric_limits<GLint>::max();
     }
 
-#if defined _MFC_VER || defined _AFXDLL
+#if defined _WINDOWS
     static void checkForErrors()
     {
         GLenum errLast = GL_NO_ERROR;
@@ -83,10 +90,10 @@ public: // Methods
             PostQuitMessage(0);
         }
     }
-#endif // #if defined(_MFC_VER) || defined(_AFXDLL)
+#endif // _WINDOWS
 };
 
-#if defined _MFC_VER || defined _AFXDLL
+#ifdef _WINDOWS
 // ************************************************************************************************
 class _oglShader
 {
@@ -1761,7 +1768,9 @@ public: // Methods
     {}
 
     virtual ~_oglBuffers()
-    {}
+    {
+        clear();
+    }
 
     map<GLuint, vector<_geometry*>>& cohorts() { return m_mapCohorts; }
     map<wstring, GLuint>& VAOs() { return m_mapVAOs; }
@@ -2068,9 +2077,33 @@ public: // Methods
             glDeleteBuffers(1, &(itBuffer->second));
         }
         m_mapBuffers.clear();
-
-        _oglUtils::checkForErrors();
     }
+};
+
+// ************************************************************************************************
+class _oglBuffersEx : public _oglBuffers
+{
+
+private: // Fields
+
+    _model* m_pModel;
+
+public: // Methods
+
+    _oglBuffersEx(_model* pModel)
+        : _oglBuffers()
+        , m_pModel(pModel)
+    {
+        assert(m_pModel != nullptr);
+    }
+
+    /*virtual*/ ~_oglBuffersEx()
+    {
+    }
+
+public: // Properties
+
+    _model* getModel() const { return m_pModel; }
 };
 
 // ************************************************************************************************
@@ -2270,7 +2303,9 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _oglRenderer : public _oglRendererSettings
+class _oglRenderer 
+    : public _oglRendererSettings
+    , public _oglScene
 {
 
 protected: // Fields
@@ -2291,7 +2326,8 @@ protected: // Fields
     glm::mat4 m_matModelView;
 
     // Cache
-    _oglBuffers m_oglBuffers;
+    _oglBuffers m_worldBuffers;
+    vector<_oglBuffersEx*> m_vecDecorationBuffers;
 
     // World
     float m_fXmin;
@@ -2339,6 +2375,18 @@ public: // Methods
     // _oglRendererSettings
     virtual void _reset() override;
 
+    // _oglScene
+    virtual void _getDimensions(int& iWidth, int& iHeight) override;
+    virtual void _prepare(
+        bool bPerspecitve,
+        int iViewportX, int iViewportY,
+        int iViewportWidth, int iViewportHeight,
+        float fXmin, float fXmax,
+        float fYmin, float fYmax,
+        float fZmin, float fZmax,
+        bool bClear,
+        bool bTranslate) override;
+
     void _initialize(CWnd* pWnd,
                      int iSamples,
                      int iVertexShader,
@@ -2346,15 +2394,6 @@ public: // Methods
                      int iResourceType,
                      bool bSupportsTexture);
     void _destroy();
-
-    void _prepare(
-        int iViewportX, int iViewportY,
-        int iViewportWidth, int iViewportHeight,
-        float fXmin, float fXmax,
-        float fYmin, float fYmax,
-        float fZmin, float fZmax,
-        bool bClearScene,
-        bool bApplyTranslations);
 
     void _redraw() { m_pWnd->RedrawWindow(); }
 
@@ -2457,16 +2496,18 @@ public: // Methods
 
 protected: // Methods
 
-    virtual bool _prepareScene();
-    virtual void _preDraw() {}
+    void _load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) const;
+
+    virtual bool _prepareScene(bool bClear);
+    virtual void _preDraw();
     virtual void _postDraw() {}
     virtual void _drawBuffers();
 
     void _drawFaces();
-    void _drawFaces(bool bTransparent);
+    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent);
     void _drawFacesPolygons();
-    void _drawConceptualFacesPolygons();
-    void _drawLines();
+    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers);
+    void _drawLines(_oglBuffers& oglBuffers);
     void _drawPoints();
     void _drawInstancesFrameBuffer();
 
@@ -2487,4 +2528,4 @@ public: // Properties
 
     const map<_instance*, _material*>& getUserDefinedMaterials() const { return m_mapUserDefinedMaterials; }
 };
-#endif // #if defined _MFC_VER || defined _AFXDLL
+#endif // _WINDOWS
