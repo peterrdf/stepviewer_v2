@@ -3,6 +3,7 @@
 #include "_mvc.h"
 #include "_rdf_class.h"
 #include "_rdf_property.h"
+#include "_oglScene.h"
 
 #include <map>
 using namespace std;
@@ -10,6 +11,7 @@ using namespace std;
 // ************************************************************************************************
 class _rdf_controller;
 class _rdf_instance;
+class _text_builder;
 
 // ************************************************************************************************
 class _rdf_model : public _model
@@ -173,4 +175,77 @@ public: // Properties
 	void setScaleAndCenterAllVisibleGeometry(bool bNewValue) { m_bScaleAndCenterAllVisibleGeometry = bNewValue; }
 	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
 	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
+};
+
+// ************************************************************************************************
+class _coordinate_system_model : public _rdf_model
+{
+
+private: // Fields
+
+	_model* m_pWorld;
+	_text_builder* m_pTextBuilder;
+
+public: // Methods
+
+	_coordinate_system_model(_model* pWorld);
+	virtual ~_coordinate_system_model();
+
+	// _model
+	virtual bool prepareScene(_oglScene* pScene) override;
+	virtual void scale() override {};
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
+
+private: // Methods
+
+	void Create();
+};
+
+// ************************************************************************************************
+class _navigator_model : public _rdf_model
+{
+
+public: // Constants
+
+	static const int NAVIGATION_VIEW_LENGTH;
+
+private: // Fields
+
+	_text_builder* m_pTextBuilder;
+
+public: // Methods
+
+	_navigator_model();
+	virtual ~_navigator_model();
+
+	// _model	
+	virtual bool prepareScene(_oglScene* pScene) override;
+	virtual void scale() override {};
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
+
+private: // Methods
+
+	void Create();
+	void CreateLabels(OwlModel owlModel);
+};
+
+// ************************************************************************************************
+class _navigator_coordinate_system_model : public _coordinate_system_model
+{
+
+public: // Methods
+
+	_navigator_coordinate_system_model();
+	virtual ~_navigator_coordinate_system_model();
+
+	// _model	
+	virtual bool prepareScene(_oglScene* pScene) override;
 };
