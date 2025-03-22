@@ -1320,7 +1320,7 @@ _navigator_model::_navigator_model()
 	: _rdf_model()
 	, m_pTextBuilder(new _text_builder())
 {
-	Create();
+	create();
 }
 
 /*virtual*/ _navigator_model::~_navigator_model()
@@ -1362,7 +1362,7 @@ _navigator_model::_navigator_model()
 	getInstancesDefaultEnableState();
 }
 
-void _navigator_model::Create()
+void _navigator_model::create()
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -1533,12 +1533,12 @@ void _navigator_model::Create()
 		SetNameOfInstance(owlInstance, "#back-bottom-right");
 	}
 
-	CreateLabels(owlModel);
+	createLabels(owlModel);
 
 	attachModel(L"_NAVIGATOR_", owlModel);
 }
 
-void _navigator_model::CreateLabels(OwlModel owlModel)
+void _navigator_model::createLabels(OwlModel owlModel)
 {
 	double dXmin = DBL_MAX;
 	double dXmax = -DBL_MAX;
@@ -1663,8 +1663,8 @@ void _navigator_model::CreateLabels(OwlModel owlModel)
 	SetNameOfInstance(owlInstance, "#right-label");
 }
 
-_navigator_coordinate_system_model::_navigator_coordinate_system_model()
-	: _coordinate_system_model(nullptr)
+_navigator_coordinate_system_model::_navigator_coordinate_system_model(_controller* pController)
+	: _coordinate_system_model(pController)
 {
 }
 

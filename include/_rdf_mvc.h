@@ -233,8 +233,8 @@ protected: // Methods
 
 private: // Methods
 
-	void Create();
-	void CreateLabels(OwlModel owlModel);
+	void create();
+	void createLabels(OwlModel owlModel);
 };
 
 // ************************************************************************************************
@@ -243,7 +243,7 @@ class _navigator_coordinate_system_model : public _coordinate_system_model
 
 public: // Methods
 
-	_navigator_coordinate_system_model();
+	_navigator_coordinate_system_model(_controller* pController);
 	virtual ~_navigator_coordinate_system_model();
 
 	// _model	
