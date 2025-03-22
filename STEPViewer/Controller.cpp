@@ -28,6 +28,6 @@ CController::CController()
 	//addDecorationModel(new _world_coordinate_system_model(nullptr));//#todo
 	addDecorationModel(new _world_coordinate_system_model(this));
 	addDecorationModel(new _navigator_model());
-	addDecorationModel(new _navigator_coordinate_system_model(this));
+	addDecorationModel(new _navigator_coordinate_system_model());
 }
 
