@@ -990,7 +990,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers/* = true*/)
+_world_coordinate_system_model::_world_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers/* = true*/)
 	: _rdf_model()
 	, _decoration()
 	, m_pController(pController)
@@ -1002,17 +1002,17 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController, boo
 	create();
 }
 
-/*virtual*/ _coordinate_system_model::~_coordinate_system_model()
+/*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
 {
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ void _coordinate_system_model::onModelUpdated() /*override*/
+/*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
 	create();
 }
 
-/*virtual*/ void _coordinate_system_model::preLoad() /*override*/
+/*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 
@@ -1042,7 +1042,7 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController, boo
 	}	
 }
 
-void _coordinate_system_model::create()
+void _world_coordinate_system_model::create()
 {
 	const double AXIS_LENGTH = 4.;
 	const double ARROW_OFFSET = AXIS_LENGTH;
@@ -1660,7 +1660,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 }
 
 _navigator_coordinate_system_model::_navigator_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model(pController, false)
+	: _world_coordinate_system_model(pController, false)
 {
 }
 

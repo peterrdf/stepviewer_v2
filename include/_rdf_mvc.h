@@ -179,7 +179,7 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _coordinate_system_model 
+class _world_coordinate_system_model 
 	: public _rdf_model
 	, public _decoration
 {
@@ -192,8 +192,8 @@ private: // Fields
 
 public: // Methods
 
-	_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers = true);
-	virtual ~_coordinate_system_model();
+	_world_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers = true);
+	virtual ~_world_coordinate_system_model();
 
 	// _model
 	virtual void scale() override {};
@@ -248,7 +248,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class _navigator_coordinate_system_model : public _coordinate_system_model
+class _navigator_coordinate_system_model : public _world_coordinate_system_model
 {
 
 public: // Methods
