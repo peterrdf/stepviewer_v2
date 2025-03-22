@@ -973,9 +973,10 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_controller* pController)
+_coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVretxBuffers/* = true*/)
 	: _rdf_model()
 	, m_pController(pController)
+	, m_bUpdateVretxBuffers(bUpdateVretxBuffers)
 	, m_pTextBuilder(new _text_builder())
 {
 	assert(m_pController != nullptr);
@@ -988,63 +989,34 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
-{
-	/*if (m_pWorld == nullptr) {
-		int iWidth = 0;
-		int iHeight = 0;
-		pScene->_getDimensions(iWidth, iHeight);
-
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-		pScene->_prepare(
-			true,
-			0, 0,
-			iWidth, iHeight,
-			fXmin, fXmax,
-			fYmin, fYmax,
-			fZmin, fZmax,
-			false,
-			false);
-
-		return true;
-	}*/
-
-	return false;
-}
-
 /*virtual*/ void _coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 
-	float fWorldXmin = FLT_MAX;
-	float fWorldXmax = -FLT_MAX;
-	float fWorldYmin = FLT_MAX;
-	float fWorldYmax = -FLT_MAX;
-	float fWorldZmin = FLT_MAX;
-	float fWorldZmax = -FLT_MAX;
-	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+	if (m_bUpdateVretxBuffers) {
+		float fWorldXmin = FLT_MAX;
+		float fWorldXmax = -FLT_MAX;
+		float fWorldYmin = FLT_MAX;
+		float fWorldYmax = -FLT_MAX;
+		float fWorldZmin = FLT_MAX;
+		float fWorldZmax = -FLT_MAX;
+		m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-		fWorldXmin,
-		fWorldYmin,
-		fWorldZmin);
+		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+			fWorldXmin,
+			fWorldYmin,
+			fWorldZmin);
 
-	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	SetVertexBufferOffset(
-		getOwlModel(),
-		fWorldXmin,
-		fWorldYmin,
-		fWorldZmin);
+		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+		SetVertexBufferOffset(
+			getOwlModel(),
+			fWorldXmin,
+			fWorldYmin,
+			fWorldZmin);
 
-	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-	ClearedExternalBuffers(getOwlModel());
+		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+		ClearedExternalBuffers(getOwlModel());
+	}	
 }
 
 void _coordinate_system_model::create()
@@ -1664,7 +1636,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 }
 
 _navigator_coordinate_system_model::_navigator_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model(pController)
+	: _coordinate_system_model(pController, false)
 {
 }
 

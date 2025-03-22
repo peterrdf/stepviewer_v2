@@ -184,15 +184,15 @@ class _coordinate_system_model : public _rdf_model
 private: // Fields
 
 	_controller* m_pController;
+	bool m_bUpdateVretxBuffers;
 	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
-	_coordinate_system_model(_controller* pController);
+	_coordinate_system_model(_controller* pController, bool bUpdateVretxBuffers = true);
 	virtual ~_coordinate_system_model();
 
 	// _model
-	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void scale() override {};
 
 protected: // Methods
