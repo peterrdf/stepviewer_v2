@@ -1050,7 +1050,7 @@ void _coordinate_system_model::create()
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
 
-	m_pTextBuilder->Initialize(owlModel);
+	m_pTextBuilder->initialize(owlModel);
 
 	// Coordinate System
 	vector<OwlInstance> vecInstances;
@@ -1215,7 +1215,7 @@ void _coordinate_system_model::create()
 	double dZmax = -DBL_MAX;
 
 	// X-axis
-	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->buildText("X-axis", true);
 	assert(owlPlusXLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1225,7 +1225,7 @@ void _coordinate_system_model::create()
 		dZmin, dZmax);
 
 	// Y-axis
-	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->buildText("Y-axis", true);
 	assert(owlPlusYLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1235,7 +1235,7 @@ void _coordinate_system_model::create()
 		dZmin, dZmax);
 
 	// Z-axis
-	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->buildText("Z-axis", true);
 	assert(owlPlusZLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1363,7 +1363,7 @@ void _navigator_model::create()
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
 
-	m_pTextBuilder->Initialize(owlModel);
+	m_pTextBuilder->initialize(owlModel);
 
 	// Cube (BoundaryRepresentations)
 	{
@@ -1544,7 +1544,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 	double dZmax = -DBL_MAX;
 
 	/* Top */
-	OwlInstance owlTopLabelInstance = m_pTextBuilder->BuildText("top", true);
+	OwlInstance owlTopLabelInstance = m_pTextBuilder->buildText("top", true);
 	assert(owlTopLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1554,7 +1554,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		dZmin, dZmax);
 
 	/* Bottom */
-	OwlInstance owlBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
+	OwlInstance owlBottomLabelInstance = m_pTextBuilder->buildText("bottom", true);
 	assert(owlBottomLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1564,7 +1564,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		dZmin, dZmax);
 
 	/* Front */
-	OwlInstance owlFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
+	OwlInstance owlFrontLabelInstance = m_pTextBuilder->buildText("front", true);
 	assert(owlFrontLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1574,7 +1574,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		dZmin, dZmax);
 
 	/* Back */
-	OwlInstance owlBackLabelInstance = m_pTextBuilder->BuildText("back", true);
+	OwlInstance owlBackLabelInstance = m_pTextBuilder->buildText("back", true);
 	assert(owlBackLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1584,7 +1584,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		dZmin, dZmax);
 
 	/* Left */
-	OwlInstance owlLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
+	OwlInstance owlLeftLabelInstance = m_pTextBuilder->buildText("left", true);
 	assert(owlLeftLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1594,7 +1594,7 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		dZmin, dZmax);
 
 	/* Right */
-	OwlInstance owlRightLabelInstance = m_pTextBuilder->BuildText("right", true);
+	OwlInstance owlRightLabelInstance = m_pTextBuilder->buildText("right", true);
 	assert(owlRightLabelInstance != 0);
 
 	_geometry::calculateBB(
