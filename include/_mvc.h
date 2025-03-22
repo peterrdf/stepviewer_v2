@@ -95,9 +95,7 @@ public: // Methods
 	T* as()
 	{
 		return dynamic_cast<T*>(this);
-	}
-
-	virtual bool prepareScene(_oglScene* /*pScene*/) { return false; };
+	}	
 
 	virtual void scale();
 	virtual void zoomTo(_instance* pInstance);
@@ -276,7 +274,7 @@ public: // Methods
 	static wstring validateFileName(const wchar_t* szFileName);
 
 	// Events
-	void onModelUpdated();
+	virtual void onModelUpdated();
 	void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }
 	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
 	void resetInstancesEnabledState(_view* pSender);
@@ -297,3 +295,18 @@ public: // Properties
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 
+// ************************************************************************************************
+class _decoration
+{
+
+public: // Methods
+
+	_decoration();
+	virtual ~_decoration();
+
+	// View
+	virtual bool prepareScene(_oglScene* /*pScene*/) { return false; };
+
+	// Events	
+	virtual void onModelUpdated() {}
+};

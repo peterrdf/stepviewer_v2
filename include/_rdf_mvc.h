@@ -147,6 +147,7 @@ public: // Methods
 protected: // Methods
 
 	// _controller
+	virtual void onModelUpdated() override;
 	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 	virtual void cleanSelection() override;
 
@@ -178,7 +179,9 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _coordinate_system_model : public _rdf_model
+class _coordinate_system_model 
+	: public _rdf_model
+	, public _decoration
 {
 
 private: // Fields
@@ -195,6 +198,9 @@ public: // Methods
 	// _model
 	virtual void scale() override {};
 
+	// _decoration
+	virtual void onModelUpdated() override;
+
 protected: // Methods
 
 	// _rdf_model
@@ -206,7 +212,9 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class _navigator_model : public _rdf_model
+class _navigator_model 
+	: public _rdf_model
+	, public _decoration
 {
 
 public: // Constants
@@ -223,8 +231,10 @@ public: // Methods
 	virtual ~_navigator_model();
 
 	// _model	
-	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void scale() override {};
+
+	// _decoration
+	virtual bool prepareScene(_oglScene* pScene) override;
 
 protected: // Methods
 
@@ -246,6 +256,6 @@ public: // Methods
 	_navigator_coordinate_system_model(_controller* pController);
 	virtual ~_navigator_coordinate_system_model();
 
-	// _model	
+	// _decoration
 	virtual bool prepareScene(_oglScene* pScene) override;
 };
