@@ -973,12 +973,14 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_model* pWorld)
+_coordinate_system_model::_coordinate_system_model(_controller* pController)
 	: _rdf_model()
-	, m_pWorld(pWorld)
+	, m_pController(pController)
 	, m_pTextBuilder(new _text_builder())
 {
-	Create();
+	assert(m_pController != nullptr);
+
+	create();
 }
 
 /*virtual*/ _coordinate_system_model::~_coordinate_system_model()
@@ -988,7 +990,7 @@ _coordinate_system_model::_coordinate_system_model(_model* pWorld)
 
 /*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
 {
-	if (m_pWorld == nullptr) {
+	/*if (m_pWorld == nullptr) {
 		int iWidth = 0;
 		int iHeight = 0;
 		pScene->_getDimensions(iWidth, iHeight);
@@ -1012,7 +1014,7 @@ _coordinate_system_model::_coordinate_system_model(_model* pWorld)
 			false);
 
 		return true;
-	}
+	}*/
 
 	return false;
 }
@@ -1021,30 +1023,31 @@ _coordinate_system_model::_coordinate_system_model(_model* pWorld)
 {
 	getInstancesDefaultEnableState();
 
-	if (m_pWorld != nullptr) {
-		double arOffset[3];
-		GetVertexBufferOffset(m_pWorld->getOwlModel(), arOffset);
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
-		double dScaleFactor = m_pWorld->getOriginalBoundingSphereDiameter() / 2.;
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		fWorldXmin,
+		fWorldYmin,
+		fWorldZmin);
 
-		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-			arOffset[0] / dScaleFactor,
-			arOffset[1] / dScaleFactor,
-			arOffset[2] / dScaleFactor);
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		getOwlModel(),
+		fWorldXmin,
+		fWorldYmin,
+		fWorldZmin);
 
-		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-		SetVertexBufferOffset(
-			getOwlModel(),
-			arOffset[0] / dScaleFactor,
-			arOffset[1] / dScaleFactor,
-			arOffset[2] / dScaleFactor);
-
-		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-		ClearedExternalBuffers(getOwlModel());
-	}
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(getOwlModel());
 }
 
-void _coordinate_system_model::Create()
+void _coordinate_system_model::create()
 {
 	const double AXIS_LENGTH = 4.;
 	const double ARROW_OFFSET = AXIS_LENGTH;

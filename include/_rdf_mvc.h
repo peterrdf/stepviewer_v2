@@ -183,12 +183,12 @@ class _coordinate_system_model : public _rdf_model
 
 private: // Fields
 
-	_model* m_pWorld;
+	_controller* m_pController;
 	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
-	_coordinate_system_model(_model* pWorld);
+	_coordinate_system_model(_controller* pController);
 	virtual ~_coordinate_system_model();
 
 	// _model
@@ -202,7 +202,7 @@ protected: // Methods
 
 private: // Methods
 
-	void Create();
+	void create();
 };
 
 // ************************************************************************************************
