@@ -184,12 +184,12 @@ class _coordinate_system_model : public _rdf_model
 private: // Fields
 
 	_controller* m_pController;
-	bool m_bUpdateVretxBuffers;
+	bool m_bUpdateVertexBuffers;
 	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
-	_coordinate_system_model(_controller* pController, bool bUpdateVretxBuffers = true);
+	_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers = true);
 	virtual ~_coordinate_system_model();
 
 	// _model

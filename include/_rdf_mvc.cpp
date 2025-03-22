@@ -973,10 +973,10 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVretxBuffers/* = true*/)
+_coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers/* = true*/)
 	: _rdf_model()
 	, m_pController(pController)
-	, m_bUpdateVretxBuffers(bUpdateVretxBuffers)
+	, m_bUpdateVertexBuffers(bUpdateVertexBuffers)
 	, m_pTextBuilder(new _text_builder())
 {
 	assert(m_pController != nullptr);
@@ -993,7 +993,7 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController, boo
 {
 	getInstancesDefaultEnableState();
 
-	if (m_bUpdateVretxBuffers) {
+	if (m_bUpdateVertexBuffers) {
 		float fWorldXmin = FLT_MAX;
 		float fWorldXmax = -FLT_MAX;
 		float fWorldYmin = FLT_MAX;
