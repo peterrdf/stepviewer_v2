@@ -134,7 +134,6 @@ private: // Fields
 
 	// OpenGL View
 	bool m_bScaleAndCenterAllVisibleGeometry;
-	bool m_bModelCoordinateSystem;
 
 public: // Methods
 
@@ -174,12 +173,10 @@ public: // Properties
 	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
 	void setScaleAndCenterAllVisibleGeometry(bool bNewValue) { m_bScaleAndCenterAllVisibleGeometry = bNewValue; }
-	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
-	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
 };
 
 // ************************************************************************************************
-class _coordinate_system_model : public _rdf_model
+class _coordinate_system_model_base : public _rdf_model
 {
 
 private: // Fields
@@ -188,17 +185,22 @@ private: // Fields
 
 public: // Methods
 
-	_coordinate_system_model();
-	virtual ~_coordinate_system_model();
+	_coordinate_system_model_base();
+	virtual ~_coordinate_system_model_base();
+
+	// _model
+	virtual void scale() override {};
+
+	static void create(OwlModel owlModel, _text_builder* pTextBuilder);
 
 protected: // Methods
 
-	void create();
+	void create(const wchar_t* szName);
 };
 
 // ************************************************************************************************
-class _world_coordinate_system_model 
-	: public _coordinate_system_model
+class _world_coordinate_system_model
+	: public _coordinate_system_model_base
 	, public _decoration
 {
 
@@ -209,10 +211,32 @@ private: // Fields
 public: // Methods
 
 	_world_coordinate_system_model(_controller* pController);
-	virtual ~_world_coordinate_system_model();
+	virtual ~_world_coordinate_system_model();	
 
-	// _model
-	virtual void scale() override {};
+	// _decoration
+	virtual bool prepareScene(_oglScene* pScene) override;
+	virtual void onModelUpdated() override;
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
+};
+
+// ************************************************************************************************
+class _model_coordinate_system_model 
+	: public _coordinate_system_model_base
+	, public _decoration
+{
+
+private: // Fields
+
+	_controller* m_pController;
+
+public: // Methods
+
+	_model_coordinate_system_model(_controller* pController);
+	virtual ~_model_coordinate_system_model();
 
 	// _decoration
 	virtual void onModelUpdated() override;
@@ -257,19 +281,4 @@ private: // Methods
 
 	void create();
 	void createLabels(OwlModel owlModel);
-};
-
-// ************************************************************************************************
-class _navigator_coordinate_system_model 
-	: public _rdf_model
-	, public _decoration
-{
-
-public: // Methods
-
-	_navigator_coordinate_system_model();
-	virtual ~_navigator_coordinate_system_model();
-
-	// _decoration
-	virtual bool prepareScene(_oglScene* pScene) override;
 };

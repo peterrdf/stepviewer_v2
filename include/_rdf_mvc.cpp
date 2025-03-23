@@ -675,7 +675,6 @@ _rdf_controller::_rdf_controller()
 	, m_pSelectedProperty(nullptr)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
-	, m_bModelCoordinateSystem(true)
 {
 }
 
@@ -990,25 +989,23 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model()
+_coordinate_system_model_base::_coordinate_system_model_base()
 	: _rdf_model()
 	, m_pTextBuilder(new _text_builder())
 {}
 
-/*virtual*/ _coordinate_system_model::~_coordinate_system_model()
+/*virtual*/ _coordinate_system_model_base::~_coordinate_system_model_base()
 {
 	delete m_pTextBuilder;
 }
 
-void _coordinate_system_model::create()
+/*static*/ void _coordinate_system_model_base::create(OwlModel owlModel, _text_builder* pTextBuilder)
 {
-	const double AXIS_LENGTH = 4.;
-	const double ARROW_OFFSET = AXIS_LENGTH;
-
-	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
+	assert(pTextBuilder != nullptr);
 
-	m_pTextBuilder->initialize(owlModel);
+	const double AXIS_LENGTH = 3.5;
+	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	// Coordinate System
 	vector<OwlInstance> vecInstances;
@@ -1173,7 +1170,7 @@ void _coordinate_system_model::create()
 	double dZmax = -DBL_MAX;
 
 	// X-axis
-	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->buildText("X-axis", true);
+	OwlInstance owlPlusXLabelInstance = pTextBuilder->buildText("X-axis", true);
 	assert(owlPlusXLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1183,7 +1180,7 @@ void _coordinate_system_model::create()
 		dZmin, dZmax);
 
 	// Y-axis
-	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->buildText("Y-axis", true);
+	OwlInstance owlPlusYLabelInstance = pTextBuilder->buildText("Y-axis", true);
 	assert(owlPlusYLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1193,7 +1190,7 @@ void _coordinate_system_model::create()
 		dZmin, dZmax);
 
 	// Z-axis
-	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->buildText("Z-axis", true);
+	OwlInstance owlPlusZLabelInstance = pTextBuilder->buildText("Z-axis", true);
 	assert(owlPlusZLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1262,30 +1259,117 @@ void _coordinate_system_model::create()
 		GetPropertyByName(owlModel, "objects"),
 		vecInstances.data(),
 		vecInstances.size());
+}
 
-	attachModel(L"_COORDINATE_SYSTEM_", owlModel);
+void _coordinate_system_model_base::create(const wchar_t* szName)
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->initialize(owlModel);
+
+	create(owlModel, m_pTextBuilder);
+
+	attachModel(szName, owlModel);
 }
 
 // ************************************************************************************************
 _world_coordinate_system_model::_world_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model()
+	: _coordinate_system_model_base()
 	, _decoration()
 	, m_pController(pController)
 {
 	assert(m_pController != nullptr);
 
-	create();
+	create(WORLD_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
-{}
+{
+}
+
+/*virtual*/ bool _world_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
+{
+	assert(pScene != nullptr);
+
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	pScene->_prepare(
+		true,
+		0, 0,
+		iWidth, iHeight,
+		fWorldXmin, fWorldXmax,
+		fWorldYmin, fWorldYmax,
+		fWorldZmin, fWorldZmax,
+		false,
+		false);
+
+	return true;
+}
 
 /*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
-	create();
+	create(WORLD_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
+
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		getOwlModel(),
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
+
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(getOwlModel());
+}
+
+// ************************************************************************************************
+_model_coordinate_system_model::_model_coordinate_system_model(_controller* pController)
+	: _coordinate_system_model_base()
+	, _decoration()
+	, m_pController(pController)
+{
+	assert(m_pController != nullptr);
+
+	create(MODEL_COORDINATE_SYSTEM);
+}
+
+/*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
+{}
+
+/*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
+{
+	create(MODEL_COORDINATE_SYSTEM);
+}
+
+/*virtual*/ void _model_coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 
@@ -1536,7 +1620,9 @@ void _navigator_model::create()
 
 	createLabels(owlModel);
 
-	attachModel(L"_NAVIGATOR_", owlModel);
+	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
+
+	attachModel(NAVIGATOR, owlModel);
 }
 
 void _navigator_model::createLabels(OwlModel owlModel)
@@ -1662,43 +1748,4 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		.751, 0., 0.,
 		1., 1., 1.);
 	SetNameOfInstance(owlInstance, "#right-label");
-}
-
-_navigator_coordinate_system_model::_navigator_coordinate_system_model()
-	: _rdf_model()
-	, _decoration()
-{
-}
-
-/*virtual*/ _navigator_coordinate_system_model::~_navigator_coordinate_system_model()
-{
-}
-
-/*virtual*/ bool _navigator_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
-{
-	const int NAVIGATION_VIEW_LENGTH = _navigator_model::NAVIGATION_VIEW_LENGTH;
-
-	int iWidth = 0;
-	int iHeight = 0;
-	pScene->_getDimensions(iWidth, iHeight);
-
-	float fXmin = FLT_MAX;
-	float fXmax = -FLT_MAX;
-	float fYmin = FLT_MAX;
-	float fYmax = -FLT_MAX;
-	float fZmin = FLT_MAX;
-	float fZmax = -FLT_MAX;
-	getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	pScene->_prepare(
-		true,
-		iWidth - NAVIGATION_VIEW_LENGTH, 0,
-		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
-
-	return true;
 }

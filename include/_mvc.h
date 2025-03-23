@@ -226,6 +226,7 @@ public: // Methods
 
 	virtual void loadDecorationModels() {}
 	void addDecorationModel(_model* pModel);
+	void updateDecorationModelsState();
 
 	_instance* loadInstance(int64_t iInstance);
 
@@ -284,6 +285,8 @@ public: // Methods
 
 protected: // Methods
 
+	void showDecoration(const wchar_t* szName, bool bShow);
+
 	virtual void clean();
 	virtual void cleanSelection();
 
@@ -310,3 +313,7 @@ public: // Methods
 	// Events	
 	virtual void onModelUpdated() {}
 };
+
+static const wchar_t* WORLD_COORDINATE_SYSTEM = L"_WORLD_COORDINATE_SYSTEM_";
+static const wchar_t* MODEL_COORDINATE_SYSTEM = L"_MODEL_COORDINATE_SYSTEM_";
+static const wchar_t* NAVIGATOR = L"_NAVIGATOR_";

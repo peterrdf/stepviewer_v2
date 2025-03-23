@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_mvc.h"
 #include "_rdf_instance.h"
+#include "_oglUtils.h"
 
 // ************************************************************************************************
 _model::_model()
@@ -20,7 +21,8 @@ _model::_model()
 	, m_vecGeometries()
 	, m_vecInstances()
 	, m_mapTextures()
-{}
+{
+}
 
 /*virtual*/ _model::~_model()
 {
@@ -574,7 +576,8 @@ _controller::_controller()
 	, m_bUpdatingModel(false)
 	, m_vecSelectedInstances()
 	, m_pTargetInstance(nullptr)
-{}
+{
+}
 
 /*virtual*/ _controller::~_controller()
 {
@@ -665,6 +668,16 @@ void _controller::addDecorationModel(_model* pModel)
 	assert(pModel != nullptr);
 
 	m_vecDecorationModels.push_back(pModel);
+}
+
+void _controller::updateDecorationModelsState()
+{
+	auto pOGLRenderer = getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
+		showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
+		showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
+	}
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)
@@ -1025,9 +1038,36 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 
 /*virtual*/ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
+	auto pOGLRenderer = getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		if ((enApplicationProperty == enumApplicationProperty::ShowCoordinateSystem) ||
+			(enApplicationProperty == enumApplicationProperty::CoordinateSystemType)) {
+			showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
+			showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
+		} else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
+			showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
+		}
+	}
+
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++) {
 		(*itView)->onApplicationPropertyChanged(pSender, enApplicationProperty);
+	}
+}
+
+void _controller::showDecoration(const wchar_t* szName, bool bShow)
+{
+	assert(szName != nullptr);
+
+	auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel)
+		{
+			return wcscmp(pModel->getPath(), szName) == 0;
+		});
+
+	if (itModel != m_vecDecorationModels.end()) {
+		for (auto pGeometry : (*itModel)->getGeometries()) {
+			pGeometry->setShow(bShow);
+		}
 	}
 }
 
