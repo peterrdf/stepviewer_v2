@@ -227,6 +227,30 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 				}
 				break;
 
+				case enumApplicationProperty::ShowCoordinateSystem:
+				{
+					pRenderer->setShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
+				}
+				break;
+
+				case enumApplicationProperty::CoordinateSystemType:
+				{
+					pRenderer->setModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
+				}
+				break;
+
+				case enumApplicationProperty::ShowNavigator:
+				{
+					pRenderer->setShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
+				}
+				break;
+
 				case enumApplicationProperty::PointLightingLocation:
 				{
 					ASSERT(pBlinnPhongProgram != nullptr);
@@ -624,6 +648,39 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
 		pProperty->AddOption(ROTATION_MODE_XY);
 		pProperty->AddOption(ROTATION_MODE_XYZ);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Show Coordinate System"),
+			pRenderer->getShowCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowCoordinateSystem));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Model Coordinate System"),
+			pRenderer->getModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CoordinateSystemType));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Navigator"),
+			pRenderer->getShowNavigator() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);

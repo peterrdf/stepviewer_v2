@@ -2087,23 +2087,27 @@ class _oglBuffersEx : public _oglBuffers
 private: // Fields
 
     _model* m_pModel;
+    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
 
 public: // Methods
 
     _oglBuffersEx(_model* pModel)
         : _oglBuffers()
         , m_pModel(pModel)
+        , m_pSelectInstanceFrameBuffer(new _oglSelectionFramebuffer())
     {
         assert(m_pModel != nullptr);
     }
 
     /*virtual*/ ~_oglBuffersEx()
     {
+        delete m_pSelectInstanceFrameBuffer;
     }
 
 public: // Properties
 
     _model* getModel() const { return m_pModel; }
+    _oglSelectionFramebuffer* getSelectInstanceFrameBuffer() const { return m_pSelectInstanceFrameBuffer; }
 };
 
 // ************************************************************************************************
@@ -2371,6 +2375,9 @@ protected: // Fields
     double m_dFieldOfView;
     double m_dAspectRatio;
 
+    // Selection
+    bool m_bDrawSelectInstanceBufferInProgress;
+
 public: // Methods
 
     _oglRenderer();
@@ -2467,7 +2474,7 @@ protected: // Fields
     CPoint m_ptPrevMousePosition;
 
     // Selection
-    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
+    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;    
     _instance* m_pPointedInstance;
 
     // Tooltip
@@ -2508,14 +2515,16 @@ protected: // Methods
     virtual void _drawBuffers();
 
     void _drawFaces();
-    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent);
+    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings = true);
     void _drawFacesPolygons();
-    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers);
-    void _drawLines(_oglBuffers& oglBuffers);
+    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
+    void _drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
     void _drawPoints();
     void _drawInstancesFrameBuffer();
+    void _drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionFramebuffer* pSelectionFrameBuffer, bool bApplyApplicationSettings = true);
 
     virtual void _onMouseMove(const CPoint& /*point*/) {}
+    virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
 
     // http://nehe.gamedev.net/article/using_gluunproject/16013/
     bool getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
