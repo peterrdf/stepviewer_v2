@@ -1,12 +1,6 @@
 #ifndef CIS2_INSTANCE_H
 #define CIS2_INSTANCE_H
 
-#ifdef _WINDOWS
-#include "engine.h"
-#else
-#include "../../include/engine.h"
-#endif
-
 #include "_ap_mvc.h"
 #include "_oglUtils.h"
 
