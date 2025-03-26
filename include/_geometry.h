@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef _WINDOWS
 #include "engine.h"
+#else
+#include "../../include/engine.h"
+#endif
 
 #include "glew.h"
 #include "wglew.h"

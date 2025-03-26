@@ -1,10 +1,14 @@
 #ifndef CIS2_GEOMETRY_H
 #define CIS2_GEOMETRY_H
 
+#ifdef _WINDOWS
+#include "engine.h"
+#else
+#include "../../include/engine.h"
+#endif
+
 #include "_ap_mvc.h"
 #include "_oglUtils.h"
-
-#include "engine.h"
 
 #include <cstddef>
 #include <string>
