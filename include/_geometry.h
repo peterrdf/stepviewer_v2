@@ -7,7 +7,9 @@
 #endif
 
 #include "glew.h"
+#ifdef _WINDOWS
 #include "wglew.h"
+#endif
 
 #include "_3DUtils.h"
 #include "_material.h"
