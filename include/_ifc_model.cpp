@@ -5,7 +5,7 @@
 #include "_ptr.h"
 
 #ifdef __EMSCRIPTEN__
-#include "../gisengine/Parsers/_string.h"
+#include "../../gisengine/Parsers/_string.h"
 #endif
 
 #include <cfloat>

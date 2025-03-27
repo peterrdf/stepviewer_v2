@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "glew.h"
+#include "../glew-2.2.0/include/GL/glew.h"
 #include <GL/glu.h>
 
 #include "stb/stb_image.h"

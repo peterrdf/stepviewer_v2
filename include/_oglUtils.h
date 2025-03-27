@@ -11,7 +11,7 @@
 #include "_oglScene.h"
 #include "_quaterniond.h"
 
-#include "glew.h"
+#include "../glew-2.2.0/include/GL/glew.h"
 #ifdef _WINDOWS
 #include "wglew.h"
 #endif
