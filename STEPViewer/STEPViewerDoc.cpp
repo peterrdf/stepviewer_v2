@@ -112,8 +112,7 @@ CMySTEPViewerDoc::CMySTEPViewerDoc()
 }
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{	
-	TRACE(L"CMySTEPViewerDoc::~CMySTEPViewerDoc()");
+{
 }
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
