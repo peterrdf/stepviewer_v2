@@ -357,7 +357,7 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	wchar_t szBuffer[512];
 	swprintf(szBuffer, 512, L"#%lld", owlInstance);
 
-	wstring strName;
+	wstring strName = szBuffer;
 	strName += L" ";
 	strName += getInstanceClassName(owlInstance);
 
