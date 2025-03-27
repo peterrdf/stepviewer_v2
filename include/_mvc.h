@@ -109,8 +109,8 @@ public: // Methods
 	static int64_t getNextInstanceID() { return s_iInstanceID++; }
 	static wstring getInstanceName(OwlInstance owlInstance);
 	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
-	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName);
-	static double getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName);
+	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName);
+	static double getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName);
 
 	_texture* getTexture(const wstring& strTexture);
 	virtual _texture* getDefaultTexture() { return nullptr; };

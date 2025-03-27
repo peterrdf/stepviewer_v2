@@ -372,7 +372,7 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return szClassName;
 }
 
-/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName)
+/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName)
 {
 	OwlInstance* piValues = nullptr;
 	int64_t	iCard = 0;
@@ -385,7 +385,7 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? piValues[0] : 0;
 }
 
-/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName)
+/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName)
 {
 	double* pdValues = nullptr;
 	int64_t	iCard = 0;
