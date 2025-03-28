@@ -88,4 +88,6 @@ public:
 	afx_msg void OnUpdateBcfNew(CCmdUI* pCmdUI);
 	afx_msg void OnBcfOpen();
 	afx_msg void OnUpdateBcfOpen(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsGltf();
+	afx_msg void OnUpdateExportAsGltf(CCmdUI* pCmdUI);
 };

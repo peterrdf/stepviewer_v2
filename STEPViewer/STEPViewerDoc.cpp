@@ -13,6 +13,11 @@
 #include "_ap_model_factory.h"
 #include <propkey.h>
 
+#ifdef _GLTF_SUPPORT
+#include "ifc2gltf.h"
+#pragma comment(lib, "ifc2gltf.lib")
+#endif
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -20,10 +25,9 @@
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
 {
-	if (pInstance == nullptr)
-	{
+	if (pInstance == nullptr) {
 		return;
-	} 
+	}
 
 	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName()).c_str();
 
@@ -31,14 +35,12 @@
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
 	auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
-	if (pAPInstance == nullptr)
-	{
+	if (pAPInstance == nullptr) {
 		ASSERT(FALSE);
 
 		return;
@@ -51,21 +53,18 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
 	setModel(nullptr);
 
-	if ((vecPaths.size() == 1) && m_wndBCFView.IsBCF(vecPaths[0]))
-	{
+	if ((vecPaths.size() == 1) && m_wndBCFView.IsBCF(vecPaths[0])) {
 		m_wndBCFView.Open(vecPaths[0]);
 
 		return;
 	}
 
-	m_wndBCFView.Close();	
+	m_wndBCFView.Close();
 
 	vector<_model*> vecModels;
-	for (auto strPath : vecPaths)
-	{
+	for (auto strPath : vecPaths) {
 		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
-		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr))
-		{
+		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr)) {
 			delete pModel;
 
 			continue;
@@ -74,8 +73,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		vecModels.push_back(pModel);
 	}
 
-	if (!vecModels.empty())
-	{
+	if (!vecModels.empty()) {
 		setModels(vecModels);
 	}
 }
@@ -101,6 +99,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_BCF_NEW, &CMySTEPViewerDoc::OnUpdateBcfNew)
 	ON_COMMAND(ID_BCF_OPEN, &CMySTEPViewerDoc::OnBcfOpen)
 	ON_UPDATE_COMMAND_UI(ID_BCF_OPEN, &CMySTEPViewerDoc::OnUpdateBcfOpen)
+	ON_COMMAND(ID_EXPORT_AS_GLTF, &CMySTEPViewerDoc::OnExportAsGltf)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_GLTF, &CMySTEPViewerDoc::OnUpdateExportAsGltf)
 END_MESSAGE_MAP()
 
 
@@ -121,7 +121,7 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 		return FALSE;
 
 	setModel(nullptr);
-	m_wndBCFView.Close();	
+	m_wndBCFView.Close();
 
 	return TRUE;
 }
@@ -130,12 +130,9 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 
 void CMySTEPViewerDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
+	if (ar.IsStoring()) {
 		// TODO: add storing code here
-	}
-	else
-	{
+	} else {
 		// TODO: add loading code here
 	}
 }
@@ -151,7 +148,7 @@ void CMySTEPViewerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
 	CString strText = _T("TODO: implement thumbnail drawing here");
 	LOGFONT lf;
 
-	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	pDefaultGUIFont->GetLogFont(&lf);
 	lf.lfHeight = 36;
 
@@ -176,16 +173,12 @@ void CMySTEPViewerDoc::InitializeSearchContent()
 
 void CMySTEPViewerDoc::SetSearchContent(const CString& value)
 {
-	if (value.IsEmpty())
-	{
+	if (value.IsEmpty()) {
 		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-	}
-	else
-	{
-		CMFCFilterChunkValueImpl *pChunk = nullptr;
+	} else {
+		CMFCFilterChunkValueImpl* pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != nullptr)
-		{
+		if (pChunk != nullptr) {
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
 		}
@@ -217,15 +210,14 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_wndBCFView.IsBCF(lpszPathName))
-	{
+	if (m_wndBCFView.IsBCF(lpszPathName)) {
 		m_wndBCFView.Open(lpszPathName);
 
 		return TRUE;
 	}
 
 	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
-	m_wndBCFView.Close();	
+	m_wndBCFView.Close();
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -242,15 +234,13 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 void CMySTEPViewerDoc::OnFileOpen()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, DESIGN_MODELS_FILTER);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
 	vector<CString> vecModels;
 	POSITION pos(dlgFile.GetStartPosition());
-	while (pos != nullptr)
-	{
+	while (pos != nullptr) {
 		CString strFileName = dlgFile.GetNextPathName(pos);
 		vecModels.push_back(strFileName);
 
@@ -265,7 +255,7 @@ void CMySTEPViewerDoc::OnFileOpen()
 	strTitle += L" - ";
 	strTitle += vecModels[0];
 	strTitle += vecModels.size() > 1 ? L", ..." : L"";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);	
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
@@ -299,8 +289,7 @@ void CMySTEPViewerDoc::OnViewModelChecker()
 {
 	if (m_wndModelChecker.IsVisible()) {
 		m_wndModelChecker.Hide(false);
-	}
-	else {
+	} else {
 		m_wndModelChecker.Show();
 	}
 }
@@ -317,31 +306,23 @@ void CMySTEPViewerDoc::OnFileSave()
 
 	CString strFiler;
 	CString strExtension;
-	if (apModel->getAP() == enumAP::STEP)
-	{
+	if (apModel->getAP() == enumAP::STEP) {
 		strFiler = STEP_MODELS_FILTER;
 		strExtension = L"ifc";
-	}
-	else if (apModel->getAP() == enumAP::IFC)
-	{
+	} else if (apModel->getAP() == enumAP::IFC) {
 		strFiler = IFC_MODELS_FILTER;
 		strExtension = L"step";
-	}
-	else  if (apModel->getAP() == enumAP::CIS2)
-	{
+	} else  if (apModel->getAP() == enumAP::CIS2) {
 		strFiler = CIS2_MODELS_FILTER;
 		strExtension = L"stp";
-	}
-	else
-	{
+	} else {
 		ASSERT(FALSE);
 
 		return;
 	}
 
 	CFileDialog dlgFile(FALSE, strExtension, apModel->getPath(), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, strFiler);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
@@ -366,19 +347,16 @@ void CMySTEPViewerDoc::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
 void CMySTEPViewerDoc::OnBcfAddbim()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, BIM_MODELS_FILTER);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
 	POSITION pos(dlgFile.GetStartPosition());
-	while (pos != nullptr)
-	{
+	while (pos != nullptr) {
 		CString strPath = dlgFile.GetNextPathName(pos);
 
 		auto pModel = _ap_model_factory::load(strPath, false, !getModels().empty() ? getModels()[0] : nullptr, false);
-		if (pModel->getAP() != enumAP::IFC)
-		{
+		if (pModel->getAP() != enumAP::IFC) {
 			delete pModel;
 
 			continue;
@@ -413,14 +391,12 @@ void CMySTEPViewerDoc::OnUpdateBcfNew(CCmdUI* pCmdUI)
 void CMySTEPViewerDoc::OnBcfOpen()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, BCF_PACKAGES_FILTER);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
 	CString strPath = dlgFile.GetPathName();
-	if (m_wndBCFView.IsBCF(strPath))
-	{
+	if (m_wndBCFView.IsBCF(strPath)) {
 		m_wndBCFView.Open(strPath);
 	}
 }
@@ -428,4 +404,32 @@ void CMySTEPViewerDoc::OnBcfOpen()
 void CMySTEPViewerDoc::OnUpdateBcfOpen(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
+}
+
+void CMySTEPViewerDoc::OnExportAsGltf()
+{
+#ifdef _GLTF_SUPPORT
+	fs::path pthInputFile = getModels()[0]->getPath();
+
+	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("gltf"), pthInputFile.wstring().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK) {
+		return;
+	}
+
+	fs::path pthOutputFile = (LPCWSTR)dlgFile.GetPathName();
+
+	SaveAsGLTF(pthInputFile.string().c_str(), pthOutputFile.string().c_str(), true);
+#endif
+}
+
+void CMySTEPViewerDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
+{
+#ifdef _GLTF_SUPPORT
+	pCmdUI->Enable(getModels().size() == 1);
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }

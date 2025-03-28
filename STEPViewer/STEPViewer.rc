@@ -672,6 +672,10 @@ BEGIN
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        POPUP "Export As..."
+        BEGIN
+            MENUITEM "glTF",                        ID_EXPORT_AS_GLTF
+        END
         MENUITEM SEPARATOR
         MENUITEM "New BCF package",             ID_BCF_NEW
         MENUITEM "Open BCF package...",         ID_BCF_OPEN
