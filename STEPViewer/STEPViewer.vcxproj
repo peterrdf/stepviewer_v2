@@ -442,7 +442,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
