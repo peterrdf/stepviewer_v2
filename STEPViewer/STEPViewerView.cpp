@@ -737,6 +737,23 @@ void CMySTEPViewerView::OnViewReset()
 	}
 }
 
+
+#ifdef _DEBUG
+static void ASSERT_EQ(double d1, double d2)
+{
+	double diff = fabs(d1 - d2);
+	ASSERT(diff < 1e-7);
+}
+
+static void ASSERT_EQ(BCFPoint& pt1, BCFPoint& pt2)
+{
+	for (int i = 0; i < 3; i++) {
+		ASSERT_EQ(pt1.xyz[i], pt2.xyz[i]);
+	}
+}
+
+#endif //_DEBUG
+
 void CMySTEPViewerView::SetBCFView(
 	BCFCamera camera,
 	BCFPoint& viewpoint,
@@ -761,6 +778,27 @@ void CMySTEPViewerView::SetBCFView(
 			fieldOfView,
 			aspectRatio,
 			dLengthConversionFactor);
+
+#ifdef _DEBUG
+		//Set/GetBCFView must be complementar
+
+		BCFCamera camera_;
+		BCFPoint viewpoint_, direction_, upVector_;
+		double viewToWorldScale_, fieldOfView_, aspectRatio_;
+		
+		GetBCFView(camera_, viewpoint_, direction_, upVector_, viewToWorldScale_, fieldOfView_, aspectRatio_);
+
+		ASSERT(camera == camera_);
+		ASSERT_EQ(viewpoint,viewpoint_);
+		ASSERT_EQ(direction, direction_);
+		ASSERT_EQ(upVector, upVector_);
+		ASSERT_EQ(viewToWorldScale, viewToWorldScale_);
+		ASSERT_EQ(fieldOfView, fieldOfView_);
+		ASSERT_EQ(aspectRatio, aspectRatio_);
+
+#endif // _DEBUG
+
+
 	}
 }
 
