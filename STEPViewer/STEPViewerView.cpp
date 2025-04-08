@@ -779,26 +779,25 @@ void CMySTEPViewerView::SetBCFView(
 			aspectRatio,
 			dLengthConversionFactor);
 
-#ifdef _DEBUG
-		//Set/GetBCFView must be complementar
-
-		BCFCamera camera_;
-		BCFPoint viewpoint_, direction_, upVector_;
-		double viewToWorldScale_, fieldOfView_, aspectRatio_;
-		
-		GetBCFView(camera_, viewpoint_, direction_, upVector_, viewToWorldScale_, fieldOfView_, aspectRatio_);
-
-		ASSERT(camera == camera_);
-		ASSERT_EQ(viewpoint,viewpoint_);
-		ASSERT_EQ(direction, direction_);
-		ASSERT_EQ(upVector, upVector_);
-		ASSERT_EQ(viewToWorldScale, viewToWorldScale_);
-		ASSERT_EQ(fieldOfView, fieldOfView_);
-		ASSERT_EQ(aspectRatio, aspectRatio_);
-
-#endif // _DEBUG
-
-
+//#ifdef _DEBUG
+//		// TBD:
+//		// Igor: Set/GetBCFView must be complementary
+// 		// Svilen: OpenGL SDK always center the model
+//
+//		BCFCamera camera_;
+//		BCFPoint viewpoint_, direction_, upVector_;
+//		double viewToWorldScale_, fieldOfView_, aspectRatio_;
+//		
+//		GetBCFView(camera_, viewpoint_, direction_, upVector_, viewToWorldScale_, fieldOfView_, aspectRatio_);
+//
+//		ASSERT(camera == camera_);
+//		ASSERT_EQ(viewpoint,viewpoint_);
+//		ASSERT_EQ(direction, direction_);
+//		ASSERT_EQ(upVector, upVector_);
+//		ASSERT_EQ(viewToWorldScale, viewToWorldScale_);
+//		ASSERT_EQ(fieldOfView, fieldOfView_);
+//		ASSERT_EQ(aspectRatio, aspectRatio_);
+//#endif // _DEBUG
 	}
 }
 
