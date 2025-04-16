@@ -1846,9 +1846,9 @@ void _navigator_model::createLabels(OwlModel owlModel)
 	// Front
 	OwlInstance owlInstance = translateTransformation(
 		owlModel,
-		rotateTransformation(owlModel, scaleTransformation(owlModel, owlFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 180. / 360.),
 		0., -.751, 0.,
-		1., 1., 1.);
+		-1., 1., 1.);
 	SetNameOfInstance(owlInstance, "#front-label");
 
 	// Back
