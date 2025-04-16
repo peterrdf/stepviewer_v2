@@ -297,6 +297,9 @@
     <ClInclude Include="IDS\pch.h">
       <Filter>IDS</Filter>
     </ClInclude>
+    <ClInclude Include="IDSCheckerDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -481,6 +484,9 @@
     </ClCompile>
     <ClCompile Include="IDS\pch.cpp">
       <Filter>IDS</Filter>
+    </ClCompile>
+    <ClCompile Include="IDSCheckerDialog.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

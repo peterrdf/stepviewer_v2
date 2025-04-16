@@ -661,6 +661,7 @@
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
+    <ClInclude Include="IDSCheckerDialog.h" />
     <ClInclude Include="IDS\IDS.h" />
     <ClInclude Include="IDS\parser\_errors.h" />
     <ClInclude Include="IDS\parser\_io.h" />
@@ -1020,6 +1021,7 @@
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
+    <ClCompile Include="IDSCheckerDialog.cpp" />
     <ClCompile Include="IDS\IDS.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>

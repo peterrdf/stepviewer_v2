@@ -12,32 +12,17 @@
 #include "STEPViewerDoc.h"
 #include <propkey.h>
 
+#include "IDSCheckerDialog.h"
+
 #include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
 #include "ifc2gltf.h"
 #pragma comment(lib, "ifc2gltf.lib")
 #endif
-#include "IDS.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-// ************************************************************************************************
-class IDSConsole : public RDF::IDS::Console
-{
-
-public:
-
-	IDSConsole(CString& text) :m_text(text) {}
-
-	virtual void out(const char* sz) override
-	{
-		m_text.Append(CString(sz));
-	}
-
-	CString& m_text;
-};
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -455,29 +440,8 @@ void CMySTEPViewerDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
 
 void CMySTEPViewerDoc::OnViewIdsChecker()
 {
-	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, IDS_FILTER);
-	if (dlgFile.DoModal() != IDOK) {
-		return;
-	}
-
-	CString strLog;
-	RDF::IDS::File ids;
-	if (ids.Read(dlgFile.GetPathName())) {
-		
-		IDSConsole output(strLog);
-		bool ok = ids.Check(_ptr<_ap_model>(getModels()[0])->getSdaiModel(), false,
-			RDF::IDS::MsgLevel::All,
-			&output);
-
-		CString strRes;
-		strRes.Format(L"Result: %s\r\n\r\n", ok ? L"OK" : L"FAIL");
-
-		strLog.Insert(0, strRes);
-	} else {
-		strLog.Format(L"Failed to read IDS file : %s", dlgFile.GetPathName().GetString());
-	}
-
-	AfxMessageBox(strLog);
+	CIDSCheckerDialog dlgIDSChecker(getModels()[0], ::AfxGetMainWnd());
+	dlgIDSChecker.DoModal();
 }
 
 void CMySTEPViewerDoc::OnUpdateViewIdsChecker(CCmdUI* pCmdUI)

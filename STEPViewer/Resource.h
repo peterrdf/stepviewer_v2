@@ -126,6 +126,7 @@
 #define IDD_BCF_ADDREFERENCELINK        359
 #define IDD_BCF_ADDOCUMENT              361
 #define IDD_BCF_TOPICFILES              363
+#define IDD_DIALOG_IDS_CHECKER          365
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -181,6 +182,9 @@
 #define IDC_UPDATE_VIEWPOINT            1052
 #define IDC_BUTTON1                     1054
 #define IDC_BUTTON_BIMS                 1054
+#define IDC_EDIT_IDS_CHECKER_RESULTS    1055
+#define IDC_CHECK1                      1056
+#define IDC_CHECK_ERRORS_ONLY           1056
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -229,16 +233,15 @@
 #define ID_BCF_OPEN                     32849
 #define ID_FILE_EXPORT_AS               32851
 #define ID_EXPORT_AS_GLTF               32853
-#define ID_VIEW_IDSCHECKER              32854
 #define ID_VIEW_IDS_CHECKER             32855
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        365
+#define _APS_NEXT_RESOURCE_VALUE        367
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_CONTROL_VALUE         1057
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif
