@@ -229,13 +229,15 @@
 #define ID_BCF_OPEN                     32849
 #define ID_FILE_EXPORT_AS               32851
 #define ID_EXPORT_AS_GLTF               32853
+#define ID_VIEW_IDSCHECKER              32854
+#define ID_VIEW_IDS_CHECKER             32855
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        365
-#define _APS_NEXT_COMMAND_VALUE         32854
+#define _APS_NEXT_COMMAND_VALUE         32856
 #define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

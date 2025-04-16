@@ -749,6 +749,7 @@ BEGIN
         MENUITEM "Reset",                       ID_VIEW_RESET
         MENUITEM SEPARATOR
         MENUITEM "Model Checker",               ID_VIEW_MODEL_CHECKER
+        MENUITEM "IDS Checker",                 ID_VIEW_IDS_CHECKER
     END
     POPUP "&Help"
     BEGIN

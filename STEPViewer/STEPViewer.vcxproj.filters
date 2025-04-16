@@ -34,6 +34,12 @@
     <Filter Include="BCF">
       <UniqueIdentifier>{cff48f62-afa3-4926-a12d-bf85abd51b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IDS">
+      <UniqueIdentifier>{4e965967-2245-44b3-bb31-b2e4cb4bf234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDS\parser">
+      <UniqueIdentifier>{46f625b7-1d98-4fcb-8921-e77e6974c391}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -255,6 +261,42 @@
     <ClInclude Include="..\include\_rdf_class.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="IDS\parser\_errors.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_io.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_log.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_net.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_reader.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_schema_storage.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_serialization.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_string.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_time.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_xml.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\IDS.h">
+      <Filter>IDS</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\pch.h">
+      <Filter>IDS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -421,6 +463,24 @@
     </ClCompile>
     <ClCompile Include="..\include\_rdf_instance.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_net.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_reader.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_serialization.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_xml.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\IDS.cpp">
+      <Filter>IDS</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\pch.cpp">
+      <Filter>IDS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

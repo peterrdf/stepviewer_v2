@@ -16,6 +16,7 @@ static TCHAR IFC_MODELS_FILTER[] = _T("IFC Models (*.ifc)|*.ifc|All Files (*.*)|
 static TCHAR BIM_MODELS_FILTER[] = _T("BIM Models (*.ifc)|*.ifc|All Files (*.*)|*.*||");
 static TCHAR STEP_MODELS_FILTER[] = _T("STEP Models (*.step)|*.step|All Files (*.*)|*.*||");
 static TCHAR CIS2_MODELS_FILTER[] = _T("CIS2 Models (*.stp)|*.stp|All Files (*.*)|*.*||");
+static TCHAR IDS_FILTER[] = _T("IDS Models (*.ids)|*.ids|All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 class CMySTEPViewerDoc
@@ -90,4 +91,6 @@ public:
 	afx_msg void OnUpdateBcfOpen(CCmdUI* pCmdUI);
 	afx_msg void OnExportAsGltf();
 	afx_msg void OnUpdateExportAsGltf(CCmdUI* pCmdUI);
+	afx_msg void OnViewIdsChecker();
+	afx_msg void OnUpdateViewIdsChecker(CCmdUI* pCmdUI);
 };

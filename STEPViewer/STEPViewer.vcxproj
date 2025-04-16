@@ -248,7 +248,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -277,7 +277,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -306,7 +306,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -335,7 +335,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -366,7 +366,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -397,7 +397,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -430,7 +430,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -460,7 +460,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -490,7 +490,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -520,7 +520,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -551,7 +551,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -582,7 +582,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -661,6 +661,18 @@
     <ClInclude Include="CIS2\CIS2Representation.h" />
     <ClInclude Include="CIS2\CIS2OpenGLView.h" />
     <ClInclude Include="DesignTreeView.h" />
+    <ClInclude Include="IDS\IDS.h" />
+    <ClInclude Include="IDS\parser\_errors.h" />
+    <ClInclude Include="IDS\parser\_io.h" />
+    <ClInclude Include="IDS\parser\_log.h" />
+    <ClInclude Include="IDS\parser\_net.h" />
+    <ClInclude Include="IDS\parser\_reader.h" />
+    <ClInclude Include="IDS\parser\_schema_storage.h" />
+    <ClInclude Include="IDS\parser\_serialization.h" />
+    <ClInclude Include="IDS\parser\_string.h" />
+    <ClInclude Include="IDS\parser\_time.h" />
+    <ClInclude Include="IDS\parser\_xml.h" />
+    <ClInclude Include="IDS\pch.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
     <ClInclude Include="ModelCheckDlg.h" />
     <ClInclude Include="RelationsView.h" />
@@ -1008,6 +1020,90 @@
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
+    <ClCompile Include="IDS\IDS.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_net.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_reader.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_serialization.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_xml.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="IDS\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
     <ClCompile Include="RelationsView.cpp" />

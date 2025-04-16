@@ -55,7 +55,7 @@
 #include <GL/glu.h>
 
 #include "engine.h"
-#include "stepengine.h"
+#include "ifcengine.h"
 
 #include <string>
 

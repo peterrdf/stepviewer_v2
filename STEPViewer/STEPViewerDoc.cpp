@@ -10,17 +10,34 @@
 #endif
 
 #include "STEPViewerDoc.h"
-#include "_ap_model_factory.h"
 #include <propkey.h>
 
+#include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
 #include "ifc2gltf.h"
 #pragma comment(lib, "ifc2gltf.lib")
 #endif
+#include "IDS.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+// ************************************************************************************************
+class IDSConsole : public RDF::IDS::Console
+{
+
+public:
+
+	IDSConsole(CString& text) :m_text(text) {}
+
+	virtual void out(const char* sz) override
+	{
+		m_text.Append(CString(sz));
+	}
+
+	CString& m_text;
+};
 
 // ************************************************************************************************
 /*virtual*/ void CMySTEPViewerDoc::saveInstance(_instance* pInstance) /*override*/
@@ -101,6 +118,8 @@ BEGIN_MESSAGE_MAP(CMySTEPViewerDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_BCF_OPEN, &CMySTEPViewerDoc::OnUpdateBcfOpen)
 	ON_COMMAND(ID_EXPORT_AS_GLTF, &CMySTEPViewerDoc::OnExportAsGltf)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_GLTF, &CMySTEPViewerDoc::OnUpdateExportAsGltf)
+	ON_COMMAND(ID_VIEW_IDS_CHECKER, &CMySTEPViewerDoc::OnViewIdsChecker)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_IDS_CHECKER, &CMySTEPViewerDoc::OnUpdateViewIdsChecker)
 END_MESSAGE_MAP()
 
 
@@ -432,4 +451,40 @@ void CMySTEPViewerDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
 #else
 	pCmdUI->Enable(FALSE);
 #endif
+}
+
+void CMySTEPViewerDoc::OnViewIdsChecker()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, IDS_FILTER);
+	if (dlgFile.DoModal() != IDOK) {
+		return;
+	}
+
+	CString strLog;
+	RDF::IDS::File ids;
+	if (ids.Read(dlgFile.GetPathName())) {
+		
+		IDSConsole output(strLog);
+		bool ok = ids.Check(_ptr<_ap_model>(getModels()[0])->getSdaiModel(), false,
+			RDF::IDS::MsgLevel::All,
+			&output);
+
+		CString strRes;
+		strRes.Format(L"Result: %s\r\n\r\n", ok ? L"OK" : L"FAIL");
+
+		strLog.Insert(0, strRes);
+	} else {
+		strLog.Format(L"Failed to read IDS file : %s", dlgFile.GetPathName().GetString());
+	}
+
+	AfxMessageBox(strLog);
+}
+
+void CMySTEPViewerDoc::OnUpdateViewIdsChecker(CCmdUI* pCmdUI)
+{
+	BOOL bEnable = FALSE;
+	if (getModels().size() == 1) {
+		bEnable = _ptr<_ap_model>(getModels()[0])->getAP() == enumAP::IFC;
+	}
+	pCmdUI->Enable(bEnable);
 }
