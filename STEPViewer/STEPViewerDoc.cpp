@@ -64,6 +64,25 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 	m_wndBCFView.Close();
 
 	vector<_model*> vecModels;
+
+#ifdef _USE_LIBZIP
+	if (vecPaths.size() == 1) {
+		fs::path pathModel = (LPCWSTR)vecPaths[0];
+		string strExtension = pathModel.extension().string();
+		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+
+		if (strExtension == ".ifczip") {
+			vecModels = _ap_model_factory::loadIFCZIP((LPCWSTR)vecPaths[0]);
+		}
+
+		if (!vecModels.empty()) {
+			setModels(vecModels);
+		}
+
+		return;
+	}
+#endif
+
 	for (auto strPath : vecPaths) {
 		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
 		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr)) {
@@ -207,33 +226,6 @@ void CMySTEPViewerDoc::Dump(CDumpContext& dc) const
 
 
 // CMySTEPViewerDoc commands
-
-
-BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
-{
-	if (!CDocument::OnOpenDocument(lpszPathName))
-		return FALSE;
-
-	if (m_wndBCFView.IsBCF(lpszPathName)) {
-		m_wndBCFView.Open(lpszPathName);
-
-		return TRUE;
-	}
-
-	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
-	m_wndBCFView.Close();
-
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += lpszPathName;
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-	// MRU
-	AfxGetApp()->AddToRecentFileList(lpszPathName);
-
-	return TRUE;
-}
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
