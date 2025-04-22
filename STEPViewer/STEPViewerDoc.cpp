@@ -73,13 +73,13 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 		if (strExtension == ".ifczip") {
 			vecModels = _ap_model_factory::loadIFCZIP((LPCWSTR)vecPaths[0]);
-		}
 
-		if (!vecModels.empty()) {
-			setModels(vecModels);
-		}
+			if (!vecModels.empty()) {
+				setModels(vecModels);
+			}
 
-		return;
+			return;
+		}
 	}
 #endif
 
