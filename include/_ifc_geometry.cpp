@@ -34,6 +34,11 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
     cleanCachedGeometry();
 }
 
+/*virtual*/ bool _ifc_geometry::isPlaceholder() const /*override*/
+{
+    return !m_vecMappedGeometries.empty();
+}
+
 /*virtual*/ bool _ifc_geometry::hasGeometry() const /*override*/
 {
     if (!m_vecMappedGeometries.empty()) {
@@ -47,11 +52,6 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
     }
 
     return _geometry::hasGeometry();
-}
-
-/*virtual*/ bool _ifc_geometry::isPlaceholder() const /*override*/
-{
-    return !m_vecMappedGeometries.empty();
 }
 
 /*virtual*/ bool _ifc_geometry::ignoreBB() const /*override*/
