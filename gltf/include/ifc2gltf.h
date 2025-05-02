@@ -4,15 +4,19 @@
 
 // ************************************************************************************************
 #ifdef _WINDOWS
-#ifdef _USRDLL
-#define DECSPEC __declspec(dllexport)  
+	#define STDCALL __stdcall
+
+	#ifndef IFC2GLTF_STATIC
+		#ifdef IFC2GLTF_EXPORTS
+			#define DECSPEC __declspec(dllexport)
+		#else
+			#define DECSPEC __declspec(dllimport)		
+		#endif
+	#else
+		#define DECSPEC /*nothing*/
+	#endif
 #else
-#define DECSPEC __declspec(dllimport) 
-#endif // _USRDLL
-#define STDCALL __stdcall
-#else
-#define DECSPEC /*nothing*/
-#define STDCALL /*nothing*/
+	#define STDCALL /*nothing*/
 #endif // _WINDOWS
 
 // ************************************************************************************************
