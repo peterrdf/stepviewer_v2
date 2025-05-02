@@ -8,6 +8,7 @@
 #include "stb/stb_image.h"
 
 #ifdef _WINDOWS
+#include <atlbase.h>
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #else

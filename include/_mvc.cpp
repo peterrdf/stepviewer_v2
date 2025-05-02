@@ -985,7 +985,7 @@ bool _controller::isInstanceSelected(_instance* pInstance) const
 
 void _controller::saveInstance(OwlInstance owlInstance)
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && defined(__AFXDLGS_H__)
 	assert(owlInstance != 0);
 
 	wstring strName = _model::getInstanceName(owlInstance);
