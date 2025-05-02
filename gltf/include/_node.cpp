@@ -4,9 +4,8 @@
 #include <memory>
 
 // ************************************************************************************************
-_node::_node(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries)
-	: _ifc_geometry(owlInstance, sdaiInstance, vecMappedGeometries)
-	, m_iBufferByteLength(0)
+_node::_node()
+	: m_iBufferByteLength(0)
 	, m_strBufferBinFile("")	
 	, m_iVerticesBufferViewByteLength(0)
 	, m_iNormalsBufferViewByteLength(0)

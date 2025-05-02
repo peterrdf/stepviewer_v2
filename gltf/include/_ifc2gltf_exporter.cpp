@@ -1,13 +1,40 @@
 #include "stdafx.h"
 
-#include "_ifc2gltf_exporter.h"
 #include "_string.h"
+
+#include "_ifc2gltf_exporter.h"
 
 // ************************************************************************************************
 namespace _ifc2gltf
 {
+	// ********************************************************************************************
+	_gltf_ifc_model::_gltf_ifc_model()
+	{
+	}
+
+	/*virtual*/ _gltf_ifc_model::~_gltf_ifc_model()
+	{
+	}
+
+	/*virtual*/ _ifc_geometry* _gltf_ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance) /*override*/
+	{
+		return new _ifc_node(owlInstance, sdaiInstance, vector<_ifc_geometry*>());
+	}
+
+	// ********************************************************************************************
+	_ifc_node::_ifc_node(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries)
+		: _ifc_geometry(owlInstance, sdaiInstance, vecMappedGeometries)
+	{
+	}
+
+	/*virtual*/ _ifc_node::~_ifc_node()
+	{
+	}
+
+	// ********************************************************************************************
 	_exporter::_exporter(const char* szInputFile, const char* szOutputFile, bool bEmbeddedBuffers)
 		: _bin2gltf::_exporter(szInputFile, szOutputFile, bEmbeddedBuffers)
+		, m_pModel(nullptr)
 		, m_sdaiModel(0)
 		//, m_pAP242(nullptr)//#todo
 	{}
@@ -20,7 +47,40 @@ namespace _ifc2gltf
 			m_sdaiModel = 0;
 		}
 
+		delete m_pModel;
+
 		//delete m_pAP242;//#todo
+	}
+
+	/*virtual*/ bool _exporter::preExecute() /*override*/
+	{
+		VERIFY_INSTANCE(getInputFile());
+
+		delete m_pModel;
+		m_pModel = nullptr;
+
+		SdaiModel sdaiModel = sdaiOpenModelBNUnicode(0, (LPCWSTR)CA2W(getInputFile()), L"");
+		if (sdaiModel == 0) {
+			getLog()->logWrite(enumLogEvent::error, "Invalid model.");
+
+			return false;
+		}
+
+		fs::path pthInputFile = getInputFile();
+		string strExtension = pthInputFile.extension().string();
+		_string::toUpper(strExtension);		
+
+		string strTargetEntity;
+		if (strExtension == ".IFC") {
+			m_pModel = new _ifc_model();
+		} else if ((strExtension == ".STEP") || (strExtension == ".STP")) {
+			assert(false);
+
+			//#todo
+			//m_pAP242 = new _AP242(m_sdaiModel);
+		}
+
+		return true;
 	}
 
 	/*virtual*/ void _exporter::postExecute() /*override*/
@@ -32,6 +92,9 @@ namespace _ifc2gltf
 			sdaiCloseModel(m_sdaiModel);
 			m_sdaiModel = 0;
 		}
+
+		delete m_pModel;
+		m_pModel = nullptr;
 
 		//#todo
 		/*if (m_pAP242 != nullptr)
@@ -57,6 +120,8 @@ namespace _ifc2gltf
 
 			return;
 		}
+
+		
 
 		fs::path pthInputFile = getInputFile();
 

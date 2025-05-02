@@ -6,9 +6,13 @@
 #include "../../include/engine.h"
 #endif
 
+#include "_ptr.h"
+#include "_geometry.h"
+
 #include "_log.h"
 #include "_io.h"
 #include "_errors.h"
+
 #include "_node.h"
 
 #include <set>

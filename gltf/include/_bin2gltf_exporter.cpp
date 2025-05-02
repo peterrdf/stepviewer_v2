@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "_bin2gltf_exporter.h"
-#include "_base64.h"
 
+#include "_base64.h"
 
 // ************************************************************************************************
 namespace _bin2gltf
@@ -500,13 +500,15 @@ namespace _bin2gltf
 		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
 			auto pNode = m_vecNodes[iIndex];
 
-			const auto VERTEX_LENGTH = pNode->getVertexLength();
+			_ptr<_geometry> ptrGeometry(pNode);
+
+			const auto VERTEX_LENGTH = ptrGeometry->getVertexLength();
 
 			// buffer: byteLength
 			uint32_t iBufferByteLength = 0;
 
 			// buffer: uri
-			string strBinFileName = _string::sformat("%lld.bin", pNode->getSdaiInstance());
+			string strBinFileName = _string::sformat("%lld.bin", ptrGeometry->getOwlInstance());
 			fs::path pthNodeBinData = m_strOutputFolder;
 			pthNodeBinData.append(strBinFileName);
 
@@ -521,49 +523,49 @@ namespace _bin2gltf
 			}
 
 			// vertices/POSITION
-			for (int64_t iVertex = 0; iVertex < pNode->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
+			for (int64_t iVertex = 0; iVertex < ptrGeometry->getVerticesCount(); iVertex++) {
+				float fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 1];
+				fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 1];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 2];
+				fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 2];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
-			pNode->verticesBufferViewByteLength() = (uint32_t)pNode->getVerticesCount() * 3 * (uint32_t)sizeof(float);
+			pNode->verticesBufferViewByteLength() = (uint32_t)ptrGeometry->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->verticesBufferViewByteLength();
 
 			// vertices/NORMAL
-			for (int64_t iVertex = 0; iVertex < pNode->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
+			for (int64_t iVertex = 0; iVertex < ptrGeometry->getVerticesCount(); iVertex++) {
+				float fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
-			pNode->normalsBufferViewByteLength() = (uint32_t)pNode->getVerticesCount() * 3 * (uint32_t)sizeof(float);
+			pNode->normalsBufferViewByteLength() = (uint32_t)ptrGeometry->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->normalsBufferViewByteLength();
 
 			// vertices/TEXCOORD_0
-			for (int64_t iVertex = 0; iVertex < pNode->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
+			for (int64_t iVertex = 0; iVertex < ptrGeometry->getVerticesCount(); iVertex++) {
+				float fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
+				fValue = ptrGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
-			pNode->texturesBufferViewByteLength() = (uint32_t)pNode->getVerticesCount() * 2 * (uint32_t)sizeof(float);
+			pNode->texturesBufferViewByteLength() = (uint32_t)ptrGeometry->getVerticesCount() * 2 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->texturesBufferViewByteLength();
 
 			// Conceptual faces/indices
-			for (auto pCohort : pNode->concFacesCohorts()) {
+			for (auto pCohort : ptrGeometry->concFacesCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -576,7 +578,7 @@ namespace _bin2gltf
 			}
 
 			// Conceptual faces polygons/indices
-			for (auto pCohort : pNode->concFacePolygonsCohorts()) {
+			for (auto pCohort : ptrGeometry->concFacePolygonsCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -589,7 +591,7 @@ namespace _bin2gltf
 			}
 
 			// Lines
-			for (auto pCohort : pNode->linesCohorts()) {
+			for (auto pCohort : ptrGeometry->linesCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -602,7 +604,7 @@ namespace _bin2gltf
 			}
 
 			// Points
-			for (auto pCohort : pNode->pointsCohorts()) {
+			for (auto pCohort : ptrGeometry->pointsCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -664,11 +666,13 @@ namespace _bin2gltf
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
 
+			_ptr<_geometry> ptrGeometry(pNode);
+
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->concFacesCohorts().size() +
-				pNode->concFacePolygonsCohorts().size() +
-				pNode->linesCohorts().size() +
-				pNode->pointsCohorts().size());
+				ptrGeometry->concFacesCohorts().size() +
+				ptrGeometry->concFacePolygonsCohorts().size() +
+				ptrGeometry->linesCohorts().size() +
+				ptrGeometry->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*m_pOutputStream << COMMA;
@@ -791,11 +795,13 @@ namespace _bin2gltf
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
 
+			_ptr<_geometry> ptrGeometry(pNode);
+
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->concFacesCohorts().size() +
-				pNode->concFacePolygonsCohorts().size() +
-				pNode->linesCohorts().size() +
-				pNode->pointsCohorts().size());
+				ptrGeometry->concFacesCohorts().size() +
+				ptrGeometry->concFacePolygonsCohorts().size() +
+				ptrGeometry->linesCohorts().size() +
+				ptrGeometry->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*m_pOutputStream << COMMA;
@@ -813,24 +819,24 @@ namespace _bin2gltf
 				*m_pOutputStream << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
 				*m_pOutputStream << COMMA;
-				writeUIntProperty("count", (uint32_t)pNode->getVerticesCount());
+				writeUIntProperty("count", (uint32_t)ptrGeometry->getVerticesCount());
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string(pNode->getBBMin()->x),
-						to_string(pNode->getBBMin()->y),
-						to_string(pNode->getBBMin()->z)
+					to_string(ptrGeometry->getBBMin()->x),
+						to_string(ptrGeometry->getBBMin()->y),
+						to_string(ptrGeometry->getBBMin()->z)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string(pNode->getBBMax()->x),
-						to_string(pNode->getBBMax()->y),
-						to_string(pNode->getBBMax()->z)
+					to_string(ptrGeometry->getBBMax()->x),
+						to_string(ptrGeometry->getBBMax()->y),
+						to_string(ptrGeometry->getBBMax()->z)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -859,7 +865,7 @@ namespace _bin2gltf
 				*m_pOutputStream << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
 				*m_pOutputStream << COMMA;
-				writeUIntProperty("count", (uint32_t)pNode->getVerticesCount());
+				writeUIntProperty("count", (uint32_t)ptrGeometry->getVerticesCount());
 				*m_pOutputStream << COMMA;
 				writeStringProperty("type", "VEC3");
 				indent()--;
@@ -887,7 +893,7 @@ namespace _bin2gltf
 				*m_pOutputStream << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
 				*m_pOutputStream << COMMA;
-				writeUIntProperty("count", (uint32_t)pNode->getVerticesCount());
+				writeUIntProperty("count", (uint32_t)ptrGeometry->getVerticesCount());
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
@@ -912,7 +918,7 @@ namespace _bin2gltf
 			// indices/ELEMENT_ARRAY_BUFFER
 
 			// Conceptual faces
-			for (auto pCohort : pNode->concFacesCohorts()) {
+			for (auto pCohort : ptrGeometry->concFacesCohorts()) {
 				*m_pOutputStream << COMMA;
 
 				indent()++;
@@ -939,7 +945,7 @@ namespace _bin2gltf
 			}
 
 			// Conceptual faces polygons
-			for (auto pCohort : pNode->concFacePolygonsCohorts()) {
+			for (auto pCohort : ptrGeometry->concFacePolygonsCohorts()) {
 				*m_pOutputStream << COMMA;
 
 				indent()++;
@@ -966,7 +972,7 @@ namespace _bin2gltf
 			}
 
 			// Lines
-			for (auto pCohort : pNode->linesCohorts()) {
+			for (auto pCohort : ptrGeometry->linesCohorts()) {
 				*m_pOutputStream << COMMA;
 
 				indent()++;
@@ -993,7 +999,7 @@ namespace _bin2gltf
 			}
 
 			// Points
-			for (auto pCohort : pNode->pointsCohorts()) {
+			for (auto pCohort : ptrGeometry->pointsCohorts()) {
 				*m_pOutputStream << COMMA;
 
 				indent()++;
@@ -1042,15 +1048,17 @@ namespace _bin2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 
+				_ptr<_geometry> ptrGeometry(pNode);
+
 				assert(pNode->accessors().size() ==
 					3/*vertices, normals & textures bufferView-s*/ +
-					pNode->concFacesCohorts().size() +
-					pNode->concFacePolygonsCohorts().size() +
-					pNode->linesCohorts().size() +
-					pNode->pointsCohorts().size());
+					ptrGeometry->concFacesCohorts().size() +
+					ptrGeometry->concFacePolygonsCohorts().size() +
+					ptrGeometry->linesCohorts().size() +
+					ptrGeometry->pointsCohorts().size());
 
 				// Conceptual faces
-				for (size_t iConcFacesCohortIndex = 0; iConcFacesCohortIndex < pNode->concFacesCohorts().size(); iConcFacesCohortIndex++) {
+				for (size_t iConcFacesCohortIndex = 0; iConcFacesCohortIndex < ptrGeometry->concFacesCohorts().size(); iConcFacesCohortIndex++) {
 					if (iMeshIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1061,7 +1069,7 @@ namespace _bin2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getSdaiInstance(), iConcFacesCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", ptrGeometry->getOwlInstance(), iConcFacesCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1084,7 +1092,7 @@ namespace _bin2gltf
 							{
 								indent()++;
 
-								auto pMaterial = pNode->concFacesCohorts()[iConcFacesCohortIndex]->getMaterial();
+								auto pMaterial = ptrGeometry->concFacesCohorts()[iConcFacesCohortIndex]->getMaterial();
 								size_t iMaterialIndex = addMaterial(pMaterial);
 
 								vector<string> vecAttributes;
@@ -1128,7 +1136,7 @@ namespace _bin2gltf
 				} // for (size_t iConcFacesCohortIndex = ...
 
 				// Conceptual faces polygons
-				for (size_t iConcFacePolygonsCohortIndex = 0; iConcFacePolygonsCohortIndex < pNode->concFacePolygonsCohorts().size(); iConcFacePolygonsCohortIndex++) {
+				for (size_t iConcFacePolygonsCohortIndex = 0; iConcFacePolygonsCohortIndex < ptrGeometry->concFacePolygonsCohorts().size(); iConcFacePolygonsCohortIndex++) {
 					if (iMeshIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1139,7 +1147,7 @@ namespace _bin2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", pNode->getSdaiInstance(), iConcFacePolygonsCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", ptrGeometry->getOwlInstance(), iConcFacePolygonsCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1170,7 +1178,7 @@ namespace _bin2gltf
 								writeUIntProperty("indices", pNode->accessors()[
 									iConcFacePolygonsCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
-										pNode->concFacesCohorts().size()]);
+										ptrGeometry->concFacesCohorts().size()]);
 								*m_pOutputStream << COMMA;
 								writeUIntProperty("material", 0);
 								*m_pOutputStream << COMMA;
@@ -1200,7 +1208,7 @@ namespace _bin2gltf
 				} // for (size_t iConcFacePolygonsCohortIndex = ...
 
 				// Lines
-				for (size_t iLinesCohortIndex = 0; iLinesCohortIndex < pNode->linesCohorts().size(); iLinesCohortIndex++) {
+				for (size_t iLinesCohortIndex = 0; iLinesCohortIndex < ptrGeometry->linesCohorts().size(); iLinesCohortIndex++) {
 					if (iMeshIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1211,7 +1219,7 @@ namespace _bin2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-lines-%lld", pNode->getSdaiInstance(), iLinesCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-lines-%lld", ptrGeometry->getOwlInstance(), iLinesCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1234,7 +1242,7 @@ namespace _bin2gltf
 							{
 								indent()++;
 
-								auto pMaterial = pNode->linesCohorts()[iLinesCohortIndex]->getMaterial();
+								auto pMaterial = ptrGeometry->linesCohorts()[iLinesCohortIndex]->getMaterial();
 								size_t iMaterialIndex = addMaterial(pMaterial);
 
 								vector<string> vecAttributes;
@@ -1245,8 +1253,8 @@ namespace _bin2gltf
 								writeUIntProperty("indices", pNode->accessors()[
 									iLinesCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
-										pNode->concFacesCohorts().size() +
-										pNode->concFacePolygonsCohorts().size()]);
+										ptrGeometry->concFacesCohorts().size() +
+										ptrGeometry->concFacePolygonsCohorts().size()]);
 								*m_pOutputStream << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
 								*m_pOutputStream << COMMA;
@@ -1276,7 +1284,7 @@ namespace _bin2gltf
 				} // for (size_t iLinesCohortIndex = ...
 
 				// Points
-				for (size_t iPointsCohortIndex = 0; iPointsCohortIndex < pNode->pointsCohorts().size(); iPointsCohortIndex++) {
+				for (size_t iPointsCohortIndex = 0; iPointsCohortIndex < ptrGeometry->pointsCohorts().size(); iPointsCohortIndex++) {
 					if (iMeshIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1287,7 +1295,7 @@ namespace _bin2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-points-%lld", pNode->getSdaiInstance(), iPointsCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-points-%lld", ptrGeometry->getOwlInstance(), iPointsCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1310,7 +1318,7 @@ namespace _bin2gltf
 							{
 								indent()++;
 
-								auto pMaterial = pNode->pointsCohorts()[iPointsCohortIndex]->getMaterial();
+								auto pMaterial = ptrGeometry->pointsCohorts()[iPointsCohortIndex]->getMaterial();
 								size_t iMaterialIndex = addMaterial(pMaterial);
 
 								vector<string> vecAttributes;
@@ -1321,9 +1329,9 @@ namespace _bin2gltf
 								writeUIntProperty("indices", pNode->accessors()[
 									iPointsCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
-										pNode->concFacesCohorts().size() +
-										pNode->concFacePolygonsCohorts().size() +
-										pNode->linesCohorts().size()]);
+										ptrGeometry->concFacesCohorts().size() +
+										ptrGeometry->concFacePolygonsCohorts().size() +
+										ptrGeometry->linesCohorts().size()]);
 								*m_pOutputStream << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
 								*m_pOutputStream << COMMA;
@@ -1377,11 +1385,13 @@ namespace _bin2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 
+				_ptr<_geometry> ptrGeometry(pNode);
+
 				assert(pNode->meshes().size() ==
-					pNode->concFacesCohorts().size() +
-					pNode->concFacePolygonsCohorts().size() +
-					pNode->linesCohorts().size() +
-					pNode->pointsCohorts().size());
+					ptrGeometry->concFacesCohorts().size() +
+					ptrGeometry->concFacePolygonsCohorts().size() +
+					ptrGeometry->linesCohorts().size() +
+					ptrGeometry->pointsCohorts().size());
 
 				if (pNode->getTransformations() == nullptr) {
 					if (iSceneNodeIndex > 0) {
@@ -1401,7 +1411,7 @@ namespace _bin2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-instance", pNode->getSdaiInstance()));
+						writeStringProperty("name", _string::sformat("%lld-instance", ptrGeometry->getOwlInstance()));
 						*m_pOutputStream << COMMA;
 						*getOutputStream() << "\n";
 						writeIndent();
@@ -1422,7 +1432,7 @@ namespace _bin2gltf
 							writeStartObjectTag();
 
 							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getSdaiInstance(), iMeshIndex));
+							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", ptrGeometry->getOwlInstance(), iMeshIndex));
 							*m_pOutputStream << COMMA;
 							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 							indent()--;
@@ -1461,7 +1471,7 @@ namespace _bin2gltf
 							writeStartObjectTag();
 
 							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-instance", pNode->getSdaiInstance()));
+							writeStringProperty("name", _string::sformat("%lld-instance", ptrGeometry->getOwlInstance()));
 							*m_pOutputStream << COMMA;
 							*getOutputStream() << "\n";
 							writeIndent();
@@ -1505,7 +1515,7 @@ namespace _bin2gltf
 								writeStartObjectTag();
 
 								indent()++;
-								writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getSdaiInstance(), iMeshIndex));
+								writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", ptrGeometry->getOwlInstance(), iMeshIndex));
 								*m_pOutputStream << COMMA;
 								writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 								indent()--;

@@ -7,7 +7,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class _node : public _ifc_geometry
+class _node
 {
 
 private: // Members
@@ -24,7 +24,7 @@ private: // Members
 
 public: // Methods
 
-	_node(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries);
+	_node();
 	virtual ~_node();
 
 	// glTF
