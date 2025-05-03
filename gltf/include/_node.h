@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_ifc_geometry.h"
+#include "_geometry.h"
 #include "_oglUtils.h"
 
 #include <vector>
@@ -10,7 +10,9 @@ using namespace std;
 class _node
 {
 
-private: // Members
+private: // Fields
+
+	_geometry* m_pGeometry;
 
 	uint32_t m_iBufferByteLength; // buffer: byteLength
 	string m_strBufferBinFile; // buffer: uri (*.bin)	
@@ -24,7 +26,7 @@ private: // Members
 
 public: // Methods
 
-	_node();
+	_node(_geometry* pGeometry);
 	virtual ~_node();
 
 	// glTF
@@ -40,5 +42,7 @@ public: // Methods
 
 protected: // Methods
 
-	void UpdateName();
+public: // Properties
+
+	_geometry* getGeometry() const { return m_pGeometry; }
 };

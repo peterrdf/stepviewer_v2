@@ -16,8 +16,7 @@
 
 #include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
-#include "ifc2gltf.h"
-#pragma comment(lib, "ifc2gltf.lib")
+#include "_gltf.h"
 #endif
 
 #ifdef _DEBUG
@@ -415,9 +414,11 @@ void CMySTEPViewerDoc::OnExportAsGltf()
 		return;
 	}
 
-	fs::path pthOutputFile = (LPCWSTR)dlgFile.GetPathName();
+	_c_log log(nullptr);
 
-	SaveAsGLTF(pthInputFile.string().c_str(), pthOutputFile.string().c_str(), true);
+	_gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	exporter.setLog(&log);
+	exporter.execute();
 #endif
 }
 

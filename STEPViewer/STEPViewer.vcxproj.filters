@@ -309,10 +309,7 @@
     <ClInclude Include="..\gltf\include\_node.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\ifc2gltf.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_ifc2gltf_exporter.h">
+    <ClInclude Include="..\gltf\include\_gltf.h">
       <Filter>glTF</Filter>
     </ClInclude>
   </ItemGroup>
@@ -509,7 +506,7 @@
     <ClCompile Include="..\gltf\include\_node.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_ifc2gltf_exporter.cpp">
+    <ClCompile Include="..\gltf\include\_gltf.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>

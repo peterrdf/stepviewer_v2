@@ -51,8 +51,6 @@ CMySTEPViewerApp::CMySTEPViewerApp()
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
-
-	std::wcout.imbue(std::locale::global(std::locale("")));
 }
 
 // The one and only CMySTEPViewerApp object
