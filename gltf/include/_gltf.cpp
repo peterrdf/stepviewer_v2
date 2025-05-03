@@ -1797,39 +1797,6 @@ namespace _gltf
 		// images
 	}
 
-	OwlInstance* _exporter::getObjectProperty(OwlInstance iInstance, const string& strPropertyName, int64_t& iInstancesCount) const
-	{
-		VERIFY_INSTANCE(iInstance);
-		VERIFY_STLOBJ_IS_NOT_EMPTY(strPropertyName);
-
-		iInstancesCount = 0;
-
-		RdfProperty iProperty = GetPropertyByName(getModel(), strPropertyName.c_str());
-		if (iProperty == 0) {
-			return nullptr;
-		}
-
-		OwlInstance* piInstances = nullptr;
-		GetObjectProperty(
-			iInstance,
-			iProperty,
-			&piInstances,
-			&iInstancesCount);
-
-		if (iInstancesCount == 0) {
-			return nullptr;
-		}
-
-		return piInstances;
-	}
-
-	bool _exporter::hasObjectProperty(OwlInstance iInstance, const string& strPropertyName)
-	{
-		int64_t iInstancesCount = 0;
-
-		return getObjectProperty(iInstance, strPropertyName, iInstancesCount) != nullptr;
-	}
-
 	size_t _exporter::addMaterial(const _material* pMaterial)
 	{
 		VERIFY_POINTER(pMaterial);

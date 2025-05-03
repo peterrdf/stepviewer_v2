@@ -85,16 +85,11 @@ namespace _gltf
 	public: // Methods
 
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
-		_exporter(const char* szInputFile, const char* szOutputFile, bool bEmbeddedBuffers);
 		virtual ~_exporter();
 
 		void execute();
 
 	protected: // Methods	
-
-		OwlModel getModel() const { return m_pModel->getOwlModel(); }
-		wofstream* getOutputStream() const { return m_pOutputStream; }
-		int& indent() { return m_iIndent; }
 
 		virtual bool preExecute();
 		virtual void postExecute();
@@ -128,10 +123,13 @@ namespace _gltf
 		void writeSamplers();
 		void writeTextures();
 
-		OwlInstance* getObjectProperty(OwlInstance iInstance, const string& strPropertyName, int64_t& iInstancesCount) const;
-		bool hasObjectProperty(OwlInstance iInstance, const string& strPropertyName);
-
 		size_t addMaterial(const _material* pMaterial);
+
+	public: // Properties
+
+		OwlModel getModel() const { return m_pModel->getOwlModel(); }
+		wofstream* getOutputStream() const { return m_pOutputStream; }
+		int& indent() { return m_iIndent; }
 	};
 };
 
