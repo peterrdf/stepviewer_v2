@@ -1297,8 +1297,14 @@ namespace _gltf
 					pNode->getGeometry()->concFacePolygonsCohorts().size() +
 					pNode->getGeometry()->linesCohorts().size() +
 					pNode->getGeometry()->pointsCohorts().size());
+				assert(!pNode->getGeometry()->getInstances().empty());
 
-				if (pNode->getGeometry()->getInstances().empty()) {
+				//
+				// Transformations
+				// 
+				for (auto pInstance : pNode->getGeometry()->getInstances()) {
+					auto pTransformation = pInstance->getTransformationMatrix();
+
 					if (iSceneNodeIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1321,6 +1327,28 @@ namespace _gltf
 						*getOutputStream() << "\n";
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
+						*m_pOutputStream << COMMA;
+						*getOutputStream() << "\n";
+						writeIndent();
+						*getOutputStream() << buildArrayProperty("matrix", vector<string>
+						{
+							to_string(pTransformation->_11),
+								to_string(pTransformation->_12),
+								to_string(pTransformation->_13),
+								to_string(pTransformation->_14),
+								to_string(pTransformation->_21),
+								to_string(pTransformation->_22),
+								to_string(pTransformation->_23),
+								to_string(pTransformation->_24),
+								to_string(pTransformation->_31),
+								to_string(pTransformation->_32),
+								to_string(pTransformation->_33),
+								to_string(pTransformation->_34),
+								to_string(pTransformation->_41),
+								to_string(pTransformation->_42),
+								to_string(pTransformation->_43),
+								to_string(pTransformation->_44)
+						}).c_str();
 						indent()--;
 
 						writeEndObjectTag();
@@ -1350,90 +1378,7 @@ namespace _gltf
 
 					// next root
 					iSceneNodeIndex++;
-				} // if (pNode->getGeometry()->getInstances().empty())
-				else {
-					//
-					// Transformations
-					// 
-					for (auto pInstance : pNode->getGeometry()->getInstances()) {
-						auto pTransformation = pInstance->getTransformationMatrix();
-
-						if (iSceneNodeIndex > 0) {
-							*m_pOutputStream << COMMA;
-						}
-
-						// root
-						{
-							m_vecSceneRootNodes.push_back(iSceneNodeIndex);
-
-							vector<string> vecNodeChildren;
-							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-								vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
-							}
-
-							indent()++;
-							writeStartObjectTag();
-
-							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-instance", getGeometryID(pNode->getGeometry())));
-							*m_pOutputStream << COMMA;
-							*getOutputStream() << "\n";
-							writeIndent();
-							*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
-							*m_pOutputStream << COMMA;
-							*getOutputStream() << "\n";
-							writeIndent();
-							*getOutputStream() << buildArrayProperty("matrix",
-								vector<string>
-							{
-								to_string(pTransformation->_11),
-									to_string(pTransformation->_12),
-									to_string(pTransformation->_13),
-									to_string(pTransformation->_14),
-									to_string(pTransformation->_21),
-									to_string(pTransformation->_22),
-									to_string(pTransformation->_23),
-									to_string(pTransformation->_24),
-									to_string(pTransformation->_31),
-									to_string(pTransformation->_32),
-									to_string(pTransformation->_33),
-									to_string(pTransformation->_34),
-									to_string(pTransformation->_41),
-									to_string(pTransformation->_42),
-									to_string(pTransformation->_43),
-									to_string(pTransformation->_44)
-							}).c_str();
-							indent()--;
-
-							writeEndObjectTag();
-							indent()--;
-						}
-						// root
-
-						// children
-						{
-							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-								*m_pOutputStream << COMMA;
-
-								indent()++;
-								writeStartObjectTag();
-
-								indent()++;
-								writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iMeshIndex));
-								*m_pOutputStream << COMMA;
-								writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
-								indent()--;
-
-								writeEndObjectTag();
-								indent()--;
-							}
-						}
-						// children
-
-						// next root
-						iSceneNodeIndex++;
-					} //for (size_t iTransformation = ...
-				} // else if (pNode->getGeometry()->getInstances().empty())
+				} //for (size_t iTransformation = ...
 			} // for (size_t iNodeIndex = ...
 
 			writeEndArrayTag();
