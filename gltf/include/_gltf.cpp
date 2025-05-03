@@ -37,7 +37,7 @@ namespace _gltf
 		m_pOutputStream = new wofstream(szOutputFile, std::ios::out | std::ios::trunc);
 
 		// UTF-8 locale
-		std::locale loc(std::locale(), new std::codecvt_utf8<wchar_t>);
+		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
 		m_pOutputStream->imbue(loc);
 	}
 
