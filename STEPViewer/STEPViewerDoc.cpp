@@ -148,6 +148,32 @@ BOOL CMySTEPViewerDoc::OnNewDocument()
 	return TRUE;
 }
 
+BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
+
+	if (m_wndBCFView.IsBCF(lpszPathName)) {
+		m_wndBCFView.Open(lpszPathName);
+
+		return TRUE;
+	}
+
+	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
+	m_wndBCFView.Close();
+
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += lpszPathName;
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(lpszPathName);
+
+	return TRUE;
+}
+
 // CMySTEPViewerDoc serialization
 
 void CMySTEPViewerDoc::Serialize(CArchive& ar)

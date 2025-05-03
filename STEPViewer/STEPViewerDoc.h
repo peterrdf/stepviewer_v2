@@ -43,6 +43,7 @@ public:
 // Overrides
 public:
 	virtual BOOL OnNewDocument();
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual void Serialize(CArchive& ar);
 	virtual void DeleteContents();
 	virtual void OnCloseDocument();
