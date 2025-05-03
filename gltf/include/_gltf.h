@@ -130,6 +130,8 @@ namespace _gltf
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
 		wofstream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
+
+		virtual int64_t getGeometryID(_geometry* pGeometry) { return (int64_t)pGeometry; }
 	};
 };
 

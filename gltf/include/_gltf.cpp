@@ -421,7 +421,7 @@ namespace _gltf
 			uint32_t iBufferByteLength = 0;
 
 			// buffer: uri
-			string strBinFileName = _string::sformat("%lld.bin", pNode->getGeometry()->getOwlInstance());
+			string strBinFileName = _string::sformat("%lld.bin", getGeometryID(pNode->getGeometry()));
 			fs::path pthNodeBinData = m_strOutputFolder;
 			pthNodeBinData.append(strBinFileName);
 
@@ -976,7 +976,7 @@ namespace _gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getGeometry()->getOwlInstance(), iConcFacesCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iConcFacesCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1054,7 +1054,7 @@ namespace _gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", pNode->getGeometry()->getOwlInstance(), iConcFacePolygonsCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pNode->getGeometry()), iConcFacePolygonsCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1126,7 +1126,7 @@ namespace _gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-lines-%lld", pNode->getGeometry()->getOwlInstance(), iLinesCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pNode->getGeometry()), iLinesCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1202,7 +1202,7 @@ namespace _gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-points-%lld", pNode->getGeometry()->getOwlInstance(), iPointsCohortIndex));
+						writeStringProperty("name", _string::sformat("%lld-points-%lld", getGeometryID(pNode->getGeometry()), iPointsCohortIndex));
 						*m_pOutputStream << COMMA;
 
 						*getOutputStream() << "\n";
@@ -1316,7 +1316,7 @@ namespace _gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-instance", pNode->getGeometry()->getOwlInstance()));
+						writeStringProperty("name", _string::sformat("%lld-instance", getGeometryID(pNode->getGeometry())));
 						*m_pOutputStream << COMMA;
 						*getOutputStream() << "\n";
 						writeIndent();
@@ -1337,7 +1337,7 @@ namespace _gltf
 							writeStartObjectTag();
 
 							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getGeometry()->getOwlInstance(), iMeshIndex));
+							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iMeshIndex));
 							*m_pOutputStream << COMMA;
 							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 							indent()--;
@@ -1375,7 +1375,7 @@ namespace _gltf
 							writeStartObjectTag();
 
 							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-instance", pNode->getGeometry()->getOwlInstance()));
+							writeStringProperty("name", _string::sformat("%lld-instance", getGeometryID(pNode->getGeometry())));
 							*m_pOutputStream << COMMA;
 							*getOutputStream() << "\n";
 							writeIndent();
@@ -1419,7 +1419,7 @@ namespace _gltf
 								writeStartObjectTag();
 
 								indent()++;
-								writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", pNode->getGeometry()->getOwlInstance(), iMeshIndex));
+								writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iMeshIndex));
 								*m_pOutputStream << COMMA;
 								writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 								indent()--;
