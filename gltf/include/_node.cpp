@@ -16,7 +16,6 @@ _node::_node(_geometry* pGeometry)
 	, m_vecIndicesBufferViewsByteLength()
 	, m_vecAccessors()
 	, m_vecMeshes()
-	, m_pvecTransformations(nullptr)
 {
 	VERIFY_POINTER(m_pGeometry);
 }

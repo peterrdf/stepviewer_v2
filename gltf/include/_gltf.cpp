@@ -149,7 +149,7 @@ namespace _gltf
 	/*virtual*/ bool _exporter::preExecute()
 	{
 		for (auto pGeometry : m_pModel->getGeometries()) {
-			if (pGeometry->hasGeometry()) {
+			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
 				auto pNode = new _node(pGeometry);
 				m_vecNodes.push_back(pNode);
 			}
@@ -1301,7 +1301,7 @@ namespace _gltf
 					pNode->getGeometry()->linesCohorts().size() +
 					pNode->getGeometry()->pointsCohorts().size());
 
-				if (pNode->getTransformations() == nullptr) {
+				if (pNode->getGeometry()->getInstances().empty()) {
 					if (iSceneNodeIndex > 0) {
 						*m_pOutputStream << COMMA;
 					}
@@ -1353,14 +1353,13 @@ namespace _gltf
 
 					// next root
 					iSceneNodeIndex++;
-				} // if (pNode->getTransformations() == nullptr)
+				} // if (pNode->getGeometry()->getInstances().empty())
 				else {
 					//
 					// Transformations
 					// 
-					auto& vecTransformations = *pNode->getTransformations();
-					for (size_t iTransformation = 0; iTransformation < vecTransformations.size(); iTransformation++) {
-						auto pTransformation = vecTransformations[iTransformation];
+					for (auto pInstance : pNode->getGeometry()->getInstances()) {
+						auto pTransformation = pInstance->getTransformationMatrix();
 
 						if (iSceneNodeIndex > 0) {
 							*m_pOutputStream << COMMA;
@@ -1393,19 +1392,19 @@ namespace _gltf
 								to_string(pTransformation->_11),
 									to_string(pTransformation->_12),
 									to_string(pTransformation->_13),
-									"0.0", // _14
+									to_string(pTransformation->_14),
 									to_string(pTransformation->_21),
 									to_string(pTransformation->_22),
 									to_string(pTransformation->_23),
-									"0.0", // _24
+									to_string(pTransformation->_24),
 									to_string(pTransformation->_31),
 									to_string(pTransformation->_32),
 									to_string(pTransformation->_33),
-									"0.0", // _34
+									to_string(pTransformation->_34),
 									to_string(pTransformation->_41),
 									to_string(pTransformation->_42),
 									to_string(pTransformation->_43),
-									"1.0", // _44
+									to_string(pTransformation->_44)
 							}).c_str();
 							indent()--;
 
@@ -1437,7 +1436,7 @@ namespace _gltf
 						// next root
 						iSceneNodeIndex++;
 					} //for (size_t iTransformation = ...
-				} // else if (pNode->getTransformations() == nullptr)				
+				} // else if (pNode->getGeometry()->getInstances().empty())
 			} // for (size_t iNodeIndex = ...
 
 			writeEndArrayTag();

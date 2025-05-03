@@ -22,7 +22,6 @@ private: // Fields
 	vector<uint32_t> m_vecIndicesBufferViewsByteLength; // indices/ELEMENT_ARRAY_BUFFER: conceptual faces, ..., conceptual face polygons, ..., lines..., points...
 	vector<uint32_t> m_vecAccessors; // accessors: bufferView vertices, bufferView indices conceptual faces, ...
 	vector<uint32_t> m_vecMeshes; // meshes: conceptual face 1, 2, ...
-	const vector<_matrix*>* m_pvecTransformations;
 
 public: // Methods
 
@@ -38,7 +37,6 @@ public: // Methods
 	vector<uint32_t>& indicesBufferViewsByteLength() { return m_vecIndicesBufferViewsByteLength; }
 	vector<uint32_t>& accessors() { return m_vecAccessors; }
 	vector<uint32_t>& meshes() { return m_vecMeshes; }
-	const vector<_matrix*>* getTransformations() const { return m_pvecTransformations; }
 
 protected: // Methods
 

@@ -303,9 +303,6 @@
     <ClInclude Include="IDSCheckerDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_bin2gltf_exporter.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
     <ClInclude Include="..\gltf\include\_node.h">
       <Filter>glTF</Filter>
     </ClInclude>
@@ -499,9 +496,6 @@
     </ClCompile>
     <ClCompile Include="IDSCheckerDialog.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_bin2gltf_exporter.cpp">
-      <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_node.cpp">
       <Filter>glTF</Filter>

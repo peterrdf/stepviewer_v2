@@ -8,6 +8,7 @@
 
 #include "_ptr.h"
 #include "_geometry.h"
+#include "_instance.h"
 
 #include "_mvc.h"
 
@@ -40,14 +41,14 @@ namespace _gltf
 	const char GENERATOR_PROP[] = "generator";
 	const char VERSION_PROP[] = "version";
 	const char SCENE_PROP[] = "scene";
-	const char SCENES_PROP[] = "scenes";	
+	const char SCENES_PROP[] = "scenes";
 	const char NODES_PROP[] = "nodes";
 	const char CHILDREN_PROP[] = "children";
 	const char BUFFERS_PROP[] = "buffers";
-	const char BUFFER_VIEWS_PROP[] = "bufferViews";	
+	const char BUFFER_VIEWS_PROP[] = "bufferViews";
 	const char ACCESSORS_PROP[] = "accessors";
 	const char MESHES_PROP[] = "meshes";
-	const char MESH_PROP[] = "mesh";	
+	const char MESH_PROP[] = "mesh";
 	const char MATERIALS_PROP[] = "materials";
 	const char IMAGES_PROP[] = "images";
 	const char SAMPLERS_PROP[] = "samplers";
@@ -67,7 +68,7 @@ namespace _gltf
 		const char* m_szInputFile;
 
 		bool m_bEmbeddedBuffers;
-		
+
 		_material* m_pPolygonsMaterial;
 		vector<const _material*> m_vecMaterials;
 		GLTFMATERIALS m_mapMaterials;
@@ -92,7 +93,7 @@ namespace _gltf
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
 		_exporter(const char* szInputFile, const char* szOutputFile, bool bEmbeddedBuffers);
 		virtual ~_exporter();
-		
+
 		void execute();
 
 	protected: // Methods	
@@ -128,7 +129,7 @@ namespace _gltf
 		void writeMeshesProperty();
 		void writeNodesProperty();
 		void writeSceneProperty();
-		void writeScenesProperty();		
+		void writeScenesProperty();
 		void writeMaterials();
 		void writeImages();
 		void writeSamplers();
@@ -136,7 +137,7 @@ namespace _gltf
 
 		OwlInstance* getObjectProperty(OwlInstance iInstance, const string& strPropertyName, int64_t& iInstancesCount) const;
 		bool hasObjectProperty(OwlInstance iInstance, const string& strPropertyName);
-		
+
 		size_t addMaterial(const _material* pMaterial);
 	};
 };

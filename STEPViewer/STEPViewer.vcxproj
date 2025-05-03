@@ -610,7 +610,6 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\gltf\include\_bin2gltf_exporter.h" />
     <ClInclude Include="..\gltf\include\_gltf.h" />
     <ClInclude Include="..\gltf\include\_node.h" />
     <ClInclude Include="..\include\stb\stb_easy_font.h" />
@@ -698,7 +697,6 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\gltf\include\_bin2gltf_exporter.cpp" />
     <ClCompile Include="..\gltf\include\_gltf.cpp" />
     <ClCompile Include="..\gltf\include\_node.cpp" />
     <ClCompile Include="..\include\stb\stb_image.cpp">
