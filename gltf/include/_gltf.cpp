@@ -9,8 +9,6 @@ namespace _gltf
 	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
 		: _log_client()
 		, m_pModel(pModel)
-		, m_iModel(0)
-		, m_szInputFile(nullptr)
 		, m_bEmbeddedBuffers(bEmbeddedBuffers)
 		, m_pPolygonsMaterial(nullptr)
 		, m_vecMaterials()
@@ -24,7 +22,6 @@ namespace _gltf
 		, m_iBuffersCount(0)
 		, m_iBufferViewsCount(0)
 		, m_iMeshesCount(0)
-		, m_mapInstanceTransformations()
 	{
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);

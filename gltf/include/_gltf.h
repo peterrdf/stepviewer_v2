@@ -64,8 +64,6 @@ namespace _gltf
 	private: // Members
 
 		_model* m_pModel;
-		OwlModel m_iModel;
-		const char* m_szInputFile;
 
 		bool m_bEmbeddedBuffers;
 
@@ -84,10 +82,6 @@ namespace _gltf
 		uint32_t m_iBufferViewsCount;
 		uint32_t m_iMeshesCount;
 
-	protected: // Members
-
-		map<OwlInstance, vector<_matrix*>> m_mapInstanceTransformations;
-
 	public: // Methods
 
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
@@ -98,8 +92,7 @@ namespace _gltf
 
 	protected: // Methods	
 
-		OwlModel getModel() const { return m_iModel; }
-		const char* getInputFile() const { return m_szInputFile; }
+		OwlModel getModel() const { return m_pModel->getOwlModel(); }
 		wofstream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
 
