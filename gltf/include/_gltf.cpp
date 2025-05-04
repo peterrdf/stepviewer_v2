@@ -691,6 +691,8 @@ namespace _gltf
 
 	void _exporter::writeAccessorsProperty()
 	{
+		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
+
 		*getOutputStream() << "\n";
 		writeIndent();
 
@@ -734,18 +736,18 @@ namespace _gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMin()->x),
-						to_string(pNode->getGeometry()->getBBMin()->y),
-						to_string(pNode->getGeometry()->getBBMin()->z)
+					to_string(pNode->getGeometry()->getBBMin()->x / dScaleFactor),
+						to_string(pNode->getGeometry()->getBBMin()->y / dScaleFactor),
+						to_string(pNode->getGeometry()->getBBMin()->z / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMax()->x),
-						to_string(pNode->getGeometry()->getBBMax()->y),
-						to_string(pNode->getGeometry()->getBBMax()->z)
+					to_string(pNode->getGeometry()->getBBMax()->x / dScaleFactor),
+						to_string(pNode->getGeometry()->getBBMax()->y / dScaleFactor),
+						to_string(pNode->getGeometry()->getBBMax()->z / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1303,6 +1305,10 @@ namespace _gltf
 				// Transformations
 				// 
 				for (auto pInstance : pNode->getGeometry()->getInstances()) {
+					if (!pInstance->getEnable()) {
+						continue;
+					}
+
 					auto pTransformation = pInstance->getTransformationMatrix();
 
 					if (iSceneNodeIndex > 0) {
