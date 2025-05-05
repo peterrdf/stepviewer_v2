@@ -251,8 +251,6 @@ namespace _gltf
 
 		strProperty += "[";
 		for (size_t iIndex = 0; iIndex < vecValues.size(); iIndex++) {
-			const auto& itProperty = vecValues[iIndex];
-
 			if (iIndex > 0) {
 				strProperty += COMMA;
 				strProperty += SPACE;
@@ -375,8 +373,6 @@ namespace _gltf
 
 		indent()++;
 		for (size_t iIndex = 0; iIndex < vecProperties.size(); iIndex++) {
-			const auto& itProperty = vecProperties[iIndex];
-
 			if (iIndex > 0) {
 				*m_pOutputStream << COMMA;
 			}
@@ -484,8 +480,8 @@ namespace _gltf
 
 				iBufferByteLength += iIndicesByteLength;
 
-				for (size_t iIndex = 0; iIndex < pCohort->indices().size(); iIndex++) {
-					GLuint iIndexValue = pCohort->indices()[iIndex];
+				for (size_t i = 0; i < pCohort->indices().size(); i++) {
+					GLuint iIndexValue = pCohort->indices()[i];
 					pNodeBinDataStream->write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
 				}
 			}
@@ -497,8 +493,8 @@ namespace _gltf
 
 				iBufferByteLength += iIndicesByteLength;
 
-				for (size_t iIndex = 0; iIndex < pCohort->indices().size(); iIndex++) {
-					GLuint iIndexValue = pCohort->indices()[iIndex];
+				for (size_t i = 0; i < pCohort->indices().size(); i++) {
+					GLuint iIndexValue = pCohort->indices()[i];
 					pNodeBinDataStream->write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
 				}
 			}
@@ -510,8 +506,8 @@ namespace _gltf
 
 				iBufferByteLength += iIndicesByteLength;
 
-				for (size_t iIndex = 0; iIndex < pCohort->indices().size(); iIndex++) {
-					GLuint iIndexValue = pCohort->indices()[iIndex];
+				for (size_t i = 0; i < pCohort->indices().size(); i++) {
+					GLuint iIndexValue = pCohort->indices()[i];
 					pNodeBinDataStream->write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
 				}
 			}
@@ -523,8 +519,8 @@ namespace _gltf
 
 				iBufferByteLength += iIndicesByteLength;
 
-				for (size_t iIndex = 0; iIndex < pCohort->indices().size(); iIndex++) {
-					GLuint iIndexValue = pCohort->indices()[iIndex];
+				for (size_t i = 0; i < pCohort->indices().size(); i++) {
+					GLuint iIndexValue = pCohort->indices()[i];
 					pNodeBinDataStream->write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
 				}
 			}
@@ -691,6 +687,9 @@ namespace _gltf
 
 	void _exporter::writeAccessorsProperty()
 	{
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
 		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
 
 		*getOutputStream() << "\n";
@@ -736,18 +735,18 @@ namespace _gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMin()->x / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMin()->y / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMin()->z / dScaleFactor)
+					to_string((pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMax()->x / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMax()->y / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMax()->z / dScaleFactor)
+					to_string((pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				writeStringProperty("type", "VEC3");
