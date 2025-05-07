@@ -13,7 +13,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*) GetOwner(), bDisableIfNoHndler);
+		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
 	}
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
@@ -30,28 +30,31 @@ class CDesignTreeView
 
 private: // Classes
 
+	// ********************************************************************************************
 	enum class enumItemType : int
 	{
 		Unknown = 0,
 		Instance = 1,
 	};
 
+	// ********************************************************************************************
 	class CItemData
 	{
 
 	private: // Members
-		
+
 		OwlInstance m_owlInstance;
 		enumItemType m_enItemType;
 		vector<HTREEITEM> m_vecItems;
 
 	public: // Methods
-		
+
 		CItemData(OwlInstance owlInstance, enumItemType enItemType)
 			: m_owlInstance(owlInstance)
 			, m_enItemType(enItemType)
 			, m_vecItems()
-		{}
+		{
+		}
 
 		virtual ~CItemData() {}
 
@@ -62,6 +65,7 @@ private: // Classes
 		vector<HTREEITEM>& Items() { return m_vecItems; }
 	};
 
+	// ********************************************************************************************
 	class CInstanceData
 		: public CItemData
 	{
@@ -70,11 +74,13 @@ private: // Classes
 
 		CInstanceData(OwlInstance owlInstance)
 			: CItemData(owlInstance, enumItemType::Instance)
-		{}
+		{
+		}
 
 		virtual ~CInstanceData() {}
 	};
 
+	// ********************************************************************************************
 	enum class enumSearchFilter : int {
 		All = 0,
 		Instances,
@@ -83,14 +89,15 @@ private: // Classes
 	};
 
 private: // Members
-	
-	_rdf_property_provider* m_pPropertyProvider;
+
+	map<_ap_model*, vector<SdaiInstance>> m_mapSelectedInstances;
+	_rdf_property_provider* m_pPropertyProvider;	
 	map<OwlInstance, CInstanceData*> m_mapInstance2Data; // C INSTANCE : C++ INSTANCE
 	bool m_bInitInProgress;
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
-	
+
 	// _view
 	virtual void onModelLoaded() override;
 	virtual void onInstanceSelected(_view* pSender) override;
@@ -103,20 +110,20 @@ public: // Methods
 
 private: // Methods
 
-	void ResetView();	
+	void ResetView();
 	void AddInstance(HTREEITEM hParent, OwlInstance owlInstance);
 	void AddProperties(HTREEITEM hParent, OwlInstance owlInstance);
 
 	void Clean();
 
-// Construction
+	// Construction
 public:
 	CDesignTreeView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
 
-// Attributes
+	// Attributes
 protected:
 
 	CTreeCtrlEx m_treeCtrl;
@@ -125,7 +132,7 @@ protected:
 
 protected:
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CDesignTreeView();
 
@@ -135,7 +142,7 @@ protected:
 	afx_msg void OnProperties();
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
+	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 public:
