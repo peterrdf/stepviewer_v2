@@ -1409,7 +1409,7 @@ void _oglRenderer::_prepare(
 		glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
 	} else {
-		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
 	}	
 
