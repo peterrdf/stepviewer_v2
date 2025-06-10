@@ -1,10 +1,10 @@
 #version 130
 
-in vec3 EyespaceNormal;
-in vec3 Diffuse;
-in float _EnableLighting;
-in float _EnableTexture;
-in vec2 _UV;
+in highp vec3 EyespaceNormal;
+in lowp vec3 Diffuse;
+in lowp float _EnableLighting;
+in lowp float _EnableTexture;
+in mediump vec2 _UV;
 
 uniform vec3 LightPosition = vec3(0.25, 0.25, 1);
 uniform vec3 AmbientMaterial;
@@ -20,32 +20,28 @@ out vec4 FragColor;
 
 void main()
 {
-    if (_EnableTexture < 0.5)
-    {
-        if (_EnableLighting > 0.5)
-        {
-            vec3 N = normalize(EyespaceNormal);
-            vec3 L = normalize(LightPosition);
-            vec3 E = vec3(0, 0, 1);
-            vec3 H = normalize(L + E);
-    
-            float df = max(0.0, dot(N, L));
-            float sf = max(0.0, dot(N, H));
-            sf = pow(sf, Shininess);
+    // Texture rendering path
+    if (_EnableTexture > 0.5) {
+        gl_FragColor = texture2D(Sampler, _UV);
+        return;
+    }
 
-            vec3 color = 
-                (AmbientMaterial * AmbientLightWeighting) + 
-                (df * Diffuse * DiffuseLightWeighting) + 
-                (sf * SpecularMaterial * SpecularLightWeighting);
-            FragColor = vec4(color, Transparency);
-        }
-        else
-        {
-            FragColor = vec4(AmbientMaterial, 1);
-        }    
+    // Lighting path
+    vec3 color = AmbientMaterial;
+    if (_EnableLighting > 0.5) {
+        vec3 N = normalize(EyespaceNormal);
+        vec3 L = normalize(LightPosition);
+        vec3 E = vec3(0.0, 0.0, 1.0);
+        vec3 H = normalize(L + E);
+
+        float df = max(dot(N, L), 0.0);
+        float sf = pow(max(dot(N, H), 0.0), Shininess);
+
+        color =
+            (AmbientMaterial * AmbientLightWeighting) +
+            (df * Diffuse * DiffuseLightWeighting) +
+            (sf * SpecularMaterial * SpecularLightWeighting);
     }
-    else
-    {
-        FragColor = texture(Sampler, _UV);
-    }
+
+    gl_FragColor = vec4(color, Transparency);
 }
