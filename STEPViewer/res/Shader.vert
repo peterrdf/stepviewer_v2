@@ -10,12 +10,14 @@ uniform mat3 NormalMatrix;
 uniform vec3 DiffuseMaterial;
 uniform float EnableLighting = 1;
 uniform float EnableTexture = 0;
+uniform mat4 LightSpaceMatrix;
 
 out highp vec3 EyespaceNormal;
 out lowp vec3 Diffuse;
 out lowp float _EnableLighting;
 out lowp float _EnableTexture;
 out mediump vec2 _UV;
+out vec4 FragPosLightSpace;
 
 void main()
 {
@@ -28,4 +30,6 @@ void main()
 
     gl_Position = ProjectionMatrix * ModelViewMatrix * Position;
     gl_PointSize = 5.0;
+
+    FragPosLightSpace = LightSpaceMatrix * vec4(Position.xyz, 1.0);
 }

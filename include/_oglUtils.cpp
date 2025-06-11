@@ -797,6 +797,9 @@ void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float
 }
 
 // ************************************************************************************************
+const GLuint SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
+
+// ************************************************************************************************
 _oglRenderer::_oglRenderer()
 	: _oglRendererSettings()
 	, m_pWnd(nullptr)
@@ -808,6 +811,8 @@ _oglRenderer::_oglRenderer()
 	, m_matModelView()
 	, m_worldBuffers()
 	, m_vecDecorationBuffers()
+	, m_iShadowFBO(0)
+	, m_iShadowMap(0)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
 	, m_fYmin(-1.f)
@@ -1751,8 +1756,15 @@ _oglView::_oglView()
 		return;
 	}
 
+	// Shadows
+	_drawShadowMap(m_worldBuffers);
+
 	// Off-screen
 	_drawBuffers();
+
+	if (!_prepareScene(false)) {
+		return;
+	}	
 
 	// Coordinate System, Navigation, etc.
 	_preDraw();
@@ -2687,6 +2699,155 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	pSelectInstanceFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
+}
+
+/*virtual*/ void _oglView::_drawShadowMap(_oglBuffers& oglBuffers)
+{
+	if (!getShowFaces()) {
+		return;
+	}
+
+#ifdef _DEBUG_DRAW_DURATION
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+
+	// Create framebuffer
+	if (m_iShadowFBO == 0) {
+		glGenFramebuffers(1, &m_iShadowFBO);
+		assert(m_iShadowFBO != 0);
+
+		// Create depth texture
+		glGenTextures(1, &m_iShadowMap);
+		assert(m_iShadowMap != 0);
+
+		glBindTexture(GL_TEXTURE_2D, m_iShadowMap);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+		// Attach depth texture as FBO's depth buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, m_iShadowFBO);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_iShadowMap, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	glm::mat4 lightProjection, lightView;
+	glm::mat4 lightSpaceMatrix;
+	float near_plane = 1.0f, far_plane = 100.0f;
+	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+	// Directional Light (Sunlight from above)
+	glm::vec3 lightPos = glm::vec3(10.0f, 20.0f, 10.0f); // Light position in world space
+	glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Looking at the origin (center of scene)
+	glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+
+	// Light from the side
+	//glm::vec3 lightPos = glm::vec3(-20.0f, 10.0f, 0.0f); // Light from the left
+	//glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Center of scene
+	//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+
+	// Light from the front
+	//glm::vec3 lightPos = glm::vec3(0.0f, 10.0f, 20.0f);  // Light in front of the scene
+	//glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Center of scene
+	//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+
+	lightView = glm::lookAt(lightPos, targetPos, upVector);
+	lightSpaceMatrix = lightProjection * lightView;
+	m_pOGLProgram->_setLightSpaceMatrix(lightSpaceMatrix);
+
+	// Shadow pass
+	glBindFramebuffer(GL_FRAMEBUFFER, m_iShadowFBO);
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_iShadowMap);
+	glUniform1f(glGetUniformLocation(m_pOGLProgram->_getID(), "IsShadowPass"), 1.0f);
+
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
+
+	for (auto itCohort : oglBuffers.cohorts()) {
+		glBindVertexArray(itCohort.first);
+
+		for (auto pGeometry : itCohort.second) {
+			auto pModel = getController()->getModelByInstance(pGeometry->getOwlModel());
+			assert(pModel->getEnable());
+
+			if (!pGeometry->getShow()) {
+				continue;
+			}
+
+			if (pGeometry->concFacesCohorts().empty()) {
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances()) {
+				if (!pInstance->getEnable()) {
+					continue;
+				}
+
+				// Transformation Matrix
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matModelView = m_matModelView;
+				matModelView = matModelView * matTransformation;
+
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+				glm::mat4 matNormal = m_matModelView * matTransformation;
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
+#else
+				m_pOGLProgram->_setNormalMatrix(matModelView);
+#endif
+				for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++) {
+					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
+					glDrawElementsBaseVertex(GL_TRIANGLES,
+						(GLsizei)pCohort->indices().size(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
+						pGeometry->VBOOffset());
+				}
+			} // auto pInstance : ...			
+		} // for (auto pGeometry : ...
+
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1f(glGetUniformLocation(m_pOGLProgram->_getID(), "IsShadowPass"), 0.0f);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Restore Model-View Matrix
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+
+	_oglUtils::checkForErrors();
+
+#ifdef _DEBUG_DRAW_DURATION
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
 }
 
 bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)

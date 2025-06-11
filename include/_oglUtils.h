@@ -982,6 +982,7 @@ private: // Fields
     // Uniforms
     GLint m_iProjectionMatrix;
     GLint m_iModelViewMatrix;
+    GLint m_iLightSpaceMatrix;
     GLint m_iNormalMatrix;
     GLint m_iDiffuseMaterial;
     GLint m_iEnableLighting;
@@ -1009,6 +1010,7 @@ public: // Methods
         , m_iUV(-1)
         , m_iProjectionMatrix(-1)
         , m_iModelViewMatrix(-1)
+		, m_iLightSpaceMatrix(-1)
         , m_iNormalMatrix(-1)
         , m_iDiffuseMaterial(-1)
         , m_iEnableLighting(-1)
@@ -1046,6 +1048,9 @@ public: // Methods
 
         m_iModelViewMatrix = glGetUniformLocation(_getID(), "ModelViewMatrix");
         assert(m_iModelViewMatrix >= 0);
+
+        m_iLightSpaceMatrix = glGetUniformLocation(_getID(), "LightSpaceMatrix");
+        assert(m_iLightSpaceMatrix >= 0);
 
         m_iNormalMatrix = glGetUniformLocation(_getID(), "NormalMatrix");
         assert(m_iNormalMatrix >= 0);
@@ -1109,6 +1114,16 @@ public: // Methods
             false,
             value_ptr(matModelView));
     }
+
+    void _setLightSpaceMatrix(glm::mat4& matLightSpace) const
+    {
+        glProgramUniformMatrix4fv(
+            _getID(),
+            m_iLightSpaceMatrix,
+            1,
+            false,
+            value_ptr(matLightSpace));
+	}
 
     void _setNormalMatrix(glm::mat4& matModelView) const
     {
@@ -2340,6 +2355,10 @@ protected: // Fields
     _oglBuffers m_worldBuffers;
     vector<_oglBuffersEx*> m_vecDecorationBuffers;
 
+    // Shadows
+    GLuint m_iShadowFBO;
+    GLuint m_iShadowMap;
+
     // World
     float m_fXmin;
     float m_fXmax;
@@ -2517,8 +2536,9 @@ protected: // Methods
     virtual void _postDraw() {}
     virtual void _drawBuffers();
 
+    void _drawShadowMap(_oglBuffers& oglBuffers);
     void _drawFaces();
-    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings = true);
+    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings = true);    
     void _drawFacesPolygons();
     void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
     void _drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
