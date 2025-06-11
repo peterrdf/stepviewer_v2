@@ -1759,9 +1759,15 @@ _oglView::_oglView()
 	// Shadows
 	_drawShadowMap(m_worldBuffers);
 
+	// Restore
+	if (!_prepareScene(false)) {
+		return;
+	}
+
 	// Off-screen
 	_drawBuffers();
 
+	// Restore
 	if (!_prepareScene(false)) {
 		return;
 	}	
@@ -2773,8 +2779,6 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	}
 
 	GLdouble zFar = 100.;
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
 
 	// Directional Light (Sunlight from above)
 	glm::vec3 lightPos = glm::vec3(10.0f, 20.0f, 10.0f); // Light position in world space
@@ -2794,14 +2798,9 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	glm::mat4 matLightView = glm::lookAt(lightPos, targetPos, upVector);
 
 	// Projection
-	glm::mat4 matLightProjection;
-	if (m_enProjection == enumProjection::Perspective) {
-		matLightProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-		
-	} else {
-		matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);		
-	}
-	
+	glm::mat4 matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+	m_pOGLProgram->_setProjectionMatrix(matLightProjection);
+
 	glm::mat4 matLightSpaceMatrix = matLightProjection * matLightView;
 	m_pOGLProgram->_setLightSpaceMatrix(matLightSpaceMatrix);
 
