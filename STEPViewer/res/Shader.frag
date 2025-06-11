@@ -21,21 +21,30 @@ uniform float IsShadowPass; // 1.0 for shadow pass, 0.0 for normal rendering
 
 out vec4 FragColor;
 
+// Function to calculate shadow using PCF (Percentage Closer Filtering)
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Discard if outside shadow map
     if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
         projCoords.y < 0.0 || projCoords.y > 1.0 ||
         projCoords.z > 1.0)
         return 0.0;
 
-    float closestDepth = texture(shadowMap, projCoords.xy).r;
-    float currentDepth = projCoords.z;
-    float bias = 0.01; // Try a slightly larger bias if you see no shadows
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    float bias = 0.01;
+    float shadow = 0.0;
+    float samples = 0.0;
+    float texelSize = 1.0 / 2048.0; // Shadow map size
+
+    for(int x = -1; x <= 1; ++x)
+    for(int y = -1; y <= 1; ++y)
+    {
+        float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+        shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
+        samples += 1.0;
+    }
+    shadow /= samples;
     return shadow;
 }
 
@@ -68,7 +77,8 @@ void main()
     }
 
     float shadow = ShadowCalculation(FragPosLightSpace);
-    vec3 shadowColor = vec3(0.0);
-    vec3 lighting = (1.0 - shadow) * color + shadow * shadowColor;
+    vec3 shadowColor = vec3(0.7); // light gray shadow
+    vec3 lighting = mix(color, shadowColor, shadow);
+    //vec3 lighting = (1.0 - shadow) * color + shadow * shadowColor;
     FragColor = vec4(lighting, Transparency);
 }
