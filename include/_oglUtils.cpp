@@ -25,6 +25,25 @@ static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::v
 	return eulerAngles;
 }
 
+// ************************************************************************************************
+// Helper: Get 8 corners of the camera frustum in world space
+static void getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view, std::vector<glm::vec3>& outCorners)
+{
+	glm::mat4 inv = glm::inverse(proj * view);
+	outCorners.clear();
+	for (int x = 0; x < 2; ++x)
+		for (int y = 0; y < 2; ++y)
+			for (int z = 0; z < 2; ++z) {
+				glm::vec4 pt = inv * glm::vec4(
+					2.0f * x - 1.0f,
+					2.0f * y - 1.0f,
+					2.0f * z - 1.0f,
+					1.0f
+				);
+				outCorners.push_back(glm::vec3(pt) / pt.w);
+			}
+}
+
 #ifdef _WINDOWS
 // ************************************************************************************************
 _oglRendererSettings::_oglRendererSettings()
@@ -479,7 +498,7 @@ void _oglRendererSettings::_setView(enumView enView)
 			m_bShowCoordinateSystem = strValue == "TRUE";
 		}
 	}
-	
+
 	{
 		string strSettingName(typeid(this).raw_name());
 		strSettingName += NAMEOFVAR(m_bModelCoordinateSystem);
@@ -1370,7 +1389,7 @@ void _oglRenderer::_prepare(
 		glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
 	} else {
 		glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
-	}	
+	}
 
 	if (bClear) {
 		glEnable(GL_SCISSOR_TEST);
@@ -1395,7 +1414,7 @@ void _oglRenderer::_prepare(
 	GLdouble aspect = m_dAspectRatio;
 	if (!m_bCameraSettings) {
 		aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
-	}	
+	}
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -1416,7 +1435,7 @@ void _oglRenderer::_prepare(
 	} else {
 		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
-	}	
+	}
 
 	// Model-View Matrix
 	m_matModelView = glm::identity<glm::mat4>();
@@ -1741,7 +1760,7 @@ _oglView::_oglView()
 
 	for (auto pModel : getController()->getDecorationModels()) {
 		auto pBuffer = new _oglBuffersEx(pModel);
-		_load(vector<_model*>{ pModel }, *pBuffer);
+		_load(vector<_model*>{ pModel }, * pBuffer);
 
 		m_vecDecorationBuffers.push_back(pBuffer);
 	}
@@ -1764,7 +1783,7 @@ _oglView::_oglView()
 
 	if (!_prepareScene(false)) {
 		return;
-	}	
+	}
 
 	// Coordinate System, Navigation, etc.
 	_preDraw();
@@ -2563,7 +2582,7 @@ void _oglView::_drawInstancesFrameBuffer()
 
 	// World
 	m_pSelectInstanceFrameBuffer->create();
-	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {		
+	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {
 		for (auto pModel : getController()->getModels()) {
 			if (!pModel->getEnable()) {
 				continue;
@@ -2588,7 +2607,7 @@ void _oglView::_drawInstancesFrameBuffer()
 	// Draw
 	//
 
-	m_bDrawSelectInstanceBufferInProgress = true;	
+	m_bDrawSelectInstanceBufferInProgress = true;
 
 	// Decorations
 	for (auto pBuffer : m_vecDecorationBuffers) {
@@ -2620,7 +2639,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	if (bApplyApplicationSettings && !getShowFaces()) {
 		return;
-	}	
+	}
 
 	pSelectInstanceFrameBuffer->bind();
 
@@ -2694,7 +2713,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);	
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	pSelectInstanceFrameBuffer->unbind();
 
@@ -2762,7 +2781,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	GLdouble aspect = m_dAspectRatio;
 	if (!m_bCameraSettings) {
 		aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	}	
+	}
 
 	GLdouble zNear = min(abs((double)m_fXmin), abs((double)m_fYmin));
 	zNear = min(zNear, abs((double)m_fZmin));
@@ -2794,14 +2813,36 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	glm::mat4 matLightView = glm::lookAt(lightPos, targetPos, upVector);
 
 	// Projection
-	glm::mat4 matLightProjection;
+	glm::mat4 matProjection;
 	if (m_enProjection == enumProjection::Perspective) {
-		matLightProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-		
+		matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+
 	} else {
-		matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);		
+		matProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 	}
-	
+	// In your shadow map setup:
+	std::vector<glm::vec3> frustumCorners;
+	getFrustumCornersWorldSpace(matProjection, m_matModelView, frustumCorners);
+
+	// Transform corners to light space
+	std::vector<glm::vec3> frustumCornersLS;
+	for (const auto& corner : frustumCorners)
+		frustumCornersLS.push_back(glm::vec3(matLightView * glm::vec4(corner, 1.0f)));
+
+	// Find AABB in light space
+	glm::vec3 min = frustumCornersLS[0];
+	glm::vec3 max = frustumCornersLS[0];
+	for (const auto& v : frustumCornersLS) {
+		min = glm::min(min, v);
+		max = glm::max(max, v);
+	}
+
+	// Use min/max for ortho projection
+	glm::mat4 matLightProjection = glm::ortho(
+		min.x, max.x,
+		min.y, max.y,
+		min.z, max.z
+	);
 	glm::mat4 matLightSpaceMatrix = matLightProjection * matLightView;
 	m_pOGLProgram->_setLightSpaceMatrix(matLightSpaceMatrix);
 
@@ -2966,7 +3007,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 			m_pSelectInstanceFrameBuffer->unbind();
-			
+
 			if (arPixels[3] != 0) {
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = getController()->getInstanceByID(iInstanceID);
