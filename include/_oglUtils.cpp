@@ -2707,6 +2707,12 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 		return;
 	}
 
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	int iWidth = rcClient.Width();
+	int iHeight = rcClient.Height();
+
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2743,10 +2749,32 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	glm::mat4 lightProjection, lightView;
-	glm::mat4 lightSpaceMatrix;
-	float near_plane = 1.0f, far_plane = 100.0f;
-	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+	float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// Projection Matrix
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = m_dFieldOfView;
+	if (!m_bCameraSettings) {
+		m_dAspectRatio = (GLdouble)iWidth / (GLdouble)iHeight;
+	}
+	GLdouble aspect = m_dAspectRatio;
+
+	GLdouble zNear = min(abs((double)m_fXmin), abs((double)m_fYmin));
+	zNear = min(zNear, abs((double)m_fZmin));
+	if (zNear != 0.) {
+		zNear /= 25.;
+	} else {
+		zNear = fBoundingSphereDiameter * .1;
+	}
+
+	GLdouble zFar = 100.;
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
 
 	// Directional Light (Sunlight from above)
 	glm::vec3 lightPos = glm::vec3(10.0f, 20.0f, 10.0f); // Light position in world space
@@ -2763,9 +2791,19 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	//glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Center of scene
 	//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
 
-	lightView = glm::lookAt(lightPos, targetPos, upVector);
-	lightSpaceMatrix = lightProjection * lightView;
-	m_pOGLProgram->_setLightSpaceMatrix(lightSpaceMatrix);
+	glm::mat4 matLightView = glm::lookAt(lightPos, targetPos, upVector);
+
+	// Projection
+	glm::mat4 matLightProjection;
+	if (m_enProjection == enumProjection::Perspective) {
+		matLightProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+		
+	} else {
+		matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);		
+	}
+	
+	glm::mat4 matLightSpaceMatrix = matLightProjection * matLightView;
+	m_pOGLProgram->_setLightSpaceMatrix(matLightSpaceMatrix);
 
 	// Shadow pass
 	glBindFramebuffer(GL_FRAMEBUFFER, m_iShadowFBO);
