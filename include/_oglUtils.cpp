@@ -1392,10 +1392,10 @@ void _oglRenderer::_prepare(
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
 	GLdouble fovY = m_dFieldOfView;
-	if (!m_bCameraSettings) {
-		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
-	}
 	GLdouble aspect = m_dAspectRatio;
+	if (!m_bCameraSettings) {
+		aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	}	
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -2759,10 +2759,10 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
 	GLdouble fovY = m_dFieldOfView;
-	if (!m_bCameraSettings) {
-		m_dAspectRatio = (GLdouble)iWidth / (GLdouble)iHeight;
-	}
 	GLdouble aspect = m_dAspectRatio;
+	if (!m_bCameraSettings) {
+		aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+	}	
 
 	GLdouble zNear = min(abs((double)m_fXmin), abs((double)m_fYmin));
 	zNear = min(zNear, abs((double)m_fZmin));
