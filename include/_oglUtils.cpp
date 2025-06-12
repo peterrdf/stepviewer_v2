@@ -2599,7 +2599,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	GLdouble zFar = 100.;
 
 	// 1. Define a base light direction (e.g., from above and to the side)
-	glm::vec3 baseLightDir = glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f));
+	glm::vec3 baseLightDir = glm::normalize(glm::vec3(-0.5f, 1.0f, -0.5f));
 
 	// 2. Extract rotation from the quaternion (scene rotation only)
 	const double* pRotationMatrix = m_rotation.toMatrix();
@@ -2609,22 +2609,22 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	// 3. Rotate the base light direction by the current view rotation
 	glm::vec3 rotatedLightDir = rotationMatrix * baseLightDir;
 
-	// 4. Place the light some distance away from the center along the rotated direction
+	// 4. Scene center is always at the origin
 	glm::vec3 sceneCenter(0.0f, 0.0f, 0.0f);
-	glm::vec3 lightPos = sceneCenter + glm::normalize(glm::vec3(10.f, 20.0f, 10.f)) * 20.0f;
 
-	// 5. Use the rotated up vector
+	// 5. Position the light at a fixed distance from the origin in the direction opposite to the light direction
+	float lightDistance = fBoundingSphereDiameter * 1.5f; // Adjust this value based on your scene scale
+	glm::vec3 modelTranslation(m_fXTranslation, m_fYTranslation, m_fZTranslation);
+	glm::vec3 adjustedSceneCenter = modelTranslation; // Use the current translation as scene center
+	glm::vec3 lightPos = adjustedSceneCenter - (rotatedLightDir * lightDistance);
+
+	// 6. Create light view matrix with a consistent up vector
 	glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	// 6. Now use these in glm::lookAt
-	glm::mat4 matLightView = glm::lookAt(lightPos, sceneCenter, upVector);
+	glm::mat4 matLightView = glm::lookAt(lightPos, adjustedSceneCenter, upVector);
 
 	// Projection
 	glm::mat4 matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 	m_pOGLProgram->_setProjectionMatrix(matLightProjection);
-
-	glm::mat4 matLightSpaceMatrix = matLightProjection * matLightView;
-	m_pOGLProgram->_setLightSpaceMatrix(matLightSpaceMatrix);
 
 	// Shadow pass
 	glBindFramebuffer(GL_FRAMEBUFFER, m_iShadowFBO);
@@ -2643,8 +2643,8 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	glUniform3f(glGetUniformLocation(m_pOGLProgram->_getID(), "LightDirection"),
 		rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
 
-	// lightPos is in world space
-	glm::vec4 lightPosEye = m_matModelView * glm::vec4(lightPos, 1.0f);
+	// Transform light position to eye space for the shader
+	glm::vec4 lightPosEye = glm::vec4(lightPos, 1.0f);
 	int lightPosLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "LightPosition");
 	glUniform3f(lightPosLoc, lightPosEye.x, lightPosEye.y, lightPosEye.z);
 
@@ -2691,6 +2691,9 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 #endif
 				for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++) {
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
+
+					glm::mat4 matLightSpaceMatrix = matLightProjection * matLightView;
+					m_pOGLProgram->_setLightSpaceMatrix(matLightSpaceMatrix);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,

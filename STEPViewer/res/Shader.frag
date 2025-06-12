@@ -36,7 +36,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
     
     // Add bias to prevent shadow acne
-    float bias = max(0.05 * (1.0 - dot(normalize(EyespaceNormal), normalize(LightDirection))), 0.005);
+    float bias = max(0.05 * (1.0 - dot(normalize(EyespaceNormal), normalize(LightDirection))), 0.001);
     
     // PCF
     float shadow = 0.0;
