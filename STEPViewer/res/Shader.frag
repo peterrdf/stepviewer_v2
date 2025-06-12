@@ -17,6 +17,7 @@ uniform vec3 DiffuseLightWeighting = vec3(0.95, 0.95, 0.95);
 uniform vec3 SpecularLightWeighting = vec3(0.15, 0.15, 0.15);
 uniform sampler2D Sampler;
 uniform sampler2D shadowMap;
+uniform vec2 shadowMapSize; // Size of the shadow map texture
 uniform float IsShadowPass; // 1.0 for shadow pass, 0.0 for normal rendering
 
 out vec4 FragColor;
@@ -26,6 +27,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
+    projCoords.y = 1.0 - projCoords.y;
 
     if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
         projCoords.y < 0.0 || projCoords.y > 1.0 ||
@@ -35,7 +37,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float bias = 0.01;
     float shadow = 0.0;
     float samples = 0.0;
-    float texelSize = 1.0 / 2048.0; // Shadow map size
+    float texelSize = 1.0 / shadowMapSize.x; // Assuming square shadow map
 
     for(int x = -1; x <= 1; ++x)
     for(int y = -1; y <= 1; ++y)

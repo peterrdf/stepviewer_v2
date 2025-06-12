@@ -2815,6 +2815,9 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+	int shadowMapSizeLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "shadowMapSize");
+	glUniform2f(shadowMapSizeLoc, (float)SHADOW_WIDTH, (float)SHADOW_HEIGHT);
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_iShadowMap);
 	glUniform1f(glGetUniformLocation(m_pOGLProgram->_getID(), "IsShadowPass"), 1.0f);
@@ -2991,7 +2994,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 
 				if (iInstanceID != 0) {
 					pPointedInstance = getController()->getInstanceByID(iInstanceID);
-					assert(pPointedInstance != nullptr);
+					//assert(pPointedInstance != nullptr);#todo: assert is not needed here, because the instance may not exist in the model
 				}
 			}
 		} // if (pPointedInstance == nullptr)
