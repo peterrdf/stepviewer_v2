@@ -18,6 +18,7 @@ uniform vec3 SpecularLightWeighting = vec3(0.15, 0.15, 0.15);
 uniform sampler2D Sampler;
 uniform sampler2D shadowMap;
 uniform vec2 shadowMapSize; // Size of the shadow map texture
+uniform vec3 LightDirection;
 uniform float IsShadowPass; // 1.0 for shadow pass, 0.0 for normal rendering
 
 out vec4 FragColor;
@@ -25,28 +26,34 @@ out vec4 FragColor;
 // Function to calculate shadow using PCF (Percentage Closer Filtering)
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
+    // Perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    
+    // Transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
-    projCoords.y = 1.0 - projCoords.y;
-
-    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
-        projCoords.y < 0.0 || projCoords.y > 1.0 ||
-        projCoords.z > 1.0)
-        return 0.0;
-
-    float bias = 0.01;
+    
+    // Get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    
+    // Add bias to prevent shadow acne
+    float bias = max(0.05 * (1.0 - dot(normalize(EyespaceNormal), normalize(LightDirection))), 0.005);
+    
+    // PCF
     float shadow = 0.0;
-    float samples = 0.0;
-    float texelSize = 1.0 / shadowMapSize.x; // Assuming square shadow map
-
+    vec2 texelSize = 1.0 / shadowMapSize;
     for(int x = -1; x <= 1; ++x)
-    for(int y = -1; y <= 1; ++y)
     {
-        float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-        shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
-        samples += 1.0;
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+        }    
     }
-    shadow /= samples;
+    shadow /= 9.0;
+    
+    if(projCoords.z > 1.0)
+        shadow = 0.0;
+        
     return shadow;
 }
 
@@ -79,8 +86,6 @@ void main()
     }
 
     float shadow = ShadowCalculation(FragPosLightSpace);
-    vec3 shadowColor = vec3(0.7); // light gray shadow
-    vec3 lighting = mix(color, shadowColor, shadow);
-    //vec3 lighting = (1.0 - shadow) * color + shadow * shadowColor;
+    vec3 lighting = (AmbientMaterial + (1.0 - shadow) * (DiffuseLightWeighting + SpecularLightWeighting)) * color;
     FragColor = vec4(lighting, Transparency);
 }
