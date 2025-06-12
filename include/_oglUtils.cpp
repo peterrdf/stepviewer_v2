@@ -2611,7 +2611,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	// 4. Place the light some distance away from the center along the rotated direction
 	glm::vec3 sceneCenter(0.0f, 0.0f, 0.0f);
-	glm::vec3 lightPos = sceneCenter + glm::normalize(glm::vec3(-0.5f, -1.0f, -0.5f)) * 20.0f;
+	glm::vec3 lightPos = sceneCenter + glm::normalize(glm::vec3(10.f, 20.0f, 10.f)) * 20.0f;
 
 	// 5. Use the rotated up vector
 	glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
