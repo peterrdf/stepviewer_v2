@@ -7,7 +7,7 @@ in lowp float _EnableTexture;
 in mediump vec2 _UV;
 in vec4 FragPosLightSpace;
 
-uniform vec3 LightPosition = vec3(0.25, 0.25, 1);
+uniform vec3 LightPosition = vec3(10.0, 20.0, 10.0);
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
 uniform float Transparency;

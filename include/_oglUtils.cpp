@@ -2780,22 +2780,26 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	GLdouble zFar = 100.;
 
-	// Directional Light (Sunlight from above)
-	glm::vec3 lightPos = glm::vec3(10.0f, 20.0f, 10.0f); // Light position in world space
-	glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Looking at the origin (center of scene)
-	glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+	// 1. Define a base light direction (e.g., from above and to the side)
+	glm::vec3 baseLightDir = glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f));
 
-	// Light from the side
-	//glm::vec3 lightPos = glm::vec3(-20.0f, 10.0f, 0.0f); // Light from the left
-	//glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Center of scene
-	//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+	// 2. Extract rotation from the quaternion (scene rotation only)
+	const double* pRotationMatrix = m_rotation.toMatrix();
+	glm::mat3 rotationMatrix = glm::make_mat3((const double*)pRotationMatrix);
+	delete pRotationMatrix;
 
-	// Light from the front
-	//glm::vec3 lightPos = glm::vec3(0.0f, 10.0f, 20.0f);  // Light in front of the scene
-	//glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);    // Center of scene
-	//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);    // Y axis is up
+	// 3. Rotate the base light direction by the current view rotation
+	glm::vec3 rotatedLightDir = rotationMatrix * baseLightDir;
 
-	glm::mat4 matLightView = glm::lookAt(lightPos, targetPos, upVector);
+	// 4. Place the light some distance away from the center along the rotated direction
+	glm::vec3 sceneCenter(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightPos = sceneCenter + rotatedLightDir * 20.0f;
+
+	// 5. Use the rotated up vector
+	glm::vec3 upVector = rotationMatrix * glm::vec3(0.0f, 1.0f, 0.0f);
+
+	// 6. Now use these in glm::lookAt
+	glm::mat4 matLightView = glm::lookAt(lightPos, sceneCenter, upVector);
 
 	// Projection
 	glm::mat4 matLightProjection = glm::ortho<GLdouble>(-m_fScaleFactor * aspect, m_fScaleFactor * aspect, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
@@ -2817,6 +2821,11 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	int shadowMapSizeLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "shadowMapSize");
 	glUniform2f(shadowMapSizeLoc, (float)SHADOW_WIDTH, (float)SHADOW_HEIGHT);
+
+	// lightPos is in world space
+	glm::vec4 lightPosEye = m_matModelView * glm::vec4(lightPos, 1.0f);
+	int lightPosLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "LightPosition");
+	glUniform3f(lightPosLoc, lightPosEye.x, lightPosEye.y, lightPosEye.z);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_iShadowMap);
