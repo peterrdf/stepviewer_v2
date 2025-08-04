@@ -1,7 +1,7 @@
 #version 130
 
-in highp vec3 EyespaceNormal;
-in lowp vec3 Diffuse;
+in highp vec3 _EyespaceNormal;
+in lowp vec3 _Diffuse;
 in lowp float _EnableLighting;
 in lowp float _EnableTexture;
 in mediump vec2 _UV;
@@ -16,8 +16,6 @@ uniform vec3 DiffuseLightWeighting = vec3(0.95, 0.95, 0.95);
 uniform vec3 SpecularLightWeighting = vec3(0.15, 0.15, 0.15);
 uniform sampler2D Sampler;
 
-out vec4 FragColor;
-
 void main()
 {
     // Texture rendering path
@@ -29,7 +27,7 @@ void main()
     // Lighting path
     vec3 color = AmbientMaterial;
     if (_EnableLighting > 0.5) {
-        vec3 N = normalize(EyespaceNormal);
+        vec3 N = normalize(_EyespaceNormal);
         vec3 L = normalize(LightPosition);
         vec3 E = vec3(0.0, 0.0, 1.0);
         vec3 H = normalize(L + E);
@@ -39,7 +37,7 @@ void main()
 
         color =
             (AmbientMaterial * AmbientLightWeighting) +
-            (df * Diffuse * DiffuseLightWeighting) +
+            (df * _Diffuse * DiffuseLightWeighting) +
             (sf * SpecularMaterial * SpecularLightWeighting);
     }
 

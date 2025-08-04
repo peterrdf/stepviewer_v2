@@ -11,16 +11,16 @@ uniform vec3 DiffuseMaterial;
 uniform float EnableLighting = 1;
 uniform float EnableTexture = 0;
 
-out highp vec3 EyespaceNormal;
-out lowp vec3 Diffuse;
+out highp vec3 _EyespaceNormal;
+out lowp vec3 _Diffuse;
 out lowp float _EnableLighting;
 out lowp float _EnableTexture;
 out mediump vec2 _UV;
 
 void main()
 {
-    EyespaceNormal = NormalMatrix * Normal;
-    Diffuse = DiffuseMaterial;
+    _EyespaceNormal = NormalMatrix * Normal;
+    _Diffuse = DiffuseMaterial;
 
     _EnableLighting = EnableLighting;
     _EnableTexture = EnableTexture;
