@@ -748,7 +748,11 @@ void CCIS2ModelStructureView::LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstanc
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
 			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
-		} // for (int_t j = ...
+		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hDecomposition)) {
+			m_pTreeCtrl->SetItemImage(hDecomposition, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		}
 	} // for (int64_t i = ...	
 }
 
@@ -800,7 +804,11 @@ void CCIS2ModelStructureView::LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iI
 			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
 			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
-		} // for (int_t j = ...
+		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hDecomposition)) {
+			m_pTreeCtrl->SetItemImage(hDecomposition, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		}
 	} // for (int64_t i = ...
 }
 
@@ -853,8 +861,12 @@ void CCIS2ModelStructureView::LoadContainsElements(CCIS2Model* pModel, SdaiInsta
 			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
 
 			LoadInstance(pModel, iIFCRelatedElementsInstance, hContains);
-		} // for (int_t j = ...
-	} // for (int64_t i = ...
+		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hContains)) {
+			m_pTreeCtrl->SetItemImage(hContains, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		}
+	} // for (SdaiInteger i = ...
 }
 
 // ------------------------------------------------------------------------------------------------

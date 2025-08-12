@@ -1185,6 +1185,10 @@ void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance
 
 			LoadInstance(pModel, sdaiRelatedObjectsInstance, hDecomposition, mapItems);
 		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hDecomposition)) {
+			m_pTreeCtrl->SetItemImage(hDecomposition, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		}
 	} // for (SdaiInteger i = ...	
 }
 
@@ -1229,6 +1233,10 @@ void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sda
 
 			LoadInstance(pModel, sdaiRelatedObjectsInstance, hDecomposition, mapItems);
 		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hDecomposition)) {
+			m_pTreeCtrl->SetItemImage(hDecomposition, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
+		}
 	} // for (SdaiInteger i = ...
 }
 
@@ -1272,6 +1280,10 @@ void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstan
 			engiGetAggrElement(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			LoadInstance(pModel, sdaiRelatedElementsInstance, hContains, mapItems);
+		}
+
+		if (!m_pTreeCtrl->ItemHasChildren(hContains)) {
+			m_pTreeCtrl->SetItemImage(hContains, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 		}
 	} // for (SdaiInteger i = ...
 }
