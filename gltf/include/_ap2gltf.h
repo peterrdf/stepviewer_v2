@@ -61,7 +61,7 @@ namespace _ap2gltf
 	class _exporter : public _log_client
 	{
 
-	private: // Members
+	protected: // Members
 
 		_model* m_pModel;
 
@@ -74,8 +74,9 @@ namespace _ap2gltf
 		vector<_node*> m_vecNodes;
 		vector<uint32_t> m_vecSceneRootNodes;
 
+		string m_strOutputFile;
 		string m_strOutputFolder;
-		wofstream* m_pOutputStream;
+		ostream* m_pOutputStream;
 		int m_iIndent; // TAB-s count
 
 		uint32_t m_iBuffersCount;
@@ -89,7 +90,9 @@ namespace _ap2gltf
 
 		void execute();
 
-	protected: // Methods	
+	protected: // Methods
+
+		virtual bool createOuputStream();
 
 		virtual bool preExecute();
 		virtual void postExecute();
@@ -98,7 +101,7 @@ namespace _ap2gltf
 		string buildNumberProperty(const string& strName, const string& strValue);
 		string buildArrayProperty(const string& strName, const vector<string>& vecValues);
 
-		void writeIndent();
+		virtual void writeIndent();
 		void writeStartObjectTag(bool bNewLine = true);
 		void writeEndObjectTag();
 		void writeStartArrayTag(bool bNewLine = true);
@@ -111,8 +114,8 @@ namespace _ap2gltf
 		void writeBoolProperty(const string& strName, bool bValue);
 		void writeObjectProperty(const string& strName, const vector<string>& vecProperties);
 		void writeAssetProperty();
-		void writeBuffersProperty();
-		void writeBufferViewsProperty();
+		virtual void writeBuffersProperty();
+		virtual void writeBufferViewsProperty();
 		void writeAccessorsProperty();
 		void writeMeshesProperty();
 		void writeNodesProperty();
@@ -128,9 +131,9 @@ namespace _ap2gltf
 	public: // Properties
 
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
-		wofstream* getOutputStream() const { return m_pOutputStream; }
+		ostream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
-
+		virtual const char* getNewLine() const { return "\n"; }
 		virtual int64_t getGeometryID(_geometry* pGeometry) { return (int64_t)pGeometry; }
 	};
 };

@@ -16,6 +16,7 @@ namespace _ap2gltf
 		, m_mapImages()
 		, m_vecNodes()
 		, m_vecSceneRootNodes()
+		, m_strOutputFile("")
 		, m_strOutputFolder("")
 		, m_pOutputStream(nullptr)
 		, m_iIndent(-1)
@@ -26,16 +27,15 @@ namespace _ap2gltf
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);
 
-		m_pPolygonsMaterial = new _material();
-		addMaterial(m_pPolygonsMaterial);
+		m_strOutputFile = szOutputFile;
+		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strOutputFile);
 
 		fs::path pthOutputFile = szOutputFile;
 		m_strOutputFolder = pthOutputFile.parent_path().string();
-		m_pOutputStream = new wofstream(szOutputFile, std::ios::out | std::ios::trunc);
+		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strOutputFolder);
 
-		// UTF-8 locale
-		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
-		m_pOutputStream->imbue(loc);
+		m_pPolygonsMaterial = new _material();
+		addMaterial(m_pPolygonsMaterial);
 	}
 
 	/*virtual*/ _exporter::~_exporter()
@@ -46,7 +46,7 @@ namespace _ap2gltf
 			delete pNode;
 		}
 
-		delete m_pOutputStream;
+		delete getOutputStream();
 	}
 
 	void _exporter::execute()
@@ -67,49 +67,49 @@ namespace _ap2gltf
 				// asset
 				{
 					writeAssetProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// buffers
 				{
 					writeBuffersProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// bufferViews
 				{
 					writeBufferViewsProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// accessors
 				{
 					writeAccessorsProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// meshes
 				{
 					writeMeshesProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// nodes
 				{
 					writeNodesProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// scene
 				{
 					writeSceneProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// scenes
 				{
 					writeScenesProperty();
-					*m_pOutputStream << COMMA;
+					*getOutputStream() << COMMA;
 				}
 
 				// materials
@@ -120,11 +120,11 @@ namespace _ap2gltf
 				// images/textures
 				{
 					if (!m_mapImages.empty()) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 						writeImages();
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 						writeSamplers();
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 						writeTextures();
 					}
 				}
@@ -143,8 +143,25 @@ namespace _ap2gltf
 		postExecute();
 	}
 
+	/*virtual*/ bool _exporter::createOuputStream()
+	{
+		if (getOutputStream() != nullptr) {
+			delete getOutputStream();
+		}
+
+		m_pOutputStream = new ofstream(m_strOutputFile, std::ios::out | std::ios::trunc);
+		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
+		getOutputStream()->imbue(loc);
+		return getOutputStream()->good();
+	}
+
 	/*virtual*/ bool _exporter::preExecute()
 	{
+		if (!createOuputStream()) {
+			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
+			return false;
+		}
+
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
 				auto pNode = new _node(pGeometry);
@@ -159,17 +176,17 @@ namespace _ap2gltf
 	{
 	}
 
-	void _exporter::writeIndent()
+	/*virtual*/ void _exporter::writeIndent()
 	{
 		for (int iTab = 0; iTab < m_iIndent; iTab++) {
-			*m_pOutputStream << TAB;
+			*getOutputStream() << TAB;
 		}
 	}
 
 	void _exporter::writeStartObjectTag(bool bNewLine/* = true*/)
 	{
 		if (bNewLine) {
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
 		}
 
@@ -178,7 +195,7 @@ namespace _ap2gltf
 
 	void _exporter::writeEndObjectTag()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 		*getOutputStream() << "}";
 	}
@@ -186,7 +203,7 @@ namespace _ap2gltf
 	void _exporter::writeStartArrayTag(bool bNewLine/* = true*/)
 	{
 		if (bNewLine) {
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
 		}
 
@@ -195,7 +212,7 @@ namespace _ap2gltf
 
 	void _exporter::writeEndArrayTag()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 		*getOutputStream() << "]";
 	}
@@ -267,92 +284,92 @@ namespace _ap2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strValue.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strValue.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
 	}
 
 	void _exporter::writeIntProperty(const string& strName, int iValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << iValue;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << iValue;
 	}
 
 	void _exporter::writeUIntProperty(const string& strName, uint32_t iValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << iValue;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << iValue;
 	}
 
 	void _exporter::writeFloatProperty(const string& strName, float fValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << fValue;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << fValue;
 	}
 
 	void _exporter::writeDoubleProperty(const string& strName, double dValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << dValue;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << dValue;
 	}
 
 	void _exporter::writeBoolProperty(const string& strName, bool bValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
-		*m_pOutputStream << (bValue ? "true" : "false");
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		*getOutputStream() << (bValue ? "true" : "false");
 	}
 
 	void _exporter::writeObjectProperty(const string& strName, const vector<string>& vecProperties)
@@ -360,26 +377,26 @@ namespace _ap2gltf
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(vecProperties);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << strName.c_str();
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << strName.c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartObjectTag(false);
 
 		indent()++;
 		for (size_t iIndex = 0; iIndex < vecProperties.size(); iIndex++) {
 			if (iIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
-			*m_pOutputStream << vecProperties[iIndex].c_str();
+			*getOutputStream() << vecProperties[iIndex].c_str();
 		}
 		indent()--;
 
@@ -395,16 +412,16 @@ namespace _ap2gltf
 		writeObjectProperty(ASSET_PROP, vecProperties);
 	}
 
-	void _exporter::writeBuffersProperty()
+	/*virtual*/ void _exporter::writeBuffersProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << BUFFERS_PROP;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << BUFFERS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartArrayTag(false);
 
@@ -528,7 +545,7 @@ namespace _ap2gltf
 			pNode->bufferByteLength() = iBufferByteLength;
 
 			if (iIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
 			indent()++;
@@ -536,7 +553,7 @@ namespace _ap2gltf
 
 			indent()++;
 			writeUIntProperty("byteLength", iBufferByteLength);
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 			if (m_bEmbeddedBuffers) {
 				std::string strBufferData = ((std::stringstream*)pNodeBinDataStream)->str();
 				std::string strBase64BufferData = "data:application/octet-stream;base64,";
@@ -558,16 +575,16 @@ namespace _ap2gltf
 		writeEndArrayTag();
 	}
 
-	void _exporter::writeBufferViewsProperty()
+	/*virtual*/ void _exporter::writeBufferViewsProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << BUFFER_VIEWS_PROP;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << BUFFER_VIEWS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartArrayTag(false);
 
@@ -582,7 +599,7 @@ namespace _ap2gltf
 				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
 			uint32_t iByteOffset = 0;
@@ -594,11 +611,11 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -608,7 +625,7 @@ namespace _ap2gltf
 				iByteOffset += pNode->verticesBufferViewByteLength();
 			}
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// normals/ARRAY_BUFFER/NORMAL
 			{
@@ -617,11 +634,11 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -631,7 +648,7 @@ namespace _ap2gltf
 				iByteOffset += pNode->normalsBufferViewByteLength();
 			}
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// textures/ARRAY_BUFFER/TEXCOORD_0
 			{
@@ -640,11 +657,11 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -658,18 +675,18 @@ namespace _ap2gltf
 			for (size_t iIndicesBufferViewIndex = 0; iIndicesBufferViewIndex < pNode->indicesBufferViewsByteLength().size(); iIndicesBufferViewIndex++) {
 				uint32_t iByteLength = pNode->indicesBufferViewsByteLength()[iIndicesBufferViewIndex];
 
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", iByteLength);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34963/*ELEMENT_ARRAY_BUFFER*/);
 				indent()--;
 
@@ -692,14 +709,14 @@ namespace _ap2gltf
 
 		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << ACCESSORS_PROP;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << ACCESSORS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartArrayTag(false);
 
@@ -714,7 +731,7 @@ namespace _ap2gltf
 				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
 			// vertices/ARRAY_BUFFER/POSITION
@@ -724,14 +741,14 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
-				*m_pOutputStream << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
@@ -739,8 +756,8 @@ namespace _ap2gltf
 						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
 						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
-				*m_pOutputStream << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
@@ -748,7 +765,7 @@ namespace _ap2gltf
 						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
 						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
 				indent()--;
 
@@ -761,7 +778,7 @@ namespace _ap2gltf
 			}
 			// vertices/ARRAY_BUFFER/POSITION
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// normals/ARRAY_BUFFER/NORMAL
 			{
@@ -770,13 +787,13 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
 				indent()--;
 
@@ -789,7 +806,7 @@ namespace _ap2gltf
 			}
 			// normals/ARRAY_BUFFER/NORMAL
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// normals/ARRAY_BUFFER/TEXCOORD_0
 			{
@@ -798,21 +815,21 @@ namespace _ap2gltf
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5126/*FLOAT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
-				*m_pOutputStream << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string> { "-1.0", "-1.0" }).c_str();
-				*m_pOutputStream << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string> { "1.0", "1.0" }).c_str();
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC2");
 				indent()--;
 
@@ -829,20 +846,20 @@ namespace _ap2gltf
 
 			// Conceptual faces
 			for (auto pCohort : pNode->getGeometry()->concFacesCohorts()) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5125/*UNSIGNED_INT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pCohort->indices().size());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "SCALAR");
 				indent()--;
 
@@ -856,20 +873,20 @@ namespace _ap2gltf
 
 			// Conceptual faces polygons
 			for (auto pCohort : pNode->getGeometry()->concFacePolygonsCohorts()) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5125/*UNSIGNED_INT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pCohort->indices().size());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "SCALAR");
 				indent()--;
 
@@ -883,20 +900,20 @@ namespace _ap2gltf
 
 			// Lines
 			for (auto pCohort : pNode->getGeometry()->linesCohorts()) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5125/*UNSIGNED_INT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pCohort->indices().size());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "SCALAR");
 				indent()--;
 
@@ -910,20 +927,20 @@ namespace _ap2gltf
 
 			// Points
 			for (auto pCohort : pNode->getGeometry()->pointsCohorts()) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteOffset", 0);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("componentType", 5125/*UNSIGNED_INT*/);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pCohort->indices().size());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeStringProperty("type", "SCALAR");
 				indent()--;
 
@@ -941,16 +958,16 @@ namespace _ap2gltf
 
 	void _exporter::writeMeshesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// meshes
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << MESHES_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << MESHES_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			writeStartArrayTag(false);
 
@@ -968,7 +985,7 @@ namespace _ap2gltf
 				// Conceptual faces
 				for (size_t iConcFacesCohortIndex = 0; iConcFacesCohortIndex < pNode->getGeometry()->concFacesCohorts().size(); iConcFacesCohortIndex++) {
 					if (iMeshIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// mesh
@@ -978,16 +995,16 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iConcFacesCohortIndex));
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << "primitives";
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << COLON;
-						*m_pOutputStream << SPACE;
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << "primitives";
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << COLON;
+						*getOutputStream() << SPACE;
 
 						writeStartArrayTag(false);
 
@@ -1011,13 +1028,13 @@ namespace _ap2gltf
 								}
 								writeObjectProperty("attributes", vecAttributes);
 
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iConcFacesCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/]);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("mode", 4/*TRIANGLES*/);
 
 								indent()--;
@@ -1046,7 +1063,7 @@ namespace _ap2gltf
 				// Conceptual faces polygons
 				for (size_t iConcFacePolygonsCohortIndex = 0; iConcFacePolygonsCohortIndex < pNode->getGeometry()->concFacePolygonsCohorts().size(); iConcFacePolygonsCohortIndex++) {
 					if (iMeshIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// mesh
@@ -1056,16 +1073,16 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pNode->getGeometry()), iConcFacePolygonsCohortIndex));
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << "primitives";
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << COLON;
-						*m_pOutputStream << SPACE;
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << "primitives";
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << COLON;
+						*getOutputStream() << SPACE;
 
 						writeStartArrayTag(false);
 
@@ -1082,14 +1099,14 @@ namespace _ap2gltf
 								vecAttributes.push_back(buildNumberProperty("POSITION", to_string(pNode->accessors()[0])));
 								writeObjectProperty("attributes", vecAttributes);
 
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iConcFacePolygonsCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size()]);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("material", 0);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("mode", 1/*LINES*/);
 
 								indent()--;
@@ -1118,7 +1135,7 @@ namespace _ap2gltf
 				// Lines
 				for (size_t iLinesCohortIndex = 0; iLinesCohortIndex < pNode->getGeometry()->linesCohorts().size(); iLinesCohortIndex++) {
 					if (iMeshIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// mesh
@@ -1128,16 +1145,16 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pNode->getGeometry()), iLinesCohortIndex));
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << "primitives";
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << COLON;
-						*m_pOutputStream << SPACE;
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << "primitives";
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << COLON;
+						*getOutputStream() << SPACE;
 
 						writeStartArrayTag(false);
 
@@ -1157,15 +1174,15 @@ namespace _ap2gltf
 								vecAttributes.push_back(buildNumberProperty("POSITION", to_string(pNode->accessors()[0])));
 								writeObjectProperty("attributes", vecAttributes);
 
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iLinesCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size() +
 										pNode->getGeometry()->concFacePolygonsCohorts().size()]);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("mode", 1/*LINES*/);
 
 								indent()--;
@@ -1194,7 +1211,7 @@ namespace _ap2gltf
 				// Points
 				for (size_t iPointsCohortIndex = 0; iPointsCohortIndex < pNode->getGeometry()->pointsCohorts().size(); iPointsCohortIndex++) {
 					if (iMeshIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// mesh
@@ -1204,16 +1221,16 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-points-%lld", getGeometryID(pNode->getGeometry()), iPointsCohortIndex));
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << "primitives";
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << COLON;
-						*m_pOutputStream << SPACE;
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << "primitives";
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << COLON;
+						*getOutputStream() << SPACE;
 
 						writeStartArrayTag(false);
 
@@ -1233,16 +1250,16 @@ namespace _ap2gltf
 								vecAttributes.push_back(buildNumberProperty("POSITION", to_string(pNode->accessors()[0])));
 								writeObjectProperty("attributes", vecAttributes);
 
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iPointsCohortIndex +
 										3/*skip vertices, normals & textures accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size() +
 										pNode->getGeometry()->concFacePolygonsCohorts().size() +
 										pNode->getGeometry()->linesCohorts().size()]);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeUIntProperty("mode", 0/*POINTS*/);
 
 								indent()--;
@@ -1276,16 +1293,16 @@ namespace _ap2gltf
 
 	void _exporter::writeNodesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// nodes
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << NODES_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << NODES_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			writeStartArrayTag(false);
 
@@ -1311,7 +1328,7 @@ namespace _ap2gltf
 					auto pTransformation = pInstance->getTransformationMatrix();
 
 					if (iSceneNodeIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// root
@@ -1328,12 +1345,12 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-instance", getGeometryID(pNode->getGeometry())));
-						*m_pOutputStream << COMMA;
-						*getOutputStream() << "\n";
+						*getOutputStream() << COMMA;
+						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
-						*m_pOutputStream << COMMA;
-						*getOutputStream() << "\n";
+						*getOutputStream() << COMMA;
+						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("matrix", vector<string>
 						{
@@ -1364,14 +1381,14 @@ namespace _ap2gltf
 					// children
 					{
 						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-							*m_pOutputStream << COMMA;
+							*getOutputStream() << COMMA;
 
 							indent()++;
 							writeStartObjectTag();
 
 							indent()++;
 							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iMeshIndex));
-							*m_pOutputStream << COMMA;
+							*getOutputStream() << COMMA;
 							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 							indent()--;
 
@@ -1398,16 +1415,16 @@ namespace _ap2gltf
 
 	void _exporter::writeScenesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// scenes
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << SCENES_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << SCENES_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			// [
 			{
@@ -1421,7 +1438,7 @@ namespace _ap2gltf
 					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
 				}
 
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				indent()++;
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("nodes", vecRootNodes).c_str();
@@ -1439,16 +1456,16 @@ namespace _ap2gltf
 
 	void _exporter::writeMaterials()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// materials
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << MATERIALS_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << MATERIALS_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			// [
 			{
@@ -1458,7 +1475,7 @@ namespace _ap2gltf
 					auto pMaterial = m_vecMaterials[iMaterialIndex];
 
 					if (iMaterialIndex > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					if (pMaterial->hasTexture()) {
@@ -1493,13 +1510,13 @@ namespace _ap2gltf
 							writeStartObjectTag();
 
 							indent()++;
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							writeIndent();
-							*m_pOutputStream << DOULE_QUOT_MARK;
-							*m_pOutputStream << "pbrMetallicRoughness";
-							*m_pOutputStream << DOULE_QUOT_MARK;
-							*m_pOutputStream << COLON;
-							*m_pOutputStream << SPACE;
+							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << "pbrMetallicRoughness";
+							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << COLON;
+							*getOutputStream() << SPACE;
 
 							// pbrMetallicRoughness
 							writeStartObjectTag();
@@ -1515,7 +1532,7 @@ namespace _ap2gltf
 							writeEndObjectTag();
 							indent()--;
 
-							*m_pOutputStream << COMMA;
+							*getOutputStream() << COMMA;
 
 							// doubleSided
 							{
@@ -1537,19 +1554,19 @@ namespace _ap2gltf
 
 						// pbrMetallicRoughness
 						indent()++;
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << "pbrMetallicRoughness";
-						*m_pOutputStream << DOULE_QUOT_MARK;
-						*m_pOutputStream << COLON;
-						*m_pOutputStream << SPACE;
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << "pbrMetallicRoughness";
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << COLON;
+						*getOutputStream() << SPACE;
 
 						// baseColorFactor						
 						{
 							writeStartObjectTag();
 
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							indent()++;
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("baseColorFactor", vector<string>
@@ -1564,11 +1581,11 @@ namespace _ap2gltf
 						}
 						// baseColorFactor
 
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
 						// emissiveFactor
 						{
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("emissiveFactor", vector<string>
 							{
@@ -1579,7 +1596,7 @@ namespace _ap2gltf
 						}
 						// emissiveFactor					
 
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 
 						// doubleSided
 						{
@@ -1590,7 +1607,7 @@ namespace _ap2gltf
 						// alphaMode: OPAQUE/BLEND
 						{
 							if (pMaterial->getA() < 1.f) {
-								*m_pOutputStream << COMMA;
+								*getOutputStream() << COMMA;
 								writeStringProperty("alphaMode", "BLEND");
 							}
 						}
@@ -1613,16 +1630,16 @@ namespace _ap2gltf
 
 	void _exporter::writeImages()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// images
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << IMAGES_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << IMAGES_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			// [
 			{
@@ -1636,7 +1653,7 @@ namespace _ap2gltf
 				uint32_t iIndex = 0;
 				for (auto itImageURI : mapImageURIs) {
 					if (iIndex++ > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// image
@@ -1666,22 +1683,22 @@ namespace _ap2gltf
 
 	void _exporter::writeSamplers()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// samplers
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << SAMPLERS_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << SAMPLERS_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			// [
 			{
 				writeStartArrayTag(false);
 
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << "{}";
 
@@ -1694,16 +1711,16 @@ namespace _ap2gltf
 
 	void _exporter::writeTextures()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// images
 		{
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << TEXTURES_PROP;
-			*m_pOutputStream << DOULE_QUOT_MARK;
-			*m_pOutputStream << COLON;
-			*m_pOutputStream << SPACE;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << TEXTURES_PROP;
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
 
 			// [
 			{
@@ -1717,7 +1734,7 @@ namespace _ap2gltf
 				uint32_t iIndex = 0;
 				for (auto itTextureSource : mapTextureSource) {
 					if (iIndex++ > 0) {
-						*m_pOutputStream << COMMA;
+						*getOutputStream() << COMMA;
 					}
 
 					// image
@@ -1729,7 +1746,7 @@ namespace _ap2gltf
 						{
 							indent()++;
 							writeUIntProperty("sampler", 0);
-							*m_pOutputStream << COMMA;
+							*getOutputStream() << COMMA;
 							writeUIntProperty("source", itTextureSource.first);
 							indent()--;
 						}
