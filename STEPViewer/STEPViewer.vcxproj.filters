@@ -306,7 +306,7 @@
     <ClInclude Include="..\gltf\include\_node.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_gltf.h">
+    <ClInclude Include="..\gltf\include\_ap2gltf.h">
       <Filter>glTF</Filter>
     </ClInclude>
   </ItemGroup>
@@ -500,7 +500,7 @@
     <ClCompile Include="..\gltf\include\_node.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf.cpp">
+    <ClCompile Include="..\gltf\include\_ap2gltf.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>

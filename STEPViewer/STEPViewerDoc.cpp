@@ -16,7 +16,7 @@
 
 #include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
-#include "_gltf.h"
+#include "_ap2gltf.h"
 #endif
 
 #ifdef _DEBUG
@@ -442,7 +442,7 @@ void CMySTEPViewerDoc::OnExportAsGltf()
 
 	_c_log log(nullptr);
 
-	_gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	_ap2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 	exporter.setLog(&log);
 	exporter.execute();
 #endif

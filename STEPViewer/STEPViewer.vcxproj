@@ -610,7 +610,7 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\gltf\include\_gltf.h" />
+    <ClInclude Include="..\gltf\include\_ap2gltf.h" />
     <ClInclude Include="..\gltf\include\_node.h" />
     <ClInclude Include="..\include\stb\stb_easy_font.h" />
     <ClInclude Include="..\include\stb\stb_image.h" />
@@ -697,7 +697,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\gltf\include\_gltf.cpp" />
+    <ClCompile Include="..\gltf\include\_ap2gltf.cpp" />
     <ClCompile Include="..\gltf\include\_node.cpp" />
     <ClCompile Include="..\include\stb\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">NotUsing</PrecompiledHeader>
