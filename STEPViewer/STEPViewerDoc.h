@@ -92,4 +92,6 @@ public:
 	afx_msg void OnUpdateExportAsGltf(CCmdUI* pCmdUI);
 	afx_msg void OnViewIdsChecker();
 	afx_msg void OnUpdateViewIdsChecker(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsGltfBinary();
+	afx_msg void OnUpdateExportAsGltfBinary(CCmdUI* pCmdUI);
 };

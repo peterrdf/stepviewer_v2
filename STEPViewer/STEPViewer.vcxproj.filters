@@ -309,6 +309,9 @@
     <ClInclude Include="..\gltf\include\_ap2gltf.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_ap2glb.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -501,6 +504,9 @@
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_ap2gltf.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_ap2glb.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>

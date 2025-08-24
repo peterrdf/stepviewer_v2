@@ -698,6 +698,7 @@ BEGIN
         POPUP "Export As..."
         BEGIN
             MENUITEM "glTF",                        ID_EXPORT_AS_GLTF
+            MENUITEM "glTF Binary",                 ID_EXPORT_AS_GLTF_BINARY
         END
         MENUITEM SEPARATOR
         MENUITEM "New BCF package",             ID_BCF_NEW

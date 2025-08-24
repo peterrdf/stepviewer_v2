@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "_host.h"
 #include "_ap2gltf.h"
 
 #include "_base64.h"
