@@ -23,13 +23,9 @@ protected: // Methods
 
     // _geometry
     virtual void preCalculate() override;
-    virtual void postCalculate() override; 
-
-public: // Properties
-
-    // _geometry
-    virtual bool isPlaceholder() const override;
+    virtual void postCalculate() override;
     virtual bool hasGeometry() const override;
+    virtual bool isPlaceholder() const override;
     virtual bool ignoreBB() const override;
 
 public: // Methods

@@ -8,7 +8,6 @@
 #include "stb/stb_image.h"
 
 #ifdef _WINDOWS
-#include <atlbase.h>
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #else
@@ -49,7 +48,7 @@ public: // Methods
 		return false;
 	}
 
-	bool load(const wchar_t* lpszPathName)
+	bool load(const wchar_t* lpszPathName, bool bFlipY)
 	{
 #ifdef _WINDOWS
 		fs::path pthFile = lpszPathName;
@@ -58,7 +57,7 @@ public: // Methods
 			(pthFile.extension() == ".png") ||
 			(pthFile.extension() == ".bmp"))
 		{
-			stbi_set_flip_vertically_on_load(true);
+			stbi_set_flip_vertically_on_load(bFlipY);			
 
 			int iWidth = 0;
 			int iHeight = 0;
@@ -68,16 +67,6 @@ public: // Methods
 			{
 				glGenTextures(1, &m_iName);
 				glBindTexture(GL_TEXTURE_2D, m_iName);
-
-				// TODO:
-				// https://learnopengl.com/Getting-started/Textures
-				// https://www.cityjson.org/specs/1.1.3/#texture-object
-				// wrapMode, borderColor
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 				if (!isPowerOf2(iWidth) || !isPowerOf2(iHeight))
 				{
@@ -92,6 +81,20 @@ public: // Methods
 					iChannels == 3 ? GL_RGB : GL_RGBA,
 					GL_UNSIGNED_BYTE,
 					pData);
+
+				// Generate MIPMAPs
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				// Set texture filtering to use MIPMAPs
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				// Optional: set texture wrapping
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+				// Unbind texture
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
 			stbi_image_free(pData);

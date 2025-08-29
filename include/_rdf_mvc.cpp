@@ -9,6 +9,7 @@
 #include "_rdf_class.h"
 #include "_text_builder.h"
 #include "_oglUtils.h"
+#include "_settings_storage.h"
 #include "_ptr.h"
 
 // ************************************************************************************************
@@ -204,6 +205,7 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 
 	load();
@@ -217,6 +219,7 @@ void _rdf_model::assignModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 	m_bExternalModel = true;
 }
@@ -1019,8 +1022,19 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 	}
 
 	pInstance->recalculate();
+	if (!pInstance->hasGeometry()) {
+		vector<OwlInstance> vecAncestors;
+		_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
 
-	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable()) {
+		for (auto owlInstance : vecAncestors) {
+			auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
+			if (pAncestorInstance != nullptr) {
+				pAncestorInstance->recalculate(true);
+			}
+		}
+	}
+
+	if (m_bScaleAndCenterAllVisibleGeometry) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
@@ -1036,6 +1050,47 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 			rdfView->onInstancePropertyEdited(pSender, pInstance, pProperty);
 		}
 	}
+}
+
+void _rdf_controller::loadSettings()
+{
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
+
+		string strValue = getSettingsStorage()->getSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_iVisibleValuesCountLimit = atoi(strValue.c_str());
+		}
+	}
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
+
+	string strValue = getSettingsStorage()->getSetting(strSettingName);
+	if (!strValue.empty()) {
+		m_bScaleAndCenterAllVisibleGeometry = strValue == "TRUE";
+	}
+}
+
+void _rdf_controller::setVisibleValuesCountLimit(int iNewValue) 
+{ 
+	m_iVisibleValuesCountLimit = iNewValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
+
+	getSettingsStorage()->setSetting(strSettingName, to_string(m_iVisibleValuesCountLimit));
+}
+
+void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue) 
+{ 
+	m_bScaleAndCenterAllVisibleGeometry = bNewValue; 
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
+
+	getSettingsStorage()->setSetting(strSettingName, bNewValue ? "TRUE" : "FALSE");
 }
 
 // ************************************************************************************************

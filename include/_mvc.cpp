@@ -7,6 +7,7 @@
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
+	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
 	, m_pWorld(nullptr)
 	, m_mapID2Instance()
@@ -398,28 +399,58 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? pdValues[0] : 0.;
 }
 
-_texture* _model::getTexture(const wstring& strTexture)
+/*static*/ void _model::getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors)
 {
-	if (!m_strPath.empty()) {
-		if (m_mapTextures.find(strTexture) != m_mapTextures.end()) {
-			return m_mapTextures.at(strTexture);
+	OwlInstance owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
+	while (owlInverseReferenceInstance != 0) {
+		if (find(
+			vecAncestors.begin(),
+			vecAncestors.end(),
+			owlInverseReferenceInstance) != vecAncestors.end()) {
+			break; // already exists			
 		}
+		vecAncestors.push_back(owlInverseReferenceInstance);
 
-		fs::path pthFile = m_strPath;
-		fs::path pthTexture = pthFile.parent_path();
+		getInstanceAncestors(owlInverseReferenceInstance, vecAncestors);
+
+		owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, owlInverseReferenceInstance);
+	}
+}
+
+_texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
+{
+	if (m_mapTextures.find(strTexture) != m_mapTextures.end()) {
+		return m_mapTextures.at(strTexture);
+	}
+
+	fs::path pthTexture = strTexture;
+
+	if (!fs::exists(pthTexture)) {
+		// use search path if texture not found by as absolute or relative path
+		wstring strTextureSearch = getTextureSearchPath();
+		pthTexture = strTextureSearch;
 		pthTexture.append(strTexture);
+	}
 
-		if (fs::exists(pthTexture)) {
-			auto pTexture = new _texture();
-			pTexture->load(pthTexture.wstring().c_str());
+	_texture* pTexture = NULL;
 
-			m_mapTextures[strTexture] = pTexture;
-
-			return pTexture;
+	if (fs::exists(pthTexture)) {
+		pTexture = new _texture();
+		if (!pTexture->load(pthTexture.wstring().c_str(), bFlipY)) {
+			AfxMessageBox(CString(L"Failed to load texture: ") + pthTexture.c_str(), MB_ICONERROR);
 		}
-	} // if (!m_strModel.empty())
+	}
+	else {
+		CString msg;
+		msg.Format(L"Not found texture: %s\nSearch path: %s", strTexture.c_str(), pthTexture.c_str());
+		AfxMessageBox(msg, MB_ICONERROR);
+	}
 
-	return getDefaultTexture();
+	if (pTexture == nullptr) {
+		m_mapTextures[strTexture] = getDefaultTexture();
+	}
+
+	return pTexture;
 }
 
 void _model::setVertexBufferOffset(OwlInstance owlInstance)
@@ -537,6 +568,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (bCloseModel) {
 		m_strPath = L"";
+		m_strTextureSearchPath = L"";
 	}
 
 	for (auto pGeometry : m_vecGeometries) {
@@ -550,10 +582,16 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 	m_vecInstances.clear();
 	m_mapID2Instance.clear();
 
-	for (auto itTexture : m_mapTextures) {
-		delete itTexture.second;
+	if (!m_mapTextures.empty()) {
+		auto pDefaultTexture = getDefaultTexture();
+		for (auto itTexture : m_mapTextures) {
+			if (itTexture.second == pDefaultTexture) {
+				continue; // do not delete default texture
+			}
+			delete itTexture.second;
+		}
+		m_mapTextures.clear();
 	}
-	m_mapTextures.clear();
 }
 
 void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
@@ -985,7 +1023,7 @@ bool _controller::isInstanceSelected(_instance* pInstance) const
 
 void _controller::saveInstance(OwlInstance owlInstance)
 {
-#if defined(_WINDOWS) && defined(__AFXDLGS_H__)
+#ifdef _WINDOWS
 	assert(owlInstance != 0);
 
 	wstring strName = _model::getInstanceName(owlInstance);

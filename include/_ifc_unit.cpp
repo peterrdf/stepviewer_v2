@@ -32,10 +32,6 @@ void _ifc_unit::convertType(const wchar_t* szUnitType)
 {
     assert(szUnitType != nullptr);
 
-    if (szUnitType == nullptr) {
-        return;
-    }
-
     if (wcscmp(szUnitType, L".ABSORBEDDOSEUNIT.") == 0) {
         m_iType = ABSORBEDDOSEUNIT;
         m_strType = L"ABSORBEDDOSEUNIT";
@@ -304,10 +300,6 @@ void _ifc_unit::convertPrefix(const wchar_t* szPrefix)
 void _ifc_unit::convertName(const wchar_t* szName)
 {
     assert(szName != nullptr);
-
-    if (szName == nullptr) {
-        return;
-    }
 
     if (wcscmp(szName, L".AMPERE.") == 0) {
         m_strName = L"Ampere";
