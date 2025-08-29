@@ -1400,6 +1400,10 @@ void _oglRenderer::_prepare(
 		zNear = fBoundingSphereDiameter * .1;
 	}
 
+	if (zNear < 0.001) {
+		zNear = 0.001;
+	}
+
 	GLdouble zFar = 100.;
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
