@@ -288,6 +288,17 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
 
+#ifdef _PRINT_VERTEX_BUFFER
+    for (int64_t i = 0; i < pVertexBuffer->size(); i++) {
+		TRACE(
+			L"V %lld: %f, %f, %f\n",
+			i,
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 0],
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 1],
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 2]);
+	}
+#endif
+
     pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
     memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
