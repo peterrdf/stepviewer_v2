@@ -65,6 +65,7 @@ public: // Properties
 	void setTransformationMatrix(_matrix4x3* pTransformationMatrix)
 	{
 		delete m_pTransformationMatrix;
+		m_pTransformationMatrix = nullptr;
 
 		if (pTransformationMatrix != nullptr) {
 			m_pTransformationMatrix = new _matrix4x4();
