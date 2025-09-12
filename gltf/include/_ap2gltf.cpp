@@ -2,6 +2,7 @@
 #include "_ap2gltf.h"
 
 #include "_base64.h"
+#include "_ifc_geometry.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -456,13 +457,18 @@ namespace _ap2gltf
 
 			// vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -707,6 +713,8 @@ namespace _ap2gltf
 
 			// vertices/ARRAY_BUFFER/POSITION
 			{
+				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+
 				float fXmin = FLT_MAX;
 				float fXmax = -FLT_MAX;
 				float fYmin = FLT_MAX;
@@ -731,18 +739,18 @@ namespace _ap2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					_string::format("%.10g", fXmin * fScaleFactor),
-					_string::format("%.10g", fYmin * fScaleFactor),
-					_string::format("%.10g", fZmin * fScaleFactor),
+					_string::format("%.10g", (fXmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
+					_string::format("%.10g", (fYmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
+					_string::format("%.10g", (fZmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					_string::format("%.10g", fXmax * fScaleFactor),
-					_string::format("%.10g", fYmax * fScaleFactor),
-					_string::format("%.10g", fZmax * fScaleFactor),
+					_string::format("%.10g", (fXmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
+					_string::format("%.10g", (fYmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
+					_string::format("%.10g", (fZmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1317,9 +1325,9 @@ namespace _ap2gltf
 								to_string(pTransformation->_32),
 								to_string(pTransformation->_33),
 								to_string(pTransformation->_34),
-								to_string(pTransformation->_41 * fScaleFactor),
-								to_string(pTransformation->_42 * fScaleFactor),
-								to_string(pTransformation->_43 * fScaleFactor),
+								to_string((pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x),
+								to_string((pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y),
+								to_string((pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z),
 								to_string(pTransformation->_44)
 							}).c_str();
 						} // if (pTransformation != nullptr)						

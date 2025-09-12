@@ -2,6 +2,7 @@
 #include "_ap2glb.h"
 
 #include "_base64.h"
+#include "_ifc_geometry.h"
 
 // ************************************************************************************************
 namespace _ap2glb
@@ -58,11 +59,18 @@ namespace _ap2glb
 
 			// Vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -70,8 +78,10 @@ namespace _ap2glb
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
