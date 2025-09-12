@@ -36,6 +36,11 @@ namespace _ap2glb
 			return;
 		}
 
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+
 		// Get JSON content as string
 		std::string jsonContent = ((std::ostringstream*)m_pOutputStream)->str();
 
@@ -53,11 +58,11 @@ namespace _ap2glb
 
 			// Vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
+				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -68,14 +73,6 @@ namespace _ap2glb
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
-				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-			}
-
-			// Vertices/TEXCOORD_0
-			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
-				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -167,10 +164,6 @@ namespace _ap2glb
 			// vertices/NORMAL
 			pNode->normalsBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->normalsBufferViewByteLength();
-
-			// vertices/TEXCOORD_0
-			pNode->texturesBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 2 * (uint32_t)sizeof(float);
-			iBufferByteLength += pNode->texturesBufferViewByteLength();
 
 			// Conceptual faces/indices
 			for (auto pCohort : pNode->getGeometry()->concFacesCohorts()) {
@@ -299,29 +292,6 @@ namespace _ap2glb
 				indent()--;
 
 				iByteOffset += pNode->normalsBufferViewByteLength();
-			}
-
-			*getOutputStream() << COMMA;
-
-			// textures/ARRAY_BUFFER/TEXCOORD_0
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", 0);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += pNode->texturesBufferViewByteLength();
 			}
 
 			// indices/ELEMENT_ARRAY_BUFFER

@@ -188,6 +188,27 @@ void _geometry::calculateBB(
     }
 }
 
+void _geometry::calculateVerticesMinMax(
+    float& fXmin, float& fXmax,
+    float& fYmin, float& fYmax,
+    float& fZmin, float& fZmax) const
+{
+    if (getVerticesCount() == 0) {
+        return;
+    }
+
+    const auto VERTEX_LENGTH = getVertexLength();
+
+    for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++) {
+        fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+        fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+        fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+        fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+        fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
+        fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);        
+	}
+}
+
 void _geometry::scale(float fScaleFactor)
 {
     if (getVerticesCount() == 0) {
@@ -203,6 +224,7 @@ void _geometry::scale(float fScaleFactor)
         m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
     }
 
+    /* BB - Min */
     m_pvecAABBMin->x /= fScaleFactor;
     m_pvecAABBMin->y /= fScaleFactor;
     m_pvecAABBMin->z /= fScaleFactor;

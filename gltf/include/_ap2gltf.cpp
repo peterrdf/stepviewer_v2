@@ -415,6 +415,11 @@ namespace _ap2gltf
 
 	/*virtual*/ void _exporter::writeBuffersProperty()
 	{
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
@@ -451,13 +456,13 @@ namespace _ap2gltf
 
 			// vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
+				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -478,18 +483,6 @@ namespace _ap2gltf
 
 			pNode->normalsBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->normalsBufferViewByteLength();
-
-			// vertices/TEXCOORD_0
-			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-			}
-
-			pNode->texturesBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 2 * (uint32_t)sizeof(float);
-			iBufferByteLength += pNode->texturesBufferViewByteLength();
 
 			// Conceptual faces/indices
 			for (auto pCohort : pNode->getGeometry()->concFacesCohorts()) {
@@ -649,29 +642,6 @@ namespace _ap2gltf
 				iByteOffset += pNode->normalsBufferViewByteLength();
 			}
 
-			*getOutputStream() << COMMA;
-
-			// textures/ARRAY_BUFFER/TEXCOORD_0
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += pNode->texturesBufferViewByteLength();
-			}
-
 			// indices/ELEMENT_ARRAY_BUFFER
 			for (size_t iIndicesBufferViewIndex = 0; iIndicesBufferViewIndex < pNode->indicesBufferViewsByteLength().size(); iIndicesBufferViewIndex++) {
 				uint32_t iByteLength = pNode->indicesBufferViewsByteLength()[iIndicesBufferViewIndex];
@@ -708,7 +678,7 @@ namespace _ap2gltf
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
+		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -737,6 +707,14 @@ namespace _ap2gltf
 
 			// vertices/ARRAY_BUFFER/POSITION
 			{
+				float fXmin = FLT_MAX;
+				float fXmax = -FLT_MAX;
+				float fYmin = FLT_MAX;
+				float fYmax = -FLT_MAX;
+				float fZmin = FLT_MAX;
+				float fZmax = -FLT_MAX;
+				pNode->getGeometry()->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
 				indent()++;
 				writeStartObjectTag();
 
@@ -753,18 +731,18 @@ namespace _ap2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", fXmin * fScaleFactor),
+					_string::format("%.10g", fYmin * fScaleFactor),
+					_string::format("%.10g", fZmin * fScaleFactor),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", fXmax * fScaleFactor),
+					_string::format("%.10g", fYmax * fScaleFactor),
+					_string::format("%.10g", fZmax * fScaleFactor),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -807,43 +785,9 @@ namespace _ap2gltf
 			}
 			// normals/ARRAY_BUFFER/NORMAL
 
-			*getOutputStream() << COMMA;
-
-			// normals/ARRAY_BUFFER/TEXCOORD_0
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("bufferView", (uint32_t)iBufferViewIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteOffset", 0);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("componentType", 5126/*FLOAT*/);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
-				*getOutputStream() << COMMA;
-				*getOutputStream() << getNewLine();
-				writeIndent();
-				*getOutputStream() << buildArrayProperty("min", vector<string> { "-1.0", "-1.0" }).c_str();
-				*getOutputStream() << COMMA;
-				*getOutputStream() << getNewLine();
-				writeIndent();
-				*getOutputStream() << buildArrayProperty("max", vector<string> { "1.0", "1.0" }).c_str();
-				*getOutputStream() << COMMA;
-				writeStringProperty("type", "VEC2");
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				pNode->accessors().push_back(iBufferViewIndex);
-
-				iBufferViewIndex++;
-			}
-			// normals/ARRAY_BUFFER/NORMAL
-
-			// indices/ELEMENT_ARRAY_BUFFER
+			/*
+			* indices/ELEMENT_ARRAY_BUFFER
+			*/
 
 			// Conceptual faces
 			for (auto pCohort : pNode->getGeometry()->concFacesCohorts()) {
@@ -977,7 +921,7 @@ namespace _ap2gltf
 				auto pNode = m_vecNodes[iNodeIndex];
 
 				assert(pNode->accessors().size() ==
-					3/*vertices, normals & textures bufferView-s*/ +
+					2/*vertices & normals bufferView-s*/ +
 					pNode->getGeometry()->concFacesCohorts().size() +
 					pNode->getGeometry()->concFacePolygonsCohorts().size() +
 					pNode->getGeometry()->linesCohorts().size() +
@@ -1032,7 +976,7 @@ namespace _ap2gltf
 								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iConcFacesCohortIndex +
-										3/*skip vertices, normals & textures accessor-s*/]);
+										2/*skip vertices & normals accessor-s*/]);
 								*getOutputStream() << COMMA;
 								writeUIntProperty("material", (uint32_t)iMaterialIndex);
 								*getOutputStream() << COMMA;
@@ -1103,7 +1047,7 @@ namespace _ap2gltf
 								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iConcFacePolygonsCohortIndex +
-										3/*skip vertices, normals & textures accessor-s*/ +
+										2/*skip vertices & normals accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size()]);
 								*getOutputStream() << COMMA;
 								writeUIntProperty("material", 0);
@@ -1178,7 +1122,7 @@ namespace _ap2gltf
 								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iLinesCohortIndex +
-										3/*skip vertices, normals & textures accessor-s*/ +
+										2/*skip vertices & normals accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size() +
 										pNode->getGeometry()->concFacePolygonsCohorts().size()]);
 								*getOutputStream() << COMMA;
@@ -1254,7 +1198,7 @@ namespace _ap2gltf
 								*getOutputStream() << COMMA;
 								writeUIntProperty("indices", pNode->accessors()[
 									iPointsCohortIndex +
-										3/*skip vertices, normals & textures accessor-s*/ +
+										2/*skip vertices & normals accessor-s*/ +
 										pNode->getGeometry()->concFacesCohorts().size() +
 										pNode->getGeometry()->concFacePolygonsCohorts().size() +
 										pNode->getGeometry()->linesCohorts().size()]);
@@ -1294,6 +1238,11 @@ namespace _ap2gltf
 
 	void _exporter::writeNodesProperty()
 	{
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
@@ -1357,21 +1306,21 @@ namespace _ap2gltf
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
 								to_string(pTransformation->_11),
-									to_string(pTransformation->_12),
-									to_string(pTransformation->_13),
-									to_string(pTransformation->_14),
-									to_string(pTransformation->_21),
-									to_string(pTransformation->_22),
-									to_string(pTransformation->_23),
-									to_string(pTransformation->_24),
-									to_string(pTransformation->_31),
-									to_string(pTransformation->_32),
-									to_string(pTransformation->_33),
-									to_string(pTransformation->_34),
-									to_string(pTransformation->_41),
-									to_string(pTransformation->_42),
-									to_string(pTransformation->_43),
-									to_string(pTransformation->_44)
+								to_string(pTransformation->_12),
+								to_string(pTransformation->_13),
+								to_string(pTransformation->_14),
+								to_string(pTransformation->_21),
+								to_string(pTransformation->_22),
+								to_string(pTransformation->_23),
+								to_string(pTransformation->_24),
+								to_string(pTransformation->_31),
+								to_string(pTransformation->_32),
+								to_string(pTransformation->_33),
+								to_string(pTransformation->_34),
+								to_string(pTransformation->_41 * fScaleFactor),
+								to_string(pTransformation->_42 * fScaleFactor),
+								to_string(pTransformation->_43 * fScaleFactor),
+								to_string(pTransformation->_44)
 							}).c_str();
 						} // if (pTransformation != nullptr)						
 						indent()--;
