@@ -247,6 +247,10 @@ namespace _ap2glb
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			if (pNode->getGeometry()->isPlaceholder()) {
+				// Skip placeholder geometries
+				continue;
+			}
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
 				pNode->getGeometry()->concFacesCohorts().size() +
