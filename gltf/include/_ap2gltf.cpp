@@ -445,6 +445,35 @@ namespace _ap2gltf
 
 			const auto VERTEX_LENGTH = pNode->getGeometry()->getVertexLength();
 
+			_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+			bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
+
+			float fXmin = FLT_MAX;
+			float fXmax = -FLT_MAX;
+			float fYmin = FLT_MAX;
+			float fYmax = -FLT_MAX;
+			float fZmin = FLT_MAX;
+			float fZmax = -FLT_MAX;
+			pNode->getGeometry()->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+			fXmin *= fScaleFactor;
+			fXmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
+
+			fYmin *= fScaleFactor;
+			fYmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
+
+			fZmin *= fScaleFactor;
+			fZmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
+
+			fXmax *= fScaleFactor;
+			fXmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
+
+			fYmax *= fScaleFactor;
+			fYmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
+
+			fZmax *= fScaleFactor;
+			fZmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
+
 			// buffer: byteLength
 			uint32_t iBufferByteLength = 0;
 
@@ -466,19 +495,16 @@ namespace _ap2gltf
 
 			// vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
-				bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
-
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
-				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
+				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
-				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
+				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
-				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
+				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -743,22 +769,22 @@ namespace _ap2gltf
 				pNode->getGeometry()->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 				fXmin *= fScaleFactor;
-				fXmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
+				fXmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 
 				fYmin *= fScaleFactor;
-				fYmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
+				fYmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
 
 				fZmin *= fScaleFactor;
-				fZmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
+				fZmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 
 				fXmax *= fScaleFactor;
-				fXmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
+				fXmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 
 				fYmax *= fScaleFactor;
-				fYmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
+				fYmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
 
 				fZmax *= fScaleFactor;
-				fZmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
+				fZmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 
 				indent()++;
 				writeStartObjectTag();
@@ -1364,7 +1390,7 @@ namespace _ap2gltf
 								to_string(pTransformation->_31),
 								to_string(pTransformation->_33),
 								to_string(pTransformation->_32),
-								to_string(pTransformation->_34),
+								to_string(pTransformation->_34),								
 								to_string(pTransformation->_21),
 								to_string(pTransformation->_23),
 								to_string(pTransformation->_22),
