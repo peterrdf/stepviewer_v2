@@ -68,17 +68,18 @@ namespace _ap2glb
 			// Vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
 				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+				bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
 
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 

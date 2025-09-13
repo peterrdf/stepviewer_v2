@@ -458,7 +458,8 @@ namespace _ap2gltf
 			std::ostream* pNodeBinDataStream = nullptr;
 			if (m_bEmbeddedBuffers) {
 				pNodeBinDataStream = new std::stringstream();
-			} else {
+			}
+			else {
 				pNodeBinDataStream = new std::ofstream();
 				((std::ofstream*)pNodeBinDataStream)->open(pthNodeBinData.string(), std::ios::out | std::ios::binary | std::ios::trunc);
 			}
@@ -466,17 +467,18 @@ namespace _ap2gltf
 			// vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
 				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+				bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
 
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
+				fValue -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -567,7 +569,8 @@ namespace _ap2gltf
 				std::string strBase64BufferData = "data:application/octet-stream;base64,";
 				strBase64BufferData += base64_encode(reinterpret_cast<const unsigned char*>(strBufferData.data()), (unsigned int)strBufferData.size());
 				writeStringProperty("uri", strBase64BufferData);
-			} else {
+			}
+			else {
 				writeStringProperty("uri", pthNodeBinData.stem().string() + ".bin");
 			}
 			indent()--;
@@ -729,6 +732,7 @@ namespace _ap2gltf
 			// vertices/ARRAY_BUFFER/POSITION
 			{
 				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+				bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
 
 				float fXmin = FLT_MAX;
 				float fXmax = -FLT_MAX;
@@ -737,6 +741,24 @@ namespace _ap2gltf
 				float fZmin = FLT_MAX;
 				float fZmax = -FLT_MAX;
 				pNode->getGeometry()->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+				fXmin *= fScaleFactor;
+				fXmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
+
+				fYmin *= fScaleFactor;
+				fYmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
+
+				fZmin *= fScaleFactor;
+				fZmin -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
+
+				fXmax *= fScaleFactor;
+				fXmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.x : 0.f;
+
+				fYmax *= fScaleFactor;
+				fYmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.y : 0.f;
+
+				fZmax *= fScaleFactor;
+				fZmax -= !bIsMappeditem ? (float)vecVertexBufferOffset.z : 0.f;
 
 				indent()++;
 				writeStartObjectTag();
@@ -754,18 +776,18 @@ namespace _ap2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					_string::format("%.10g", (fXmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
-					_string::format("%.10g", (fZmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
-					_string::format("%.10g", (fYmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
+					_string::format("%.10g", fXmin),
+					_string::format("%.10g", fZmin),
+					_string::format("%.10g", fYmin),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					_string::format("%.10g", (fXmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
-					_string::format("%.10g", (fZmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
-					_string::format("%.10g", (fYmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
+					_string::format("%.10g", fXmax),
+					_string::format("%.10g", fZmax),
+					_string::format("%.10g", fYmax),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1335,21 +1357,21 @@ namespace _ap2gltf
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
-								to_string(pTransformation->_11),  // X row, X column - unchanged
-								to_string(pTransformation->_13),  // X row, Z column (was Y column)
-								to_string(pTransformation->_12),  // X row, Y column (was Z column)
+								to_string(pTransformation->_11),
+								to_string(pTransformation->_13),
+								to_string(pTransformation->_12),
 								to_string(pTransformation->_14),
-								to_string(pTransformation->_31),  // Z row, X column (was Y row)
-								to_string(pTransformation->_33),  // Z row, Z column (was Y row, Z column)
-								to_string(pTransformation->_32),  // Z row, Y column (was Y row, Y column)
+								to_string(pTransformation->_31),
+								to_string(pTransformation->_33),
+								to_string(pTransformation->_32),
 								to_string(pTransformation->_34),
-								to_string(pTransformation->_21),  // Y row, X column (was Z row)
-								to_string(pTransformation->_23),  // Y row, Z column (was Z row, Z column)
-								to_string(pTransformation->_22),  // Y row, Y column (was Z row, Y column)
+								to_string(pTransformation->_21),
+								to_string(pTransformation->_23),
+								to_string(pTransformation->_22),
 								to_string(pTransformation->_24),
-								to_string((pTransformation->_41* fScaleFactor) - vecVertexBufferOffset.x),
-								to_string((pTransformation->_43* fScaleFactor) - vecVertexBufferOffset.z),
-								to_string((pTransformation->_42* fScaleFactor) - vecVertexBufferOffset.y),
+								to_string((pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x),
+								to_string((pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z),
+								to_string((pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y),
 								to_string(pTransformation->_44)
 							}).c_str();
 						} // if (pTransformation != nullptr)						
@@ -1482,7 +1504,8 @@ namespace _ap2gltf
 						if (itImage == m_mapImages.end()) {
 							iImageIndex = (uint32_t)m_mapImages.size();
 							m_mapImages[strTexture] = iImageIndex;
-						} else {
+						}
+						else {
 							iImageIndex = itImage->second;
 						}
 
@@ -1529,7 +1552,8 @@ namespace _ap2gltf
 							// pbrMetallicRoughness							
 						}
 						// texture
-					} else {
+					}
+					else {
 						// material					
 						indent()++;
 						writeStartObjectTag();
