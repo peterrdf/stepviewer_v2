@@ -41,6 +41,10 @@ namespace _ap2glb
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		fScaleFactor /= 1000.f;
+		vecVertexBufferOffset.x /= 1000.f;
+		vecVertexBufferOffset.y /= 1000.f;
+		vecVertexBufferOffset.z /= 1000.f;
 
 		// Get JSON content as string
 		std::string jsonContent = ((std::ostringstream*)m_pOutputStream)->str();
@@ -65,12 +69,12 @@ namespace _ap2glb
 				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
-				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
 				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -79,10 +83,10 @@ namespace _ap2glb
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 

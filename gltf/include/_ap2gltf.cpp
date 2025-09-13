@@ -3,6 +3,7 @@
 
 #include "_base64.h"
 #include "_ifc_geometry.h"
+#include "_ap_mvc.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -420,6 +421,10 @@ namespace _ap2gltf
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		fScaleFactor /= 1000.f;
+		vecVertexBufferOffset.x /= 1000.f;
+		vecVertexBufferOffset.y /= 1000.f;
+		vecVertexBufferOffset.z /= 1000.f;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -463,12 +468,12 @@ namespace _ap2gltf
 				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
-				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
 				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f;
+				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
+				fValue -= ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -480,10 +485,10 @@ namespace _ap2gltf
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -681,10 +686,17 @@ namespace _ap2gltf
 
 	void _exporter::writeAccessorsProperty()
 	{
+		double dLengthConversionFactor = getProjectUnitConversionFactor(
+			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		fScaleFactor /= 1000.f;
+		vecVertexBufferOffset.x /= 1000.f;
+		vecVertexBufferOffset.y /= 1000.f;
+		vecVertexBufferOffset.z /= 1000.f;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -740,8 +752,8 @@ namespace _ap2gltf
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
 					_string::format("%.10g", (fXmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
-					_string::format("%.10g", (fYmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
 					_string::format("%.10g", (fZmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
+					_string::format("%.10g", (fYmin * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
@@ -749,8 +761,8 @@ namespace _ap2gltf
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
 					_string::format("%.10g", (fXmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.x : 0.f)),
-					_string::format("%.10g", (fYmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
 					_string::format("%.10g", (fZmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.z : 0.f)),
+					_string::format("%.10g", (fYmax * fScaleFactor) - (ifcGeometry && !ifcGeometry->getIsMappedItem() ? (float)vecVertexBufferOffset.y : 0.f)),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1250,6 +1262,10 @@ namespace _ap2gltf
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		fScaleFactor /= 1000.f;
+		vecVertexBufferOffset.x /= 1000.f;
+		vecVertexBufferOffset.y /= 1000.f;
+		vecVertexBufferOffset.z /= 1000.f;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -1313,21 +1329,21 @@ namespace _ap2gltf
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
-								to_string(pTransformation->_11),
-								to_string(pTransformation->_12),
-								to_string(pTransformation->_13),
+								to_string(pTransformation->_11),  // X row, X column - unchanged
+								to_string(pTransformation->_13),  // X row, Z column (was Y column)
+								to_string(pTransformation->_12),  // X row, Y column (was Z column)
 								to_string(pTransformation->_14),
-								to_string(pTransformation->_21),
-								to_string(pTransformation->_22),
-								to_string(pTransformation->_23),
-								to_string(pTransformation->_24),
-								to_string(pTransformation->_31),
-								to_string(pTransformation->_32),
-								to_string(pTransformation->_33),
+								to_string(pTransformation->_31),  // Z row, X column (was Y row)
+								to_string(pTransformation->_33),  // Z row, Z column (was Y row, Z column)
+								to_string(pTransformation->_32),  // Z row, Y column (was Y row, Y column)
 								to_string(pTransformation->_34),
-								to_string((pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x),
-								to_string((pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y),
-								to_string((pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z),
+								to_string(pTransformation->_21),  // Y row, X column (was Z row)
+								to_string(pTransformation->_23),  // Y row, Z column (was Z row, Z column)
+								to_string(pTransformation->_22),  // Y row, Y column (was Z row, Y column)
+								to_string(pTransformation->_24),
+								to_string((pTransformation->_41* fScaleFactor) - vecVertexBufferOffset.x),
+								to_string((pTransformation->_43* fScaleFactor) - vecVertexBufferOffset.z),
+								to_string((pTransformation->_42* fScaleFactor) - vecVertexBufferOffset.y),
 								to_string(pTransformation->_44)
 							}).c_str();
 						} // if (pTransformation != nullptr)						
