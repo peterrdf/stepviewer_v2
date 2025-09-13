@@ -417,14 +417,17 @@ namespace _ap2gltf
 
 	/*virtual*/ void _exporter::writeBuffersProperty()
 	{
+		float fLengthConversionFactor = (float)getProjectUnitConversionFactor(
+			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
-		fScaleFactor /= 1000.f;
-		vecVertexBufferOffset.x /= 1000.f;
-		vecVertexBufferOffset.y /= 1000.f;
-		vecVertexBufferOffset.z /= 1000.f;
+		fScaleFactor *= fLengthConversionFactor;
+		vecVertexBufferOffset.x *= fLengthConversionFactor;
+		vecVertexBufferOffset.y *= fLengthConversionFactor;
+		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -686,17 +689,17 @@ namespace _ap2gltf
 
 	void _exporter::writeAccessorsProperty()
 	{
-		double dLengthConversionFactor = getProjectUnitConversionFactor(
+		float fLengthConversionFactor = (float)getProjectUnitConversionFactor(
 			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
 
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
-		fScaleFactor /= 1000.f;
-		vecVertexBufferOffset.x /= 1000.f;
-		vecVertexBufferOffset.y /= 1000.f;
-		vecVertexBufferOffset.z /= 1000.f;
+		fScaleFactor *= fLengthConversionFactor;
+		vecVertexBufferOffset.x *= fLengthConversionFactor;
+		vecVertexBufferOffset.y *= fLengthConversionFactor;
+		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -1258,14 +1261,17 @@ namespace _ap2gltf
 
 	void _exporter::writeNodesProperty()
 	{
+		float fLengthConversionFactor = (float)getProjectUnitConversionFactor(
+			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
-		fScaleFactor /= 1000.f;
-		vecVertexBufferOffset.x /= 1000.f;
-		vecVertexBufferOffset.y /= 1000.f;
-		vecVertexBufferOffset.z /= 1000.f;
+		fScaleFactor *= fLengthConversionFactor;
+		vecVertexBufferOffset.x *= fLengthConversionFactor;
+		vecVertexBufferOffset.y *= fLengthConversionFactor;
+		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();

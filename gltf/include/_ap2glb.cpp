@@ -3,6 +3,7 @@
 
 #include "_base64.h"
 #include "_ifc_geometry.h"
+#include "_ap_mvc.h"
 
 // ************************************************************************************************
 namespace _ap2glb
@@ -37,14 +38,17 @@ namespace _ap2glb
 			return;
 		}
 
+		float fLengthConversionFactor = (float)getProjectUnitConversionFactor(
+			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
-		fScaleFactor /= 1000.f;
-		vecVertexBufferOffset.x /= 1000.f;
-		vecVertexBufferOffset.y /= 1000.f;
-		vecVertexBufferOffset.z /= 1000.f;
+		fScaleFactor *= fLengthConversionFactor;
+		vecVertexBufferOffset.x *= fLengthConversionFactor;
+		vecVertexBufferOffset.y *= fLengthConversionFactor;
+		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
 		// Get JSON content as string
 		std::string jsonContent = ((std::ostringstream*)m_pOutputStream)->str();
