@@ -1295,6 +1295,10 @@ namespace _ap2gltf
 		vecVertexBufferOffset.y *= fLengthConversionFactor;
 		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
+		_matrix4x4 mtxDefaultViewTransformation;
+		_matrix4x4Identity(&mtxDefaultViewTransformation);
+		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
+
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
@@ -1348,68 +1352,60 @@ namespace _ap2gltf
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
 						if (pTransformation != nullptr) {
-							_matrix4x4 matrix1;
-							memcpy(&matrix1, pTransformation, sizeof(_matrix4x4));
-							matrix1._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
-							matrix1._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
-							matrix1._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
+							_matrix4x4 mtxInstanceTransformation;
+							memcpy(&mtxInstanceTransformation, pTransformation, sizeof(_matrix4x4));
+							mtxInstanceTransformation._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
+							mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
+							mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;							
 
-							_matrix4x4 matrix2;
-							_matrix4x4Identity(&matrix2);
-							_matrixRotateByEulerAngles4x4(&matrix2, 2 * PI * -90. / 360., 0, 0);
-
-							_matrix4x4 matrix;
-							_matrix4x4Multiply(&matrix, &matrix1, &matrix2);
+							_matrix4x4 mtxTransformation;
+							_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
 
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
-								to_string(matrix._11),
-								to_string(matrix._12),
-								to_string(matrix._13),
-								to_string(matrix._14),
-								to_string(matrix._21),
-								to_string(matrix._22),
-								to_string(matrix._23),
-								to_string(matrix._24),
-								to_string(matrix._31),
-								to_string(matrix._32),
-								to_string(matrix._33),
-								to_string(matrix._34),
-								to_string(matrix._41),
-								to_string(matrix._42),
-								to_string(matrix._43),
-								to_string(matrix._44)
+								to_string(mtxTransformation._11),
+								to_string(mtxTransformation._12),
+								to_string(mtxTransformation._13),
+								to_string(mtxTransformation._14),
+								to_string(mtxTransformation._21),
+								to_string(mtxTransformation._22),
+								to_string(mtxTransformation._23),
+								to_string(mtxTransformation._24),
+								to_string(mtxTransformation._31),
+								to_string(mtxTransformation._32),
+								to_string(mtxTransformation._33),
+								to_string(mtxTransformation._34),
+								to_string(mtxTransformation._41),
+								to_string(mtxTransformation._42),
+								to_string(mtxTransformation._43),
+								to_string(mtxTransformation._44)
 							}).c_str();
 						} // if (pTransformation != nullptr)	
 						else {
-							_matrix4x4 matrix;
-							_matrix4x4Identity(&matrix);
-							_matrixRotateByEulerAngles4x4(&matrix, 2 * PI * -90. / 360., 0, 0);
-
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
-								to_string(matrix._11),
-								to_string(matrix._12),
-								to_string(matrix._13),
-								to_string(matrix._14),
-								to_string(matrix._21),
-								to_string(matrix._22),
-								to_string(matrix._23),
-								to_string(matrix._24),
-								to_string(matrix._31),
-								to_string(matrix._32),
-								to_string(matrix._33),
-								to_string(matrix._34),
-								to_string(matrix._41),
-								to_string(matrix._42),
-								to_string(matrix._43),
-								to_string(matrix._44)
+								to_string(mtxDefaultViewTransformation._11),
+								to_string(mtxDefaultViewTransformation._12),
+								to_string(mtxDefaultViewTransformation._13),
+								to_string(mtxDefaultViewTransformation._14),
+								to_string(mtxDefaultViewTransformation._21),
+								to_string(mtxDefaultViewTransformation._22),
+								to_string(mtxDefaultViewTransformation._23),
+								to_string(mtxDefaultViewTransformation._24),
+								to_string(mtxDefaultViewTransformation._31),
+								to_string(mtxDefaultViewTransformation._32),
+								to_string(mtxDefaultViewTransformation._33),
+								to_string(mtxDefaultViewTransformation._34),
+								to_string(mtxDefaultViewTransformation._41),
+								to_string(mtxDefaultViewTransformation._42),
+								to_string(mtxDefaultViewTransformation._43),
+								to_string(mtxDefaultViewTransformation._44)
 							}).c_str();
 						}
 						indent()--;
