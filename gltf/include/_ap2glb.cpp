@@ -69,32 +69,6 @@ namespace _ap2glb
 			_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
 			bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
 
-			float fXmin = FLT_MAX;
-			float fXmax = -FLT_MAX;
-			float fYmin = FLT_MAX;
-			float fYmax = -FLT_MAX;
-			float fZmin = FLT_MAX;
-			float fZmax = -FLT_MAX;
-			pNode->getGeometry()->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-			fXmin *= fScaleFactor;
-			fXmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
-
-			fYmin *= fScaleFactor;
-			fYmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
-
-			fZmin *= fScaleFactor;
-			fZmin -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
-
-			fXmax *= fScaleFactor;
-			fXmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
-
-			fYmax *= fScaleFactor;
-			fYmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
-
-			fZmax *= fScaleFactor;
-			fZmax -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
-
 			// Vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
 				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
