@@ -499,12 +499,12 @@ namespace _ap2gltf
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
-				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
+				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
+				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -516,10 +516,10 @@ namespace _ap2gltf
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -803,8 +803,8 @@ namespace _ap2gltf
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
 					_string::format("%.10g", fXmin),
-					_string::format("%.10g", fZmin),
 					_string::format("%.10g", fYmin),
+					_string::format("%.10g", fZmin),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
@@ -812,8 +812,8 @@ namespace _ap2gltf
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
 					_string::format("%.10g", fXmax),
-					_string::format("%.10g", fZmax),
 					_string::format("%.10g", fYmax),
+					_string::format("%.10g", fZmax),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1349,10 +1349,6 @@ namespace _ap2gltf
 				// Transformations
 				// 
 				for (auto pInstance : pNode->getGeometry()->getInstances()) {
-					if (!pInstance->getEnable()) {
-						continue;
-					}
-
 					auto pTransformation = pInstance->getTransformationMatrix();
 
 					if (iSceneNodeIndex > 0) {
@@ -1378,29 +1374,70 @@ namespace _ap2gltf
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
 						if (pTransformation != nullptr) {
+							_matrix4x4 matrix1;
+							memcpy(&matrix1, pTransformation, sizeof(_matrix4x4));
+							matrix1._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
+							matrix1._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
+							matrix1._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
+
+							_matrix4x4 matrix2;
+							_matrix4x4Identity(&matrix2);
+							_matrixRotateByEulerAngles4x4(&matrix2, 2 * PI * -90. / 360., 0, 0);
+
+							_matrix4x4 matrix;
+							_matrix4x4Multiply(&matrix, &matrix1, &matrix2);
+
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("matrix", vector<string>
 							{
-								to_string(pTransformation->_11),
-								to_string(pTransformation->_13),
-								to_string(pTransformation->_12),
-								to_string(pTransformation->_14),
-								to_string(pTransformation->_31),
-								to_string(pTransformation->_33),
-								to_string(pTransformation->_32),
-								to_string(pTransformation->_34),								
-								to_string(pTransformation->_21),
-								to_string(pTransformation->_23),
-								to_string(pTransformation->_22),
-								to_string(pTransformation->_24),
-								to_string((pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x),
-								to_string((pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z),
-								to_string((pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y),
-								to_string(pTransformation->_44)
+								to_string(matrix._11),
+								to_string(matrix._12),
+								to_string(matrix._13),
+								to_string(matrix._14),
+								to_string(matrix._21),
+								to_string(matrix._22),
+								to_string(matrix._23),
+								to_string(matrix._24),
+								to_string(matrix._31),
+								to_string(matrix._32),
+								to_string(matrix._33),
+								to_string(matrix._34),
+								to_string(matrix._41),
+								to_string(matrix._42),
+								to_string(matrix._43),
+								to_string(matrix._44)
 							}).c_str();
-						} // if (pTransformation != nullptr)						
+						} // if (pTransformation != nullptr)	
+						else {
+							_matrix4x4 matrix;
+							_matrix4x4Identity(&matrix);
+							_matrixRotateByEulerAngles4x4(&matrix, 2 * PI * -90. / 360., 0, 0);
+
+							*getOutputStream() << COMMA;
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << buildArrayProperty("matrix", vector<string>
+							{
+								to_string(matrix._11),
+								to_string(matrix._12),
+								to_string(matrix._13),
+								to_string(matrix._14),
+								to_string(matrix._21),
+								to_string(matrix._22),
+								to_string(matrix._23),
+								to_string(matrix._24),
+								to_string(matrix._31),
+								to_string(matrix._32),
+								to_string(matrix._33),
+								to_string(matrix._34),
+								to_string(matrix._41),
+								to_string(matrix._42),
+								to_string(matrix._43),
+								to_string(matrix._44)
+							}).c_str();
+						}
 						indent()--;
 
 						writeEndObjectTag();

@@ -104,12 +104,12 @@ namespace _ap2glb
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
-				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
-				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-
 				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
+				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -118,10 +118,10 @@ namespace _ap2glb
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
