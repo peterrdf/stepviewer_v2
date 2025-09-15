@@ -265,6 +265,11 @@ void _geometry::translate(float fX, float fY, float fZ)
     m_pvecAABBMax->x += fX;
     m_pvecAABBMax->y += fY;
     m_pvecAABBMax->z += fZ;
+
+    // Instances
+    for (size_t iInstance = 0; iInstance < m_vecInstances.size(); iInstance++) {
+        m_vecInstances[iInstance]->translate(fX, fY, fZ);
+    }
 }
 
 void _geometry::addInstance(_instance* pInstance)
