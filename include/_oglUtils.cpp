@@ -1429,20 +1429,15 @@ void _oglRenderer::_prepare(
 	}
 	GLdouble aspect = m_dAspectRatio;
 
-	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
-	zNear = min(zNear, abs((double)fZmin));
-	if (zNear != 0.) {
-		zNear /= 25.;
-	}
-	else {
-		zNear = fBoundingSphereDiameter * .1;
-	}
-
-	if (zNear < 0.001) {
-		zNear = 0.001;
+	// Znear and Zfar
+	GLdouble dCenterZ = (fZmin + fZmax) / 2.0;
+	GLdouble dCameraDistance = abs(m_fZTranslation + dCenterZ);
+	GLdouble zNear = max(0.001, min(dCameraDistance * 0.001, (fBoundingSphereDiameter / 2.0) * 0.001));
+	GLdouble zFar = dCameraDistance + fBoundingSphereDiameter;
+	if (zFar < zNear * 2.0) {
+		zFar = zNear * 1000.0;
 	}
 
-	GLdouble zFar = 100.;
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
 
@@ -1505,10 +1500,10 @@ void _oglRenderer::_prepare(
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setNormalMatrix(m_matModelView);
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(true);
-#else
-	m_pOGLProgram->_setNormalMatrix(m_matModelView);
+#else	
 	m_pOGLProgram->_enableLighting(true);
 #endif
 }
