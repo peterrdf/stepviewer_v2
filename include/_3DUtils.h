@@ -6,6 +6,21 @@
 #define PI 3.14159265
 
 // ************************************************************************************************
+static void _normalize(float fXin, float fYin, float fZin, float* pV)
+{
+    float d = sqrtf(fXin * fXin + fYin * fYin + fZin * fZin);
+    if (d == 0.f) {
+        pV[0] = 0.f;
+        pV[1] = 0.f;
+        pV[2] = 0.f;
+        return;
+    }
+    pV[0] = fXin / d;
+    pV[1] = fYin / d;
+    pV[2] = fZin / d;
+}
+
+// ************************************************************************************************
 struct _vector3d
 {
     double x;
