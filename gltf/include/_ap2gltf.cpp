@@ -487,14 +487,18 @@ namespace _ap2gltf
 
 			// vertices/NORMAL
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				float fNx = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
+				float fNy = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				float fNz = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				// If normal is zero vector, set Y axis as default
+				if ((fNx + fNy + fNz) == 0.f) {
+					fNy = 1.f;
+				}
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
-				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fNx), sizeof(float));
+				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fNy), sizeof(float));
+				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fNz), sizeof(float));
 			}
 
 			pNode->normalsBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 3 * (uint32_t)sizeof(float);
