@@ -71,9 +71,6 @@ namespace _ap2glb
 
 			// Vertices/POSITION
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
-				bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
-
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
