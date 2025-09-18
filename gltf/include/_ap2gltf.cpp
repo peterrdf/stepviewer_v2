@@ -1704,7 +1704,7 @@ namespace _ap2gltf
 						// uri
 						{
 							indent()++;
-							writeStringProperty("uri", CW2A(itImageURI.second.c_str()).m_psz);
+							writeStringProperty("uri", (const char*)CW2A(itImageURI.second.c_str()));
 							indent()--;
 						}
 
