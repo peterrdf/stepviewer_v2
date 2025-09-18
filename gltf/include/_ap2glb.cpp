@@ -85,19 +85,16 @@ namespace _ap2glb
 			}
 
 			// Vertices/NORMAL
+			float arNormalizedVector[3] = { 0.f, 0.f, 0.f };
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fNx = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
-				float fNy = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
-				float fNz = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
-
-				// If normal is zero vector, set Y axis as default
-				if ((fNx + fNy + fNz) == 0.f) {
-					fNy = 1.f;
-				}
-
-				binaryStream.write(reinterpret_cast<const char*>(&fNx), sizeof(float));		
-				binaryStream.write(reinterpret_cast<const char*>(&fNy), sizeof(float));			
-				binaryStream.write(reinterpret_cast<const char*>(&fNz), sizeof(float));
+				_normalizeVector(
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3],
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4],
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5],
+					arNormalizedVector);
+				binaryStream.write(reinterpret_cast<const char*>(&arNormalizedVector[0]), sizeof(float));
+				binaryStream.write(reinterpret_cast<const char*>(&arNormalizedVector[1]), sizeof(float));
+				binaryStream.write(reinterpret_cast<const char*>(&arNormalizedVector[2]), sizeof(float));
 			}
 
 			// Write all indices
