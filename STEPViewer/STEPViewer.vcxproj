@@ -246,7 +246,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_KUBAZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
@@ -275,9 +275,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_KUBAZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -304,9 +304,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_KUBAZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -333,9 +333,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../kubazip;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -364,9 +364,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -395,9 +395,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -428,9 +428,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../kubazip;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -458,9 +458,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../kubazip;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -488,9 +488,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../ziplib/include;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../glew-2.2.0/include/GL;./../kubazip;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -518,9 +518,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -549,9 +549,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -580,9 +580,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USE_LIBZIP;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_CIS2_EXPERIMENTAL;RDFBCF_STATIC;_GLTF_SUPPORT;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../ziplib/include;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./..;./../include;./../parsers;./../stepengine/include;./../bcfEngine/include;./IDS;./IDS/parser;./../gltf/include;./../kubazip;./../glew-2.2.0/include/GL;./../glm/glm;./AP242;./IFC;./CIS2</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -646,6 +646,8 @@
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="..\include\_ifc_unit.h" />
+    <ClInclude Include="..\kubazip\miniz.h" />
+    <ClInclude Include="..\kubazip\zip.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
     <ClInclude Include="BCF\BCFAddDocumentReference.h" />
@@ -1047,6 +1049,20 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\kubazip\zip.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AP242\AP242OpenGLView.cpp" />
     <ClCompile Include="AP242\AP242PModelStructureView.cpp" />

@@ -65,7 +65,6 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 	vector<_model*> vecModels;
 
-#ifdef _USE_LIBZIP
 	if (vecPaths.size() == 1) {
 		fs::path pathModel = (LPCWSTR)vecPaths[0];
 		string strExtension = pathModel.extension().string();
@@ -81,16 +80,19 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 			return;
 		}
 	}
-#endif
 
+	vector<CString> vecIfcPaths;
 	for (auto strPath : vecPaths) {
-		auto pModel = _ap_model_factory::load(strPath, vecPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
-		if ((vecPaths.size() > 1) && (dynamic_cast<_ifc_model*>(pModel) == nullptr)) {
-			delete pModel;
-
-			continue;
+		fs::path pathModel = (LPCWSTR)strPath;
+		string strExtension = pathModel.extension().string();
+		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+		if (strExtension == ".ifc") {
+			vecIfcPaths.push_back(strPath);
 		}
+	}
 
+	for (auto strPath : vecIfcPaths) {
+		auto pModel = _ap_model_factory::load(strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
 		vecModels.push_back(pModel);
 	}
 
@@ -162,7 +164,18 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return TRUE;
 	}
 
-	setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
+	fs::path pathModel = lpszPathName;
+	string strExtension = pathModel.extension().string();
+	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+
+	if (strExtension == ".ifczip") {
+		auto vecModels = _ap_model_factory::loadIFCZIP(lpszPathName);
+		setModels(vecModels);
+	}
+	else {
+		setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
+	}
+
 	m_wndBCFView.Close();
 
 	// Title
@@ -183,7 +196,8 @@ void CMySTEPViewerDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring()) {
 		// TODO: add storing code here
-	} else {
+	}
+	else {
 		// TODO: add loading code here
 	}
 }
@@ -226,7 +240,8 @@ void CMySTEPViewerDoc::SetSearchContent(const CString& value)
 {
 	if (value.IsEmpty()) {
 		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-	} else {
+	}
+	else {
 		CMFCFilterChunkValueImpl* pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
 		if (pChunk != nullptr) {
@@ -313,7 +328,8 @@ void CMySTEPViewerDoc::OnViewModelChecker()
 {
 	if (m_wndModelChecker.IsVisible()) {
 		m_wndModelChecker.Hide(false);
-	} else {
+	}
+	else {
 		m_wndModelChecker.Show();
 	}
 }
@@ -333,13 +349,16 @@ void CMySTEPViewerDoc::OnFileSave()
 	if (apModel->getAP() == enumAP::STEP) {
 		strFiler = STEP_MODELS_FILTER;
 		strExtension = L"ifc";
-	} else if (apModel->getAP() == enumAP::IFC) {
+	}
+	else if (apModel->getAP() == enumAP::IFC) {
 		strFiler = IFC_MODELS_FILTER;
 		strExtension = L"step";
-	} else  if (apModel->getAP() == enumAP::CIS2) {
+	}
+	else  if (apModel->getAP() == enumAP::CIS2) {
 		strFiler = CIS2_MODELS_FILTER;
 		strExtension = L"stp";
-	} else {
+	}
+	else {
 		ASSERT(FALSE);
 
 		return;
