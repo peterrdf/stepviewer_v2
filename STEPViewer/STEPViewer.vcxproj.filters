@@ -43,7 +43,7 @@
     <Filter Include="glTF">
       <UniqueIdentifier>{801dc855-158d-47db-9223-2048e9168414}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ziplibs">
+    <Filter Include="zip">
       <UniqueIdentifier>{c1235aa0-b05c-4c78-a4b2-0a095ccda9d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -316,37 +316,37 @@
       <Filter>glTF</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\crc32.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\gzguts.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\inffast.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\inffixed.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\inflate.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\inftrees.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\miniz.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\zconf.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\zip.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\zlib.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\zip\zutil.h">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -546,31 +546,31 @@
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\zutil.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\zip.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\adler32.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\crc32.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\gzread.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\inffast.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\inflate.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\inftrees.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\zip\gzlib.c">
-      <Filter>ziplibs</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
