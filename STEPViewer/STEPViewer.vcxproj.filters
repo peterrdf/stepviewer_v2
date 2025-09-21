@@ -43,6 +43,9 @@
     <Filter Include="glTF">
       <UniqueIdentifier>{801dc855-158d-47db-9223-2048e9168414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="zip">
+      <UniqueIdentifier>{c1235aa0-b05c-4c78-a4b2-0a095ccda9d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -313,10 +316,10 @@
       <Filter>glTF</Filter>
     </ClInclude>
     <ClInclude Include="..\kubazip\miniz.h">
-      <Filter>Header Files</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
     <ClInclude Include="..\kubazip\zip.h">
-      <Filter>Header Files</Filter>
+      <Filter>zip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -515,32 +518,32 @@
     <ClCompile Include="..\gltf\include\_ap2glb.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\zip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\kubazip\inflate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\kubazip\inffast.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\kubazip\inftrees.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\kubazip\adler32.c">
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\kubazip\crc32.c">
-      <Filter>Source Files</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\kubazip\gzlib.c">
-      <Filter>Source Files</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\kubazip\gzread.c">
-      <Filter>Source Files</Filter>
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\kubazip\inffast.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\kubazip\inflate.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\kubazip\inftrees.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\kubazip\zip.c">
+      <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\kubazip\zutil.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\kubazip\adler32.c">
-      <Filter>Source Files</Filter>
+      <Filter>zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
