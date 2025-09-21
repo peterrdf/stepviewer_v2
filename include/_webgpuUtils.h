@@ -983,12 +983,17 @@ private: // Fields
 
     map<_instance*, _material*> m_mapUserDefinedMaterials;
 
+protected: // Fields
+
+    bool m_bMultiSelect;
+
 public: // Methods
 
     _webgpuView()
         : _webgpuRenderer()
         , _view()
         , m_mapUserDefinedMaterials()
+        , m_bMultiSelect(false)
     {
     }
 
