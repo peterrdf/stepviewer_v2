@@ -217,24 +217,23 @@ public: // Methods
 	// GZip support
 	// https://windrealm.org/tutorials/decompress-gzip-stream.php
 	// ********************************************************************************************	
-	static bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes)
+	static bool gzipInflate(const vector<unsigned char> compressed, vector<unsigned char>& uncompressed)
 	{
-		if (compressedBytes.size() == 0) {
-			uncompressedBytes = compressedBytes;
-			return true;
+		if (compressed.size() == 0) {
+			return false;
 		}
 
-		uncompressedBytes.clear();
+		uncompressed.clear();
 
-		unsigned full_length = (unsigned)compressedBytes.size();
-		unsigned half_length = (unsigned)compressedBytes.size() / 2;
+		unsigned full_length = (unsigned)compressed.size();
+		unsigned half_length = (unsigned)compressed.size() / 2;
 
 		unsigned uncompLength = full_length;
 		char* uncomp = (char*)calloc(sizeof(char), uncompLength);
 
 		z_stream strm;
-		strm.next_in = (Bytef*)compressedBytes.c_str();
-		strm.avail_in = (unsigned)compressedBytes.size();
+		strm.next_in = (Bytef*)compressed.data();
+		strm.avail_in = (unsigned)compressed.size();
 		strm.total_out = 0;
 		strm.zalloc = Z_NULL;
 		strm.zfree = Z_NULL;
@@ -274,10 +273,11 @@ public: // Methods
 		}
 
 		for (size_t i = 0; i < strm.total_out; ++i) {
-			uncompressedBytes += uncomp[i];
+			uncompressed.push_back(uncomp[i]);
 		}
 
 		free(uncomp);
+
 		return true;
 	}
 
@@ -290,21 +290,21 @@ public: // Methods
 			return 0;
 		}
 
-		std::string fileData; 
+		vector<unsigned char> compressed; 
 		int c = fgetc(f);
 		while (c != EOF) {
-			fileData += (char)c;
+			compressed.push_back((unsigned char)c);
 			c = fgetc(f);
 		}
 		fclose(f);
 
-		std::string data;
-		if (!gzipInflate(fileData, data)) {
-			printf("Error decompressing file.");
+		vector<unsigned char> uncompressed;
+		if (!gzipInflate(compressed, uncompressed)) {
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed decompress the model.", L"Error", MB_ICONERROR | MB_OK);
 			return 0;
 		}
 
-		return engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
+		return engiOpenModelByArray(0, (unsigned char*)uncompressed.data(), (int_t)uncompressed.size(), "");
 	}
 };
 
