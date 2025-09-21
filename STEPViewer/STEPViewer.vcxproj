@@ -646,7 +646,17 @@
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="..\include\_ifc_unit.h" />
+    <ClInclude Include="..\zip\crc32.h" />
+    <ClInclude Include="..\zip\gzguts.h" />
+    <ClInclude Include="..\zip\inffast.h" />
+    <ClInclude Include="..\zip\inffixed.h" />
+    <ClInclude Include="..\zip\inflate.h" />
+    <ClInclude Include="..\zip\inftrees.h" />
+    <ClInclude Include="..\zip\miniz.h" />
+    <ClInclude Include="..\zip\zconf.h" />
     <ClInclude Include="..\zip\zip.h" />
+    <ClInclude Include="..\zip\zlib.h" />
+    <ClInclude Include="..\zip\zutil.h" />
     <ClInclude Include="AP242\AP242OpenGLView.h" />
     <ClInclude Include="AP242\AP242PModelStructureView.h" />
     <ClInclude Include="BCF\BCFAddDocumentReference.h" />
