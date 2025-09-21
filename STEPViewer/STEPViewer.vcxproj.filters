@@ -43,7 +43,7 @@
     <Filter Include="glTF">
       <UniqueIdentifier>{801dc855-158d-47db-9223-2048e9168414}</UniqueIdentifier>
     </Filter>
-    <Filter Include="zip">
+    <Filter Include="ziplibs">
       <UniqueIdentifier>{c1235aa0-b05c-4c78-a4b2-0a095ccda9d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -315,11 +315,38 @@
     <ClInclude Include="..\gltf\include\_ap2glb.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\kubazip\miniz.h">
-      <Filter>zip</Filter>
+    <ClInclude Include="..\zip\crc32.h">
+      <Filter>ziplibs</Filter>
     </ClInclude>
-    <ClInclude Include="..\kubazip\zip.h">
-      <Filter>zip</Filter>
+    <ClInclude Include="..\zip\gzguts.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inffast.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inffixed.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inflate.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inftrees.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\miniz.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zconf.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zip.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zlib.h">
+      <Filter>ziplibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zutil.h">
+      <Filter>ziplibs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -518,32 +545,32 @@
     <ClCompile Include="..\gltf\include\_ap2glb.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\adler32.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\zutil.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\crc32.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\zip.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\gzlib.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\adler32.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\gzread.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\crc32.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\inffast.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\gzread.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\inflate.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\inffast.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\inftrees.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\inflate.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\zip.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\inftrees.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
-    <ClCompile Include="..\kubazip\zutil.c">
-      <Filter>zip</Filter>
+    <ClCompile Include="..\zip\gzlib.c">
+      <Filter>ziplibs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
