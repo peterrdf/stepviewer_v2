@@ -72,18 +72,13 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 		if (strExtension == ".ifczip") {
 			vecModels = _ap_model_factory::loadIFCZIP((LPCWSTR)vecPaths[0]);
-
 			if (!vecModels.empty()) {
 				setModels(vecModels);
 			}
-
 			return;
 		}
 		else if (strExtension == ".stpz") {
-			auto pModel = _ap_model_factory::load((LPCWSTR)vecPaths[0], false, nullptr, false);
-			if (pModel != nullptr) {
-				vecModels.push_back(pModel);
-			}
+			vecModels = _ap_model_factory::loadSTEPGZip((LPCWSTR)vecPaths[0]);
 			if (!vecModels.empty()) {
 				setModels(vecModels);
 			}

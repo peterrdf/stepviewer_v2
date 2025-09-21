@@ -74,17 +74,8 @@ public: // Methods
 		* STEPGZip
 		*/
 		if (strExtension == ".stpz") {
-			auto sdaiModel = openSTEPGZipModel(pathModel);
-			if (sdaiModel == 0) {
-				MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
-				return nullptr;
-			}
-
-			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
-			pModel->attachModel(szModel, sdaiModel, nullptr);
-
-			return pModel;
-		} // STEPZIP
+			return nullptr;
+		}
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0) {
@@ -157,6 +148,22 @@ public: // Methods
 
 			vecModels.push_back(pModel);
 		}
+
+		return vecModels;
+	}
+
+	static vector<_model*> loadSTEPGZip(const wchar_t* szIFCZIP)
+	{
+		vector<_model*> vecModels;
+
+		auto vecSdaiModels = openSTEPGZip(szIFCZIP);
+		if (vecSdaiModels.size() != 1) {
+			return vecModels;
+		}
+
+		auto pModel = new _ap242_model();
+		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
+		vecModels.push_back(pModel);
 
 		return vecModels;
 	}
@@ -281,16 +288,17 @@ public: // Methods
 		return true;
 	}
 
-	static SdaiModel openSTEPGZipModel(const fs::path& pathStepGZip)
+	static vector<pair<fs::path, SdaiModel>> openSTEPGZip(const fs::path& pathStepGZip)
 	{
-		// Open the gzip file in binary mode  
+		vector<pair<fs::path, SdaiModel>> vecSdaiModels;
+
 		FILE* f = fopen(pathStepGZip.string().c_str(), "rb");
 		if (f == NULL) {
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
-			return 0;
+			return vecSdaiModels;
 		}
 
-		vector<unsigned char> compressed; 
+		vector<unsigned char> compressed;
 		int c = fgetc(f);
 		while (c != EOF) {
 			compressed.push_back((unsigned char)c);
@@ -301,10 +309,12 @@ public: // Methods
 		vector<unsigned char> uncompressed;
 		if (!gzipInflate(compressed, uncompressed)) {
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed decompress the model.", L"Error", MB_ICONERROR | MB_OK);
-			return 0;
+			return vecSdaiModels;
 		}
 
-		return engiOpenModelByArray(0, (unsigned char*)uncompressed.data(), (int_t)uncompressed.size(), "");
+		vecSdaiModels.push_back({ pathStepGZip, engiOpenModelByArray(0, (unsigned char*)uncompressed.data(), (int_t)uncompressed.size(), "") });
+
+		return vecSdaiModels;
 	}
 };
 
