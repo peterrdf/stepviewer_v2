@@ -72,18 +72,18 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 		if (strExtension == ".ifczip") {
 			vecModels = _ap_model_factory::loadIFCZIP((LPCWSTR)vecPaths[0]);
-			if (!vecModels.empty()) {
-				setModels(vecModels);
-			}
-			return;
 		}
 		else if (strExtension == ".stpz") {
-			vecModels = _ap_model_factory::loadSTEPGZip((LPCWSTR)vecPaths[0]);
-			if (!vecModels.empty()) {
-				setModels(vecModels);
-			}
-			return;
+			vecModels = _ap_model_factory::loadSTEPGZip((LPCWSTR)vecPaths[0]);			
 		}
+		else {
+			vecModels.push_back(_ap_model_factory::load((LPCWSTR)vecPaths[0], false, nullptr, false));
+		}
+
+		if (!vecModels.empty()) {
+			setModels(vecModels);
+		}
+		return;
 	}
 
 	vector<CString> vecIfcPaths;
@@ -91,9 +91,15 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		fs::path pathModel = (LPCWSTR)strPath;
 		string strExtension = pathModel.extension().string();
 		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+
 		if (strExtension == ".ifc") {
 			vecIfcPaths.push_back(strPath);
 		}
+	}
+
+	if (vecIfcPaths.empty()) {
+		AfxMessageBox(L"No IFC files found in the selection.", MB_ICONERROR | MB_OK);
+		return;
 	}
 
 	for (auto strPath : vecIfcPaths) {
@@ -177,8 +183,13 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		auto vecModels = _ap_model_factory::loadIFCZIP(lpszPathName);
 		setModels(vecModels);
 	}
+	else if (strExtension == ".stpz") {
+		auto vecModels = _ap_model_factory::loadSTEPGZip(lpszPathName);
+		setModels(vecModels);
+	}
 	else {
-		setModel(_ap_model_factory::load(lpszPathName, false, nullptr, false));
+		auto pModel = _ap_model_factory::load(lpszPathName, false, nullptr, false);
+		setModel(pModel);
 	}
 
 	m_wndBCFView.Close();
