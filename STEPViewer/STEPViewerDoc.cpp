@@ -79,6 +79,16 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 			return;
 		}
+		else if (strExtension == ".stpz") {
+			auto pModel = _ap_model_factory::load((LPCWSTR)vecPaths[0], false, nullptr, false);
+			if (pModel != nullptr) {
+				vecModels.push_back(pModel);
+			}
+			if (!vecModels.empty()) {
+				setModels(vecModels);
+			}
+			return;
+		}
 	}
 
 	vector<CString> vecIfcPaths;
