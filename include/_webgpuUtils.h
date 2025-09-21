@@ -36,6 +36,51 @@ using namespace std;
 static const int MIN_VIEW_PORT_LENGTH = 100;
 
 // ************************************************************************************************
+const float DEFAULT_TRANSLATION = -5.f;
+
+const float ZOOM_SPEED_MOUSE = 0.01f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
+const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
+
+#define CULL_FACES_NONE L"<none>"
+#define CULL_FACES_FRONT L"Front"
+#define CULL_FACES_BACK L"Back"
+
+// ************************************************************************************************
+enum class enumProjection : int
+{
+    Perspective = 0,
+    Orthographic,
+};
+
+// ************************************************************************************************
+enum class enumView : int64_t
+{
+    Front = 0,
+    Back,
+    Top,
+    Bottom,
+    Left,
+    Right,
+    FrontTopLeft,
+    FrontTopRight,
+    FrontBottomLeft,
+    FrontBottomRight,
+    BackTopLeft,
+    BackTopRight,
+    BackBottomLeft,
+    BackBottomRight,
+    Isometric,
+};
+
+// ************************************************************************************************
+enum class enumRotationMode : int
+{
+    XY = 0, // Standard
+    XYZ,	// Quaternions
+};
+
+// ************************************************************************************************
 class _webgpuUtils
 {
 
@@ -780,7 +825,6 @@ public: // Methods
 // ************************************************************************************************
 class _webgpuRenderer 
     : public _webgpuRendererSettings
-    , public _oglScene
 {
 
 protected: // Fields
@@ -820,7 +864,6 @@ public: // Methods
 
     _webgpuRenderer()
         : _webgpuRendererSettings()
-        , _oglScene()
         , m_pWnd(nullptr)
         , m_pWebGPUContext(nullptr)
         , m_pWebGPUProgram(nullptr)

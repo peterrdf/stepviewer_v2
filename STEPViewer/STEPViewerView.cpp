@@ -14,9 +14,17 @@
 
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
+
+// Graphics API selection
+#ifdef _WEBGPU_ENABLED
+#include "AP242/AP242WebGPUView.h"
+#include "IFC/IFCWebGPUView.h"
+#include "CIS2/CIS2WebGPUView.h"
+#else
 #include "AP242OpenGLView.h"
 #include "IFCOpenGLView.h"
 #include "CIS2OpenGLView.h"
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,7 +75,11 @@ CController* CMySTEPViewerView::getController()
 			strSettingsFile += L"\\STEPViewer_STEP.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
+#ifdef _WEBGPU_ENABLED
+			m_pOpenGLView = new CAP242WebGPUView(this);
+#else
 			m_pOpenGLView = new CAP242OpenGLView(this);
+#endif
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -78,7 +90,11 @@ CController* CMySTEPViewerView::getController()
 			strSettingsFile += L"\\STEPViewer_IFC.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
+#ifdef _WEBGPU_ENABLED
+			m_pOpenGLView = new CIFCWebGPUView(this);
+#else
 			m_pOpenGLView = new CIFCOpenGLView(this);
+#endif
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();
 		}
@@ -89,7 +105,11 @@ CController* CMySTEPViewerView::getController()
 			strSettingsFile += L"\\STEPViewer_CIS2.settings";
 			pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
+#ifdef _WEBGPU_ENABLED
+			m_pOpenGLView = new CCIS2WebGPUView(this);
+#else
 			m_pOpenGLView = new CCIS2OpenGLView(this);
+#endif
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();
 		}
