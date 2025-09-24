@@ -2066,27 +2066,13 @@ void _water_mark_model::createLabels(OwlModel owlModel)
 		owlModel,
 		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., 0., 0,
-		1., 1., 1.);
-	SetNameOfInstance(owlInstance, "#water-mark-0");
+		1., -1., 1.);
+	SetNameOfInstance(owlInstance, "#water-mark-1");
 
 	owlInstance = translateTransformation(
 		owlModel,
-		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 90. / 360., 0.),
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 0., 2 * PI * 90. / 360.),
 		0., 0., 0,
-		1., 1., 1.);
-	SetNameOfInstance(owlInstance, "#water-mark-90");
-
-	/*owlInstance = translateTransformation(
-		owlModel,
-		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 180. / 360., 0.),
-		0., 0., .751,
-		-1., 1., 1.);
-	SetNameOfInstance(owlInstance, "#water-mark-180");
-
-	owlInstance = translateTransformation(
-		owlModel,
-		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 270. / 360., 0.),
-		0., 0., .751,
-		-1., 1., 1.);
-	SetNameOfInstance(owlInstance, "#water-mark-270");*/
+		1., 1., -1.);
+	SetNameOfInstance(owlInstance, "#water-mark-2");
 }
