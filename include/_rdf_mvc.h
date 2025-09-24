@@ -292,3 +292,33 @@ private: // Methods
 	void create();
 	void createLabels(OwlModel owlModel);
 };
+
+// ************************************************************************************************
+class _water_mark_model
+	: public _rdf_model
+	, public _decoration
+{
+
+private: // Fields
+
+	_controller* m_pController;
+	_text_builder* m_pTextBuilder;
+
+public: // Methods
+
+	_water_mark_model(_controller* pController);
+	virtual ~_water_mark_model();
+
+	// _decoration
+	virtual void onModelUpdated() override;
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
+
+private: // Methods
+
+	void create();
+	void createLabels(OwlModel owlModel);
+};

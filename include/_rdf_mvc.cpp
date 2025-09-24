@@ -1965,3 +1965,128 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		1., -1., 1.);
 	SetNameOfInstance(owlInstance, "#right-label");
 }
+
+// ************************************************************************************************
+_water_mark_model::_water_mark_model(_controller* pController)
+	: _rdf_model()
+	, _decoration()
+	, m_pController(pController)
+	, m_pTextBuilder(new _text_builder())
+{
+	assert(m_pController != nullptr);
+
+	create();
+}
+
+/*virtual*/ _water_mark_model::~_water_mark_model()
+{
+	delete m_pTextBuilder;
+}
+
+/*virtual*/ void _water_mark_model::onModelUpdated() /*override*/
+{
+	create();
+}
+
+/*virtual*/ void _water_mark_model::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+#ifdef _WINDOWS
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
+#endif
+
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		getOwlModel(),
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
+
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(getOwlModel());
+}
+
+void _water_mark_model::create()
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->initialize(owlModel);
+
+	createLabels(owlModel);
+
+	attachModel(WATERMARK, owlModel);
+}
+
+void _water_mark_model::createLabels(OwlModel owlModel)
+{
+	OwlInstance owlWaterMarkInstance = m_pTextBuilder->buildText("RDF LTD. All rights reserved.", true);
+	assert(owlWaterMarkInstance != 0);
+
+#ifdef _WINDOWS
+	OwlInstance owlWaterMarkMaterialInstance = 0;
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(1.);
+		pAmbient.set_G(1.);
+		pAmbient.set_B(0.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		owlWaterMarkMaterialInstance = (int64_t)pMaterial;
+
+		SetObjectProperty(
+			owlWaterMarkInstance,
+			GetPropertyByName(owlModel, "material"),
+			&owlWaterMarkMaterialInstance,
+			1);
+	}
+#endif // _WINDOWS
+
+	double dScaleFactor = 5.;
+
+	OwlInstance owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., 0., 0,
+		1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#water-mark-0");
+
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 90. / 360., 0.),
+		0., 0., 0,
+		1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#water-mark-90");
+
+	/*owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 180. / 360., 0.),
+		0., 0., .751,
+		-1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#water-mark-180");
+
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlWaterMarkInstance, dScaleFactor), 0., 2 * PI * 270. / 360., 0.),
+		0., 0., .751,
+		-1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#water-mark-270");*/
+}

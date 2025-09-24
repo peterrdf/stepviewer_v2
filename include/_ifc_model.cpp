@@ -819,7 +819,7 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 		OwlInstance		owlInstanceObjectPlacementMatrix = 0;
 		owlBuildInstance(getSdaiModel(), ifcObjectPlacementInstance, &owlInstanceObjectPlacementMatrix);
 
-		assert(GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "Matrix") ||
+		assert(!owlInstanceObjectPlacementMatrix || GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "Matrix") ||
 			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "InverseMatrix") ||
 			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "MatrixMultiplication"));
 

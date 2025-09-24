@@ -316,6 +316,7 @@ public: // Properties
 static const wchar_t* WORLD_COORDINATE_SYSTEM = L"_WORLD_COORDINATE_SYSTEM_";
 static const wchar_t* MODEL_COORDINATE_SYSTEM = L"_MODEL_COORDINATE_SYSTEM_";
 static const wchar_t* NAVIGATOR = L"_NAVIGATOR_";
+static const wchar_t* WATERMARK = L"_WATERMARK_";
 
 // ************************************************************************************************
 class _oglSelectionFramebuffer;
