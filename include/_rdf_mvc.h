@@ -315,6 +315,7 @@ public: // Methods
 protected: // Methods
 
 	// _rdf_model
+	virtual void scale() override {}
 	virtual void preLoad() override;
 
 private: // Methods

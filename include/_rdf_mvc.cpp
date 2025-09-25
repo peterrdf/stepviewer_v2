@@ -2060,7 +2060,7 @@ void _water_mark_model::createLabels(OwlModel owlModel)
 	}
 #endif // _WINDOWS
 
-	double dScaleFactor = 5.;
+	double dScaleFactor = 0.05;
 
 	OwlInstance owlInstance = translateTransformation(
 		owlModel,
