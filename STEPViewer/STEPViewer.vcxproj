@@ -610,6 +610,7 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\gltf\include\_dateTime.h" />
     <ClInclude Include="..\gltf\include\_ap2glb.h" />
     <ClInclude Include="..\gltf\include\_ap2gltf.h" />
     <ClInclude Include="..\gltf\include\_node.h" />

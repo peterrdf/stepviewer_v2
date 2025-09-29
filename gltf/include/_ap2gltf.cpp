@@ -2,6 +2,7 @@
 #include "_ap2gltf.h"
 
 #include "_base64.h"
+#include "_dateTime.h"
 #include "_ifc_geometry.h"
 #include "_ap_mvc.h"
 
@@ -55,7 +56,6 @@ namespace _ap2gltf
 	{
 		if (!preExecute()) {
 			getLog()->logWrite(enumLogEvent::error, "Invalid model.");
-
 			return;
 		}
 
@@ -177,6 +177,45 @@ namespace _ap2gltf
 
 	/*virtual*/ void _exporter::postExecute()
 	{
+		if (getOutputStream() != nullptr) {
+			delete getOutputStream();
+		}
+
+		fs::path pthMetadataFile = m_strOutputFile;
+		pthMetadataFile += ".json";
+
+		m_pOutputStream = new ofstream(pthMetadataFile.string(), std::ios::out | std::ios::trunc);
+		std::locale loc(std::locale::classic());
+		getOutputStream()->imbue(loc);
+
+		if (!getOutputStream()->good()) {
+			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
+			return;
+		}
+
+		// {root
+		indent()++;
+		{
+			writeStartObjectTag(false);
+
+			indent()++;
+			{
+				// project
+				{
+					writeMetadata();
+				}
+
+				// units
+				{
+					
+				}
+			}
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+		}
+		// root}
 	}
 
 	/*virtual*/ void _exporter::writeIndent()
@@ -1354,10 +1393,10 @@ namespace _ap2gltf
 						string strName;
 						_ptr<_ap_geometry> apGeometry(pGeometry);
 
-						char* szName = nullptr;
-						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szName);
-						if (szName != nullptr) {
-							strName = szName;
+						char* szGlobalId = nullptr;
+						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						if (szGlobalId != nullptr) {
+							strName = szGlobalId;
 						}
 						else {
 							strName = _string::sformat("#%lld", apGeometry->getExpressID()).c_str();
@@ -1836,5 +1875,33 @@ namespace _ap2gltf
 		m_vecMaterials.push_back(pMaterial);
 
 		return iMaterialIndex;
+	}
+
+	void _exporter::writeMetadata()
+	{
+		_ptr<_ap_model> apModel(m_pModel);
+
+		char* szFileSchema = 0;
+		GetSPFFHeaderItem(apModel->getSdaiModel(), 9, 0, sdaiSTRING, (char**)&szFileSchema);
+
+		char* szProjectGlobalId = nullptr;
+		SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(apModel->getSdaiModel(), "IFCPROJECT");
+		SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
+		if (iMembersCount > 0) {
+			SdaiInstance sdaiProjectInstance = 0;
+			engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+			sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiSTRING, &szProjectGlobalId);
+		}
+
+		writeStringProperty("id", "0001"); //#todo
+		writeStringProperty("projectId", szProjectGlobalId);
+		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
+		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "NA");
+		writeStringProperty("creatingApplication", "RDF LTD STEP2glTF Convertor"); //#todo
+	}
+
+	void writeMetadataProperties()
+	{
+
 	}
 };

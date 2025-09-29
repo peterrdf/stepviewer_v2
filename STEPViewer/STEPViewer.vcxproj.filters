@@ -348,6 +348,9 @@
     <ClInclude Include="..\zip\zutil.h">
       <Filter>zip</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_dateTime.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">

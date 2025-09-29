@@ -158,6 +158,8 @@ namespace _ap2glb
 		if (!outputStream.good()) {
 			getLog()->logWrite(enumLogEvent::error, "Error while writing GLB file.");
 		}
+
+		_ap2gltf::_exporter::postExecute();
 	}
 
 	/*virtual*/ void _exporter::writeBuffersProperty() /*override*/

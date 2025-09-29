@@ -128,6 +128,10 @@ namespace _ap2gltf
 
 		size_t addMaterial(const _material* pMaterial);
 
+		// XKT metadata
+		void writeMetadata();
+		void writeMetadataProperties();
+
 	public: // Properties
 
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
