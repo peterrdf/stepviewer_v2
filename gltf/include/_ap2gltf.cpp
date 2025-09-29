@@ -989,8 +989,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iConcFacesCohortIndex));
-						*getOutputStream() << COMMA;
+						/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iConcFacesCohortIndex));
+						*getOutputStream() << COMMA;*/
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1067,8 +1067,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pGeometry), iConcFacePolygonsCohortIndex));
-						*getOutputStream() << COMMA;
+						/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pGeometry), iConcFacePolygonsCohortIndex));
+						*getOutputStream() << COMMA;*/
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1139,8 +1139,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pGeometry), iLinesCohortIndex));
-						*getOutputStream() << COMMA;
+						/*writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pGeometry), iLinesCohortIndex));
+						*getOutputStream() << COMMA;*/
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1215,8 +1215,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", _string::sformat("%lld-points-%lld", getGeometryID(pGeometry), iPointsCohortIndex));
-						*getOutputStream() << COMMA;
+						/*writeStringProperty("name", _string::sformat("%lld-points-%lld", getGeometryID(pGeometry), iPointsCohortIndex));
+						*getOutputStream() << COMMA;*/
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1442,8 +1442,8 @@ namespace _ap2gltf
 							writeStartObjectTag();
 
 							indent()++;
-							writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
-							*getOutputStream() << COMMA;
+							/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
+							*getOutputStream() << COMMA;*/
 							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 							indent()--;
 
