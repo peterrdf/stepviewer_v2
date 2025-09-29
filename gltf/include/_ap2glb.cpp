@@ -63,34 +63,35 @@ namespace _ap2glb
 		std::ostringstream binaryStream;
 		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
 			auto pNode = m_vecNodes[iIndex];
+			auto pGeometry = pNode->getGeometry();
 
-			const auto VERTEX_LENGTH = pNode->getGeometry()->getVertexLength();
+			const auto VERTEX_LENGTH = pGeometry->getVertexLength();
 
-			_ptr<_ifc_geometry> ifcGeometry(pNode->getGeometry(), false);
+			_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
 			bool bIsMappeditem = ifcGeometry && ifcGeometry->getIsMappedItem();
 
 			// Vertices/POSITION
-			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
-				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
+			for (int64_t iVertex = 0; iVertex < pGeometry->getVerticesCount(); iVertex++) {
+				float fValue = pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 0] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.x;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
+				fValue = pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 1] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.y;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
+				fValue = pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 2] * fScaleFactor;
 				fValue -= bIsMappeditem ? 0.f : (float)vecVertexBufferOffset.z;
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
 			// Vertices/NORMAL
 			float arNormalizedVector[3] = { 0.f, 0.f, 0.f };
-			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+			for (int64_t iVertex = 0; iVertex < pGeometry->getVerticesCount(); iVertex++) {
 				_normalizeVector(
-					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3],
-					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4],
-					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5],
+					pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 3],
+					pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 4],
+					pGeometry->getVertices()[(iVertex * VERTEX_LENGTH) + 5],
 					arNormalizedVector);
 				binaryStream.write(reinterpret_cast<const char*>(&arNormalizedVector[0]), sizeof(float));
 				binaryStream.write(reinterpret_cast<const char*>(&arNormalizedVector[1]), sizeof(float));
@@ -107,10 +108,10 @@ namespace _ap2glb
 				}
 			};
 
-			writeIndices(pNode->getGeometry()->concFacesCohorts());
-			writeIndices(pNode->getGeometry()->concFacePolygonsCohorts());
-			writeIndices(pNode->getGeometry()->linesCohorts());
-			writeIndices(pNode->getGeometry()->pointsCohorts());
+			writeIndices(pGeometry->concFacesCohorts());
+			writeIndices(pGeometry->concFacePolygonsCohorts());
+			writeIndices(pGeometry->linesCohorts());
+			writeIndices(pGeometry->pointsCohorts());
 		}
 
 		// Get binary content and apply padding
@@ -174,20 +175,21 @@ namespace _ap2glb
 
 		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
 			auto pNode = m_vecNodes[iIndex];
+			auto pGeometry = pNode->getGeometry();
 
 			// buffer: byteLength
 			uint32_t iBufferByteLength = 0;
 
 			// vertices/POSITION
-			pNode->verticesBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 3 * (uint32_t)sizeof(float);
+			pNode->verticesBufferViewByteLength() = (uint32_t)pGeometry->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->verticesBufferViewByteLength();
 
 			// vertices/NORMAL
-			pNode->normalsBufferViewByteLength() = (uint32_t)pNode->getGeometry()->getVerticesCount() * 3 * (uint32_t)sizeof(float);
+			pNode->normalsBufferViewByteLength() = (uint32_t)pGeometry->getVerticesCount() * 3 * (uint32_t)sizeof(float);
 			iBufferByteLength += pNode->normalsBufferViewByteLength();
 
 			// Conceptual faces/indices
-			for (auto pCohort : pNode->getGeometry()->concFacesCohorts()) {
+			for (auto pCohort : pGeometry->concFacesCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -195,7 +197,7 @@ namespace _ap2glb
 			}
 
 			// Conceptual faces polygons/indices
-			for (auto pCohort : pNode->getGeometry()->concFacePolygonsCohorts()) {
+			for (auto pCohort : pGeometry->concFacePolygonsCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -203,7 +205,7 @@ namespace _ap2glb
 			}
 
 			// Lines
-			for (auto pCohort : pNode->getGeometry()->linesCohorts()) {
+			for (auto pCohort : pGeometry->linesCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -211,7 +213,7 @@ namespace _ap2glb
 			}
 
 			// Points
-			for (auto pCohort : pNode->getGeometry()->pointsCohorts()) {
+			for (auto pCohort : pGeometry->pointsCohorts()) {
 				uint32_t iIndicesByteLength = (uint32_t)pCohort->indices().size() * (uint32_t)sizeof(GLuint);
 				pNode->indicesBufferViewsByteLength().push_back(iIndicesByteLength);
 
@@ -258,12 +260,13 @@ namespace _ap2glb
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->getGeometry()->concFacesCohorts().size() +
-				pNode->getGeometry()->concFacePolygonsCohorts().size() +
-				pNode->getGeometry()->linesCohorts().size() +
-				pNode->getGeometry()->pointsCohorts().size());
+				pGeometry->concFacesCohorts().size() +
+				pGeometry->concFacePolygonsCohorts().size() +
+				pGeometry->linesCohorts().size() +
+				pGeometry->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
