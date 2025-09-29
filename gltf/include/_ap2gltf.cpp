@@ -1894,10 +1894,10 @@ namespace _ap2gltf
 		}
 
 		writeStringProperty("id", "0001"); //#todo
-		writeStringProperty("projectId", szProjectGlobalId);
+		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "NA");
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "NA");
-		writeStringProperty("creatingApplication", "RDF LTD STEP2glTF Convertor"); //#todo
+		writeStringProperty("creatingApplication", "STEP2glTF Convertor, RDF LTD"); //#todo
 	}
 
 	void writeMetadataProperties()
