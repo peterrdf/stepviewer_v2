@@ -13,12 +13,13 @@ class _ifc_property
 
 private: // Members	
 
+	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
 	wstring m_strValue;
 
 public: // Methods
 
-	_ifc_property(const wstring& strName, const wstring& strValue);
+	_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue);
 	virtual ~_ifc_property();
 
 	static bool hasProperties(SdaiModel sdaiModel, SdaiInstance sdaiInstance);
@@ -26,6 +27,7 @@ public: // Methods
 
 public: // Properties
 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getName() const { return m_strName; }
 	wstring getValue() const { return m_strValue; }
 };
@@ -45,7 +47,7 @@ public: // Methods
 	virtual ~_ifc_property_set();
 
 public: // Properties
-
+	
 	wstring getName() const { return m_strName; }
 	vector<_ifc_property*>& properties() { return m_vecProperties; }
 };
