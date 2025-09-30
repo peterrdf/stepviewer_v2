@@ -38,16 +38,18 @@ class _ifc_property_set
 
 private: // Members	
 
+	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
 	vector<_ifc_property*> m_vecProperties;
 
 public: // Methods
 
-	_ifc_property_set(const wstring& strName);
+	_ifc_property_set(SdaiInstance sdaiInstance, const wstring& strName);
 	virtual ~_ifc_property_set();
 
 public: // Properties
 	
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getName() const { return m_strName; }
 	vector<_ifc_property*>& properties() { return m_vecProperties; }
 };

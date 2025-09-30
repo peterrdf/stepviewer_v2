@@ -8,6 +8,7 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
     , m_strName(strName)
     , m_strValue(strValue)
 {
+    assert(!m_strName.empty());
     assert(m_sdaiInstance != 0);
 }
 
@@ -63,10 +64,12 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 }
 
 // ************************************************************************************************
-_ifc_property_set::_ifc_property_set(const wstring& strName)
-    : m_strName(strName)
+_ifc_property_set::_ifc_property_set(SdaiInstance sdaiInstance, const wstring& strName)
+    : m_sdaiInstance(sdaiInstance)
+    , m_strName(strName)
     , m_vecProperties()
 {
+    assert(m_sdaiInstance != 0);
     assert(!m_strName.empty());
 }
 
@@ -196,7 +199,7 @@ void _ifc_property_provider::loadPropertySet(SdaiInstance sdaiPropertySetInstanc
 
     wstring strItem = getName(sdaiPropertySetInstance);
 
-    auto pPropertySet = new _ifc_property_set(strItem);
+    auto pPropertySet = new _ifc_property_set(sdaiPropertySetInstance, strItem);
 
     SdaiEntity iIFCPropertySingleValueEntity = sdaiGetEntity(m_sdaiModel, "IFCPROPERTYSINGLEVALUE");
 
@@ -261,7 +264,7 @@ void _ifc_property_provider::loadQuantites(SdaiInstance sdaiElementQuantityInsta
     /*
     * Property set
     */
-    auto pPropertySet = new _ifc_property_set(strItem);
+    auto pPropertySet = new _ifc_property_set(sdaiElementQuantityInstance, strItem);
 
     SdaiAggr sdaiQuantitiesAggr = nullptr;
     sdaiGetAttrBN(sdaiElementQuantityInstance, "Quantities", sdaiAGGR, &sdaiQuantitiesAggr);
