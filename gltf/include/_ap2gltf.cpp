@@ -1921,6 +1921,10 @@ namespace _ap2gltf
 			return;
 		}
 
+		//
+		// Collect property sets & properties
+		//
+
 		int iPropertySetIndex = 0;
 		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
 
@@ -1970,7 +1974,9 @@ namespace _ap2gltf
 			} // for (auto pPropertySet : ...
 		} // for (size_t iNodeIndex = ...
 
-		// JSON
+		//
+		// Write metadata
+		//
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -1997,6 +2003,7 @@ namespace _ap2gltf
 				indent()++;
 				writeStartObjectTag();
 
+				indent()++;
 				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("ifcValueType", szEntityName);
@@ -2004,6 +2011,7 @@ namespace _ap2gltf
 				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("valueType", "#todo");
+				indent()--;
 
 				writeEndObjectTag();
 				indent()--;
@@ -2013,43 +2021,80 @@ namespace _ap2gltf
 		}
 		// properties
 
-		// properties
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		// propertySets
 		{
 			*getOutputStream() << DOULE_QUOT_MARK;
-			*getOutputStream() << "properties";
+			*getOutputStream() << "propertySets";
 			*getOutputStream() << DOULE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
 			writeStartArrayTag(false);
 
-			iPropertyIndex = 0;
-			for (const auto& itProperty : mapProperties) {
-				if (iPropertyIndex++ > 0) {
+			iPropertySetIndex = 0;
+			for (const auto& itPropertySet : mapPropertySets) {
+				if (iPropertySetIndex++ > 0) {
 					*getOutputStream() << COMMA;
 				}
 
+				char* szGlobalId = nullptr;
+				sdaiGetAttrBN(itPropertySet.second.first->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+
 				char* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+				engiGetEntityName(sdaiGetInstanceType(itPropertySet.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
 
 				indent()++;
 				writeStartObjectTag();
 
-				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
+				indent()++;
+				writeStringProperty("id", szGlobalId != nullptr ? szGlobalId : "$");
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", szEntityName);
+				writeStringProperty("name", (const char*)CW2A(itPropertySet.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
+				writeStringProperty("type", szEntityName != nullptr ? szEntityName : "$");
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", "#todo");
+				{
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << "properties";
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << COLON;
+					*getOutputStream() << SPACE;
+
+					writeStartArrayTag(false);
+
+					indent()++;
+					for (size_t iIndex = 0; iIndex < itPropertySet.second.first->properties().size(); iIndex++) {
+						auto pProperty = itPropertySet.second.first->properties()[iIndex];
+
+						if (iIndex > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
+						assert(itProperty != mapProperties.end());
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << itProperty->second.second;
+					}
+					indent()--;
+
+					writeEndArrayTag();
+				}
+				indent()--;
 
 				writeEndObjectTag();
 				indent()--;
-			} // for (auto itProperty : ...
+			} // for (const auto& itPropertySet : ...
 
 			writeEndArrayTag();
 		}
-		// properties
-		
+		// propertySets		
 	}
 };
