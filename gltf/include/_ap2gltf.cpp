@@ -158,6 +158,22 @@ namespace _ap2gltf
 		return getOutputStream()->good();
 	}
 
+	/*virtual*/ bool _exporter::ignoreGeometry(_geometry* pGeometry)
+	{
+		assert(pGeometry != nullptr);
+
+		_ptr<_ap_geometry> apGeometry(pGeometry);
+
+		if (!sdaiIsKindOfBN(apGeometry->getSdaiInstance(), "IFCPRODUCT")) {
+			return true;
+		}
+
+		wstring strEntity = apGeometry->getEntityName();
+		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
+
+		return strEntity == L"IFCOPENINGELEMENT";
+	}
+
 	/*virtual*/ bool _exporter::preExecute()
 	{
 		if (!createOuputStream()) {
@@ -166,7 +182,9 @@ namespace _ap2gltf
 		}
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
-			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
+			if (!pGeometry->isPlaceholder() && 
+				pGeometry->hasGeometry() &&
+				!ignoreGeometry(pGeometry)) {
 				auto pNode = new _node(pGeometry);
 				m_vecNodes.push_back(pNode);
 			}
@@ -1405,8 +1423,7 @@ namespace _ap2gltf
 							strName = szGlobalId;
 						}
 						else {
-							//assert!!!!!!!!!!!!!!!!!!!
-							strName = _string::sformat("#%lld", apGeometry->getExpressID()).c_str();
+							strName = _string::sformat("#%lld", apGeometry->getExpressID()).c_str(); //#todo
 						}
 
 						indent()++;
@@ -1898,6 +1915,7 @@ namespace _ap2gltf
 			SdaiInstance sdaiProjectInstance = 0;
 			engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 			sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiSTRING, &szProjectGlobalId);
+			assert(szProjectGlobalId != nullptr);
 		}
 
 		writeStringProperty("id", "0001"); //#todo

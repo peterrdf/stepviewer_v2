@@ -94,6 +94,8 @@ namespace _ap2gltf
 
 		virtual bool createOuputStream();
 
+		virtual bool ignoreGeometry(_geometry* pGeometry);
+
 		virtual bool preExecute();
 		virtual void postExecute();
 
