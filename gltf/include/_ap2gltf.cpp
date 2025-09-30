@@ -4,7 +4,7 @@
 #include "_base64.h"
 #include "_dateTime.h"
 #include "_ifc_geometry.h"
-#include "_ap_mvc.h"
+#include "_ifc_model.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -200,14 +200,19 @@ namespace _ap2gltf
 
 			indent()++;
 			{
-				// project
+				// Global metadata
 				{
 					writeMetadata();
 				}
 
-				// units
+				// Properties
 				{
-					
+					writeMetadataProperties();
+				}
+
+				// Units
+				{
+					//writeMetadataProperties();
 				}
 			}
 			indent()--;
@@ -643,13 +648,12 @@ namespace _ap2gltf
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
-			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pGeometry->concFacesCohorts().size() +
-				pGeometry->concFacePolygonsCohorts().size() +
-				pGeometry->linesCohorts().size() +
-				pGeometry->pointsCohorts().size());
+				pNode->getGeometry()->concFacesCohorts().size() +
+				pNode->getGeometry()->concFacePolygonsCohorts().size() +
+				pNode->getGeometry()->linesCohorts().size() +
+				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
@@ -1399,6 +1403,7 @@ namespace _ap2gltf
 							strName = szGlobalId;
 						}
 						else {
+							//assert!!!!!!!!!!!!!!!!!!!
 							strName = _string::sformat("#%lld", apGeometry->getExpressID()).c_str();
 						}
 
@@ -1894,14 +1899,74 @@ namespace _ap2gltf
 		}
 
 		writeStringProperty("id", "0001"); //#todo
-		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "NA");
+		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
-		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "NA");
+		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "$");
 		writeStringProperty("creatingApplication", "STEP2glTF Convertor, RDF LTD"); //#todo
 	}
 
-	void writeMetadataProperties()
+	void _exporter::writeMetadataProperties()
 	{
+		_ptr<_ifc_model> ifcModel(m_pModel);
+		if (ifcModel == nullptr)
+		{
+			return;
+		}
 
+		auto pPropertyProvider = ifcModel->getPropertyProvider();
+		if (pPropertyProvider == nullptr)
+		{
+			return;
+		}
+
+		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
+		map<SdaiInstance, pair<_ifc_property*, int>> mapProperties;
+
+		int iPropertySetIndex = 0;
+		int iPropertIndex = 0;
+		for (auto pGeometry : ifcModel->getGeometries()) {
+			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
+				auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(_ptr<_ifc_geometry>(pGeometry)->getSdaiInstance());
+				if (pPropertySetCollection == nullptr) {
+					continue;
+				}
+
+				// Property sets
+				for (auto pPropertySet : pPropertySetCollection->propertySets())
+				{
+					auto itPropertySet = mapPropertySets.find(pPropertySet->getSdaiInstance());
+					if (itPropertySet == mapPropertySets.end()) {
+						mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
+						TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));
+					}
+					else {
+						assert(itPropertySet->second->getName() == pPropertySet->getName());
+						/*TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));*/
+					}
+
+					// Properties
+					for (auto pProperty : pPropertySet->properties())
+					{
+						auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
+						if (itProperty == mapProperties.end()) {
+							mapProperties[pProperty->getSdaiInstance()] = { pProperty, iPropertIndex++ };
+
+							char* szEntityName = nullptr;
+							engiGetEntityName(sdaiGetInstanceType(pProperty->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+							TRACE("Property entity: %s\n", szEntityName != nullptr ? szEntityName : "NA");
+
+							TRACE("Property set: %s, property: %s, value: %s\n",
+								(const char*)CW2A(pPropertySet->getName().c_str()),
+								(const char*)CW2A(pProperty->getName().c_str()),
+								(const char*)CW2A(pProperty->getValue().c_str()));
+						} 
+						else {
+							assert(itProperty->second->getName() == pProperty->getName());
+							assert(itProperty->second->getValue() == pProperty->getValue());
+						}
+					}
+				} // for (auto pPropertySet : ...
+			} // if (!pGeometry->isPlaceholder() ...
+		} // for (auto pGeometry : ...
 	}
 };

@@ -262,13 +262,12 @@ namespace _ap2glb
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
-			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pGeometry->concFacesCohorts().size() +
-				pGeometry->concFacePolygonsCohorts().size() +
-				pGeometry->linesCohorts().size() +
-				pGeometry->pointsCohorts().size());
+				pNode->getGeometry()->concFacesCohorts().size() +
+				pNode->getGeometry()->concFacePolygonsCohorts().size() +
+				pNode->getGeometry()->linesCohorts().size() +
+				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
