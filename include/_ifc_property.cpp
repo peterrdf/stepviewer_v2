@@ -214,7 +214,7 @@ void _ifc_property_provider::loadPropertySet(SdaiInstance sdaiPropertySetInstanc
         if (sdaiGetInstanceType(sdaiAggrInstance) == iIFCPropertySingleValueEntity) {
             strValue = _ifc_property::getPropertySingleValue(sdaiAggrInstance);
             if (strValue.empty()) {
-                strValue = L"<empty>";
+                strValue = L"$";
             }
         }
 
@@ -359,7 +359,7 @@ wstring _ifc_property_provider::getName(SdaiInstance sdaiInstance) const
         strName = szName;
     }
     else {
-        strName = L"<empty>";
+        strName = L"$";
     }
 
     if ((szDescription != nullptr) && (wcslen(szDescription) > 0)) {

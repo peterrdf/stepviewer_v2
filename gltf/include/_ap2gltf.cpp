@@ -203,11 +203,13 @@ namespace _ap2gltf
 				// Global metadata
 				{
 					writeMetadata();
+					*getOutputStream() << COMMA;
 				}
 
 				// Properties
 				{
 					writeMetadataProperties();
+					//*getOutputStream() << COMMA;
 				}
 
 				// Units
@@ -1919,54 +1921,135 @@ namespace _ap2gltf
 			return;
 		}
 
+		int iPropertySetIndex = 0;
 		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
+
+		int iPropertyIndex = 0;
 		map<SdaiInstance, pair<_ifc_property*, int>> mapProperties;
 
-		int iPropertySetIndex = 0;
-		int iPropertIndex = 0;
-		for (auto pGeometry : ifcModel->getGeometries()) {
-			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
-				auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(_ptr<_ifc_geometry>(pGeometry)->getSdaiInstance());
-				if (pPropertySetCollection == nullptr) {
-					continue;
+		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
+			auto pGeometry = m_vecNodes[iNodeIndex]->getGeometry();
+
+			auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(_ptr<_ifc_geometry>(pGeometry)->getSdaiInstance());
+			if (pPropertySetCollection == nullptr) {
+				continue;
+			}
+
+			// Property sets
+			for (auto pPropertySet : pPropertySetCollection->propertySets())
+			{
+				auto itPropertySet = mapPropertySets.find(pPropertySet->getSdaiInstance());
+				if (itPropertySet == mapPropertySets.end()) {
+					mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
+#ifdef _WINDOWS
+					TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));
+#endif
+				}
+				else {
+					assert(itPropertySet->second.first->getName() == pPropertySet->getName());
 				}
 
-				// Property sets
-				for (auto pPropertySet : pPropertySetCollection->propertySets())
+				// Properties
+				for (auto pProperty : pPropertySet->properties())
 				{
-					auto itPropertySet = mapPropertySets.find(pPropertySet->getSdaiInstance());
-					if (itPropertySet == mapPropertySets.end()) {
-						mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
-						TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));
+					auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
+					if (itProperty == mapProperties.end()) {
+						mapProperties[pProperty->getSdaiInstance()] = { pProperty, iPropertyIndex++ };
+#ifdef _WINDOWS
+						TRACE("Property set: %s, property: %s, value: %s\n",
+							(const char*)CW2A(pPropertySet->getName().c_str()),
+							(const char*)CW2A(pProperty->getName().c_str()),
+							(const char*)CW2A(pProperty->getValue().c_str()));
+#endif
 					}
 					else {
-						assert(itPropertySet->second->getName() == pPropertySet->getName());
-						/*TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));*/
+						assert(itProperty->second.first->getName() == pProperty->getName());
+						assert(itProperty->second.first->getValue() == pProperty->getValue());
 					}
+				}
+			} // for (auto pPropertySet : ...
+		} // for (size_t iNodeIndex = ...
 
-					// Properties
-					for (auto pProperty : pPropertySet->properties())
-					{
-						auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
-						if (itProperty == mapProperties.end()) {
-							mapProperties[pProperty->getSdaiInstance()] = { pProperty, iPropertIndex++ };
+		// JSON
 
-							char* szEntityName = nullptr;
-							engiGetEntityName(sdaiGetInstanceType(pProperty->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
-							TRACE("Property entity: %s\n", szEntityName != nullptr ? szEntityName : "NA");
+		*getOutputStream() << getNewLine();
+		writeIndent();
 
-							TRACE("Property set: %s, property: %s, value: %s\n",
-								(const char*)CW2A(pPropertySet->getName().c_str()),
-								(const char*)CW2A(pProperty->getName().c_str()),
-								(const char*)CW2A(pProperty->getValue().c_str()));
-						} 
-						else {
-							assert(itProperty->second->getName() == pProperty->getName());
-							assert(itProperty->second->getValue() == pProperty->getValue());
-						}
-					}
-				} // for (auto pPropertySet : ...
-			} // if (!pGeometry->isPlaceholder() ...
-		} // for (auto pGeometry : ...
+		// properties
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "properties";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			iPropertyIndex = 0;
+			for (const auto& itProperty : mapProperties) {
+				if (iPropertyIndex++ > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				char* szEntityName = nullptr;
+				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+
+				indent()++;
+				writeStartObjectTag();
+
+				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("ifcValueType", szEntityName);
+				*getOutputStream() << COMMA;
+				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("valueType", "#todo");
+
+				writeEndObjectTag();
+				indent()--;
+			} // for (auto itProperty : ...
+
+			writeEndArrayTag();
+		}
+		// properties
+
+		// properties
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "properties";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			iPropertyIndex = 0;
+			for (const auto& itProperty : mapProperties) {
+				if (iPropertyIndex++ > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				char* szEntityName = nullptr;
+				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+
+				indent()++;
+				writeStartObjectTag();
+
+				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("ifcValueType", szEntityName);
+				*getOutputStream() << COMMA;
+				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("valueType", "#todo");
+
+				writeEndObjectTag();
+				indent()--;
+			} // for (auto itProperty : ...
+
+			writeEndArrayTag();
+		}
+		// properties
+		
 	}
 };
