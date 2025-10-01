@@ -790,7 +790,8 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 
 			char* representationIdentifier = nullptr;
 			sdaiGetAttrBN(ifcRepresentationInstance, "RepresentationIdentifier", sdaiSTRING, &representationIdentifier);
-			if (Equals(representationIdentifier, "Body")) {
+///20251001 by Peter			if (Equals(representationIdentifier, "Body")) {
+			if (!Equals(representationIdentifier, "Box")) {
 				SdaiAggr	ifcRepresentationItemInstanceAGGR = nullptr;
 				sdaiGetAttrBN(ifcRepresentationInstance, "Items", sdaiAGGR, &ifcRepresentationItemInstanceAGGR);
 
