@@ -1414,20 +1414,14 @@ namespace _ap2gltf
 						indent()++;
 						writeStartObjectTag();
 
-						string strName;
 						_ptr<_ap_geometry> apGeometry(pGeometry);
 
 						char* szGlobalId = nullptr;
 						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
-						if (szGlobalId != nullptr) {
-							strName = szGlobalId;
-						}
-						else {
-							strName = _string::sformat("#%lld", apGeometry->getExpressID()).c_str(); //#todo
-						}
+						assert(szGlobalId != nullptr);
 
 						indent()++;
-						writeStringProperty("name", strName);
+						writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
 						*getOutputStream() << COMMA;
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1922,7 +1916,7 @@ namespace _ap2gltf
 		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "$");
-		writeStringProperty("creatingApplication", "STEP2glTF Convertor, RDF LTD"); //#todo
+		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD"); //#todo
 	}
 
 	void _exporter::writeMetadataProperties()
@@ -2061,6 +2055,7 @@ namespace _ap2gltf
 
 				char* szGlobalId = nullptr;
 				sdaiGetAttrBN(itPropertySet.second.first->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+				assert(szGlobalId != nullptr);
 
 				char* szEntityName = nullptr;
 				engiGetEntityName(sdaiGetInstanceType(itPropertySet.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
