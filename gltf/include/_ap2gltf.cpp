@@ -506,8 +506,8 @@ namespace _ap2gltf
 
 		writeStartArrayTag(false);
 
-		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
-			auto pNode = m_vecNodes[iIndex];
+		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
+			auto pNode = m_vecNodes[iNodeIndex];
 			auto pGeometry = pNode->getGeometry();
 
 			if (pGeometry->isPlaceholder()) {
@@ -626,7 +626,7 @@ namespace _ap2gltf
 
 			pNode->bufferByteLength() = iBufferByteLength;
 
-			if (iIndex > 0) {
+			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
 
