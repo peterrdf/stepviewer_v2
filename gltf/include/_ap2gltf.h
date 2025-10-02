@@ -72,6 +72,7 @@ namespace _ap2gltf
 		GLTFMATERIALS m_mapMaterials;
 		map<wstring, uint32_t> m_mapImages;
 		vector<_node*> m_vecNodes;
+		map<_geometry*,  _node*> m_mapNodes;
 		vector<uint32_t> m_vecSceneRootNodes;
 
 		string m_strOutputFile;

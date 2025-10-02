@@ -18,6 +18,7 @@ namespace _ap2gltf
 		, m_mapMaterials()
 		, m_mapImages()
 		, m_vecNodes()
+		, m_mapNodes()
 		, m_vecSceneRootNodes()
 		, m_strOutputFile("")
 		, m_strOutputFolder("")
@@ -189,6 +190,9 @@ namespace _ap2gltf
 			if (!ignoreGeometry(pGeometry)) {
 				auto pNode = new _node(pGeometry);
 				m_vecNodes.push_back(pNode);
+
+				assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
+				m_mapNodes[pGeometry] = pNode;
 			}
 		}
 
@@ -1405,10 +1409,6 @@ namespace _ap2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
-
-				if (pGeometry->isPlaceholder()) {
-					continue;
-				}
 				
 				_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
 				if (ifcGeometry && ifcGeometry->getIsMappedItem()) {
@@ -1433,11 +1433,24 @@ namespace _ap2gltf
 					}
 
 					// root
+					vector<uint32_t> vecMeshes;
 					{
 						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+						
+						if (pGeometry->isPlaceholder()) {
+							assert(ifcGeometry);
+							for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+								auto itNode = m_mapNodes.find(pMappedGeometry);
+								assert(itNode != m_mapNodes.end());
+								vecMeshes.insert(vecMeshes.begin(), itNode->second->meshes().begin(), itNode->second->meshes().end());
+							}
+						} 
+						else {
+							vecMeshes.insert(vecMeshes.begin(), pNode->meshes().begin(), pNode->meshes().end());
+						}
 
 						vector<string> vecNodeChildren;
-						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
+						for (size_t iMeshIndex = 0; iMeshIndex < vecMeshes.size(); iMeshIndex++) {
 							vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
 						}
 
@@ -1522,7 +1535,7 @@ namespace _ap2gltf
 
 					// children
 					{
-						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
+						for (size_t iMeshIndex = 0; iMeshIndex < vecMeshes.size(); iMeshIndex++) {
 							*getOutputStream() << COMMA;
 
 							indent()++;
@@ -1531,7 +1544,7 @@ namespace _ap2gltf
 							indent()++;
 							/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
 							*getOutputStream() << COMMA;*/
-							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
+							writeUIntProperty("mesh", vecMeshes[iMeshIndex]);
 							indent()--;
 
 							writeEndObjectTag();
