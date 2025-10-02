@@ -162,38 +162,20 @@ namespace _ap2gltf
 	{
 		assert(pGeometry != nullptr);
 
-		// #poc =>
-		_ptr<_ifc_geometry> apGeometry(pGeometry);
-		
-
-		wstring strEntity = apGeometry->getEntityName();
-		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
-
-		// 
-		//?????????????????????
-		if (apGeometry->getIsMappedItem()) {
-			TRACE("********** Mapped geometry: %S\n", strEntity.c_str());
-			//return false;
+		if (!pGeometry->hasGeometry()) {
+			return true;
 		}
 
-		//?????????????????????????
-		/*TRACE("********** Geometry: %S\n", strEntity.c_str());
-		if (!sdaiIsKindOfBN(apGeometry->getSdaiInstance(), "IFCPRODUCT")) {
-			TRACE("********** Ignoring geometry: %S\n", strEntity.c_str());
-			return true;
-		}*/
+		wstring strEntity = _ptr<_ap_geometry>(pGeometry)->getEntityName();
+		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
-		// ================>
-
-		/*(strEntity == L"IFCSPACE") || ??????????????????????????????????
+		return (strEntity == L"IFCSPACE") ||
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ||
 			(strEntity == L"IFCALIGNMENTVERTICAL") ||
 			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
 			(strEntity == L"IFCALIGNMENTSEGMENT") ||
-			(strEntity == L"IFCALIGNMENTCANT") ? false : true);*/
-			// <==================
-		return strEntity == L"IFCOPENINGELEMENT";
+			(strEntity == L"IFCALIGNMENTCANT");
 	}
 
 	/*virtual*/ bool _exporter::preExecute()
@@ -204,9 +186,7 @@ namespace _ap2gltf
 		}
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
-			if (!pGeometry->isPlaceholder() && 
-				pGeometry->hasGeometry() &&
-				!ignoreGeometry(pGeometry)) {
+			if (!ignoreGeometry(pGeometry)) {
 				auto pNode = new _node(pGeometry);
 				m_vecNodes.push_back(pNode);
 			}
@@ -530,6 +510,10 @@ namespace _ap2gltf
 			auto pNode = m_vecNodes[iIndex];
 			auto pGeometry = pNode->getGeometry();
 
+			if (pGeometry->isPlaceholder()) {
+				continue;
+			}
+
 			const auto VERTEX_LENGTH = pGeometry->getVertexLength();
 
 			_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
@@ -688,8 +672,14 @@ namespace _ap2gltf
 		writeStartArrayTag(false);
 
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
+		size_t iBufferIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
+
+			if (pGeometry->isPlaceholder()) {
+				continue;
+			}
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
 				pNode->getGeometry()->concFacesCohorts().size() +
@@ -697,7 +687,7 @@ namespace _ap2gltf
 				pNode->getGeometry()->linesCohorts().size() +
 				pNode->getGeometry()->pointsCohorts().size());
 
-			if (iNodeIndex > 0) {
+			if (iBufferIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
 
@@ -709,7 +699,7 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", (uint32_t)iBufferIndex);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
 				*getOutputStream() << COMMA;
@@ -732,7 +722,7 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", (uint32_t)iBufferIndex);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
 				*getOutputStream() << COMMA;
@@ -757,7 +747,7 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", (uint32_t)iBufferIndex);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", iByteLength);
 				*getOutputStream() << COMMA;
@@ -773,6 +763,7 @@ namespace _ap2gltf
 			} // for (size_t iIndicesBufferViewIndex = ...
 
 			m_iBufferViewsCount++;
+			iBufferIndex++;
 		} // for (size_t iNodeIndex = ...
 
 		writeEndArrayTag();
@@ -807,6 +798,10 @@ namespace _ap2gltf
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
 			auto pGeometry = pNode->getGeometry();
+
+			if (pGeometry->isPlaceholder()) {
+				continue;
+			}
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
 				pGeometry->concFacesCohorts().size() +
@@ -1054,6 +1049,10 @@ namespace _ap2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
+
+				if (pGeometry->isPlaceholder()) {
+					continue;
+				}
 
 				assert(pNode->accessors().size() ==
 					2/*vertices & normals bufferView-s*/ +
@@ -1406,6 +1405,15 @@ namespace _ap2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
+
+				if (pGeometry->isPlaceholder()) {
+					continue;
+				}
+				
+				_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
+				if (ifcGeometry && ifcGeometry->getIsMappedItem()) {
+					continue;
+				}
 
 				assert(pNode->meshes().size() ==
 					pGeometry->concFacesCohorts().size() +
@@ -1944,14 +1952,12 @@ namespace _ap2gltf
 	void _exporter::writeMetadataProperties()
 	{
 		_ptr<_ifc_model> ifcModel(m_pModel);
-		if (ifcModel == nullptr)
-		{
+		if (ifcModel == nullptr) {
 			return;
 		}
 
 		auto pPropertyProvider = ifcModel->getPropertyProvider();
-		if (pPropertyProvider == nullptr)
-		{
+		if (pPropertyProvider == nullptr) {
 			return;
 		}
 
@@ -1974,8 +1980,7 @@ namespace _ap2gltf
 			}
 
 			// Property sets
-			for (auto pPropertySet : pPropertySetCollection->propertySets())
-			{
+			for (auto pPropertySet : pPropertySetCollection->propertySets()) {
 				auto itPropertySet = mapPropertySets.find(pPropertySet->getSdaiInstance());
 				if (itPropertySet == mapPropertySets.end()) {
 					mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
@@ -1988,8 +1993,7 @@ namespace _ap2gltf
 				}
 
 				// Properties
-				for (auto pProperty : pPropertySet->properties())
-				{
+				for (auto pProperty : pPropertySet->properties()) {
 					auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
 					if (itProperty == mapProperties.end()) {
 						mapProperties[pProperty->getSdaiInstance()] = { pProperty, iPropertyIndex++ };
