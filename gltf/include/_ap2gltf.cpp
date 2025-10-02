@@ -162,15 +162,37 @@ namespace _ap2gltf
 	{
 		assert(pGeometry != nullptr);
 
-		_ptr<_ap_geometry> apGeometry(pGeometry);
-
-		if (!sdaiIsKindOfBN(apGeometry->getSdaiInstance(), "IFCPRODUCT")) {
-			return true;
-		}
+		// #poc =>
+		_ptr<_ifc_geometry> apGeometry(pGeometry);
+		
 
 		wstring strEntity = apGeometry->getEntityName();
 		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
+		// 
+		//?????????????????????
+		if (apGeometry->getIsMappedItem()) {
+			TRACE("********** Mapped geometry: %S\n", strEntity.c_str());
+			//return false;
+		}
+
+		//?????????????????????????
+		/*TRACE("********** Geometry: %S\n", strEntity.c_str());
+		if (!sdaiIsKindOfBN(apGeometry->getSdaiInstance(), "IFCPRODUCT")) {
+			TRACE("********** Ignoring geometry: %S\n", strEntity.c_str());
+			return true;
+		}*/
+
+		// ================>
+
+		/*(strEntity == L"IFCSPACE") || ??????????????????????????????????
+			(strEntity == L"IFCRELSPACEBOUNDARY") ||
+			(strEntity == L"IFCOPENINGELEMENT") ||
+			(strEntity == L"IFCALIGNMENTVERTICAL") ||
+			(strEntity == L"IFCALIGNMENTHORIZONTAL") ||
+			(strEntity == L"IFCALIGNMENTSEGMENT") ||
+			(strEntity == L"IFCALIGNMENTCANT") ? false : true);*/
+			// <==================
 		return strEntity == L"IFCOPENINGELEMENT";
 	}
 
