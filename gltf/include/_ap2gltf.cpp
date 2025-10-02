@@ -164,6 +164,7 @@ namespace _ap2gltf
 
 		_ptr<_ap_geometry> apGeometry(pGeometry);
 
+		//#todo Remove this temporary workaround
 		if (!sdaiIsKindOfBN(apGeometry->getSdaiInstance(), "IFCPRODUCT")) {
 			return true;
 		}
@@ -171,6 +172,7 @@ namespace _ap2gltf
 		wstring strEntity = apGeometry->getEntityName();
 		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
+		// #todo Remove this temporary workaround
 		return strEntity == L"IFCOPENINGELEMENT";
 	}
 
