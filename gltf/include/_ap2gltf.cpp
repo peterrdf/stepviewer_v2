@@ -1136,7 +1136,6 @@ namespace _ap2gltf
 					pNode->meshes().push_back(iMeshIndex);
 
 					iMeshIndex++;
-
 					m_iMeshesCount++;
 				} // for (size_t iConcFacesCohortIndex = ...
 
@@ -1202,7 +1201,6 @@ namespace _ap2gltf
 					// mesh					
 
 					pNode->meshes().push_back(iMeshIndex);
-
 					iMeshIndex++;
 
 					m_iMeshesCount++;
@@ -1274,7 +1272,6 @@ namespace _ap2gltf
 					// mesh					
 
 					pNode->meshes().push_back(iMeshIndex);
-
 					iMeshIndex++;
 
 					m_iMeshesCount++;
@@ -1347,7 +1344,6 @@ namespace _ap2gltf
 					// mesh					
 
 					pNode->meshes().push_back(iMeshIndex);
-
 					iMeshIndex++;
 
 					m_iMeshesCount++;
