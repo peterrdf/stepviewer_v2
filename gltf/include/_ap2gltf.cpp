@@ -766,8 +766,8 @@ namespace _ap2gltf
 				iByteOffset += iByteLength;
 			} // for (size_t iIndicesBufferViewIndex = ...
 
-			m_iBufferViewsCount++;
 			iBufferIndex++;
+			m_iBufferViewsCount++;
 		} // for (size_t iNodeIndex = ...
 
 		writeEndArrayTag();
@@ -1422,6 +1422,19 @@ namespace _ap2gltf
 					pGeometry->pointsCohorts().size());
 				assert(!pGeometry->getInstances().empty());
 
+				// 
+				// Mapped Items
+				if (pGeometry->isPlaceholder()) {
+					assert(ifcGeometry); //#todo
+					continue;
+					/*vector<uint32_t> vecMeshes;
+					for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+						auto itNode = m_mapNodes.find(pMappedGeometry);
+						assert(itNode != m_mapNodes.end());
+						vecMeshes.insert(vecMeshes.begin(), itNode->second->meshes().begin(), itNode->second->meshes().end());
+					}*/
+				} // if (pGeometry->isPlaceholder())
+
 				//
 				// Transformations
 				// 
@@ -1432,25 +1445,12 @@ namespace _ap2gltf
 						*getOutputStream() << COMMA;
 					}
 
-					// root
-					vector<uint32_t> vecMeshes;
+					// root	
 					{
 						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
-						
-						if (pGeometry->isPlaceholder()) {
-							assert(ifcGeometry);
-							for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
-								auto itNode = m_mapNodes.find(pMappedGeometry);
-								assert(itNode != m_mapNodes.end());
-								vecMeshes.insert(vecMeshes.begin(), itNode->second->meshes().begin(), itNode->second->meshes().end());
-							}
-						} 
-						else {
-							vecMeshes.insert(vecMeshes.begin(), pNode->meshes().begin(), pNode->meshes().end());
-						}
 
 						vector<string> vecNodeChildren;
-						for (size_t iMeshIndex = 0; iMeshIndex < vecMeshes.size(); iMeshIndex++) {
+						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
 							vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
 						}
 
@@ -1535,7 +1535,7 @@ namespace _ap2gltf
 
 					// children
 					{
-						for (size_t iMeshIndex = 0; iMeshIndex < vecMeshes.size(); iMeshIndex++) {
+						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
 							*getOutputStream() << COMMA;
 
 							indent()++;
@@ -1544,7 +1544,7 @@ namespace _ap2gltf
 							indent()++;
 							/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
 							*getOutputStream() << COMMA;*/
-							writeUIntProperty("mesh", vecMeshes[iMeshIndex]);
+							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
 							indent()--;
 
 							writeEndObjectTag();

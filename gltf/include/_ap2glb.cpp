@@ -179,6 +179,10 @@ namespace _ap2glb
 			auto pNode = m_vecNodes[iIndex];
 			auto pGeometry = pNode->getGeometry();
 
+			if (pGeometry->isPlaceholder()) {
+				continue;
+			}
+
 			// buffer: byteLength
 			uint32_t iBufferByteLength = 0;
 
@@ -260,8 +264,14 @@ namespace _ap2glb
 		uint32_t iGlobalByteOffset = 0;
 
 		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
+		size_t iBufferIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
+
+			if (pGeometry->isPlaceholder()) {
+				continue;
+			}
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
 				pNode->getGeometry()->concFacesCohorts().size() +
@@ -269,7 +279,7 @@ namespace _ap2glb
 				pNode->getGeometry()->linesCohorts().size() +
 				pNode->getGeometry()->pointsCohorts().size());
 
-			if (iNodeIndex > 0) {
+			if (iBufferIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
 
@@ -345,6 +355,8 @@ namespace _ap2glb
 			} // for (size_t iIndicesBufferViewIndex = ...
 
 			iGlobalByteOffset += pNode->bufferByteLength();
+
+			iBufferIndex++;
 			m_iBufferViewsCount++;
 		} // for (size_t iNodeIndex = ...
 
