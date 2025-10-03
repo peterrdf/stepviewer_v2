@@ -1370,10 +1370,6 @@ namespace _ap2gltf
 		vecVertexBufferOffset.y *= fLengthConversionFactor;
 		vecVertexBufferOffset.z *= fLengthConversionFactor;
 
-		_matrix4x4 mtxDefaultViewTransformation;
-		_matrix4x4Identity(&mtxDefaultViewTransformation);
-		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
-
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
@@ -1455,56 +1451,29 @@ namespace _ap2gltf
 									mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
 									mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
 
-									_matrix4x4 mtxTransformation;
-									_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
-
 									*getOutputStream() << COMMA;
 									*getOutputStream() << getNewLine();
 									writeIndent();
 									*getOutputStream() << buildArrayProperty("matrix", vector<string>
 									{
-										to_string(mtxTransformation._11),
-											to_string(mtxTransformation._12),
-											to_string(mtxTransformation._13),
-											to_string(mtxTransformation._14),
-											to_string(mtxTransformation._21),
-											to_string(mtxTransformation._22),
-											to_string(mtxTransformation._23),
-											to_string(mtxTransformation._24),
-											to_string(mtxTransformation._31),
-											to_string(mtxTransformation._32),
-											to_string(mtxTransformation._33),
-											to_string(mtxTransformation._34),
-											to_string(mtxTransformation._41),
-											to_string(mtxTransformation._42),
-											to_string(mtxTransformation._43),
-											to_string(mtxTransformation._44)
+										to_string(mtxInstanceTransformation._11),
+											to_string(mtxInstanceTransformation._12),
+											to_string(mtxInstanceTransformation._13),
+											to_string(mtxInstanceTransformation._14),
+											to_string(mtxInstanceTransformation._21),
+											to_string(mtxInstanceTransformation._22),
+											to_string(mtxInstanceTransformation._23),
+											to_string(mtxInstanceTransformation._24),
+											to_string(mtxInstanceTransformation._31),
+											to_string(mtxInstanceTransformation._32),
+											to_string(mtxInstanceTransformation._33),
+											to_string(mtxInstanceTransformation._34),
+											to_string(mtxInstanceTransformation._41),
+											to_string(mtxInstanceTransformation._42),
+											to_string(mtxInstanceTransformation._43),
+											to_string(mtxInstanceTransformation._44)
 									}).c_str();
-								} // if (pTransformation != nullptr)	
-								else {
-									*getOutputStream() << COMMA;
-									*getOutputStream() << getNewLine();
-									writeIndent();
-									*getOutputStream() << buildArrayProperty("matrix", vector<string>
-									{
-										to_string(mtxDefaultViewTransformation._11),
-											to_string(mtxDefaultViewTransformation._12),
-											to_string(mtxDefaultViewTransformation._13),
-											to_string(mtxDefaultViewTransformation._14),
-											to_string(mtxDefaultViewTransformation._21),
-											to_string(mtxDefaultViewTransformation._22),
-											to_string(mtxDefaultViewTransformation._23),
-											to_string(mtxDefaultViewTransformation._24),
-											to_string(mtxDefaultViewTransformation._31),
-											to_string(mtxDefaultViewTransformation._32),
-											to_string(mtxDefaultViewTransformation._33),
-											to_string(mtxDefaultViewTransformation._34),
-											to_string(mtxDefaultViewTransformation._41),
-											to_string(mtxDefaultViewTransformation._42),
-											to_string(mtxDefaultViewTransformation._43),
-											to_string(mtxDefaultViewTransformation._44)
-									}).c_str();
-								}
+								} // if (pTransformation != nullptr)								
 								indent()--;
 
 								writeEndObjectTag();
@@ -1601,56 +1570,29 @@ namespace _ap2gltf
 								mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
 								mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
 
-								_matrix4x4 mtxTransformation;
-								_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
-
 								*getOutputStream() << COMMA;
 								*getOutputStream() << getNewLine();
 								writeIndent();
 								*getOutputStream() << buildArrayProperty("matrix", vector<string>
 								{
-									to_string(mtxTransformation._11),
-										to_string(mtxTransformation._12),
-										to_string(mtxTransformation._13),
-										to_string(mtxTransformation._14),
-										to_string(mtxTransformation._21),
-										to_string(mtxTransformation._22),
-										to_string(mtxTransformation._23),
-										to_string(mtxTransformation._24),
-										to_string(mtxTransformation._31),
-										to_string(mtxTransformation._32),
-										to_string(mtxTransformation._33),
-										to_string(mtxTransformation._34),
-										to_string(mtxTransformation._41),
-										to_string(mtxTransformation._42),
-										to_string(mtxTransformation._43),
-										to_string(mtxTransformation._44)
+									to_string(mtxInstanceTransformation._11),
+										to_string(mtxInstanceTransformation._12),
+										to_string(mtxInstanceTransformation._13),
+										to_string(mtxInstanceTransformation._14),
+										to_string(mtxInstanceTransformation._21),
+										to_string(mtxInstanceTransformation._22),
+										to_string(mtxInstanceTransformation._23),
+										to_string(mtxInstanceTransformation._24),
+										to_string(mtxInstanceTransformation._31),
+										to_string(mtxInstanceTransformation._32),
+										to_string(mtxInstanceTransformation._33),
+										to_string(mtxInstanceTransformation._34),
+										to_string(mtxInstanceTransformation._41),
+										to_string(mtxInstanceTransformation._42),
+										to_string(mtxInstanceTransformation._43),
+										to_string(mtxInstanceTransformation._44)
 								}).c_str();
-							} // if (pTransformation != nullptr)	
-							else {
-								*getOutputStream() << COMMA;
-								*getOutputStream() << getNewLine();
-								writeIndent();
-								*getOutputStream() << buildArrayProperty("matrix", vector<string>
-								{
-									to_string(mtxDefaultViewTransformation._11),
-										to_string(mtxDefaultViewTransformation._12),
-										to_string(mtxDefaultViewTransformation._13),
-										to_string(mtxDefaultViewTransformation._14),
-										to_string(mtxDefaultViewTransformation._21),
-										to_string(mtxDefaultViewTransformation._22),
-										to_string(mtxDefaultViewTransformation._23),
-										to_string(mtxDefaultViewTransformation._24),
-										to_string(mtxDefaultViewTransformation._31),
-										to_string(mtxDefaultViewTransformation._32),
-										to_string(mtxDefaultViewTransformation._33),
-										to_string(mtxDefaultViewTransformation._34),
-										to_string(mtxDefaultViewTransformation._41),
-										to_string(mtxDefaultViewTransformation._42),
-										to_string(mtxDefaultViewTransformation._43),
-										to_string(mtxDefaultViewTransformation._44)
-								}).c_str();
-							}
+							} // if (pTransformation != nullptr)							
 							indent()--;
 
 							writeEndObjectTag();
@@ -1693,6 +1635,11 @@ namespace _ap2gltf
 					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
 				}
 
+				_matrix4x4 mtxDefaultViewTransformation;
+				_matrix4x4Identity(&mtxDefaultViewTransformation);
+				_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
+
+
 				indent()++;
 				writeStartObjectTag();
 
@@ -1700,6 +1647,28 @@ namespace _ap2gltf
 				indent()++;
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("children", vecRootNodes).c_str();
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
+				writeIndent();
+				*getOutputStream() << buildArrayProperty("matrix", vector<string>
+				{
+					to_string(mtxDefaultViewTransformation._11),
+						to_string(mtxDefaultViewTransformation._12),
+						to_string(mtxDefaultViewTransformation._13),
+						to_string(mtxDefaultViewTransformation._14),
+						to_string(mtxDefaultViewTransformation._21),
+						to_string(mtxDefaultViewTransformation._22),
+						to_string(mtxDefaultViewTransformation._23),
+						to_string(mtxDefaultViewTransformation._24),
+						to_string(mtxDefaultViewTransformation._31),
+						to_string(mtxDefaultViewTransformation._32),
+						to_string(mtxDefaultViewTransformation._33),
+						to_string(mtxDefaultViewTransformation._34),
+						to_string(mtxDefaultViewTransformation._41),
+						to_string(mtxDefaultViewTransformation._42),
+						to_string(mtxDefaultViewTransformation._43),
+						to_string(mtxDefaultViewTransformation._44)
+				}).c_str();
 				indent()--;
 
 				writeEndObjectTag();
