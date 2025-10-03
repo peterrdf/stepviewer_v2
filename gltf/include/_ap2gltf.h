@@ -74,6 +74,7 @@ namespace _ap2gltf
 		vector<_node*> m_vecNodes;
 		map<_geometry*,  _node*> m_mapNodes;
 		vector<uint32_t> m_vecSceneRootNodes;
+		uint32_t m_iRootNodeIndex;
 
 		string m_strOutputFile;
 		string m_strOutputFolder;

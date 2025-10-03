@@ -21,6 +21,7 @@ namespace _ap2gltf
 		, m_vecNodes()
 		, m_mapNodes()
 		, m_vecSceneRootNodes()
+		, m_iRootNodeIndex(0)
 		, m_strOutputFile("")
 		, m_strOutputFolder("")
 		, m_pOutputStream(nullptr)
@@ -1681,6 +1682,33 @@ namespace _ap2gltf
 				} // else if (pGeometry->isPlaceholder())
 			} // for (size_t iNodeIndex = ...
 
+			// root
+			{
+				if (iSceneNodeIndex > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				vector<string> vecRootNodes;
+				for (size_t iRootNodeIndex = 0; iRootNodeIndex < m_vecSceneRootNodes.size(); iRootNodeIndex++) {
+					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
+				}
+
+				indent()++;
+				writeStartObjectTag();
+
+				*getOutputStream() << getNewLine();
+				indent()++;
+				writeIndent();
+				*getOutputStream() << buildArrayProperty("children", vecRootNodes).c_str();
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				m_iRootNodeIndex = iSceneNodeIndex;
+			}
+			// root
+
 			writeEndArrayTag();
 		}
 		// nodes
@@ -1710,16 +1738,10 @@ namespace _ap2gltf
 
 				indent()++;
 				writeStartObjectTag();
-
-				vector<string> vecRootNodes;
-				for (size_t iRootNodeIndex = 0; iRootNodeIndex < m_vecSceneRootNodes.size(); iRootNodeIndex++) {
-					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
-				}
-
 				*getOutputStream() << getNewLine();
 				indent()++;
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("nodes", vecRootNodes).c_str();
+				*getOutputStream() << buildArrayProperty("nodes", vector<string>{ to_string(m_iRootNodeIndex) }).c_str();
 				indent()--;
 
 				writeEndObjectTag();
@@ -1727,7 +1749,7 @@ namespace _ap2gltf
 
 				writeEndArrayTag();
 			}
-			// ]			
+			// ]
 		}
 		// scenes
 	}
