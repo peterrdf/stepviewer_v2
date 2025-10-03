@@ -1228,12 +1228,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						/*writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pGeometry), iLinesCohortIndex));
-						*getOutputStream() << COMMA;*/
-
 						*getOutputStream() << getNewLine();
 						writeIndent();
-
 						*getOutputStream() << DOULE_QUOT_MARK;
 						*getOutputStream() << "primitives";
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1555,11 +1551,12 @@ namespace _ap2gltf
 
 						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
 
-						indent()++;
-						writeStartObjectTag();
 						char* szGlobalId = nullptr;
 						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
 						assert(szGlobalId != nullptr);
+
+						indent()++;
+						writeStartObjectTag();
 
 						indent()++;
 						writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
@@ -1568,6 +1565,7 @@ namespace _ap2gltf
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecPlaceholderNodeChildren).c_str();
 						indent()--;
+
 						writeEndObjectTag();
 						indent()--;
 					}
