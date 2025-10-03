@@ -4,6 +4,7 @@
 #include "_base64.h"
 #include "_dateTime.h"
 #include "_ifc_geometry.h"
+#include "_ifc_instance.h"
 #include "_ifc_model.h"
 
 // ************************************************************************************************
@@ -1409,7 +1410,8 @@ namespace _ap2gltf
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
-				
+				_ptr<_ap_geometry> apGeometry(pGeometry);
+
 				_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
 				if (ifcGeometry && ifcGeometry->getIsMappedItem()) {
 					continue;
@@ -1424,138 +1426,307 @@ namespace _ap2gltf
 
 				// 
 				// Mapped Items
-				if (pGeometry->isPlaceholder()) {
-					assert(ifcGeometry); //#todo
-					continue;
-					/*vector<uint32_t> vecMeshes;
-					for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
-						auto itNode = m_mapNodes.find(pMappedGeometry);
-						assert(itNode != m_mapNodes.end());
-						vecMeshes.insert(vecMeshes.begin(), itNode->second->meshes().begin(), itNode->second->meshes().end());
-					}*/
-				} // if (pGeometry->isPlaceholder())
-
-				//
-				// Transformations
 				// 
-				for (auto pInstance : pGeometry->getInstances()) {
-					auto pTransformation = pInstance->getTransformationMatrix();
 
-					if (iSceneNodeIndex > 0) {
-						*getOutputStream() << COMMA;
-					}
+				if (pGeometry->isPlaceholder()) {
+					assert(ifcGeometry);
+					assert(ifcGeometry->getInstances().size() == 1);
 
-					// root	
+					// M	??????????????????????????
 					{
-						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
-
-						vector<string> vecNodeChildren;
-						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-							vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
+						vector<string> vecPlaceholderNodeChildren;
+						for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+							vecPlaceholderNodeChildren.push_back(to_string(iSceneNodeIndex++));
 						}
 
-						indent()++;
-						writeStartObjectTag();
+						auto pPlaceholderInstance = ifcGeometry->getInstances().front();
+						assert(pPlaceholderInstance != nullptr);
 
-						_ptr<_ap_geometry> apGeometry(pGeometry);
+						for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+							// Transformations
+							for (auto pInstance : pMappedGeometry->getInstances()) {
+								_ptr<_ifc_instance> ifcInstance(pInstance);
+								if (ifcInstance->getOwner() != pPlaceholderInstance) {
+									continue;
+								}
 
-						char* szGlobalId = nullptr;
-						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
-						assert(szGlobalId != nullptr);
+								auto pTransformation = pInstance->getTransformationMatrix();
 
-						indent()++;
-						writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
-						*getOutputStream() << COMMA;
-						*getOutputStream() << getNewLine();
-						writeIndent();
-						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
-						if (pTransformation != nullptr) {
-							_matrix4x4 mtxInstanceTransformation;
-							memcpy(&mtxInstanceTransformation, pTransformation, sizeof(_matrix4x4));
-							mtxInstanceTransformation._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
-							mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
-							mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
+								if (iSceneNodeIndex > 0) {
+									*getOutputStream() << COMMA;
+								}
 
-							_matrix4x4 mtxTransformation;
-							_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
+								auto itMappedItem = m_mapNodes.find(pMappedGeometry);
+								assert(itMappedItem != m_mapNodes.end());
+								auto pMappedNode = itMappedItem->second;
 
+								// root	?????????????????????????
+								{
+									//m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+
+
+
+
+									vector<string> vecNodeChildren;
+									for (size_t iMeshIndex = 0; iMeshIndex < pMappedNode->meshes().size(); iMeshIndex++) {
+										vecNodeChildren.push_back(to_string(iSceneNodeIndex++));
+									}
+
+									indent()++;
+									writeStartObjectTag();
+
+									/*char* szGlobalId = nullptr;
+									sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+									assert(szGlobalId != nullptr);*/
+
+									indent()++;
+									//writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
+									//*getOutputStream() << COMMA;
+									*getOutputStream() << getNewLine();
+									writeIndent();
+									*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
+									if (pTransformation != nullptr) {
+										_matrix4x4 mtxInstanceTransformation;
+										memcpy(&mtxInstanceTransformation, pTransformation, sizeof(_matrix4x4));
+										mtxInstanceTransformation._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
+										mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
+										mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
+
+										_matrix4x4 mtxTransformation;
+										_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
+
+										*getOutputStream() << COMMA;
+										*getOutputStream() << getNewLine();
+										writeIndent();
+										*getOutputStream() << buildArrayProperty("matrix", vector<string>
+										{
+											to_string(mtxTransformation._11),
+												to_string(mtxTransformation._12),
+												to_string(mtxTransformation._13),
+												to_string(mtxTransformation._14),
+												to_string(mtxTransformation._21),
+												to_string(mtxTransformation._22),
+												to_string(mtxTransformation._23),
+												to_string(mtxTransformation._24),
+												to_string(mtxTransformation._31),
+												to_string(mtxTransformation._32),
+												to_string(mtxTransformation._33),
+												to_string(mtxTransformation._34),
+												to_string(mtxTransformation._41),
+												to_string(mtxTransformation._42),
+												to_string(mtxTransformation._43),
+												to_string(mtxTransformation._44)
+										}).c_str();
+									} // if (pTransformation != nullptr)	
+									else {
+										*getOutputStream() << COMMA;
+										*getOutputStream() << getNewLine();
+										writeIndent();
+										*getOutputStream() << buildArrayProperty("matrix", vector<string>
+										{
+											to_string(mtxDefaultViewTransformation._11),
+												to_string(mtxDefaultViewTransformation._12),
+												to_string(mtxDefaultViewTransformation._13),
+												to_string(mtxDefaultViewTransformation._14),
+												to_string(mtxDefaultViewTransformation._21),
+												to_string(mtxDefaultViewTransformation._22),
+												to_string(mtxDefaultViewTransformation._23),
+												to_string(mtxDefaultViewTransformation._24),
+												to_string(mtxDefaultViewTransformation._31),
+												to_string(mtxDefaultViewTransformation._32),
+												to_string(mtxDefaultViewTransformation._33),
+												to_string(mtxDefaultViewTransformation._34),
+												to_string(mtxDefaultViewTransformation._41),
+												to_string(mtxDefaultViewTransformation._42),
+												to_string(mtxDefaultViewTransformation._43),
+												to_string(mtxDefaultViewTransformation._44)
+										}).c_str();
+									}
+									indent()--;
+
+									writeEndObjectTag();
+									indent()--;
+								}
+								// root
+
+								// children
+								{
+									for (size_t iMeshIndex = 0; iMeshIndex < pMappedNode->meshes().size(); iMeshIndex++) {
+										*getOutputStream() << COMMA;
+
+										indent()++;
+										writeStartObjectTag();
+
+										indent()++;
+										/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pMappedGeometry), iMeshIndex));
+										*getOutputStream() << COMMA;*/
+
+										//test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+										writeStringProperty("name", "Mapped Item");
+										*getOutputStream() << COMMA;
+
+										writeUIntProperty("mesh", pMappedNode->meshes()[iMeshIndex]);
+										indent()--;
+
+										writeEndObjectTag();
+										indent()--;
+									}
+								}
+								// children
+								
+							} // for (size_t iTransformation = ...
+						} // for (auto pMappedGeometry : ...
+
+						// placeholder root
+						{
+							if (iSceneNodeIndex > 0) {
+								*getOutputStream() << COMMA;
+							}
+
+							m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+
+							indent()++;
+							writeStartObjectTag();
+							char* szGlobalId = nullptr;
+							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+							assert(szGlobalId != nullptr);
+
+							indent()++;
+							writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
-							*getOutputStream() << buildArrayProperty("matrix", vector<string>
-							{
-								to_string(mtxTransformation._11),
-									to_string(mtxTransformation._12),
-									to_string(mtxTransformation._13),
-									to_string(mtxTransformation._14),
-									to_string(mtxTransformation._21),
-									to_string(mtxTransformation._22),
-									to_string(mtxTransformation._23),
-									to_string(mtxTransformation._24),
-									to_string(mtxTransformation._31),
-									to_string(mtxTransformation._32),
-									to_string(mtxTransformation._33),
-									to_string(mtxTransformation._34),
-									to_string(mtxTransformation._41),
-									to_string(mtxTransformation._42),
-									to_string(mtxTransformation._43),
-									to_string(mtxTransformation._44)
-							}).c_str();
-						} // if (pTransformation != nullptr)	
-						else {
-							*getOutputStream() << COMMA;
-							*getOutputStream() << getNewLine();
-							writeIndent();
-							*getOutputStream() << buildArrayProperty("matrix", vector<string>
-							{
-								to_string(mtxDefaultViewTransformation._11),
-									to_string(mtxDefaultViewTransformation._12),
-									to_string(mtxDefaultViewTransformation._13),
-									to_string(mtxDefaultViewTransformation._14),
-									to_string(mtxDefaultViewTransformation._21),
-									to_string(mtxDefaultViewTransformation._22),
-									to_string(mtxDefaultViewTransformation._23),
-									to_string(mtxDefaultViewTransformation._24),
-									to_string(mtxDefaultViewTransformation._31),
-									to_string(mtxDefaultViewTransformation._32),
-									to_string(mtxDefaultViewTransformation._33),
-									to_string(mtxDefaultViewTransformation._34),
-									to_string(mtxDefaultViewTransformation._41),
-									to_string(mtxDefaultViewTransformation._42),
-									to_string(mtxDefaultViewTransformation._43),
-									to_string(mtxDefaultViewTransformation._44)
-							}).c_str();
+							*getOutputStream() << buildArrayProperty("children", vecPlaceholderNodeChildren).c_str();
+							indent()--;
+							writeEndObjectTag();
+							indent()--;
 						}
-						indent()--;
+						// placeholder root
 
-						writeEndObjectTag();
-						indent()--;
+						// next root
+								iSceneNodeIndex++;
 					}
 					// root
+				} // if (pGeometry->isPlaceholder())
+				else {
+					// Transformations
+					for (auto pInstance : pGeometry->getInstances()) {
+						auto pTransformation = pInstance->getTransformationMatrix();
 
-					// children
-					{
-						for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
+						if (iSceneNodeIndex > 0) {
 							*getOutputStream() << COMMA;
+						}
+
+						// root	
+						{
+							m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+
+							vector<string> vecNodeChildren;
+							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
+								vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
+							}
 
 							indent()++;
 							writeStartObjectTag();
 
+							char* szGlobalId = nullptr;
+							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+							assert(szGlobalId != nullptr);
+
 							indent()++;
-							/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
-							*getOutputStream() << COMMA;*/
-							writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
+							writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
+							*getOutputStream() << COMMA;
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
+							if (pTransformation != nullptr) {
+								_matrix4x4 mtxInstanceTransformation;
+								memcpy(&mtxInstanceTransformation, pTransformation, sizeof(_matrix4x4));
+								mtxInstanceTransformation._41 = (pTransformation->_41 * fScaleFactor) - vecVertexBufferOffset.x;
+								mtxInstanceTransformation._42 = (pTransformation->_42 * fScaleFactor) - vecVertexBufferOffset.y;
+								mtxInstanceTransformation._43 = (pTransformation->_43 * fScaleFactor) - vecVertexBufferOffset.z;
+
+								_matrix4x4 mtxTransformation;
+								_matrix4x4Multiply(&mtxTransformation, &mtxInstanceTransformation, &mtxDefaultViewTransformation);
+
+								*getOutputStream() << COMMA;
+								*getOutputStream() << getNewLine();
+								writeIndent();
+								*getOutputStream() << buildArrayProperty("matrix", vector<string>
+								{
+									to_string(mtxTransformation._11),
+										to_string(mtxTransformation._12),
+										to_string(mtxTransformation._13),
+										to_string(mtxTransformation._14),
+										to_string(mtxTransformation._21),
+										to_string(mtxTransformation._22),
+										to_string(mtxTransformation._23),
+										to_string(mtxTransformation._24),
+										to_string(mtxTransformation._31),
+										to_string(mtxTransformation._32),
+										to_string(mtxTransformation._33),
+										to_string(mtxTransformation._34),
+										to_string(mtxTransformation._41),
+										to_string(mtxTransformation._42),
+										to_string(mtxTransformation._43),
+										to_string(mtxTransformation._44)
+								}).c_str();
+							} // if (pTransformation != nullptr)	
+							else {
+								*getOutputStream() << COMMA;
+								*getOutputStream() << getNewLine();
+								writeIndent();
+								*getOutputStream() << buildArrayProperty("matrix", vector<string>
+								{
+									to_string(mtxDefaultViewTransformation._11),
+										to_string(mtxDefaultViewTransformation._12),
+										to_string(mtxDefaultViewTransformation._13),
+										to_string(mtxDefaultViewTransformation._14),
+										to_string(mtxDefaultViewTransformation._21),
+										to_string(mtxDefaultViewTransformation._22),
+										to_string(mtxDefaultViewTransformation._23),
+										to_string(mtxDefaultViewTransformation._24),
+										to_string(mtxDefaultViewTransformation._31),
+										to_string(mtxDefaultViewTransformation._32),
+										to_string(mtxDefaultViewTransformation._33),
+										to_string(mtxDefaultViewTransformation._34),
+										to_string(mtxDefaultViewTransformation._41),
+										to_string(mtxDefaultViewTransformation._42),
+										to_string(mtxDefaultViewTransformation._43),
+										to_string(mtxDefaultViewTransformation._44)
+								}).c_str();
+							}
 							indent()--;
 
 							writeEndObjectTag();
 							indent()--;
 						}
-					}
-					// children
+						// root
 
-					// next root
-					iSceneNodeIndex++;
-				} //for (size_t iTransformation = ...
+						// children
+						{
+							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
+								*getOutputStream() << COMMA;
+
+								indent()++;
+								writeStartObjectTag();
+
+								indent()++;
+								/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iMeshIndex));
+								*getOutputStream() << COMMA;*/
+								writeUIntProperty("mesh", pNode->meshes()[iMeshIndex]);
+								indent()--;
+
+								writeEndObjectTag();
+								indent()--;
+							}
+						}
+						// children
+
+						// next root
+						iSceneNodeIndex++;
+					} //for (size_t iTransformation = ...
+				} // else if (pGeometry->isPlaceholder())
 			} // for (size_t iNodeIndex = ...
 
 			writeEndArrayTag();
