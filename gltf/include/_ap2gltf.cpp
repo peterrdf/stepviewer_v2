@@ -814,7 +814,7 @@ namespace _ap2gltf
 				pGeometry->linesCohorts().size() +
 				pGeometry->pointsCohorts().size());
 
-			if (iNodeIndex > 0) {
+			if (iBufferViewIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
 
@@ -1078,12 +1078,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pGeometry), iConcFacesCohortIndex));
-						*getOutputStream() << COMMA;*/
-
 						*getOutputStream() << getNewLine();
 						writeIndent();
-
 						*getOutputStream() << DOULE_QUOT_MARK;
 						*getOutputStream() << "primitives";
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1156,12 +1152,8 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						/*writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pGeometry), iConcFacePolygonsCohortIndex));
-						*getOutputStream() << COMMA;*/
-
 						*getOutputStream() << getNewLine();
 						writeIndent();
-
 						*getOutputStream() << DOULE_QUOT_MARK;
 						*getOutputStream() << "primitives";
 						*getOutputStream() << DOULE_QUOT_MARK;
