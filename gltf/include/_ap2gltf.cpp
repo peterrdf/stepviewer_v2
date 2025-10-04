@@ -172,7 +172,7 @@ namespace _ap2gltf
 		wstring strEntity = _ptr<_ap_geometry>(pGeometry)->getEntityName();
 		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
-		return (strEntity == L"IFCSPACE") ||
+		return 
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ||
 			(strEntity == L"IFCALIGNMENTVERTICAL") ||
@@ -2166,8 +2166,66 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 				}
 
-				char* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+				wstring strIfcValueType;
+				wstring strValueType;
+
+				wchar_t* szEntityName = nullptr;
+				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiUNICODE, (const char**)&szEntityName);
+
+				wstring strEntity = szEntityName;
+				std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
+				if (strEntity == L"IFCPROPERTYSINGLEVALUE") {
+					SdaiAttr sdaiNominalValueAttr = sdaiGetAttrDefinition(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), "NominalValue");
+					assert(sdaiNominalValueAttr != nullptr);
+
+					SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(sdaiNominalValueAttr);
+					if ((sdaiPrimitiveType & engiTypeFlagAggr) ||
+						(sdaiPrimitiveType & engiTypeFlagAggrOption)) {
+						sdaiPrimitiveType = sdaiAGGR;
+					}
+
+					SdaiADB pADB = nullptr;
+					if (sdaiGetAttr(
+						itProperty.second.first->getSdaiInstance(),
+						sdaiNominalValueAttr,
+						sdaiPrimitiveType,
+						&pADB)) {
+						strIfcValueType = (const wchar_t*)sdaiGetADBTypePath(pADB, sdaiUNICODE);
+
+						SdaiPrimitiveType adbType = sdaiGetADBType(pADB);
+						if ((adbType == sdaiINTEGER) ||
+							(adbType == sdaiREAL) ||
+							(adbType == sdaiNUMBER)) {
+							strValueType = L"number";
+						}
+						else {
+							if (adbType == sdaiSTRING) {
+								strValueType = L"string";
+							}
+							else if (adbType == sdaiBOOLEAN) {
+								strValueType = L"boolean";
+							}
+							else if (adbType == sdaiENUM) {
+								strValueType = L"enum";
+							}
+							else {
+								strValueType = L"object"; // complex type
+							}
+						}
+					}
+					else {
+						assert(false); // Failed to get NominalValue attribute
+					}
+				} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
+				else {
+					assert(sdaiIsKindOfBN(itProperty.second.first->getSdaiInstance(), "IfcPhysicalQuantity"));
+
+					strIfcValueType = szEntityName;
+					strValueType = L"number";
+				}
+				
+				assert(!strIfcValueType.empty());
+				assert(!strValueType.empty());
 
 				indent()++;
 				writeStartObjectTag();
@@ -2175,11 +2233,13 @@ namespace _ap2gltf
 				indent()++;
 				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", szEntityName);
+				writeStringProperty("ifcPropertyType", (const char*)CW2A(szEntityName));
+				*getOutputStream() << COMMA;
+				writeStringProperty("ifcValueType", (const char*)CW2A(strIfcValueType.c_str()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", "#todo");
+				writeStringProperty("valueType", (const char*)CW2A(strValueType.c_str()));
 				indent()--;
 
 				writeEndObjectTag();

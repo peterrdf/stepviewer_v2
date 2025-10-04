@@ -48,19 +48,7 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
     wchar_t* szNominalValueADB = nullptr;
     sdaiGetAttrBN(sdaiPropertySingleValueInstance, "NominalValue", sdaiUNICODE, &szNominalValueADB);
 
-    if (szNominalValueADB == nullptr) {
-        return L"";
-    }
-
-    wchar_t* szUnitADB = nullptr;
-    sdaiGetAttrBN(sdaiPropertySingleValueInstance, "Unit", sdaiUNICODE, &szUnitADB);
-
-    wchar_t* szTypePath = (wchar_t*)sdaiGetADBTypePath(szNominalValueADB, 0);
-    if (szTypePath == nullptr) {
-        return szNominalValueADB;
-    }
-
-    return L"";
+    return szNominalValueADB != nullptr ? szNominalValueADB : L"";
 }
 
 // ************************************************************************************************
