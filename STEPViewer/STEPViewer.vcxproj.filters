@@ -351,6 +351,9 @@
     <ClInclude Include="..\gltf\include\_dateTime.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ifc_model_structure.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -574,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="..\zip\gzlib.c">
       <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_model_structure.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -135,6 +135,7 @@ namespace _ap2gltf
 		// XKT metadata
 		void writeMetadata();
 		void writeMetadataProperties();
+		void writeMetadataObjects();
 
 	public: // Properties
 

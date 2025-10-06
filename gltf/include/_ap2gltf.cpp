@@ -6,6 +6,7 @@
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_ifc_model_structure.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -228,19 +229,37 @@ namespace _ap2gltf
 			{
 				// Global metadata
 				{
-					writeMetadata();
-					*getOutputStream() << COMMA;
+					writeMetadata();					
 				}
 
 				// Properties
 				{
+					*getOutputStream() << COMMA;
 					writeMetadataProperties();
-					//*getOutputStream() << COMMA;
 				}
 
-				// Units
+				// units
 				{
-					//writeMetadataProperties();
+					//*getOutputStream() << COMMA;
+					//writeMetadataUnits(); //#todo
+				}
+
+				// projectUnits
+				{
+					//*getOutputStream() << COMMA;
+					//writeMetadataProjectUnits(); //#todo
+				}
+
+				// groups
+				{
+					//*getOutputStream() << COMMA;
+					//writeMetadataGroups(); //#todo
+				}
+
+				// metaObjects
+				{
+					*getOutputStream() << COMMA;
+					writeMetadataObjects();
 				}
 			}
 			indent()--;
@@ -2273,5 +2292,15 @@ namespace _ap2gltf
 			writeEndArrayTag();
 		}
 		// propertySets		
+	}
+
+	void _exporter::writeMetadataObjects()
+	{
+		_ptr<_ifc_model> ifcModel(m_pModel, false);
+		if (ifcModel) {
+			_ifc_model_structure modelStructure(ifcModel);
+		}
+
+		
 	}
 };
