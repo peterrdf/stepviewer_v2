@@ -3,9 +3,9 @@
 #include "_ifc_geometry.h"
 
 // ************************************************************************************************
-_ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParent)
+_ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
 	: m_sdaiInstance(sdaiInstance)
-	, m_pParent(pParent)
+	, m_pParent(pParentNode)
 	, m_vecChildren()
 {
 }
@@ -27,8 +27,8 @@ wchar_t* _ifc_node::getGlobalId() const
 }
 
 // ************************************************************************************************
-_ifc_decomposition_node::_ifc_decomposition_node(_ifc_node* pParent)
-	: _ifc_node(0, pParent)
+_ifc_decomposition_node::_ifc_decomposition_node(_ifc_node* pParentNode)
+	: _ifc_node(0, pParentNode)
 {
 }
 
@@ -37,8 +37,8 @@ _ifc_decomposition_node::_ifc_decomposition_node(_ifc_node* pParent)
 }
 
 // ************************************************************************************************
-_ifc_contains_node::_ifc_contains_node(_ifc_node* pParent)
-	: _ifc_node(0, pParent)
+_ifc_contains_node::_ifc_contains_node(_ifc_node* pParentNode)
+	: _ifc_node(0, pParentNode)
 {
 }
 
@@ -49,7 +49,7 @@ _ifc_contains_node::_ifc_contains_node(_ifc_node* pParent)
 // ************************************************************************************************
 _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 	: m_pModel(pModel)
-	, m_pRootNode(nullptr)
+	, m_pProjectNode(nullptr)
 {
 	assert(m_pModel != nullptr);
 }
@@ -63,7 +63,7 @@ _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullptr*/)
 {
 	if (pNode == nullptr) {
-		pNode = m_pRootNode;
+		pNode = m_pProjectNode;
 	}
 	if (pNode == nullptr) {
 		return;
@@ -109,8 +109,8 @@ void _ifc_model_structure::build()
 void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 {
 	assert(sdaiProjectInstance != 0);
-	assert(m_pRootNode == nullptr);
-	m_pRootNode = new _ifc_node(sdaiProjectInstance, nullptr);
+	assert(m_pProjectNode == nullptr);
+	m_pProjectNode = new _ifc_node(sdaiProjectInstance, nullptr);
 
 	auto pGeometry = m_pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr) {
@@ -119,15 +119,15 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 		assert(pGeometry->getInstances().size() == 1);
 
 		// decomposition/contains
-		loadIsDecomposedBy(m_pRootNode, sdaiProjectInstance);
-		loadIsNestedBy(m_pRootNode, sdaiProjectInstance);
-		loadContainsElements(m_pRootNode, sdaiProjectInstance);
+		loadIsDecomposedBy(m_pProjectNode, sdaiProjectInstance);
+		loadIsNestedBy(m_pProjectNode, sdaiProjectInstance);
+		loadContainsElements(m_pProjectNode, sdaiProjectInstance);
 	}
 }
 
-void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParent, SdaiInstance sdaiInstance)
+void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
 {
-	assert(pParent != nullptr);
+	assert(pParentNode != nullptr);
 	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiIsDecomposedByAggr = nullptr;
@@ -148,8 +148,8 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParent, SdaiInstance s
 			continue;
 		}
 
-		auto pDecomposition = new _ifc_decomposition_node(pParent);
-		pParent->children().push_back(pDecomposition);
+		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
+		pParentNode->children().push_back(pDecompositioNode);
 
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
 		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
@@ -159,14 +159,14 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParent, SdaiInstance s
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
 			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
-			loadInstance(pDecomposition, sdaiRelatedObjectsInstance);
+			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
 		}
 	} // for (SdaiInteger i = ...	
 }
 
-void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParent, SdaiInstance sdaiInstance)
+void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
 {
-	assert(pParent != nullptr);
+	assert(pParentNode != nullptr);
 	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiIsNestedByAggr = nullptr;
@@ -185,8 +185,9 @@ void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParent, SdaiInstance sdaiI
 		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity) {
 			continue;
 		}
-		auto pDecomposition = new _ifc_decomposition_node(pParent);
-		pParent->children().push_back(pDecomposition);
+
+		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
+		pParentNode->children().push_back(pDecompositioNode);
 
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
 		sdaiGetAttrBN(sdaiIsNestedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
@@ -196,14 +197,14 @@ void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParent, SdaiInstance sdaiI
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
 			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
-			loadInstance(pDecomposition, sdaiRelatedObjectsInstance);
+			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
 		}
 	} // for (SdaiInteger i = ...	
 }
 
-void _ifc_model_structure::loadContainsElements(_ifc_node* pParent, SdaiInstance sdaiInstance)
+void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
 {
-	assert(pParent != nullptr);
+	assert(pParentNode != nullptr);
 	assert(sdaiInstance != 0);
 
 	SdaiAggr sdaiContainsElementsAggr = nullptr;
@@ -222,8 +223,8 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParent, SdaiInstance
 			continue;
 		}
 
-		auto pContains = new _ifc_contains_node(pParent);
-		pParent->children().push_back(pContains);
+		auto pContainsNode = new _ifc_contains_node(pParentNode);
+		pParentNode->children().push_back(pContainsNode);
 
 		SdaiAggr sdaiRelatedElementsInstances = 0;
 		sdaiGetAttrBN(sdaiContainsElementsInstance, "RelatedElements", sdaiAGGR, &sdaiRelatedElementsInstances);
@@ -233,14 +234,14 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParent, SdaiInstance
 			SdaiInstance sdaiRelatedElementsInstance = 0;
 			engiGetAggrElement(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
-			loadInstance(pContains, sdaiRelatedElementsInstance);
+			loadInstance(pContainsNode, sdaiRelatedElementsInstance);
 		}
 	} // for (SdaiInteger i = ...
 }
 
-void _ifc_model_structure::loadInstance(_ifc_node* pParent, SdaiInstance sdaiInstance)
+void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
 {
-	assert(pParent != nullptr);
+	assert(pParentNode != nullptr);
 	assert(sdaiInstance != 0);
 
 	auto pGeometry = m_pModel->getGeometryByInstance(sdaiInstance);
@@ -249,20 +250,20 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParent, SdaiInstance sdaiIns
 		assert(!ifcGeometry->getIsMappedItem());
 		assert(pGeometry->getInstances().size() == 1);
 
-		_ifc_node* pInstance = new _ifc_node(sdaiInstance, pParent);
-		pParent->children().push_back(pInstance);
+		_ifc_node* pInstanceNode = new _ifc_node(sdaiInstance, pParentNode);
+		pParentNode->children().push_back(pInstanceNode);
 
 		// decomposition/contains
-		loadIsDecomposedBy(pInstance, sdaiInstance);
-		loadIsNestedBy(pInstance, sdaiInstance);
-		loadContainsElements(pInstance, sdaiInstance);
+		loadIsDecomposedBy(pInstanceNode, sdaiInstance);
+		loadIsNestedBy(pInstanceNode, sdaiInstance);
+		loadContainsElements(pInstanceNode, sdaiInstance);
 	}
 }
 
 void _ifc_model_structure::clean()
 {
-	if (m_pRootNode != nullptr) {
-		delete m_pRootNode;
-		m_pRootNode = nullptr;
+	if (m_pProjectNode != nullptr) {
+		delete m_pProjectNode;
+		m_pProjectNode = nullptr;
 	}
 }

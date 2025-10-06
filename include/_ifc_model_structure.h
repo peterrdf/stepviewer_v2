@@ -23,7 +23,7 @@ private: // Members
 
 public: // Methods
 
-	_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParent);
+	_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode);
 	virtual ~_ifc_node();
 
 public: // Properties
@@ -39,7 +39,7 @@ class _ifc_decomposition_node : public _ifc_node
 {
 public: // Methods
 
-	_ifc_decomposition_node(_ifc_node* pParent);
+	_ifc_decomposition_node(_ifc_node* pParentNode);
 	virtual ~_ifc_decomposition_node();
 
 public: // Properties
@@ -53,7 +53,7 @@ class _ifc_contains_node : public _ifc_node
 
 public: // Methods
 
-	_ifc_contains_node(_ifc_node* pParent);
+	_ifc_contains_node(_ifc_node* pParentNode);
 	virtual ~_ifc_contains_node();
 
 public: // Properties
@@ -68,7 +68,7 @@ class _ifc_model_structure
 private: // Members
 
 	_ifc_model* m_pModel;
-	_ifc_node* m_pRootNode;
+	_ifc_node* m_pProjectNode;
 
 public: // Methods
 
@@ -84,15 +84,15 @@ public: // Methods
 protected: // Methods
 	
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
-	void loadIsDecomposedBy(_ifc_node* pParent, SdaiInstance sdaiInstance);
-	void loadIsNestedBy(_ifc_node* pParent, SdaiInstance sdaiInstance);
-	void loadContainsElements(_ifc_node* pParent, SdaiInstance sdaiInstance);
-	void loadInstance(_ifc_node* pParent, SdaiInstance sdaiInstance);
+	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void clean();
 
 public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
-	_ifc_node* getRootNode() const { return m_pRootNode; }
+	_ifc_node* getProject() const { return m_pProjectNode; }
 };
 

@@ -2303,6 +2303,55 @@ namespace _ap2gltf
 #ifdef _DEBUG
 			modelStructure.print();
 #endif
+
+			auto pProject = modelStructure.getProject();
+
+			//
+			// Write metadata
+			//
+
+			* getOutputStream() << getNewLine();
+			writeIndent();
+
+			// metaObjects
+			{
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "metaObjects";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+
+
+
+				//iPropertyIndex = 0;
+				//for (const auto& itProperty : mapProperties) {
+				//	if (iPropertyIndex++ > 0) {
+				//		*getOutputStream() << COMMA;
+				//	}
+
+				//	indent()++;
+				//	writeStartObjectTag();
+
+				//	indent()++;
+				//	writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				//	*getOutputStream() << COMMA;
+				//	writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				//	*getOutputStream() << COMMA;
+				//	writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.first->getIfcValueType().c_str()));
+				//	*getOutputStream() << COMMA;
+				//	writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				//	*getOutputStream() << COMMA;
+				//	writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				//	indent()--;
+
+				//	writeEndObjectTag();
+				//	indent()--;
+				//} // for (auto itProperty : ...
+
+				writeEndArrayTag();
+			}
 		} // if (ifcModel
 	}
 };
