@@ -2070,10 +2070,14 @@ namespace _ap2gltf
 		}
 
 		writeStringProperty("id", "0001"); //#todo
+		*getOutputStream() << COMMA;
 		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
+		*getOutputStream() << COMMA;
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
+		*getOutputStream() << COMMA;
 		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "$");
-		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD"); //#todo
+		*getOutputStream() << COMMA;
+		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD");
 	}
 
 	void _exporter::writeMetadataProperties()
