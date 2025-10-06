@@ -2299,8 +2299,10 @@ namespace _ap2gltf
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
 		if (ifcModel) {
 			_ifc_model_structure modelStructure(ifcModel);
-		}
-
-		
+			modelStructure.build();
+#ifdef _DEBUG
+			modelStructure.print();
+#endif
+		} // if (ifcModel
 	}
 };

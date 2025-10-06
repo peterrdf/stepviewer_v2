@@ -8,8 +8,8 @@
 using namespace std;
 
 // ************************************************************************************************
-#define NODE_DECOMPOSITION	L"decomposition"
-#define NODE_CONTAINS		L"contains"
+#define DECOMPOSITION_NODE	L"decomposition"
+#define CONTAINS_NODE		L"contains"
 
 // ************************************************************************************************
 class _ifc_node
@@ -18,16 +18,18 @@ class _ifc_node
 private: // Members
 
 	SdaiInstance m_sdaiInstance;
+	_ifc_node* m_pParent;
 	vector<_ifc_node*> m_vecChildren;
 
 public: // Methods
 
-	_ifc_node(SdaiInstance sdaiInstance);
+	_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParent);
 	virtual ~_ifc_node();
 
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	_ifc_node* getParent() const { return m_pParent; }
 	virtual wchar_t* getGlobalId() const;
 	vector<_ifc_node*>& children() { return m_vecChildren; }
 };
@@ -37,12 +39,12 @@ class _ifc_decomposition_node : public _ifc_node
 {
 public: // Methods
 
-	_ifc_decomposition_node(SdaiInstance sdaiInstance);
+	_ifc_decomposition_node(_ifc_node* pParent);
 	virtual ~_ifc_decomposition_node();
 
 public: // Properties
 
-	virtual wchar_t* getGlobalId() const override { return NODE_DECOMPOSITION; }
+	virtual wchar_t* getGlobalId() const override { return DECOMPOSITION_NODE; }
 };
 
 // ************************************************************************************************
@@ -51,12 +53,12 @@ class _ifc_contains_node : public _ifc_node
 
 public: // Methods
 
-	_ifc_contains_node(SdaiInstance sdaiInstance);
+	_ifc_contains_node(_ifc_node* pParent);
 	virtual ~_ifc_contains_node();
 
 public: // Properties
 
-	virtual wchar_t* getGlobalId() const override { return NODE_CONTAINS; }
+	virtual wchar_t* getGlobalId() const override { return CONTAINS_NODE; }
 };
 
 // ************************************************************************************************
@@ -73,9 +75,14 @@ public: // Methods
 	_ifc_model_structure(_ifc_model* pModel);
 	virtual ~_ifc_model_structure();
 
-protected: // Methods
-
 	void build();
+
+#ifdef _DEBUG
+	void print(int iLevel = 0, _ifc_node* pNode = nullptr);
+#endif
+
+protected: // Methods
+	
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
 	void loadIsDecomposedBy(_ifc_node* pParent, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParent, SdaiInstance sdaiInstance);
