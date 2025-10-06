@@ -2336,10 +2336,7 @@ namespace _ap2gltf
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 				*getOutputStream() << COMMA;
-				writeStringProperty("parent", 
-					pProjectNode->getParent() != nullptr ?
-					(const char*)CW2A(pProjectNode->getParent()->getGlobalId()) : 
-					"null");
+				writeStringProperty("parent", "null");
 				*getOutputStream() << COMMA;
 				writeStringProperty("ObjectType", "#todo");
 				*getOutputStream() << COMMA;
