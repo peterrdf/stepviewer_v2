@@ -93,6 +93,6 @@ protected: // Methods
 public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
-	_ifc_node* getProject() const { return m_pProjectNode; }
+	_ifc_node* getProjectNode() const { return m_pProjectNode; }
 };
 

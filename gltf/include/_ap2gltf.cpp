@@ -2303,14 +2303,11 @@ namespace _ap2gltf
 #ifdef _DEBUG
 			modelStructure.print();
 #endif
-
-			auto pProject = modelStructure.getProject();
-
 			//
 			// Write metadata
 			//
 
-			* getOutputStream() << getNewLine();
+			*getOutputStream() << getNewLine();
 			writeIndent();
 
 			// metaObjects
@@ -2323,32 +2320,47 @@ namespace _ap2gltf
 
 				writeStartArrayTag(false);
 
+				auto pProjectNode = modelStructure.getProjectNode();
 
+				indent()++;
+				writeStartObjectTag();
 
-				//iPropertyIndex = 0;
-				//for (const auto& itProperty : mapProperties) {
-				//	if (iPropertyIndex++ > 0) {
-				//		*getOutputStream() << COMMA;
-				//	}
+				indent()++;
+				writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("name", (const char*)CW2A(_ap_geometry::getName(pProjectNode->getSdaiInstance()).c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
+				*getOutputStream() << COMMA;
+				writeStringProperty("parent", 
+					pProjectNode->getParent() != nullptr ?
+					(const char*)CW2A(pProjectNode->getParent()->getGlobalId()) : 
+					"null");
+				*getOutputStream() << COMMA;
+				writeStringProperty("ObjectType", "#todo");
+				*getOutputStream() << COMMA;
+				writeStringProperty("tag", "#todo");
+				*getOutputStream() << COMMA;
+				// propertySetIds
+				{
+					*getOutputStream() << getNewLine();
+					writeIndent();
 
-				//	indent()++;
-				//	writeStartObjectTag();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << "propertySetIds";
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << COLON;
+					*getOutputStream() << SPACE;
 
-				//	indent()++;
-				//	writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
-				//	*getOutputStream() << COMMA;
-				//	writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
-				//	*getOutputStream() << COMMA;
-				//	writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.first->getIfcValueType().c_str()));
-				//	*getOutputStream() << COMMA;
-				//	writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
-				//	*getOutputStream() << COMMA;
-				//	writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
-				//	indent()--;
+					writeStartArrayTag(false);
 
-				//	writeEndObjectTag();
-				//	indent()--;
-				//} // for (auto itProperty : ...
+					writeEndArrayTag();
+				}
+				// propertySetIds
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
 
 				writeEndArrayTag();
 			}
