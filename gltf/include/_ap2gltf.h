@@ -18,6 +18,8 @@
 
 #include "_node.h"
 
+#include "_ifc_model_structure.h"
+
 #include <set>
 #include <map>
 using namespace std;
@@ -136,6 +138,7 @@ namespace _ap2gltf
 		void writeMetadata();
 		void writeMetadataProperties();
 		void writeMetadataObjects();
+		void writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider);
 
 	public: // Properties
 

@@ -6,7 +6,6 @@
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
-#include "_ifc_model_structure.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -2386,8 +2385,90 @@ namespace _ap2gltf
 				writeEndObjectTag();
 				indent()--;
 
+				for (auto pChildNode : pProjectNode->children()) {
+					writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+				}
+
 				writeEndArrayTag();
 			}
 		} // if (ifcModel
+	}
+
+	void _exporter::writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)
+	{
+		assert(pNode != nullptr);
+		assert(pPropertyProvider != nullptr);
+
+		// Skip IfcRelDecomposes and IfcRelContainedInSpatialStructure nodes
+		if (pNode->getGlobalId() != wstring(DECOMPOSITION_NODE) &&
+			pNode->getGlobalId() != wstring(CONTAINS_NODE)) {
+			
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", (const char*)CW2A(pNode->getGlobalId()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", (const char*)CW2A(_ap_geometry::getName(pNode->getSdaiInstance()).c_str()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent",
+				pNode->getParent() != nullptr ?
+				(const char*)CW2A(pNode->getParent()->getGlobalId()) :
+				"null");
+			*getOutputStream() << COMMA;
+			writeStringProperty("ObjectType", "#todo");
+			*getOutputStream() << COMMA;
+			writeStringProperty("tag", "#todo");
+			*getOutputStream() << COMMA;
+			// propertySetIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertySetIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pNode->getSdaiInstance());
+				if (pPropertySetCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pPropertySet : pPropertySetCollection->propertySets()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+						char* szGlobalId = nullptr;
+						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						assert(szGlobalId != nullptr);
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertySetIds
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+		} // if (pNode->getGlobalId() != wstring(DECOMPOSITION_NODE) && ...
+
+		for (auto pChildNode : pNode->children()) {
+			writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+		}
 	}
 };
