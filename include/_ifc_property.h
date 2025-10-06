@@ -40,6 +40,35 @@ public: // Properties
 };
 
 // ************************************************************************************************
+struct _ifc_property_comparator
+{
+	bool operator()(const _ifc_property* lhs, const _ifc_property* rhs) const
+	{
+		int entityNameCmp = lhs->getEntityName().compare(rhs->getEntityName());
+		if (entityNameCmp != 0) {
+			return entityNameCmp < 0;
+		}
+
+		int nameCmp = lhs->getName().compare(rhs->getName());
+		if (nameCmp != 0) {
+			return nameCmp < 0;
+		}
+
+		int valueCmp = lhs->getValue().compare(rhs->getValue());
+		if (valueCmp != 0) {
+			return valueCmp < 0;
+		}
+
+		int ifcValueTypeCmp = lhs->getIfcValueType().compare(rhs->getIfcValueType());
+		if (ifcValueTypeCmp != 0) {
+			return ifcValueTypeCmp < 0;
+		}
+
+		return lhs->getValueType().compare(rhs->getValueType()) < 0;
+	}
+};
+
+// ************************************************************************************************
 class _ifc_property_set
 {
 
@@ -55,7 +84,7 @@ public: // Methods
 	virtual ~_ifc_property_set();
 
 public: // Properties
-	
+
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getName() const { return m_strName; }
 	vector<_ifc_property*>& properties() { return m_vecProperties; }

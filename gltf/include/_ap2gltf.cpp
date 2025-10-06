@@ -2101,10 +2101,8 @@ namespace _ap2gltf
 		//
 
 		int iPropertySetIndex = 0;
-		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
-
-		int iPropertyIndex = 0;
-		map<SdaiInstance, pair<_ifc_property*, int>> mapProperties;
+		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;		
+		map<_ifc_property*, int, _ifc_property_comparator> mapProperties;
 
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pGeometry = m_vecNodes[iNodeIndex]->getGeometry();
@@ -2129,9 +2127,9 @@ namespace _ap2gltf
 
 				// Properties
 				for (auto pProperty : pPropertySet->properties()) {
-					auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
+					auto itProperty = mapProperties.find(pProperty);
 					if (itProperty == mapProperties.end()) {
-						mapProperties[pProperty->getSdaiInstance()] = { pProperty, iPropertyIndex++ };
+						mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
 						TRACE("Property set: %s, property: %s, value: %s\n",
 							(const char*)CW2A(pPropertySet->getName().c_str()),
@@ -2140,12 +2138,18 @@ namespace _ap2gltf
 #endif
 					}
 					else {
-						assert(itProperty->second.first->getName() == pProperty->getName());
-						assert(itProperty->second.first->getValue() == pProperty->getValue());
+						assert(itProperty->first->getName() == pProperty->getName());
+						assert(itProperty->first->getValue() == pProperty->getValue());
 					}
 				}
 			} // for (auto pPropertySet : ...
 		} // for (size_t iNodeIndex = ...
+
+		// Index properties
+		int iPropertyIndex = 0;
+		for (auto& itProperty : mapProperties) {
+			itProperty.second = iPropertyIndex++;	
+		}
 
 		//
 		// Write metadata
@@ -2174,15 +2178,15 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
+				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.second.first->getEntityName().c_str()));
+				writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.second.first->getIfcValueType().c_str()));
+				writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.first->getIfcValueType().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
+				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(itProperty.second.first->getValueType().c_str()));
+				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();
@@ -2249,12 +2253,12 @@ namespace _ap2gltf
 							*getOutputStream() << COMMA;
 						}
 
-						auto itProperty = mapProperties.find(pProperty->getSdaiInstance());
+						auto itProperty = mapProperties.find(pProperty);
 						assert(itProperty != mapProperties.end());
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
-						*getOutputStream() << itProperty->second.second;
+						*getOutputStream() << itProperty->second;
 					}
 					indent()--;
 
