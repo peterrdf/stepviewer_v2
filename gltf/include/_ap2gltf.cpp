@@ -2166,66 +2166,11 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 				}
 
-				wstring strIfcValueType;
-				wstring strValueType;
+				char* szEntityName = nullptr;
+				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
 
-				wchar_t* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiUNICODE, (const char**)&szEntityName);
-
-				wstring strEntity = szEntityName;
-				std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
-				if (strEntity == L"IFCPROPERTYSINGLEVALUE") {
-					SdaiAttr sdaiNominalValueAttr = sdaiGetAttrDefinition(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), "NominalValue");
-					assert(sdaiNominalValueAttr != nullptr);
-
-					SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(sdaiNominalValueAttr);
-					if ((sdaiPrimitiveType & engiTypeFlagAggr) ||
-						(sdaiPrimitiveType & engiTypeFlagAggrOption)) {
-						sdaiPrimitiveType = sdaiAGGR;
-					}
-
-					SdaiADB pADB = nullptr;
-					if (sdaiGetAttr(
-						itProperty.second.first->getSdaiInstance(),
-						sdaiNominalValueAttr,
-						sdaiPrimitiveType,
-						&pADB)) {
-						strIfcValueType = (const wchar_t*)sdaiGetADBTypePath(pADB, sdaiUNICODE);
-
-						SdaiPrimitiveType adbType = sdaiGetADBType(pADB);
-						if ((adbType == sdaiINTEGER) ||
-							(adbType == sdaiREAL) ||
-							(adbType == sdaiNUMBER)) {
-							strValueType = L"number";
-						}
-						else {
-							if (adbType == sdaiSTRING) {
-								strValueType = L"string";
-							}
-							else if (adbType == sdaiBOOLEAN) {
-								strValueType = L"boolean";
-							}
-							else if (adbType == sdaiENUM) {
-								strValueType = L"enum";
-							}
-							else {
-								strValueType = L"object"; // complex type
-							}
-						}
-					}
-					else {
-						assert(false); // Failed to get NominalValue attribute
-					}
-				} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
-				else {
-					assert(sdaiIsKindOfBN(itProperty.second.first->getSdaiInstance(), "IfcPhysicalQuantity"));
-
-					strIfcValueType = szEntityName;
-					strValueType = L"number";
-				}
-				
-				assert(!strIfcValueType.empty());
-				assert(!strValueType.empty());
+				auto prValueTypes = itProperty.second.first->getValueTypes();				
+				assert(!prValueTypes.first.empty() && !prValueTypes.second.empty());
 
 				indent()++;
 				writeStartObjectTag();
@@ -2233,13 +2178,13 @@ namespace _ap2gltf
 				indent()++;
 				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcPropertyType", (const char*)CW2A(szEntityName));
+				writeStringProperty("ifcPropertyType", szEntityName);
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", (const char*)CW2A(strIfcValueType.c_str()));
+				writeStringProperty("ifcValueType", (const char*)CW2A(prValueTypes.first.c_str()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(strValueType.c_str()));
+				writeStringProperty("valueType", (const char*)CW2A(prValueTypes.second.c_str()));
 				indent()--;
 
 				writeEndObjectTag();

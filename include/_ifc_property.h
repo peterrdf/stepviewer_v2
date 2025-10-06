@@ -30,6 +30,7 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getName() const { return m_strName; }
 	wstring getValue() const { return m_strValue; }
+	pair<wstring, wstring> getValueTypes() const;
 };
 
 // ************************************************************************************************
