@@ -2328,7 +2328,7 @@ namespace _ap2gltf
 					indent()++;
 					writeStartObjectTag();
 					indent()++;
-					writeStringProperty("name", "#todo");
+					writeStringProperty("name", (const char*)CW2A(prUnit.second->getName().c_str()));
 					*getOutputStream() << COMMA;
 					writeStringProperty("className", (const char*)CW2A(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
 					*getOutputStream() << COMMA;
