@@ -2402,7 +2402,25 @@ namespace _ap2gltf
 		// Skip IfcRelDecomposes and IfcRelContainedInSpatialStructure nodes
 		if (pNode->getGlobalId() != wstring(DECOMPOSITION_NODE) &&
 			pNode->getGlobalId() != wstring(CONTAINS_NODE)) {
+
+			wstring strParentGlobalId;
+			if (pNode->getParent() != nullptr) {
+				if (pNode->getParent()->getGlobalId() == wstring(DECOMPOSITION_NODE) ||
+					pNode->getParent()->getGlobalId() == wstring(CONTAINS_NODE)) {
+					assert(pNode->getParent()->getParent() != nullptr);
+					assert(pNode->getParent()->getParent() != nullptr);
+					strParentGlobalId = pNode->getParent()->getParent()->getGlobalId();
+				}
+				else {
+					strParentGlobalId = pNode->getParent()->getGlobalId();
+				}
+			}
+			else {
+				strParentGlobalId = L"null";
+			}
+
 			
+
 			*getOutputStream() << COMMA;
 
 			indent()++;
@@ -2415,10 +2433,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent",
-				pNode->getParent() != nullptr ?
-				(const char*)CW2A(pNode->getParent()->getGlobalId()) :
-				"null");
+			writeStringProperty("parent", (const char*)CW2A(strParentGlobalId.c_str()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("ObjectType", "#todo");
 			*getOutputStream() << COMMA;
