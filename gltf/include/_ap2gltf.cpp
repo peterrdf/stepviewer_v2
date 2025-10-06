@@ -231,22 +231,16 @@ namespace _ap2gltf
 					writeMetadata();					
 				}
 
-				// Properties
+				// properties & propertySets
 				{
 					*getOutputStream() << COMMA;
 					writeMetadataProperties();
 				}
 
-				// units
+				// units & projectUnits
 				{
 					*getOutputStream() << COMMA;
 					writeMetadataUnits();
-				}
-
-				// projectUnits
-				{
-					//*getOutputStream() << COMMA;
-					//writeMetadataProjectUnits(); //#todo
 				}
 
 				// groups
@@ -2303,13 +2297,13 @@ namespace _ap2gltf
 		auto pUnitProvider = ifcModel->getUnitProvider();
 		if (pUnitProvider == nullptr) {
 			return;
-		}
-
-		*getOutputStream() << getNewLine();
-		writeIndent();
+		}		
 
 		// units
 		{
+			*getOutputStream() << getNewLine();
+			writeIndent();
+
 			*getOutputStream() << DOULE_QUOT_MARK;
 			*getOutputStream() << "units";
 			*getOutputStream() << DOULE_QUOT_MARK;
@@ -2343,6 +2337,38 @@ namespace _ap2gltf
 			writeEndArrayTag();
 		}
 		// units
+
+		// projectUnits
+		{
+			*getOutputStream() << COMMA;
+			*getOutputStream() << getNewLine();
+			writeIndent();
+
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "projectUnits";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartObjectTag(false);
+
+			int iUnitIndex = 0;
+			for (auto prUnit : pUnitProvider->getUnits()) {
+				// unit
+				{
+					if (iUnitIndex > 0) {
+						*getOutputStream() << COMMA;
+					}
+					indent()++;
+					writeIntProperty((const char*)CW2A(prUnit.second->getType().c_str()), iUnitIndex++);
+					indent()--;
+				}
+				// unit
+			} // for (auto pUnit : ...
+
+			writeEndObjectTag();
+		}
+		// projectUnits
 	}
 
 	void _exporter::writeMetadataObjects()
