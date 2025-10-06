@@ -2166,25 +2166,19 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 				}
 
-				char* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(itProperty.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
-
-				auto prValueTypes = itProperty.second.first->getValueTypes();				
-				assert(!prValueTypes.first.empty() && !prValueTypes.second.empty());
-
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeStringProperty("name", (const char*)CW2A(itProperty.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcPropertyType", szEntityName);
+				writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.second.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", (const char*)CW2A(prValueTypes.first.c_str()));
+				writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.second.first->getIfcValueType().c_str()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("value", (const char*)CW2A(itProperty.second.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(prValueTypes.second.c_str()));
+				writeStringProperty("valueType", (const char*)CW2A(itProperty.second.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();

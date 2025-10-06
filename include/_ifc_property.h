@@ -14,8 +14,11 @@ class _ifc_property
 private: // Members	
 
 	SdaiInstance m_sdaiInstance;
+	wstring m_strEntityName;
 	wstring m_strName;
 	wstring m_strValue;
+	wstring m_strIfcValueType;
+	wstring m_strValueType;
 
 public: // Methods
 
@@ -24,13 +27,16 @@ public: // Methods
 
 	static bool hasProperties(SdaiModel sdaiModel, SdaiInstance sdaiInstance);
 	static wstring getPropertySingleValue(SdaiInstance sdaiPropertySingleValueInstance);
+	static pair<wstring, wstring> getValueTypes(SdaiInstance sdaiInstance);
 
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	wstring getEntityName() const { return m_strEntityName; }
 	wstring getName() const { return m_strName; }
 	wstring getValue() const { return m_strValue; }
-	pair<wstring, wstring> getValueTypes() const;
+	wstring getIfcValueType() const { return m_strIfcValueType; }
+	wstring getValueType() const { return m_strValueType; }
 };
 
 // ************************************************************************************************

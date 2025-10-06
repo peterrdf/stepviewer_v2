@@ -1,6 +1,7 @@
 #include "_host.h"
-#include "_ifc_property.h"
 #include "_ifc_unit.h"
+#include "_ifc_property.h"
+#include "_ap_geometry.h"
 
 #include <algorithm>
 using namespace std;
@@ -8,11 +9,20 @@ using namespace std;
 // ************************************************************************************************
 _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue)
 	: m_sdaiInstance(sdaiInstance)
+	, m_strEntityName(_ap_geometry::getEntityName(sdaiInstance))
 	, m_strName(strName)
 	, m_strValue(strValue)
+	, m_strIfcValueType(L"")
+	, m_strValueType(L"")
 {
 	assert(!m_strName.empty());
 	assert(m_sdaiInstance != 0);
+
+	auto prValueTypes = getValueTypes(m_sdaiInstance);
+	assert(!prValueTypes.first.empty() && !prValueTypes.second.empty());
+
+	m_strIfcValueType = prValueTypes.first;
+	m_strValueType = prValueTypes.second;
 }
 
 /*virtual*/ _ifc_property::~_ifc_property()
@@ -54,18 +64,18 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 	return szNominalValueADB != nullptr ? szNominalValueADB : L"";
 }
 
-pair<wstring, wstring> _ifc_property::getValueTypes() const
+/*static*/ pair<wstring, wstring> _ifc_property::getValueTypes(SdaiInstance sdaiInstance)
 {
 	wstring strIfcValueType;
 	wstring strValueType;
 
 	wchar_t* szEntityName = nullptr;
-	engiGetEntityName(sdaiGetInstanceType(m_sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
+	engiGetEntityName(sdaiGetInstanceType(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
 
 	wstring strEntity = szEntityName;
 	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 	if (strEntity == L"IFCPROPERTYSINGLEVALUE") {
-		SdaiAttr sdaiNominalValueAttr = sdaiGetAttrDefinition(sdaiGetInstanceType(m_sdaiInstance), "NominalValue");
+		SdaiAttr sdaiNominalValueAttr = sdaiGetAttrDefinition(sdaiGetInstanceType(sdaiInstance), "NominalValue");
 		assert(sdaiNominalValueAttr != nullptr);
 
 		SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(sdaiNominalValueAttr);
@@ -76,7 +86,7 @@ pair<wstring, wstring> _ifc_property::getValueTypes() const
 
 		SdaiADB pADB = nullptr;
 		if (sdaiGetAttr(
-			m_sdaiInstance,
+			sdaiInstance,
 			sdaiNominalValueAttr,
 			sdaiPrimitiveType,
 			&pADB)) {
@@ -108,7 +118,7 @@ pair<wstring, wstring> _ifc_property::getValueTypes() const
 		}
 	} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
 	else {
-		assert(sdaiIsKindOfBN(m_sdaiInstance, "IfcPhysicalQuantity"));
+		assert(sdaiIsKindOfBN(sdaiInstance, "IfcPhysicalQuantity"));
 
 		strIfcValueType = szEntityName;
 		strValueType = L"number";
