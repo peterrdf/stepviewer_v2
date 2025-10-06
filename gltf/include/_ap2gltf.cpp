@@ -2298,6 +2298,11 @@ namespace _ap2gltf
 	{
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
 		if (ifcModel) {
+			auto pPropertyProvider = ifcModel->getPropertyProvider();
+			if (pPropertyProvider == nullptr) {
+				return;
+			}
+
 			_ifc_model_structure modelStructure(ifcModel);
 			modelStructure.build();
 #ifdef _DEBUG
@@ -2353,6 +2358,25 @@ namespace _ap2gltf
 					*getOutputStream() << SPACE;
 
 					writeStartArrayTag(false);
+
+					auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pProjectNode->getSdaiInstance());
+					if (pPropertySetCollection != nullptr) {
+						int iIndex = 0;
+						for (auto pPropertySet : pPropertySetCollection->propertySets()) {
+							if (iIndex++ > 0) {
+								*getOutputStream() << COMMA;
+							}
+							char* szGlobalId = nullptr;
+							sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+							assert(szGlobalId != nullptr);
+
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+							*getOutputStream() << DOULE_QUOT_MARK;
+						}
+					}
 
 					writeEndArrayTag();
 				}
