@@ -239,8 +239,8 @@ namespace _ap2gltf
 
 				// units
 				{
-					//*getOutputStream() << COMMA;
-					//writeMetadataUnits(); //#todo
+					*getOutputStream() << COMMA;
+					writeMetadataUnits();
 				}
 
 				// projectUnits
@@ -2291,6 +2291,58 @@ namespace _ap2gltf
 			writeEndArrayTag();
 		}
 		// propertySets		
+	}
+
+	void _exporter::writeMetadataUnits()
+	{
+		_ptr<_ifc_model> ifcModel(m_pModel, false);
+		if (!ifcModel) {
+			return;
+		}
+
+		auto pUnitProvider = ifcModel->getUnitProvider();
+		if (pUnitProvider == nullptr) {
+			return;
+		}
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		// units
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "units";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			int iUnitIndex = 0;
+			for (auto prUnit : pUnitProvider->getUnits()) {
+				// unit
+				{
+					if (iUnitIndex++ > 0) {
+						*getOutputStream() << COMMA;
+					}
+					indent()++;
+					writeStartObjectTag();
+					indent()++;
+					writeStringProperty("name", "#todo");
+					*getOutputStream() << COMMA;
+					writeStringProperty("className", (const char*)CW2A(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
+					*getOutputStream() << COMMA;
+					writeStringProperty("unitEnum", (const char*)CW2A(prUnit.second->getType().c_str()));
+					indent()--;
+					writeEndObjectTag();
+					indent()--;
+				}
+				// unit
+			} // for (auto pUnit : ...
+
+			writeEndArrayTag();
+		}
+		// units
 	}
 
 	void _exporter::writeMetadataObjects()

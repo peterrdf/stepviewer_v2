@@ -137,6 +137,7 @@ namespace _ap2gltf
 		// XKT metadata
 		void writeMetadata();
 		void writeMetadataProperties();
+		void writeMetadataUnits();
 		void writeMetadataObjects();
 		void writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider);
 
