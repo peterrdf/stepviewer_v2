@@ -7,6 +7,9 @@
 using namespace std;
 
 // ************************************************************************************************
+typedef _vector_sequential_iterator<_instance> _instance_iterator;
+
+// ************************************************************************************************
 class _ap242_node
 {
 
@@ -25,7 +28,6 @@ public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	_ap242_node* getParent() const { return m_pParent; }
-	virtual wchar_t* getGlobalId() const;
 	vector<_ap242_node*>& children() { return m_vecChildren; }
 };
 
@@ -37,6 +39,9 @@ private: // Members
 
 	_ap242_model* m_pModel;
 	vector<_ap242_node*> m_vecRootProducts;
+
+	// Cache	
+	map<_ap242_product_definition*, _instance_iterator*> m_mapInstanceIterators;
 
 public: // Methods
 
@@ -51,6 +56,7 @@ public: // Methods
 
 protected: // Methods
 
+	void loadProductNode(_ap242_node* pParentNode, _ap242_product_definition* pProduct);
 	void clean();
 
 public: // Properties

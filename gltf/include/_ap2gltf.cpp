@@ -2525,16 +2525,16 @@ namespace _ap2gltf
 						*getOutputStream() << COMMA;
 					}
 
-					_ptr<_ap242_product_definition> productDefinion(ap242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
-					assert(productDefinion);
+					_ptr<_ap242_product_definition> product(ap242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
+					assert(product);
 					
 					indent()++;
 					writeStartObjectTag();
 
 					indent()++;
-					writeStringProperty("id", (const char*)CW2A(productDefinion->getId()));
+					writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
 					*getOutputStream() << COMMA;
-					writeStringProperty("name", (const char*)CW2A(productDefinion->getProductName()));
+					writeStringProperty("name", (const char*)CW2A(product->getProductName()));
 					*getOutputStream() << COMMA;
 					writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 					*getOutputStream() << COMMA;
@@ -2543,13 +2543,11 @@ namespace _ap2gltf
 
 					writeEndObjectTag();
 					indent()--;
-				} // for (size_t iRootProductIndex = ...
 
-				
-				//#todo
-				/*for (auto pChildNode : pProjectNode->children()) {
-					writeMetadataObjectChildren(pChildNode, pPropertyProvider);
-				}*/
+					for (auto pChildNode : pRootProduct->children()) {
+						writeMetadataObjectChildren(pChildNode);
+					}
+				} // for (size_t iRootProductIndex = ...				
 
 				writeEndArrayTag();
 			}
@@ -2665,5 +2663,82 @@ namespace _ap2gltf
 		for (auto pChildNode : pNode->children()) {
 			writeMetadataObjectChildren(pChildNode, pPropertyProvider);
 		}
+	}
+
+	void _exporter::writeMetadataObjectChildren(_ap242_node* pNode)
+	{
+		assert(pNode != nullptr);
+
+		_ptr<_ap242_model> ap242Model(m_pModel, false);
+		assert(ap242Model != nullptr);
+		if (!ap242Model) {
+			return;
+		}
+
+		string strParentId;
+		if (pNode->getParent() != nullptr) {
+			_ptr<_ap242_product_definition> parentProductD(ap242Model->getGeometryByInstance(pNode->getParent()->getSdaiInstance()));
+			assert(parentProductD);
+			strParentId = _string::format("#%lld", parentProductD->getExpressID());
+		}
+		else {
+			strParentId = "null";
+		}
+
+		_ptr<_ap242_product_definition> product(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (product) {
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", strParentId);
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildren(pChildNode);
+			}
+		} // if (product)
+		else {
+			auto& mapExpressID2Assembly = ap242Model->getExpressID2Assembly();
+
+			auto& itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
+			if (itAssembly != mapExpressID2Assembly.end()) {
+				*getOutputStream() << COMMA;
+
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeStringProperty("id", _string::format("#%lld", itAssembly->second->getExpressID()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+				*getOutputStream() << COMMA;
+				writeStringProperty("parent", strParentId);
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				for (auto pChildNode : pNode->children()) {
+					writeMetadataObjectChildren(pChildNode);
+				}
+			} // if (itAssembly != mapExpressID2Assembly.end())
+			else {
+				assert(false); // Unknown type!
+			}
+		} // else if (product)
 	}
 };

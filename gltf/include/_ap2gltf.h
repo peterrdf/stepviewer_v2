@@ -141,6 +141,7 @@ namespace _ap2gltf
 		void writeMetadataUnits();
 		void writeMetadataObjects();
 		void writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider);
+		void writeMetadataObjectChildren(_ap242_node* pNode);
 
 	public: // Properties
 
