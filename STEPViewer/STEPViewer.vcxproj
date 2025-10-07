@@ -610,7 +610,6 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\gltf\include\_dateTime.h" />
     <ClInclude Include="..\gltf\include\_ap2glb.h" />
     <ClInclude Include="..\gltf\include\_ap2gltf.h" />
     <ClInclude Include="..\gltf\include\_node.h" />
@@ -618,6 +617,7 @@
     <ClInclude Include="..\include\stb\stb_image.h" />
     <ClInclude Include="..\include\_ap_model_factory.h" />
     <ClInclude Include="..\include\_attribute.h" />
+    <ClInclude Include="..\include\_dateTime.h" />
     <ClInclude Include="..\include\_host.h" />
     <ClInclude Include="..\include\_ifc_model_structure.h" />
     <ClInclude Include="..\include\_rdf_class.h" />
