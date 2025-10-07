@@ -3,6 +3,7 @@
 #include "_ifc_property.h"
 #include "_ap_geometry.h"
 
+#include <cwctype>
 #include <algorithm>
 using namespace std;
 
