@@ -348,11 +348,11 @@
     <ClInclude Include="..\zip\zutil.h">
       <Filter>zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_model_structure.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_dateTime.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_model_structure.h">
+      <Filter>IFC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -579,7 +579,7 @@
       <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_ifc_model_structure.cpp">
-      <Filter>include</Filter>
+      <Filter>IFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
