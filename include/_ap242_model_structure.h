@@ -1,6 +1,5 @@
 #pragma once
 
-#include "_ap242_instance.h"
 #include "_ap242_model.h"
 
 #include <string>
@@ -37,7 +36,7 @@ class _ap242_model_structure
 private: // Members
 
 	_ap242_model* m_pModel;
-	_ap242_node* m_pProjectNode;
+	vector<_ap242_node*> m_vecRootsProducts;
 
 public: // Methods
 
@@ -47,11 +46,16 @@ public: // Methods
 	void build();
 
 #ifdef _DEBUG
-	void print(int iLevel = 0, _ifc_node* pNode = nullptr);
+	void print(int iLevel = 0, _ap242_node* pNode = nullptr);
 #endif
 
 protected: // Methods
 
 	void clean();
+
+public: // Properties
+
+	_ap242_model* getModel() const { return m_pModel; }
+	const vector<_ap242_node*>& getRootsProducts() { return m_vecRootsProducts; }
 };
 

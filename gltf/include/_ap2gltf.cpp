@@ -6,6 +6,7 @@
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_ap242_product_definition.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -168,6 +169,12 @@ namespace _ap2gltf
 		if (!pGeometry->hasGeometry()) {
 			return true;
 		}
+
+		if (_ptr<_ap_model>(m_pModel)->getAP() == enumAP::STEP) {
+			return false;
+		}
+
+		assert(_ptr<_ap_model>(m_pModel)->getAP() == enumAP::IFC);
 
 		wstring strEntity = _ptr<_ap_geometry>(pGeometry)->getEntityName();
 		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
@@ -2418,13 +2425,16 @@ namespace _ap2gltf
 
 				auto pProjectNode = modelStructure.getProjectNode();
 
+				char* szName = nullptr;
+				sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(_ap_geometry::getName(pProjectNode->getSdaiInstance()).c_str()));
+				writeStringProperty("name", szName != nullptr ? szName : "$");
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 				*getOutputStream() << COMMA;
@@ -2497,6 +2507,53 @@ namespace _ap2gltf
 
 			*getOutputStream() << COMMA;
 
+			// metaObjects
+			{
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "metaObjects";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+
+				auto& vecRootProducts = modelStructure.getRootsProducts();
+
+				for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
+					auto pRootProduct = vecRootProducts[iRootProductIndex];
+					if (iRootProductIndex > 0) {
+						*getOutputStream() << COMMA;
+					}
+
+					_ptr<_ap242_product_definition> productDefinion(ap242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
+					assert(productDefinion);
+					
+					indent()++;
+					writeStartObjectTag();
+
+					indent()++;
+					writeStringProperty("id", (const char*)CW2A(productDefinion->getId()));
+					*getOutputStream() << COMMA;
+					writeStringProperty("name", (const char*)CW2A(productDefinion->getProductName()));
+					*getOutputStream() << COMMA;
+					writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
+					*getOutputStream() << COMMA;
+					writeStringProperty("parent", "null");
+					indent()--;
+
+					writeEndObjectTag();
+					indent()--;
+				} // for (size_t iRootProductIndex = ...
+
+				
+				//#todo
+				/*for (auto pChildNode : pProjectNode->children()) {
+					writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+				}*/
+
+				writeEndArrayTag();
+			}
+
 			return;
 		} // if (ap242Model)
 
@@ -2532,8 +2589,8 @@ namespace _ap2gltf
 			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
 
 			string strName = szName != nullptr ? szName : "";
-			string strObjectType;
-			string strTag;
+			string strObjectType = "$";
+			string strTag = "$";
 			if (!strName.empty()) {
 				vector<string> vecTokens;
 				_string::split(strName, CHR2STR(COLON), vecTokens);
