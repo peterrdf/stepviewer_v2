@@ -233,13 +233,11 @@ namespace _ap2gltf
 
 				// properties & propertySets
 				{
-					*getOutputStream() << COMMA;
 					writeMetadataProperties();
 				}
 
 				// units & projectUnits
 				{
-					*getOutputStream() << COMMA;
 					writeMetadataUnits();
 				}
 
@@ -251,7 +249,6 @@ namespace _ap2gltf
 
 				// metaObjects
 				{
-					*getOutputStream() << COMMA;
 					writeMetadataObjects();
 				}
 			}
@@ -2077,20 +2074,21 @@ namespace _ap2gltf
 		char* szFileSchema = 0;
 		GetSPFFHeaderItem(apModel->getSdaiModel(), 9, 0, sdaiSTRING, (char**)&szFileSchema);
 
-		char* szProjectGlobalId = nullptr;
-		SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(apModel->getSdaiModel(), "IFCPROJECT");
-		SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
-		if (iMembersCount > 0) {
-			SdaiInstance sdaiProjectInstance = 0;
-			engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
-			sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiSTRING, &szProjectGlobalId);
-			assert(szProjectGlobalId != nullptr);
-		}
-
 		writeStringProperty("id", "0001"); //#todo
 		*getOutputStream() << COMMA;
-		writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
-		*getOutputStream() << COMMA;
+		if (apModel->getAP() == enumAP::IFC) {
+			char* szProjectGlobalId = nullptr;
+			SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(apModel->getSdaiModel(), "IFCPROJECT");
+			SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
+			if (iMembersCount > 0) {
+				SdaiInstance sdaiProjectInstance = 0;
+				engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiSTRING, &szProjectGlobalId);
+				assert(szProjectGlobalId != nullptr);
+			}
+			writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
+			*getOutputStream() << COMMA;
+		}
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		*getOutputStream() << COMMA;
 		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "$");
@@ -2113,6 +2111,8 @@ namespace _ap2gltf
 		if (pPropertyProvider == nullptr) {
 			return;
 		}
+
+		*getOutputStream() << COMMA;
 
 		//
 		// Collect property sets & properties
@@ -2305,6 +2305,8 @@ namespace _ap2gltf
 			return;
 		}
 
+		*getOutputStream() << COMMA;
+
 		// units
 		{
 			*getOutputStream() << getNewLine();
@@ -2379,6 +2381,10 @@ namespace _ap2gltf
 
 	void _exporter::writeMetadataObjects()
 	{
+		//
+		// IFC
+		//
+
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
 		if (ifcModel) {
 			auto pPropertyProvider = ifcModel->getPropertyProvider();
@@ -2395,7 +2401,9 @@ namespace _ap2gltf
 			// Write metadata
 			//
 
-			* getOutputStream() << getNewLine();
+			* getOutputStream() << COMMA;
+
+			*getOutputStream() << getNewLine();
 			writeIndent();
 
 			// metaObjects
@@ -2468,7 +2476,31 @@ namespace _ap2gltf
 
 				writeEndArrayTag();
 			}
-		} // if (ifcModel
+
+			return;
+		} // if (ifcModel)
+
+		//
+		// STEP
+		//
+
+		_ptr<_ap242_model> ap242Model(m_pModel, false);
+		if (ap242Model) {
+			_ap242_model_structure modelStructure(ap242Model);
+			modelStructure.build();
+#ifdef _DEBUG
+			modelStructure.print();
+#endif
+			//
+			// Write metadata
+			//
+
+			*getOutputStream() << COMMA;
+
+			return;
+		} // if (ap242Model)
+
+		assert(false); // Unknown model!
 	}
 
 	void _exporter::writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)

@@ -354,6 +354,9 @@
     <ClInclude Include="..\include\_ifc_model_structure.h">
       <Filter>IFC</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ap242_model_structure.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -580,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_ifc_model_structure.cpp">
       <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_model_structure.cpp">
+      <Filter>AP242</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@
 #include "_node.h"
 
 #include "_ifc_model_structure.h"
+#include "_ap242_model_structure.h"
 
 #include <set>
 #include <map>
