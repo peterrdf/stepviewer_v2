@@ -172,7 +172,7 @@ namespace _ap2gltf
 		wstring strEntity = _ptr<_ap_geometry>(pGeometry)->getEntityName();
 		std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
-		return 
+		return
 			(strEntity == L"IFCRELSPACEBOUNDARY") ||
 			(strEntity == L"IFCOPENINGELEMENT") ||
 			(strEntity == L"IFCALIGNMENTVERTICAL") ||
@@ -228,7 +228,7 @@ namespace _ap2gltf
 			{
 				// Global metadata
 				{
-					writeMetadata();					
+					writeMetadata();
 				}
 
 				// properties & propertySets
@@ -2113,7 +2113,7 @@ namespace _ap2gltf
 		//
 
 		int iPropertySetIndex = 0;
-		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;		
+		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
 		map<_ifc_property*, int, _ifc_property_comparator> mapProperties;
 
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
@@ -2160,7 +2160,7 @@ namespace _ap2gltf
 		// Index properties
 		int iPropertyIndex = 0;
 		for (auto& itProperty : mapProperties) {
-			itProperty.second = iPropertyIndex++;	
+			itProperty.second = iPropertyIndex++;
 		}
 
 		//
@@ -2297,7 +2297,7 @@ namespace _ap2gltf
 		auto pUnitProvider = ifcModel->getUnitProvider();
 		if (pUnitProvider == nullptr) {
 			return;
-		}		
+		}
 
 		// units
 		{
@@ -2389,7 +2389,7 @@ namespace _ap2gltf
 			// Write metadata
 			//
 
-			*getOutputStream() << getNewLine();
+			* getOutputStream() << getNewLine();
 			writeIndent();
 
 			// metaObjects
@@ -2415,10 +2415,6 @@ namespace _ap2gltf
 				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 				*getOutputStream() << COMMA;
 				writeStringProperty("parent", "null");
-				*getOutputStream() << COMMA;
-				writeStringProperty("ObjectType", "#todo");
-				*getOutputStream() << COMMA;
-				writeStringProperty("tag", "#todo");
 				*getOutputStream() << COMMA;
 				// propertySetIds
 				{
@@ -2494,7 +2490,21 @@ namespace _ap2gltf
 				strParentGlobalId = L"null";
 			}
 
-			
+			char* szName = nullptr;
+			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+
+			string strName = szName != nullptr ? szName : "";
+			string strObjectType;
+			string strTag;
+			if (!strName.empty()) {
+				vector<string> vecTokens;
+				_string::split(strName, CHR2STR(COLON), vecTokens);
+
+				if (vecTokens.size() >= 3) {
+					strObjectType = vecTokens[vecTokens.size() - 2];
+					strTag = vecTokens[vecTokens.size() - 1];
+				}
+			}
 
 			*getOutputStream() << COMMA;
 
@@ -2504,15 +2514,15 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", (const char*)CW2A(pNode->getGlobalId()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", (const char*)CW2A(_ap_geometry::getName(pNode->getSdaiInstance()).c_str()));
+			writeStringProperty("name", strName);
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", (const char*)CW2A(strParentGlobalId.c_str()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("ObjectType", "#todo");
+			writeStringProperty("ObjectType", strObjectType);
 			*getOutputStream() << COMMA;
-			writeStringProperty("tag", "#todo");
+			writeStringProperty("tag", strTag);
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
