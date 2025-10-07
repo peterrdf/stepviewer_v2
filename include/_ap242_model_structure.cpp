@@ -31,7 +31,7 @@ wchar_t* _ap242_node::getGlobalId() const
 // ************************************************************************************************
 _ap242_model_structure::_ap242_model_structure(_ap242_model* pModel)
 	: m_pModel(pModel)
-	, m_vecRootsProducts()
+	, m_vecRootProducts()
 
 {
 	assert(m_pModel != nullptr);
@@ -78,7 +78,7 @@ void _ap242_model_structure::build()
 	for (auto pGeometry : pModel->getGeometries()) {
 		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);
 		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {
-			m_vecRootsProducts.push_back(new _ap242_node(pProduct->getSdaiInstance(), __nullptr));
+			m_vecRootProducts.push_back(new _ap242_node(pProduct->getSdaiInstance(), __nullptr));
 		}
 	}
 
@@ -91,8 +91,8 @@ void _ap242_model_structure::build()
 
 void _ap242_model_structure::clean()
 {
-	for (auto pRoot : m_vecRootsProducts) {
+	for (auto pRoot : m_vecRootProducts) {
 		delete pRoot;
 	}
-	m_vecRootsProducts.clear();
+	m_vecRootProducts.clear();
 }

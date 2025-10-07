@@ -2517,7 +2517,7 @@ namespace _ap2gltf
 
 				writeStartArrayTag(false);
 
-				auto& vecRootProducts = modelStructure.getRootsProducts();
+				auto& vecRootProducts = modelStructure.getRootProducts();
 
 				for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
 					auto pRootProduct = vecRootProducts[iRootProductIndex];

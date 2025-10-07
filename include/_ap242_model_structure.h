@@ -36,7 +36,7 @@ class _ap242_model_structure
 private: // Members
 
 	_ap242_model* m_pModel;
-	vector<_ap242_node*> m_vecRootsProducts;
+	vector<_ap242_node*> m_vecRootProducts;
 
 public: // Methods
 
@@ -56,6 +56,6 @@ protected: // Methods
 public: // Properties
 
 	_ap242_model* getModel() const { return m_pModel; }
-	const vector<_ap242_node*>& getRootsProducts() { return m_vecRootsProducts; }
+	const vector<_ap242_node*>& getRootProducts() { return m_vecRootProducts; }
 };
 
