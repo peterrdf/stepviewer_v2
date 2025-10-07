@@ -1565,12 +1565,18 @@ namespace _ap2gltf
 							indent()++;
 							writeStartObjectTag();
 
+							string strGlobalId;
 							char* szGlobalId = nullptr;
 							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
-							//assert(szGlobalId != nullptr); //#todo STEP file may contain entities with no GlobalId attribute assigned
+							if (szGlobalId != nullptr) {
+								strGlobalId = szGlobalId;
+							}
+							else {
+								strGlobalId = _string::format("#%lld", apGeometry->getExpressID());
+							}
 
 							indent()++;
-							writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
+							writeStringProperty("name", strGlobalId);
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
