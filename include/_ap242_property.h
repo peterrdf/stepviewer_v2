@@ -100,7 +100,4 @@ private: // Methods
 	_ap242_property_collection* loadPropertyCollection(SdaiInstance sdaiInstance);
 
 	void loadProperties(SdaiInstance sdaiInstance, _ap242_property_collection* pPropertyCollection);
-
-	//#todo
-	wstring getName(SdaiInstance sdaiInstance) const;
 };
