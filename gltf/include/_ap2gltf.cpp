@@ -2506,7 +2506,7 @@ namespace _ap2gltf
 			indent()--;
 
 			for (auto pChildNode : pProjectNode->children()) {
-				writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+				writeMetadataObjectChildrenIFC(pChildNode, pPropertyProvider);
 			}
 
 			writeEndArrayTag();
@@ -2514,72 +2514,7 @@ namespace _ap2gltf
 		// metaObjects
 	}
 
-	void _exporter::writeMetadataObjectsSTEP(_ap242_model* pAP242Model)
-	{
-		assert(pAP242Model != nullptr);
-
-
-		_ap242_model_structure modelStructure(pAP242Model);
-		modelStructure.build();
-#ifdef _DEBUG
-		modelStructure.print();
-#endif
-		//
-		// Write metadata
-		//
-
-		* getOutputStream() << COMMA;
-
-		*getOutputStream() << getNewLine();
-		writeIndent();
-
-		// metaObjects
-		{
-			*getOutputStream() << DOULE_QUOT_MARK;
-			*getOutputStream() << "metaObjects";
-			*getOutputStream() << DOULE_QUOT_MARK;
-			*getOutputStream() << COLON;
-			*getOutputStream() << SPACE;
-
-			writeStartArrayTag(false);
-
-			auto& vecRootProducts = modelStructure.getRootProducts();
-			for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
-				auto pRootProduct = vecRootProducts[iRootProductIndex];
-				if (iRootProductIndex > 0) {
-					*getOutputStream() << COMMA;
-				}
-
-				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
-				assert(product);
-
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(product->getProductName()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
-				*getOutputStream() << COMMA;
-				writeStringProperty("parent", "null");
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				for (auto pChildNode : pRootProduct->children()) {
-					writeMetadataObjectChildren(pChildNode);
-				}
-			} // for (size_t iRootProductIndex = ...				
-
-			writeEndArrayTag();
-		}
-		// metaObjects
-	}
-
-	void _exporter::writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)
+	void _exporter::writeMetadataObjectChildrenIFC(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)
 	{
 		assert(pNode != nullptr);
 		assert(pPropertyProvider != nullptr);
@@ -2682,13 +2617,79 @@ namespace _ap2gltf
 		} // if (pNode->getGlobalId() != wstring(DECOMPOSITION_NODE) && ...
 
 		for (auto pChildNode : pNode->children()) {
-			writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+			writeMetadataObjectChildrenIFC(pChildNode, pPropertyProvider);
 		}
 	}
 
-	void _exporter::writeMetadataObjectChildren(_ap242_node* pNode)
+	void _exporter::writeMetadataObjectsSTEP(_ap242_model* pAP242Model)
+	{
+		assert(pAP242Model != nullptr);
+
+
+		_ap242_model_structure modelStructure(pAP242Model);
+		modelStructure.build();
+#ifdef _DEBUG
+		modelStructure.print();
+#endif
+		//
+		// Write metadata
+		//
+
+		* getOutputStream() << COMMA;
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		// metaObjects
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "metaObjects";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			auto& vecRootProducts = modelStructure.getRootProducts();
+			for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
+				auto pRootProduct = vecRootProducts[iRootProductIndex];
+				if (iRootProductIndex > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
+				assert(product);
+
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
+				*getOutputStream() << COMMA;
+				writeStringProperty("parent", "null");
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				for (auto pChildNode : pRootProduct->children()) {
+					writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
+				}
+			} // for (size_t iRootProductIndex = ...				
+
+			writeEndArrayTag();
+		}
+		// metaObjects
+	}	
+
+	void _exporter::writeMetadataObjectChildrenSTEP(_ap242_node* pNode, _ap242_model* pAP242Model)
 	{
 		assert(pNode != nullptr);
+		assert(pAP242Model != nullptr);
 
 		_ptr<_ap242_model> ap242Model(m_pModel, false);
 		assert(ap242Model != nullptr);
@@ -2705,6 +2706,10 @@ namespace _ap2gltf
 		else {
 			strParentId = "null";
 		}
+
+		//
+		// Product
+		//
 
 		_ptr<_ap242_product_definition> product(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
 		if (product) {
@@ -2727,39 +2732,49 @@ namespace _ap2gltf
 			indent()--;
 
 			for (auto pChildNode : pNode->children()) {
-				writeMetadataObjectChildren(pChildNode);
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
 			}
+
+			return;
 		} // if (product)
-		else {
-			auto& mapExpressID2Assembly = ap242Model->getExpressID2Assembly();
 
-			auto& itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
-			if (itAssembly != mapExpressID2Assembly.end()) {
-				*getOutputStream() << COMMA;
+		//
+		// Assembly
+		//
+		
+		auto& mapExpressID2Assembly = ap242Model->getExpressID2Assembly();
 
-				indent()++;
-				writeStartObjectTag();
+		auto& itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
+		if (itAssembly != mapExpressID2Assembly.end()) {
+			*getOutputStream() << COMMA;
 
-				indent()++;
-				writeStringProperty("id", _string::format("#%lld", itAssembly->second->getExpressID()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
-				*getOutputStream() << COMMA;
-				writeStringProperty("parent", strParentId);
-				indent()--;
+			indent()++;
+			writeStartObjectTag();
 
-				writeEndObjectTag();
-				indent()--;
+			indent()++;
+			writeStringProperty("id", _string::format("#%lld", itAssembly->second->getExpressID()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", strParentId);
+			indent()--;
 
-				for (auto pChildNode : pNode->children()) {
-					writeMetadataObjectChildren(pChildNode);
-				}
-			} // if (itAssembly != mapExpressID2Assembly.end())
-			else {
-				assert(false); // Unknown type!
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
 			}
-		} // else if (product)
+
+			return;
+		} // if (itAssembly != mapExpressID2Assembly.end())
+
+		//
+		// Not supported
+		//
+		
+		assert(false);
 	}
 };
