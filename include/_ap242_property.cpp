@@ -2,95 +2,110 @@
 #include "_ap242_property.h"
 #include "_ap_geometry.h"
 
+#include "_string.h"
+
 #include <cwctype>
 #include <algorithm>
 using namespace std;
 
 // ************************************************************************************************
-_ap242_property::_ap242_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue)
+_ap242_property::_ap242_property(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strEntityName(_ap_geometry::getEntityName(sdaiInstance))
-	, m_strName(strName)
-	, m_strValue(strValue)
+	, m_strName(L"")
+	, m_strValue(L"")
+	, m_strValueType(L"")
 {
-	assert(!m_strName.empty());
 	assert(m_sdaiInstance != 0);
+
+	load();
 }
 
 /*virtual*/ _ap242_property::~_ap242_property()
 {}
 
-/*static*/ wstring _ap242_property::getPropertySingleValue(SdaiInstance sdaiPropertySingleValueInstance)
+void _ap242_property::load()
 {
-	assert(sdaiPropertySingleValueInstance != 0);
+	assert(m_sdaiInstance != 0);
 
-	wchar_t* szNominalValueADB = nullptr;
-	sdaiGetAttrBN(sdaiPropertySingleValueInstance, "NominalValue", sdaiUNICODE, &szNominalValueADB);
+	SdaiModel sdaiModel = sdaiGetInstanceModel(m_sdaiInstance);
+	assert(sdaiModel != 0);
 
-	return szNominalValueADB != nullptr ? szNominalValueADB : L"";
-}
+	wchar_t* szName = nullptr;
+	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &szName);
 
-/*static*/ pair<wstring, wstring> _ap242_property::getValueTypes(SdaiInstance sdaiInstance)
-{
-	wstring strIfcValueType;
-	wstring strValueType;
+	m_strName = szName != nullptr ? szName : L"$";
 
-	wchar_t* szEntityName = nullptr;
-	engiGetEntityName(sdaiGetInstanceType(sdaiInstance), sdaiUNICODE, (const char**)&szEntityName);
+	SdaiAggr sdaiPropertyDefinitionRepresentationAggr = sdaiGetEntityExtentBN(sdaiModel, "PROPERTY_DEFINITION_REPRESENTATION");
+	SdaiInteger	iPropertyDefinitionRepresentationsCount = sdaiGetMemberCount(sdaiPropertyDefinitionRepresentationAggr);
+	for (SdaiInteger j = 0; j < iPropertyDefinitionRepresentationsCount; j++) {
+		SdaiInstance sdaiPropertyDefinitionRepresentationInstance = 0;
+		sdaiGetAggrByIndex(sdaiPropertyDefinitionRepresentationAggr, j, sdaiINSTANCE, &sdaiPropertyDefinitionRepresentationInstance);
 
-	wstring strEntity = szEntityName;
-	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
-	if (strEntity == L"IFCPROPERTYSINGLEVALUE") {
-		SdaiAttr sdaiNominalValueAttr = sdaiGetAttrDefinition(sdaiGetInstanceType(sdaiInstance), "NominalValue");
-		assert(sdaiNominalValueAttr != nullptr);
+		SdaiInstance sdaiPDRDefinitionInstance = 0;
+		sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &sdaiPDRDefinitionInstance);
+		if (sdaiPDRDefinitionInstance == m_sdaiInstance) {
+			SdaiInstance sdaiUsedRepresentationInstance = 0;
+			sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiUsedRepresentationInstance);
 
-		SdaiPrimitiveType sdaiPrimitiveType = engiGetAttrType(sdaiNominalValueAttr);
-		if ((sdaiPrimitiveType & engiTypeFlagAggr) ||
-			(sdaiPrimitiveType & engiTypeFlagAggrOption)) {
-			sdaiPrimitiveType = sdaiAGGR;
-		}
+			SdaiAggr sdaiItemsAggr = nullptr;
+			sdaiGetAttrBN(sdaiUsedRepresentationInstance, "items", sdaiAGGR, &sdaiItemsAggr);
+			SdaiInteger	iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
+			for (SdaiInteger k = 0; k < iItemsCount; k++) {
+				SdaiInstance sdaiItemInstance = 0;
+				sdaiGetAggrByIndex(sdaiItemsAggr, k, sdaiINSTANCE, &sdaiItemInstance);
 
-		SdaiADB pADB = nullptr;
-		if (sdaiGetAttr(
-			sdaiInstance,
-			sdaiNominalValueAttr,
-			sdaiPrimitiveType,
-			&pADB)) {
-			strIfcValueType = (const wchar_t*)sdaiGetADBTypePath(pADB, sdaiUNICODE);
+				if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "DESCRIPTIVE_REPRESENTATION_ITEM")) {
+					wchar_t* szDescription = nullptr;
+					sdaiGetAttrBN(sdaiItemInstance, "description", sdaiUNICODE, &szDescription);
 
-			SdaiPrimitiveType adbType = sdaiGetADBType(pADB);
-			if ((adbType == sdaiINTEGER) ||
-				(adbType == sdaiREAL) ||
-				(adbType == sdaiNUMBER)) {
-				strValueType = L"number";
-			}
-			else {
-				if (adbType == sdaiSTRING) {
-					strValueType = L"string";
-				}
-				else if (adbType == sdaiBOOLEAN) {
-					strValueType = L"boolean";
-				}
-				else if (adbType == sdaiENUM) {
-					strValueType = L"enum";
-				}
-				else {
-					strValueType = L"object"; // complex type
-				}
-			}
-		}
-		else {
-			assert(false); // Failed to get NominalValue attribute
-		}
-	} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
-	else {
-		assert(sdaiIsKindOfBN(sdaiInstance, "IfcPhysicalQuantity"));
+					m_strValue = szDescription != nullptr ? szDescription : L"$";
+					m_strValueType = L"string";
+				} // DESCRIPTIVE_REPRESENTATION_ITEM
+				else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "VALUE_REPRESENTATION_ITEM")) {
+					SdaiADB sdaiValueComponentADB = nullptr;
+					sdaiGetAttrBN(sdaiItemInstance, "value_component", sdaiADB, &sdaiValueComponentADB);
 
-		strIfcValueType = szEntityName;
-		strValueType = L"number";
-	}
+					const char* szTypePath = sdaiGetADBTypePath(sdaiValueComponentADB, 0);
+					switch (sdaiGetADBType(sdaiValueComponentADB)) {
+						case sdaiINTEGER:
+							{
+								SdaiInteger iValue = 0;
+								sdaiGetADBValue(sdaiValueComponentADB, sdaiINTEGER, (void*)&iValue);
 
-	return pair <wstring, wstring>(strIfcValueType, strValueType);
+								m_strValue = (const wchar_t*)CA2W(_string::format("%lld", iValue).c_str());
+								m_strValueType = L"number";
+							}
+							break;
+
+						case sdaiREAL:
+							{
+								double dValue = 0;
+								sdaiGetADBValue(sdaiValueComponentADB, sdaiREAL, (void*)&dValue);
+
+								m_strValue = (const wchar_t*)CA2W(_string::format("%f", dValue).c_str());
+								m_strValueType = L"number";
+							}
+							break;
+
+						case sdaiSTRING:
+							{
+								wchar_t* szValue = nullptr;
+								sdaiGetADBValue(sdaiValueComponentADB, sdaiUNICODE, (void*)&szValue);
+
+								m_strValue = szValue != nullptr ? szValue : L"$";
+								m_strValueType = L"string";
+							}
+							break;
+
+						default:
+							assert(false);
+							break;
+					} // switch (sdaiGetADBType(valueComponentADB))
+				} // VALUE_REPRESENTATION_ITEM
+			} // for (SdaiInteger k = ...
+		} // if (sdaiPDRDefinitionInstance == ...
+	} // for (SdaiInteger j = ...
 }
 
 // ************************************************************************************************
@@ -159,114 +174,7 @@ void _ap242_property_provider::loadProperties(SdaiInstance sdaiInstance, _ap242_
 		SdaiInstance sdaiDefinitionInstance = 0;
 		sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "definition", sdaiINSTANCE, &sdaiDefinitionInstance);
 		if (sdaiDefinitionInstance == sdaiInstance) {
-			char* szName = nullptr;
-			sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "name", sdaiSTRING, &szName);
-			assert(szName != nullptr);
-
-			CString strValue;
-			strValue.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(sdaiPropertyDefinitionInstance));
-
-			//auto pProperty = new _ap242_property(sdaiPropertyDefinitionInstance, szName, (LPCTSTR)strValue);
-
-			/*auto pPropertyGroup = new CMFCPropertyGridProperty(strValue);
-			pInstanceGroup->AddSubItem(pPropertyGroup);
-
-			
-
-			auto pProperty = new CMFCPropertyGridProperty(L"name", (_variant_t)szName, L"name");
-			pProperty->AllowEdit(false);
-			pPropertyGroup->AddSubItem(pProperty);
-
-			char* szDescription = nullptr;
-			sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "description", sdaiSTRING, &szDescription);
-
-			pProperty = new CMFCPropertyGridProperty(L"description", (_variant_t)szName, L"description");
-			pProperty->AllowEdit(false);
-			pPropertyGroup->AddSubItem(pProperty);*/
-
-			//
-			//	Lookup value (not using inverse relations)
-			//
-			SdaiAggr sdaiPropertyDefinitionRepresentationAggr = sdaiGetEntityExtentBN(m_sdaiModel, "PROPERTY_DEFINITION_REPRESENTATION");
-			SdaiInteger	iPropertyDefinitionRepresentationsCount = sdaiGetMemberCount(sdaiPropertyDefinitionRepresentationAggr);
-			for (SdaiInteger j = 0; j < iPropertyDefinitionRepresentationsCount; j++) {
-				SdaiInstance sdaiPropertyDefinitionRepresentationInstance = 0;
-				sdaiGetAggrByIndex(sdaiPropertyDefinitionRepresentationAggr, j, sdaiINSTANCE, &sdaiPropertyDefinitionRepresentationInstance);
-
-				SdaiInstance sdaiPDRDefinitionInstance = 0;
-				sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &sdaiPDRDefinitionInstance);
-				if (sdaiPDRDefinitionInstance == sdaiPropertyDefinitionInstance) {
-					SdaiInstance sdaiUsedRepresentationInstance = 0;
-					sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiUsedRepresentationInstance);
-
-					SdaiAggr sdaiItemsAggr = nullptr;
-					sdaiGetAttrBN(sdaiUsedRepresentationInstance, "items", sdaiAGGR, &sdaiItemsAggr);
-					SdaiInteger	iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
-					for (SdaiInteger k = 0; k < iItemsCount; k++) {
-						SdaiInstance sdaiItemInstance = 0;
-						sdaiGetAggrByIndex(sdaiItemsAggr, k, sdaiINSTANCE, &sdaiItemInstance);
-
-						if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(m_sdaiModel, "DESCRIPTIVE_REPRESENTATION_ITEM")) {
-							/*szDescription = nullptr;
-							sdaiGetAttrBN(sdaiItemInstance, "description", sdaiSTRING, &szDescription);
-
-							pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)szDescription, L"value");
-							pProperty->AllowEdit(false);
-							pPropertyGroup->AddSubItem(pProperty);*/
-						} // DESCRIPTIVE_REPRESENTATION_ITEM
-						else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(m_sdaiModel, "VALUE_REPRESENTATION_ITEM")) {
-							SdaiADB sdaiValueComponentADB = nullptr;
-							sdaiGetAttrBN(sdaiItemInstance, "value_component", sdaiADB, &sdaiValueComponentADB);
-
-							const char* szTypePath = sdaiGetADBTypePath(sdaiValueComponentADB, 0);
-							switch (sdaiGetADBType(sdaiValueComponentADB)) {
-								case sdaiINTEGER:
-									{
-										SdaiInteger iValue = 0;
-										sdaiGetADBValue(sdaiValueComponentADB, sdaiINTEGER, (void*)&iValue);
-
-										strValue.Format(L"%i [%s]", (int)iValue, (LPCTSTR)CA2W(szTypePath));
-
-										/*pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-										pProperty->AllowEdit(false);
-										pPropertyGroup->AddSubItem(pProperty);*/
-									}
-									break;
-
-								case sdaiREAL:
-									{
-										double dValue = 0;
-										sdaiGetADBValue(sdaiValueComponentADB, sdaiREAL, (void*)&dValue);
-
-										strValue.Format(L"%f [%s]", dValue, (LPCTSTR)CA2W(szTypePath));
-
-										/*pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-										pProperty->AllowEdit(false);
-										pPropertyGroup->AddSubItem(pProperty);*/
-									}
-									break;
-
-								case sdaiSTRING:
-									{
-										char* szValue = nullptr;
-										sdaiGetADBValue(sdaiValueComponentADB, sdaiSTRING, (void*)&szValue);
-
-										strValue.Format(L"%s [%s]", (LPCWSTR)CA2W(szValue), (LPCTSTR)CA2W(szTypePath));
-
-										/*pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-										pProperty->AllowEdit(false);
-										pPropertyGroup->AddSubItem(pProperty);*/
-									}
-									break;
-
-								default:
-									assert(false);
-									break;
-							} // switch (sdaiGetADBType(valueComponentADB))
-						} // VALUE_REPRESENTATION_ITEM
-					} // for (SdaiInteger k = ...
-				} // if (sdaiPDRDefinitionInstance == ...
-			} // for (SdaiInteger j = ...
-		} // if (sdaiDefinitionInstance == ... 
-	} // for (SdaiInteger i = ...
+			pPropertyCollection->properties().push_back(new _ap242_property(sdaiPropertyDefinitionInstance));			
+		}
+	}
 }

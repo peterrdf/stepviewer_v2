@@ -15,15 +15,16 @@ private: // Members
 	wstring m_strEntityName;
 	wstring m_strName;
 	wstring m_strValue;
+	wstring m_strValueType;
 
 public: // Methods
 
-	_ap242_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue);
+	_ap242_property(SdaiInstance sdaiInstance);
 	virtual ~_ap242_property();
 
-	//#todo
-	static wstring getPropertySingleValue(SdaiInstance sdaiPropertySingleValueInstance);
-	static pair<wstring, wstring> getValueTypes(SdaiInstance sdaiInstance);
+protected: // Methods
+
+	void load();
 
 public: // Properties
 
@@ -31,6 +32,7 @@ public: // Properties
 	wstring getEntityName() const { return m_strEntityName; }
 	wstring getName() const { return m_strName; }
 	wstring getValue() const { return m_strValue; }
+	wstring getValueType() const { return m_strValueType; }
 };
 
 // ************************************************************************************************
