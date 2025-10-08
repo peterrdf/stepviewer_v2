@@ -2665,7 +2665,7 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
+				writeStringProperty("id", _string::format("#%lld:0", product->getExpressID()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("name", (const char*)CW2A(product->getProductName()));
 				*getOutputStream() << COMMA;
@@ -2698,16 +2698,6 @@ namespace _ap2gltf
 			return;
 		}
 
-		string strParentId;
-		if (pNode->getParent() != nullptr) {
-			_ptr<_ap242_product_definition> parentProductD(ap242Model->getGeometryByInstance(pNode->getParent()->getSdaiInstance()));
-			assert(parentProductD);
-			strParentId = _string::format("#%lld", parentProductD->getExpressID());
-		}
-		else {
-			strParentId = "null";
-		}
-
 		//
 		// Product
 		//
@@ -2720,13 +2710,13 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
+			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
 			writeStringProperty("name", (const char*)CW2A(product->getProductName()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", strParentId);
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			indent()--;
 
 			writeEndObjectTag();
@@ -2753,13 +2743,13 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", _string::format("#%lld", itAssembly->second->getExpressID()));
+			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
 			writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", strParentId);
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			indent()--;
 
 			writeEndObjectTag();

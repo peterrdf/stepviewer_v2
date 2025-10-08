@@ -16,17 +16,19 @@ class _ap242_node
 private: // Members
 
 	SdaiInstance m_sdaiInstance;
+	string m_strId;
 	_ap242_node* m_pParent;
 	vector<_ap242_node*> m_vecChildren;
 
 public: // Methods
 
-	_ap242_node(SdaiInstance sdaiInstance, _ap242_node* pParentNode);
+	_ap242_node(SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode);
 	virtual ~_ap242_node();
 
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	const string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
 	vector<_ap242_node*>& children() { return m_vecChildren; }
 };

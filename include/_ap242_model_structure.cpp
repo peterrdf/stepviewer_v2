@@ -5,12 +5,18 @@
 #include "_ap242_instance.h"
 #include "_ap242_draughting_model.h"
 
+#include "_string.h"
+
 // ************************************************************************************************
-_ap242_node::_ap242_node(SdaiInstance sdaiInstance, _ap242_node* pParentNode)
+_ap242_node::_ap242_node(SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode)
 	: m_sdaiInstance(sdaiInstance)
+	, m_strId(strId)
 	, m_pParent(pParentNode)
-	, m_vecChildren()	
-{}
+	, m_vecChildren()
+{
+	assert(m_sdaiInstance != 0);
+	assert(!m_strId.empty());
+}
 
 /*virtual*/ _ap242_node::~_ap242_node()
 {
@@ -71,9 +77,8 @@ void _ap242_model_structure::build()
 
 	for (auto pGeometry : m_pModel->getGeometries()) {
 		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);
-		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {
-			m_vecRootProducts.push_back(new _ap242_node(pProduct->getSdaiInstance(), __nullptr));
-			loadProductNode(m_vecRootProducts.back(), pProduct);
+		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {			
+			loadProductNode(nullptr, pProduct);
 		}
 	}
 	
@@ -85,7 +90,6 @@ void _ap242_model_structure::build()
 
 void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_product_definition* pProduct)
 {
-	assert(pParentNode != nullptr);
 	assert(pProduct != nullptr);
 
 	// Iterator
@@ -99,11 +103,29 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 		pInstanceIterator = itInstanceIterator->second;
 	}
 
+	// Next Instance
+	_ptr<_ap242_instance> apProductInstance(pInstanceIterator->getNextItem());
+	if (apProductInstance) {
+		auto& vecChildren = pParentNode != nullptr ? pParentNode->children() : m_vecRootProducts;
+		vecChildren.push_back(new _ap242_node(
+			apProductInstance->getSdaiInstance(),
+			_string::format("#%lld:%lld", apProductInstance->getExpressID(), pInstanceIterator->index()),
+			pParentNode));
+
+		pParentNode = vecChildren.back();
+	}
+	else {
+		assert(false);
+	}
+
 	// Assemblies
 	for (auto itExpressID2Assembly : m_pModel->getExpressID2Assembly()) {
 		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct) {
-			pParentNode->children().push_back(new _ap242_node(itExpressID2Assembly.second->getSdaiInstance(), pParentNode));
-			//loadProductNode(pParentNode->children().back(), itExpressID2Assembly.second->getRelatedProductDefinition());
+			pParentNode->children().push_back(new _ap242_node(
+				itExpressID2Assembly.second->getSdaiInstance(), 
+				_string::format("#%lld", itExpressID2Assembly.second->getExpressID()), 
+				pParentNode));
+			loadProductNode(pParentNode->children().back(), itExpressID2Assembly.second->getRelatedProductDefinition());
 		}
 	}
 }
