@@ -140,6 +140,8 @@ namespace _ap2gltf
 		void writeMetadataProperties();
 		void writeMetadataUnits();
 		void writeMetadataObjects();
+		void writeMetadataObjectsIFC(_ifc_model* pIfcModel);
+		void writeMetadataObjectsSTEP(_ap242_model* pAP242Model);
 		void writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider);
 		void writeMetadataObjectChildren(_ap242_node* pNode);
 

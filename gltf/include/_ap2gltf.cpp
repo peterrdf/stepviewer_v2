@@ -2394,99 +2394,7 @@ namespace _ap2gltf
 
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
 		if (ifcModel) {
-			auto pPropertyProvider = ifcModel->getPropertyProvider();
-			if (pPropertyProvider == nullptr) {
-				return;
-			}
-
-			_ifc_model_structure modelStructure(ifcModel);
-			modelStructure.build();
-#ifdef _DEBUG
-			modelStructure.print();
-#endif
-			//
-			// Write metadata
-			//
-
-			* getOutputStream() << COMMA;
-
-			*getOutputStream() << getNewLine();
-			writeIndent();
-
-			// metaObjects
-			{
-				*getOutputStream() << DOULE_QUOT_MARK;
-				*getOutputStream() << "metaObjects";
-				*getOutputStream() << DOULE_QUOT_MARK;
-				*getOutputStream() << COLON;
-				*getOutputStream() << SPACE;
-
-				writeStartArrayTag(false);
-
-				auto pProjectNode = modelStructure.getProjectNode();
-
-				char* szName = nullptr;
-				sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
-
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("name", szName != nullptr ? szName : "$");
-				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
-				*getOutputStream() << COMMA;
-				writeStringProperty("parent", "null");
-				*getOutputStream() << COMMA;
-				// propertySetIds
-				{
-					*getOutputStream() << getNewLine();
-					writeIndent();
-
-					*getOutputStream() << DOULE_QUOT_MARK;
-					*getOutputStream() << "propertySetIds";
-					*getOutputStream() << DOULE_QUOT_MARK;
-					*getOutputStream() << COLON;
-					*getOutputStream() << SPACE;
-
-					writeStartArrayTag(false);
-
-					auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pProjectNode->getSdaiInstance());
-					if (pPropertySetCollection != nullptr) {
-						int iIndex = 0;
-						for (auto pPropertySet : pPropertySetCollection->propertySets()) {
-							if (iIndex++ > 0) {
-								*getOutputStream() << COMMA;
-							}
-							char* szGlobalId = nullptr;
-							sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
-							assert(szGlobalId != nullptr);
-
-							*getOutputStream() << getNewLine();
-							writeIndent();
-							*getOutputStream() << DOULE_QUOT_MARK;
-							*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
-							*getOutputStream() << DOULE_QUOT_MARK;
-						}
-					}
-
-					writeEndArrayTag();
-				}
-				// propertySetIds
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				for (auto pChildNode : pProjectNode->children()) {
-					writeMetadataObjectChildren(pChildNode, pPropertyProvider);
-				}
-
-				writeEndArrayTag();
-			}
-
+			writeMetadataObjectsIFC(ifcModel);
 			return;
 		} // if (ifcModel)
 
@@ -2496,69 +2404,179 @@ namespace _ap2gltf
 
 		_ptr<_ap242_model> ap242Model(m_pModel, false);
 		if (ap242Model) {
-			_ap242_model_structure modelStructure(ap242Model);
-			modelStructure.build();
+			writeMetadataObjectsSTEP(ap242Model);
+			return;
+		} // if (ap242Model)
+
+		//
+		// Not supported
+		//
+
+		assert(false);
+	}
+
+	void _exporter::writeMetadataObjectsIFC(_ifc_model* pIfcModel)
+	{
+		assert(pIfcModel != nullptr);
+
+		auto pPropertyProvider = pIfcModel->getPropertyProvider();
+		if (pPropertyProvider == nullptr) {
+			return;
+		}
+
+		_ifc_model_structure modelStructure(pIfcModel);
+		modelStructure.build();
 #ifdef _DEBUG
-			modelStructure.print();
+		modelStructure.print();
 #endif
-			//
-			// Write metadata
-			//
+		//
+		// Write metadata
+		//
 
+		* getOutputStream() << COMMA;
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		// metaObjects
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "metaObjects";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			auto pProjectNode = modelStructure.getProjectNode();
+
+			char* szName = nullptr;
+			sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
 			*getOutputStream() << COMMA;
-
-			*getOutputStream() << getNewLine();
-			writeIndent();
-
-			// metaObjects
+			writeStringProperty("name", szName != nullptr ? szName : "$");
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", "null");
+			*getOutputStream() << COMMA;
+			// propertySetIds
 			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
 				*getOutputStream() << DOULE_QUOT_MARK;
-				*getOutputStream() << "metaObjects";
+				*getOutputStream() << "propertySetIds";
 				*getOutputStream() << DOULE_QUOT_MARK;
 				*getOutputStream() << COLON;
 				*getOutputStream() << SPACE;
 
 				writeStartArrayTag(false);
 
-				auto& vecRootProducts = modelStructure.getRootProducts();
+				auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(pProjectNode->getSdaiInstance());
+				if (pPropertySetCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pPropertySet : pPropertySetCollection->propertySets()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+						char* szGlobalId = nullptr;
+						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						assert(szGlobalId != nullptr);
 
-				for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
-					auto pRootProduct = vecRootProducts[iRootProductIndex];
-					if (iRootProductIndex > 0) {
-						*getOutputStream() << COMMA;
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << DOULE_QUOT_MARK;
 					}
-
-					_ptr<_ap242_product_definition> product(ap242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
-					assert(product);
-					
-					indent()++;
-					writeStartObjectTag();
-
-					indent()++;
-					writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
-					*getOutputStream() << COMMA;
-					writeStringProperty("name", (const char*)CW2A(product->getProductName()));
-					*getOutputStream() << COMMA;
-					writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
-					*getOutputStream() << COMMA;
-					writeStringProperty("parent", "null");
-					indent()--;
-
-					writeEndObjectTag();
-					indent()--;
-
-					for (auto pChildNode : pRootProduct->children()) {
-						writeMetadataObjectChildren(pChildNode);
-					}
-				} // for (size_t iRootProductIndex = ...				
+				}
 
 				writeEndArrayTag();
 			}
+			// propertySetIds
+			indent()--;
 
-			return;
-		} // if (ap242Model)
+			writeEndObjectTag();
+			indent()--;
 
-		assert(false); // Unknown model!
+			for (auto pChildNode : pProjectNode->children()) {
+				writeMetadataObjectChildren(pChildNode, pPropertyProvider);
+			}
+
+			writeEndArrayTag();
+		}
+		// metaObjects
+	}
+
+	void _exporter::writeMetadataObjectsSTEP(_ap242_model* pAP242Model)
+	{
+		assert(pAP242Model != nullptr);
+
+
+		_ap242_model_structure modelStructure(pAP242Model);
+		modelStructure.build();
+#ifdef _DEBUG
+		modelStructure.print();
+#endif
+		//
+		// Write metadata
+		//
+
+		* getOutputStream() << COMMA;
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		// metaObjects
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "metaObjects";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			auto& vecRootProducts = modelStructure.getRootProducts();
+			for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
+				auto pRootProduct = vecRootProducts[iRootProductIndex];
+				if (iRootProductIndex > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
+				assert(product);
+
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeStringProperty("id", _string::format("#%lld", product->getExpressID()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
+				*getOutputStream() << COMMA;
+				writeStringProperty("parent", "null");
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				for (auto pChildNode : pRootProduct->children()) {
+					writeMetadataObjectChildren(pChildNode);
+				}
+			} // for (size_t iRootProductIndex = ...				
+
+			writeEndArrayTag();
+		}
+		// metaObjects
 	}
 
 	void _exporter::writeMetadataObjectChildren(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)
