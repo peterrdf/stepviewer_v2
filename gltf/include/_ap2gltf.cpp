@@ -2334,6 +2334,8 @@ namespace _ap2gltf
 		if (pPropertyProvider == nullptr) {
 			return;
 		}
+
+		*getOutputStream() << COMMA;
 		
 		//
 		// Collect properties
@@ -2744,6 +2746,10 @@ namespace _ap2gltf
 	{
 		assert(pAP242Model != nullptr);
 
+		auto pPropertyProvider = pAP242Model->getPropertyProvider();
+		if (pPropertyProvider == nullptr) {
+			return;
+		}
 
 		_ap242_model_structure modelStructure(pAP242Model);
 		modelStructure.build();
@@ -2754,7 +2760,7 @@ namespace _ap2gltf
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -2790,13 +2796,48 @@ namespace _ap2gltf
 				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;
 				writeStringProperty("parent", "null");
+				*getOutputStream() << COMMA;
+				// propertyIds
+				{
+					*getOutputStream() << getNewLine();
+					writeIndent();
+
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << "propertyIds";
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << COLON;
+					*getOutputStream() << SPACE;
+
+					writeStartArrayTag(false);
+					indent()++;
+
+					auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pRootProduct->getSdaiInstance());
+					if (pPropertyCollection != nullptr) {
+						int iIndex = 0;
+						for (auto pProperty : pPropertyCollection->properties()) {
+							if (iIndex++ > 0) {
+								*getOutputStream() << COMMA;
+							}
+
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+							*getOutputStream() << DOULE_QUOT_MARK;
+						}
+					}
+
+					indent()--;
+					writeEndArrayTag();
+				}
+				// propertyIds
 				indent()--;
 
 				writeEndObjectTag();
 				indent()--;
 
 				for (auto pChildNode : pRootProduct->children()) {
-					writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
+					writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
 				}
 			} // for (size_t iRootProductIndex = ...				
 
@@ -2805,10 +2846,11 @@ namespace _ap2gltf
 		// metaObjects
 	}
 
-	void _exporter::writeMetadataObjectChildrenSTEP(_ap242_node* pNode, _ap242_model* pAP242Model)
+	void _exporter::writeMetadataObjectChildrenSTEP(_ap242_node* pNode, _ap242_model* pAP242Model, _ap242_property_provider* pPropertyProvider)
 	{
 		assert(pNode != nullptr);
 		assert(pAP242Model != nullptr);
+		assert(pPropertyProvider != nullptr);
 
 		_ptr<_ap242_model> ap242Model(m_pModel, false);
 		assert(ap242Model != nullptr);
@@ -2835,13 +2877,48 @@ namespace _ap2gltf
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
+			// propertyIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertyIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(product->getSdaiInstance());
+				if (pPropertyCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pProperty : pPropertyCollection->properties()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertyIds
 			indent()--;
 
 			writeEndObjectTag();
 			indent()--;
 
 			for (auto pChildNode : pNode->children()) {
-				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
 			}
 
 			return;
@@ -2874,7 +2951,7 @@ namespace _ap2gltf
 			indent()--;
 
 			for (auto pChildNode : pNode->children()) {
-				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model);
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
 			}
 
 			return;
