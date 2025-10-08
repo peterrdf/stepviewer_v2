@@ -41,28 +41,26 @@ _ap242_model_structure::_ap242_model_structure(_ap242_model* pModel)
 }
 
 #ifdef _DEBUG
-void _ap242_model_structure::print(int iLevel/* = 0*/, _ap242_node* pNode/* = nullptr*/)
+void _ap242_model_structure::print()
 {
-	//#todo
-	/*if (pNode == nullptr) {
-		pNode = m_pProjectNode;
+	for (auto pRootProduct : m_vecRootProducts) {
+		print(0, pRootProduct);
 	}
-	if (pNode == nullptr) {
-		return;
-	}
+}
+
+void _ap242_model_structure::print(int iLevel, _ap242_node* pNode)
+{
+	assert(pNode != nullptr);
+
 	for (int i = 0; i < iLevel; ++i) {
 		TRACE("  ");
 	}
-	wchar_t* szGlobalId = pNode->getGlobalId();
-	if (szGlobalId != nullptr) {
-		TRACE(L"%s\n", szGlobalId);
-	}
-	else {
-		TRACE("(null)\n");
-	}
+
+	TRACE("%s\n", pNode->getId().c_str());
+
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);
-	}*/
+	}
 }
 #endif
 

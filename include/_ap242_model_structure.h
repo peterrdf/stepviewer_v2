@@ -53,7 +53,8 @@ public: // Methods
 	void build();
 
 #ifdef _DEBUG
-	void print(int iLevel = 0, _ap242_node* pNode = nullptr);
+	void print();
+	void print(int iLevel, _ap242_node* pNode);
 #endif
 
 protected: // Methods
