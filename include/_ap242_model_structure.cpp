@@ -99,15 +99,11 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 		pInstanceIterator = itInstanceIterator->second;
 	}
 
-	// Load #todo
-	//_ptr<_ap242_instance> apProductInstance(pInstanceIterator->getNextItem());
-	//pParentNode->children().push_back(new _ap242_node(apProductInstance->getSdaiInstance(), pParentNode));
-
-	// Assemblies #todo
+	// Assemblies
 	for (auto itExpressID2Assembly : m_pModel->getExpressID2Assembly()) {
 		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct) {
 			pParentNode->children().push_back(new _ap242_node(itExpressID2Assembly.second->getSdaiInstance(), pParentNode));
-			//LoadAssembly(m_pModel, itExpressID2Assembly.second, hProduct);
+			//loadProductNode(pParentNode->children().back(), itExpressID2Assembly.second->getRelatedProductDefinition());
 		}
 	}
 }

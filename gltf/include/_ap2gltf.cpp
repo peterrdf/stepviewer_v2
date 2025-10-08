@@ -1549,7 +1549,8 @@ namespace _ap2gltf
 					iSceneNodeIndex++;
 				} // if (pGeometry->isPlaceholder())
 				else {
-					// Transformations
+					// Instances
+					int iInstanceIndex = 0;
 					for (auto pInstance : pGeometry->getInstances()) {
 						auto pTransformation = pInstance->getTransformationMatrix();
 
@@ -1576,7 +1577,7 @@ namespace _ap2gltf
 								strGlobalId = szGlobalId;
 							}
 							else {
-								strGlobalId = _string::format("#%lld", apGeometry->getExpressID());
+								strGlobalId = _string::format("#%lld:%d", apGeometry->getExpressID(), iInstanceIndex++);
 							}
 
 							indent()++;
