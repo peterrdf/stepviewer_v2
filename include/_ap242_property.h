@@ -50,7 +50,12 @@ struct _ap242_property_comparator
 			return nameCmp < 0;
 		}
 
-		return lhs->getValue().compare(rhs->getValue());
+		int valueCmp = lhs->getValue().compare(rhs->getValue());
+		if (valueCmp != 0) {
+			return valueCmp < 0;
+		}
+
+		return lhs->getValueType().compare(rhs->getValueType()) < 0;
 	}
 };
 

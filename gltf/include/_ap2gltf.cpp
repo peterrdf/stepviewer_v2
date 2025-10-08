@@ -2153,6 +2153,11 @@ namespace _ap2gltf
 		map<_ifc_property*, int, _ifc_property_comparator> mapProperties;
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
+			_ptr<_ifc_geometry> ifcGeometry(pGeometry, false);
+			if (ifcGeometry && ifcGeometry->getIsMappedItem()) {
+				continue;
+			}
+
 			auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(_ptr<_ifc_geometry>(pGeometry)->getSdaiInstance());
 			if (pPropertySetCollection == nullptr) {
 				continue;
@@ -2331,7 +2336,7 @@ namespace _ap2gltf
 		}
 		
 		//
-		// Collect property sets & properties
+		// Collect properties
 		//
 
 		map<_ap242_property*, int, _ap242_property_comparator> mapProperties;
@@ -2348,10 +2353,10 @@ namespace _ap2gltf
 				if (itProperty == mapProperties.end()) {
 					mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
-					TRACE("Property set: %s, property: %s, value: %s\n",
+					TRACE("Property: %s, Value: %s, Type: %s\n",
 						(const char*)CW2A(pProperty->getName().c_str()),
-						(const char*)CW2A(pProperty->getName().c_str()),
-						(const char*)CW2A(pProperty->getValue().c_str()));
+						(const char*)CW2A(pProperty->getValue().c_str()),
+						(const char*)CW2A(pProperty->getValueType().c_str()));
 #endif
 				}
 				else {
@@ -2373,6 +2378,45 @@ namespace _ap2gltf
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
+
+		// properties
+		{
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << "properties";
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << COLON;
+			*getOutputStream() << SPACE;
+
+			writeStartArrayTag(false);
+
+			iPropertyIndex = 0;
+			for (const auto& itProperty : mapProperties) {
+				if (iPropertyIndex++ > 0) {
+					*getOutputStream() << COMMA;
+				}
+
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeStringProperty("id", _string::format("#%lld", internalGetP21Line(itProperty.first->getSdaiInstance())));
+				*getOutputStream() << COMMA;
+				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("type", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				*getOutputStream() << COMMA;
+				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+			} // for (auto itProperty : ...
+
+			writeEndArrayTag();
+		}
+		// properties
 	}
 
 	void _exporter::writeMetadataUnits()

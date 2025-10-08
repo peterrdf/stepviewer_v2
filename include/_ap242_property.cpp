@@ -12,9 +12,9 @@ using namespace std;
 _ap242_property::_ap242_property(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strEntityName(_ap_geometry::getEntityName(sdaiInstance))
-	, m_strName(L"")
-	, m_strValue(L"")
-	, m_strValueType(L"")
+	, m_strName(L"$")
+	, m_strValue(L"$")
+	, m_strValueType(L"$")
 {
 	assert(m_sdaiInstance != 0);
 
