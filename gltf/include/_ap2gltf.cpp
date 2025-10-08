@@ -7,6 +7,7 @@
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
 #include "_ap242_product_definition.h"
+#include "_ap242_draughting_model.h"
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -2782,16 +2783,34 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 				}
 
-				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()));
-				assert(product);
+				string strName = "$";
+				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
+				if (product) {
+					strName = (const char*)CW2A(product->getProductName());
+				}
+				else {
+					_ptr<_ap242_annotation_plane> annotationPlane(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
+					if (annotationPlane) {
+						strName = (const char*)CW2A(annotationPlane->getName());
+					}
+					else {
+						_ptr<_ap242_draughting_callout> draughtingCallout(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
+						if (draughtingCallout) {
+							strName = (const char*)CW2A(draughtingCallout->getName());
+						}
+						else {
+							assert(false);	// Unknown root product type 
+						}
+					}
+				}
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("id", _string::format("#%lld:0", product->getExpressID()));
+				writeStringProperty("id", _string::format("#%lld:0", internalGetP21Line(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+				writeStringProperty("name", strName);
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;

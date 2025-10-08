@@ -80,10 +80,22 @@ void _ap242_model_structure::build()
 		}
 	}
 	
-	// Draughitng models #todo
-	/*for (auto pDraughtingModel : pModel->getDraughtingModels()) {
-		LoadDraughtingModel(pDraughtingModel, hModel);
-	}*/
+	// Draughitng models
+	for (auto pDraughtingModel : m_pModel->getDraughtingModels()) {
+		for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
+			m_vecRootProducts.push_back(new _ap242_node(
+				pAnnotationPlane->getSdaiInstance(),
+				_string::format("#%lld", pAnnotationPlane->getExpressID()),
+				nullptr));			
+		}
+
+		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
+			m_vecRootProducts.push_back(new _ap242_node(
+				pDraughtingCallout->getSdaiInstance(),
+				_string::format("#%lld", pDraughtingCallout->getExpressID()),
+				nullptr));
+		}
+	}
 }
 
 void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_product_definition* pProduct)
