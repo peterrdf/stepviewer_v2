@@ -2507,6 +2507,9 @@ namespace _ap2gltf
 
 			*getOutputStream() << COMMA;
 
+			*getOutputStream() << getNewLine();
+			writeIndent();
+
 			// metaObjects
 			{
 				*getOutputStream() << DOULE_QUOT_MARK;
