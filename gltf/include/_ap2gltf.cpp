@@ -2106,16 +2106,38 @@ namespace _ap2gltf
 
 	void _exporter::writeMetadataProperties()
 	{
+		//
+		// IFC
+		//
+
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
-		if (!ifcModel) {
+		if (ifcModel) {
+			writeMetadataPropertiesIFC(ifcModel);
 			return;
 		}
 
-		if (ifcModel == nullptr) {
+		//
+		// STEP
+		//
+
+		_ptr<_ap242_model> ap242Model(m_pModel, false);
+		if (ap242Model) {
+			writeMetadataPropertiesSTEP(ap242Model);
 			return;
 		}
 
-		auto pPropertyProvider = ifcModel->getPropertyProvider();
+		//
+		// Not supported
+		//
+
+		assert(false);
+	}
+
+	void _exporter::writeMetadataPropertiesIFC(_ifc_model* pIfcModel)
+	{
+		assert(pIfcModel != nullptr);
+
+		auto pPropertyProvider = pIfcModel->getPropertyProvider();
 		if (pPropertyProvider == nullptr) {
 			return;
 		}
@@ -2130,9 +2152,7 @@ namespace _ap2gltf
 		map<SdaiInstance, pair<_ifc_property_set*, int>> mapPropertySets;
 		map<_ifc_property*, int, _ifc_property_comparator> mapProperties;
 
-		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
-			auto pGeometry = m_vecNodes[iNodeIndex]->getGeometry();
-
+		for (auto pGeometry : m_pModel->getGeometries()) {
 			auto pPropertySetCollection = pPropertyProvider->getPropertySetCollection(_ptr<_ifc_geometry>(pGeometry)->getSdaiInstance());
 			if (pPropertySetCollection == nullptr) {
 				continue;
@@ -2301,6 +2321,60 @@ namespace _ap2gltf
 		// propertySets		
 	}
 
+	void _exporter::writeMetadataPropertiesSTEP(_ap242_model* pAP242Model)
+	{
+		assert(pAP242Model != nullptr);
+
+		auto pPropertyProvider = pAP242Model->getPropertyProvider();
+		if (pPropertyProvider == nullptr) {
+			return;
+		}
+		
+		//
+		// Collect property sets & properties
+		//
+
+		map<_ap242_property*, int, _ap242_property_comparator> mapProperties;
+
+		for (auto pGeometry : m_pModel->getGeometries()) {
+			auto pPropertyCollection = pPropertyProvider->getPropertyCollection(_ptr<_ap242_geometry>(pGeometry)->getSdaiInstance());
+			if (pPropertyCollection == nullptr) {
+				continue;
+			}
+
+			// Properties
+			for (auto pProperty : pPropertyCollection->properties()) {
+				auto itProperty = mapProperties.find(pProperty);
+				if (itProperty == mapProperties.end()) {
+					mapProperties[pProperty] = 0;
+#ifdef _WINDOWS
+					TRACE("Property set: %s, property: %s, value: %s\n",
+						(const char*)CW2A(pProperty->getName().c_str()),
+						(const char*)CW2A(pProperty->getName().c_str()),
+						(const char*)CW2A(pProperty->getValue().c_str()));
+#endif
+				}
+				else {
+					assert(itProperty->first->getName() == pProperty->getName());
+					assert(itProperty->first->getValue() == pProperty->getValue());
+				}
+			}
+		} // for (size_t iNodeIndex = ...
+
+		// Index properties
+		int iPropertyIndex = 0;
+		for (auto& itProperty : mapProperties) {
+			itProperty.second = iPropertyIndex++;
+		}
+
+		//
+		// Write metadata
+		//
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+	}
+
 	void _exporter::writeMetadataUnits()
 	{
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
@@ -2397,7 +2471,7 @@ namespace _ap2gltf
 		if (ifcModel) {
 			writeMetadataObjectsIFC(ifcModel);
 			return;
-		} // if (ifcModel)
+		}
 
 		//
 		// STEP
@@ -2407,7 +2481,7 @@ namespace _ap2gltf
 		if (ap242Model) {
 			writeMetadataObjectsSTEP(ap242Model);
 			return;
-		} // if (ap242Model)
+		}
 
 		//
 		// Not supported
@@ -2685,7 +2759,7 @@ namespace _ap2gltf
 			writeEndArrayTag();
 		}
 		// metaObjects
-	}	
+	}
 
 	void _exporter::writeMetadataObjectChildrenSTEP(_ap242_node* pNode, _ap242_model* pAP242Model)
 	{
@@ -2732,7 +2806,7 @@ namespace _ap2gltf
 		//
 		// Assembly
 		//
-		
+
 		auto& mapExpressID2Assembly = ap242Model->getExpressID2Assembly();
 
 		auto& itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
@@ -2765,7 +2839,7 @@ namespace _ap2gltf
 		//
 		// Not supported
 		//
-		
+
 		assert(false);
 	}
 };

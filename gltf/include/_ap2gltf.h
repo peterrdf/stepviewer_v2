@@ -138,6 +138,8 @@ namespace _ap2gltf
 		// XKT metadata
 		void writeMetadata();
 		void writeMetadataProperties();
+		void writeMetadataPropertiesIFC(_ifc_model* pIfcModel);
+		void writeMetadataPropertiesSTEP(_ap242_model* pAP242Model);
 		void writeMetadataUnits();
 		void writeMetadataObjects();
 		void writeMetadataObjectsIFC(_ifc_model* pIfcModel);
