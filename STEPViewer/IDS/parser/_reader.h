@@ -1,14 +1,12 @@
 #pragma once
 
 #include "_errors.h"
+#include "_io.h"
 
 #include <iostream>
 #include <fstream>
-
 #include <codecvt>
 #include <fcntl.h>
-#include <io.h>
-
 #include <string>
 using namespace std;
 
@@ -45,7 +43,7 @@ public: // Methods
 	_stream_reader();
 	virtual ~_stream_reader();
 
-	void init(istream* m_pStream);
+	void init(istream* pStream);
 
 	/// <summary>
 	/// https://cplusplus.com/reference/streambuf/basic_streambuf/snextc/

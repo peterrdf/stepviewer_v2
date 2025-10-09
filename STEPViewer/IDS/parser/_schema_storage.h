@@ -1,8 +1,10 @@
 #pragma once
 
 #include "_log.h"
-#include "_net.h"
 #include "_io.h"
+#ifdef _LOAD_SCHEMAS
+#include "_net.h"
+#endif // _LOAD_SCHEMAS
 
 #include <string>
 using namespace std;
@@ -65,6 +67,7 @@ public: // Methods
 		}
 	}
 
+#ifdef _LOAD_SCHEMAS
 	string getSchemas(const string& strNamespace, vector<_schema_metadata*>& vecSchemas)
 	{
 		if (strNamespace.empty())
@@ -90,6 +93,7 @@ public: // Methods
 
 		return strTargetNamespace;
 	}
+
 	_schema_metadata* getSchema(const string& strNamespace, const string& strLocation)
 	{
 		if (strNamespace.empty() || strLocation.empty())
@@ -138,6 +142,7 @@ public: // Methods
 
 		return nullptr;
 	}
+
 	string getNamespaceRedirection(const string& strNamespace) const
 	{
 		if (strNamespace.empty())
@@ -155,6 +160,7 @@ public: // Methods
 
 		return strNamespace;
 	}
+
 	string getLocationRedirection(const string& strLocation) const
 	{
 		if (strLocation.empty())
@@ -172,6 +178,7 @@ public: // Methods
 
 		return strLocation;
 	}
+#endif // _LOAD_SCHEMAS
 
 	const map<string, map<string, _schema_metadata*>>& getNamespaceSchemas() const { return m_mapNamespaceSchemas; }
 	const map<string, string>& getNamespaceRedirections() const { return m_mapNamespaceRedirections; }
@@ -195,6 +202,7 @@ public: // Methods
 
 	virtual void loadMetadata(const string& strStorage) = 0;
 
+#ifdef _LOAD_SCHEMAS
 	string getTempFilePath(const string& strTempFolder, const string& strFile)
 	{
 		string strFileName = _net::_url::toFileName(strFile);
@@ -203,5 +211,6 @@ public: // Methods
 			strTempFolder,
 			strFileName);
 	}
+#endif // _LOAD_SCHEMAS
 };
 
