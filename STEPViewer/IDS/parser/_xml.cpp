@@ -363,7 +363,7 @@ namespace _xml
 
 		string strName;
 		bool bValueStart = false;
-		char chValueEnd = DOULE_QUOT_MARK;
+		char chValueEnd = DOUBLE_QUOT_MARK;
 
 		string strBuffer;
 		while (ch != EOF)
@@ -391,7 +391,7 @@ namespace _xml
 					continue;
 				}
 			}
-			else if ((ch == SINGLE_QUOT_MARK) || (ch == DOULE_QUOT_MARK))
+			else if ((ch == SINGLE_QUOT_MARK) || (ch == DOUBLE_QUOT_MARK))
 			{
 				if (strName.empty())
 				{
@@ -419,7 +419,7 @@ namespace _xml
 						strBuffer = "";
 						strName = "";
 						bValueStart = false;
-						chValueEnd = DOULE_QUOT_MARK;
+						chValueEnd = DOUBLE_QUOT_MARK;
 
 						ch = readerAttributes.getNextChar(false);
 
