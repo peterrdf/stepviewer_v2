@@ -1875,6 +1875,7 @@ namespace _ap2gltf
 						}
 						// baseColorFactor
 
+						/* Disabled as not supported by many viewers
 						*getOutputStream() << COMMA;
 
 						// emissiveFactor
@@ -1888,7 +1889,8 @@ namespace _ap2gltf
 									to_string(pMaterial->getEmissiveColor().b())
 							}).c_str();
 						}
-						// emissiveFactor					
+						// emissiveFactor
+						*/					
 
 						*getOutputStream() << COMMA;
 
