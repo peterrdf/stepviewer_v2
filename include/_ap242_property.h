@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ifcengine.h"
+
 #include <string>
 #include <vector>
 #include <map>

@@ -3078,7 +3078,7 @@ namespace _ap2gltf
 
 		auto& mapExpressID2Assembly = ap242Model->getExpressID2Assembly();
 
-		auto& itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
+		auto itAssembly = mapExpressID2Assembly.find(internalGetP21Line(pNode->getSdaiInstance()));
 		if (itAssembly != mapExpressID2Assembly.end()) {
 			*getOutputStream() << COMMA;
 
