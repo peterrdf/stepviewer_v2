@@ -251,8 +251,7 @@ namespace _ap2gltf
 
 				// groups
 				{
-					//*getOutputStream() << COMMA;
-					//writeMetadataGroups(); //#todo
+					writeMetadataGroups();
 				}
 
 				// metaObjects
@@ -2508,6 +2507,71 @@ namespace _ap2gltf
 		// projectUnits
 	}
 
+	void _exporter::writeMetadataGroups()
+	{
+		_ptr<_ifc_model> ifcModel(m_pModel, false);
+		if (!ifcModel) {
+			return;
+		}
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << "groups";
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+
+		writeStartArrayTag(false);
+		indent()++;
+
+		vector<_ap_geometry*> vecGroupGeometries;
+		ifcModel->getGeometriesByType("IFCGROUP", vecGroupGeometries);
+
+		int iIndex = 0;
+		for (auto pGeometry : vecGroupGeometries) {
+			SdaiInstance sdaiIsGroupedByInstance = 0;
+			sdaiGetAttrBN(pGeometry->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
+			if (sdaiIsGroupedByInstance != 0) {
+				SdaiAggr sdaiRelatedObjectsAggr = nullptr;
+				sdaiGetAttrBN(sdaiIsGroupedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
+
+				SdaiInteger iRelatedObjectsCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+				if (iRelatedObjectsCount > 0) {
+					if (iIndex++ > 0) {
+						*getOutputStream() << COMMA;
+					}
+
+					char* szGlobalId = nullptr;
+					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+					assert(szGlobalId != nullptr);
+
+					char* szName = nullptr;
+					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+
+					char* szEntityName = nullptr;
+					engiGetEntityName(sdaiGetInstanceType(pGeometry->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+
+					writeStartObjectTag();
+
+					indent()++;
+					writeStringProperty("id", szGlobalId != nullptr ? szGlobalId : "$");
+					*getOutputStream() << COMMA;
+					writeStringProperty("name", szName != nullptr ? szName : "$");
+					*getOutputStream() << COMMA;
+					writeStringProperty("type", szEntityName != nullptr ? szEntityName : "$");
+					indent()--;
+					
+					writeEndObjectTag();
+				} // if (iRelatedObjectsCount > 0)
+			} // if (sdaiIsGroupedByInstance != 0)
+		} // for (auto pGeometry : ...
+
+		indent()--;
+		writeEndArrayTag();
+	}
+
 	void _exporter::writeMetadataObjects()
 	{
 		//
@@ -2555,7 +2619,7 @@ namespace _ap2gltf
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
