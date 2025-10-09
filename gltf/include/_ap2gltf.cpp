@@ -2336,7 +2336,7 @@ namespace _ap2gltf
 		}
 
 		*getOutputStream() << COMMA;
-		
+
 		//
 		// Collect properties
 		//
@@ -2562,7 +2562,7 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 					writeStringProperty("type", szEntityName != nullptr ? szEntityName : "$");
 					indent()--;
-					
+
 					writeEndObjectTag();
 				} // if (iRelatedObjectsCount > 0)
 			} // if (sdaiIsGroupedByInstance != 0)
@@ -2580,7 +2580,34 @@ namespace _ap2gltf
 
 		_ptr<_ifc_model> ifcModel(m_pModel, false);
 		if (ifcModel) {
-			writeMetadataObjectsIFC(ifcModel);
+			vector<_ap_geometry*> vecGroupGeometries;
+			ifcModel->getGeometriesByType("IFCGROUP", vecGroupGeometries);
+
+			map<SdaiInstance, vector<SdaiInstance>> mapGroupedInstances; // Instance -> IfcGroup-s
+			for (auto pGeometry : vecGroupGeometries) {
+				SdaiInstance sdaiIsGroupedByInstance = 0;
+				sdaiGetAttrBN(pGeometry->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
+				if (sdaiIsGroupedByInstance != 0) {
+					SdaiAggr sdaiRelatedObjectsAggr = nullptr;
+					sdaiGetAttrBN(sdaiIsGroupedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
+
+					SdaiInteger iRelatedObjectsCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+					for (SdaiInteger i = 0; i < iRelatedObjectsCount; i++) {
+						SdaiInstance sdaiRelatedObject = 0;
+						sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, i, sdaiINSTANCE, &sdaiRelatedObject);
+
+						auto itGroupedInstances = mapGroupedInstances.find(sdaiRelatedObject);
+						if (itGroupedInstances == mapGroupedInstances.end()) {
+							mapGroupedInstances[sdaiRelatedObject] = vector<SdaiInstance>{ pGeometry->getSdaiInstance() };
+						}
+						else {
+							itGroupedInstances->second.push_back(pGeometry->getSdaiInstance());
+						}
+					} // for (SdaiInteger i = ...
+				} // if (sdaiIsGroupedByInstance != 0)
+			} // for (auto pGeometry : ...
+
+			writeMetadataObjectsIFC(ifcModel, mapGroupedInstances);
 			return;
 		}
 
@@ -2601,7 +2628,7 @@ namespace _ap2gltf
 		assert(false);
 	}
 
-	void _exporter::writeMetadataObjectsIFC(_ifc_model* pIfcModel)
+	void _exporter::writeMetadataObjectsIFC(_ifc_model* pIfcModel, const map<SdaiInstance, vector<SdaiInstance>>& mapGroupedInstances)
 	{
 		assert(pIfcModel != nullptr);
 
@@ -2619,7 +2646,7 @@ namespace _ap2gltf
 		// Write metadata
 		//
 
-		*getOutputStream() << COMMA;
+		* getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -2692,7 +2719,7 @@ namespace _ap2gltf
 			indent()--;
 
 			for (auto pChildNode : pProjectNode->children()) {
-				writeMetadataObjectChildrenIFC(pChildNode, pPropertyProvider);
+				writeMetadataObjectChildrenIFC(pChildNode, mapGroupedInstances, pPropertyProvider);
 			}
 
 			writeEndArrayTag();
@@ -2700,7 +2727,7 @@ namespace _ap2gltf
 		// metaObjects
 	}
 
-	void _exporter::writeMetadataObjectChildrenIFC(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider)
+	void _exporter::writeMetadataObjectChildrenIFC(_ifc_node* pNode, const map<SdaiInstance, vector<SdaiInstance>>& mapGroupedInstances, _ifc_property_provider* pPropertyProvider)
 	{
 		assert(pNode != nullptr);
 		assert(pPropertyProvider != nullptr);
@@ -2759,6 +2786,42 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("tag", strTag);
 			*getOutputStream() << COMMA;
+			// groups
+			{
+				auto itGroupedInstances = mapGroupedInstances.find(pNode->getSdaiInstance());
+				if (itGroupedInstances != mapGroupedInstances.end()) {
+					*getOutputStream() << getNewLine();
+					writeIndent();
+
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << "groups";
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << COLON;
+					*getOutputStream() << SPACE;
+
+					writeStartArrayTag(false);
+					indent()++;
+
+					for (size_t iIndex = 0; iIndex < itGroupedInstances->second.size(); iIndex++) {
+						if (iIndex > 0) {
+							*getOutputStream() << COMMA;
+						}
+						char* szGlobalId = nullptr;
+						sdaiGetAttrBN(itGroupedInstances->second[iIndex], "GlobalId", sdaiSTRING, &szGlobalId);
+						assert(szGlobalId != nullptr);
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}				
+
+					indent()--;
+					writeEndArrayTag();
+				}
+			}			
+			// groups
 			// propertySetIds
 			{
 				*getOutputStream() << getNewLine();
@@ -2803,7 +2866,7 @@ namespace _ap2gltf
 		} // if (pNode->getGlobalId() != wstring(DECOMPOSITION_NODE) && ...
 
 		for (auto pChildNode : pNode->children()) {
-			writeMetadataObjectChildrenIFC(pChildNode, pPropertyProvider);
+			writeMetadataObjectChildrenIFC(pChildNode, mapGroupedInstances, pPropertyProvider);
 		}
 	}
 
@@ -2825,7 +2888,7 @@ namespace _ap2gltf
 		// Write metadata
 		//
 
-		*getOutputStream() << COMMA;
+		* getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();

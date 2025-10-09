@@ -23,6 +23,7 @@
 
 #include <set>
 #include <map>
+#include <vector>
 using namespace std;
 
 // ************************************************************************************************
@@ -143,8 +144,8 @@ namespace _ap2gltf
 		void writeMetadataUnits();
 		void writeMetadataGroups();
 		void writeMetadataObjects();
-		void writeMetadataObjectsIFC(_ifc_model* pIfcModel);
-		void writeMetadataObjectChildrenIFC(_ifc_node* pNode, _ifc_property_provider* pPropertyProvider);
+		void writeMetadataObjectsIFC(_ifc_model* pIfcModel, const map<SdaiInstance, vector<SdaiInstance>>& mapGroupedInstances);
+		void writeMetadataObjectChildrenIFC(_ifc_node* pNode, const map<SdaiInstance, vector<SdaiInstance>>& mapGroupedInstances, _ifc_property_provider* pPropertyProvider);
 		void writeMetadataObjectsSTEP(_ap242_model* pAP242Model);		
 		void writeMetadataObjectChildrenSTEP(_ap242_node* pNode, _ap242_model* pAP242Model, _ap242_property_provider* pPropertyProvider);
 
