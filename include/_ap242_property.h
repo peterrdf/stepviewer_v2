@@ -14,6 +14,7 @@ private: // Members
 	SdaiInstance m_sdaiInstance;
 	wstring m_strEntityName;
 	wstring m_strName;
+	wstring m_strDescription;
 	wstring m_strValue;
 	wstring m_strValueType;
 
@@ -31,6 +32,7 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getEntityName() const { return m_strEntityName; }
 	wstring getName() const { return m_strName; }
+	wstring getDescription() const { return m_strDescription; }
 	wstring getValue() const { return m_strValue; }
 	wstring getValueType() const { return m_strValueType; }
 };
@@ -48,6 +50,11 @@ struct _ap242_property_comparator
 		int nameCmp = lhs->getName().compare(rhs->getName());
 		if (nameCmp != 0) {
 			return nameCmp < 0;
+		}
+
+		int descriptionCmp = lhs->getDescription().compare(rhs->getDescription());
+		if (descriptionCmp != 0) {
+			return descriptionCmp < 0;
 		}
 
 		int valueCmp = lhs->getValue().compare(rhs->getValue());

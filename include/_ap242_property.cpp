@@ -13,6 +13,7 @@ _ap242_property::_ap242_property(SdaiInstance sdaiInstance)
 	: m_sdaiInstance(sdaiInstance)
 	, m_strEntityName(_ap_geometry::getEntityName(sdaiInstance))
 	, m_strName(L"$")
+	, m_strDescription(L"$")
 	, m_strValue(L"$")
 	, m_strValueType(L"$")
 {
@@ -33,8 +34,11 @@ void _ap242_property::load()
 
 	wchar_t* szName = nullptr;
 	sdaiGetAttrBN(m_sdaiInstance, "name", sdaiUNICODE, &szName);
-
 	m_strName = szName != nullptr ? szName : L"$";
+
+	wchar_t* szDescription = nullptr;
+	sdaiGetAttrBN(m_sdaiInstance, "description", sdaiUNICODE, &szDescription);
+	m_strDescription = szDescription != nullptr ? szDescription : L"$";
 
 	SdaiAggr sdaiPropertyDefinitionRepresentationAggr = sdaiGetEntityExtentBN(sdaiModel, "PROPERTY_DEFINITION_REPRESENTATION");
 	SdaiInteger	iPropertyDefinitionRepresentationsCount = sdaiGetMemberCount(sdaiPropertyDefinitionRepresentationAggr);

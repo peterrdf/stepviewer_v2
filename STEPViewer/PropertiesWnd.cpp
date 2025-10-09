@@ -987,8 +987,8 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 	ASSERT(pController->getModels().size() == 1);
 
-	_ptr<_ap_model> model(pController->getModels()[0]);
-	if (!model)
+	_ptr<_ap242_model> ap242Model(pController->getModels()[0]);
+	if (!ap242Model)
 	{
 		return;
 	}
@@ -1000,6 +1000,11 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		return;
 	}
 
+	auto pPropertyProvider = ap242Model->getPropertyProvider();
+	if (pPropertyProvider == nullptr) {
+		return;
+	}
+
 	/*
 	* Instance
 	*/
@@ -1008,128 +1013,28 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	SdaiAggr sdaiPropertyDefinitionAggr = sdaiGetEntityExtentBN(model.p()->getSdaiModel(), "PROPERTY_DEFINITION");
-	SdaiInteger iPropertyDefinitionsCount = sdaiGetMemberCount(sdaiPropertyDefinitionAggr);
-	for (SdaiInteger i = 0; i < iPropertyDefinitionsCount; i++)
-	{
-		SdaiInstance sdaiPropertyDefinitionInstance = 0;
-		sdaiGetAggrByIndex(sdaiPropertyDefinitionAggr, i, sdaiINSTANCE, &sdaiPropertyDefinitionInstance);
+	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getSdaiInstance());
+	if (pPropertyCollection != nullptr) {
+		for (auto pAP242Property : pPropertyCollection->properties()) {
+			CString strExpressId;
+			strExpressId.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(pAP242Property->getSdaiInstance()));
 
-		SdaiInstance sdaiDefinitionInstance = 0;
-		sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "definition", sdaiINSTANCE, &sdaiDefinitionInstance);
-		if (sdaiDefinitionInstance == pSelectedInstance->getProductDefinition()->getSdaiInstance())
-		{
-			CString strValue;
-			strValue.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(sdaiPropertyDefinitionInstance));
-
-			auto pPropertyGroup = new CMFCPropertyGridProperty(strValue);
+			auto pPropertyGroup = new CMFCPropertyGridProperty(strExpressId);
 			pInstanceGroup->AddSubItem(pPropertyGroup);
 
-			char* szName = nullptr;
-			sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "name", sdaiSTRING, &szName);
-
-			auto pProperty = new CMFCPropertyGridProperty(L"name", (_variant_t)szName, L"name");
+			auto pProperty = new CMFCPropertyGridProperty(L"name", (_variant_t)(LPCSTR)CW2A(pAP242Property->getName().c_str()), L"name");
 			pProperty->AllowEdit(FALSE);
 			pPropertyGroup->AddSubItem(pProperty);
 
-			char* szDescription = nullptr;
-			sdaiGetAttrBN(sdaiPropertyDefinitionInstance, "description", sdaiSTRING, &szDescription);
-
-			pProperty = new CMFCPropertyGridProperty(L"description", (_variant_t)szName, L"description");
+			pProperty = new CMFCPropertyGridProperty(L"description", (_variant_t)(LPCSTR)CW2A(pAP242Property->getDescription().c_str()), L"description");
 			pProperty->AllowEdit(FALSE);
 			pPropertyGroup->AddSubItem(pProperty);
 
-			//
-			//	Lookup value (not using inverse relations)
-			//
-			SdaiAggr sdaiPropertyDefinitionRepresentationAggr = sdaiGetEntityExtentBN(model.p()->getSdaiModel(), "PROPERTY_DEFINITION_REPRESENTATION");
-			SdaiInteger	iPropertyDefinitionRepresentationsCount = sdaiGetMemberCount(sdaiPropertyDefinitionRepresentationAggr);
-			for (SdaiInteger j = 0; j < iPropertyDefinitionRepresentationsCount; j++) 
-			{
-				SdaiInstance sdaiPropertyDefinitionRepresentationInstance = 0;
-				sdaiGetAggrByIndex(sdaiPropertyDefinitionRepresentationAggr, j, sdaiINSTANCE, &sdaiPropertyDefinitionRepresentationInstance);
-
-				SdaiInstance sdaiPDRDefinitionInstance = 0;
-				sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &sdaiPDRDefinitionInstance);
-				if (sdaiPDRDefinitionInstance == sdaiPropertyDefinitionInstance)
-				{
-					SdaiInstance sdaiUsedRepresentationInstance = 0;
-					sdaiGetAttrBN(sdaiPropertyDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiUsedRepresentationInstance);
-
-					SdaiAggr sdaiItemsAggr = nullptr;
-					sdaiGetAttrBN(sdaiUsedRepresentationInstance, "items", sdaiAGGR, &sdaiItemsAggr);
-					SdaiInteger	iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
-					for (SdaiInteger k = 0; k < iItemsCount; k++)
-					{
-						SdaiInstance sdaiItemInstance = 0;
-						sdaiGetAggrByIndex(sdaiItemsAggr, k, sdaiINSTANCE, &sdaiItemInstance);
-
-						if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(model.p()->getSdaiModel(), "DESCRIPTIVE_REPRESENTATION_ITEM")) 
-						{
-							szDescription = nullptr;
-							sdaiGetAttrBN(sdaiItemInstance, "description", sdaiSTRING, &szDescription);
-
-							pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)szDescription, L"value");
-							pProperty->AllowEdit(FALSE);
-							pPropertyGroup->AddSubItem(pProperty);
-						} // DESCRIPTIVE_REPRESENTATION_ITEM
-						else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(model.p()->getSdaiModel(), "VALUE_REPRESENTATION_ITEM")) 
-						{
-							SdaiADB sdaiValueComponentADB = nullptr;
-							sdaiGetAttrBN(sdaiItemInstance, "value_component", sdaiADB, &sdaiValueComponentADB);
-
-							const char* szTypePath = sdaiGetADBTypePath(sdaiValueComponentADB, 0);
-							switch (sdaiGetADBType(sdaiValueComponentADB))
-							{
-								case sdaiINTEGER:
-								{
-									SdaiInteger iValue = 0;
-									sdaiGetADBValue(sdaiValueComponentADB, sdaiINTEGER, (void*)&iValue);
-
-									strValue.Format(L"%i [%s]", (int)iValue, (LPCTSTR)CA2W(szTypePath));
-
-									pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-									pProperty->AllowEdit(FALSE);
-									pPropertyGroup->AddSubItem(pProperty);
-								}
-								break;
-
-								case sdaiREAL:
-								{
-									double dValue = 0;
-									sdaiGetADBValue(sdaiValueComponentADB, sdaiREAL, (void*)&dValue);
-
-									strValue.Format(L"%f [%s]", dValue, (LPCTSTR)CA2W(szTypePath));
-
-									pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-									pProperty->AllowEdit(FALSE);
-									pPropertyGroup->AddSubItem(pProperty);
-								}
-								break;
-
-								case sdaiSTRING:
-								{
-									char* szValue = nullptr;
-									sdaiGetADBValue(sdaiValueComponentADB, sdaiSTRING, (void*)&szValue);
-
-									strValue.Format(L"%s [%s]", (LPCWSTR)CA2W(szValue), (LPCTSTR)CA2W(szTypePath));
-
-									pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCTSTR)strValue, L"value");
-									pProperty->AllowEdit(FALSE);
-									pPropertyGroup->AddSubItem(pProperty);
-								}
-								break;
-
-								default:
-									ASSERT(FALSE);
-									break;
-							} // switch (sdaiGetADBType(valueComponentADB))
-						} // VALUE_REPRESENTATION_ITEM
-					} // for (SdaiInteger k = ...
-				} // if (sdaiPDRDefinitionInstance == ...
-			} // for (SdaiInteger j = ...
-		} // if (sdaiDefinitionInstance == ... 
-	} // for (SdaiInteger i = ...
+			pProperty = new CMFCPropertyGridProperty(L"value", (_variant_t)(LPCSTR)CW2A(pAP242Property->getValue().c_str()), L"value");
+			pProperty->AllowEdit(FALSE);
+			pPropertyGroup->AddSubItem(pProperty);
+		}
+	}
 
 	m_wndPropList.AddProperty(pInstanceGroup);
 }
