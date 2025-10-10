@@ -2320,10 +2320,10 @@ public: // Properties
 	void setBackgroundColor(float fR, float fG, float fB);
 	_color* getBackgroundColor() const { return m_pBackgroundColor; }
 
-    void setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
+    void setSelectedInstanceMaterial(const _material& material);
     _material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
 
-	void setPointedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
+	void setPointedInstanceMaterial(const _material& material);
 	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
 };
 

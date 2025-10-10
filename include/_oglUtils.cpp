@@ -557,15 +557,36 @@ void _oglRendererSettings::_setView(enumView enView)
 
 		string strValue = loadSetting(strSettingName);
 		if (!strValue.empty()) {
-			vector<string> arRGB;
-			_string::split(strValue, ":", arRGB);
-			if (arRGB.size() == 4) {
+			vector<string> arMaterial;
+			_string::split(strValue, ":", arMaterial);
+			if (arMaterial.size() == 13) {
 				m_pSelectedInstanceMaterial->init(
-					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
-					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
-					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
-					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
-					(float)atof(arRGB[3].c_str()),
+					(float)atof(arMaterial[0].c_str()), (float)atof(arMaterial[1].c_str()), (float)atof(arMaterial[2].c_str()),
+					(float)atof(arMaterial[3].c_str()), (float)atof(arMaterial[4].c_str()), (float)atof(arMaterial[5].c_str()),
+					(float)atof(arMaterial[6].c_str()), (float)atof(arMaterial[7].c_str()), (float)atof(arMaterial[8].c_str()),
+					(float)atof(arMaterial[9].c_str()), (float)atof(arMaterial[10].c_str()), (float)atof(arMaterial[11].c_str()),
+					(float)atof(arMaterial[12].c_str()),
+					nullptr,
+					false);
+			}
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arMaterial;
+			_string::split(strValue, ":", arMaterial);
+			if (arMaterial.size() == 13) {
+				m_pPointedInstanceMaterial->init(
+					(float)atof(arMaterial[0].c_str()), (float)atof(arMaterial[1].c_str()), (float)atof(arMaterial[2].c_str()),
+					(float)atof(arMaterial[3].c_str()), (float)atof(arMaterial[4].c_str()), (float)atof(arMaterial[5].c_str()),
+					(float)atof(arMaterial[6].c_str()), (float)atof(arMaterial[7].c_str()), (float)atof(arMaterial[8].c_str()),
+					(float)atof(arMaterial[9].c_str()), (float)atof(arMaterial[10].c_str()), (float)atof(arMaterial[11].c_str()),
+					(float)atof(arMaterial[12].c_str()),
 					nullptr,
 					false);
 			}
@@ -868,34 +889,49 @@ void _oglRendererSettings::setBackgroundColor(float fR, float fG, float fB)
 	saveSetting(strSettingName, strValue);
 }
 
-void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
+void _oglRendererSettings::setSelectedInstanceMaterial(const _material& material)
 {
 	m_pSelectedInstanceMaterial->init(
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fTransparency,
+		material.getAmbientColor().r(), material.getAmbientColor().g(), material.getAmbientColor().b(),
+		material.getDiffuseColor().r(), material.getDiffuseColor().g(), material.getDiffuseColor().b(),
+		material.getSpecularColor().r(), material.getSpecularColor().g(), material.getSpecularColor().b(),
+		material.getEmissiveColor().r(), material.getEmissiveColor().g(), material.getEmissiveColor().b(),
+		material.getA(),
 		nullptr,
 		false);
 
 	string strSettingName(typeid(this).raw_name());
 	strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
 
-	string strValue = to_string(fR) + ":" + to_string(fG) + ":" + to_string(fB) + ":" + to_string(fTransparency);
+	string strValue = 
+		to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
+		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
+		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +
+		to_string(material.getA());
 	saveSetting(strSettingName, strValue);
 }
 
-void _oglRendererSettings::setPointedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
+void _oglRendererSettings::setPointedInstanceMaterial(const _material& material)
 {
 	m_pPointedInstanceMaterial->init(
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fTransparency,
+		material.getAmbientColor().r(), material.getAmbientColor().g(), material.getAmbientColor().b(),
+		material.getDiffuseColor().r(), material.getDiffuseColor().g(), material.getDiffuseColor().b(),
+		material.getSpecularColor().r(), material.getSpecularColor().g(), material.getSpecularColor().b(),
+		material.getEmissiveColor().r(), material.getEmissiveColor().g(), material.getEmissiveColor().b(),
+		material.getA(),
 		nullptr,
 		false);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
+
+	string strValue = to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
+		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
+		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +
+		to_string(material.getA());
+	saveSetting(strSettingName, strValue);
 }
 
 // ************************************************************************************************
@@ -1736,8 +1772,8 @@ _oglView::_oglView()
 	case enumApplicationProperty::Projection:
 	case enumApplicationProperty::View:
 	case enumApplicationProperty::BackgroundColor:
-	case enumApplicationProperty::SelectionColor:
-	case enumApplicationProperty::HighlightColor:
+	case enumApplicationProperty::SelectionMaterial:
+	case enumApplicationProperty::HighlightMaterial:
 	case enumApplicationProperty::GhostView:
 	case enumApplicationProperty::GhostViewTransparency:
 	case enumApplicationProperty::ShowFaces:

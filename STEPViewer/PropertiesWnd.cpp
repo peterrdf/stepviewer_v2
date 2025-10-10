@@ -417,25 +417,81 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 					}
 					break;
 
-				case enumApplicationProperty::SelectionColor:
+				case enumApplicationProperty::SelectionMaterial:
 					{
-						pRenderer->setSelectedInstanceMaterial(
-							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f,
-							1.f);
-						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::SelectionColor);
+						auto pMaterialProperty = pColorSelectorProperty->GetParent();
+						ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+
+						// Validate transparency value
+						auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+						float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+						if (fTransparency > 1.f) {
+							fTransparency = 1.f;
+							pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+						}
+						else if (fTransparency < 0.f) {
+							fTransparency = 0.f;
+							pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+						}
+
+						_material material;
+						material.init(
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							fTransparency,
+							nullptr,
+							false);
+						pRenderer->setSelectedInstanceMaterial(material);
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::SelectionMaterial);
 					}
 					break;
 
-				case enumApplicationProperty::HighlightColor:
+				case enumApplicationProperty::HighlightMaterial:
 					{
-						pRenderer->setPointedInstanceMaterial(
-							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f,
-							1.f);
-						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightColor);
+						auto pMaterialProperty = pColorSelectorProperty->GetParent();
+						ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+
+						// Validate transparency value
+						auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+						float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+						if (fTransparency > 1.f) {
+							fTransparency = 1.f;
+							pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+						}
+						else if (fTransparency < 0.f) {
+							fTransparency = 0.f;
+							pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+						}
+
+						_material material;
+						material.init(
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+							(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+							fTransparency,
+							nullptr,
+							false);
+						pRenderer->setPointedInstanceMaterial(material);
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightMaterial);
 					}
 					break;
 
@@ -752,7 +808,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
 				nullptr,
 				L"Selection Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -767,7 +823,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
 				nullptr,
 				L"Selection Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -782,7 +838,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
 				nullptr,
 				L"Selection Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -797,7 +853,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
 				nullptr,
 				L"Selection Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -809,7 +865,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Transparency"),
 				(_variant_t)pMaterial->getA(),
 				_T("Transparency"),
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
 			pProperty->AllowEdit(TRUE);
 
 			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
@@ -832,7 +888,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
 				nullptr,
 				L"Highlight Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -847,7 +903,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
 				nullptr,
 				L"Highlight Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -862,7 +918,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
 				nullptr,
 				L"Highlight Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -877,7 +933,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
 				nullptr,
 				L"Highlight Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
@@ -889,7 +945,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Transparency"),
 				(_variant_t)pMaterial->getA(),
 				_T("Transparency"),
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->AllowEdit(TRUE);
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
