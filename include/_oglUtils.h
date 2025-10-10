@@ -1241,6 +1241,7 @@ public: // Methods
         _setAmbientColor(pMaterial);
         _setDiffuseColor(pMaterial);
         _setSpecularColor(pMaterial);
+        //_setEmissiveColor(pMaterial); //#todo emissive color support
 
         _setTransparency(fTransparency);
     }
