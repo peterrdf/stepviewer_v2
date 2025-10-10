@@ -17,8 +17,11 @@ enum class enumApplicationProperty : int
 	All, // Reset
 	Projection,
 	View,
+	BackgroundColor,
+	SelectionColor,
+	HighlightColor,
 	GhostView,
-	GhostViewTransparency,
+	GhostViewTransparency,	
 	ShowFaces,
 	CullFaces,
 	ShowFacesWireframes,

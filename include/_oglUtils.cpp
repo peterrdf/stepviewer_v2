@@ -52,6 +52,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bModelCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
+	, m_pBackgroundMaterial(new _material())
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
 	, m_bMultiSelect(false)
@@ -61,6 +62,7 @@ _oglRendererSettings::_oglRendererSettings()
 
 /*virtual*/ _oglRendererSettings::~_oglRendererSettings()
 {
+	delete m_pBackgroundMaterial;
 	delete m_pSelectedInstanceMaterial;
 	delete m_pPointedInstanceMaterial;
 }
@@ -94,6 +96,16 @@ _oglRendererSettings::_oglRendererSettings()
 	m_bShowCoordinateSystem = TRUE;
 	m_bModelCoordinateSystem = TRUE;
 	m_bShowNavigator = TRUE;
+
+	// Background
+	m_pBackgroundMaterial->init(
+		0.9f, 0.9f, 0.9f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f,
+		nullptr,
+		false);
 
 	// Selection
 	m_pSelectedInstanceMaterial->init(
@@ -815,9 +827,33 @@ BOOL _oglRendererSettings::getShowNavigator() const
 	return m_bShowNavigator;
 }
 
+void _oglRendererSettings::setBackgroundMaterial(float fR, float fG, float fB)
+{
+	m_pBackgroundMaterial->init(
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		1.f,
+		nullptr,
+		false);
+}
+
 void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
 {
 	m_pSelectedInstanceMaterial->init(
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		fR, fG, fB,
+		fTransparency,
+		nullptr,
+		false);
+}
+
+void _oglRendererSettings::setPointedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
+{
+	m_pPointedInstanceMaterial->init(
 		fR, fG, fB,
 		fR, fG, fB,
 		fR, fG, fB,
@@ -1408,7 +1444,11 @@ void _oglRenderer::_prepare(
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
-		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClearColor(
+			m_pBackgroundMaterial->getAmbientColor().r(),
+			m_pBackgroundMaterial->getAmbientColor().g(),
+			m_pBackgroundMaterial->getAmbientColor().b(),
+			1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_SCISSOR_TEST);
@@ -1660,6 +1700,9 @@ _oglView::_oglView()
 	case enumApplicationProperty::All:
 	case enumApplicationProperty::Projection:
 	case enumApplicationProperty::View:
+	case enumApplicationProperty::BackgroundColor:
+	case enumApplicationProperty::SelectionColor:
+	case enumApplicationProperty::HighlightColor:
 	case enumApplicationProperty::GhostView:
 	case enumApplicationProperty::GhostViewTransparency:
 	case enumApplicationProperty::ShowFaces:

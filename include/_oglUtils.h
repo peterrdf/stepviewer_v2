@@ -2230,6 +2230,9 @@ protected: // Fields
     BOOL m_bModelCoordinateSystem;
     BOOL m_bShowNavigator;
 
+	//Background
+	_material* m_pBackgroundMaterial;
+
     // Selection
     _material* m_pSelectedInstanceMaterial;
     _material* m_pPointedInstanceMaterial;
@@ -2314,8 +2317,14 @@ public: // Properties
     void setShowNavigator(BOOL bValue);
     BOOL getShowNavigator() const;
 
+	void setBackgroundMaterial(float fR, float fG, float fB);
+	_material* getBackgroundMaterial() const { return m_pBackgroundMaterial; }
+
     void setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
     _material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
+
+	void setPointedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
+	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
 };
 
 // ************************************************************************************************

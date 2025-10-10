@@ -49,6 +49,16 @@ public: // Methods
 };
 
 // ************************************************************************************************
+class CColorSelectorProperty : public CMFCPropertyGridColorProperty
+{
+
+public: // Methods
+
+	CColorSelectorProperty(const CString& strName, const COLORREF& color, CPalette* pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
+	virtual ~CColorSelectorProperty();
+};
+
+// ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
 	, public _ap_view
