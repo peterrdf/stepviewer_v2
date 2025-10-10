@@ -116,7 +116,7 @@ _oglRendererSettings::_oglRendererSettings()
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
-		1.f,
+		.5f,
 		nullptr,
 		false);
 }

@@ -733,36 +733,169 @@ void CPropertiesWnd::LoadApplicationProperties()
 			L"Background Color",
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::BackgroundColor));
 		pProperty->EnableOtherButton(_T("Other..."));
-		pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+		pProperty->EnableAutomaticButton(_T("Default"), RGB(230, 230, 230));
+
 		pViewGroup->AddSubItem(pProperty);
 	}
 
+	// Selection Material
 	{
 		auto pMaterial = pRenderer->getSelectedInstanceMaterial();
-		auto pProperty = new CColorSelectorProperty(L"Selection Color",
-			RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().g() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
-			nullptr,
-			L"Selection Color",
-			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
-		pProperty->EnableOtherButton(_T("Other..."));
-		pProperty->EnableAutomaticButton(_T("Default"), RGB(230, 230, 230));
-		pViewGroup->AddSubItem(pProperty);
+
+		auto pSelectedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Selection Material"));
+		
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Specular
+		{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Emissive
+		{
+			auto pProperty = new CColorSelectorProperty(L"Emissive",
+				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionColor));
+			pProperty->AllowEdit(TRUE);
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+		
+		pViewGroup->AddSubItem(pSelectedInstanceMateriaGroup);
 	}
 
+	// Highlight Material
 	{
 		auto pMaterial = pRenderer->getPointedInstanceMaterial();
-		auto pProperty = new CColorSelectorProperty(L"Highlight Color",
-			RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().g() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
-			nullptr,
-			L"Highlight Color",
-			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
-		pProperty->EnableOtherButton(_T("Other..."));
-		pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
-		pViewGroup->AddSubItem(pProperty);
+
+		auto pPointedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Highlight Material"));
+
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Specular
+		{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Emissive
+		{
+			auto pProperty = new CColorSelectorProperty(L"Emissive",
+				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightColor));
+			pProperty->AllowEdit(TRUE);
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
 	}
 #pragma endregion
 
