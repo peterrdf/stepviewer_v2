@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_oglUtils.h"
 #include "_instance.h"
+#include "_string.h"
 #include "_ptr.h"
 
 #ifdef __EMSCRIPTEN__
@@ -541,6 +542,27 @@ void _oglRendererSettings::_setView(enumView enView)
 			m_bShowNavigator = strValue == "TRUE";
 		}
 	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arRGB;
+			_string::split(strValue, ":", arRGB);
+			if (arRGB.size() == 4) {
+				m_pSelectedInstanceMaterial->init(
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()),
+					(float)atof(arRGB[3].c_str()),
+					nullptr,
+					false);
+			}
+		}
+	}
 }
 
 enumProjection _oglRendererSettings::_getProjection() const
@@ -849,6 +871,12 @@ void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float
 		fTransparency,
 		nullptr,
 		false);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
+
+	string strValue = to_string(fR) + ":" + to_string(fG) + ":" + to_string(fB) + ":" + to_string(fTransparency);
+	saveSetting(strSettingName, strValue);
 }
 
 void _oglRendererSettings::setPointedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
