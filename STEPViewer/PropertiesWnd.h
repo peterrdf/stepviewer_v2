@@ -80,6 +80,8 @@ protected: // Methods
 
 	// Support for properties
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
+	void OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
+	void OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 
 // Construction
 public:
