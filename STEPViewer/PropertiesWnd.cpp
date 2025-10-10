@@ -409,7 +409,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 			switch (pData->GetType()) {
 				case enumApplicationProperty::BackgroundColor:
 					{
-						pRenderer->setBackgroundMaterial(
+						pRenderer->setBackgroundColor(
 							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
 							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
 							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f);
@@ -724,11 +724,11 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pMaterial = pRenderer->getBackgroundMaterial();
+		auto pColor = pRenderer->getBackgroundColor();
 		auto pProperty = new CColorSelectorProperty(L"Background Color",
-			RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().g() * 255.f), 
-				(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+			RGB((BYTE)(pColor->r() * 255.f),
+				(BYTE)(pColor->g() * 255.f),
+				(BYTE)(pColor->b() * 255.f)),
 			nullptr,
 			L"Background Color",
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::BackgroundColor));

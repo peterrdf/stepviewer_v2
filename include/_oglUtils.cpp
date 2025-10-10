@@ -53,7 +53,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bModelCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
-	, m_pBackgroundMaterial(new _material())
+	, m_pBackgroundColor(new _color())
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
 	, m_bMultiSelect(false)
@@ -63,7 +63,7 @@ _oglRendererSettings::_oglRendererSettings()
 
 /*virtual*/ _oglRendererSettings::~_oglRendererSettings()
 {
-	delete m_pBackgroundMaterial;
+	delete m_pBackgroundColor;
 	delete m_pSelectedInstanceMaterial;
 	delete m_pPointedInstanceMaterial;
 }
@@ -99,14 +99,7 @@ _oglRendererSettings::_oglRendererSettings()
 	m_bShowNavigator = TRUE;
 
 	// Background
-	m_pBackgroundMaterial->init(
-		0.9f, 0.9f, 0.9f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f,
-		nullptr,
-		false);
+	m_pBackgroundColor->init(0.9f, 0.9f, 0.9f);
 
 	// Selection
 	m_pSelectedInstanceMaterial->init(
@@ -545,6 +538,21 @@ void _oglRendererSettings::_setView(enumView enView)
 
 	{
 		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pBackgroundColor);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arRGB;
+			_string::split(strValue, ":", arRGB);
+			if (arRGB.size() == 3) {
+				m_pBackgroundColor->init(
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()));
+			}
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
 		strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
 
 		string strValue = loadSetting(strSettingName);
@@ -849,16 +857,15 @@ BOOL _oglRendererSettings::getShowNavigator() const
 	return m_bShowNavigator;
 }
 
-void _oglRendererSettings::setBackgroundMaterial(float fR, float fG, float fB)
+void _oglRendererSettings::setBackgroundColor(float fR, float fG, float fB)
 {
-	m_pBackgroundMaterial->init(
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		1.f,
-		nullptr,
-		false);
+	m_pBackgroundColor->init(fR, fG, fB);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pBackgroundColor);
+
+	string strValue = to_string(fR) + ":" + to_string(fG) + ":" + to_string(fB);
+	saveSetting(strSettingName, strValue);
 }
 
 void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
@@ -1473,9 +1480,9 @@ void _oglRenderer::_prepare(
 		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
 		glClearColor(
-			m_pBackgroundMaterial->getAmbientColor().r(),
-			m_pBackgroundMaterial->getAmbientColor().g(),
-			m_pBackgroundMaterial->getAmbientColor().b(),
+			m_pBackgroundColor->r(),
+			m_pBackgroundColor->g(),
+			m_pBackgroundColor->b(),
 			1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -2230,8 +2230,8 @@ protected: // Fields
     BOOL m_bModelCoordinateSystem;
     BOOL m_bShowNavigator;
 
-	//Background
-	_material* m_pBackgroundMaterial;
+	// Background
+    _color* m_pBackgroundColor;
 
     // Selection
     _material* m_pSelectedInstanceMaterial;
@@ -2317,8 +2317,8 @@ public: // Properties
     void setShowNavigator(BOOL bValue);
     BOOL getShowNavigator() const;
 
-	void setBackgroundMaterial(float fR, float fG, float fB);
-	_material* getBackgroundMaterial() const { return m_pBackgroundMaterial; }
+	void setBackgroundColor(float fR, float fG, float fB);
+	_color* getBackgroundColor() const { return m_pBackgroundColor; }
 
     void setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
     _material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
