@@ -64,6 +64,20 @@ CColorSelectorProperty::CColorSelectorProperty(const CString& strName, const COL
 	delete (CApplicationPropertyData*)GetData();
 }
 
+COLORREF CColorSelectorProperty::GetSelectedColor() const
+{
+	if (GetColor() == (COLORREF)-1) {
+		return GetAutomaticColor();
+	}
+
+	return GetColor();
+}
+
+COLORREF CColorSelectorProperty::GetAutomaticColor() const
+{
+	return m_ColorAutomatic;
+}
+
 // ************************************************************************************************
 /*virtual*/ void CPropertiesWnd::postModelLoaded()
 {
@@ -421,9 +435,9 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 				case enumApplicationProperty::BackgroundColor:
 					{
 						pOGLRenderer->setBackgroundColor(
-							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
-							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f);
+							(float)GetRValue(pColorSelectorProperty->GetSelectedColor()) / 255.f,
+							(float)GetGValue(pColorSelectorProperty->GetSelectedColor()) / 255.f,
+							(float)GetBValue(pColorSelectorProperty->GetSelectedColor()) / 255.f);
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::BackgroundColor);
 					}
 					break;
@@ -479,18 +493,18 @@ void CPropertiesWnd::OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty
 
 	_material material;
 	material.init(
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
 		fTransparency,
 		nullptr,
 		false);
@@ -526,18 +540,18 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 
 	_material material;
 	material.init(
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
-		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
-		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
-		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
 		fTransparency,
 		nullptr,
 		false);
