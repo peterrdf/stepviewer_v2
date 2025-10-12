@@ -124,14 +124,13 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 #pragma region Application
 	if (m_wndObjectCombo.GetCurSel() == 0) {
-		auto pRenderer = getController()->getViewAs<_oglRenderer>();
-		if (pRenderer == nullptr) {
+		auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+		if (pOGLRenderer == nullptr) {
 			ASSERT(FALSE);
-
 			return 0;
 		}
 
-		auto pBlinnPhongProgram = pRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+		auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr) {
 			CString strValue = pApplicationProperty->GetValue();
@@ -146,7 +145,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 			switch (pData->GetType()) {
 				case enumApplicationProperty::ShowFaces:
 					{
-						pRenderer->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 					}
@@ -154,7 +153,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::GhostView:
 					{
-						pRenderer->setGhostView(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setGhostView(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::GhostView);
 					}
@@ -176,7 +175,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 							pApplicationProperty->SetValue(fTransparency);
 						}
 
-						pRenderer->setGhostViewTransparency((float)atof(CW2A((LPCWSTR)strValue)));
+						pOGLRenderer->setGhostViewTransparency((float)atof(CW2A((LPCWSTR)strValue)));
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::GhostViewTransparency);
 					}
@@ -184,7 +183,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::CullFaces:
 					{
-						pRenderer->setCullFacesMode(strValue);
+						pOGLRenderer->setCullFacesMode(strValue);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 					}
@@ -192,7 +191,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::ShowConceptualFacesWireframes:
 					{
-						pRenderer->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 					}
@@ -200,7 +199,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::ShowLines:
 					{
-						pRenderer->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 					}
@@ -208,7 +207,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::ShowPoints:
 					{
-						pRenderer->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 					}
@@ -216,7 +215,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::RotationMode:
 					{
-						pRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
+						pOGLRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 					}
@@ -224,7 +223,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::ShowCoordinateSystem:
 					{
-						pRenderer->setShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
 					}
@@ -232,7 +231,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::CoordinateSystemType:
 					{
-						pRenderer->setModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
 					}
@@ -240,7 +239,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 				case enumApplicationProperty::ShowNavigator:
 					{
-						pRenderer->setShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						pOGLRenderer->setShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
 					}
@@ -421,7 +420,7 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 			switch (pData->GetType()) {
 				case enumApplicationProperty::BackgroundColor:
 					{
-						pRenderer->setBackgroundColor(
+						pOGLRenderer->setBackgroundColor(
 							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
 							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
 							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f);
@@ -448,6 +447,8 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 
 			return 0;
 		} // if (pColorSelectorProperty != nullptr)
+
+		ASSERT(FALSE); // unexpected!
 	} // if (m_wndObjectCombo.GetCurSel() == 0)
 #pragma endregion
 
@@ -494,9 +495,9 @@ void CPropertiesWnd::OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty
 		nullptr,
 		false);
 
-	auto pRenderer = getController()->getViewAs<_oglRenderer>();
-	if (pRenderer != nullptr) {
-		pRenderer->setSelectedInstanceMaterial(material);
+	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		pOGLRenderer->setSelectedInstanceMaterial(material);
 		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::SelectionMaterial);
 	}
 }
@@ -541,9 +542,9 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 		nullptr,
 		false);
 
-	auto pRenderer = getController()->getViewAs<_oglRenderer>();
-	if (pRenderer != nullptr) {
-		pRenderer->setPointedInstanceMaterial(material);
+	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		pOGLRenderer->setPointedInstanceMaterial(material);
 		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightMaterial);
 	}
 }
@@ -685,8 +686,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	auto pRenderer = getController()->getViewAs<_oglRenderer>();
-	if (pRenderer == nullptr) {
+	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pOGLRenderer == nullptr) {
 		return;
 	}
 
@@ -695,7 +696,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Ghost View"),
-			pRenderer->getGhostView() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Ghost View"),
+			pOGLRenderer->getGhostView() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Ghost View"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::GhostView));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -706,7 +707,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Ghost View Transparency"),
-			(_variant_t)pRenderer->getGhostViewTransparency(),
+			(_variant_t)pOGLRenderer->getGhostViewTransparency(),
 			_T("Ghost View Transparency"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::GhostViewTransparency));
 		pProperty->AllowEdit(TRUE);
@@ -715,7 +716,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"),
-			pRenderer->getShowFaces() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			pOGLRenderer->getShowFaces() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -725,7 +726,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		CString strCullFacesMode = pRenderer->getCullFacesMode();
+		CString strCullFacesMode = pOGLRenderer->getCullFacesMode();
 
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"),
@@ -741,7 +742,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"),
-			pRenderer->getShowConceptualFacesPolygons() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOGLRenderer->getShowConceptualFacesPolygons() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Conceptual faces wireframes"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -752,7 +753,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Lines"), pRenderer->getShowLines() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Lines"), pOGLRenderer->getShowLines() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -763,7 +764,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Points"), pRenderer->getShowPoints() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Points"), pOGLRenderer->getShowPoints() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -776,7 +777,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(
 			_T("Rotation mode"),
-			pRenderer->_getRotationMode() == enumRotationMode::XY ? ROTATION_MODE_XY : ROTATION_MODE_XYZ,
+			pOGLRenderer->_getRotationMode() == enumRotationMode::XY ? ROTATION_MODE_XY : ROTATION_MODE_XYZ,
 			_T("XY/XYZ"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
 		pProperty->AddOption(ROTATION_MODE_XY);
@@ -788,7 +789,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Show Coordinate System"),
-			pRenderer->getShowCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
+			pOGLRenderer->getShowCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowCoordinateSystem));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -799,7 +800,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Model Coordinate System"),
-			pRenderer->getModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
+			pOGLRenderer->getModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CoordinateSystemType));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -810,7 +811,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Navigator"),
-			pRenderer->getShowNavigator() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
+			pOGLRenderer->getShowNavigator() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -819,8 +820,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
+	// Background Color
 	{
-		auto pColor = pRenderer->getBackgroundColor();
+		auto pColor = pOGLRenderer->getBackgroundColor();
 		auto pProperty = new CColorSelectorProperty(L"Background Color",
 			RGB((BYTE)(pColor->r() * 255.f),
 				(BYTE)(pColor->g() * 255.f),
@@ -836,7 +838,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	// Selection Material
 	{
-		auto pMaterial = pRenderer->getSelectedInstanceMaterial();
+		auto pMaterial = pOGLRenderer->getSelectedInstanceMaterial();
 
 		auto pSelectedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Selection Material"));
 
@@ -913,10 +915,11 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pSelectedInstanceMateriaGroup);
 	}
+	// Selection Material
 
 	// Highlight Material
 	{
-		auto pMaterial = pRenderer->getPointedInstanceMaterial();
+		auto pMaterial = pOGLRenderer->getPointedInstanceMaterial();
 
 		auto pPointedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Highlight Material"));
 
@@ -930,7 +933,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				L"Highlight Color",
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
@@ -945,7 +948,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				L"Highlight Color",
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
@@ -960,7 +963,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				L"Highlight Color",
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
@@ -975,7 +978,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				L"Highlight Color",
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
 			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
@@ -993,10 +996,11 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
 	}
+	// Highlight Material
 #pragma endregion
 
 #pragma region OpenGL
-	auto pBlinnPhongProgram = pRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+	auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
 	if (pBlinnPhongProgram != nullptr) {
 		auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
 		pViewGroup->AddSubItem(pOpenGL);
