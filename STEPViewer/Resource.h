@@ -87,6 +87,7 @@
 #define IDB_SORT_INSTANCES_24           312
 #define TEXTFILE                        312
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
+#define ID_INDICATOR_LOG                313
 #define IDD_DIALOG_NEW_INSTANCE         314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
 #define IDD_DIALOG_SEARCH               316
@@ -127,6 +128,10 @@
 #define IDD_BCF_ADDOCUMENT              361
 #define IDD_BCF_TOPICFILES              363
 #define IDD_DIALOG_IDS_CHECKER          365
+#define IDI_ICON_ERR                    367
+#define IDI_ICON_INFO                   368
+#define IDI_ICON_WARN                   369
+#define IDD_DIALOG_LOG                  370
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -185,6 +190,7 @@
 #define IDC_EDIT_IDS_CHECKER_RESULTS    1055
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
+#define IDC_EDIT_MESSAGES               1057
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -240,9 +246,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        367
+#define _APS_NEXT_RESOURCE_VALUE        372
 #define _APS_NEXT_COMMAND_VALUE         32858
-#define _APS_NEXT_CONTROL_VALUE         1057
-#define _APS_NEXT_SYMED_VALUE           313
+#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

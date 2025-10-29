@@ -30,15 +30,13 @@ END_MESSAGE_MAP()
 static UINT indicators[] =
 {
 	ID_SEPARATOR,           // status line indicator
-	ID_INDICATOR_CAPS,
-	ID_INDICATOR_NUM,
-	ID_INDICATOR_SCRL,
+	ID_INDICATOR_LOG,
 };
 
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-CController* CMainFrame::getController() const
+CController* CMainFrame::GetController() const
 {
 	POSITION posDocTemplate = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (posDocTemplate == nullptr)
@@ -116,13 +114,37 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(nullptr, uiFirstUserToolBarId, uiLastUserToolBarId);
 
-	if (!m_statusBar.Create(this))
-	{
-		ASSERT(FALSE);
-
-		return -1;
+	if (!m_statusBar.Create(this)) {
+		TRACE0("Failed to create status bar\n");
+		return -1;      // fail to create
 	}
-	m_statusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+	m_statusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
+
+	// Status indicator
+	int nIndex = m_statusBar.CommandToIndex(ID_SEPARATOR);
+	if (nIndex != -1) {
+		m_statusBar.SetPaneInfo(nIndex, ID_SEPARATOR, SBPS_NORMAL, 200);
+	}
+
+	// Log indicator
+	nIndex = m_statusBar.CommandToIndex(ID_INDICATOR_LOG);
+	if (nIndex != -1) {
+		m_statusBar.SetPaneText(nIndex, _T(""));
+		m_statusBar.SetPaneInfo(nIndex, ID_INDICATOR_LOG, SBPS_STRETCH, 400);
+
+		HICON hIcon = (HICON)LoadImage(
+			AfxGetResourceHandle(),
+			MAKEINTRESOURCE(IDI_ICON_INFO),
+			IMAGE_ICON,
+			16, 16, LR_DEFAULTCOLOR
+		);
+		if (hIcon) {
+			m_statusBar.SetPaneIcon(nIndex, hIcon);
+		}
+	}
+
+	// Initialize
+	m_statusBar.SetLogHub(GetController()->getLogHub());
 
 	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
 	m_menuBar.EnableDocking(CBRS_ALIGN_ANY);
@@ -257,7 +279,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::CreateDockingWindows()
 {
-	CController* pController = getController();
+	CController* pController = GetController();
 
 	BOOL bNameValid;
 

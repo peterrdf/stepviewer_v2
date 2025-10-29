@@ -693,6 +693,7 @@
     <ClInclude Include="IDS\parser\_xml.h" />
     <ClInclude Include="IDS\pch.h" />
     <ClInclude Include="IFC\IFCModelStructureView.h" />
+    <ClInclude Include="LogDialog.h" />
     <ClInclude Include="ModelCheckDlg.h" />
     <ClInclude Include="RelationsView.h" />
     <ClInclude Include="SchemaView.h" />
@@ -1248,6 +1249,7 @@
     <ClCompile Include="CIS2\CIS2ModelStructureView.cpp" />
     <ClCompile Include="CIS2\CIS2Representation.cpp" />
     <ClCompile Include="CIS2\CIS2OpenGLView.cpp" />
+    <ClCompile Include="CustomStatusBar.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="IDSCheckerDialog.cpp" />
     <ClCompile Include="IDS\IDS.cpp">
@@ -1335,6 +1337,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
+    <ClCompile Include="LogDialog.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
@@ -1368,6 +1371,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\error.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\information.ico" />
     <Image Include="res\none.bmp" />
     <Image Include="res\property.bmp" />
     <Image Include="res\propertySet.bmp" />
@@ -1398,6 +1404,7 @@
     <Image Include="res\sort_hc.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\warning.ico" />
     <Image Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>

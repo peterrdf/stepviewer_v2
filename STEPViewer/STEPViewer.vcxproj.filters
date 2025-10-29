@@ -360,6 +360,9 @@
     <ClInclude Include="..\include\_ap242_property.h">
       <Filter>AP242</Filter>
     </ClInclude>
+    <ClInclude Include="LogDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">
@@ -593,6 +596,12 @@
     <ClCompile Include="..\include\_ap242_property.cpp">
       <Filter>AP242</Filter>
     </ClCompile>
+    <ClCompile Include="CustomStatusBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="STEPViewer.rc">
@@ -694,6 +703,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\selectedPart.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\warning.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\information.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

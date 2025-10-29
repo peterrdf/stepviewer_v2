@@ -10,6 +10,7 @@
 #include "DesignTreeView.h"
 #include "SchemaView.h"
 #include "RelationsView.h"
+#include "CustomStatusBar.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -18,7 +19,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Controller - MVC
-	CController* getController() const;
+	CController* GetController() const;
 
 
 protected: // create from serialization only
@@ -47,7 +48,7 @@ public:
 protected:  // control bar embedded members
 	CMFCMenuBar         m_menuBar;
 	CMFCToolBar         m_toolBar;
-	CMFCStatusBar       m_statusBar;
+	CCustomStatusBar    m_statusBar;
 	CMFCToolBarImages   m_userImages;
 	CStructureView      m_structureView;
 	CDesignTreeView		m_designTreeView;
