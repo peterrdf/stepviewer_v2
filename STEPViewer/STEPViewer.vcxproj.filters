@@ -705,9 +705,6 @@
     <Image Include="res\selectedPart.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\icon1.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\error.ico">
       <Filter>Resource Files</Filter>
     </Image>

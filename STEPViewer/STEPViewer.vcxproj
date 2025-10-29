@@ -1372,7 +1372,6 @@
   <ItemGroup>
     <Image Include="res\bitmap1.bmp" />
     <Image Include="res\error.ico" />
-    <Image Include="res\icon1.ico" />
     <Image Include="res\information.ico" />
     <Image Include="res\none.bmp" />
     <Image Include="res\property.bmp" />
