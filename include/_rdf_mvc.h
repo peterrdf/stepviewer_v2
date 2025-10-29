@@ -28,7 +28,7 @@ private: // Fields
 
 public:  // Methods
 
-	_rdf_model();
+	_rdf_model(_log* pLog);
 	virtual ~_rdf_model();
 
 	// _model
@@ -126,10 +126,13 @@ public: // Properties
 class _rdf_controller : public _controller
 {
 
-private: // Fields
+private: // Fields	
 
 	// Selection
 	_rdf_property* m_pSelectedProperty;
+
+	// Progress
+	bool m_bShowProgressDialog;
 
 	// UI
 	int m_iVisibleValuesCountLimit;
@@ -175,6 +178,8 @@ public: // Properties
 
 	_rdf_property* getSelectedInstanceProperty() const { return m_pSelectedProperty; }
 
+	bool getShowProgressDialog() const { return m_bShowProgressDialog; }
+	void setShowProgressDialog(bool bNewValue);
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
 	void setVisibleValuesCountLimit(int iNewValue);
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
@@ -191,7 +196,7 @@ private: // Fields
 
 public: // Methods
 
-	_coordinate_system_model_base();
+	_coordinate_system_model_base(_log* pLog);
 	virtual ~_coordinate_system_model_base();
 
 	// _model

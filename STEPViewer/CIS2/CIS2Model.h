@@ -20,7 +20,7 @@ private: // Members
 
 public: // Methods
 
-	CCIS2Model(bool bLoadInstancesOnDemand = false);
+	CCIS2Model(_log* pLog, bool bLoadInstancesOnDemand = false);
 	virtual ~CCIS2Model();
 
 protected: // Methods

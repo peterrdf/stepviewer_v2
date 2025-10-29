@@ -7,8 +7,8 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-CCIS2Model::CCIS2Model(bool bLoadInstancesOnDemand/* = false*/)
-	: _ap_model(enumAP::CIS2)
+CCIS2Model::CCIS2Model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
+	: _ap_model(pLog, enumAP::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 {}
 

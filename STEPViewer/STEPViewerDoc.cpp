@@ -71,13 +71,13 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
 		if (strExtension == ".ifczip") {
-			vecModels = _ap_model_factory::loadIFCZIP((LPCWSTR)vecPaths[0]);
+			vecModels = _ap_model_factory::loadIFCZIP(getLog(), (LPCWSTR)vecPaths[0]);
 		}
 		else if (strExtension == ".stpz") {
-			vecModels = _ap_model_factory::loadSTEPGZip((LPCWSTR)vecPaths[0]);			
+			vecModels = _ap_model_factory::loadSTEPGZip(getLog(), (LPCWSTR)vecPaths[0]);			
 		}
 		else {
-			vecModels.push_back(_ap_model_factory::load((LPCWSTR)vecPaths[0], false, nullptr, false));
+			vecModels.push_back(_ap_model_factory::load(getLog(), (LPCWSTR)vecPaths[0], false, nullptr, false));
 		}
 
 		if (!vecModels.empty()) {
@@ -103,7 +103,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 	}
 
 	for (auto strPath : vecIfcPaths) {
-		auto pModel = _ap_model_factory::load(strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+		auto pModel = _ap_model_factory::load(getLog(), strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
 		vecModels.push_back(pModel);
 	}
 
@@ -180,15 +180,15 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
 	if (strExtension == ".ifczip") {
-		auto vecModels = _ap_model_factory::loadIFCZIP(lpszPathName);
+		auto vecModels = _ap_model_factory::loadIFCZIP(getLog(), lpszPathName);
 		setModels(vecModels);
 	}
 	else if (strExtension == ".stpz") {
-		auto vecModels = _ap_model_factory::loadSTEPGZip(lpszPathName);
+		auto vecModels = _ap_model_factory::loadSTEPGZip(getLog(), lpszPathName);
 		setModels(vecModels);
 	}
 	else {
-		auto pModel = _ap_model_factory::load(lpszPathName, false, nullptr, false);
+		auto pModel = _ap_model_factory::load(getLog(), lpszPathName, false, nullptr, false);
 		setModel(pModel);
 	}
 
@@ -414,7 +414,7 @@ void CMySTEPViewerDoc::OnBcfAddbim()
 	while (pos != nullptr) {
 		CString strPath = dlgFile.GetNextPathName(pos);
 
-		auto pModel = _ap_model_factory::load(strPath, false, !getModels().empty() ? getModels()[0] : nullptr, false);
+		auto pModel = _ap_model_factory::load(getLog(), strPath, false, !getModels().empty() ? getModels()[0] : nullptr, false);
 		if (pModel->getAP() != enumAP::IFC) {
 			delete pModel;
 
