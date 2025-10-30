@@ -1001,7 +1001,7 @@ BEGIN
             VALUE "FileDescription", "STEPViewer"
             VALUE "FileVersion", "1.0.1.2000"
             VALUE "InternalName", "STEPViewer.exe"
-            VALUE "LegalCopyright", "(c) RDF LTD.  All rights reserved."
+            VALUE "LegalCopyright", "(c) RDF LTD. All rights reserved."
             VALUE "OriginalFilename", "STEPViewer.exe"
             VALUE "ProductName", "STEPViewer"
             VALUE "ProductVersion", "1.0.1.2000"
