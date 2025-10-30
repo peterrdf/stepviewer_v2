@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by STEPViewer.rc
 //
+#define VERSION_MINOR                   0
+#define VERSION_MAJOR                   1
+#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_POPUP_EDIT                  119
@@ -89,8 +92,11 @@
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
 #define ID_INDICATOR_LOG                313
 #define IDD_DIALOG_NEW_INSTANCE         314
+#define IDC_PRODUCT_NAME                314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
+#define IDC_COPYRIGHT                   315
 #define IDD_DIALOG_SEARCH               316
+#define IDC_COMPANY                     316
 #define IDD_DIALOG_SELECT_INSTANCE      318
 #define IDD_MODELCHECK                  319
 #define IDR_MENU_3D_VIEW                320
@@ -191,6 +197,7 @@
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
 #define IDC_EDIT_MESSAGES               1057
+#define VERSION_BUILD                   2000
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -249,6 +256,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        372
 #define _APS_NEXT_COMMAND_VALUE         32858
 #define _APS_NEXT_CONTROL_VALUE         1058
-#define _APS_NEXT_SYMED_VALUE           314
+#define _APS_NEXT_SYMED_VALUE           317
 #endif
 #endif

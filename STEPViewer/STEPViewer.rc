@@ -103,10 +103,11 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "About STEPViewer"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "STEPViewer, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2024",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20    
+    LTEXT           "STEPViewer", IDC_PRODUCT_NAME, 42, 14, 114, 8, SS_NOPREFIX
+    LTEXT           "Copyright info", IDC_COPYRIGHT, 42, 26, 114, 8
+    LTEXT           "Company info", IDC_COMPANY, 42, 38, 114, 8
+    DEFPUSHBUTTON   "OK", IDOK, 113, 41, 50, 14, WS_GROUP
 END
 
 IDD_DIALOG_EDIT_OBJECT_PROPRTY DIALOGEX 0, 0, 223, 112
@@ -980,8 +981,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,0,1,2000
+ PRODUCTVERSION 1,0,1,2000
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -998,12 +999,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "STEPViewer"
-            VALUE "FileVersion", "1.0.0.1"
+            VALUE "FileVersion", "1.0.1.2000"
             VALUE "InternalName", "STEPViewer.exe"
             VALUE "LegalCopyright", "(c) RDF LTD.  All rights reserved."
             VALUE "OriginalFilename", "STEPViewer.exe"
             VALUE "ProductName", "STEPViewer"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "ProductVersion", "1.0.1.2000"
         END
     END
     BLOCK "VarFileInfo"

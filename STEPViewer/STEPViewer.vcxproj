@@ -254,7 +254,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../gltf/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32Sd.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32Sd.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -283,7 +283,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../gltf/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32Sd.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32Sd.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -312,7 +312,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../bcfEngine/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32Sd.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32Sd.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -344,7 +344,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../gltf/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64Sd.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;bcfEngine.x64Sd.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64Sd.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;bcfEngine.x64Sd.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -375,7 +375,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../gltf/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64Sd.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64Sd.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -406,7 +406,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../bcfEngine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64Sd.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;bcfEngine.x64Sd.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64Sd.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;bcfEngine.x64Sd.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -438,7 +438,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../gltf/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32S.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32S.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -468,7 +468,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../gltf/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32S.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32S.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -498,7 +498,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x86;./../ziplib/lib/x86;./../glew-2.2.0/lib/Release/Win32;./../bcfEngine/lib/x86;./../bcfEngine/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.Win32S.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.Win32S.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -530,7 +530,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../gltf/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64S.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64S.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -561,7 +561,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../gltf/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64S.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64S.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -592,7 +592,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>./../stepengine/lib/x64;./../ziplib/lib/x64;./../glew-2.2.0/lib/Release/x64;./../bcfEngine/lib/x64;./../bcfEngine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bcfEngine.x64S.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;bcfEngine.x64S.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
