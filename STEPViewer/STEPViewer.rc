@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -981,8 +982,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,1,2000
- PRODUCTVERSION 1,0,1,2000
+FILEVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
+PRODUCTVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -999,12 +1000,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "STEPViewer"
-            VALUE "FileVersion", "1.0.1.2000"
+            VALUE "FileVersion", VERSION_STRING
             VALUE "InternalName", "STEPViewer.exe"
             VALUE "LegalCopyright", "(c) RDF LTD. All rights reserved."
             VALUE "OriginalFilename", "STEPViewer.exe"
             VALUE "ProductName", "STEPViewer"
-            VALUE "ProductVersion", "1.0.1.2000"
+            VALUE "ProductVersion", VERSION_STRING
         END
     END
     BLOCK "VarFileInfo"
