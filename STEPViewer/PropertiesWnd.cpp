@@ -1438,7 +1438,7 @@ void CPropertiesWnd::LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* 
 			auto pGridProperty = new CMFCPropertyGridProperty(
 				pProperty->getName().c_str(),
 				(_variant_t)strValue.c_str(),
-				L""); // Description
+				pProperty->getDescription().c_str());
 			pGridProperty->AllowEdit(FALSE);
 
 			pPropertySetGroup->AddSubItem(pGridProperty);
@@ -1503,7 +1503,7 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 	//		auto pGridProperty = new CMFCPropertyGridProperty(
 	//			pProperty->GetName().c_str(),
 	//			(_variant_t)pProperty->GetValue().c_str(),
-	//			L""); // Description
+	//			pProperty->getDescription().c_str());
 	//		pGridProperty->AllowEdit(FALSE);
 
 	//		pPropertySetGroup->AddSubItem(pGridProperty);

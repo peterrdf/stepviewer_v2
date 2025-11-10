@@ -545,7 +545,7 @@ const _ifc_unit* _ifc_unit_provider::getUnit(const wchar_t* szUnit) const
     return nullptr;
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
 {
     wchar_t* szQuantityName = nullptr;
     sdaiGetAttrBN(sdaiQuantityInstance, "Name", sdaiUNICODE, &szQuantityName);
@@ -560,6 +560,12 @@ tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sd
     sdaiGetAttrBN(sdaiQuantityInstance, "Unit", sdaiUNICODE, &szUnit);
 
     wstring strName = szQuantityName;
+
+    wstring strDescription;
+    if (szQuantityDescription != nullptr) {
+        strDescription = szQuantityDescription;
+    }
+
     wstring strValue = szValue != nullptr ? szValue : L"NA";
 
     wstring strUnit;
@@ -573,41 +579,35 @@ tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sd
         }
     }
 
-    if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0)) {
-        strName += L" ('";
-        strName += szQuantityDescription;
-        strName += L"')";
-    }
-
-    return tuple<wstring, wstring, wstring>(strName, strValue, strUnit);
+    return tuple<wstring, wstring, wstring, wstring>(strName, strDescription, strValue, strUnit);
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityLength(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityLength(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "LengthValue", L"LENGTHUNIT");
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityArea(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityArea(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "AreaValue", L"AREAUNIT");
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityVolume(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityVolume(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "VolumeValue", L"VOLUMEUNIT");
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityCount(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityCount(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "CountValue", L"");
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityWeight(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityWeight(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "WeigthValue", L"MASSUNIT");
 }
 
-tuple<wstring, wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "TimeValue", L"TIMEUNIT");
 }
