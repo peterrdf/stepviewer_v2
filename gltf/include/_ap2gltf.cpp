@@ -2506,7 +2506,7 @@ namespace _ap2gltf
 					indent()++;
 					writeStartObjectTag();
 					indent()++;
-					writeStringProperty("name", wstring_to_utf8(prUnit.second->getSymbol().c_str()));
+					writeStringProperty("name", wstring_to_utf8(prUnit.second->getUnitSymbol().c_str()));
 					*getOutputStream() << COMMA;
 					writeStringProperty("className", wstring_to_utf8(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
 					*getOutputStream() << COMMA;

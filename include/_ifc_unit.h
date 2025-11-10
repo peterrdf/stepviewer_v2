@@ -55,8 +55,9 @@ private: // Members
     int m_iType;
     wstring m_strType;
     wstring m_strPrefix;
+    wstring m_strPrefixSymbol;
     wstring m_strName;
-    wstring m_strSymbol;
+    wstring m_strNameSymbol;
 
 public: // Methods
 
@@ -68,9 +69,11 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
     const wstring& getType() const { return m_strType; }
     const wstring& getPrefix() const { return m_strPrefix; }
+    const wstring& getPrefixSymbol() const { return m_strPrefixSymbol; }
     const wstring& getName() const { return m_strName; }
-    const wstring& getSymbol()  const { return m_strSymbol; }
-    wstring getUnit() const; // [PREFIX][SPACE][NAME]
+    const wstring& getNameSymbol()  const { return m_strNameSymbol; }
+    wstring getUnit() const; // [PREFIX][SPACE][NAME], e.g. 'Square Metre'
+    wstring getUnitSymbol() const; // [PREFIX SYMBOL][SYMBOL], e.g. 'm2'
 
 protected: // Methods
 

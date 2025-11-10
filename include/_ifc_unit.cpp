@@ -7,8 +7,9 @@ _ifc_unit::_ifc_unit(SdaiInstance sdaiInstance, const wchar_t* szType, const wch
     , m_iType(UNKNOWN)
     , m_strType(L"")
     , m_strPrefix(L"")
+    , m_strPrefixSymbol(L"")
     , m_strName(L"")
-    , m_strSymbol(L"")
+    , m_strNameSymbol(L"")
 {
     assert(m_sdaiInstance != 0);
     assert(szName != nullptr);
@@ -32,6 +33,14 @@ wstring _ifc_unit::getUnit() const
     strUnit += m_strName;
 
     return strUnit;
+}
+
+wstring _ifc_unit::getUnitSymbol() const
+{
+    wstring strUnitSymbol = m_strPrefixSymbol;
+    strUnitSymbol += m_strNameSymbol;
+
+    return strUnitSymbol;
 }
 
 void _ifc_unit::convertType(const wchar_t* szUnitType)
@@ -224,81 +233,97 @@ void _ifc_unit::convertPrefix(const wchar_t* szPrefix)
 
     if (wcscmp(szPrefix, L".EXA.") == 0) {
         m_strPrefix = L"Exa";
+        m_strPrefixSymbol = L"E";
         return;
     }
 
     if (wcscmp(szPrefix, L".PETA.") == 0) {
         m_strPrefix = L"Peta";
+        m_strPrefixSymbol = L"P";
         return;
     }
 
     if (wcscmp(szPrefix, L".TERA.") == 0) {
         m_strPrefix = L"Tera";
+        m_strPrefixSymbol = L"T";
         return;
     }
 
     if (wcscmp(szPrefix, L".GIGA.") == 0) {
         m_strPrefix = L"Giga";
+        m_strPrefixSymbol = L"G";
         return;
     }
 
     if (wcscmp(szPrefix, L".MEGA.") == 0) {
         m_strPrefix = L"Mega";
+        m_strPrefixSymbol = L"M";
         return;
     }
 
     if (wcscmp(szPrefix, L".KILO.") == 0) {
         m_strPrefix = L"Kilo";
+        m_strPrefixSymbol = L"k";
         return;
     }
 
     if (wcscmp(szPrefix, L".HECTO.") == 0) {
         m_strPrefix = L"Hecto";
+        m_strPrefixSymbol = L"h";
         return;
     }
 
     if (wcscmp(szPrefix, L".DECA.") == 0) {
         m_strPrefix = L"Deca";
+        m_strPrefixSymbol = L"da";
         return;
     }
 
     if (wcscmp(szPrefix, L".DECI.") == 0) {
         m_strPrefix = L"Deci";
+        m_strPrefixSymbol = L"d";
         return;
     }
 
     if (wcscmp(szPrefix, L".CENTI.") == 0) {
         m_strPrefix = L"Centi";
+        m_strPrefixSymbol = L"c";
         return;
     }
 
     if (wcscmp(szPrefix, L".MILLI.") == 0) {
         m_strPrefix = L"Milli";
+        m_strPrefixSymbol = L"m";
         return;
     }
 
     if (wcscmp(szPrefix, L".MICRO.") == 0) {
         m_strPrefix = L"Micro";
+        m_strPrefixSymbol = L"μ";
         return;
     }
 
     if (wcscmp(szPrefix, L".NANO.") == 0) {
         m_strPrefix = L"Nano";
+        m_strPrefixSymbol = L"n";
         return;
     }
 
     if (wcscmp(szPrefix, L".PICO.") == 0) {
         m_strPrefix = L"Pico";
+        m_strPrefixSymbol = L"p";
         return;
     }
 
     if (wcscmp(szPrefix, L".FEMTO.") == 0) {
         m_strPrefix = L"Femto";
+        m_strPrefixSymbol = L"f";
         return;
     }
 
     if (wcscmp(szPrefix, L".ATTO.") == 0) {
         m_strPrefix = L"Atto";
+        m_strPrefixSymbol = L"a";
         return;
     }
 }
@@ -309,184 +334,184 @@ void _ifc_unit::convertName(const wchar_t* szName)
 
     if (wcscmp(szName, L".AMPERE.") == 0) {
         m_strName = L"Ampere";
-        m_strSymbol = L"A";
+        m_strNameSymbol = L"A";
         return;
     }
 
     if (wcscmp(szName, L".BECQUEREL.") == 0) {
         m_strName = L"Becquerel";
-        m_strSymbol = L"Bq";
+        m_strNameSymbol = L"Bq";
         return;
     }
 
     if (wcscmp(szName, L".CANDELA.") == 0) {
         m_strName = L"Candela";
-        m_strSymbol = L"cd";
+        m_strNameSymbol = L"cd";
         return;
     }
 
     if (wcscmp(szName, L".COULOMB.") == 0) {
         m_strName = L"Coulomb";
-        m_strSymbol = L"C";
+        m_strNameSymbol = L"C";
         return;
     }
 
     if (wcscmp(szName, L".CUBIC_METRE.") == 0) {
         m_strName = L"Cubic Metre";
-        m_strSymbol = L"m3";
-        //m_strSymbol = L"m³";
+        m_strNameSymbol = L"m3";
+        //m_strNameSymbol = L"m³";
         return;
     }
 
     if (wcscmp(szName, L".DEGREE_CELSIUS.") == 0) {
         m_strName = L"Degree Celcius";
-        m_strSymbol = L"DEGREE_CELSIUS"; // XKT
-        //m_strSymbol = L"°C";
+        m_strNameSymbol = L"DEGREE_CELSIUS"; // XKT
+        //m_strNameSymbol = L"°C";
         return;
     }
 
     if (wcscmp(szName, L".FARAD.") == 0) {
         m_strName = L"Farad";
-        m_strSymbol = L"F";
+        m_strNameSymbol = L"F";
         return;
     }
 
     if (wcscmp(szName, L".GRAM.") == 0) {
         m_strName = L"Gram";
-        m_strSymbol = L"g";
+        m_strNameSymbol = L"g";
         return;
     }
 
     if (wcscmp(szName, L".GRAY.") == 0) {
         m_strName = L"Gray";
-        m_strSymbol = L"Gy";
+        m_strNameSymbol = L"Gy";
         return;
     }
 
     if (wcscmp(szName, L".HENRY.") == 0) {
         m_strName = L"Henry";
-        m_strSymbol = L"H";
+        m_strNameSymbol = L"H";
         return;
     }
 
     if (wcscmp(szName, L".HERTZ.") == 0) {
         m_strName = L"Hertz";
-        m_strSymbol = L"Hz";
+        m_strNameSymbol = L"Hz";
         return;
     }
 
     if (wcscmp(szName, L".JOULE.") == 0) {
         m_strName = L"Joule";
-        m_strSymbol = L"J";
+        m_strNameSymbol = L"J";
         return;
     }
 
     if (wcscmp(szName, L".KELVIN.") == 0) {
         m_strName = L"Kelvin";
-        m_strSymbol = L"K";
+        m_strNameSymbol = L"K";
         return;
     }
 
     if (wcscmp(szName, L".LUMEN.") == 0) {
         m_strName = L"Lumen";
-        m_strSymbol = L"lm";
+        m_strNameSymbol = L"lm";
         return;
     }
 
     if (wcscmp(szName, L".LUX.") == 0) {
         m_strName = L"Lux";
-        m_strSymbol = L"lx";
+        m_strNameSymbol = L"lx";
         return;
     }
 
     if (wcscmp(szName, L".METRE.") == 0) {
         m_strName = L"Metre";
-        m_strSymbol = L"m";
+        m_strNameSymbol = L"m";
         return;
     }
 
     if (wcscmp(szName, L".MOLE.") == 0) {
         m_strName = L"Mole";
-        m_strSymbol = L"mol";
+        m_strNameSymbol = L"mol";
         return;
     }
 
     if (wcscmp(szName, L".NEWTON.") == 0) {
         m_strName = L"Newton";
-        m_strSymbol = L"N";
+        m_strNameSymbol = L"N";
         return;
     }
 
     if (wcscmp(szName, L".OHM.") == 0) {
         m_strName = L"Ohm";
-        m_strSymbol = L"Ω";
+        m_strNameSymbol = L"Ω";
         return;
     }
 
     if (wcscmp(szName, L".PASCAL.") == 0) {
         m_strName = L"Pascal";
-        m_strSymbol = L"Pa";
+        m_strNameSymbol = L"Pa";
         return;
     }
 
     if (wcscmp(szName, L".RADIAN.") == 0) {
         m_strName = L"Radian";
-        m_strSymbol = L"rad";
+        m_strNameSymbol = L"rad";
         return;
     }
 
     if (wcscmp(szName, L".SECOND.") == 0) {
         m_strName = L"Second";
-        m_strSymbol = L"s";
+        m_strNameSymbol = L"s";
         return;
     }
 
     if (wcscmp(szName, L".SIEMENS.") == 0) {
         m_strName = L"Siemens";
-        m_strSymbol = L"S";
+        m_strNameSymbol = L"S";
         return;
     }
 
     if (wcscmp(szName, L".SIEVERT.") == 0) {
         m_strName = L"Sievert";
-        m_strSymbol = L"Sv";
+        m_strNameSymbol = L"Sv";
         return;
     }
 
     if (wcscmp(szName, L".SQUARE_METRE.") == 0) {
         m_strName = L"Square Metre";
-        m_strSymbol = L"m2"; // XKT
-        //m_strSymbol = L"m²";
+        m_strNameSymbol = L"m2"; // XKT
+        //m_strNameSymbol = L"m²";
         return;
     }
 
     if (wcscmp(szName, L".STERADIAN.") == 0) {
         m_strName = L"Steradian";
-        m_strSymbol = L"sr";
+        m_strNameSymbol = L"sr";
         return;
     }
 
     if (wcscmp(szName, L".TESLA.") == 0) {
         m_strName = L"Tesla";
-        m_strSymbol = L"T";
+        m_strNameSymbol = L"T";
         return;
     }
 
     if (wcscmp(szName, L".VOLT.") == 0) {
         m_strName = L"Volt";
-        m_strSymbol = L"V";
+        m_strNameSymbol = L"V";
         return;
     }
 
     if (wcscmp(szName, L".WATT.") == 0) {
         m_strName = L"Watt";
-        m_strSymbol = L"W";
+        m_strNameSymbol = L"W";
         return;
     }
 
     if (wcscmp(szName, L".WEBER.") == 0) {
         m_strName = L"Weber";
-        m_strSymbol = L"Wb";
+        m_strNameSymbol = L"Wb";
         return;
     }
 
