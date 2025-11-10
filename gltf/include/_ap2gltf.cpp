@@ -1428,6 +1428,10 @@ namespace _ap2gltf
 
 					// Transformations
 					for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+						if (ignoreGeometry(pMappedGeometry)) {
+							continue;
+						}
+
 						for (auto pInstance : pMappedGeometry->getInstances()) {
 							_ptr<_ifc_instance> ifcInstance(pInstance);
 							if (ifcInstance->getOwner() != pPlaceholderInstance) {
