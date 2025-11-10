@@ -56,6 +56,7 @@ private: // Members
     wstring m_strType;
     wstring m_strPrefix;
     wstring m_strName;
+    wstring m_strSymbol;
 
 public: // Methods
 
@@ -65,9 +66,10 @@ public: // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
-    wstring getType() const { return m_strType; }
-    wstring getPrefix() const { return m_strPrefix; }
-    wstring getName() const { return m_strName; }
+    const wstring& getType() const { return m_strType; }
+    const wstring& getPrefix() const { return m_strPrefix; }
+    const wstring& getName() const { return m_strName; }
+    const wstring& getSymbol()  const { return m_strSymbol; }
     wstring getUnit() const; // [PREFIX][SPACE][NAME]
 
 protected: // Methods

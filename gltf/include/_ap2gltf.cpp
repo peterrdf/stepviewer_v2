@@ -2506,11 +2506,17 @@ namespace _ap2gltf
 					indent()++;
 					writeStartObjectTag();
 					indent()++;
-					writeStringProperty("name", wstring_to_utf8(prUnit.second->getName().c_str()));
+					writeStringProperty("name", wstring_to_utf8(prUnit.second->getSymbol().c_str()));
 					*getOutputStream() << COMMA;
 					writeStringProperty("className", wstring_to_utf8(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
 					*getOutputStream() << COMMA;
 					writeStringProperty("unitEnum", wstring_to_utf8(prUnit.second->getType().c_str()));
+					if (!prUnit.second->getPrefix().empty()) {
+						*getOutputStream() << COMMA;
+						wstring strPrefix = prUnit.second->getPrefix();
+						std::transform(strPrefix.begin(), strPrefix.end(), strPrefix.begin(), ::towupper);						
+						writeStringProperty("prefix", wstring_to_utf8(strPrefix.c_str()));
+					}
 					indent()--;
 					writeEndObjectTag();
 					indent()--;
