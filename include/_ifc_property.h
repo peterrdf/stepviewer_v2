@@ -36,7 +36,7 @@ public: // Properties
 	const wstring& getEntityName() const { return m_strEntityName; }
 	const wstring& getName() const { return m_strName; }
 	const wstring& getValue() const { return m_strValue; }
-	const wstring& getUnit() const { return m_strValue; }
+	const wstring& getUnit() const { return m_strUnit; }
 	const wstring& getIfcValueType() const { return m_strIfcValueType; }
 	const wstring& getValueType() const { return m_strValueType; }
 };

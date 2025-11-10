@@ -1430,9 +1430,14 @@ void CPropertiesWnd::LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* 
 		pInstanceGridGroup->AddSubItem(pPropertySetGroup);
 
 		for (auto pProperty : pPropertySet->properties()) {
+			wstring strValue = pProperty->getValue();
+			if (!pProperty->getUnit().empty()) {
+				strValue += L" ";
+				strValue += pProperty->getUnit();
+			}
 			auto pGridProperty = new CMFCPropertyGridProperty(
 				pProperty->getName().c_str(),
-				(_variant_t)pProperty->getValue().c_str(),
+				(_variant_t)strValue.c_str(),
 				L""); // Description
 			pGridProperty->AllowEdit(FALSE);
 
