@@ -17,12 +17,13 @@ private: // Members
 	wstring m_strEntityName;
 	wstring m_strName;
 	wstring m_strValue;
+	wstring m_strUnit;
 	wstring m_strIfcValueType;
 	wstring m_strValueType;
 
 public: // Methods
 
-	_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue);
+	_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue, const wstring& strUnit);
 	virtual ~_ifc_property();
 
 	static bool hasProperties(SdaiModel sdaiModel, SdaiInstance sdaiInstance);
@@ -32,11 +33,12 @@ public: // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
-	wstring getEntityName() const { return m_strEntityName; }
-	wstring getName() const { return m_strName; }
-	wstring getValue() const { return m_strValue; }
-	wstring getIfcValueType() const { return m_strIfcValueType; }
-	wstring getValueType() const { return m_strValueType; }
+	const wstring& getEntityName() const { return m_strEntityName; }
+	const wstring& getName() const { return m_strName; }
+	const wstring& getValue() const { return m_strValue; }
+	const wstring& getUnit() const { return m_strValue; }
+	const wstring& getIfcValueType() const { return m_strIfcValueType; }
+	const wstring& getValueType() const { return m_strValueType; }
 };
 
 // ************************************************************************************************

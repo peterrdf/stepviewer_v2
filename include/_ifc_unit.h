@@ -10,6 +10,7 @@
 #endif
 
 #include <string>
+#include <tuple>
 #include <map>
 using namespace std;
 
@@ -98,13 +99,13 @@ public: // Methods
 
     const _ifc_unit* getUnit(const wchar_t* szUnit) const;
 
-    pair<wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
-    pair<wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
+    tuple<wstring, wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
 
 protected: // Methods
 
