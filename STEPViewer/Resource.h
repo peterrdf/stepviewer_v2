@@ -197,7 +197,6 @@
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
 #define IDC_EDIT_MESSAGES               1057
-#define VERSION_BUILD                   2000
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
