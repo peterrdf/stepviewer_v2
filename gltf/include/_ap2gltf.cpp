@@ -218,8 +218,9 @@ namespace _ap2gltf
 		fs::path pthMetadataFile = m_strOutputFile;
 		pthMetadataFile += ".json";
 
-		m_pOutputStream = new ofstream(pthMetadataFile.string(), std::ios::out | std::ios::trunc);
-		std::locale loc(std::locale::classic());
+		m_pOutputStream = new ofstream(pthMetadataFile.string(),
+			std::ios::out | std::ios::binary | std::ios::trunc);
+		std::locale loc(std::locale::classic(), new std::codecvt_utf8<wchar_t>);
 		getOutputStream()->imbue(loc);
 
 		if (!getOutputStream()->good()) {
@@ -2100,12 +2101,12 @@ namespace _ap2gltf
 				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiUNICODE, &szProjectGlobalId);
 				assert(szProjectGlobalId != nullptr);
 			}
-			writeStringProperty("projectId", szProjectGlobalId != nullptr ? (const char*)CW2A(szProjectGlobalId) : "$");
+			writeStringProperty("projectId", szProjectGlobalId != nullptr ? wstring_to_utf8(szProjectGlobalId) : "$");
 			*getOutputStream() << COMMA;
 		}
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		*getOutputStream() << COMMA;
-		writeStringProperty("schema", szFileSchema != nullptr ? (const char*)CW2A(szFileSchema) : "$");
+		writeStringProperty("schema", szFileSchema != nullptr ? wstring_to_utf8(szFileSchema) : "$");
 		*getOutputStream() << COMMA;
 		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD");
 	}
@@ -2175,7 +2176,7 @@ namespace _ap2gltf
 				if (itPropertySet == mapPropertySets.end()) {
 					mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
 #ifdef _WINDOWS
-					TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));
+					TRACE("Property set: %s\n", wstring_to_utf8(pPropertySet->getName().c_str()));
 #endif
 				}
 				else {
@@ -2189,9 +2190,9 @@ namespace _ap2gltf
 						mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
 						TRACE("Property set: %s, property: %s, value: %s\n",
-							(const char*)CW2A(pPropertySet->getName().c_str()),
-							(const char*)CW2A(pProperty->getName().c_str()),
-							(const char*)CW2A(pProperty->getValue().c_str()));
+							wstring_to_utf8(pPropertySet->getName().c_str()),
+							wstring_to_utf8(pProperty->getName().c_str()),
+							wstring_to_utf8(pProperty->getValue().c_str()));
 #endif
 					}
 					else {
@@ -2235,15 +2236,15 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itProperty.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				writeStringProperty("ifcPropertyType", wstring_to_utf8(itProperty.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.first->getIfcValueType().c_str()));
+				writeStringProperty("ifcValueType", wstring_to_utf8(itProperty.first->getIfcValueType().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				writeStringProperty("value", wstring_to_utf8(itProperty.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				writeStringProperty("valueType", wstring_to_utf8(itProperty.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();
@@ -2285,11 +2286,11 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+				writeStringProperty("id", szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(itPropertySet.second.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itPropertySet.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
+				writeStringProperty("type", szEntityName != nullptr ? wstring_to_utf8(szEntityName) : "$");
 				*getOutputStream() << COMMA;
 				{
 					*getOutputStream() << getNewLine();
@@ -2362,9 +2363,9 @@ namespace _ap2gltf
 					mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
 					TRACE("Property: %s, Value: %s, Type: %s\n",
-						(const char*)CW2A(pProperty->getName().c_str()),
-						(const char*)CW2A(pProperty->getValue().c_str()),
-						(const char*)CW2A(pProperty->getValueType().c_str()));
+						wstring_to_utf8(pProperty->getName().c_str()),
+						wstring_to_utf8(pProperty->getValue().c_str()),
+						wstring_to_utf8(pProperty->getValueType().c_str()));
 #endif
 				}
 				else {
@@ -2409,13 +2410,13 @@ namespace _ap2gltf
 				indent()++;
 				writeStringProperty("id", _string::format("#%lld", internalGetP21Line(itProperty.first->getSdaiInstance())));
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itProperty.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				writeStringProperty("type", wstring_to_utf8(itProperty.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				writeStringProperty("value", wstring_to_utf8(itProperty.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				writeStringProperty("valueType", wstring_to_utf8(itProperty.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();
@@ -2464,11 +2465,11 @@ namespace _ap2gltf
 					indent()++;
 					writeStartObjectTag();
 					indent()++;
-					writeStringProperty("name", (const char*)CW2A(prUnit.second->getName().c_str()));
+					writeStringProperty("name", wstring_to_utf8(prUnit.second->getName().c_str()));
 					*getOutputStream() << COMMA;
-					writeStringProperty("className", (const char*)CW2A(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
+					writeStringProperty("className", wstring_to_utf8(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
 					*getOutputStream() << COMMA;
-					writeStringProperty("unitEnum", (const char*)CW2A(prUnit.second->getType().c_str()));
+					writeStringProperty("unitEnum", wstring_to_utf8(prUnit.second->getType().c_str()));
 					indent()--;
 					writeEndObjectTag();
 					indent()--;
@@ -2502,7 +2503,7 @@ namespace _ap2gltf
 						*getOutputStream() << COMMA;
 					}
 					indent()++;
-					writeIntProperty((const char*)CW2A(prUnit.second->getType().c_str()), iUnitIndex++);
+					writeIntProperty(wstring_to_utf8(prUnit.second->getType().c_str()), iUnitIndex++);
 					indent()--;
 				}
 				// unit
@@ -2564,11 +2565,11 @@ namespace _ap2gltf
 					writeStartObjectTag();
 
 					indent()++;
-					writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+					writeStringProperty("id", szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
+					writeStringProperty("name", szName != nullptr ? wstring_to_utf8(szName) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
+					writeStringProperty("type", szEntityName != nullptr ? wstring_to_utf8(szEntityName) : "$");
 					indent()--;
 
 					writeEndObjectTag();
@@ -2678,11 +2679,11 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
+			writeStringProperty("id", wstring_to_utf8(pProjectNode->getGlobalId()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
+			writeStringProperty("name", szName != nullptr ? wstring_to_utf8(szName) : "$");
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", "null");
 			*getOutputStream() << COMMA;
@@ -2713,7 +2714,7 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}
@@ -2763,7 +2764,7 @@ namespace _ap2gltf
 			wchar_t* szName = nullptr;
 			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
 
-			string strName = szName != nullptr ? (const char*)CW2A(szName) : "";
+			string strName = szName != nullptr ? wstring_to_utf8(szName) : "";
 			string strObjectType = "$";
 			string strTag = "$";
 			if (!strName.empty()) {
@@ -2782,13 +2783,13 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", (const char*)CW2A(pNode->getGlobalId()));
+			writeStringProperty("id", wstring_to_utf8(pNode->getGlobalId()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("name", strName);
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", (const char*)CW2A(strParentGlobalId.c_str()));
+			writeStringProperty("parent", wstring_to_utf8(strParentGlobalId.c_str()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("ObjectType", strObjectType);
 			*getOutputStream() << COMMA;
@@ -2821,7 +2822,7 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}				
 
@@ -2860,7 +2861,7 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}
@@ -2923,17 +2924,17 @@ namespace _ap2gltf
 				string strName = "$";
 				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 				if (product) {
-					strName = (const char*)CW2A(product->getProductName());
+					strName = wstring_to_utf8(product->getProductName());
 				}
 				else {
 					_ptr<_ap242_annotation_plane> annotationPlane(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 					if (annotationPlane) {
-						strName = (const char*)CW2A(annotationPlane->getName());
+						strName = wstring_to_utf8(annotationPlane->getName());
 					}
 					else {
 						_ptr<_ap242_draughting_callout> draughtingCallout(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 						if (draughtingCallout) {
-							strName = (const char*)CW2A(draughtingCallout->getName());
+							strName = wstring_to_utf8(draughtingCallout->getName());
 						}
 						else {
 							assert(false);	// Unknown root product type 
@@ -2949,7 +2950,7 @@ namespace _ap2gltf
 				*getOutputStream() << COMMA;
 				writeStringProperty("name", strName);
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
+				writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;
 				writeStringProperty("parent", "null");
 				*getOutputStream() << COMMA;
@@ -3028,9 +3029,9 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+			writeStringProperty("name", wstring_to_utf8(product->getProductName()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
@@ -3096,9 +3097,9 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
+			writeStringProperty("name", wstring_to_utf8(itAssembly->second->getName()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			indent()--;
