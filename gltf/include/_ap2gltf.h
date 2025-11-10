@@ -133,6 +133,7 @@ namespace _ap2gltf
 		void writeImages();
 		void writeSamplers();
 		void writeTextures();
+		string escapeJsonString(const string& input) const;
 
 		size_t addMaterial(const _material* pMaterial);
 

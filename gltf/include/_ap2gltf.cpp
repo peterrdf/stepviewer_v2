@@ -380,12 +380,12 @@ namespace _ap2gltf
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << strName.c_str();
+		*getOutputStream() << escapeJsonString(strName).c_str();
 		*getOutputStream() << DOULE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << strValue.c_str();
+		*getOutputStream() << escapeJsonString(strValue).c_str();
 		*getOutputStream() << DOULE_QUOT_MARK;
 	}
 
@@ -1895,7 +1895,7 @@ namespace _ap2gltf
 							}).c_str();
 						}
 						// emissiveFactor
-						*/					
+						*/
 
 						*getOutputStream() << COMMA;
 
@@ -2063,6 +2063,47 @@ namespace _ap2gltf
 			// ]
 		}
 		// images
+	}
+
+	string _exporter::escapeJsonString(const string& input) const
+	{
+		string output;
+		for (char c : input) {
+			switch (c) {
+				case '\"':
+					output += "\\\"";
+					break;
+				case '\\':
+					output += "\\\\";
+					break;
+				case '\b':
+					output += "\\b";
+					break;
+				case '\f':
+					output += "\\f";
+					break;
+				case '\n':
+					output += "\\n";
+					break;
+				case '\r':
+					output += "\\r";
+					break;
+				case '\t':
+					output += "\\t";
+					break;
+				default:
+					if (c < 0x20) {
+						// Control characters must be escaped as \uXXXX
+						char buf[7];
+						snprintf(buf, sizeof(buf), "\\u%04x", c);
+						output += buf;
+					}
+					else {
+						output += c;
+					}
+			}
+		}
+		return output;
 	}
 
 	size_t _exporter::addMaterial(const _material* pMaterial)
@@ -2824,14 +2865,14 @@ namespace _ap2gltf
 						*getOutputStream() << DOULE_QUOT_MARK;
 						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
-					}				
+					}
 
 					indent()--;
 					writeEndArrayTag();
 
 					*getOutputStream() << COMMA;
-				}		
-			}			
+				}
+			}
 			// groups
 			// propertySetIds
 			{
