@@ -10,6 +10,10 @@
 #include "_ap242_draughting_model.h"
 
 // ************************************************************************************************
+#define _DEBUG_IFC_EXPORTER
+//#define _DEBUG_AP242_EXPORTER
+
+// ************************************************************************************************
 namespace _ap2gltf
 {
 	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
@@ -1605,7 +1609,7 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");						
-#ifdef _DEBUG
+#ifdef _DEBUG_IFC_EXPORTER
 						*getOutputStream() << COMMA;
 						writeStringProperty("DEBUG: index", to_string(pNode->index()));
 						*getOutputStream() << COMMA;
@@ -1626,6 +1630,8 @@ namespace _ap2gltf
 					m_iSceneNodeIndex++;
 				} // if (pGeometry->isPlaceholder())
 				else {
+					pNode->index() = m_iSceneNodeIndex; //#todo: AP242
+
 					// Instances
 					int iInstanceIndex = 0;
 					for (auto pInstance : pGeometry->getInstances()) {
@@ -1636,7 +1642,7 @@ namespace _ap2gltf
 						}
 
 						// root	
-						{
+						{							
 							m_vecSceneRootNodes.push_back(m_iSceneNodeIndex);
 
 							vector<string> vecNodeChildren;
@@ -1659,9 +1665,9 @@ namespace _ap2gltf
 
 							indent()++;
 							writeStringProperty("name", strGlobalId);
-#ifdef _DEBUG
+#ifdef _DEBUG_IFC_EXPORTER
 							*getOutputStream() << COMMA;
-							writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
+							writeStringProperty("DEBUG: index", to_string(pNode->index()));
 							*getOutputStream() << COMMA;
 							writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
 #endif
@@ -1840,14 +1846,16 @@ namespace _ap2gltf
 		assert(szGlobalId != nullptr);
 
 		// Project root
+		++m_iSceneNodeIndex;
+
 		*getOutputStream() << COMMA;
 		indent()++;
 		writeStartObjectTag();
 		indent()++;
 		writeStringProperty("name", (const char*)CW2A(szGlobalId));
-#ifdef _DEBUG
+#ifdef _DEBUG_IFC_EXPORTER
 		*getOutputStream() << COMMA;
-		writeStringProperty("DEBUG: index", to_string(m_vecNodes.size()));
+		writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
 		*getOutputStream() << COMMA;
 		writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
 #endif
@@ -1872,7 +1880,7 @@ namespace _ap2gltf
 		*getOutputStream() << COMMA;
 		*getOutputStream() << getNewLine();		
 		writeIndent();		
-		*getOutputStream() << buildArrayProperty("children", vector<string>{ to_string((uint32_t)m_vecNodes.size()) }).c_str();
+		*getOutputStream() << buildArrayProperty("children", vector<string>{ to_string(m_iSceneNodeIndex) }).c_str();
 		*getOutputStream() << COMMA;
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -1899,7 +1907,7 @@ namespace _ap2gltf
 		writeEndObjectTag();
 		indent()--;
 
-		m_iRootNodeIndex = (uint32_t)m_vecNodes.size();
+		m_iRootNodeIndex = ++m_iSceneNodeIndex;
 	}
 
 	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren)
@@ -1914,48 +1922,43 @@ namespace _ap2gltf
 				auto pGeometry = pIfcModel->getGeometryByInstance(pChildNode->getSdaiInstance());
 				assert(pGeometry != nullptr);
 
-				_node* pNode = nullptr;
 				auto itNode = m_mapNodes.find(pGeometry);
-				if (itNode != m_mapNodes.end()) {
-					pNode = itNode->second;
-					vecParentChildren.push_back(pNode->index());
+				if (itNode == m_mapNodes.end()) {
+					// Continue to traverse
+					vector<uint32_t> vecChildren;
+					writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecChildren);
+
+					vecParentChildren.push_back(++m_iSceneNodeIndex);
+
+					// Write node
+					wchar_t* szGlobalId = nullptr;
+					sdaiGetAttrBN(pChildNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+					assert(szGlobalId != nullptr);
+
+					*getOutputStream() << COMMA;
+					indent()++;
+					writeStartObjectTag();
+					indent()++;
+					writeStringProperty("name", (const char*)CW2A(szGlobalId));
+#ifdef _DEBUG_IFC_EXPORTER
+					* getOutputStream() << COMMA;
+					writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
+					*getOutputStream() << COMMA;
+					writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
+#endif
+					if (!vecChildren.empty()) {
+						*getOutputStream() << COMMA;
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+					}
+					indent()--;
+					writeEndObjectTag();
+					indent()--;
 				}
 				else {
-					pNode = new _node(pGeometry);
-					pNode->index() = (uint32_t)m_vecNodes.size();
-					m_vecNodes.push_back(pNode);
-					vecParentChildren.push_back(pNode->index());
-				}
-
-				// Continue to traverse
-				vector<uint32_t> vecChildren;
-				writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecChildren);
-
-				// Write node
-				wchar_t* szGlobalId = nullptr;
-				sdaiGetAttrBN(pChildNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
-				assert(szGlobalId != nullptr);
-
-				*getOutputStream() << COMMA;
-				indent()++;
-				writeStartObjectTag();
-				indent()++;
-				writeStringProperty("name", (const char*)CW2A(szGlobalId));
-#ifdef _DEBUG
-				*getOutputStream() << COMMA;
-				writeStringProperty("DEBUG: index", to_string(pNode->index()));
-				*getOutputStream() << COMMA;
-				writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
-#endif
-				if (!vecChildren.empty()) {
-					*getOutputStream() << COMMA;
-					*getOutputStream() << getNewLine();
-					writeIndent();
-					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
-				}
-				indent()--;
-				writeEndObjectTag();
-				indent()--;
+					vecParentChildren.push_back(itNode->second->index());
+				}		
 			}
 			else {
 				// Continue to traverse
