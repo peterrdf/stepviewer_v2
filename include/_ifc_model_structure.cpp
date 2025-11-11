@@ -65,19 +65,21 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 	if (pNode == nullptr) {
 		pNode = m_pProjectNode;
 	}
+
 	if (pNode == nullptr) {
 		return;
 	}
+
+	wstring strGlobalId = L"\n";
 	for (int i = 0; i < iLevel; ++i) {
-		TRACE("  ");
+		strGlobalId += L"  ";
 	}
+
 	wchar_t* szGlobalId = pNode->getGlobalId();
-	if (szGlobalId != nullptr) {
-		TRACE(L"%s\n", szGlobalId);
-	}
-	else {
-		TRACE("(null)\n");
-	}
+	strGlobalId += L"Node GlobalId: ";
+	strGlobalId += szGlobalId != nullptr ? szGlobalId : L"(null)";
+	TRACE(L"%s", strGlobalId.c_str());
+
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);
 	}

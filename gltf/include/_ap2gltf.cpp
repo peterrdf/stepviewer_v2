@@ -1727,6 +1727,7 @@ namespace _ap2gltf
 					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
 				}
 
+				// Z-up to Y-up
 				_matrix4x4 mtxDefaultViewTransformation;
 				_matrix4x4Identity(&mtxDefaultViewTransformation);
 				_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
@@ -1824,6 +1825,7 @@ namespace _ap2gltf
 		sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 		assert(szGlobalId != nullptr);
 
+		// Project root
 		*getOutputStream() << COMMA;
 		indent()++;
 		writeStartObjectTag();
@@ -1837,6 +1839,7 @@ namespace _ap2gltf
 		writeEndObjectTag();
 		indent()--;
 
+		// Z-up to Y-up
 		_matrix4x4 mtxDefaultViewTransformation;
 		_matrix4x4Identity(&mtxDefaultViewTransformation);
 		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
@@ -2442,7 +2445,7 @@ namespace _ap2gltf
 				if (itPropertySet == mapPropertySets.end()) {
 					mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
 #ifdef _WINDOWS
-					TRACE("Property set: %s\n", wstring_to_utf8(pPropertySet->getName().c_str()));
+					TRACE(L"Property set: %s\n", pPropertySet->getName().c_str());
 #endif
 				}
 				else {
@@ -2455,10 +2458,10 @@ namespace _ap2gltf
 					if (itProperty == mapProperties.end()) {
 						mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
-						TRACE("Property set: %s, property: %s, value: %s\n",
-							wstring_to_utf8(pPropertySet->getName().c_str()),
-							wstring_to_utf8(pProperty->getName().c_str()),
-							wstring_to_utf8(pProperty->getValue().c_str()));
+						TRACE(L"Property set: %s, property: %s, value: %s\n",
+							pPropertySet->getName().c_str(),
+							pProperty->getName().c_str(),
+							pProperty->getValue().c_str());
 #endif
 					}
 					else {
@@ -2628,10 +2631,10 @@ namespace _ap2gltf
 				if (itProperty == mapProperties.end()) {
 					mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
-					TRACE("Property: %s, Value: %s, Type: %s\n",
-						wstring_to_utf8(pProperty->getName().c_str()),
-						wstring_to_utf8(pProperty->getValue().c_str()),
-						wstring_to_utf8(pProperty->getValueType().c_str()));
+					TRACE(L"Property: %s, Value: %s, Type: %s\n",
+						pProperty->getName().c_str(),
+						pProperty->getValue().c_str(),
+						pProperty->getValueType().c_str());
 #endif
 				}
 				else {

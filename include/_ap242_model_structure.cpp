@@ -52,11 +52,14 @@ void _ap242_model_structure::print(int iLevel, _ap242_node* pNode)
 {
 	assert(pNode != nullptr);
 
+	wstring strId = L"\n";
 	for (int i = 0; i < iLevel; ++i) {
-		TRACE("  ");
+		strId += L"  ";
 	}
-
-	TRACE("%s\n", pNode->getId().c_str());
+	
+	strId += L"Node ID: ";
+	strId += (wchar_t*)CA2W(pNode->getId().c_str());
+	TRACE(L"%s", strId.c_str());
 
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);
