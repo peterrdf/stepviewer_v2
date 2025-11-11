@@ -33,6 +33,8 @@ namespace _ap2gltf
 		, m_iMeshesCount(0)
 		, m_bExportGeometriesOnly(false)
 		, m_bWriteModelMetadataJSON(true)
+		, m_pIFCModelStructure(nullptr)
+		, m_pAP242ModelStructure(nullptr)
 	{
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);
@@ -57,6 +59,9 @@ namespace _ap2gltf
 		}
 
 		delete getOutputStream();
+
+		delete m_pIFCModelStructure;
+		delete m_pAP242ModelStructure;
 	}
 
 	void _exporter::execute()
@@ -197,6 +202,31 @@ namespace _ap2gltf
 			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
 			return false;
 		}
+
+		if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON) {
+			_ptr<_ifc_model> ifcModel(m_pModel, false);
+			if (ifcModel) {
+				m_pIFCModelStructure = new _ifc_model_structure(ifcModel);
+				m_pIFCModelStructure->build();
+#ifdef _DEBUG
+				m_pIFCModelStructure->print();
+#endif
+			}
+			else {
+				_ptr<_ap242_model> ap242Model(m_pModel, false);
+				if (ap242Model) {
+					m_pAP242ModelStructure = new _ap242_model_structure(ap242Model);
+					m_pAP242ModelStructure->build();
+#ifdef _DEBUG
+					m_pAP242ModelStructure->print();
+#endif
+				}
+				else {
+					getLog()->logWrite(enumLogEvent::error, "Unsupported model type.");
+					return false;
+				}
+			}
+		} // if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON)
 
 		uint32_t iIndex = 0;
 		for (auto pGeometry : m_pModel->getGeometries()) {
@@ -373,6 +403,33 @@ namespace _ap2gltf
 			}
 
 			strProperty += vecValues[iIndex];
+		}
+		strProperty += "]";
+
+		return strProperty;
+	}
+
+	string _exporter::buildArrayProperty(const string& strName, const vector<uint32_t>& vecValues)
+	{
+		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
+		VERIFY_STLOBJ_IS_NOT_EMPTY(vecValues);
+
+		string strProperty;
+
+		strProperty += DOULE_QUOT_MARK;
+		strProperty += strName.c_str();
+		strProperty += DOULE_QUOT_MARK;
+		strProperty += COLON;
+		strProperty += SPACE;
+
+		strProperty += "[";
+		for (size_t iIndex = 0; iIndex < vecValues.size(); iIndex++) {
+			if (iIndex > 0) {
+				strProperty += COMMA;
+				strProperty += SPACE;
+			}
+
+			strProperty += to_string(vecValues[iIndex]);
 		}
 		strProperty += "]";
 
@@ -1674,7 +1731,6 @@ namespace _ap2gltf
 				_matrix4x4Identity(&mtxDefaultViewTransformation);
 				_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
 
-
 				indent()++;
 				writeStartObjectTag();
 
@@ -1712,13 +1768,172 @@ namespace _ap2gltf
 				m_iRootNodeIndex = iSceneNodeIndex;
 			} // if (m_bExportGeometriesOnly)
 			else {
-				m_iRootNodeIndex = 0;
+				writeNodesPropertyModelStructure();
 			}
 			// root
 
 			writeEndArrayTag();
 		}
 		// nodes
+	}
+
+	void _exporter::writeNodesPropertyModelStructure()
+	{
+		//
+		// IFC
+		//
+
+		_ptr<_ifc_model> ifcModel(m_pModel, false);
+		if (ifcModel) {
+			writeNodesPropertyModelStructureIFC(ifcModel);
+			return;
+		}
+
+		//
+		// STEP
+		//
+
+		_ptr<_ap242_model> ap242Model(m_pModel, false);
+		if (ap242Model) {
+			writeNodesPropertyModelStructureAP242(ap242Model);
+			return;
+		}
+
+		//
+		// Not supported
+		//
+
+		assert(false);
+	}
+
+	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel)
+	{
+		assert(pIfcModel != nullptr);
+		assert(m_pIFCModelStructure != nullptr);
+
+		auto pProjectNode = m_pIFCModelStructure->getProjectNode();
+		assert(pProjectNode != nullptr);
+
+		vector<uint32_t> vecChildren;
+		writeNodesPropertyModelStructureIFC(pIfcModel, pProjectNode, vecChildren);
+
+		auto pGeometry = pIfcModel->getGeometryByInstance(pProjectNode->getSdaiInstance());
+		assert(pGeometry != nullptr);
+
+		wchar_t* szGlobalId = nullptr;
+		sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+		assert(szGlobalId != nullptr);
+
+		*getOutputStream() << COMMA;
+		indent()++;
+		writeStartObjectTag();
+		indent()++;
+		writeStringProperty("name", (const char*)CW2A(szGlobalId));
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		indent()--;
+		writeEndObjectTag();
+		indent()--;
+
+		_matrix4x4 mtxDefaultViewTransformation;
+		_matrix4x4Identity(&mtxDefaultViewTransformation);
+		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
+
+		*getOutputStream() << COMMA;
+		indent()++;
+		writeStartObjectTag();
+		*getOutputStream() << getNewLine();
+		indent()++;
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("children", vector<string>{ to_string((uint32_t)m_vecNodes.size()) }).c_str();
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("matrix", vector<string>
+		{
+			to_string(mtxDefaultViewTransformation._11),
+				to_string(mtxDefaultViewTransformation._12),
+				to_string(mtxDefaultViewTransformation._13),
+				to_string(mtxDefaultViewTransformation._14),
+				to_string(mtxDefaultViewTransformation._21),
+				to_string(mtxDefaultViewTransformation._22),
+				to_string(mtxDefaultViewTransformation._23),
+				to_string(mtxDefaultViewTransformation._24),
+				to_string(mtxDefaultViewTransformation._31),
+				to_string(mtxDefaultViewTransformation._32),
+				to_string(mtxDefaultViewTransformation._33),
+				to_string(mtxDefaultViewTransformation._34),
+				to_string(mtxDefaultViewTransformation._41),
+				to_string(mtxDefaultViewTransformation._42),
+				to_string(mtxDefaultViewTransformation._43),
+				to_string(mtxDefaultViewTransformation._44)
+		}).c_str();
+		indent()--;
+		writeEndObjectTag();
+		indent()--;
+
+		m_iRootNodeIndex = (uint32_t)m_vecNodes.size();
+	}
+
+	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren)
+	{
+		assert(pIfcModel != nullptr);
+		assert(m_pIFCModelStructure != nullptr);
+		assert(pParent != nullptr);
+
+		for (auto pChildNode : pParent->children()) {			
+			// Skip IfcRelDecomposes and IfcRelContainedInSpatialStructure nodes
+			if (pChildNode->getGlobalId() != wstring(DECOMPOSITION_NODE) &&
+				pChildNode->getGlobalId() != wstring(CONTAINS_NODE)) {
+				auto pGeometry = pIfcModel->getGeometryByInstance(pChildNode->getSdaiInstance());
+				assert(pGeometry != nullptr);
+
+				auto itNode = m_mapNodes.find(pGeometry);
+				if (itNode != m_mapNodes.end()) {
+					vecParentChildren.push_back(itNode->second->getIndex());
+				}
+				else {
+					auto pNode = new _node(pGeometry, (uint32_t)m_vecNodes.size());
+					m_vecNodes.push_back(pNode);
+					vecParentChildren.push_back(pNode->getIndex());
+				}
+
+				// Continue to traverse
+				vector<uint32_t> vecChildren;
+				writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecChildren);
+
+				// Write node
+				wchar_t* szGlobalId = nullptr;
+				sdaiGetAttrBN(pChildNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+				assert(szGlobalId != nullptr);
+
+				*getOutputStream() << COMMA;
+				indent()++;
+				writeStartObjectTag();
+				indent()++;
+				writeStringProperty("name", (const char*)CW2A(szGlobalId));
+				if (!vecChildren.empty()) {
+					*getOutputStream() << COMMA;
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				}
+				indent()--;
+				writeEndObjectTag();
+				indent()--;
+			}
+			else {
+				// Continue to traverse
+				writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecParentChildren);
+			}			
+		} // for (auto pChildNode : ...)
+	}
+
+	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model)
+	{
+		assert(pAP242Model != nullptr);
 	}
 
 	void _exporter::writeSceneProperty()
@@ -2703,16 +2918,11 @@ namespace _ap2gltf
 			return;
 		}
 
-		_ifc_model_structure modelStructure(pIfcModel);
-		modelStructure.build();
-#ifdef _DEBUG
-		modelStructure.print();
-#endif
 		//
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -2727,7 +2937,9 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			auto pProjectNode = modelStructure.getProjectNode();
+			assert(m_pIFCModelStructure != nullptr);
+			auto pProjectNode = m_pIFCModelStructure->getProjectNode();
+			assert(pProjectNode != nullptr);
 
 			wchar_t* szName = nullptr;
 			sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);

@@ -92,6 +92,12 @@ namespace _ap2gltf
 		bool m_bExportGeometriesOnly;
 		bool m_bWriteModelMetadataJSON;
 
+		// IFC
+		_ifc_model_structure* m_pIFCModelStructure;
+
+		// STEP AP242
+		_ap242_model_structure* m_pAP242ModelStructure;
+
 	public: // Methods
 
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
@@ -111,6 +117,7 @@ namespace _ap2gltf
 		string buildStringProperty(const string& strName, const string& strValue);
 		string buildNumberProperty(const string& strName, const string& strValue);
 		string buildArrayProperty(const string& strName, const vector<string>& vecValues);
+		string buildArrayProperty(const string& strName, const vector<uint32_t>& vecValues);
 
 		virtual void writeIndent();
 		void writeStartObjectTag(bool bNewLine = true);
@@ -130,6 +137,10 @@ namespace _ap2gltf
 		void writeAccessorsProperty();
 		void writeMeshesProperty();
 		void writeNodesProperty();
+		void writeNodesPropertyModelStructure();
+		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel);
+		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren);
+		void writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model);
 		void writeSceneProperty();
 		void writeScenesProperty();
 		void writeMaterials();
