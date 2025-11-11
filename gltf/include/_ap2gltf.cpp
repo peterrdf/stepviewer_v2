@@ -1788,7 +1788,7 @@ namespace _ap2gltf
 
 				m_iRootNodeIndex = m_iSceneNodeIndex;
 			} // if (m_bExportGeometriesOnly)
-			else {
+			else {				
 				writeNodesPropertyModelStructure();
 			}
 			// root
@@ -1846,8 +1846,6 @@ namespace _ap2gltf
 		assert(szGlobalId != nullptr);
 
 		// Project root
-		++m_iSceneNodeIndex;
-
 		*getOutputStream() << COMMA;
 		indent()++;
 		writeStartObjectTag();
@@ -1928,7 +1926,7 @@ namespace _ap2gltf
 					vector<uint32_t> vecChildren;
 					writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecChildren);
 
-					vecParentChildren.push_back(++m_iSceneNodeIndex);
+					vecParentChildren.push_back(m_iSceneNodeIndex++);
 
 					// Write node
 					wchar_t* szGlobalId = nullptr;
