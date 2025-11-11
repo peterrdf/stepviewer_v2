@@ -1558,7 +1558,7 @@ namespace _ap2gltf
 											to_string(mtxInstanceTransformation._43),
 											to_string(mtxInstanceTransformation._44)
 									}).c_str();
-								} // if (pTransformation != nullptr)								
+								} // if (pTransformation != nullptr)
 								indent()--;
 
 								writeEndObjectTag();
@@ -1604,6 +1604,12 @@ namespace _ap2gltf
 						indent()++;
 						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 						*getOutputStream() << COMMA;
+#ifdef _DEBUG
+						*getOutputStream() << COMMA;
+						writeStringProperty("DEBUG: index", to_string(iSceneNodeIndex));
+						*getOutputStream() << COMMA;
+						writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
+#endif
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecPlaceholderNodeChildren).c_str();
@@ -1651,6 +1657,12 @@ namespace _ap2gltf
 
 							indent()++;
 							writeStringProperty("name", strGlobalId);
+#ifdef _DEBUG
+							*getOutputStream() << COMMA;
+							writeStringProperty("DEBUG: index", to_string(iSceneNodeIndex));
+							*getOutputStream() << COMMA;
+							writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
+#endif
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
@@ -1831,6 +1843,12 @@ namespace _ap2gltf
 		writeStartObjectTag();
 		indent()++;
 		writeStringProperty("name", (const char*)CW2A(szGlobalId));
+#ifdef _DEBUG
+		*getOutputStream() << COMMA;
+		writeStringProperty("DEBUG: index", to_string(m_vecNodes.size()));
+		*getOutputStream() << COMMA;
+		writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
+#endif
 		*getOutputStream() << COMMA;
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -1847,9 +1865,11 @@ namespace _ap2gltf
 		*getOutputStream() << COMMA;
 		indent()++;
 		writeStartObjectTag();
-		*getOutputStream() << getNewLine();
 		indent()++;
-		writeIndent();
+		writeStringProperty("name", "Z_UP");
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();		
+		writeIndent();		
 		*getOutputStream() << buildArrayProperty("children", vector<string>{ to_string((uint32_t)m_vecNodes.size()) }).c_str();
 		*getOutputStream() << COMMA;
 		*getOutputStream() << getNewLine();
@@ -1883,24 +1903,26 @@ namespace _ap2gltf
 	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren)
 	{
 		assert(pIfcModel != nullptr);
-		assert(m_pIFCModelStructure != nullptr);
 		assert(pParent != nullptr);
 
-		for (auto pChildNode : pParent->children()) {			
+		for (auto pChildNode : pParent->children()) {
 			// Skip IfcRelDecomposes and IfcRelContainedInSpatialStructure nodes
 			if (pChildNode->getGlobalId() != wstring(DECOMPOSITION_NODE) &&
 				pChildNode->getGlobalId() != wstring(CONTAINS_NODE)) {
 				auto pGeometry = pIfcModel->getGeometryByInstance(pChildNode->getSdaiInstance());
 				assert(pGeometry != nullptr);
 
+				uint32_t iIndex = -1;
 				auto itNode = m_mapNodes.find(pGeometry);
 				if (itNode != m_mapNodes.end()) {
 					vecParentChildren.push_back(itNode->second->getIndex());
+					iIndex = itNode->second->getIndex();
 				}
 				else {
 					auto pNode = new _node(pGeometry, (uint32_t)m_vecNodes.size());
 					m_vecNodes.push_back(pNode);
 					vecParentChildren.push_back(pNode->getIndex());
+					iIndex = pNode->getIndex();
 				}
 
 				// Continue to traverse
@@ -1917,6 +1939,12 @@ namespace _ap2gltf
 				writeStartObjectTag();
 				indent()++;
 				writeStringProperty("name", (const char*)CW2A(szGlobalId));
+#ifdef _DEBUG
+				*getOutputStream() << COMMA;
+				writeStringProperty("DEBUG: index", to_string(iIndex));
+				*getOutputStream() << COMMA;
+				writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
+#endif
 				if (!vecChildren.empty()) {
 					*getOutputStream() << COMMA;
 					*getOutputStream() << getNewLine();
@@ -1930,7 +1958,7 @@ namespace _ap2gltf
 			else {
 				// Continue to traverse
 				writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecParentChildren);
-			}			
+			}
 		} // for (auto pChildNode : ...)
 	}
 
@@ -3171,7 +3199,7 @@ namespace _ap2gltf
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
