@@ -87,6 +87,8 @@ protected: // Methods
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadBoundedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadHasOpenings(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void clean();
 
