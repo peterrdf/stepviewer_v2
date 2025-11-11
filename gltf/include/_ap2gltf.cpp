@@ -31,6 +31,8 @@ namespace _ap2gltf
 		, m_iBuffersCount(0)
 		, m_iBufferViewsCount(0)
 		, m_iMeshesCount(0)
+		, m_bExportGeometriesOnly(false)
+		, m_bWriteModelMetadataJSON(true)
 	{
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);
@@ -196,9 +198,10 @@ namespace _ap2gltf
 			return false;
 		}
 
+		uint32_t iIndex = 0;
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!ignoreGeometry(pGeometry)) {
-				auto pNode = new _node(pGeometry);
+				auto pNode = new _node(pGeometry, iIndex++);
 				m_vecNodes.push_back(pNode);
 
 				assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
@@ -211,6 +214,10 @@ namespace _ap2gltf
 
 	/*virtual*/ void _exporter::postExecute()
 	{
+		if (!m_bWriteModelMetadataJSON) {
+			return;
+		}
+
 		if (getOutputStream() != nullptr) {
 			delete getOutputStream();
 		}
@@ -1653,7 +1660,7 @@ namespace _ap2gltf
 			} // for (size_t iNodeIndex = ...
 
 			// root
-			{
+			if (m_bExportGeometriesOnly) {
 				if (iSceneNodeIndex > 0) {
 					*getOutputStream() << COMMA;
 				}
@@ -1703,6 +1710,9 @@ namespace _ap2gltf
 				indent()--;
 
 				m_iRootNodeIndex = iSceneNodeIndex;
+			} // if (m_bExportGeometriesOnly)
+			else {
+				m_iRootNodeIndex = 0;
 			}
 			// root
 
@@ -2514,7 +2524,7 @@ namespace _ap2gltf
 					if (!prUnit.second->getPrefix().empty()) {
 						*getOutputStream() << COMMA;
 						wstring strPrefix = prUnit.second->getPrefix();
-						std::transform(strPrefix.begin(), strPrefix.end(), strPrefix.begin(), ::towupper);						
+						std::transform(strPrefix.begin(), strPrefix.end(), strPrefix.begin(), ::towupper);
 						writeStringProperty("prefix", wstring_to_utf8(strPrefix.c_str()));
 					}
 					indent()--;

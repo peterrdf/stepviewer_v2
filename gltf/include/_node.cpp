@@ -6,8 +6,9 @@
 #include <memory>
 
 // ************************************************************************************************
-_node::_node(_geometry* pGeometry)
+_node::_node(_geometry* pGeometry, uint32_t iIndex)
 	: m_pGeometry(pGeometry)
+	, m_iIndex(iIndex)
 	, m_iBufferByteLength(0)
 	, m_strBufferBinFile("")
 	, m_iVerticesBufferViewByteLength(0)
@@ -18,6 +19,7 @@ _node::_node(_geometry* pGeometry)
 	, m_vecMeshes()
 {
 	VERIFY_POINTER(m_pGeometry);
+	VERIFY_EXPRESSION(m_iIndex >= 0);
 }
 
 /*virtual*/ _node::~_node()

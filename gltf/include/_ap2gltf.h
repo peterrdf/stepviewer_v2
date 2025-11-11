@@ -89,6 +89,9 @@ namespace _ap2gltf
 		uint32_t m_iBufferViewsCount;
 		uint32_t m_iMeshesCount;
 
+		bool m_bExportGeometriesOnly;
+		bool m_bWriteModelMetadataJSON;
+
 	public: // Methods
 
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
@@ -155,6 +158,8 @@ namespace _ap2gltf
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
 		ostream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
+		bool& exportGeometriesOnly() { return m_bExportGeometriesOnly; }
+		bool& writeModelMetadataJSON() { return m_bWriteModelMetadataJSON; }
 		virtual const char* getNewLine() const { return "\n"; }
 		virtual int64_t getGeometryID(_geometry* pGeometry) { return (int64_t)pGeometry; }
 	};
