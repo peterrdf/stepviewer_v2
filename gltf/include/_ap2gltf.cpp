@@ -10,7 +10,7 @@
 #include "_ap242_draughting_model.h"
 
 // ************************************************************************************************
-#define _DEBUG_IFC_EXPORTER
+//#define _DEBUG_IFC_EXPORTER
 //#define _DEBUG_AP242_EXPORTER
 
 // ************************************************************************************************
@@ -1956,6 +1956,9 @@ namespace _ap2gltf
 				}
 				else {
 					vecParentChildren.push_back(itNode->second->index());
+
+					// Continue to traverse
+					writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecParentChildren);
 				}		
 			}
 			else {
