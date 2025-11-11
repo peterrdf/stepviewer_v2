@@ -20,6 +20,7 @@ namespace _ap2gltf
 		, m_vecMaterials()
 		, m_mapMaterials()
 		, m_mapImages()
+		, m_iSceneNodeIndex(0)
 		, m_vecNodes()
 		, m_mapNodes()
 		, m_vecSceneRootNodes()
@@ -231,7 +232,7 @@ namespace _ap2gltf
 		uint32_t iIndex = 0;
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!ignoreGeometry(pGeometry)) {
-				auto pNode = new _node(pGeometry, iIndex++);
+				auto pNode = new _node(pGeometry);
 				m_vecNodes.push_back(pNode);
 
 				assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
@@ -1464,7 +1465,7 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			uint32_t iSceneNodeIndex = 0;
+			m_iSceneNodeIndex = 0;
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
@@ -1505,11 +1506,11 @@ namespace _ap2gltf
 
 							auto pTransformation = pInstance->getTransformationMatrix();
 
-							if (iSceneNodeIndex > 0) {
+							if (m_iSceneNodeIndex > 0) {
 								*getOutputStream() << COMMA;
 							}
 
-							vecPlaceholderNodeChildren.push_back(to_string(iSceneNodeIndex++));
+							vecPlaceholderNodeChildren.push_back(to_string(m_iSceneNodeIndex++));
 
 							auto itMappedItem = m_mapNodes.find(pMappedGeometry);
 							assert(itMappedItem != m_mapNodes.end());
@@ -1519,7 +1520,7 @@ namespace _ap2gltf
 							{
 								vector<string> vecNodeChildren;
 								for (size_t iMeshIndex = 0; iMeshIndex < pMappedNode->meshes().size(); iMeshIndex++) {
-									vecNodeChildren.push_back(to_string(iSceneNodeIndex++));
+									vecNodeChildren.push_back(to_string(m_iSceneNodeIndex++));
 								}
 
 								indent()++;
@@ -1588,11 +1589,12 @@ namespace _ap2gltf
 
 					// Placeholder root
 					{
-						if (iSceneNodeIndex > 0) {
-							*getOutputStream() << COMMA;
-						}
+						pNode->index() = m_iSceneNodeIndex;
+						m_vecSceneRootNodes.push_back(pNode->index());
 
-						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+						if (m_iSceneNodeIndex > 0) {
+							*getOutputStream() << COMMA;
+						}						
 
 						wchar_t* szGlobalId = nullptr;
 						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
@@ -1602,14 +1604,14 @@ namespace _ap2gltf
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
-						*getOutputStream() << COMMA;
+						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");						
 #ifdef _DEBUG
 						*getOutputStream() << COMMA;
-						writeStringProperty("DEBUG: index", to_string(iSceneNodeIndex));
+						writeStringProperty("DEBUG: index", to_string(pNode->index()));
 						*getOutputStream() << COMMA;
 						writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
 #endif
+						*getOutputStream() << COMMA;
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecPlaceholderNodeChildren).c_str();
@@ -1621,7 +1623,7 @@ namespace _ap2gltf
 					// Placeholder root
 
 					// next root
-					iSceneNodeIndex++;
+					m_iSceneNodeIndex++;
 				} // if (pGeometry->isPlaceholder())
 				else {
 					// Instances
@@ -1629,17 +1631,17 @@ namespace _ap2gltf
 					for (auto pInstance : pGeometry->getInstances()) {
 						auto pTransformation = pInstance->getTransformationMatrix();
 
-						if (iSceneNodeIndex > 0) {
+						if (m_iSceneNodeIndex > 0) {
 							*getOutputStream() << COMMA;
 						}
 
 						// root	
 						{
-							m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+							m_vecSceneRootNodes.push_back(m_iSceneNodeIndex);
 
 							vector<string> vecNodeChildren;
 							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-								vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
+								vecNodeChildren.push_back(to_string(++m_iSceneNodeIndex));
 							}
 
 							indent()++;
@@ -1659,7 +1661,7 @@ namespace _ap2gltf
 							writeStringProperty("name", strGlobalId);
 #ifdef _DEBUG
 							*getOutputStream() << COMMA;
-							writeStringProperty("DEBUG: index", to_string(iSceneNodeIndex));
+							writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
 							*getOutputStream() << COMMA;
 							writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
 #endif
@@ -1723,14 +1725,14 @@ namespace _ap2gltf
 						// children
 
 						// next root
-						iSceneNodeIndex++;
+						m_iSceneNodeIndex++;
 					} //for (size_t iTransformation = ...
 				} // else if (pGeometry->isPlaceholder())
 			} // for (size_t iNodeIndex = ...
 
 			// root
 			if (m_bExportGeometriesOnly) {
-				if (iSceneNodeIndex > 0) {
+				if (m_iSceneNodeIndex > 0) {
 					*getOutputStream() << COMMA;
 				}
 
@@ -1746,9 +1748,10 @@ namespace _ap2gltf
 
 				indent()++;
 				writeStartObjectTag();
-
-				*getOutputStream() << getNewLine();
 				indent()++;
+				writeStringProperty("name", "Z_UP");
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("children", vecRootNodes).c_str();
 				*getOutputStream() << COMMA;
@@ -1774,11 +1777,10 @@ namespace _ap2gltf
 						to_string(mtxDefaultViewTransformation._44)
 				}).c_str();
 				indent()--;
-
 				writeEndObjectTag();
 				indent()--;
 
-				m_iRootNodeIndex = iSceneNodeIndex;
+				m_iRootNodeIndex = m_iSceneNodeIndex;
 			} // if (m_bExportGeometriesOnly)
 			else {
 				writeNodesPropertyModelStructure();
@@ -1912,17 +1914,17 @@ namespace _ap2gltf
 				auto pGeometry = pIfcModel->getGeometryByInstance(pChildNode->getSdaiInstance());
 				assert(pGeometry != nullptr);
 
-				uint32_t iIndex = -1;
+				_node* pNode = nullptr;
 				auto itNode = m_mapNodes.find(pGeometry);
 				if (itNode != m_mapNodes.end()) {
-					vecParentChildren.push_back(itNode->second->getIndex());
-					iIndex = itNode->second->getIndex();
+					pNode = itNode->second;
+					vecParentChildren.push_back(pNode->index());
 				}
 				else {
-					auto pNode = new _node(pGeometry, (uint32_t)m_vecNodes.size());
+					pNode = new _node(pGeometry);
+					pNode->index() = (uint32_t)m_vecNodes.size();
 					m_vecNodes.push_back(pNode);
-					vecParentChildren.push_back(pNode->getIndex());
-					iIndex = pNode->getIndex();
+					vecParentChildren.push_back(pNode->index());
 				}
 
 				// Continue to traverse
@@ -1941,7 +1943,7 @@ namespace _ap2gltf
 				writeStringProperty("name", (const char*)CW2A(szGlobalId));
 #ifdef _DEBUG
 				*getOutputStream() << COMMA;
-				writeStringProperty("DEBUG: index", to_string(iIndex));
+				writeStringProperty("DEBUG: index", to_string(pNode->index()));
 				*getOutputStream() << COMMA;
 				writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
 #endif

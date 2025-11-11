@@ -27,7 +27,7 @@ private: // Fields
 
 public: // Methods
 
-	_node(_geometry* pGeometry, uint32_t iIndex);
+	_node(_geometry* pGeometry);
 	virtual ~_node();	
 
 public: // Properties
@@ -36,7 +36,7 @@ public: // Properties
 	_geometry* getGeometry() const { return m_pGeometry; }
 
 	// glTF
-	uint32_t getIndex() const { return m_iIndex; }
+	uint32_t& index() { return m_iIndex; }
 	uint32_t& bufferByteLength() { return m_iBufferByteLength; }
 	string& bufferBinFile() { return m_strBufferBinFile; }
 	uint32_t& verticesBufferViewByteLength() { return m_iVerticesBufferViewByteLength; }

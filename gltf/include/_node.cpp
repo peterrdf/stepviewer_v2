@@ -6,9 +6,9 @@
 #include <memory>
 
 // ************************************************************************************************
-_node::_node(_geometry* pGeometry, uint32_t iIndex)
+_node::_node(_geometry* pGeometry)
 	: m_pGeometry(pGeometry)
-	, m_iIndex(iIndex)
+	, m_iIndex(0)
 	, m_iBufferByteLength(0)
 	, m_strBufferBinFile("")
 	, m_iVerticesBufferViewByteLength(0)

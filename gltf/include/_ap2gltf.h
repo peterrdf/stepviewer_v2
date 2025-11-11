@@ -75,6 +75,7 @@ namespace _ap2gltf
 		vector<const _material*> m_vecMaterials;
 		GLTFMATERIALS m_mapMaterials;
 		map<wstring, uint32_t> m_mapImages;
+		uint32_t m_iSceneNodeIndex;
 		vector<_node*> m_vecNodes;
 		map<_geometry*,  _node*> m_mapNodes;
 		vector<uint32_t> m_vecSceneRootNodes;
@@ -95,7 +96,7 @@ namespace _ap2gltf
 		// IFC
 		_ifc_model_structure* m_pIFCModelStructure;
 
-		// STEP AP242
+		// AP242
 		_ap242_model_structure* m_pAP242ModelStructure;
 
 	public: // Methods
