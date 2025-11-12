@@ -2000,9 +2000,10 @@ namespace _ap2gltf
 		} // for (auto pChildNode : ...)
 	}
 
-	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* /*pAP242Model*/)
+	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model)
 	{
-		//assert(pAP242Model != nullptr);
+		assert(pAP242Model != nullptr);
+		assert(m_pAP242ModelStructure != nullptr);
 	}
 
 	void _exporter::writeSceneProperty()
@@ -3227,12 +3228,7 @@ namespace _ap2gltf
 		if (pPropertyProvider == nullptr) {
 			return;
 		}
-
-		_ap242_model_structure modelStructure(pAP242Model);
-		modelStructure.build();
-#ifdef _DEBUG
-		modelStructure.print();
-#endif
+		
 		//
 		// Write metadata
 		//
@@ -3252,7 +3248,8 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			auto& vecRootProducts = modelStructure.getRootProducts();
+			assert(m_pAP242ModelStructure != nullptr);
+			auto& vecRootProducts = m_pAP242ModelStructure->getRootProducts();
 			for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
 				auto pRootProduct = vecRootProducts[iRootProductIndex];
 				if (iRootProductIndex > 0) {
