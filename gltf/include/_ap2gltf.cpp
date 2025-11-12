@@ -233,7 +233,6 @@ namespace _ap2gltf
 			}
 		} // if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON)
 
-		uint32_t iIndex = 0;
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!ignoreGeometry(pGeometry)) {
 				auto pNode = new _node(pGeometry);
@@ -1837,10 +1836,10 @@ namespace _ap2gltf
 
 		vector<uint32_t> vecChildren;
 		writeNodesPropertyModelStructureIFC(pIfcModel, pProjectNode, vecChildren);
-
+#ifdef _DEBUG_IFC_EXPORTER
 		auto pGeometry = pIfcModel->getGeometryByInstance(pProjectNode->getSdaiInstance());
 		assert(pGeometry != nullptr);
-
+#endif
 		wchar_t* szGlobalId = nullptr;
 		sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 		assert(szGlobalId != nullptr);
@@ -1968,9 +1967,9 @@ namespace _ap2gltf
 		} // for (auto pChildNode : ...)
 	}
 
-	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model)
+	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* /*pAP242Model*/)
 	{
-		assert(pAP242Model != nullptr);
+		//assert(pAP242Model != nullptr);
 	}
 
 	void _exporter::writeSceneProperty()
