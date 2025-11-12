@@ -68,6 +68,7 @@ namespace _ap2gltf
 	protected: // Members
 
 		_model* m_pModel;
+		set<SdaiInstance> m_setTargetInstances;
 
 		bool m_bEmbeddedBuffers;
 
@@ -105,6 +106,7 @@ namespace _ap2gltf
 		virtual ~_exporter();
 
 		void execute();
+		void execute(const set<SdaiInstance>& setTargetInstances);
 
 	protected: // Methods
 

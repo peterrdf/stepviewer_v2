@@ -33,7 +33,11 @@
 
 	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName()).c_str();
 
-	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+#ifdef _GLTF_SUPPORT
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|glTF Files (*.gltf)|*.gltf|glTF Binary Files (*.glb)|*.glb||");
+#else
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin||");
+#endif
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
@@ -44,11 +48,42 @@
 	auto pAPInstance = dynamic_cast<_ap_instance*>(pInstance);
 	if (pAPInstance == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
+	if (getModels().size() != 1) {
+		ASSERT(FALSE);
+		return;
+	}
+
+#ifdef _GLTF_SUPPORT
+	fs::path pathModel = (LPCWSTR)dlgFile.GetPathName();
+	string strExtension = pathModel.extension().string();
+	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+
+	if (strExtension == ".gltf") {
+		_c_log log(nullptr);
+
+		_ap2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+		exporter.setLog(&log);
+		exporter.execute({ pAPInstance->getSdaiInstance() });
+	}
+	else if (strExtension == ".glb") {
+		_c_log log(nullptr);
+
+		_ap2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
+		exporter.setLog(&log);
+		exporter.execute({ pAPInstance->getSdaiInstance() });
+	}
+	else if (strExtension == ".bin") {
+		pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
+	}
+	else {
+		ASSERT(FALSE);
+	}	
+#else
 	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
+#endif
 }
 
 void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
@@ -57,7 +92,6 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 	if ((vecPaths.size() == 1) && m_wndBCFView.IsBCF(vecPaths[0])) {
 		m_wndBCFView.Open(vecPaths[0]);
-
 		return;
 	}
 
@@ -74,7 +108,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 			vecModels = _ap_model_factory::loadIFCZIP(getLog(), (LPCWSTR)vecPaths[0]);
 		}
 		else if (strExtension == ".stpz") {
-			vecModels = _ap_model_factory::loadSTEPGZip(getLog(), (LPCWSTR)vecPaths[0]);			
+			vecModels = _ap_model_factory::loadSTEPGZip(getLog(), (LPCWSTR)vecPaths[0]);
 		}
 		else {
 			vecModels.push_back(_ap_model_factory::load(getLog(), (LPCWSTR)vecPaths[0], false, nullptr, false));
@@ -146,12 +180,10 @@ END_MESSAGE_MAP()
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
 	: m_wndBCFView(*this)
-{
-}
+{}
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{
-}
+{}
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
@@ -470,7 +502,7 @@ void CMySTEPViewerDoc::OnExportAsGltf()
 #ifdef _GLTF_SUPPORT
 	fs::path pthInputFile = getModels()[0]->getPath();
 
-	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf|All Files (*.*)|*.*||");
+	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf||");
 	CFileDialog dlgFile(FALSE, _T("gltf"), pthInputFile.wstring().c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
@@ -499,7 +531,7 @@ void CMySTEPViewerDoc::OnExportAsGltfBinary()
 {
 	fs::path pthInputFile = getModels()[0]->getPath();
 
-	TCHAR szFilters[] = _T("glTF Binary Files (*.glb)|*.glb|All Files (*.*)|*.*||");
+	TCHAR szFilters[] = _T("glTF Binary Files (*.glb)|*.glb||");
 	CFileDialog dlgFile(FALSE, _T("glb"), pthInputFile.wstring().c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 

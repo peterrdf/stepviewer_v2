@@ -19,6 +19,7 @@ namespace _ap2gltf
 	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
 		: _log_client()
 		, m_pModel(pModel)
+		, m_setTargetInstances()
 		, m_bEmbeddedBuffers(bEmbeddedBuffers)
 		, m_pPolygonsMaterial(nullptr)
 		, m_vecMaterials()
@@ -162,6 +163,17 @@ namespace _ap2gltf
 		postExecute();
 	}
 
+	void _exporter::execute(const set<SdaiInstance>& setTargetInstances)
+	{
+		assert(!setTargetInstances.empty());
+
+		m_setTargetInstances = setTargetInstances;
+		m_bExportGeometriesOnly = true;
+		m_bWriteModelMetadataJSON = false;
+
+		execute();
+	}
+
 	/*virtual*/ bool _exporter::createOuputStream()
 	{
 		if (getOutputStream() != nullptr) {
@@ -203,6 +215,12 @@ namespace _ap2gltf
 
 	/*virtual*/ bool _exporter::preExecute()
 	{
+		_ptr<_ap_model> apModel(m_pModel, false);
+		if (!apModel) {
+			getLog()->logWrite(enumLogEvent::error, "Unsupported model type.");
+			return false;
+		}
+
 		if (!createOuputStream()) {
 			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
 			return false;
@@ -233,13 +251,28 @@ namespace _ap2gltf
 			}
 		} // if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON)
 
-		for (auto pGeometry : m_pModel->getGeometries()) {
-			if (!ignoreGeometry(pGeometry)) {
-				auto pNode = new _node(pGeometry);
-				m_vecNodes.push_back(pNode);
-
-				assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
-				m_mapNodes[pGeometry] = pNode;
+		if (m_setTargetInstances.empty()) {
+			// All geometries
+			for (auto pGeometry : m_pModel->getGeometries()) {
+				if (!ignoreGeometry(pGeometry)) {
+					auto pNode = new _node(pGeometry);
+					m_vecNodes.push_back(pNode);
+					assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
+					m_mapNodes[pGeometry] = pNode;
+				}
+			}
+		} else {
+			// Selected geometries only			
+			for (auto sdaiInstance : m_setTargetInstances) {
+				auto pGeometry = apModel->getGeometryByInstance(sdaiInstance);
+				if (pGeometry != nullptr) {
+					if (!ignoreGeometry(pGeometry)) {
+						auto pNode = new _node(pGeometry);
+						m_vecNodes.push_back(pNode);
+						assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
+						m_mapNodes[pGeometry] = pNode;
+					}
+				}
 			}
 		}
 

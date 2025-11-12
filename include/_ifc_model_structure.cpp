@@ -45,6 +45,7 @@ _ifc_contains_node::_ifc_contains_node(_ifc_node* pParentNode)
 _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 	: m_pModel(pModel)
 	, m_pProjectNode(nullptr)
+	, m_mapInstance2Node()
 {
 	assert(m_pModel != nullptr);
 }
@@ -107,7 +108,10 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 {
 	assert(sdaiProjectInstance != 0);
 	assert(m_pProjectNode == nullptr);
+
 	m_pProjectNode = new _ifc_node(sdaiProjectInstance, nullptr);
+	assert(m_mapInstance2Node.find(sdaiProjectInstance) == m_mapInstance2Node.end());
+	m_mapInstance2Node[sdaiProjectInstance] = m_pProjectNode;
 
 	auto pGeometry = m_pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr) {
@@ -299,6 +303,9 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sda
 		assert(pGeometry->getInstances().size() == 1);
 
 		_ifc_node* pInstanceNode = new _ifc_node(sdaiInstance, pParentNode);
+		assert(m_mapInstance2Node.find(sdaiInstance) == m_mapInstance2Node.end());
+		m_mapInstance2Node[sdaiInstance] = pInstanceNode;
+
 		pParentNode->children().push_back(pInstanceNode);
 
 		// decomposition/contains

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 using namespace std;
 
 // ************************************************************************************************
@@ -69,6 +70,7 @@ private: // Members
 
 	_ifc_model* m_pModel;
 	_ifc_node* m_pProjectNode;
+	map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
 
 public: // Methods
 
