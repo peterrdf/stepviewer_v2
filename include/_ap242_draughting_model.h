@@ -56,7 +56,7 @@ public: // Methods
 
 public: // Properties
 
-    const wchar_t* getName() { return m_strName.c_str(); }
+    const wchar_t* getName() const { return m_strName.c_str(); }
 };
 
 // ************************************************************************************************
@@ -74,5 +74,5 @@ public: // Methods
 
 public: // Properties
 
-    const wchar_t* getName() { return m_strName.c_str(); }
+    const wchar_t* getName() const { return m_strName.c_str(); }
 };

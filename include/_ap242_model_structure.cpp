@@ -96,7 +96,7 @@ void _ap242_model_structure::build()
 			m_vecRootProducts.push_back(new _ap242_node(
 				_ap242_node_type::AnnotationPlane,
 				pAnnotationPlane->getSdaiInstance(),
-				_string::format("#%lld", pAnnotationPlane->getExpressID()),
+				_string::format("#%lld:0", pAnnotationPlane->getExpressID()),
 				pDraughtingModelNode));
 		}
 
@@ -104,7 +104,7 @@ void _ap242_model_structure::build()
 			m_vecRootProducts.push_back(new _ap242_node(
 				_ap242_node_type::DraughtingCallout,
 				pDraughtingCallout->getSdaiInstance(),
-				_string::format("#%lld", pDraughtingCallout->getExpressID()),
+				_string::format("#%lld:0", pDraughtingCallout->getExpressID()),
 				pDraughtingModelNode));
 		}
 	}
