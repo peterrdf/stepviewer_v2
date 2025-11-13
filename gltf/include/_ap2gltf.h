@@ -79,6 +79,7 @@ namespace _ap2gltf
 		uint32_t m_iSceneNodeIndex;
 		vector<_node*> m_vecNodes;
 		map<_geometry*,  _node*> m_mapNodes;
+		map<string, uint32_t> m_mapName2Index;
 		vector<uint32_t> m_vecSceneRootNodes;
 		uint32_t m_iRootNodeIndex;
 
@@ -144,6 +145,7 @@ namespace _ap2gltf
 		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel);
 		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren);
 		void writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model);
+		void writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model, _ap242_node* pParent, vector<uint32_t>& vecParentChildren);
 		void writeSceneProperty();
 		void writeScenesProperty();
 		void writeMaterials();
