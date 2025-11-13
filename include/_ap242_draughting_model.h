@@ -35,7 +35,7 @@ public: // Properties
 
     SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
     ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
-    const wchar_t* getName() { return m_strName.c_str(); }
+    const wchar_t* getName() const { return m_strName.c_str(); }
 
     const vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
     const vector<_ap242_draughting_callout*> getDraughtingCallouts() const { return m_vecDraughtingCallouts; }

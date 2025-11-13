@@ -2031,17 +2031,19 @@ namespace _ap2gltf
 				// Continue to traverse
 				vector<uint32_t> vecChildren;
 				writeNodesPropertyModelStructureAP242(pAP242Model, pRootProduct, vecChildren);
-				
+
 				// Write node
 				*getOutputStream() << COMMA;
 				indent()++;
 				writeStartObjectTag();
 				indent()++;
 				writeStringProperty("name", pRootProduct->getId());
-				*getOutputStream() << COMMA;
-				*getOutputStream() << getNewLine();
-				writeIndent();
-				*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				if (!vecChildren.empty()) {
+					*getOutputStream() << COMMA;
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				}
 				indent()--;
 				writeEndObjectTag();
 				indent()--;
@@ -3403,7 +3405,20 @@ namespace _ap2gltf
 							strName = wstring_to_utf8(draughtingCallout->getName());
 						}
 						else {
-							assert(false);	// Unknown root product type 
+							if (pRootProduct->getType() == _ap242_node_type::DraughtingModel) {
+								auto itDraughtingModel = find_if(pAP242Model->getDraughtingModels().begin(), pAP242Model->getDraughtingModels().end(),
+									[&strName, pRootProduct](const _ap242_draughting_model* pDraughtingModel) {
+										if (pDraughtingModel->getSdaiInstance() == pRootProduct->getSdaiInstance()) {
+											strName = wstring_to_utf8(pDraughtingModel->getName());
+											return true;
+										}
+										return false;
+									});
+								assert(itDraughtingModel != pAP242Model->getDraughtingModels().end());
+							}
+							else {
+								assert(false);	// Unknown root product type 
+							}
 						}
 					}
 				}

@@ -86,12 +86,18 @@ void _ap242_model_structure::build()
 	
 	// Draughitng models
 	for (auto pDraughtingModel : m_pModel->getDraughtingModels()) {
+		auto pDraughtingModelNode = new _ap242_node(
+			_ap242_node_type::DraughtingModel,
+			pDraughtingModel->getSdaiInstance(),
+			_string::format("#%lld", pDraughtingModel->getExpressID()),
+			nullptr);
+		m_vecRootProducts.push_back(pDraughtingModelNode);
 		for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
 			m_vecRootProducts.push_back(new _ap242_node(
 				_ap242_node_type::AnnotationPlane,
 				pAnnotationPlane->getSdaiInstance(),
 				_string::format("#%lld", pAnnotationPlane->getExpressID()),
-				nullptr));			
+				pDraughtingModelNode));
 		}
 
 		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
@@ -99,7 +105,7 @@ void _ap242_model_structure::build()
 				_ap242_node_type::DraughtingCallout,
 				pDraughtingCallout->getSdaiInstance(),
 				_string::format("#%lld", pDraughtingCallout->getExpressID()),
-				nullptr));
+				pDraughtingModelNode));
 		}
 	}
 }
