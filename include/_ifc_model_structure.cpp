@@ -323,4 +323,6 @@ void _ifc_model_structure::clean()
 		delete m_pProjectNode;
 		m_pProjectNode = nullptr;
 	}
+
+	m_mapInstance2Node.clear();
 }
