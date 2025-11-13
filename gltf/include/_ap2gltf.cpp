@@ -3596,6 +3596,138 @@ namespace _ap2gltf
 		} // if (itAssembly != mapExpressID2Assembly.end())
 
 		//
+		// Annotation Plane
+		//
+
+		_ptr<_ap242_annotation_plane> annotationPlane(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (annotationPlane) {
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(annotationPlane->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
+			// propertyIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertyIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(annotationPlane->getSdaiInstance());
+				if (pPropertyCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pProperty : pPropertyCollection->properties()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertyIds
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (annotationPlane)
+
+		//
+		// Draughting Callout
+		//
+
+		_ptr<_ap242_draughting_callout> draughtingCallout(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (draughtingCallout) {
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(draughtingCallout->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
+			// propertyIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertyIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(draughtingCallout->getSdaiInstance());
+				if (pPropertyCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pProperty : pPropertyCollection->properties()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertyIds
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (draughtingCallout)
+
+		//
 		// Not supported
 		//
 
