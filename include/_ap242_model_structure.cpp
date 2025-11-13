@@ -93,7 +93,7 @@ void _ap242_model_structure::build()
 			nullptr);
 		m_vecRootProducts.push_back(pDraughtingModelNode);
 		for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
-			m_vecRootProducts.push_back(new _ap242_node(
+			pDraughtingModelNode->children().push_back(new _ap242_node(
 				_ap242_node_type::AnnotationPlane,
 				pAnnotationPlane->getSdaiInstance(),
 				_string::format("#%lld:0", pAnnotationPlane->getExpressID()),
@@ -101,7 +101,7 @@ void _ap242_model_structure::build()
 		}
 
 		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
-			m_vecRootProducts.push_back(new _ap242_node(
+			pDraughtingModelNode->children().push_back(new _ap242_node(
 				_ap242_node_type::DraughtingCallout,
 				pDraughtingCallout->getSdaiInstance(),
 				_string::format("#%lld:0", pDraughtingCallout->getExpressID()),
