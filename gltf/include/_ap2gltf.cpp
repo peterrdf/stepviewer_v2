@@ -3423,6 +3423,10 @@ namespace _ap2gltf
 					}
 				}
 
+				if (strName.empty()) {
+					strName = "$";
+				}
+
 				indent()++;
 				writeStartObjectTag();
 
