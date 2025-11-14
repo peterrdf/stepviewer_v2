@@ -66,6 +66,7 @@
 
 		_ap2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 		exporter.setLog(&log);
+		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
 	else if (strExtension == ".glb") {
@@ -73,6 +74,7 @@
 
 		_ap2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
 		exporter.setLog(&log);
+		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
 	else if (strExtension == ".bin") {
@@ -514,6 +516,7 @@ void CMySTEPViewerDoc::OnExportAsGltf()
 
 	_ap2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 	exporter.setLog(&log);
+	exporter.writeModelMetadataJSON() = false;
 	exporter.execute();
 #endif
 }
@@ -543,6 +546,7 @@ void CMySTEPViewerDoc::OnExportAsGltfBinary()
 
 	_ap2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
 	exporter.setLog(&log);
+	exporter.writeModelMetadataJSON() = false;
 	exporter.execute();
 }
 

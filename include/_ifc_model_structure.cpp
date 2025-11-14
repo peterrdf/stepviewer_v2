@@ -16,7 +16,7 @@ _ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
 	}
 }
 
-wchar_t* _ifc_node::getGlobalId() const
+const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;
 	sdaiGetAttrBN(m_sdaiInstance, "GlobalId", sdaiUNICODE, &szGlobalId);
@@ -71,7 +71,7 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 		strGlobalId += L"  ";
 	}
 
-	wchar_t* szGlobalId = pNode->getGlobalId();
+	const wchar_t* szGlobalId = pNode->getGlobalId();
 	strGlobalId += L"Node GlobalId: ";
 	strGlobalId += szGlobalId != nullptr ? szGlobalId : L"(null)";
 	TRACE(L"%s", strGlobalId.c_str());
