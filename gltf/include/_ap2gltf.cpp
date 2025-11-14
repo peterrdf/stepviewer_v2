@@ -2122,10 +2122,12 @@ namespace _ap2gltf
 				writeStartObjectTag();
 				indent()++;
 				writeStringProperty("name", pChildNode->getId());
-				*getOutputStream() << COMMA;
-				*getOutputStream() << getNewLine();
-				writeIndent();
-				*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				if (!vecChildren.empty()) {
+					*getOutputStream() << COMMA;
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				}
 				indent()--;
 				writeEndObjectTag();
 				indent()--;
