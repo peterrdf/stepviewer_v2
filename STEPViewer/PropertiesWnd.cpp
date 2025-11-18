@@ -86,13 +86,6 @@ COLORREF CColorSelectorProperty::GetAutomaticColor() const
 	LoadApplicationProperties();
 }
 
-/*virtual*/ void CPropertiesWnd::onShowMetaInformation()
-{
-	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
-
-	ASSERT(FALSE); // TODO
-}
-
 /*virtual*/ void CPropertiesWnd::onInstanceSelected(_view* /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);

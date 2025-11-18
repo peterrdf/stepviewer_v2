@@ -206,6 +206,24 @@ void _geometry::calculateVerticesMinMax(
 	}
 }
 
+void _geometry::calculateUVMinMax(
+    float& fUmin, float& fUmax,
+    float& fVmin, float& fVmax) const
+{
+    if (getVerticesCount() == 0) {
+        return;
+    }
+    const auto VERTEX_LENGTH = getVertexLength();
+	assert(VERTEX_LENGTH >= 8);
+
+    for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++) {
+        fUmin = (float)fmin(fUmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 6]);
+        fUmax = (float)fmax(fUmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 6]);
+        fVmin = (float)fmin(fVmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 7]);
+        fVmax = (float)fmax(fVmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 7]);
+	}
+}
+
 void _geometry::scale(float fScaleFactor)
 {
     if (getVerticesCount() == 0) {
@@ -654,7 +672,7 @@ void _geometry::buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei IND
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 concFacesCohorts().push_back(pCohort);
@@ -728,7 +746,7 @@ void _geometry::buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
         } // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
         // Check the limit
-        if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
+        if ((int)(pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
             pCohort = new _cohort();
             facePolygonsCohorts().push_back(pCohort);
         }
@@ -794,7 +812,7 @@ void _geometry::buildConcFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
         } // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
         // Check the limit
-        if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
+        if ((int)(pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
             pCohort = new _cohort();
             concFacePolygonsCohorts().push_back(pCohort);
         }
@@ -870,7 +888,7 @@ void _geometry::buildLinesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 linesCohorts().push_back(pCohort);
@@ -954,7 +972,7 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 pointsCohorts().push_back(pCohort);
