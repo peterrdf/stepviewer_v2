@@ -13,6 +13,9 @@ class CCustomStatusBar
 private: // Fields
 
 	_log_hub* m_pLogHub;
+    HICON m_hIconInfo;
+    HICON m_hIconWarn;
+    HICON m_hIconErr;
 
 public:
 
@@ -33,4 +36,7 @@ protected:
 private:
 	void UpdateLogStatus(enumLogEvent enLogEvent, const std::string& strEvent);
     void HandlePaneClick(int nPane, CPoint point);
+public:
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+    afx_msg void OnDestroy();    
 };
