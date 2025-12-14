@@ -98,5 +98,7 @@ public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
+
+	const map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
 };
 
