@@ -84,6 +84,21 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 }
 #endif
 
+void _ifc_model_structure::getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath)
+{
+	vecPath.clear();
+	auto it = m_mapInstance2Node.find(sdaiInstance);
+	if (it == m_mapInstance2Node.end()) {
+		return;
+	}
+	_ifc_node* pNode = it->second;
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+	std::reverse(vecPath.begin(), vecPath.end());
+}
+
 void _ifc_model_structure::build()
 {
 	// Clean
