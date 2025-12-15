@@ -101,6 +101,8 @@ void _ifc_model_structure::getInstancePath(SdaiInstance sdaiInstance, vector<_if
 
 void _ifc_model_structure::getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive)
 {
+	assert(sdaiInstance != 0);
+
 	auto it = m_mapInstance2Node.find(sdaiInstance);
 	if (it == m_mapInstance2Node.end()) {
 		return;
@@ -132,6 +134,21 @@ void _ifc_model_structure::getInstanceChildren(SdaiInstance sdaiInstance, vector
 			}
 		}
 	}
+}
+
+bool _ifc_model_structure::hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
+{
+	assert(pParentNode != nullptr);
+
+	for (auto pChildNode : pParentNode->children()) {
+		if (pChildNode->getSdaiInstance() == sdaiInstance) {
+			return true;
+		}
+
+		return hasChild(pChildNode, sdaiInstance);
+	}
+
+	return false;
 }
 
 void _ifc_model_structure::build()

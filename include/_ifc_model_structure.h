@@ -85,6 +85,7 @@ public: // Methods
 
 	void getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath);
 	void getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive);
+	bool hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 
 protected: // Methods
 
