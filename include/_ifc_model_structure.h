@@ -84,9 +84,10 @@ public: // Methods
 #endif
 
 	void getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath);
+	void getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive);
 
 protected: // Methods
-	
+
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);

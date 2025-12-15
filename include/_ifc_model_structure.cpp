@@ -99,6 +99,41 @@ void _ifc_model_structure::getInstancePath(SdaiInstance sdaiInstance, vector<_if
 	std::reverse(vecPath.begin(), vecPath.end());
 }
 
+void _ifc_model_structure::getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive)
+{
+	auto it = m_mapInstance2Node.find(sdaiInstance);
+	if (it == m_mapInstance2Node.end()) {
+		return;
+	}
+
+	if (!bRecursive) {
+		vecChildren.clear();
+	}
+
+	_ifc_node* pNode = it->second;
+	for (auto pChildNode : pNode->children()) {
+		SdaiInstance sdaiChildInstance = pChildNode->getSdaiInstance();
+		if (sdaiChildInstance != 0) {
+			vecChildren.push_back(sdaiChildInstance);
+			if (bRecursive) {
+				getInstanceChildren(sdaiChildInstance, vecChildren, bRecursive);
+			}
+		}
+		else {
+			// Decomposition/Contains nodes
+			for (auto pGrandChildNode : pChildNode->children()) {
+				SdaiInstance sdaiGrandChildInstance = pGrandChildNode->getSdaiInstance();
+				if (sdaiGrandChildInstance != 0) {
+					vecChildren.push_back(sdaiGrandChildInstance);
+					if (bRecursive) {
+						getInstanceChildren(sdaiGrandChildInstance, vecChildren, bRecursive);
+					}
+				}
+			}
+		}
+	}
+}
+
 void _ifc_model_structure::build()
 {
 	// Clean
