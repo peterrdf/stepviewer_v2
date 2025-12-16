@@ -28,6 +28,7 @@ private: // Members
 
 	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
+	int64_t m_iInstanceIndex;
 	string m_strId;
 	_ap242_node* m_pParent;
 	vector<_ap242_node*> m_vecChildren;
@@ -41,6 +42,7 @@ public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	int64_t& instanceIndex() { return m_iInstanceIndex; }
 	const string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
 	vector<_ap242_node*>& children() { return m_vecChildren; }

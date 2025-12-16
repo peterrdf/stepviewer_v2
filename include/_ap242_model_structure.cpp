@@ -11,6 +11,7 @@
 _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode)
 	: m_type(type)
 	, m_sdaiInstance(sdaiInstance)
+	, m_iInstanceIndex(0)
 	, m_strId(strId)
 	, m_pParent(pParentNode)
 	, m_vecChildren()
@@ -57,7 +58,7 @@ void _ap242_model_structure::print(int iLevel, _ap242_node* pNode)
 	for (int i = 0; i < iLevel; ++i) {
 		strId += L"  ";
 	}
-	
+
 	strId += L"Node ID: ";
 	strId += (const wchar_t*)CA2W(pNode->getId().c_str());
 #ifdef _WINDOWS
@@ -81,11 +82,11 @@ void _ap242_model_structure::build()
 
 	for (auto pGeometry : m_pModel->getGeometries()) {
 		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);
-		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {			
+		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {
 			loadProductNode(nullptr, pProduct);
 		}
 	}
-	
+
 	// Draughitng models
 	for (auto pDraughtingModel : m_pModel->getDraughtingModels()) {
 		auto pDraughtingModelNode = new _ap242_node(
@@ -136,6 +137,7 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 			apProductInstance->getSdaiInstance(),
 			_string::format("#%lld:%lld", apProductInstance->getExpressID(), pInstanceIterator->index()),
 			pParentNode));
+		vecChildren.back()->instanceIndex() = pInstanceIterator->index();
 
 		pParentNode = vecChildren.back();
 	}
