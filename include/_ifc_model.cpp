@@ -857,6 +857,7 @@ _ifc_model_structure* _ifc_model::getModelStructure()
 {
 	if (m_pModelStructure == nullptr) {
 		m_pModelStructure = new _ifc_model_structure(this);
+		m_pModelStructure->build();
 	}
 
 	return m_pModelStructure;
