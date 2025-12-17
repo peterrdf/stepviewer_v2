@@ -101,6 +101,7 @@ void _ap242_model_structure::build()
 				pAnnotationPlane->getSdaiInstance(),
 				_string::format("#%lld:0", pAnnotationPlane->getExpressID()),
 				pDraughtingModelNode));
+			pDraughtingModelNode->children().back()->id() = pAnnotationPlane->getInstances().front()->getID();
 		}
 
 		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
@@ -109,6 +110,7 @@ void _ap242_model_structure::build()
 				pDraughtingCallout->getSdaiInstance(),
 				_string::format("#%lld:0", pDraughtingCallout->getExpressID()),
 				pDraughtingModelNode));
+			pDraughtingModelNode->children().back()->id() = pDraughtingCallout->getInstances().front()->getID();
 		}
 	}
 }
