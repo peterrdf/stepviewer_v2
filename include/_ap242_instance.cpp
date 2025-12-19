@@ -34,3 +34,28 @@ _ap242_product_definition* _ap242_instance::getProductDefinition() const
 {
     return getGeometryAs<_ap242_product_definition>();
 }
+
+// ************************************************************************************************
+_ap242_product_shape_representation_item_instance::_ap242_product_shape_representation_item_instance(int64_t iID, _ap242_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
+    : _ap242_instance(iID, pGeometry, pTransformationMatrix)
+{
+    ExpressID expressID = internalGetP21Line(pGeometry->getSdaiInstance());
+
+    wchar_t* szName = nullptr;
+    sdaiGetAttrBN(pGeometry->getSdaiInstance(), "name", sdaiUNICODE, &szName);
+
+    m_strName = L"#";
+    m_strName += to_wstring(expressID);
+    m_strName += szName != nullptr ? szName : L"$";
+    m_strName += L" = ";
+    m_strName += getEntityName();
+}
+
+/*virtual*/ _ap242_product_shape_representation_item_instance::~_ap242_product_shape_representation_item_instance()
+{
+}
+
+/*virtual*/ _ap242_product_definition* _ap242_product_shape_representation_item_instance::getProductDefinition() const /*override*/
+{
+    return getGeometryAs<_ap242_product_shape_representation_item>()->getProductDefinition();
+}

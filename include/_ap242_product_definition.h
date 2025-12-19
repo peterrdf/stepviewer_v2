@@ -64,6 +64,7 @@ public: // Methods
 
 public: // Properties
 
+	const vector<_ap242_product_shape_representation*>& getProductShapeRepresentations() const { return m_vecProductShapeRepresentations; }
 	_ap242_product_definition* getProductDefinition() const { return m_pProductDefinition; }
 };
 

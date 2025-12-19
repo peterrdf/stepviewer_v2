@@ -201,12 +201,6 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance);
 				addGeometry(pProductShapeRepresentationItem);
 
-				auto pInstance = new _ap_instance( //#todo
-					_model::getNextInstanceID(),
-					pProductShapeRepresentationItem,
-					nullptr);
-				addInstance(pInstance);
-
 				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
 			}
 		}
@@ -336,11 +330,23 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 		} // if (pAssembly->m_pRelatingProductDefinition == ...
 	} // for (; itAssembly != ...
 
+	// Create instance for current product definition
 	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pProductDefinition,
 		pParentMatrix);
 	addInstance(pInstance);
+
+	// Create instances for product shape representation items
+	for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
+		for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
+			auto pInstance = new _ap242_product_shape_representation_item_instance(
+				_model::getNextInstanceID(),
+				pRepresentationItem,
+				pParentMatrix);
+			addInstance(pInstance);
+		}
+	}
 }
 
 void _ap242_model::loadDraughtingModels()
