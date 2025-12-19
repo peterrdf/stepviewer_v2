@@ -354,7 +354,7 @@ public: // Properties
     vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
 
     // Instances
-    const vector<_instance*>& getInstances() { return m_vecInstances; }
+    virtual const vector<_instance*>& getInstances() const { return m_vecInstances; }
 
     // VBO (OpenGL)
     GLuint& VBO() { return m_iVBO; }

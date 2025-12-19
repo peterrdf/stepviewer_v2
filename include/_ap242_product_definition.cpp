@@ -31,6 +31,16 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 {}
 
 // ************************************************************************************************
+_ap242_product_representation_item::_ap242_product_representation_item(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+    : _ap242_geometry(owlInstance, sdaiInstance)
+{
+
+}
+/*virtual*/ _ap242_product_representation_item::~_ap242_product_representation_item()
+{
+}
+
+// ************************************************************************************************
 _ap242_assembly::_ap242_assembly(SdaiInstance sdaiInstance, _ap242_product_definition* pRelatingProductDefinition, _ap242_product_definition* pRelatedProductDefinition)
     : m_sdaiInstance(sdaiInstance)
     , m_szId(nullptr)

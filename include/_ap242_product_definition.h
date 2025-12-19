@@ -3,6 +3,9 @@
 #include "_ap242_geometry.h"
 
 // ************************************************************************************************
+class _ap242_product_representation_item;
+
+// ************************************************************************************************
 class _ap242_product_definition : public _ap242_geometry
 {
     friend class _ap242_model;
@@ -33,6 +36,26 @@ public: // Properties
 
     SdaiInteger getRelatingProducts() const { return m_iRelatingProducts; }
     SdaiInteger getRelatedProducts() const { return m_iRelatedProducts; }
+};
+
+// ************************************************************************************************
+class _ap242_product_representation_item : public _ap242_geometry
+{
+    friend class _ap242_model;
+
+private: // Members
+
+    _ap242_product_definition* m_pProductDefinition;
+
+public: // Methods
+
+    _ap242_product_representation_item(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+    virtual ~_ap242_product_representation_item();
+
+public: // Properties
+
+    // _geometry
+    virtual const vector<_instance*>& getInstances() const override { return m_vecInstances; }//#todo
 };
 
 // ************************************************************************************************

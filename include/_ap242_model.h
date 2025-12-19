@@ -44,6 +44,9 @@ protected: // Methods
 private: // Methods
 
     void loadProductDefinitions();
+    void loadProductDefinitionShapes(SdaiInstance sdaiProductDefinitionInstance);
+    void loadProductDefinitionShape(SdaiInstance sdaiProductDefinitionShapeInstance);
+    void loadRepresentationItems(SdaiInstance sdaiRepresentationInstance);
     _ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
     _ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
     void loadAssemblies();
