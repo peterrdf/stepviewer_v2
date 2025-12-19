@@ -48,6 +48,7 @@ private: // Methods
     void loadProductDefinitions();
     void loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition);
     void loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance);
+    void loadShapeRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance);
     void loadRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance);
     _ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
     _ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);

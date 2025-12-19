@@ -175,8 +175,46 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 			pProductShape->addProductShapeRepresentation(pProductShapeRepresentation);
 			addGeometry(pProductShapeRepresentation);
 
-			loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
+			if (sdaiGetInstanceType(sdaiRepresentationInstance) == sdaiGetEntity(getSdaiModel(), "SHAPE_REPRESENTATION")) {
+				loadShapeRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
+			}
+			else {
+				loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
+			}			
 		}
+	}
+}
+
+void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance)
+{
+	assert(pProductShapeRepresentation != nullptr);
+	assert(sdaiRepresentationInstance != 0);
+
+	SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
+	SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
+	if (shapeRepresentationRelationshipInstancesCnt) {
+		for (SdaiInteger index = 0; index < shapeRepresentationRelationshipInstancesCnt; index++) {
+			SdaiInstance sdaiShapeRepresentationRelationshipInstance = 0;
+			sdaiGetAggrByIndex(sdaiShapeRepresentationRelationshipAggr, index, sdaiINSTANCE, &sdaiShapeRepresentationRelationshipInstance);
+
+			SdaiInstance sdaiRep_1Instance = 0;
+			sdaiGetAttrBN(sdaiShapeRepresentationRelationshipInstance, "rep_1", sdaiINSTANCE, &sdaiRep_1Instance);
+
+			SdaiInstance sdaiRep_2Instance = 0;
+			sdaiGetAttrBN(sdaiShapeRepresentationRelationshipInstance, "rep_2", sdaiINSTANCE, &sdaiRep_2Instance);
+			if (sdaiRep_2Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
+				sdaiRep_1Instance == sdaiRepresentationInstance) {
+				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_2Instance);
+			}
+
+			if (sdaiRep_1Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
+				sdaiRep_2Instance == sdaiRepresentationInstance) {
+				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_1Instance);
+			}
+		}
+	}
+	else {
+		loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 	}
 }
 
