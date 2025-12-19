@@ -197,11 +197,11 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		OwlInstance owlInstance = 0;
 		owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
 		if (owlInstance) {
-			if (getGeometryByInstance(sdaiRepresentationItemInstance) == nullptr) {
+			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
 				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance);
 				addGeometry(pProductShapeRepresentationItem);
 
-				auto pInstance = new _ap_instance(
+				auto pInstance = new _ap_instance( //#todo
 					_model::getNextInstanceID(),
 					pProductShapeRepresentationItem,
 					nullptr);
@@ -422,7 +422,7 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 
 void _ap242_model::save(const wchar_t* /*szPath*/)
 {
-	assert(0); //#todo
+	assert(0); // Not implemented
 }
 
 _ap242_model_structure* _ap242_model::getModelStructure()
