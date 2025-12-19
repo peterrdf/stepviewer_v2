@@ -7,7 +7,10 @@
 
 // ************************************************************************************************
 class _ap242_model;
+class _ap242_geometry;
 class _ap242_product_definition;
+class _ap242_product_shape;
+class _ap242_product_shape_representation;
 class _ap242_instance;
 class _ap242_assembly;
 class _ap242_draughting_model;
@@ -42,7 +45,7 @@ private: // Members
 	CImageList* m_pImageList;
 
 	// Cache	
-	map<_ap242_product_definition*, _instance_iterator*> m_mapInstanceIterators;
+	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 	map<_instance*, HTREEITEM> m_mapInstance2Item;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
@@ -88,6 +91,8 @@ private: // Methods
 
 	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_definition* pProduct);
 	void HasDescendantsWithGeometryRecursively(_ap242_model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry);
+	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape* pProductShape);
+	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape_representation* pProductShapeRepresentation);
 	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_assembly* pAssembly);
 	bool HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel);
 
@@ -108,13 +113,16 @@ private: // Methods
 enum class enumAP242ItemDataType : int
 {
 	Unknown = -1,
-	Model = 0,
-	ProductDefinition = 1,
-	Assembly = 2,
-	ProductInstance = 3,
-	DraughtingModel = 4,
-	AnnotationPlane = 5,
-	DraughtingCallout = 6,
+	Model,
+	ProductDefinition,
+	ProductShape,
+	ProductShapeRepresentation,
+	ProductShapeRepresentationItem,
+	Assembly,
+	ProductInstance,
+	DraughtingModel,
+	AnnotationPlane,
+	DraughtingCallout,
 };
 
 // ************************************************************************************************
