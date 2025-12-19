@@ -112,15 +112,15 @@ void _ap242_model::loadProductDefinitions()
 		assert(sdaiProductDefinitionInstance != 0);
 
 		//#todo m_bLoadProductRepresentationItems
-		loadProductDefinition(sdaiProductDefinitionInstance); 
-		loadProductDefinitionShapes(sdaiProductDefinitionInstance);
+		auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance); 
+		loadProductDefinitionShapes(pProductDefinition);
 	}
 }
 
-void _ap242_model::loadProductDefinitionShapes(SdaiInstance sdaiProductDefinitionInstance)
+void _ap242_model::loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition)
 {
-	assert(sdaiProductDefinitionInstance != 0);
-	assert(sdaiGetInstanceType(sdaiProductDefinitionInstance) == sdaiGetEntity(getSdaiModel(), "PRODUCT_DEFINITION"));
+	assert(pProductDefinition != nullptr);
+	assert(sdaiGetInstanceType(pProductDefinition->getSdaiInstance()) == sdaiGetEntity(getSdaiModel(), "PRODUCT_DEFINITION"));
 
 	SdaiInstance sdaiRelevantProductDefinitionShapeInstance = 0;
 
@@ -135,21 +135,25 @@ void _ap242_model::loadProductDefinitionShapes(SdaiInstance sdaiProductDefinitio
 		sdaiGetAttrBN(sdaiProductDefinitionShapeInstance, "definition", sdaiINSTANCE, &sdaiCharacterizedDefinitionInstance);
 		assert(sdaiCharacterizedDefinitionInstance != 0);
 
-		if (sdaiCharacterizedDefinitionInstance == sdaiProductDefinitionInstance) {
+		if (sdaiCharacterizedDefinitionInstance == pProductDefinition->getSdaiInstance()) {
 			assert(sdaiRelevantProductDefinitionShapeInstance == 0);
 			sdaiRelevantProductDefinitionShapeInstance = sdaiProductDefinitionShapeInstance;
-			break; //???????????????????
 		}
 	}
 
 	assert(sdaiRelevantProductDefinitionShapeInstance);
-	loadProductDefinitionShape(sdaiRelevantProductDefinitionShapeInstance);
+	loadProductDefinitionShape(pProductDefinition, sdaiRelevantProductDefinitionShapeInstance);
 }
 
-void _ap242_model::loadProductDefinitionShape(SdaiInstance sdaiProductDefinitionShapeInstance)
+void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance)
 {
+	assert(pProductDefinition != nullptr);
 	assert(sdaiProductDefinitionShapeInstance != 0);
 	assert(sdaiGetInstanceType(sdaiProductDefinitionShapeInstance) == sdaiGetEntity(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE"));
+
+	auto pProductShape = new _ap242_product_shape(pProductDefinition, sdaiProductDefinitionShapeInstance);
+	pProductDefinition->setProductShape(pProductShape);
+	addGeometry(pProductShape);
 
 	SdaiAggr sdaiProductShapeDefinitionRepresentationAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_DEFINITION_REPRESENTATION");
 	SdaiInteger sdaiProductShapeDefinitionRepresentationInstancesCnt = sdaiGetMemberCount(sdaiProductShapeDefinitionRepresentationAggr);
@@ -167,13 +171,18 @@ void _ap242_model::loadProductDefinitionShape(SdaiInstance sdaiProductDefinition
 			sdaiGetAttrBN(sdaiProductShapeDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiRepresentationInstance);
 			assert(sdaiRepresentationInstance != 0);
 
-			loadRepresentationItems(sdaiRepresentationInstance);
+			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance);
+			pProductShape->addProductShapeRepresentation(pProductShapeRepresentation);
+			addGeometry(pProductShapeRepresentation);
+
+			loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 		}
 	}
 }
 
-void _ap242_model::loadRepresentationItems(SdaiInstance sdaiRepresentationInstance)
+void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance)
 {
+	assert(pProductShapeRepresentation != nullptr);
 	assert(sdaiRepresentationInstance != 0);
 
 	SdaiAggr sdaiRepresentationItemsAggr = nullptr;
@@ -188,15 +197,17 @@ void _ap242_model::loadRepresentationItems(SdaiInstance sdaiRepresentationInstan
 		OwlInstance owlInstance = 0;
 		owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
 		if (owlInstance) {
-			if (getGeometryByInstance(sdaiRepresentationItemInstance) == nullptr) { //#todo
-				OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiRepresentationItemInstance);
-				auto pGeometry = new _ap242_product_representation_item(owlInstance, sdaiRepresentationItemInstance);
-				addGeometry(pGeometry);
+			if (getGeometryByInstance(sdaiRepresentationItemInstance) == nullptr) {
+				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance);
+				addGeometry(pProductShapeRepresentationItem);
+
 				auto pInstance = new _ap_instance(
 					_model::getNextInstanceID(),
-					pGeometry,
+					pProductShapeRepresentationItem,
 					nullptr);
 				addInstance(pInstance);
+
+				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
 			}
 		}
 	}
@@ -205,7 +216,7 @@ void _ap242_model::loadRepresentationItems(SdaiInstance sdaiRepresentationInstan
 _ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance)
 {
 	//OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
-	auto pGeometry = new _ap242_product_definition(0/*owlInstance*/, sdaiProductDefinitionInstance);//#todo
+	auto pGeometry = new _ap242_product_definition(/*owlInstance*/0, sdaiProductDefinitionInstance);//#todo
 	addGeometry(pGeometry);
 
 	return pGeometry;

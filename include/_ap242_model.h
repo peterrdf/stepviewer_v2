@@ -5,6 +5,8 @@
 
 // ************************************************************************************************
 class _ap242_product_definition;
+class _ap242_product_shape;
+class _ap242_product_shape_representation;
 class _ap242_assembly;
 class _ap242_draughting_model;
 class _ap242_annotation_plane;
@@ -44,9 +46,9 @@ protected: // Methods
 private: // Methods
 
     void loadProductDefinitions();
-    void loadProductDefinitionShapes(SdaiInstance sdaiProductDefinitionInstance);
-    void loadProductDefinitionShape(SdaiInstance sdaiProductDefinitionShapeInstance);
-    void loadRepresentationItems(SdaiInstance sdaiRepresentationInstance);
+    void loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition);
+    void loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance);
+    void loadRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance);
     _ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
     _ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
     void loadAssemblies();
