@@ -1358,12 +1358,12 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Instance
 	*/
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getId());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getProductName());
 
 	/*
 	* Properties
 	*/
-	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getSdaiInstance());
+	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getProductDefinition()->getSdaiInstance());
 	if (pPropertyCollection != nullptr) {
 		for (auto pAP242Property : pPropertyCollection->properties()) {
 			CString strExpressId;
