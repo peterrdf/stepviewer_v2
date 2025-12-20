@@ -7,8 +7,9 @@
 #include "_rdf_instance.h"
 
 // ************************************************************************************************
-_ap242_model::_ap242_model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
+_ap242_model::_ap242_model(_log* pLog, bool bLoadProductRepresentationItems, bool bLoadInstancesOnDemand)
 	: _ap_model(pLog, enumAP::STEP)
+	, m_bLoadProductRepresentationItems(bLoadProductRepresentationItems)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_pModelStructure(nullptr)
 	, m_pPropertyProvider(nullptr)
@@ -111,9 +112,10 @@ void _ap242_model::loadProductDefinitions()
 		sdaiGetAggrByIndex(sdaiProductDefinitionAggr, i, sdaiINSTANCE, &sdaiProductDefinitionInstance);
 		assert(sdaiProductDefinitionInstance != 0);
 
-		//#todo m_bLoadProductRepresentationItems
-		auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance); 
-		loadProductDefinitionShapes(pProductDefinition);
+		auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
+		if (m_bLoadProductRepresentationItems) {
+			loadProductDefinitionShapes(pProductDefinition);
+		}
 	}
 }
 
@@ -180,7 +182,7 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 			}
 			else {
 				loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
-			}			
+			}
 		}
 	}
 }
@@ -247,8 +249,11 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 
 _ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance)
 {
-	//OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
-	auto pGeometry = new _ap242_product_definition(/*owlInstance*/0, sdaiProductDefinitionInstance);//#todo
+	OwlInstance owlInstance = 0;
+	if (!m_bLoadProductRepresentationItems) {
+		owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
+	}
+	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance);
 	addGeometry(pGeometry);
 
 	return pGeometry;
@@ -315,7 +320,8 @@ void _ap242_model::loadGeometry()
 	for (auto pGeometry : getGeometries()) {
 		_ptr<_ap242_product_definition> ap242ProductDefinition(pGeometry, false);
 		if (!ap242ProductDefinition) {
-			continue;//#todo assert(m_bLoadProductRepresentationItems);
+			assert(m_bLoadProductRepresentationItems);
+			continue;
 		}
 
 		if (ap242ProductDefinition->getRelatedProducts() == 0) {
@@ -376,13 +382,15 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 	addInstance(pInstance);
 
 	// Create instances for product shape representation items
-	for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
-		for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
-			auto pInstance = new _ap242_product_shape_representation_item_instance(
-				_model::getNextInstanceID(),
-				pRepresentationItem,
-				pParentMatrix);
-			addInstance(pInstance);
+	if (m_bLoadProductRepresentationItems) {
+		for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
+			for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
+				auto pInstance = new _ap242_product_shape_representation_item_instance(
+					_model::getNextInstanceID(),
+					pRepresentationItem,
+					pParentMatrix);
+				addInstance(pInstance);
+			}
 		}
 	}
 }

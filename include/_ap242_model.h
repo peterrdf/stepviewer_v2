@@ -19,6 +19,7 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
+    bool m_bLoadProductRepresentationItems;
     bool m_bLoadInstancesOnDemand;
 
 	_ap242_model_structure* m_pModelStructure;
@@ -29,7 +30,7 @@ private: // Members
 
 public: // Methods
 
-    _ap242_model(_log* pLog, bool bLoadInstancesOnDemand = false);
+    _ap242_model(_log* pLog, bool bLoadProductRepresentationItem, bool bLoadInstancesOnDemand);
     virtual ~_ap242_model();
 
     _ap242_assembly* getAssemblyByInstance(SdaiInstance sdaiInstance) const;
