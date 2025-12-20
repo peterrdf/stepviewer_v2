@@ -1339,7 +1339,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 	ASSERT(pController->getModels().size() == 1);
 
-	_ptr<_ap242_model> ap242Model(pController->getModels()[0]);
+	_ptr<_ap242_model> ap242Model(pController->getModels()[0], false);
 	if (!ap242Model) {
 		return;
 	}
@@ -1358,12 +1358,20 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Instance
 	*/
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getProductName());
+	CString strGroupName;
+	_ptr<_ap242_product_definition> apProductDefinition(pSelectedInstance->getGeometry(), false);
+	if (apProductDefinition) {
+		strGroupName = apProductDefinition->getProductName();
+	}
+	else {
+		strGroupName = _ap_geometry::getName(pSelectedInstance->getSdaiInstance()).c_str();
+	}
+	auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
 
 	/*
 	* Properties
 	*/
-	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getProductDefinition()->getSdaiInstance());
+	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getSdaiInstance());
 	if (pPropertyCollection != nullptr) {
 		for (auto pAP242Property : pPropertyCollection->properties()) {
 			CString strExpressId;
