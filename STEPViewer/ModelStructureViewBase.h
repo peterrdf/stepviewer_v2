@@ -7,6 +7,9 @@
 // ************************************************************************************************
 #define ITEM_GEOMETRY			L"geometry"
 #define ITEM_PRODUCT_DEFINION	L"(product)"
+#define ITEM_SHAPE				L"(shape)"
+#define ITEM_REPRESENTATION		L"(representation)"
+#define ITEM_ITEM				L"(item)"
 #define ITEM_PRODUCT_INSTANCE	L"(instance)"
 #define ITEM_ASSEMBLY			L"(assembly)"
 #define ITEM_DRAUGHTING_MODEL	L"(draugthing model)"

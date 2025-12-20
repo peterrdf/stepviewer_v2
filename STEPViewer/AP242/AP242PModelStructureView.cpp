@@ -849,9 +849,10 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 			auto pProductShapeData = new CAP242ItemData(pProductItemData, (int64_t*)pProductShape, enumAP242ItemDataType::ProductShape);
 			pProductItemData->Children().push_back(pProductShapeData);
 
+			strName.Format(L"%s %s", _ap_geometry::getName(pProductShape->getSdaiInstance()).c_str(), ITEM_SHAPE);
 			iGeometryImage = pProductShape->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShape) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			HTREEITEM hProductShape = m_pTreeCtrl->InsertItem(
-				_ap_geometry::getName(pProductShape->getSdaiInstance()).c_str(),
+				strName,
 				iGeometryImage, iGeometryImage,
 				hProduct);
 			m_pTreeCtrl->SetItemData(hProductShape, (DWORD_PTR)pProductShapeData);
@@ -862,15 +863,15 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData, (int64_t*)pProductShapeRepresentation, enumAP242ItemDataType::ProductShapeRepresentation);
 				pProductShapeData->Children().push_back(pProductShapeRepresentationData);
 
+				strName.Format(L"%s %s", _ap_geometry::getName(pProductShapeRepresentation->getSdaiInstance()).c_str(), ITEM_REPRESENTATION);
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShapeRepresentation) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				HTREEITEM hProductShapeRepresentation = m_pTreeCtrl->InsertItem(
-					_ap_geometry::getName(pProductShapeRepresentation->getSdaiInstance()).c_str(),
+					strName,
 					iGeometryImage, iGeometryImage,
 					hProductShape);
 				m_pTreeCtrl->SetItemData(hProductShapeRepresentation, (DWORD_PTR)pProductShapeRepresentationData);
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
-
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
@@ -888,9 +889,10 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 						auto pProductShapeRepresentationItemData = new CAP242ItemData(pProductShapeRepresentationData, (int64_t*)apRepresentationItemInstance.p(), enumAP242ItemDataType::ProductShapeRepresentationItem);
 						pProductShapeRepresentationData->Children().push_back(pProductShapeRepresentationItemData);
 
+						strName.Format(L"%s %s", _ap_geometry::getName(apRepresentationItemInstance->getSdaiInstance()).c_str(), ITEM_ITEM);
 						iGeometryImage = apRepresentationItemInstance->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 						HTREEITEM hProductShapeRepresentationItem = m_pTreeCtrl->InsertItem(
-							_ap_geometry::getName(apRepresentationItemInstance->getSdaiInstance()).c_str(),
+							strName,
 							iGeometryImage, iGeometryImage,
 							hProductShapeRepresentation);
 						m_pTreeCtrl->SetItemData(hProductShapeRepresentationItem, (DWORD_PTR)pProductShapeRepresentationItemData);
