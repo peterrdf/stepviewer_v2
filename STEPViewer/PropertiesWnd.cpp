@@ -1361,10 +1361,10 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	CString strGroupName;
 	_ptr<_ap242_product_definition> apProductDefinition(pSelectedInstance->getGeometry(), false);
 	if (apProductDefinition) {
-		strGroupName = apProductDefinition->getProductName();
+		strGroupName.Format(L"#%lld %s", apProductDefinition->getExpressID(), apProductDefinition->getProductName());
 	}
 	else {
-		strGroupName = _ap_geometry::getName(pSelectedInstance->getSdaiInstance()).c_str();
+		strGroupName = ((_geometry*)pSelectedInstance->getGeometry())->getName();
 	}
 	auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
 
