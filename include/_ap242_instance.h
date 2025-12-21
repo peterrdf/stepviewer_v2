@@ -10,7 +10,7 @@ class _ap242_product_definition;
 class _ap242_instance : public _ap_instance
 {
 
-protected: // Members
+private: // Members
 
     wstring m_strName;
 

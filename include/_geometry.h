@@ -144,7 +144,7 @@ private: // Fields
 
     OwlInstance m_owlInstance;
 
-protected: // Fields
+protected: // Fields 
 
     wstring m_strName;
     wstring m_strUniqueName;
