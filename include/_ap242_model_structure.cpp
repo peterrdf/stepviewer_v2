@@ -205,9 +205,12 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 						pProductShapeRepresentationNode->children().push_back(new _ap242_node(
 							_ap242_node_type::ProductShapeRepresentationItem,
 							apRepresentationItemInstance->getSdaiInstance(),
-							_string::format("#%lld", apRepresentationItemInstance->getExpressID()),
+							_string::format("#%lld:%lld", apRepresentationItemInstance->getExpressID(), pInstanceIterator->index()),
 							pProductShapeRepresentationNode));
 						pProductShapeRepresentationNode->children().back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
+					}
+					else {
+						assert(false);
 					}
 				}
 			}
