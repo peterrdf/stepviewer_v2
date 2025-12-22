@@ -1339,7 +1339,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 
 	ASSERT(pController->getModels().size() == 1);
 
-	_ptr<_ap242_model> ap242Model(pController->getModels()[0]);
+	_ptr<_ap242_model> ap242Model(pController->getModels()[0], false);
 	if (!ap242Model) {
 		return;
 	}
@@ -1358,7 +1358,15 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Instance
 	*/
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getProductDefinition()->getId());
+	CString strGroupName;
+	_ptr<_ap242_product_definition> apProductDefinition(pSelectedInstance->getGeometry(), false);
+	if (apProductDefinition) {
+		strGroupName.Format(L"#%lld %s", apProductDefinition->getExpressID(), apProductDefinition->getProductName());
+	}
+	else {
+		strGroupName = ((_geometry*)pSelectedInstance->getGeometry())->getName();
+	}
+	auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
 
 	/*
 	* Properties
