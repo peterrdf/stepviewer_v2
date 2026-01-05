@@ -375,21 +375,19 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 	} // for (; itAssembly != ...
 
 	// Create instance for current product definition
-	auto pInstance = new _ap242_instance(
+	addInstance(new _ap242_instance(
 		_model::getNextInstanceID(),
 		pProductDefinition,
-		pParentMatrix);
-	addInstance(pInstance);
+		pParentMatrix));
 
 	// Create instances for product shape representation items
 	if (m_bLoadProductRepresentationItems) {
 		for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
 			for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
-				auto pInstance = new _ap242_product_shape_representation_item_instance(
+				addInstance(new _ap242_product_shape_representation_item_instance(
 					_model::getNextInstanceID(),
 					pRepresentationItem,
-					pParentMatrix);
-				addInstance(pInstance);
+					pParentMatrix));
 			}
 		}
 	}

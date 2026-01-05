@@ -875,7 +875,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
-					auto itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
+					itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
 					if (itInstanceIterator == m_mapInstanceIterators.end()) {
 						pInstanceIterator = new _instance_iterator(pRepresentationItem->getInstances());
 						m_mapInstanceIterators[pRepresentationItem] = pInstanceIterator;
