@@ -192,7 +192,7 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 	assert(pProductShapeRepresentation != nullptr);
 	assert(sdaiRepresentationInstance != 0);
 
-	bool added = false;
+	bool bAdded = false;
 	
 	SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
 	SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
@@ -209,18 +209,18 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 			if (sdaiRep_2Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
 				sdaiRep_1Instance == sdaiRepresentationInstance) {
 				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_2Instance);
-				added = true;
+				bAdded = true;
 			}
 
 			if (sdaiRep_1Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
 				sdaiRep_2Instance == sdaiRepresentationInstance) {
 				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_1Instance);
-				added = true;
+				bAdded = true;
 			}
 		}
 	}
 	
-	if (!added) {
+	if (!bAdded) {
 		loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 	}
 }
