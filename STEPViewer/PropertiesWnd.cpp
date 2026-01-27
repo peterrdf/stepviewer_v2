@@ -1371,7 +1371,12 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pSelectedInstance->getSdaiInstance());
+	SdaiInstance sdaiProductDefinitionInstance = pSelectedInstance->getSdaiInstance();
+	_ptr<_ap242_product_shape_representation_item_instance> apProductShapeRepresentationItemInstance(pSelectedInstance, false);
+	if (apProductShapeRepresentationItemInstance) {
+		sdaiProductDefinitionInstance = apProductShapeRepresentationItemInstance->getProductDefinition()->getSdaiInstance();
+	}
+	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(sdaiProductDefinitionInstance);
 	if (pPropertyCollection != nullptr) {
 		for (auto pAP242Property : pPropertyCollection->properties()) {
 			CString strExpressId;
