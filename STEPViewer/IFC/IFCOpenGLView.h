@@ -13,6 +13,14 @@ public: // Methods
 	// ctor/dtor
 	CIFCOpenGLView(CWnd * pWnd);
 	virtual ~CIFCOpenGLView();
+
+
+protected: // Methods
+
+	// _oglView
+	virtual void _postDraw() override;
+
+	void DrawBoundingBoxes(_model* pModel);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

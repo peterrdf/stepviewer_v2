@@ -220,6 +220,14 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 					}
 					break;
 
+				case enumApplicationProperty::ShowBoundingBoxes:
+					{
+						pOGLRenderer->setShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowBoundingBoxes);
+					}
+					break;
+
 				case enumApplicationProperty::RotationMode:
 					{
 						pOGLRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
@@ -816,6 +824,18 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Bounding boxes"),
+			pOGLRenderer->getShowBoundingBoxes() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			_T("Bounding boxes"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBoundingBoxes));
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);

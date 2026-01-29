@@ -16,6 +16,11 @@ protected: // Methods
 
 	// _oglRenderer
 	virtual void _reset() override;
+
+	// _oglView
+	virtual void _postDraw() override;
+
+	void DrawBoundingBoxes(_model* pModel);
 };
 
 #endif // _OPEN_GL_STEP_VIEW_H_
