@@ -1366,8 +1366,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	else {
 		strGroupName = ((_geometry*)pSelectedInstance->getGeometry())->getName();
 	}
-	auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
-
+	
 	/*
 	* Properties
 	*/
@@ -1377,7 +1376,9 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		sdaiProductDefinitionInstance = apProductShapeRepresentationItemInstance->getProductDefinition()->getSdaiInstance();
 	}
 	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(sdaiProductDefinitionInstance);
-	if (pPropertyCollection != nullptr) {
+	if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+		auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
+
 		for (auto pAP242Property : pPropertyCollection->properties()) {
 			CString strExpressId;
 			strExpressId.Format(L"property (#%i = PROPERTY_DEFINITION( ... ))", (int)internalGetP21Line(pAP242Property->getSdaiInstance()));
@@ -1397,9 +1398,9 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 			pProperty->AllowEdit(FALSE);
 			pPropertyGroup->AddSubItem(pProperty);
 		}
-	}
 
-	m_wndPropList.AddProperty(pInstanceGroup);
+		m_wndPropList.AddProperty(pInstanceGroup);
+	}	
 }
 
 void CPropertiesWnd::LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance)
