@@ -3545,7 +3545,7 @@ namespace _ap2gltf
 					writeStartArrayTag(false);
 
 					auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pRootProduct->getSdaiInstance());
-					if (pPropertyCollection != nullptr) {
+					if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 						indent()++;
 						writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 						indent()--;
@@ -3615,7 +3615,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apProduct->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
@@ -3669,7 +3669,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShape->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
@@ -3723,7 +3723,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShapeRepresentation->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
@@ -3775,7 +3775,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShapeRepresentationItem->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
@@ -3863,7 +3863,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(annotationPlane->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
@@ -3918,7 +3918,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(draughtingCallout->getSdaiInstance());
-				if (pPropertyCollection != nullptr) {
+				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 					indent()++;
 					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
 					indent()--;
