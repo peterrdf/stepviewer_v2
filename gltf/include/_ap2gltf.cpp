@@ -2825,7 +2825,7 @@ namespace _ap2gltf
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			auto pPropertyCollection = pPropertyProvider->getPropertyCollection(_ptr<_ap242_geometry>(pGeometry)->getSdaiInstance());
-			if (pPropertyCollection == nullptr) {
+			if ((pPropertyCollection == nullptr) || pPropertyCollection->properties().empty()) {
 				continue;
 			}
 
@@ -2858,7 +2858,45 @@ namespace _ap2gltf
 					assert(itProperty->first->getValue() == pProperty->getValue());
 				}
 			}
-		} // for (size_t iNodeIndex = ...
+		} // for (auto pGeometry : ...
+
+		// Draughting models
+		for (auto pDraughtingModel : pAP242Model->getDraughtingModels()) {
+			auto pPropertyCollection = pPropertyProvider->getPropertyCollection(_ptr<_ap242_draughting_model>(pDraughtingModel)->getSdaiInstance());
+			if ((pPropertyCollection == nullptr) || pPropertyCollection->properties().empty()) {
+				continue;
+			}
+
+			// Property sets
+			auto itPropertySet = mapPropertySets.find(pPropertyCollection->getSdaiInstance());
+			if (itPropertySet == mapPropertySets.end()) {
+				mapPropertySets[pPropertyCollection->getSdaiInstance()] = { pPropertyCollection, iPropertySetIndex++ };
+#ifdef _WINDOWS
+				TRACE(L"Property set: %s\n", pPropertyCollection->getName().c_str());
+#endif
+			}
+			else {
+				assert(itPropertySet->second.first->getName() == pPropertyCollection->getName());
+			}
+
+			// Properties
+			for (auto pProperty : pPropertyCollection->properties()) {
+				auto itProperty = mapProperties.find(pProperty);
+				if (itProperty == mapProperties.end()) {
+					mapProperties[pProperty] = 0;
+#ifdef _WINDOWS
+					TRACE(L"Property: %s, Value: %s, Type: %s\n",
+						pProperty->getName().c_str(),
+						pProperty->getValue().c_str(),
+						pProperty->getValueType().c_str());
+#endif
+				}
+				else {
+					assert(itProperty->first->getName() == pProperty->getName());
+					assert(itProperty->first->getValue() == pProperty->getValue());
+				}
+			}
+		} // for (auto pDraughtingModel : ...
 
 		// Index properties
 		int iPropertyIndex = 0;
