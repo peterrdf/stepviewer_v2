@@ -3693,6 +3693,7 @@ namespace _ap2gltf
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
 				*getOutputStream() << getNewLine();
@@ -3747,6 +3748,7 @@ namespace _ap2gltf
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
 				*getOutputStream() << getNewLine();
@@ -3799,6 +3801,7 @@ namespace _ap2gltf
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
 				*getOutputStream() << getNewLine();
