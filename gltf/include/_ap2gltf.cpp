@@ -3584,8 +3584,12 @@ namespace _ap2gltf
 
 					auto pPropertyCollection = pPropertyProvider->getPropertyCollection(pRootProduct->getSdaiInstance());
 					if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+						*getOutputStream() << getNewLine();
 						indent()++;
-						writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
 						indent()--;
 					}
 
@@ -3654,8 +3658,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apProduct->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
@@ -3709,8 +3717,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShape->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
@@ -3764,8 +3776,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShapeRepresentation->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
@@ -3817,8 +3833,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apShapeRepresentationItem->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
@@ -3905,8 +3925,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(annotationPlane->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
@@ -3960,8 +3984,12 @@ namespace _ap2gltf
 
 				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(draughtingCallout->getSdaiInstance());
 				if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
+					*getOutputStream() << getNewLine();
 					indent()++;
-					writeStringProperty("id", _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance())));
+					writeIndent();
+					*getOutputStream() << DOULE_QUOT_MARK;
+					*getOutputStream() << _string::format("#%lld", internalGetP21Line(pPropertyCollection->getSdaiInstance()));
+					*getOutputStream() << DOULE_QUOT_MARK;
 					indent()--;
 				}
 
