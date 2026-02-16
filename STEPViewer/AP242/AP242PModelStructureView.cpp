@@ -352,6 +352,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 		if ((pItemData == nullptr) ||
 			((pItemData->GetType() != enumAP242ItemDataType::ProductInstance) &&
+				(pItemData->GetType() != enumAP242ItemDataType::ProductShape) &&
+				(pItemData->GetType() != enumAP242ItemDataType::ProductShapeRepresentation) &&
 				(pItemData->GetType() != enumAP242ItemDataType::ProductShapeRepresentationItem) &&
 				(pItemData->GetType() != enumAP242ItemDataType::AnnotationPlane) &&
 				(pItemData->GetType() != enumAP242ItemDataType::DraughtingCallout))) {
@@ -382,6 +384,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) &&
 		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pItemData->GetType() == enumAP242ItemDataType::ProductShape) ||
+			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentation) ||
 			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
 			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
 			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
@@ -561,6 +565,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if ((pItemData != nullptr) &&
 		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
+			(pItemData->GetType() == enumAP242ItemDataType::ProductShape) ||
+			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentation) ||
 			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
 			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
 			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
@@ -846,7 +852,10 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 
 		auto pProductShape = pProduct->getProductShape();
 		if (pProductShape) {
-			auto pProductShapeData = new CAP242ItemData(pProductItemData, (int64_t*)pProductShape, enumAP242ItemDataType::ProductShape);
+			ASSERT(pProductShape->getInstances().size() == 1);
+			auto pProductShapeData = new CAP242ItemData(pProductItemData, 
+				(int64_t*)pProductShape->getInstances().front(), 
+				enumAP242ItemDataType::ProductShape);
 			pProductItemData->Children().push_back(pProductShapeData);
 
 			strName.Format(L"%s %s", ((_geometry*)pProductShape)->getName(), ITEM_SHAPE);
@@ -859,8 +868,14 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 			iGeometryImage = pProductShape->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShape);
 
+			ASSERT(m_mapInstance2Item.find(pProductShape->getInstances().front()) == m_mapInstance2Item.end());
+			m_mapInstance2Item[pProductShape->getInstances().front()] = hProductShape;
+
 			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
-				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData, (int64_t*)pProductShapeRepresentation, enumAP242ItemDataType::ProductShapeRepresentation);
+				ASSERT(pProductShapeRepresentation->getInstances().size() == 1);
+				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData, 
+					(int64_t*)pProductShapeRepresentation->getInstances().front(),
+					enumAP242ItemDataType::ProductShapeRepresentation);
 				pProductShapeData->Children().push_back(pProductShapeRepresentationData);
 
 				strName.Format(L"%s %s", ((_geometry*)pProductShapeRepresentation)->getName(), ITEM_REPRESENTATION);
@@ -872,6 +887,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				m_pTreeCtrl->SetItemData(hProductShapeRepresentation, (DWORD_PTR)pProductShapeRepresentationData);
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
+
+				ASSERT(m_mapInstance2Item.find(pProductShapeRepresentation->getInstances().front()) == m_mapInstance2Item.end());
+				m_mapInstance2Item[pProductShapeRepresentation->getInstances().front()] = hProductShapeRepresentation;
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
@@ -886,7 +904,10 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 
 					_ptr<_ap242_product_shape_representation_item_instance> apRepresentationItemInstance(pInstanceIterator->getNextItem());
 					if (apRepresentationItemInstance) {
-						auto pProductShapeRepresentationItemData = new CAP242ItemData(pProductShapeRepresentationData, (int64_t*)apRepresentationItemInstance.p(), enumAP242ItemDataType::ProductShapeRepresentationItem);
+						auto pProductShapeRepresentationItemData = 
+							new CAP242ItemData(pProductShapeRepresentationData, 
+								(int64_t*)apRepresentationItemInstance.p(), 
+								enumAP242ItemDataType::ProductShapeRepresentationItem);
 						pProductShapeRepresentationData->Children().push_back(pProductShapeRepresentationItemData);
 
 						strName.Format(L"%s %s", apRepresentationItemInstance->getGeometry()->getName(), ITEM_ITEM);

@@ -1390,12 +1390,8 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	/*
 	* Properties
 	*/
-	SdaiInstance sdaiProductDefinitionInstance = pSelectedInstance->getSdaiInstance();
-	_ptr<_ap242_product_shape_representation_item_instance> apProductShapeRepresentationItemInstance(pSelectedInstance, false);
-	if (apProductShapeRepresentationItemInstance) {
-		sdaiProductDefinitionInstance = apProductShapeRepresentationItemInstance->getProductDefinition()->getSdaiInstance();
-	}
-	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(sdaiProductDefinitionInstance);
+	SdaiInstance sdaiInstance = pSelectedInstance->getSdaiInstance();
+	auto pPropertyCollection = pPropertyProvider->getPropertyCollection(sdaiInstance);
 	if ((pPropertyCollection != nullptr) && !pPropertyCollection->properties().empty()) {
 		auto pInstanceGroup = new CMFCPropertyGridProperty(strGroupName);
 
