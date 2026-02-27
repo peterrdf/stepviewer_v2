@@ -41,6 +41,88 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	clean();
 }
 
+OwlInstance _ifc_model::createMapConversionTransformation()
+{
+	auto pAttributeProvider = getAttributeProvider();
+	if (pAttributeProvider == nullptr) {
+		return 0;
+	}
+
+	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)"IFCMAPCONVERSION");
+	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
+	if (iMembersCount != 1) {
+		return 0;
+	}
+
+	SdaiInstance sdaiIfcMapConversionInstance = 0;
+	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
+
+	SdaiEntity sdaiIfcMapConversionEntity = sdaiGetInstanceType(sdaiIfcMapConversionInstance);
+
+	double dEastings = 0.;
+	double dNorthings = 0.;
+	const auto& vecAttributes = pAttributeProvider->getInstanceAttributes(sdaiIfcMapConversionInstance);
+	for (size_t i = 0; i < vecAttributes.size(); i++) {
+		auto pAttribute = vecAttributes[i];
+		const char* szAttributeName = nullptr;
+		engiGetEntityArgumentName(sdaiIfcMapConversionEntity,
+			(SdaiInteger)i,
+			sdaiSTRING,
+			&szAttributeName);
+
+		if (string(szAttributeName) == "Eastings") {
+			if (!sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dEastings)) {
+				return 0;
+			}
+		}
+
+		if (string(szAttributeName) == "Northings") {
+			if (!sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dNorthings)) {
+				return 0;
+			}
+		}
+	}
+
+	if ((dEastings == 0.) && (dNorthings == 0.)) {
+		return 0;
+	}
+
+	OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	vector<double> vecMatrix
+	{
+		1.,			// _11,
+		0.,			// _12,
+		0.,			// _13,
+		0.,			// _21,
+		1.,			// _22,
+		0.,			// _23,
+		0.,			// _31,
+		0.,			// _32,
+		1.,			// _33,
+		dEastings,  // _41,
+		dNorthings, // _42,
+		0.,			// _43,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(getOwlModel(), "coordinates"),
+		vecMatrix.data(),
+		vecMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(
+		owlTransformationInstance,
+		GetPropertyByName(getOwlModel(), "matrix"),
+		owlMatrixInstance);
+
+	return owlTransformationInstance;
+}
+
 /*virtual*/ _instance* _ifc_model::loadInstance(int64_t iInstance) /*override*/
 {
 	assert(iInstance != 0);

@@ -94,6 +94,8 @@ public: // Methods
     _ifc_model(_log* pLog, bool bUseWorldCoordinates = false, bool bLoadInstancesOnDemand = false);
     virtual ~_ifc_model();
 
+    OwlInstance createMapConversionTransformation();
+
 protected: // Methods
 
     // _model

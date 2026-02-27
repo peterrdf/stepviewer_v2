@@ -78,11 +78,22 @@
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
 	else if (strExtension == ".bin") {
-		pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
+		auto pModel = getModelByInstance(pAPInstance->getOwlModel());
+		_ptr<_ifc_model> ifcModel(pModel, false);
+		if (ifcModel) {
+			OwlInstance owlMapConversionTransformationInstance = ifcModel->createMapConversionTransformation();
+			pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName(), owlMapConversionTransformationInstance);
+			if (owlMapConversionTransformationInstance != 0) {
+				RemoveInstance(owlMapConversionTransformationInstance);
+			}
+		}
+		else {
+			pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
+		}
 	}
 	else {
 		ASSERT(FALSE);
-	}	
+	}
 #else
 	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 #endif
