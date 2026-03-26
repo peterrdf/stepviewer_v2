@@ -34,7 +34,7 @@
 	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName()).c_str();
 
 #ifdef _GLTF_SUPPORT
-	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|glTF Files (*.gltf)|*.gltf|glTF Binary Files (*.glb)|*.glb||");
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|TTL Files (*.ttl)|*.ttl|glTF Files (*.gltf)|*.gltf|glTF Binary Files (*.glb)|*.glb||");
 #else
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin||");
 #endif
@@ -77,7 +77,7 @@
 		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
-	else if (strExtension == ".bin") {
+	else if ((strExtension == ".bin") || (strExtension == ".ttl")) {
 		auto pModel = getModelByInstance(pAPInstance->getOwlModel());
 		_ptr<_ifc_model> ifcModel(pModel, false);
 		if (ifcModel) {
