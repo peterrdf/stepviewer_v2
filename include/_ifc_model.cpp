@@ -300,8 +300,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			double arOffset[3] = { 0., 0., 0. };
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
-			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
-				double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+
+			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {				
 				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
 					auto pMappedItem = pMappedItemPendingUpdate.second;
 
@@ -353,6 +354,22 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 							-fYmin,
 							-fZmin);
 					}
+				}
+
+				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
+					auto pMappedItem = pMappedItemPendingUpdate.second;
+
+					pMappedItem->matrix._41 += -fXmin;
+					pMappedItem->matrix._42 += -fYmin;
+					pMappedItem->matrix._43 += -fZmin;
+
+					pMappedItem->matrix._41 /= dScaleFactor;
+					pMappedItem->matrix._42 /= dScaleFactor;
+					pMappedItem->matrix._43 /= dScaleFactor;
+
+					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+					delete pMappedItem;
 				}
 			} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
 		} // if (!m_vecMappedItemPendingUpdate.empty())
