@@ -845,11 +845,13 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappedRepresentation", sdaiINSTANCE, &ifcRepresentationInstance);
 
 	OwlInstance		owlInstanceMatrix;
+	bool bDeleteInstanceMatrix = false;
 	if (owlInstanceCartesianTransformationOperatorMatrix && owlInstanceAxis2PlacementMatrix) {
 		OwlInstance	owlInstanceMatrixMultiplication = CreateInstance(GetClassByName(getOwlModel(), "MatrixMultiplication"));
 		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "firstMatrix"), owlInstanceCartesianTransformationOperatorMatrix);
 		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "secondMatrix"), owlInstanceAxis2PlacementMatrix);
 		owlInstanceMatrix = owlInstanceMatrixMultiplication;
+		bDeleteInstanceMatrix = true;
 	}
 	else {
 		owlInstanceMatrix = owlInstanceCartesianTransformationOperatorMatrix ? owlInstanceCartesianTransformationOperatorMatrix : owlInstanceAxis2PlacementMatrix;
@@ -865,6 +867,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 
 			STRUCT_INTERNAL* mappedItemData = new STRUCT_INTERNAL;
 			mappedItemData->owlInstanceMatrix = owlInstanceMatrix;
+			mappedItemData->bDeleteInstanceMatrix = bDeleteInstanceMatrix;
 			mappedItemData->ifcRepresentationInstance = ifcRepresentationItemInstance;
 			//mappedItemData->material = material;
 			(*pVectorMappedItemData).push_back(mappedItemData);
@@ -954,6 +957,16 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 			double* values = nullptr;
 			int64_t	card = 0;
 			GetDatatypeProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "coordinates"), (void**)&values, &card);
+
+			// Clean up
+			if ((*mappedItemData)->bDeleteInstanceMatrix) {
+				RemoveInstance((*mappedItemData)->owlInstanceMatrix);
+				(*mappedItemData)->owlInstanceMatrix = 0;
+				(*mappedItemData)->bDeleteInstanceMatrix = false;
+			}
+			RemoveInstance(owlInstanceMatrixMultiplication);
+			owlInstanceMatrixMultiplication = 0;
+
 			if (card == sizeof(_matrix4x3) / sizeof(double)) {
 				STRUCT_MAPPED_ITEM* myMappedItem = new STRUCT_MAPPED_ITEM;
 				myMappedItem->ifcRepresentationInstance = (*mappedItemData)->ifcRepresentationInstance;

@@ -35,8 +35,9 @@ struct STRUCT_MATERIAL
 
 struct STRUCT_INTERNAL
 {
-    SdaiInstance ifcRepresentationInstance;
-    OwlInstance owlInstanceMatrix;
+    SdaiInstance ifcRepresentationInstance = 0;
+    OwlInstance owlInstanceMatrix = 0;
+    bool bDeleteInstanceMatrix = false;
     //STRUCT_MATERIAL* material;
 };
 
