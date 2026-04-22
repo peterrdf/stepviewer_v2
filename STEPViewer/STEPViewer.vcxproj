@@ -1401,6 +1401,8 @@
     <Image Include="res\sort.bmp" />
     <Image Include="res\sort_24.bmp" />
     <Image Include="res\sort_hc.bmp" />
+    <Image Include="res\tb_schema_view.bmp" />
+    <Image Include="res\tb_schema_view_hc.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
     <Image Include="res\warning.ico" />

@@ -714,6 +714,12 @@
     <Image Include="res\information.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\tb_schema_view.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\tb_schema_view_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\MySTEPViewer.rc2">

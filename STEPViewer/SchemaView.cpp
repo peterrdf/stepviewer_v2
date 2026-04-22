@@ -179,6 +179,12 @@ void CSchemaView::LoadEntity(_entity* pEntity, HTREEITEM hParent)
 	*/
 	pair<int, int>  prInstancesCount = GetInstancesCount(pEntity);
 
+	if (m_bHideEmptyItems) {
+		if (!prInstancesCount.first && !prInstancesCount.second) {
+			return;
+		}
+	}
+
 	CString strEntity;
 	strEntity.Format(_T("%s (%d/%d)"), pEntity->getName(), prInstancesCount.first, prInstancesCount.second);
 
@@ -219,13 +225,10 @@ pair<int, int> CSchemaView::GetInstancesCount(_entity* pEntity) const
 {
 	int iInstancesCount = (int)pEntity->getInstances().size();
 
-	int iSubInstancesCount = 0;
-	for (size_t iSubType = 0; iSubType < pEntity->getSubTypes().size(); iSubType++)
-	{
-		iSubInstancesCount += (int)pEntity->getSubTypes()[iSubType]->getInstances().size();
-
-		iSubInstancesCount += GetInstancesCount(pEntity->getSubTypes()[iSubType]).second;
-	}
+	auto sdaiEntity = pEntity->getEntity();
+	auto sdaiModel = engiGetEntityModel(sdaiEntity);
+	auto extent = xxxxGetEntityAndSubTypesExtent(sdaiModel, sdaiEntity);
+	int iSubInstancesCount = sdaiGetMemberCount(extent);
 
 	return pair<int, int>(iInstancesCount, iSubInstancesCount);
 }
@@ -332,6 +335,7 @@ void CSchemaView::OnTVNItemexpandingTree(NMHDR* pNMHDR, LRESULT* pResult)
 
 CSchemaView::CSchemaView()
 	: m_mapModels()
+	, m_bHideEmptyItems(TRUE)
 	, m_pSearchDialog(nullptr)
 {
 }
@@ -343,7 +347,9 @@ CSchemaView::~CSchemaView()
 BEGIN_MESSAGE_MAP(CSchemaView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_PROPERTIES, OnProperties)
+	ON_COMMAND(ID_PROPERTIES, OnSearch)
+	ON_COMMAND(ID_PROPERTIES2, OnHideEmptyItems)
+	ON_UPDATE_COMMAND_UI(ID_PROPERTIES2, OnUpdateHideEmptyItems)
 	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
@@ -383,8 +389,8 @@ int CSchemaView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_imageList.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
 	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
-	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
-	m_toolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
+	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_TB_SCHEMA_VIEW);
+	m_toolBar.LoadToolBar(IDR_TB_SCHEMA_VIEW, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
@@ -486,7 +492,7 @@ void CSchemaView::AdjustLayout()
 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CSchemaView::OnProperties()
+void CSchemaView::OnSearch()
 {
 	if (!m_pSearchDialog->IsWindowVisible())
 	{
@@ -496,6 +502,18 @@ void CSchemaView::OnProperties()
 	{
 		m_pSearchDialog->ShowWindow(SW_HIDE);
 	}
+}
+
+void CSchemaView::OnHideEmptyItems()
+{
+	m_bHideEmptyItems = !m_bHideEmptyItems;
+
+	ResetView();
+}
+
+void CSchemaView::OnUpdateHideEmptyItems(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_bHideEmptyItems);
 }
 
 void CSchemaView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
@@ -548,7 +566,7 @@ void CSchemaView::OnChangeVisualStyle()
 	m_treeCtrl.SetImageList(&m_imageList, TVSIL_NORMAL);
 
 	m_toolBar.CleanUpLockedImages();
-	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_EXPLORER_24 : IDR_EXPLORER, 0, 0, TRUE /* Locked */);
+	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_TB_SCHEMA_VIEW_24 : IDR_TB_SCHEMA_VIEW, 0, 0, TRUE /* Locked */);
 }
 
 void CSchemaView::OnDestroy()

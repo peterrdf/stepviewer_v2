@@ -104,7 +104,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "About STEPViewer"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20    
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "STEPViewer", IDC_PRODUCT_NAME, 42, 14, 114, 8, SS_NOPREFIX
     LTEXT           "Copyright info", IDC_COPYRIGHT, 42, 26, 114, 8
     LTEXT           "Company info", IDC_COMPANY, 42, 38, 114, 8
@@ -611,6 +611,10 @@ IDB_CLASS_VIEW          BITMAP                  "res\\classview.bmp"
 
 IDB_CLASS_VIEW_24       BITMAP                  "res\\classview_hc.bmp"
 
+IDR_TB_SCHEMA_VIEW      BITMAP                  "res\\tb_schema_view.bmp"
+
+IDB_TB_SCHEMA_VIEW_24   BITMAP                  "res\\tb_schema_view_hc.bmp"
+
 IDR_EXPLORER            BITMAP                  "res\\explorer.bmp"
 
 IDB_EXPLORER_24         BITMAP                  "res\\explorer_hc.bmp"
@@ -682,6 +686,12 @@ END
 IDR_EXPLORER TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_PROPERTIES
+END
+
+IDR_TB_SCHEMA_VIEW TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_PROPERTIES
+    BUTTON      ID_PROPERTIES2
 END
 
 IDR_MENU_IMAGES TOOLBAR 16, 15

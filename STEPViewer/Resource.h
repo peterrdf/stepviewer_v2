@@ -94,6 +94,8 @@
 #define IDC_COPYRIGHT                   315
 #define IDD_DIALOG_SEARCH               316
 #define IDC_COMPANY                     316
+#define IDR_TB_SCHEMA_VIEW              317
+#define IDB_TB_SCHEMA_VIEW_24           318
 #define IDD_DIALOG_SELECT_INSTANCE      318
 #define IDD_MODELCHECK                  319
 #define IDR_MENU_3D_VIEW                320
@@ -252,6 +254,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        372
 #define _APS_NEXT_COMMAND_VALUE         32858
 #define _APS_NEXT_CONTROL_VALUE         1058
-#define _APS_NEXT_SYMED_VALUE           317
+#define _APS_NEXT_SYMED_VALUE           320
 #endif
 #endif

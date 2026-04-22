@@ -40,6 +40,8 @@ private: // Members
 
 	map<HTREEITEM, _ap_model*> m_mapModels;
 
+	BOOL m_bHideEmptyItems;
+
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
@@ -86,7 +88,9 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnProperties();
+	afx_msg void OnSearch();
+	afx_msg void OnHideEmptyItems();
+	afx_msg void OnUpdateHideEmptyItems(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
