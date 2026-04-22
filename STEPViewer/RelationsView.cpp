@@ -362,7 +362,7 @@ void CRelationsView::LoadInstance(SdaiEntity sdaiEntity, SdaiInstance sdaiInstan
 	/*
 	* Instance
 	*/
-	wstring strItem = _ap_geometry::getName(sdaiInstance);
+	wstring strItem = _ap_geometry::getDisplayString(sdaiInstance);
 
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hParent;

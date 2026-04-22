@@ -1105,7 +1105,7 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 
 	auto pGeometry = pModelData->GetModel()->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr) {
-		wstring strItem = _ap_geometry::getName(sdaiProjectInstance);
+		wstring strItem = _ap_geometry::getDisplayString(sdaiProjectInstance);
 
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 		ASSERT(!ifcGeometry->getIsMappedItem());
@@ -1361,7 +1361,7 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 
 	ASSERT(_ptr<_ifc_geometry>(pGeometry)->getIsReferenced());
 
-	wstring strItem = _ap_geometry::getName(sdaiInstance);
+	wstring strItem = _ap_geometry::getDisplayString(sdaiInstance);
 
 	// Instance
 	TV_INSERTSTRUCT tvInsertStruct;
@@ -1436,7 +1436,7 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 		ASSERT(pGeometry->getInstances().size() == 1);
 		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 
-		wstring strItem = _ap_geometry::getName(ifcInstance->getSdaiInstance());
+		wstring strItem = _ap_geometry::getDisplayString(ifcInstance->getSdaiInstance());
 
 		// Instance
 		tvInsertStruct.hParent = hGroups;
@@ -1538,7 +1538,7 @@ void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREE
 		for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++) {
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			wstring strItem = _ap_geometry::getName(pInstance->getSdaiInstance());
+			wstring strItem = _ap_geometry::getDisplayString(pInstance->getSdaiInstance());
 
 			// Instance
 			tvInsertStruct.hParent = hEntity;

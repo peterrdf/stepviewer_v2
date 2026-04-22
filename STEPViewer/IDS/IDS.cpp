@@ -2576,7 +2576,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
         return false;
     }
 
-    enum_express_attr_type  attrType = enum_express_attr_type::__NONE;
+    enum_express_data_type  attrType = enum_express_data_type::__NONE;
 
     auto ifcType = sdaiGetADBTypePath(adbValue, 0);
 
@@ -2592,8 +2592,8 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
     }
 
     switch (attrType) {
-        case enum_express_attr_type::__BINARY:
-        case enum_express_attr_type::__BINARY_32:
+        case enum_express_data_type::__BINARY:
+        case enum_express_data_type::__BINARY_32:
         {
             assert(!"to test");
             const char* value = nullptr;
@@ -2602,7 +2602,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             else
                 return false;
         }
-        case enum_express_attr_type::__STRING:
+        case enum_express_data_type::__STRING:
         {
             const wchar_t* value = nullptr;
             if (sdaiGetADBValue(adbValue, sdaiUNICODE, &value) && value && *value)
@@ -2610,7 +2610,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             else
                 return false;
         }
-        case enum_express_attr_type::__ENUMERATION:
+        case enum_express_data_type::__ENUMERATION:
         {
             assert(!"to test");
             const char* value = nullptr;
@@ -2619,7 +2619,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             else
                 return false;
         }
-        case enum_express_attr_type::__BOOLEAN:
+        case enum_express_data_type::__BOOLEAN:
         {
             bool match = false;
             bool value = false;
@@ -2628,7 +2628,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             }
             return match;
         }
-        case enum_express_attr_type::__INTEGER:
+        case enum_express_data_type::__INTEGER:
         {
             SdaiInteger value = 0;
             if (sdaiGetADBValue(adbValue, sdaiINTEGER, &value))
@@ -2636,7 +2636,7 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             else
                 return false;
         }
-        case enum_express_attr_type::__LOGICAL:
+        case enum_express_data_type::__LOGICAL:
         {
             assert(!"to test");
             bool match = false;
@@ -2658,8 +2658,8 @@ bool FacetProperty::MatchValue(SdaiADB adbValue, SdaiInstance unit, Context& ctx
             }
             return match;
         }
-        case enum_express_attr_type::__NUMBER:
-        case enum_express_attr_type::__REAL:
+        case enum_express_data_type::__NUMBER:
+        case enum_express_data_type::__REAL:
         {
             double value = 0;
             if (sdaiGetADBValue(adbValue, sdaiREAL, &value))
