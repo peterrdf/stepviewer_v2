@@ -31,6 +31,47 @@ static char THIS_FILE[] = __FILE__;
 #define ROTATION_MODE_XYZ L"3D"
 
 // ************************************************************************************************
+static bool operator==(const CValueLocator& lhs, const CValueLocator& rhs)
+{
+	return lhs.sdaiInst == rhs.sdaiInst
+		&& lhs.sdaiAttr == rhs.sdaiAttr
+		&& lhs.indexes == rhs.indexes;
+}
+
+static SdaiPrimitiveType GetEditArgumentType(SdaiInstance inst, SdaiAttr attr)
+{
+	//if argument is set, use its type
+	auto sdaiType = engiGetInstanceAttrType(inst, attr);
+
+	//for unset argument, we will create new from attribute definition
+	if (!sdaiType) {
+		sdaiType = engiGetAttrType(attr);
+		sdaiType &= ~engiTypeFlagAggrOption;
+		if (sdaiType & engiTypeFlagAggr) {
+			sdaiType = sdaiAGGR;
+		}
+	}
+
+	ASSERT(sdaiType);
+	return sdaiType;
+}
+
+static CStringA GetPrimitiveSdaiTypeName(SdaiPrimitiveType type)
+{
+	switch (type) {
+		case	sdaiBINARY:		return "sdaiBINARY";
+		case	sdaiBOOLEAN:	return "sdaiBOOLEAN";
+		case	sdaiENUM:		return "sdaiENUM";
+		case	sdaiINSTANCE:	return "sdaiINSTANCE";
+		case	sdaiINTEGER:	return "sdaiINTEGER";
+		case	sdaiLOGICAL:	return "sdaiLOGICAL";
+		case	sdaiREAL:		return "sdaiREAL";
+		case	sdaiSTRING:		return "sdaiSTRING";
+		default: ASSERT(false);	return "";
+	}
+}
+
+// ************************************************************************************************
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
 {
 	m_enApplicationProperty = enApplicationProperty;
@@ -52,6 +93,78 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 /*virtual*/ CApplicationProperty::~CApplicationProperty()
 {
 	delete (CApplicationPropertyData*)GetData();
+}
+
+// ************************************************************************************************
+CInstanceAttributeProperty::CInstanceAttributeProperty(const CString& strName, const COleVariant& vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
+	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
+{}
+
+/*virtual*/ CInstanceAttributeProperty::~CInstanceAttributeProperty()
+{
+	auto data = (CPropertyGridData*)GetData();
+	if (data)
+		delete data;
+}
+
+/*virtual*/ CString CInstanceAttributeProperty::FormatProperty()
+{
+	if (m_varValue.vt != VT_I8) {
+		return __super::FormatProperty();
+	}
+
+	CString strValue;
+	strValue.Format(L"%lld", m_varValue.llVal);
+
+	return strValue;
+}
+
+/*virtual*/ BOOL CInstanceAttributeProperty::TextToVar(const CString& strText)
+{
+	/*
+	* Support for int64_t
+	*/
+	if (m_varValue.vt != VT_I8) {
+		return __super::TextToVar(strText);
+	}
+
+	m_varValue.llVal = _ttoi64(strText);
+
+	return TRUE;
+}
+
+/*virtual*/ CWnd* CInstanceAttributeProperty::CreateInPlaceEdit(CRect rectEdit, BOOL& bDefaultFormat)
+{
+	/*
+	* Support for int64_t
+	*/
+	bool bInt64 = false;
+	if (m_varValue.vt == VT_I8) {
+		// Cheat the base class
+		m_varValue.vt = VT_I4;
+		bInt64 = true;
+	}
+
+	CWnd* pWnd = __super::CreateInPlaceEdit(rectEdit, bDefaultFormat);
+
+	if (bInt64) {
+		// Restore type
+		m_varValue.vt = VT_I8;
+	}
+
+	return pWnd;
+}
+
+/*virtual*/ void CInstanceAttributeProperty::EnableSpinControlInt64()
+{
+	ASSERT(m_varValue.vt == VT_I8);
+
+	// Cheat the base class
+	m_varValue.vt = VT_I4;
+
+	EnableSpinControl(TRUE, 0, INT_MAX);
+
+	m_varValue.vt = VT_I8;
 }
 
 // ************************************************************************************************
@@ -607,6 +720,7 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 CPropertiesWnd::CPropertiesWnd()
 {
 	m_nComboHeight = 0;
+	m_calculateDerivedAttributes = FALSE;
 }
 
 CPropertiesWnd::~CPropertiesWnd()
@@ -667,6 +781,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndObjectCombo.AddString(_T("Application"));
 	m_wndObjectCombo.AddString(_T("Properties"));
+	m_wndObjectCombo.AddString(_T("Attributes"));
 	m_wndObjectCombo.SetCurSel(0);
 
 	CRect rectCombo;
@@ -1536,6 +1651,669 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 	//m_wndPropList.AddProperty(pInstanceGridGroup);
 }
 
+void CPropertiesWnd::LoadInstanceAttributes()
+{
+	//
+	m_wndPropList.SetRedraw(FALSE);
+
+	CValueLocator selection = GetSelectedValueLocator();
+
+	m_wndPropList.RemoveAll();
+	m_wndPropList.AdjustLayout();
+
+	SetPropListFont();
+
+	m_wndPropList.EnableHeaderCtrl(FALSE);
+	m_wndPropList.EnableDescriptionArea();
+	m_wndPropList.SetVSDotNetLook();
+	m_wndPropList.MarkModifiedProperties();
+
+	if (!m_exploringStack.empty()) {
+
+		CMFCPropertyGridProperty* pRoot = nullptr;
+		CMFCPropertyGridProperty* pInstanceGroup = nullptr;
+		AddInstanceNode(pRoot, pInstanceGroup);
+
+		if (pInstanceGroup) {
+
+			//add instance attributes
+			CValueLocator locator;
+			locator.sdaiInst = m_exploringStack.back().inst;
+
+			auto sdaiModel = sdaiGetInstanceModel(locator.sdaiInst);
+			engiEnableDerivedAttributes(sdaiModel, m_calculateDerivedAttributes);
+
+			SdaiEntity entity = sdaiGetInstanceType(locator.sdaiInst);
+			if (engiIsComplexEntity(entity)) {
+				AddComplexInstanceProperties(pInstanceGroup, locator);
+			}
+			else {
+				AddInstanceProperties(pInstanceGroup, locator, NULL);
+			}
+		}
+
+		if (pRoot) {
+			m_wndPropList.AddProperty(pRoot);
+			SelectValue(selection);
+		}
+	}
+
+	m_wndPropList.SetRedraw(TRUE);
+	m_wndPropList.Invalidate();
+}
+
+void CPropertiesWnd::AddInstanceNode(CMFCPropertyGridProperty*& pRootNode, CMFCPropertyGridProperty*& pInstanceGroup)
+{
+	pRootNode = nullptr;
+	pInstanceGroup = nullptr;
+
+	for (auto& elem : m_exploringStack) {
+
+		auto text = _ap_geometry::getDisplayString(elem.inst, false);
+
+		if (elem.attrToNext) {
+			auto attrName = engiGetAttrName(elem.attrToNext);
+			text += L".";
+			text += attrName ? CA2W(attrName) : L"?";
+		}
+
+		auto details = _ap_geometry::getDisplayString(elem.inst, true);
+
+		//show parents in details
+		auto entity = sdaiGetInstanceType(elem.inst);
+		if (!engiIsComplexEntity(entity)) { //parents of complex entity embedded in entity name
+
+			SdaiInteger iParent = 0;
+			while (auto parent = engiGetEntityParentEx(entity, iParent++)) {
+				if (iParent < 2)
+					details += L"\nSUBTYPE OF ";
+				else
+					details += L", ";
+
+				details += CA2W(engiGetEntityName(parent, sdaiSTRING));
+			}
+		}
+
+		//
+		auto pNode = new CMFCPropertyGridProperty(text.c_str());
+		pNode->SetDescription(details.c_str());
+
+		if (!pRootNode) {
+			pRootNode = pNode;
+		}
+
+		if (pInstanceGroup) {
+			pInstanceGroup->AddSubItem(pNode);
+		}
+		pInstanceGroup = pNode;
+	}
+}
+
+void CPropertiesWnd::AddComplexInstanceProperties(CMFCPropertyGridProperty* pPropGroup, const CValueLocator& locator)
+{
+	auto entity = sdaiGetInstanceType(locator.sdaiInst);
+	ASSERT(engiIsComplexEntity(entity));
+
+	SdaiInteger i = 0;
+	while (auto parent = engiGetEntityParentEx(entity, i++)) {
+
+		if (auto parentName = (LPCTSTR)engiGetEntityName(parent, sdaiUNICODE)) {
+
+			if (auto pParentGroup = new CMFCPropertyGridProperty(parentName)) {
+				pPropGroup->AddSubItem(pParentGroup);
+
+				AddInstanceProperties(pParentGroup, locator, parent);
+			}
+		}
+	}
+}
+
+void CPropertiesWnd::AddInstanceProperties(CMFCPropertyGridProperty* pPropGroup, CValueLocator locator, SdaiEntity partOfComplex)
+{
+	SdaiEntity attrSource = partOfComplex ? partOfComplex : sdaiGetInstanceType(locator.sdaiInst);
+
+	//add attributes	
+	SdaiAttr attr = NULL;
+	while (NULL != (attr = engiGetEntityAttributeByIterator(attrSource, attr))) {
+
+		locator.sdaiAttr = attr;
+
+		if (partOfComplex) {
+			auto definedBy = engiGetAttrDefiningEntity(attr);
+			if (definedBy != partOfComplex)
+				continue; //>>>>
+		}
+
+		if (auto prop = CreateAttributeProperty(locator)) {
+			pPropGroup->AddSubItem(prop);
+		}
+		else ASSERT(false);
+	}
+}
+
+static CStringA Card2Str(SdaiInteger card)
+{
+	if (card < 0)
+		return "*";
+
+	CStringA str;
+	str.Format("%lld", card);
+	return str;
+}
+
+static CStringA GetAttributeDetails(SdaiEntity entity, SdaiAttr attr)
+{
+	CStringA details;
+
+	if (engiIsAttrInverse(attr)) {
+		details += "INVERSE ";
+	}
+
+	auto derived = engiGetAttrDerived(NULL/*do not check redeclarations*/, attr);
+	if (derived) {
+		details += "DERIVED ";
+	}
+
+	auto definingEntity = engiGetAttrDefiningEntity(attr);
+	details += engiGetEntityName(definingEntity, sdaiSTRING);
+	details += ".";
+
+	details += engiGetAttrName(attr);
+	details += " : ";
+
+	if (engiIsAttrOptional(attr)) {
+		details += "OPTIONAL ";
+	}
+
+	auto aggr = engiGetAttrAggregation(attr);
+	while (aggr) {
+		enum_express_aggr aggrType = enum_express_aggr::__NONE;
+		SdaiInteger cardMin = -1;
+		SdaiInteger cardMax = -1;
+		bool optional = false;
+		bool unique = false;
+		engiGetAggregationDefinition(aggr, &aggrType, &cardMin, &cardMax, &optional, &unique, &aggr);
+
+		switch (aggrType) {
+			case enum_express_aggr::__ARRAY:		details += "ARRAY OF ";		break;
+			case enum_express_aggr::__BAG:			details += "BAG OF ";		break;
+			case enum_express_aggr::__LIST:			details += "LIST OF";		break;
+			case enum_express_aggr::__SET:			details += "SET OF";		break;
+			case enum_express_aggr::__AGGREGATE:	details += "AGGRGATE OF ";	break;
+			default: ASSERT(false);
+		}
+
+		details += "[";
+		details += Card2Str(cardMin);
+		details += ":";
+		details += Card2Str(cardMax);
+		details += "] ";
+
+		if (optional)
+			details += "OPTIONAL ";
+		if (unique)
+			details += "UNIQUE ";
+	}
+
+	auto type = engiGetExpressAttrType(attr);
+	switch (type) {
+		case enum_express_data_type::__NONE:			break; //will take domain later
+		case enum_express_data_type::__BINARY:
+		case enum_express_data_type::__BINARY_32:		details += "BINARY ";		break;
+		case enum_express_data_type::__BOOLEAN:			details += "BOOLEAN ";		break;
+		case enum_express_data_type::__ENUMERATION:		details += "ENUM ";			break;
+		case enum_express_data_type::__INTEGER:			details += "INTEGER ";		break;
+		case enum_express_data_type::__LOGICAL:			details += "LOGICAL ";		break;
+		case enum_express_data_type::__NUMBER:			details += "NUMBER ";		break;
+		case enum_express_data_type::__REAL:			details += "REAL ";			break;
+		case enum_express_data_type::__SELECT:			details += "SELECT ";		break;
+		case enum_express_data_type::__STRING:			details += "STRING ";		break;
+		case enum_express_data_type::__GENERIC:			details += "GENERIC ";		break;
+		default: ASSERT(FALSE);
+	}
+
+	auto domain = engiGetAttrDomainName(attr);
+	if (domain && *domain) {
+		details += domain;
+		details += " ";
+	}
+
+	if (derived) {
+		//TODO give information where it is derived
+		details += " := ";
+
+		SdaiString label = NULL;
+		SdaiString text = NULL;
+		engiGetScriptText(derived, &label, &text);
+		if (label && *label) {
+			ASSERT(!"Not expected");
+			details += label;
+			details += ": ";
+		}
+		if (text && *text) {
+			details += text;
+		}
+	}
+
+	SdaiAttr redeclaration = NULL;
+	while (NULL != (redeclaration = engiGetAttrRedeclarationByIterator(entity, attr, redeclaration))) {
+		details += "\n  REDECLARATION ";
+		details += GetAttributeDetails(engiGetAttrDefiningEntity(redeclaration), redeclaration);
+	}
+
+	return details;
+}
+
+static CStringA GetNullTypeName(const char* val)
+{
+	/*	if (*val == '$')
+			return "unset";
+		if (*val == '*')
+			return "<not calculated>";
+		if (!val)*/
+	return "";
+}
+
+CMFCPropertyGridProperty* CPropertiesWnd::CreateAttributeProperty(const CValueLocator& locator)
+{
+	auto entity = sdaiGetInstanceType(locator.sdaiInst);
+	bool complex = engiIsComplexEntity(entity);
+	auto definingEntity = engiGetAttrDefiningEntity(locator.sdaiAttr);
+	auto sdaiType = engiGetInstanceAttrType(locator.sdaiInst, locator.sdaiAttr);
+	auto entityName = engiGetEntityName(definingEntity, sdaiSTRING);
+	auto attrName = engiGetAttrName(locator.sdaiAttr);
+
+	CStringA valueName;
+	if (engiIsAttrExplicit(locator.sdaiAttr)) {
+		int_t argNum = engiGetEntityAttributePosition(complex ? definingEntity : entity, locator.sdaiAttr, !complex);
+		ASSERT(argNum >= 0);
+		if (argNum >= 0)
+			valueName.Format("%d. ", (int)argNum + 1);
+	}
+	else if (engiIsAttrInverse(locator.sdaiAttr)) {
+		valueName += "inverse ";
+	}
+	else if (engiGetAttrDerived(entity, locator.sdaiAttr)) {
+		valueName += "derived ";
+	}
+	else {
+		ASSERT(FALSE);
+	}
+
+	if (!sdaiType && engiGetAttrDerived(entity, locator.sdaiAttr) && m_calculateDerivedAttributes) {
+		sdaiType = sdaiADB;
+	}
+
+	valueName += attrName;
+
+	CStringA details = GetAttributeDetails(entity, locator.sdaiAttr);
+
+	GridPropertyInfo prop;
+
+	switch (sdaiType) {
+		case sdaiADB:
+			{
+				SdaiADB adb = NULL;
+				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiADB, &adb);
+				if (res && adb) {
+					prop = CreateADBGridProperty(adb, locator, details);
+				}
+				else {
+					ASSERT(engiGetAttrDerived(entity, locator.sdaiAttr)); //derived attribute can return ?-undefined 
+					prop.pProp = CreateValueGridProperty("$", locator, details);
+					prop.typeName = GetNullTypeName("undefined");
+				}
+			}
+			break;
+
+		case sdaiAGGR:
+			{
+				SdaiAggr aggr = NULL;
+				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiAGGR, &aggr);
+				ASSERT(res && aggr);
+				prop = CreateAggrGridProperty(aggr, locator, details);
+			}
+			break;
+
+		case sdaiINSTANCE:
+			{
+				SdaiInstance inst = NULL;
+				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiType, &inst);
+				if (!inst) {
+					ASSERT(!engiIsAttrExplicit(locator.sdaiAttr));
+					prop.pProp = CreateValueGridProperty("", locator, details);
+				}
+				else {
+					prop.pProp = CreateInstanceGridProperty(inst, locator, details);
+				}
+				prop.typeName = GetPrimitiveSdaiTypeName(sdaiType);
+			}
+			break;
+
+		case 0:
+			{
+				const char* val = NULL;
+				sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiEXPRESSSTRING, &val);
+				ASSERT(val || !engiIsAttrExplicit(locator.sdaiAttr));
+				prop.pProp = CreateValueGridProperty(val, locator, details);
+				prop.typeName = GetNullTypeName(val);
+			}
+			break;
+
+		default:
+			{
+				char* sz = NULL;
+				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiSTRING, &sz);
+				ASSERT(res && sz);
+				prop.pProp = CreateValueGridProperty(sz, locator, details);
+				prop.typeName = GetPrimitiveSdaiTypeName(sdaiType);
+			}
+	} // switch sdaiType
+
+	if (prop.pProp) {
+		if (!prop.typeName.IsEmpty()) {
+			valueName += " : " + prop.typeName;
+		}
+		prop.pProp->SetName((LPCTSTR)CA2W(valueName));
+	}
+
+	return prop.pProp;
+}
+
+static bool IsPersistent(SdaiInstance inst)
+{
+	return internalGetP21Line(inst) > 0;
+}
+
+
+CMFCPropertyGridProperty* CPropertiesWnd::CreateValueGridProperty(LPCSTR value, const CValueLocator& locator, LPCSTR details)
+{
+	CString propDetails = CA2W(details);
+	CString propValue = CA2W(value);
+	auto* data = new CPropertyGridData;
+	data->valueLocator = locator;
+
+	auto pAttributeValue = new CInstanceAttributeProperty(L"Will set later", propValue, propDetails, (DWORD_PTR)data);
+
+	pAttributeValue->AllowEdit(IsPersistent(locator.sdaiInst) && engiIsAttrExplicit(locator.sdaiAttr));
+	pAttributeValue->Enable(IsPersistent(locator.sdaiInst) && engiIsAttrExplicit(locator.sdaiAttr));
+
+	return pAttributeValue;
+}
+
+CMFCPropertyGridProperty* CPropertiesWnd::CreateInstanceGridProperty(SdaiInstance inst, const CValueLocator& locator, LPCSTR details)
+{
+	auto stepId = internalGetP21Line(inst);
+	auto entity = sdaiGetInstanceType(inst);
+	auto entityName = engiGetEntityName(entity, sdaiSTRING);
+
+	CStringA value;
+	value.Format("#%lld %s", stepId, entityName ? entityName : "");
+
+	return CreateValueGridProperty(value, locator, details);
+}
+
+GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValueLocator& locator, LPCSTR details)
+{
+	GridPropertyInfo prop;
+
+	auto typePath = sdaiGetADBTypePath(adb, 0);
+	if (typePath && *typePath) {
+		prop.typeName = typePath;
+		prop.typeName += " as ";
+	}
+
+	auto sdaiType = sdaiGetADBType(adb);
+
+	switch (sdaiType) {
+		case sdaiADB:
+			{
+				ASSERT(!"Not expected");
+				SdaiADB sub = NULL;
+				auto res = sdaiGetADBValue(adb, sdaiADB, &sub);
+				ASSERT(res && sub && sub != adb);
+				auto subProp = CreateADBGridProperty(sub, locator, details);
+				prop.typeName += subProp.typeName;
+				prop.pProp = subProp.pProp;
+			}
+			break;
+
+		case sdaiAGGR:
+			{
+				SdaiAggr aggr = NULL;
+				auto res = sdaiGetADBValue(adb, sdaiAGGR, &aggr);
+				ASSERT(res && aggr);
+				auto subProp = CreateAggrGridProperty(aggr, locator, details);
+				prop.typeName += subProp.typeName;
+				prop.pProp = subProp.pProp;
+			}
+			break;
+
+		case sdaiINSTANCE:
+			{
+				SdaiInstance inst = NULL;
+				auto res = sdaiGetADBValue(adb, sdaiINSTANCE, &inst);
+				ASSERT(res && inst);
+				prop.typeName += GetPrimitiveSdaiTypeName(sdaiType);
+				prop.pProp = CreateInstanceGridProperty(inst, locator, details);
+			}
+			break;
+
+		case 0:
+			{
+				ASSERT(!"Not expected");
+				const char* val = NULL;
+				sdaiGetADBValue(adb, sdaiEXPRESSSTRING, &val);
+				ASSERT(val);
+				prop.typeName += GetNullTypeName(val);
+				prop.pProp = CreateValueGridProperty(val, locator, details);
+			}
+			break;
+
+		default:
+			{
+				char* sz = NULL;
+				auto res = sdaiGetADBValue(adb, sdaiSTRING, &sz);
+				ASSERT(res && sz);
+				prop.typeName += GetPrimitiveSdaiTypeName(sdaiType);
+				prop.pProp = CreateValueGridProperty(sz, locator, details);
+			}
+	} // switch sdaiType
+
+	return prop;
+}
+
+
+GridPropertyInfo CPropertiesWnd::CreateAggrGridProperty(SdaiAggr aggr, const CValueLocator& locator, LPCSTR details)
+{
+	GridPropertyInfo prop;
+
+	SdaiInteger iMemberCount = sdaiGetMemberCount(aggr);
+
+	prop.pProp = new CMFCPropertyGridProperty(L"WILL SET LATER");
+	prop.pProp->SetDescription((LPCTSTR)CA2W(details));
+
+	CValueLocator itemLocator = locator; // For nested structures we need to update locator with attribute index
+
+	itemLocator.indexes.push_back(-1);
+	SdaiInteger& ind = itemLocator.indexes.back(); // Reference to index for easier update in the loop
+
+	for (ind = 0; ind < iMemberCount && ind < 10; ind++) {
+
+		auto item = CreateAggrItemGridProperty(aggr, ind, itemLocator, details);
+
+		if (item.pProp) {
+			prop.pProp->AddSubItem(item.pProp);
+
+			CStringA indexName;
+			indexName.Format("[%lld] %s", ind, item.typeName.GetString());
+			item.pProp->SetName((LPCTSTR)CA2W(indexName));
+
+			if (prop.typeName.IsEmpty()) {
+				prop.typeName = item.typeName;
+			}
+			else if (prop.typeName != item.typeName) {
+				prop.typeName = "<mixed types>";
+			}
+		}
+	}
+
+	if (ind < iMemberCount) {
+		auto more = new CMFCPropertyGridProperty(L"...", L"...");
+		more->AllowEdit(FALSE);
+		prop.pProp->AddSubItem(more);
+	}
+
+	prop.typeName = "AGGR (" + prop.typeName + ")";
+
+	return prop;
+}
+
+GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiInteger index, const CValueLocator& itemLocator, LPCSTR details)
+{
+	GridPropertyInfo prop;
+
+	SdaiPrimitiveType sdaiType = 0;
+	engiGetAggrType(aggr, &sdaiType);
+
+	switch (sdaiType) {
+		case sdaiADB:
+			{
+				SdaiADB adb = NULL;
+				auto res = sdaiGetAggrByIndex(aggr, index, sdaiADB, &adb);
+				ASSERT(res && adb);
+				return CreateADBGridProperty(adb, itemLocator, details);
+			}
+			break;
+
+		case sdaiAGGR:
+			{
+				SdaiAggr sub = NULL;
+				auto res = sdaiGetAggrByIndex(aggr, index, sdaiAGGR, &sub);
+				ASSERT(res && sub);
+				return CreateAggrGridProperty(sub, itemLocator, details);
+			}
+			break;
+
+		case sdaiINSTANCE:
+			{
+				SdaiInstance inst = NULL;
+				auto res = sdaiGetAggrByIndex(aggr, index, sdaiINSTANCE, &inst);
+				ASSERT(res && inst);
+				auto typeName = GetPrimitiveSdaiTypeName(sdaiType);
+				auto pProp = CreateInstanceGridProperty(inst, itemLocator, details);
+				return { pProp, typeName };
+			}
+			break;
+
+		case 0:
+			{
+				const char* val = NULL;
+				sdaiGetAggrByIndex(aggr, index, sdaiEXPRESSSTRING, &val);
+				ASSERT(val);
+				auto typeName = GetNullTypeName(val);
+				auto pProp = CreateValueGridProperty(val, itemLocator, details);
+				return { pProp, typeName };
+			}
+
+		default:
+			{
+				char* sz = NULL;
+				auto res = sdaiGetAggrByIndex(aggr, index, sdaiSTRING, &sz);
+				ASSERT(res && sz);
+				auto typeName = GetPrimitiveSdaiTypeName(sdaiType);
+				auto pProp = CreateValueGridProperty(sz, itemLocator, details);
+				return { pProp, typeName };
+			}
+	} // switch sdaiType
+}
+
+CValueLocator CPropertiesWnd::GetSelectedValueLocator() const
+{
+	auto prop = m_wndPropList.GetCurSel();
+	return GetValueLocator(prop);
+}
+
+CValueLocator CPropertiesWnd::GetValueLocator(CMFCPropertyGridProperty* pProp) const
+{
+	auto propData = pProp ? (CPropertyGridData*)pProp->GetData() : NULL;
+	if (propData) {
+		return propData->valueLocator;
+	}
+	else {
+		return CValueLocator();
+	}
+}
+
+bool CPropertiesWnd::SelectValue(const CValueLocator& locator)
+{
+	if (locator.sdaiInst && locator.sdaiAttr) {
+		auto N = m_wndPropList.GetPropertyCount();
+		for (int i = 0; i < N; i++) {
+			auto prop = m_wndPropList.GetProperty(i);
+			if (SelectValue(prop, locator)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool CPropertiesWnd::SelectValue(CMFCPropertyGridProperty* scope, const CValueLocator& locator)
+{
+	auto loc = GetValueLocator(scope);
+	if (loc == locator) {
+		m_wndPropList.SetCurSel(scope);
+		return true;
+	}
+
+	int N = scope->GetSubItemsCount();
+	for (int i = 0; i < N; i++) {
+		auto prop = scope->GetSubItem(i);
+		if (SelectValue(prop, locator)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static SdaiInstance GetInstanceFromAggregation(SdaiAggr aggr, const std::vector<SdaiInteger>& indexes, size_t level)
+{
+	if (aggr && indexes.size()) {
+		if (level == indexes.size() - 1) {
+			SdaiInstance inst = NULL;
+			sdaiGetAggrByIndex(aggr, indexes[level], sdaiINSTANCE, &inst);
+			return inst;
+		}
+		else if (level < indexes.size() - 1) {
+			SdaiAggr nested = NULL;
+			sdaiGetAggrByIndex(aggr, indexes[level], sdaiAGGR, &nested);
+			return GetInstanceFromAggregation(nested, indexes, level + 1);
+		}
+	}
+	return NULL;
+}
+
+SdaiInstance CPropertiesWnd::GetSelectedValueInstance()
+{
+	auto selection = GetSelectedValueLocator();
+	if (selection.sdaiInst && selection.sdaiAttr) {
+
+		//try instance
+		SdaiInstance inst = NULL;
+		sdaiGetAttr(selection.sdaiInst, selection.sdaiAttr, sdaiINSTANCE, &inst);
+		if (inst)
+			return inst;
+
+		//try aggregation
+		SdaiAggr aggr = NULL;
+		sdaiGetAttr(selection.sdaiInst, selection.sdaiAttr, sdaiAGGR, &aggr);
+		return GetInstanceFromAggregation(aggr, selection.indexes, 0);
+	}
+	return NULL;
+}
+
 void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
@@ -1560,6 +2338,12 @@ void CPropertiesWnd::OnViewModeChanged()
 		case 1: // Instance Properties
 			{
 				LoadInstanceProperties();
+			}
+			break;
+
+		case 2: // Instance Attributes
+			{
+				LoadInstanceAttributes();
 			}
 			break;
 

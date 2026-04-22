@@ -62,6 +62,49 @@ public: // Methods
 };
 
 // ************************************************************************************************
+class CInstanceAttributeProperty : public CMFCPropertyGridProperty
+{
+
+public: // Methods
+
+	CInstanceAttributeProperty(const CString& strName, const COleVariant& vtValue, LPCTSTR szDescription, DWORD_PTR dwData);
+	virtual ~CInstanceAttributeProperty();
+
+	virtual CString FormatProperty();
+	virtual BOOL TextToVar(const CString& strText);
+	virtual CWnd* CreateInPlaceEdit(CRect rectEdit, BOOL& bDefaultFormat);
+	void EnableSpinControlInt64();
+};
+
+// ************************************************************************************************
+struct ExploringInstance
+{
+	SdaiInstance inst = NULL;
+	SdaiAttr	 attrToNext = NULL;
+};
+
+typedef	std::list<ExploringInstance> ExploringStack;
+
+struct GridPropertyInfo
+{
+	CMFCPropertyGridProperty* pProp = NULL;
+	CStringA				  typeName;
+};
+
+// ************************************************************************************************
+struct CValueLocator
+{
+	SdaiInstance	sdaiInst = NULL;
+	SdaiAttr		sdaiAttr = NULL;
+	std::vector<SdaiInteger>  indexes;
+};
+
+struct CPropertyGridData
+{
+	CValueLocator valueLocator;
+};
+
+// ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
 	, public _ap_view
@@ -105,6 +148,9 @@ protected:
 	CPropertiesToolBar m_toolBar;
 	CMFCPropertyGridCtrl m_wndPropList;
 
+	BOOL m_calculateDerivedAttributes;
+	ExploringStack m_exploringStack;
+
 // Implementation
 public:
 	virtual ~CPropertiesWnd();
@@ -127,6 +173,27 @@ protected:
 	void LoadSTEPInstanceProperties();
 	void LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance);
 	void LoadCIS2InstanceProperties();
+
+	void LoadInstanceAttributes();
+	void AddInstanceNode(CMFCPropertyGridProperty*& pRootNode, CMFCPropertyGridProperty*& pInstanceGroup);
+
+	void AddComplexInstanceProperties(CMFCPropertyGridProperty* pPropGroup, const CValueLocator& locator);
+	void AddInstanceProperties(CMFCPropertyGridProperty* pPropGroup, CValueLocator locator, SdaiEntity partOfComplex);
+
+	CMFCPropertyGridProperty* CreateAttributeProperty(const CValueLocator& locator);
+	GridPropertyInfo CreateADBGridProperty(SdaiADB adb, const CValueLocator& locator, LPCSTR details);
+	GridPropertyInfo CreateAggrGridProperty(SdaiAggr aggr, const CValueLocator& locator, LPCSTR details);
+	GridPropertyInfo CreateAggrItemGridProperty(SdaiAggr aggr, SdaiInteger index, const CValueLocator& itemLocator, LPCSTR details);
+	CMFCPropertyGridProperty* CreateValueGridProperty(LPCSTR value, const CValueLocator& locator, LPCSTR details);
+	CMFCPropertyGridProperty* CreateInstanceGridProperty(SdaiInstance inst, const CValueLocator& locator, LPCSTR details);
+
+	CValueLocator GetSelectedValueLocator() const;
+	CValueLocator GetValueLocator(CMFCPropertyGridProperty* pProp) const;
+	bool SelectValue(const CValueLocator& locator);
+	bool SelectValue(CMFCPropertyGridProperty* scope, const CValueLocator& locator);
+
+	SdaiInstance GetSelectedValueInstance();
+
 	void SetPropListFont();
 
 	int m_nComboHeight;
