@@ -203,6 +203,8 @@ COLORREF CColorSelectorProperty::GetAutomaticColor() const
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 
+	SetInstancesToExplore();
+
 	LoadInstanceProperties();
 }
 
@@ -1649,6 +1651,22 @@ void CPropertiesWnd::LoadCIS2InstanceProperties()
 	//}
 
 	//m_wndPropList.AddProperty(pInstanceGridGroup);
+}
+
+void CPropertiesWnd::SetInstancesToExplore()
+{
+	m_exploringStack.clear();
+
+	if (auto pContoller = getController()) {
+		for (auto& inst : pContoller->getSelectedInstances()) {
+			if (inst) {
+				_ptr<_ap_instance> apInstance(getController()->getSelectedInstances().front());
+				if (auto sdaiInst = apInstance->getSdaiInstance()) {
+					m_exploringStack.push_back({ sdaiInst, NULL });
+				}
+			}
+		}
+	}
 }
 
 void CPropertiesWnd::LoadInstanceAttributes()

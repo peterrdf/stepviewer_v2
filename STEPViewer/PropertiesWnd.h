@@ -173,10 +173,11 @@ protected:
 	void LoadSTEPInstanceProperties();
 	void LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance);
 	void LoadCIS2InstanceProperties();
-
+	
+	void SetInstancesToExplore();
 	void LoadInstanceAttributes();
-	void AddInstanceNode(CMFCPropertyGridProperty*& pRootNode, CMFCPropertyGridProperty*& pInstanceGroup);
 
+	void AddInstanceNode(CMFCPropertyGridProperty*& pRootNode, CMFCPropertyGridProperty*& pInstanceGroup);
 	void AddComplexInstanceProperties(CMFCPropertyGridProperty* pPropGroup, const CValueLocator& locator);
 	void AddInstanceProperties(CMFCPropertyGridProperty* pPropGroup, CValueLocator locator, SdaiEntity partOfComplex);
 
