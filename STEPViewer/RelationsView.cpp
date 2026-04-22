@@ -22,8 +22,6 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGE_INVERSE_ATTRIBUTE	3
 #define IMAGE_ATTRIBUTE			5
 
-#define ITEM_SUB_TYPES			L"Sub-types"
-#define ITEM_ATTRIBUTES			L"Attributes"
 #define ITEM_PENDING_LOAD		L"***..........***"
 
 #define MAX_LABEL_SIZE			50
