@@ -1,14 +1,17 @@
 
 #pragma once
 
+#include "_ap_mvc.h"
+
 #include "TreeCtrlEx.h"
 #include "SearchTreeCtrlDialog.h"
-#include "Controller.h"
 
 #include <map>
 using namespace std;
 
-// ************************************************************************************************
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 class CRelationsViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -53,11 +56,13 @@ enum class enumRelationsViewMode : int
 class CRelationsView 
 	: public CDockablePane
 	, public _ap_view
+	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
 
 private: // Classes
 
+	// ********************************************************************************************
 	class CItemData
 	{
 
@@ -67,6 +72,11 @@ private: // Classes
 		SdaiEntity m_sdaiEntity;
 
 	public: // Methods
+
+		CItemData()
+			: m_sdaiInstance(0)
+			, m_sdaiEntity(0)
+		{}
 
 		CItemData(SdaiInstance sdaiInstance, SdaiEntity sdaiEntity)
 			: m_sdaiInstance(sdaiInstance)
@@ -78,11 +88,12 @@ private: // Classes
 
 		virtual ~CItemData() {}
 
-		SdaiInstance GetInstance() const { return m_sdaiInstance; }
-		SdaiEntity GetEntity() const { return m_sdaiEntity; }
+		SdaiInstance GetSdaiInstance() const { return m_sdaiInstance; }
+		SdaiEntity GetSdaiEntity() const { return m_sdaiEntity; }
 		const wchar_t* GetEntityName() const { return _entity::getName(m_sdaiEntity); }
 	};
 
+	// ********************************************************************************************
 	class CInstanceData : public CItemData
 	{
 
@@ -95,6 +106,7 @@ private: // Classes
 		virtual ~CInstanceData() {}
 	};
 
+	// ********************************************************************************************
 	class CAttributeData : public CItemData
 	{
 
@@ -114,12 +126,33 @@ private: // Classes
 		const char* GetName() const { return m_srtName.c_str(); }
 	};
 
+	// ********************************************************************************************
+	class CInstanceSet : public CItemData
+	{
+
+	private: // Members
+
+		vector<SdaiInstance> m_vecInstances;
+
+	public: // Methods
+
+		CInstanceSet()
+			: CItemData()
+			, m_vecInstances()
+		{}
+
+		virtual ~CInstanceSet() {}
+
+		vector<SdaiInstance>& Instances() { return m_vecInstances; }
+	};
+
+	// ********************************************************************************************
 	class CAttributeSet : public CItemData
 	{
 
 	private: // Members
 
-		vector<pair<SdaiAttr, SdaiInteger>> m_vecAttributes;
+		vector<SdaiAttr> m_vecAttributes;
 
 	public: // Methods
 
@@ -130,9 +163,10 @@ private: // Classes
 
 		virtual ~CAttributeSet() {}
 
-		vector<pair<SdaiAttr, SdaiInteger>>& Attributes() { return m_vecAttributes; }
+		vector<SdaiAttr>& Attributes() { return m_vecAttributes; }
 	};
 
+	// ********************************************************************************************
 	enum class enumSearchFilter : int {
 		All = 0,
 		ExpressID,
@@ -140,16 +174,26 @@ private: // Classes
 
 private: // Members
 
+	// Target
+	_entity* m_pEntity;
+
 	// View
 	enumRelationsViewMode m_enMode;
 	
 	// Cache
 	vector<CItemData*> m_vecItemDataCache;
+	map<SdaiInstance, vector<HTREEITEM>> m_mapInstances;
+	map<SdaiInstance, map<SdaiAttr, vector<HTREEITEM>>> m_mapInstanceAttributes;
 
 	// Search
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
+
+	// CDockablePane
+	virtual BOOL CanFloat() const override { return FALSE; };
+	virtual BOOL CanBeClosed() const override { return FALSE; };
+	virtual BOOL CanAutoHide() const override { return FALSE; };
 	
 	// _view
 	virtual void onModelLoaded() override;
@@ -158,6 +202,10 @@ public: // Methods
 	// _ap_view
 	virtual void onViewRelations(_view* pSender, SdaiInstance sdaiInstance) override;
 	virtual void onViewRelations(_view* pSender, _entity* pEntity) override;
+	virtual void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr) override;
+
+	// CItemStateProvider
+	virtual bool IsSelected(HTREEITEM hItem) override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
@@ -169,38 +217,37 @@ public: // Methods
 
 private: // Methods
 
-	_ap_model* GetModelByInstance(SdaiModel sdaiModel);
+	_ap_model* GetModel() const;
 	
-	void LoadInstances(_ap_model* pModel, const vector<SdaiInstance>& vecInstances);
-	void LoadProperties(SdaiEntity sdaiEntity, const vector<SdaiInstance>& vecSdaiInstances);
-	void LoadInstance(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent);
-	SdaiInteger GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
-	void LoadInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
-	void AddInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, const char* szAttributeName, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void LoadInstances(const vector<SdaiInstance>& vecInstances, bool bResetView, HTREEITEM hInsertAfter);
+	HTREEITEM LoadInstance(SdaiInstance sdaiInstance, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	int_t GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	void LoadInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, HTREEITEM hParent, HTREEITEM hInsertAfter);
+	void AddInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr iAttribute, HTREEITEM hParent, HTREEITEM hInsertAfter);
 
 	void CreateAttributeLabelInstance(SdaiInstance sdaiInstance, wstring& strLabel);
 	void CreateAttributeLabelBoolean(bool bValue, wstring& strLabel);
 	void CreateAttributeLabelLogical(char* szValue, wstring& strLabel);
 	void CreateAttributeLabelEnumeration(char* szValue, wstring& strLabel);
 	void CreateAttributeLabelReal(double dValue, wstring& strLabel);
-	void CreateAttributeLabelInteger(SdaiInteger iValue, wstring& strLabel);
+	void CreateAttributeLabelInteger(int_t iValue, wstring& strLabel);
 	void CreateAttributeLabelString(wchar_t* szValue, wstring& strLabel);
 	
-	bool CreateAttributeLabel(SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, wstring& strLabel);
+	bool CreateAttributeLabel(SdaiInstance sdaiInstance, SdaiAttr iAttribute, wstring& strLabel);
 
-	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiPrimitiveType, SdaiInteger iIndex, wstring& strLabel);
+	bool CreateAttributeLabelAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiAggrType, SdaiInteger iIndex, wstring& strLabel);
 	bool CreateAttributeLabelAggregation(SdaiAggr aggregation, wstring& strLabel);
 	bool CreateAttributeLabelADB(SdaiADB ADB, wstring& strLabel);
 
 	void GetAttributeReferencesADB(SdaiADB ADB, HTREEITEM hParent);
-	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiPrimitiveType, SdaiInteger iIndex, HTREEITEM hParent);
+	void GetAttributeReferencesAggregationElement(SdaiAggr aggregation, SdaiPrimitiveType sdaiAggrType, SdaiInteger iIndex, HTREEITEM hParent);
 	void GetAttributeReferencesAggregation(SdaiAggr aggregation, HTREEITEM hParent);
-	void GetAttributeReferences(SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, HTREEITEM hParent);
+	void GetAttributeReferences(SdaiInstance sdaiInstance, SdaiAttr iAttribute, HTREEITEM hParent);
 
 	void GetEntityHierarchy(SdaiEntity sdaiEntity, vector<wstring>& vecHierarchy) const;
+	void GetAllInstances(_entity* pEntity, map<_entity*, vector<SdaiInstance>>& mapEntityInstances);
 
 	void Clean();
-
 	void ResetView();
 
 // Construction
@@ -228,11 +275,10 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnProperties();
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnNMClickTree(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMRClickTree(NMHDR *pNMHDR, LRESULT *pResult);	
 	afx_msg void OnTVNItemexpandingTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 
