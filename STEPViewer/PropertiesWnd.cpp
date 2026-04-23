@@ -201,11 +201,18 @@ COLORREF CColorSelectorProperty::GetAutomaticColor() const
 
 /*virtual*/ void CPropertiesWnd::onInstanceSelected(_view* /*pSender*/)
 {
-	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
+	if (!getController()->getSelectedInstances().empty()) {
+		if (m_wndObjectCombo.GetCurSel() == 0) {
+			m_wndObjectCombo.SetCurSel(1 /*Properties*/);
+		}
+	} 
+	else {
+		m_wndObjectCombo.SetCurSel(0 /*Application*/);
+	}
 
 	SetInstancesToExplore();
 
-	LoadInstanceProperties();
+	OnViewModeChanged();
 }
 
 /*virtual*/ void CPropertiesWnd::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/)
@@ -1054,7 +1061,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
 			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
-		}		
+		}
 
 		// Emissive
 		/*{
@@ -1503,7 +1510,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 	else {
 		strGroupName = ((_geometry*)pSelectedInstance->getGeometry())->getName();
 	}
-	
+
 	/*
 	* Properties
 	*/
@@ -1533,7 +1540,7 @@ void CPropertiesWnd::LoadSTEPInstanceProperties()
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
-	}	
+	}
 }
 
 void CPropertiesWnd::LoadIFCInstanceProperties(_ap_model* pModel, _ap_instance* pInstance)
