@@ -1667,7 +1667,7 @@ void CPropertiesWnd::SetInstancesToExplore()
 	if (auto pContoller = getController()) {
 		for (auto& inst : pContoller->getSelectedInstances()) {
 			if (inst) {
-				_ptr<_ap_instance> apInstance(getController()->getSelectedInstances().front());
+				_ptr<_ap_instance> apInstance(inst);
 				if (auto sdaiInst = apInstance->getSdaiInstance()) {
 					m_exploringStack.push_back({ sdaiInst, NULL });
 				}
