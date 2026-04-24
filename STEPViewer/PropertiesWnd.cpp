@@ -538,6 +538,15 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 					}
 					break;
 
+				case enumApplicationProperty::FullDisplayName:
+					{
+						_ptr<_ap_controller> apController(getController());
+						apController->setFullDisplayName(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::FullDisplayName);
+					}
+					break;
+
 				default:
 					ASSERT(FALSE);
 					break;
@@ -1308,8 +1317,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().z,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
-				pDiffuseLightWeighting->AddSubItem(pProperty);
+						(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
+						pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
 
 			pOpenGL->AddSubItem(pDiffuseLightWeighting);
@@ -1405,6 +1414,27 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma endregion
 	} // if (pBlinnPhongProgram != nullptr)
 #pragma endregion
+
+#pragma region UI
+	{
+		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
+		pViewGroup->AddSubItem(pUI);
+
+		_ptr<_ap_controller> apController(getController());
+
+		// Full Display Name
+		{
+			auto pProperty = new CApplicationProperty(_T("Full Display Name"),
+				apController->getFullDisplayName() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+				_T("Show Full Display Name"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::FullDisplayName));
+			pProperty->AddOption(TRUE_VALUE_PROPERTY);
+			pProperty->AddOption(FALSE_VALUE_PROPERTY);
+			pProperty->AllowEdit(FALSE);
+			pUI->AddSubItem(pProperty);
+		}
+	}
+#pragma endregion // UI
 
 	m_wndPropList.AddProperty(pViewGroup);
 }
@@ -1732,17 +1762,18 @@ void CPropertiesWnd::AddInstanceNode(CMFCPropertyGridProperty*& pRootNode, CMFCP
 	pRootNode = nullptr;
 	pInstanceGroup = nullptr;
 
+	_ptr<_ap_controller> apController(getController());
+
 	for (auto& elem : m_exploringStack) {
 
-		auto text = _ap_geometry::getDisplayString(elem.inst, false);
-
+		auto text = _ap_geometry::getDisplayString(elem.inst, apController->getFullDisplayName());
 		if (elem.attrToNext) {
 			auto attrName = engiGetAttrName(elem.attrToNext);
 			text += L".";
 			text += attrName ? CA2W(attrName) : L"?";
 		}
 
-		auto details = _ap_geometry::getDisplayString(elem.inst, true);
+		auto details = _ap_geometry::getDisplayString(elem.inst, apController->getFullDisplayName());
 
 		//show parents in details
 		auto entity = sdaiGetInstanceType(elem.inst);
