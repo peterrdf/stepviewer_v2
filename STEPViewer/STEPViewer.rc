@@ -105,10 +105,10 @@ CAPTION "About STEPViewer"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "STEPViewer", IDC_PRODUCT_NAME, 42, 14, 114, 8, SS_NOPREFIX
-    LTEXT           "Copyright info", IDC_COPYRIGHT, 42, 26, 114, 8
-    LTEXT           "Company info", IDC_COMPANY, 42, 38, 114, 8
-    DEFPUSHBUTTON   "OK", IDOK, 113, 41, 50, 14, WS_GROUP
+    LTEXT           "STEPViewer",IDC_PRODUCT_NAME,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright info",IDC_COPYRIGHT,42,26,114,8
+    LTEXT           "Company info",IDC_COMPANY,42,38,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
 IDD_DIALOG_EDIT_OBJECT_PROPRTY DIALOGEX 0, 0, 223, 112
@@ -712,7 +712,9 @@ BEGIN
     BUTTON      ID_EXPAND_ALL
     BUTTON      ID_SORTPROPERTIES
     BUTTON      ID_PROPERTIES1
-    BUTTON      ID_PROPERTIES2
+    BUTTON      ID_CALCULATE_DERIVED_ATTR
+    BUTTON      ID_FOLLOW_REFERENCE
+    BUTTON      ID_BACK_FROM_REFERENCE
 END
 
 IDR_SORT_INSTANCES TOOLBAR 16, 15
@@ -1166,6 +1168,10 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_CALCULATE_DERIVED_ATTR 
+                            "Calculate derived attributes\nDerived attributes"
+    ID_FOLLOW_REFERENCE     "Display properties of referenced instance\nShow referenced"
+    ID_BACK_FROM_REFERENCE  "Back to properties of referencing instance\nShow referencing"
     IDS_IFC_RELATIONS_VIEW  "Attributes"
     IDS_VIEW_IFC_RELATIONS  "View Attributes"
 END
@@ -1192,6 +1198,8 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_SORTPROPERTIES       "Sort attributes alphabetically\nSort"
+    ID_EXPAND_ALL           "Expand all nodes in tree\nExpand all"
     IDS_FILE_VIEW           "Model Structure"
     IDS_CLASS_VIEW          "Class View"
     IDS_PROPERTIES_WND      "Properties"

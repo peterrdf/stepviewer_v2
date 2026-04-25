@@ -99,7 +99,10 @@
 #define IDD_DIALOG_SELECT_INSTANCE      318
 #define IDD_MODELCHECK                  319
 #define IDR_MENU_3D_VIEW                320
+#define ID_CALCULATE_DERIVED_ATTR       320
+#define ID_FOLLOW_REFERENCE             321
 #define IDB_NONE                        322
+#define ID_BACK_FROM_REFERENCE          322
 #define IDB_PROPERTY                    323
 #define IDB_PROPERTY_SET                324
 #define IDB_SELECTED_ALL                325
@@ -254,6 +257,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        372
 #define _APS_NEXT_COMMAND_VALUE         32858
 #define _APS_NEXT_CONTROL_VALUE         1058
-#define _APS_NEXT_SYMED_VALUE           320
+#define _APS_NEXT_SYMED_VALUE           323
 #endif
 #endif

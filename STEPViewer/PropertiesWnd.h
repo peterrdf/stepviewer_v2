@@ -159,9 +159,14 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnExpandAllProperties();
-	afx_msg void OnUpdateExpandAllProperties(CCmdUI* pCmdUI);
 	afx_msg void OnSortProperties();
 	afx_msg void OnUpdateSortProperties(CCmdUI* pCmdUI);
+	afx_msg void OnCalculateDerivedAttributes();
+	afx_msg void OnUpdateCalculateDerivedAttributes(CCmdUI* pCmdUI);
+	afx_msg void OnFollowReference();
+	afx_msg void OnUpdateFollowReference(CCmdUI* pCmdUI);
+	afx_msg void OnBackFromReference();
+	afx_msg void OnUpdateBackFromReference(CCmdUI* pCmdUI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 	afx_msg void OnViewModeChanged();

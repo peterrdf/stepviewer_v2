@@ -748,9 +748,14 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_EXPAND_ALL, OnExpandAllProperties)
-	ON_UPDATE_COMMAND_UI(ID_EXPAND_ALL, OnUpdateExpandAllProperties)
 	ON_COMMAND(ID_SORTPROPERTIES, OnSortProperties)
 	ON_UPDATE_COMMAND_UI(ID_SORTPROPERTIES, OnUpdateSortProperties)
+	ON_COMMAND(ID_CALCULATE_DERIVED_ATTR, OnCalculateDerivedAttributes)
+	ON_UPDATE_COMMAND_UI(ID_CALCULATE_DERIVED_ATTR, OnUpdateCalculateDerivedAttributes)
+	ON_COMMAND(ID_FOLLOW_REFERENCE, OnFollowReference)
+	ON_UPDATE_COMMAND_UI(ID_FOLLOW_REFERENCE, OnUpdateFollowReference)
+	ON_COMMAND(ID_BACK_FROM_REFERENCE, OnBackFromReference)
+	ON_UPDATE_COMMAND_UI(ID_BACK_FROM_REFERENCE, OnUpdateBackFromReference)
 	ON_WM_SETFOCUS()
 	ON_WM_SETTINGCHANGE()
 	ON_WM_DESTROY()
@@ -842,9 +847,6 @@ void CPropertiesWnd::OnExpandAllProperties()
 	m_wndPropList.ExpandAll();
 }
 
-void CPropertiesWnd::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
-{}
-
 void CPropertiesWnd::OnSortProperties()
 {
 	m_wndPropList.SetAlphabeticMode(!m_wndPropList.IsAlphabeticMode());
@@ -853,6 +855,49 @@ void CPropertiesWnd::OnSortProperties()
 void CPropertiesWnd::OnUpdateSortProperties(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_wndPropList.IsAlphabeticMode());
+}
+
+void CPropertiesWnd::OnCalculateDerivedAttributes()
+{
+	m_calculateDerivedAttributes = !m_calculateDerivedAttributes;
+	onTargetInstanceChanged(NULL);
+}
+
+void CPropertiesWnd::OnUpdateCalculateDerivedAttributes(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndObjectCombo.GetCurSel() == 2/*Attributes*/);
+	pCmdUI->SetCheck((m_wndObjectCombo.GetCurSel() == 2/*Attributes*/) &&m_calculateDerivedAttributes ? 1 : 0);
+}
+
+void CPropertiesWnd::OnFollowReference()
+{
+	if (auto inst = GetSelectedValueInstance()) {
+		auto locator = GetSelectedValueLocator();
+		if (!m_exploringStack.empty())
+			m_exploringStack.back().attrToNext = locator.sdaiAttr;
+		m_exploringStack.push_back({ inst, NULL });
+		LoadInstanceAttributes();
+	}
+}
+
+void CPropertiesWnd::OnUpdateFollowReference(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_wndObjectCombo.GetCurSel() == 2/*Attributes*/) && GetSelectedValueInstance());
+}
+
+void CPropertiesWnd::OnBackFromReference()
+{
+	if (m_exploringStack.size() > 1) {
+		m_exploringStack.pop_back();
+		auto& top = m_exploringStack.back();
+		top.attrToNext = NULL;
+		LoadInstanceAttributes();
+	}
+}
+
+void CPropertiesWnd::OnUpdateBackFromReference(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_wndObjectCombo.GetCurSel() == 2/*Attributes*/) && (m_exploringStack.size() > 1));
 }
 
 void CPropertiesWnd::LoadApplicationProperties()
