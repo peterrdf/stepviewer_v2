@@ -17,6 +17,8 @@ CController::CController()
 	strSettingsFile += L"\\STEPViewer_STEP.settings";
 
 	getSettingsStorage()->loadSettings(strSettingsFile);
+
+	loadSettings();
 }
 
 /*virtual*/ CController::~CController()
