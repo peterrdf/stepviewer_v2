@@ -183,7 +183,7 @@ public: // Methods
 			}
 #endif	
 			if (sdaiModel) {
-				pModel->attachModel(szModel, sdaiModel, nullptr);
+				pModel->attachModel(szModel, sdaiModel, pWorld);
 			}
 			else {
 				delete pModel;

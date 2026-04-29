@@ -415,7 +415,7 @@ HTREEITEM CRelationsView::LoadInstance(SdaiInstance sdaiInstance, HTREEITEM hPar
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	CAttributeSet attributeSet(sdaiInstance, sdaiEntity);
-	GetInstanceAttributes(sdaiEntity, sdaiInstance, hInstance, &attributeSet);
+	GetInstanceAttributes(sdaiEntity, &attributeSet);
 
 	// Cache
 	auto itInstance = m_mapInstances.find(sdaiInstance);
@@ -490,17 +490,14 @@ HTREEITEM CRelationsView::LoadInstance(SdaiInstance sdaiInstance, HTREEITEM hPar
 	return hInstance;
 }
 
-int_t CRelationsView::GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet)
+int_t CRelationsView::GetInstanceAttributes(SdaiEntity sdaiEntity, CAttributeSet* pAttributeSet)
 {
 	if (sdaiEntity == 0) {
 		return 0;
 	}
 
-	ASSERT(sdaiInstance != 0);
-
 	SdaiInteger iIndex = 0;
 	while (SdaiAttr sdaiAttribute = engiGetEntityAttributeByIndex(sdaiEntity, iIndex++, true, true)) {
-
 		pAttributeSet->Attributes().push_back(sdaiAttribute);
 	}
 

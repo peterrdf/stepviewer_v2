@@ -221,7 +221,7 @@ private: // Methods
 	
 	void LoadInstances(const vector<SdaiInstance>& vecInstances, bool bResetView, HTREEITEM hInsertAfter);
 	HTREEITEM LoadInstance(SdaiInstance sdaiInstance, HTREEITEM hParent, HTREEITEM hInsertAfter);
-	int_t GetInstanceAttributes(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, HTREEITEM hParent, CAttributeSet* pAttributeSet);
+	int_t GetInstanceAttributes(SdaiEntity sdaiEntity, CAttributeSet* pAttributeSet);
 	void LoadInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr sdaiAttribute, HTREEITEM hParent, HTREEITEM hInsertAfter);
 	void AddInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sdaiInstance, SdaiAttr iAttribute, HTREEITEM hParent, HTREEITEM hInsertAfter);
 

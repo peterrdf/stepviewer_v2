@@ -56,8 +56,6 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	SdaiInstance sdaiIfcMapConversionInstance = 0;
 	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
 
-	SdaiEntity sdaiIfcMapConversionEntity = sdaiGetInstanceType(sdaiIfcMapConversionInstance);
-
 	// Default: no translation
 	double dEastings = 0.;
 	double dNorthings = 0.;

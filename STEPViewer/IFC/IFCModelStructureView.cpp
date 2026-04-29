@@ -1556,7 +1556,6 @@ void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREE
 		for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++) {
 			auto pInstance = itUnreferencedItems->second[iInstance];
 
-			_ptr<_ap_controller> apController(getController());
 			wstring strItem = _ap_geometry::getDisplayString(pInstance->getSdaiInstance(), apController->getFullDisplayName());
 
 			// Instance

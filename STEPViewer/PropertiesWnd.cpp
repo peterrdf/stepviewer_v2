@@ -2005,7 +2005,7 @@ static CStringA GetAttributeDetails(SdaiEntity entity, SdaiAttr attr)
 	return details;
 }
 
-static CStringA GetNullTypeName(const char* val)
+static CStringA GetNullTypeName(const char* /*val*/)
 {
 	/*	if (*val == '$')
 			return "unset";
@@ -2021,7 +2021,6 @@ CMFCPropertyGridProperty* CPropertiesWnd::CreateAttributeProperty(const CValueLo
 	bool complex = engiIsComplexEntity(entity);
 	auto definingEntity = engiGetAttrDefiningEntity(locator.sdaiAttr);
 	auto sdaiType = engiGetInstanceAttrType(locator.sdaiInst, locator.sdaiAttr);
-	auto entityName = engiGetEntityName(definingEntity, sdaiSTRING);
 	auto attrName = engiGetAttrName(locator.sdaiAttr);
 
 	CStringA valueName;
@@ -2071,7 +2070,7 @@ CMFCPropertyGridProperty* CPropertiesWnd::CreateAttributeProperty(const CValueLo
 			{
 				SdaiAggr aggr = NULL;
 				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiAGGR, &aggr);
-				ASSERT(res && aggr);
+				VERIFY(res && aggr);
 				prop = CreateAggrGridProperty(aggr, locator, details);
 			}
 			break;
@@ -2079,7 +2078,7 @@ CMFCPropertyGridProperty* CPropertiesWnd::CreateAttributeProperty(const CValueLo
 		case sdaiINSTANCE:
 			{
 				SdaiInstance inst = NULL;
-				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiType, &inst);
+				sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiType, &inst);
 				if (!inst) {
 					ASSERT(!engiIsAttrExplicit(locator.sdaiAttr));
 					prop.pProp = CreateValueGridProperty("", locator, details);
@@ -2105,7 +2104,7 @@ CMFCPropertyGridProperty* CPropertiesWnd::CreateAttributeProperty(const CValueLo
 			{
 				char* sz = NULL;
 				auto res = sdaiGetAttr(locator.sdaiInst, locator.sdaiAttr, sdaiSTRING, &sz);
-				ASSERT(res && sz);
+				VERIFY(res && sz);
 				prop.pProp = CreateValueGridProperty(sz, locator, details);
 				prop.typeName = GetPrimitiveSdaiTypeName(sdaiType);
 			}
@@ -2172,7 +2171,7 @@ GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValue
 				ASSERT(!"Not expected");
 				SdaiADB sub = NULL;
 				auto res = sdaiGetADBValue(adb, sdaiADB, &sub);
-				ASSERT(res && sub && sub != adb);
+				VERIFY(res && sub && sub != adb);
 				auto subProp = CreateADBGridProperty(sub, locator, details);
 				prop.typeName += subProp.typeName;
 				prop.pProp = subProp.pProp;
@@ -2183,7 +2182,7 @@ GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValue
 			{
 				SdaiAggr aggr = NULL;
 				auto res = sdaiGetADBValue(adb, sdaiAGGR, &aggr);
-				ASSERT(res && aggr);
+				VERIFY(res && aggr);
 				auto subProp = CreateAggrGridProperty(aggr, locator, details);
 				prop.typeName += subProp.typeName;
 				prop.pProp = subProp.pProp;
@@ -2194,7 +2193,7 @@ GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValue
 			{
 				SdaiInstance inst = NULL;
 				auto res = sdaiGetADBValue(adb, sdaiINSTANCE, &inst);
-				ASSERT(res && inst);
+				VERIFY(res && inst);
 				prop.typeName += GetPrimitiveSdaiTypeName(sdaiType);
 				prop.pProp = CreateInstanceGridProperty(inst, locator, details);
 			}
@@ -2205,7 +2204,7 @@ GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValue
 				ASSERT(!"Not expected");
 				const char* val = NULL;
 				sdaiGetADBValue(adb, sdaiEXPRESSSTRING, &val);
-				ASSERT(val);
+				VERIFY(val);
 				prop.typeName += GetNullTypeName(val);
 				prop.pProp = CreateValueGridProperty(val, locator, details);
 			}
@@ -2215,7 +2214,7 @@ GridPropertyInfo CPropertiesWnd::CreateADBGridProperty(SdaiADB adb, const CValue
 			{
 				char* sz = NULL;
 				auto res = sdaiGetADBValue(adb, sdaiSTRING, &sz);
-				ASSERT(res && sz);
+				VERIFY(res && sz);
 				prop.typeName += GetPrimitiveSdaiTypeName(sdaiType);
 				prop.pProp = CreateValueGridProperty(sz, locator, details);
 			}
@@ -2282,7 +2281,7 @@ GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiI
 			{
 				SdaiADB adb = NULL;
 				auto res = sdaiGetAggrByIndex(aggr, index, sdaiADB, &adb);
-				ASSERT(res && adb);
+				VERIFY(res && adb);
 				return CreateADBGridProperty(adb, itemLocator, details);
 			}
 			break;
@@ -2291,7 +2290,7 @@ GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiI
 			{
 				SdaiAggr sub = NULL;
 				auto res = sdaiGetAggrByIndex(aggr, index, sdaiAGGR, &sub);
-				ASSERT(res && sub);
+				VERIFY(res && sub);
 				return CreateAggrGridProperty(sub, itemLocator, details);
 			}
 			break;
@@ -2300,7 +2299,7 @@ GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiI
 			{
 				SdaiInstance inst = NULL;
 				auto res = sdaiGetAggrByIndex(aggr, index, sdaiINSTANCE, &inst);
-				ASSERT(res && inst);
+				VERIFY(res && inst);
 				auto typeName = GetPrimitiveSdaiTypeName(sdaiType);
 				auto pProp = CreateInstanceGridProperty(inst, itemLocator, details);
 				return { pProp, typeName };
@@ -2311,7 +2310,7 @@ GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiI
 			{
 				const char* val = NULL;
 				sdaiGetAggrByIndex(aggr, index, sdaiEXPRESSSTRING, &val);
-				ASSERT(val);
+				VERIFY(val);
 				auto typeName = GetNullTypeName(val);
 				auto pProp = CreateValueGridProperty(val, itemLocator, details);
 				return { pProp, typeName };
@@ -2321,7 +2320,7 @@ GridPropertyInfo CPropertiesWnd::CreateAggrItemGridProperty(SdaiAggr aggr, SdaiI
 			{
 				char* sz = NULL;
 				auto res = sdaiGetAggrByIndex(aggr, index, sdaiSTRING, &sz);
-				ASSERT(res && sz);
+				VERIFY(res && sz);
 				auto typeName = GetPrimitiveSdaiTypeName(sdaiType);
 				auto pProp = CreateValueGridProperty(sz, itemLocator, details);
 				return { pProp, typeName };
