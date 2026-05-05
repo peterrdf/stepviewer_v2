@@ -40,13 +40,15 @@ private: // Classes
 		DraughtingCallout = 6
 	};
 
+	typedef map<_instance*, vector<HTREEITEM>> ITEMS;
+
 private: // Members
 
 	CImageList* m_pImageList;
 
 	// Cache	
 	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
-	map<_instance*, HTREEITEM> m_mapInstance2Item;
+	ITEMS m_mapInstanceItems;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
 		
