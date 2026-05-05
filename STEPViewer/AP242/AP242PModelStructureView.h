@@ -63,6 +63,7 @@ public: // Methods
 	// _view
 	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag) override;
 	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
 
 	// CModelStructureViewBase
 	virtual void Load();

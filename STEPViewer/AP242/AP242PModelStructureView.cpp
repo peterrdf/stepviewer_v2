@@ -180,6 +180,21 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pTreeCtrl->SendMessage(WM_SETREDRAW, 1, 0);
 }
 
+/*virtual*/ void CAP242PModelStructureView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (enApplicationProperty == enumApplicationProperty::FullDisplayName) {
+		// Reload
+		ResetView();
+
+		// Restore Selection
+		onInstanceSelected(nullptr);
+	}
+}
+
 /*virtual*/ void CAP242PModelStructureView::Load() /*override*/
 {
 	ResetView();
@@ -806,12 +821,15 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	// 
 	// Product
 	//
 
 	CString strName;
-	strName.Format(L"#%lld %s %s", pProduct->getExpressID(), pProduct->getProductName(), ITEM_PRODUCT_DEFINION);
+	wstring strDisplayString = _ap_geometry::getDisplayString(pProduct->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_PRODUCT_DEFINION);
 
 	int iGeometryImage = pProduct->hasGeometry() || HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iGeometryImage, iGeometryImage, hParent);
@@ -858,7 +876,8 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				enumAP242ItemDataType::ProductShape);
 			pProductItemData->Children().push_back(pProductShapeData);
 
-			strName.Format(L"%s %s", ((_geometry*)pProductShape)->getName(), ITEM_SHAPE);
+			strDisplayString = _ap_geometry::getDisplayString(pProductShape->getSdaiInstance(), apController->getFullDisplayName());
+			strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_SHAPE);
 			iGeometryImage = pProductShape->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShape) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			HTREEITEM hProductShape = m_pTreeCtrl->InsertItem(
 				strName,
@@ -868,7 +887,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 			iGeometryImage = pProductShape->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShape);
 
-			ASSERT(m_mapInstance2Item.find(pProductShape->getInstances().front()) == m_mapInstance2Item.end());
+			//ASSERT(m_mapInstance2Item.find(pProductShape->getInstances().front()) == m_mapInstance2Item.end());
 			m_mapInstance2Item[pProductShape->getInstances().front()] = hProductShape;
 
 			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
@@ -878,7 +897,8 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 					enumAP242ItemDataType::ProductShapeRepresentation);
 				pProductShapeData->Children().push_back(pProductShapeRepresentationData);
 
-				strName.Format(L"%s %s", ((_geometry*)pProductShapeRepresentation)->getName(), ITEM_REPRESENTATION);
+				strDisplayString = _ap_geometry::getDisplayString(pProductShapeRepresentation->getSdaiInstance(), apController->getFullDisplayName());
+				strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_REPRESENTATION);
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShapeRepresentation) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				HTREEITEM hProductShapeRepresentation = m_pTreeCtrl->InsertItem(
 					strName,
@@ -888,7 +908,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
 
-				ASSERT(m_mapInstance2Item.find(pProductShapeRepresentation->getInstances().front()) == m_mapInstance2Item.end());
+				//ASSERT(m_mapInstance2Item.find(pProductShapeRepresentation->getInstances().front()) == m_mapInstance2Item.end());
 				m_mapInstance2Item[pProductShapeRepresentation->getInstances().front()] = hProductShapeRepresentation;
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
@@ -910,7 +930,8 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 								enumAP242ItemDataType::ProductShapeRepresentationItem);
 						pProductShapeRepresentationData->Children().push_back(pProductShapeRepresentationItemData);
 
-						strName.Format(L"%s %s", apRepresentationItemInstance->getGeometry()->getName(), ITEM_ITEM);
+						strDisplayString = _ap_geometry::getDisplayString(apRepresentationItemInstance->getSdaiInstance(), apController->getFullDisplayName());
+						strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ITEM);
 						iGeometryImage = apRepresentationItemInstance->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 						HTREEITEM hProductShapeRepresentationItem = m_pTreeCtrl->InsertItem(
 							strName,
@@ -994,8 +1015,11 @@ void CAP242PModelStructureView::LoadAssembly(_ap242_model* pModel, _ap242_assemb
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	CString strName;
-	strName.Format(L"#%lld %s %s", pAssembly->getExpressID(), pAssembly->getName(), ITEM_ASSEMBLY);
+	wstring strDisplayString = _ap_geometry::getDisplayString(pAssembly->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ASSEMBLY);
 
 	int iAssemblyImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iAssemblyImage, iAssemblyImage, hParent);
@@ -1020,8 +1044,11 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	CString strName;
-	strName.Format(L"%s %s (%lld)", pInstance->getName(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
+	wstring strDisplayString = _ap_geometry::getDisplayString(pInstance->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s (%lld)", strDisplayString.c_str(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
 
 	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
 
@@ -1048,8 +1075,11 @@ void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDr
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	CString strName;
-	strName.Format(L"#%lld %s %s", pDraugthingModel->getExpressID(), pDraugthingModel->getName(), ITEM_DRAUGHTING_MODEL);
+	wstring strDisplayString = _ap_geometry::getDisplayString(pDraugthingModel->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_DRAUGHTING_MODEL);
 
 	int iImage = HasDescendantsWithGeometry(pDraugthingModel) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hDraugthingModel = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
@@ -1080,8 +1110,11 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	CString strName;
-	strName.Format(L"%s %s", ((_geometry*)pAnnotationPlane)->getName(), ITEM_ANNOTATION_PLANE);
+	wstring strDisplayString = _ap_geometry::getDisplayString(pAnnotationPlane->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ANNOTATION_PLANE);
 
 	int iImage = pAnnotationPlane->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hAnnotationPlane = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
@@ -1110,8 +1143,11 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 		return;
 	}
 
+	_ptr<_ap_controller> apController(getController());
+
 	CString strName;
-	strName.Format(L"%s %s", ((_geometry*)pDraugthingCallout)->getName(), ITEM_DRAUGHTING_CALLOUT);
+	wstring strDisplayString = _ap_geometry::getDisplayString(pDraugthingCallout->getSdaiInstance(), apController->getFullDisplayName());
+	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_DRAUGHTING_CALLOUT);
 
 	int iImage = pDraugthingCallout->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 	HTREEITEM hDraugthingCallout = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
@@ -1438,6 +1474,8 @@ void CAP242PModelStructureView::ResetView()
 		delete m_vecItemData[iItemData];
 	}
 	m_vecItemData.clear();
+
+	m_mapInstanceIterators.clear();
 	m_mapInstance2Item.clear();
 	m_hSelectedItem = nullptr;
 
