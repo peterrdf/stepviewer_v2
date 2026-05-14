@@ -447,9 +447,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 }
 
-/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, SdaiModel sdaiMultiThreadedModel/* = 0*/)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>());
+	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>(), sdaiMultiThreadedModel);
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
@@ -870,9 +870,8 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel s
 	}*/
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, sdaiMultiThreadedModel);
+	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, sdaiMultiThreadedModel);
 
-	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance);
-	cleanMemory(sdaiMultiThreadedModel, 1);
 	{
 		lock_guard<mutex> lock(m_mtxUpdateModel);
 

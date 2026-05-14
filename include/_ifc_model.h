@@ -126,7 +126,7 @@ protected: // Methods
 
 protected: // Methods
 
-    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, SdaiModel sdaiMultiThreadedModel = 0);
     virtual _ifc_instance* createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 
 private: // Methods
