@@ -283,6 +283,8 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand) {
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		retrieveGeometryRecursively(sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
@@ -330,6 +332,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 				CloseModel(owlModel);
 			}
 		}
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		TRACE(L"\n*** attachModelCore() - Load Geometries : %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 
 		getObjectsReferencedState();
 
