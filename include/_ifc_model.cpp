@@ -290,15 +290,15 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 		if (getMultiThreadedLoad()) {
-			unsigned int threadCount = thread::hardware_concurrency();
-			InitializeMultiThreading(getSdaiModel(), threadCount);
+			unsigned int threadsCount = thread::hardware_concurrency() / 2;
+			InitializeMultiThreading(getSdaiModel(), threadsCount);
 
 			double arOffset[3] = { 0., 0., 0. };
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
 			vector<OwlModel> vecOwlModels;
 			vector<SdaiModel> vecSdaiMultiThreadedModels;
-			for (unsigned int i = 0; i < threadCount; i++) {
+			for (unsigned int i = 0; i < threadsCount; i++) {
 				vecOwlModels.push_back(CreateModel());
 				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
 
@@ -306,7 +306,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			}
 
 			vector<thread> vecThreads;
-			for (unsigned int i = 0; i < threadCount; i++) {
+			for (unsigned int i = 0; i < threadsCount; i++) {
 				vecThreads.emplace_back([this, i, &vecSdaiMultiThreadedModels]() {
 					while (true) {
 						IFC_GEOMETRY geometry;
