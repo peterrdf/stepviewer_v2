@@ -4,6 +4,8 @@
 #include "_ifc_unit.h"
 #include "_ifc_property.h"
 
+#include <mutex>
+#include <thread>
 #include <string>
 #include <map>
 #include <set>
@@ -63,6 +65,16 @@ class _ifc_model_structure;
 class _ifc_model : public _ap_model
 {
 
+private: // Classes
+
+    struct IFC_GEOMETRY
+    {
+		SdaiInstance sdaiInstance = 0;
+		SdaiInteger iCircleSegments = 0;
+		bool bMappedItem = false;
+		vector<_ifc_geometry*> vecMappedGeometries;
+	};
+
 private: // Fields
 
     // Load
@@ -87,6 +99,10 @@ private: // Fields
     _ifc_model_structure* m_pModelStructure;
     _ifc_unit_provider* m_pUnitProvider;
     _ifc_property_provider* m_pPropertyProvider;
+
+    vector<IFC_GEOMETRY> m_vecGeometriesPendingLoad;
+    mutex m_mtxGeometriesPendingLoad;
+    mutex m_mtxUpdateModel;
 
     vector<pair<_instance*, STRUCT_MAPPED_ITEM*>> m_vecMappedItemPendingUpdate;
 
@@ -127,7 +143,8 @@ private: // Methods
 
     void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
     void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
-    _geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+    _geometry* loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+    _geometry* loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel sdaiMultiThreadedModel);
 
     STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
     void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);

@@ -36,7 +36,7 @@ public: // Methods
     {
         _geometry::cleanCachedGeometry();
 
-        cleanMemory(getSdaiModel(), 0);
+        //cleanMemory(getSdaiModel(), 0);
     }
 
     static OwlModel getOwlModel(SdaiModel sdaiModel)
@@ -59,6 +59,17 @@ public: // Methods
 
         OwlInstance owlInstance = 0;
         owlBuildInstance(sdaiModel, sdaiInstance, &owlInstance);
+
+        return owlInstance;
+    }
+
+    static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance, SdaiModel sdaiMultiThreadedModel)
+    {
+        assert(sdaiInstance != 0);
+		assert(sdaiMultiThreadedModel != 0);
+
+        OwlInstance owlInstance = 0;
+        owlBuildInstance(sdaiMultiThreadedModel, sdaiInstance, &owlInstance);
 
         return owlInstance;
     }
@@ -208,7 +219,7 @@ public: // Properties
                 SdaiADB adb = NULL;
                 if (sdaiGetAttr(instance, attribute, sdaiADB, &adb)) {
                     content += AdbToString(adb);
-                    sdaiDeleteADB(adb);
+                    //sdaiDeleteADB(adb); #todo
                 }
                 else {
                     SdaiString strValue = NULL;

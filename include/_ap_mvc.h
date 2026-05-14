@@ -33,6 +33,7 @@ private: // Members
     // Model
     SdaiModel m_sdaiModel;
     enumAP m_enAP;
+    bool m_bMultiThreadedLoad;
 
     // Helpers
     _entity_provider* m_pEntityProvider;
@@ -74,6 +75,10 @@ public: // Properties
     // Model
     SdaiModel getSdaiModel() const { return m_sdaiModel; }
     enumAP getAP() const { return m_enAP; }
+
+	// Multi-threaded load
+	void setMultiThreadedLoad(bool bMultiThreadedLoad) { m_bMultiThreadedLoad = bMultiThreadedLoad; }
+	bool getMultiThreadedLoad() const { return m_bMultiThreadedLoad; }
 
     // Cache	
     const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }

@@ -32,6 +32,9 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_pModelStructure(nullptr)
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
+	, m_vecGeometriesPendingLoad()
+	, m_mtxGeometriesPendingLoad()
+	, m_mtxUpdateModel()
 	, m_vecMappedItemPendingUpdate()
 {}
 
@@ -250,6 +253,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		m_pPropertyProvider = nullptr;
 	}
 
+	m_vecGeometriesPendingLoad.clear();
 	m_vecMappedItemPendingUpdate.clear();
 }
 
@@ -282,6 +286,49 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		retrieveGeometryRecursively(sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+
+		if (getMultiThreadedLoad()) {
+			unsigned int threadCount = thread::hardware_concurrency();
+			InitializeMultiThreading(getSdaiModel(), threadCount);
+
+			double arOffset[3] = { 0., 0., 0. };
+			GetVertexBufferOffset(getOwlModel(), arOffset);
+
+			vector<OwlModel> vecOwlModels;
+			vector<SdaiModel> vecSdaiMultiThreadedModels;
+			for (unsigned int i = 0; i < threadCount; i++) {
+				vecOwlModels.push_back(CreateModel());
+				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
+				vecSdaiMultiThreadedModels.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			}
+
+			vector<thread> vecThreads;
+			for (unsigned int i = 0; i < threadCount; i++) {
+				vecThreads.emplace_back([this, i, &vecSdaiMultiThreadedModels]() {
+					while (true) {
+						IFC_GEOMETRY geometry;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+							if (m_vecGeometriesPendingLoad.empty()) {
+								return;
+							}
+							geometry = m_vecGeometriesPendingLoad.back();
+							m_vecGeometriesPendingLoad.pop_back();
+						}
+						loadGeometry(geometry, vecSdaiMultiThreadedModels[i]);
+					}
+					});
+			}
+
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			for (auto& owlModel : vecOwlModels) {
+				CloseModel(owlModel);
+			}
+		}
 
 		getObjectsReferencedState();
 
@@ -655,7 +702,7 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 		SdaiInstance sdaiInstance = 0;
 		engiGetAggrElement(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
 
-		loadGeometry(szEntityName, sdaiInstance, false, iCircleSegements);
+		loadGeometry(sdaiInstance, false, iCircleSegements);
 	}
 }
 
@@ -694,17 +741,14 @@ void _ifc_model::retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiIn
 	}
 }
 
-_geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments)
+_geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments)
 {
 	auto pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr) {
 		return pGeometry;
 	}
 
-	wstring strEntity = (const wchar_t*)CA2W(szEntityName);
-	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
-
-	auto pProduct = recognizeMappedItems(sdaiInstance);
+	auto pProduct = getMultiThreadedLoad() ? nullptr : recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr) {
 		double arOffset[3] = { 0., 0., 0. };
 		GetVertexBufferOffset(getOwlModel(), arOffset);
@@ -718,7 +762,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		for (auto pMappedItem : pProduct->mappedItems) {
 			auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
 			if (pMappedGeometry == nullptr) {
-				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
+				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
 			}
 
 			vecMappedGeometries.push_back(pMappedGeometry);
@@ -755,6 +799,17 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		return pGeometry;
 	} // if (pProduct != nullptr)
 
+	if (getMultiThreadedLoad()) {
+		if (!bMappedItem && m_bUpdateVertexBuffers) {
+			OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+			if (owlInstance != 0) {
+				preLoadInstance(owlInstance);
+			}
+		}
+		m_vecGeometriesPendingLoad.push_back({ sdaiInstance, iCircleSegments, bMappedItem, vector<_ifc_geometry*>() });
+		return nullptr;
+	}
+
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (!bMappedItem && owlInstance != 0) {
 		preLoadInstance(owlInstance);
@@ -784,6 +839,52 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
 		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
+
+	return pGeometry;
+}
+
+_geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel sdaiMultiThreadedModel)
+{
+	_ifc_geometry* pGeometry = nullptr;
+	{
+		lock_guard<mutex> lock(m_mtxUpdateModel);
+
+		pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(ifcGeometry.sdaiInstance));
+	}
+	if (pGeometry != nullptr) {
+		return pGeometry;
+	}
+
+	//#todo
+	// Set up circleSegments()
+	/*if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		circleSegments(ifcGeometry.iCircleSegments, 5);
+	}*/
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, sdaiMultiThreadedModel);
+
+	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance);
+	{
+		lock_guard<mutex> lock(m_mtxUpdateModel);
+
+		addGeometry(pGeometry);
+		if (!ifcGeometry.bMappedItem) {
+			pGeometry->setDefaultShowState();
+			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setDefaultEnableState();
+			addInstance(pInstance);
+		}
+		else {
+			pGeometry->m_bIsMappedItem = true;
+			pGeometry->m_bIsReferenced = true;
+		}
+	}
+
+	//#todo
+	// Restore circleSegments()
+	/*if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+	}*/
 
 	return pGeometry;
 }
