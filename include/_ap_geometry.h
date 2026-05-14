@@ -36,7 +36,7 @@ public: // Methods
     {
         _geometry::cleanCachedGeometry();
 
-        //cleanMemory(getSdaiModel(), 0);
+        cleanMemory(getSdaiModel(), 0);
     }
 
     static OwlModel getOwlModel(SdaiModel sdaiModel)

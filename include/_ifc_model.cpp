@@ -867,6 +867,7 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel s
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, sdaiMultiThreadedModel);
 
 	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance);
+	cleanMemory(sdaiMultiThreadedModel, 1);
 	{
 		{
 			lock_guard<mutex> lock(m_mtxUpdateModel);
