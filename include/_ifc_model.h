@@ -100,7 +100,7 @@ private: // Fields
     _ifc_unit_provider* m_pUnitProvider;
     _ifc_property_provider* m_pPropertyProvider;
 
-    vector<IFC_GEOMETRY> m_vecGeometriesPendingLoad;
+    map<SdaiInstance, IFC_GEOMETRY> m_mapGeometriesPendingLoad;
     mutex m_mtxGeometriesPendingLoad;
     mutex m_mtxUpdateModel;
 

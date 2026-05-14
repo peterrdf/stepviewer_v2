@@ -32,7 +32,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_pModelStructure(nullptr)
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
-	, m_vecGeometriesPendingLoad()
+	, m_mapGeometriesPendingLoad()
 	, m_mtxGeometriesPendingLoad()
 	, m_mtxUpdateModel()
 	, m_vecMappedItemPendingUpdate()
@@ -253,7 +253,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		m_pPropertyProvider = nullptr;
 	}
 
-	m_vecGeometriesPendingLoad.clear();
+	m_mapGeometriesPendingLoad.clear();
 	m_vecMappedItemPendingUpdate.clear();
 }
 
@@ -310,11 +310,12 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 						IFC_GEOMETRY geometry;
 						{
 							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
-							if (m_vecGeometriesPendingLoad.empty()) {
+							if (m_mapGeometriesPendingLoad.empty()) {
 								return;
 							}
-							geometry = m_vecGeometriesPendingLoad.back();
-							m_vecGeometriesPendingLoad.pop_back();
+							auto it = m_mapGeometriesPendingLoad.begin();
+							geometry = it->second;
+							m_mapGeometriesPendingLoad.erase(it);
 						}
 						loadGeometry(geometry, vecSdaiMultiThreadedModels[i]);
 					}
@@ -806,7 +807,9 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 				preLoadInstance(owlInstance);
 			}
 		}
-		m_vecGeometriesPendingLoad.push_back({ sdaiInstance, iCircleSegments, bMappedItem, vector<_ifc_geometry*>() });
+		if (m_mapGeometriesPendingLoad.find(sdaiInstance) == m_mapGeometriesPendingLoad.end()) {
+			m_mapGeometriesPendingLoad[sdaiInstance] = { sdaiInstance, iCircleSegments, bMappedItem, vector<_ifc_geometry*>() };
+		}
 		return nullptr;
 	}
 
@@ -848,9 +851,9 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel s
 	_ifc_geometry* pGeometry = nullptr;
 	{
 		lock_guard<mutex> lock(m_mtxUpdateModel);
-
 		pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(ifcGeometry.sdaiInstance));
 	}
+
 	if (pGeometry != nullptr) {
 		return pGeometry;
 	}
@@ -865,14 +868,18 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel s
 
 	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance);
 	{
-		lock_guard<mutex> lock(m_mtxUpdateModel);
-
-		addGeometry(pGeometry);
+		{
+			lock_guard<mutex> lock(m_mtxUpdateModel);
+			addGeometry(pGeometry);
+		}
 		if (!ifcGeometry.bMappedItem) {
 			pGeometry->setDefaultShowState();
 			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
 			pInstance->setDefaultEnableState();
-			addInstance(pInstance);
+			{
+				lock_guard<mutex> lock(m_mtxUpdateModel);
+				addInstance(pInstance);
+			}
 		}
 		else {
 			pGeometry->m_bIsMappedItem = true;
