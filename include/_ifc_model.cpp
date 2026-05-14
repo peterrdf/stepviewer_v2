@@ -874,18 +874,14 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel s
 	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance);
 	cleanMemory(sdaiMultiThreadedModel, 1);
 	{
-		{
-			lock_guard<mutex> lock(m_mtxUpdateModel);
-			addGeometry(pGeometry);
-		}
+		lock_guard<mutex> lock(m_mtxUpdateModel);
+
+		addGeometry(pGeometry);
 		if (!ifcGeometry.bMappedItem) {
 			pGeometry->setDefaultShowState();
 			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
 			pInstance->setDefaultEnableState();
-			{
-				lock_guard<mutex> lock(m_mtxUpdateModel);
-				addInstance(pInstance);
-			}
+			addInstance(pInstance);
 		}
 		else {
 			pGeometry->m_bIsMappedItem = true;
