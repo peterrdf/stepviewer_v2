@@ -538,6 +538,15 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 					}
 					break;
 
+				case enumApplicationProperty::MultiThreadedLoad:
+					{
+						_ptr<_ap_controller> apController(getController());
+						apController->setMultiThreadedLoad(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::MultiThreadedLoad);
+					}
+					break;
+
 				case enumApplicationProperty::FullDisplayName:
 					{
 						_ptr<_ap_controller> apController(getController());
@@ -1460,6 +1469,20 @@ void CPropertiesWnd::LoadApplicationProperties()
 	} // if (pBlinnPhongProgram != nullptr)
 #pragma endregion
 
+	// Multi-threaded load
+	{
+		_ptr<_ap_controller> apController(getController());
+
+		auto pProperty = new CApplicationProperty(_T("Multi-Threaded Load"),
+			apController->getMultiThreadedLoad() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Multi-Threaded Load"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::MultiThreadedLoad));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
 #pragma region UI
 	{
 		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
@@ -1478,7 +1501,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pProperty->AllowEdit(FALSE);
 			pUI->AddSubItem(pProperty);
 		}
-	}
+	}	
 #pragma endregion // UI
 
 	m_wndPropList.AddProperty(pViewGroup);

@@ -196,6 +196,7 @@ _ap_controller* _ap_view::getAPController() const
 _ap_controller::_ap_controller()
 	: _controller()
 	, m_bFullDisplayName(true)
+	, m_bMultiThreadedLoad(false)
 {}
 
 /*virtual*/ _ap_controller::~_ap_controller()
@@ -249,6 +250,18 @@ void _ap_controller::loadSettings()
 	if (!strValue.empty()) {
 		m_bFullDisplayName = strValue == "TRUE";
 	}
+
+#ifdef _WINDOWS
+	strSettingName = typeid(this).raw_name();
+#else
+	strSettingName = typeid(this).name();
+#endif
+	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
+
+	strValue = getSettingsStorage()->getSetting(strSettingName);
+	if (!strValue.empty()) {
+		m_bMultiThreadedLoad = strValue == "TRUE";
+	}
 }
 
 void _ap_controller::setFullDisplayName(bool bFullDisplayName)
@@ -263,4 +276,18 @@ void _ap_controller::setFullDisplayName(bool bFullDisplayName)
 	strSettingName += NAMEOFVAR(m_bFullDisplayName);
 
 	getSettingsStorage()->setSetting(strSettingName, bFullDisplayName ? "TRUE" : "FALSE");
+}
+
+void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
+{
+	m_bMultiThreadedLoad = bMultiThreadedLoad;
+
+#ifdef _WINDOWS
+	string strSettingName(typeid(this).raw_name());
+#else
+	string strSettingName(typeid(this).name());
+#endif
+	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
+
+	getSettingsStorage()->setSetting(strSettingName, bMultiThreadedLoad ? "TRUE" : "FALSE");
 }

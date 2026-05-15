@@ -38,7 +38,7 @@ enum class enumApplicationProperty : int
 	RotationMode,
 	ShowCoordinateSystem,
 	CoordinateSystemType,
-	ShowNavigator,
+	ShowNavigator,	
 	PointLightingLocation,
 	AmbientLightWeighting,
 	SpecularLightWeighting,
@@ -50,6 +50,7 @@ enum class enumApplicationProperty : int
 	ShowProgressDialog,
 	VisibleValuesCountLimit,
 	ScalelAndCenterAllVisibleGeometry,
+	MultiThreadedLoad,
 	FullDisplayName,
 };
 

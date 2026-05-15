@@ -114,6 +114,7 @@ class _ap_controller : public _controller
 private: // Members
 
     bool m_bFullDisplayName;
+	bool m_bMultiThreadedLoad;
 
 public: // Methods
 
@@ -133,4 +134,6 @@ public: // Properties
 
     void setFullDisplayName(bool bFullDisplayName);
 	bool getFullDisplayName() const { return m_bFullDisplayName; }
+    void setMultiThreadedLoad(bool bMultiThreadedLoad);
+	bool getMultiThreadedLoad() const { return m_bMultiThreadedLoad; }
 };
