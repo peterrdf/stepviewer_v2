@@ -63,13 +63,13 @@ public: // Methods
         return owlInstance;
     }
 
-    static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance, SdaiModel sdaiMultiThreadedModel)
+    static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance, OwlModel owlMultiThreadedModel)
     {
         assert(sdaiInstance != 0);
-		assert(sdaiMultiThreadedModel != 0);
+		assert(owlMultiThreadedModel != 0);
 
         OwlInstance owlInstance = 0;
-        owlBuildInstance(sdaiMultiThreadedModel, sdaiInstance, &owlInstance);
+        owlBuildInstance(owlMultiThreadedModel, sdaiInstance, &owlInstance);
 
         return owlInstance;
     }

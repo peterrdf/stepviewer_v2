@@ -6,12 +6,12 @@
 using namespace std;
 
 // ************************************************************************************************
-_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, SdaiModel sdaiMultiThreadedModel/* = 0*/)
+_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, OwlModel owlMultiThreadedModel/* = 0*/)
 	: _ap_geometry(owlInstance, sdaiInstance)
 	, m_vecMappedGeometries(vecMappedGeometries)
 	, m_bIsMappedItem(false)
 	, m_bIsReferenced(false)
-	, m_sdaiMultiThreadedModel(sdaiMultiThreadedModel)
+	, m_owlMultiThreadedModel(owlMultiThreadedModel)
 {
 	if (m_vecMappedGeometries.empty()) {
 		calculate();
@@ -35,11 +35,11 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 {
 	_geometry::cleanCachedGeometry();
 
-	if (m_sdaiMultiThreadedModel != 0) {
-		cleanMemory(m_sdaiMultiThreadedModel, 1);
+	if (m_owlMultiThreadedModel != 0) {
+		cleanMemory(m_owlMultiThreadedModel, 1);
 	}
 	else {
-		cleanMemory(getSdaiModel(), 0);
+		cleanMemory(getSdaiModel(), 1);
 	}
 }
 

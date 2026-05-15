@@ -126,7 +126,7 @@ protected: // Methods
 
 protected: // Methods
 
-    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, SdaiModel sdaiMultiThreadedModel = 0);
+    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, OwlModel owlMultiThreadedModel = 0);
     virtual _ifc_instance* createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 
 private: // Methods
@@ -144,7 +144,7 @@ private: // Methods
     void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
     void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
     _geometry* loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
-    _geometry* loadGeometry(const IFC_GEOMETRY& ifcGeometry, SdaiModel sdaiMultiThreadedModel);
+    _geometry* loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel owlMultiThreadedModel);
 
     STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
     void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);
