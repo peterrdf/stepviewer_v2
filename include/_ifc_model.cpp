@@ -823,9 +823,9 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 		preLoadInstance(owlInstance);
 	}
 
-	// Set up circleSegments()
+	// Set up segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(iCircleSegments, 5);
+		setSegmentation(getSdaiModel(), iCircleSegments, 5);
 	}
 
 	pGeometry = createGeometry(owlInstance, sdaiInstance);
@@ -843,9 +843,9 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 		pGeometry->m_bIsReferenced = true;
 	}
 
-	// Restore circleSegments()
+	// Restore segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+		setSegmentation(getSdaiModel(), DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
 	return pGeometry;
@@ -863,11 +863,10 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel ow
 		return pGeometry;
 	}
 
-	//#todo
-	// Set up circleSegments()
-	/*if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(ifcGeometry.iCircleSegments, 5);
-	}*/
+	// Set up segmentation
+	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		setSegmentation(owlMultiThreadedModel, ifcGeometry.iCircleSegments, 5);
+	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, owlMultiThreadedModel);
 	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, owlMultiThreadedModel);
@@ -888,11 +887,10 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel ow
 		}
 	}
 
-	//#todo
-	// Restore circleSegments()
-	/*if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
-	}*/
+	// Restore segmentation
+	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		setSegmentation(owlMultiThreadedModel, DEFAULT_CIRCLE_SEGMENTS, 5);
+	}
 
 	return pGeometry;
 }
