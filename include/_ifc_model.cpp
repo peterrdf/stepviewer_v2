@@ -290,7 +290,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
 
 		if (getMultiThreadedLoad()) {
-			unsigned int threadsCount = thread::hardware_concurrency() / 2;
+			unsigned int threadsCount = thread::hardware_concurrency() / 4;
 			InitializeMultiThreading(getSdaiModel(), threadsCount);
 
 			double arOffset[3] = { 0., 0., 0. };
