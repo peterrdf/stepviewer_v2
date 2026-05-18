@@ -333,6 +333,8 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			}
 
 			// Load mapped items
+			SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
+
 			vecThreads.clear();
 			for (unsigned int i = 0; i < threadsCount; i++) {
 				SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
@@ -396,7 +398,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 				}
 
 				delete pProduct;
-			}		
+			}
+
+			SetVertexBufferOffset(getOwlModel(), arOffset);
 
 			for (auto& owlModel : vecOwlModels) {
 				CloseModel(owlModel);
