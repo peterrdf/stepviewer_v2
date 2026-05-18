@@ -249,7 +249,7 @@ public: // Properties
                 SdaiADB adb = NULL;
                 if (sdaiGetAggrByIndex(aggr, index, sdaiADB, &adb)) {
                     content += AdbToString(adb);
-                    sdaiDeleteADB(adb);
+                    //sdaiDeleteADB(adb); #todo
                 }
                 else {
                     SdaiString strValue = NULL;

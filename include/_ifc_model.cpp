@@ -33,8 +33,10 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_mapGeometriesPendingLoad()
+	, m_mapMappedGeometriesPendingLoad()
 	, m_mtxGeometriesPendingLoad()
 	, m_mtxUpdateModel()
+	, m_vecIfcProducts()
 	, m_vecMappedItemPendingUpdate()
 {}
 
@@ -254,6 +256,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 
 	m_mapGeometriesPendingLoad.clear();
+	m_mapMappedGeometriesPendingLoad.clear();
 	m_vecMappedItemPendingUpdate.clear();
 }
 
@@ -305,6 +308,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 				vecOwlMultiThreadedModels.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
 			}
 
+			// Load geometries
 			vector<thread> vecThreads;
 			for (unsigned int i = 0; i < threadsCount; i++) {
 				vecThreads.emplace_back([this, i, &vecOwlMultiThreadedModels]() {
@@ -315,9 +319,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 							if (m_mapGeometriesPendingLoad.empty()) {
 								return;
 							}
-							auto it = m_mapGeometriesPendingLoad.begin();
-							geometry = it->second;
-							m_mapGeometriesPendingLoad.erase(it);
+							auto itGeometry = m_mapGeometriesPendingLoad.begin();
+							geometry = itGeometry->second;
+							m_mapGeometriesPendingLoad.erase(itGeometry);
 						}
 						loadGeometry(geometry, vecOwlMultiThreadedModels[i]);
 					}
@@ -328,13 +332,79 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 				thread.join();
 			}
 
+			// Load mapped items
+			vecThreads.clear();
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
+
+				vecThreads.emplace_back([this, i, &vecOwlMultiThreadedModels]() {
+					while (true) {
+						IFC_GEOMETRY geometry;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+							if (m_mapMappedGeometriesPendingLoad.empty()) {
+								return;
+							}
+							auto itGeometry = m_mapMappedGeometriesPendingLoad.begin();
+							geometry = itGeometry->second;
+							m_mapMappedGeometriesPendingLoad.erase(itGeometry);
+						}
+						loadGeometry(geometry, vecOwlMultiThreadedModels[i]);
+					}
+					});
+			}
+
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Mapped items: post-processing
+			for (auto pProduct : m_vecIfcProducts) {
+				int64_t iParenInstanceID = _model::getNextInstanceID();
+
+				vector<_ifc_geometry*> vecMappedGeometries;
+				vector<_ifc_instance*> vecMappedInstances;
+
+				for (auto pMappedItem : pProduct->mappedItems) {
+					auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
+					assert(pMappedGeometry != nullptr);
+
+					vecMappedGeometries.push_back(pMappedGeometry);
+
+					auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, nullptr);
+					pMappedInstance->setEnable(true);
+					addInstance(pMappedInstance);
+
+					vecMappedInstances.push_back(pMappedInstance);
+
+					// Pending update
+					m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });
+				} // for (auto pMappedItem : ...
+
+				// Owner
+				auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries);
+				pGeometry->setDefaultShowState();
+				addGeometry(pGeometry);
+
+				// Owner
+				auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
+				pInstance->setDefaultEnableState();
+				addInstance(pInstance);
+
+				for (auto pMappedInstance : vecMappedInstances) {
+					pMappedInstance->m_pOwner = pInstance;
+				}
+
+				delete pProduct;
+			}		
+
 			for (auto& owlModel : vecOwlModels) {
 				CloseModel(owlModel);
 			}
 		}
 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-		TRACE(L"\n*** attachModelCore() - Load Geometries : %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 
 		getObjectsReferencedState();
 
@@ -754,8 +824,19 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 		return pGeometry;
 	}
 
-	auto pProduct = getMultiThreadedLoad() ? nullptr : recognizeMappedItems(sdaiInstance);
+	auto pProduct = recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr) {
+		if (getMultiThreadedLoad()) {
+			m_vecIfcProducts.push_back(pProduct);
+
+			for (auto pMappedItem : pProduct->mappedItems) {
+				if (m_mapMappedGeometriesPendingLoad.find(pMappedItem->ifcRepresentationInstance) == m_mapMappedGeometriesPendingLoad.end()) {
+					m_mapMappedGeometriesPendingLoad[pMappedItem->ifcRepresentationInstance] = { pMappedItem->ifcRepresentationInstance, iCircleSegments, true };
+				}
+			}
+			return nullptr;
+		}
+
 		double arOffset[3] = { 0., 0., 0. };
 		GetVertexBufferOffset(getOwlModel(), arOffset);
 		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
@@ -813,7 +894,7 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 			}
 		}
 		if (m_mapGeometriesPendingLoad.find(sdaiInstance) == m_mapGeometriesPendingLoad.end()) {
-			m_mapGeometriesPendingLoad[sdaiInstance] = { sdaiInstance, iCircleSegments, bMappedItem, vector<_ifc_geometry*>() };
+			m_mapGeometriesPendingLoad[sdaiInstance] = { sdaiInstance, iCircleSegments, false };
 		}
 		return nullptr;
 	}
@@ -853,23 +934,13 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 
 _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel owlMultiThreadedModel)
 {
-	_ifc_geometry* pGeometry = nullptr;
-	{
-		lock_guard<mutex> lock(m_mtxUpdateModel);
-		pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(ifcGeometry.sdaiInstance));
-	}
-
-	if (pGeometry != nullptr) {
-		return pGeometry;
-	}
-
 	// Set up segmentation
 	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
 		setSegmentation(owlMultiThreadedModel, ifcGeometry.iCircleSegments, 5);
 	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, owlMultiThreadedModel);
-	pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, owlMultiThreadedModel);
+	auto pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, owlMultiThreadedModel);
 
 	{
 		lock_guard<mutex> lock(m_mtxUpdateModel);

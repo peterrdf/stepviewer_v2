@@ -71,8 +71,7 @@ private: // Classes
     {
 		SdaiInstance sdaiInstance = 0;
 		SdaiInteger iCircleSegments = 0;
-		bool bMappedItem = false;
-		vector<_ifc_geometry*> vecMappedGeometries;
+        bool bMappedItem = false;
 	};
 
 private: // Fields
@@ -101,9 +100,11 @@ private: // Fields
     _ifc_property_provider* m_pPropertyProvider;
 
     map<SdaiInstance, IFC_GEOMETRY> m_mapGeometriesPendingLoad;
+    map<SdaiInstance, IFC_GEOMETRY> m_mapMappedGeometriesPendingLoad;
     mutex m_mtxGeometriesPendingLoad;
     mutex m_mtxUpdateModel;
 
+    vector< STRUCT_IFC_PRODUCT*> m_vecIfcProducts;
     vector<pair<_instance*, STRUCT_MAPPED_ITEM*>> m_vecMappedItemPendingUpdate;
 
 public: // Methods
