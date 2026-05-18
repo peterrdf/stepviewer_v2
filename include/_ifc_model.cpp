@@ -257,6 +257,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 
 	m_mapGeometriesPendingLoad.clear();
 	m_mapMappedGeometriesPendingLoad.clear();
+	m_vecIfcProducts.clear();
 	m_vecMappedItemPendingUpdate.clear();
 }
 
