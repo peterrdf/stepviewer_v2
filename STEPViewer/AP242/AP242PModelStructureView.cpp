@@ -902,7 +902,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 			iGeometryImage = pProductShape->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShape);
 
-			auto itInstanceItems = m_mapInstanceItems.find(pProductShape->getInstances().front());
+			itInstanceItems = m_mapInstanceItems.find(pProductShape->getInstances().front());
 			if (itInstanceItems != m_mapInstanceItems.end()) {
 				itInstanceItems->second.push_back(hProductShape);
 			}
@@ -928,7 +928,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
 
-				auto itInstanceItems = m_mapInstanceItems.find(pProductShapeRepresentation->getInstances().front());
+				itInstanceItems = m_mapInstanceItems.find(pProductShapeRepresentation->getInstances().front());
 				if (itInstanceItems != m_mapInstanceItems.end()) {
 					itInstanceItems->second.push_back(hProductShapeRepresentation);
 				}
@@ -965,7 +965,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 						m_pTreeCtrl->SetItemData(hProductShapeRepresentationItem, (DWORD_PTR)pProductShapeRepresentationItemData);
 						m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentationItem);
 
-						auto itInstanceItems = m_mapInstanceItems.find(apRepresentationItemInstance);
+						itInstanceItems = m_mapInstanceItems.find(apRepresentationItemInstance);
 						if (itInstanceItems != m_mapInstanceItems.end()) {
 							itInstanceItems->second.push_back(hProductShapeRepresentationItem);
 						}
