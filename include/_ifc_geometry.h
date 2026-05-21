@@ -14,7 +14,7 @@ private: // Members
     bool m_bIsMappedItem;
     bool m_bIsReferenced;
 
-    OwlModel m_multiThreadOwlModelWrapper;
+    MultiThreadOwlModelWrapper m_multiThreadOwlModelWrapper;
 
 public: // Methods
 
