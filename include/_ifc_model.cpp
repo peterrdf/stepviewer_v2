@@ -301,18 +301,18 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
 			vector<OwlModel> vecOwlModels;
-			vector<MultiThreadOwlModelWrapper> vecOwlMultiThreadedModels;
+			vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
 			for (unsigned int i = 0; i < threadsCount; i++) {
 				vecOwlModels.push_back(CreateModel());
 				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
 
-				vecOwlMultiThreadedModels.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+				vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
 			}
 
 			// Load geometries
 			vector<thread> vecThreads;
 			for (unsigned int i = 0; i < threadsCount; i++) {
-				vecThreads.emplace_back([this, i, &vecOwlMultiThreadedModels]() {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
 					while (true) {
 						IFC_GEOMETRY geometry;
 						{
@@ -324,7 +324,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 							geometry = itGeometry->second;
 							m_mapGeometriesPendingLoad.erase(itGeometry);
 						}
-						loadGeometry(geometry, vecOwlMultiThreadedModels[i]);
+						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
 					}
 					});
 			}
@@ -340,7 +340,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			for (unsigned int i = 0; i < threadsCount; i++) {
 				SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
 
-				vecThreads.emplace_back([this, i, &vecOwlMultiThreadedModels]() {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
 					while (true) {
 						IFC_GEOMETRY geometry;
 						{
@@ -352,7 +352,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 							geometry = itGeometry->second;
 							m_mapMappedGeometriesPendingLoad.erase(itGeometry);
 						}
-						loadGeometry(geometry, vecOwlMultiThreadedModels[i]);
+						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
 					}
 					});
 			}
@@ -522,9 +522,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 }
 
-/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, OwlModel owlMultiThreadedModel/* = 0*/)
+/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper/* = 0*/)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>(), owlMultiThreadedModel);
+	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>(), multiThreadOwlModelWrapper);
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
@@ -937,16 +937,15 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 	return pGeometry;
 }
 
-_geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel owlMultiThreadedModel)
+_geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
 {
 	// Set up segmentation
 	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		setSegmentation(owlMultiThreadedModel, ifcGeometry.iCircleSegments, 5);
+		setSegmentation(multiThreadOwlModelWrapper, ifcGeometry.iCircleSegments, 5);
 	}
 
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, owlMultiThreadedModel);
-	auto pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, owlMultiThreadedModel);
-
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
+	auto pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
 	{
 		lock_guard<mutex> lock(m_mtxUpdateModel);
 
@@ -965,7 +964,7 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, OwlModel ow
 
 	// Restore segmentation
 	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		setSegmentation(owlMultiThreadedModel, DEFAULT_CIRCLE_SEGMENTS, 5);
+		setSegmentation(multiThreadOwlModelWrapper, DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
 	return pGeometry;

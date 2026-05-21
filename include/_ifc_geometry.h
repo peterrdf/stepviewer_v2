@@ -14,11 +14,11 @@ private: // Members
     bool m_bIsMappedItem;
     bool m_bIsReferenced;
 
-    OwlModel m_owlMultiThreadedModel;
+    OwlModel m_multiThreadOwlModelWrapper;
 
 public: // Methods
 
-    _ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, OwlModel owlMultiThreadedModel = 0);
+    _ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper = 0);
     virtual ~_ifc_geometry();
 
 protected: // Methods
