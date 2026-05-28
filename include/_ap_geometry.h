@@ -232,7 +232,7 @@ public: // Properties
                 SdaiADB adb = NULL;
                 if (sdaiGetAttr(instance, attribute, sdaiADB, &adb)) {
                     content += AdbToString(adb);
-                    //sdaiDeleteADB(adb); #todo
+                    sdaiDeleteADB(adb);
                 }
                 else {
                     SdaiString strValue = NULL;
@@ -262,7 +262,7 @@ public: // Properties
                 SdaiADB adb = NULL;
                 if (sdaiGetAggrByIndex(aggr, index, sdaiADB, &adb)) {
                     content += AdbToString(adb);
-                    //sdaiDeleteADB(adb); #todo
+                    sdaiDeleteADB(adb);
                 }
                 else {
                     SdaiString strValue = NULL;
