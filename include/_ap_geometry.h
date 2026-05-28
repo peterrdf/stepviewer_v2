@@ -31,6 +31,9 @@ public: // Methods
     // _geometry
     virtual OwlModel getOwlModel() const override
     {
+        if (OwlInstance owlInstance = getOwlInstance())
+            return GetModel(owlInstance);
+
         return getOwlModel(getSdaiModel());
     }
 
