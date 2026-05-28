@@ -924,7 +924,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
+		return;
+	}
 
+	if (pController->getModel() == nullptr) {
 		return;
 	}
 
