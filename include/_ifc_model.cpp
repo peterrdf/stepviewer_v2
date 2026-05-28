@@ -327,10 +327,15 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
 					}
 					});
-			}
+			}			
 
 			for (auto& thread : vecThreads) {
 				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
 			}
 
 			// Load mapped items

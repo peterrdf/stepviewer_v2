@@ -22,7 +22,9 @@ public: // Methods
         , m_sdaiInstance(sdaiInstance)
 		, m_multiThreadOwlModelWrapper(multiThreadOwlModelWrapper)
     {
-        m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
+        if (multiThreadOwlModelWrapper == 0) {
+            m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
+        }        
     }
 
     virtual ~_ap_geometry()
@@ -78,6 +80,11 @@ public: // Methods
 
         return owlInstance;
     }
+
+    void loadDisplayString()
+    {
+        m_strName = m_strUniqueName = getDisplayString(getSdaiInstance());
+	}
 
     void setAPFormatSettings()
     {
