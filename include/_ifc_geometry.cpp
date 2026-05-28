@@ -6,12 +6,11 @@
 using namespace std;
 
 // ************************************************************************************************
-_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper/* = 0*/)
-	: _ap_geometry(owlInstance, sdaiInstance)
+_ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+	: _ap_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 	, m_vecMappedGeometries(vecMappedGeometries)
 	, m_bIsMappedItem(false)
 	, m_bIsReferenced(false)
-	, m_multiThreadOwlModelWrapper(multiThreadOwlModelWrapper)
 {
 	if (m_vecMappedGeometries.empty()) {
 		calculate();
@@ -28,15 +27,20 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 
 	// Extra settings
 	setFilter(getSdaiModel(), FLAGBIT(1), FLAGBIT(1));
-	setSegmentation(getSdaiModel(), 16, 0.);
+	if (getMultiThreadOwlModelWrapper() != 0) {
+		setSegmentation(getMultiThreadOwlModelWrapper(), 16, 0.);
+	}
+	else {
+		setSegmentation(getSdaiModel(), 16, 0.);
+	}
 }
 
 /*virtual*/ void _ifc_geometry::postCalculate() /*override*/
 {
 	_geometry::cleanCachedGeometry();
 
-	if (m_multiThreadOwlModelWrapper != 0) {
-		cleanMemory(m_multiThreadOwlModelWrapper, 1);
+	if (getMultiThreadOwlModelWrapper() != 0) {
+		cleanMemory(getMultiThreadOwlModelWrapper(), 1);
 	}
 	else {
 		cleanMemory(getSdaiModel(), 1);

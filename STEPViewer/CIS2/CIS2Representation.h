@@ -10,7 +10,7 @@ class CCIS2Representation
 
 public: // Methods
 	
-	CCIS2Representation(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+	CCIS2Representation(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~CCIS2Representation();
 };
 

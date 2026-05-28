@@ -26,7 +26,7 @@ private: // Members
 
 public: // Methods
 	
-	CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType);
+	CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~CCIS2Geometry();
 
 	// _geometry

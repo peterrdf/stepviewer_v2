@@ -2,8 +2,8 @@
 #include "_ap242_geometry.h"
 
 // ************************************************************************************************
-_ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap_geometry(owlInstance, sdaiInstance)
+_ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 {
     calculate();
 }

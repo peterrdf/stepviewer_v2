@@ -51,7 +51,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		preLoadInstance(owlInstance);
 	}
 
-	auto pGeometry = new _ap242_geometry(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_geometry(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
 	auto pInstance = new _ap242_instance(
@@ -153,7 +153,7 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 	assert(sdaiProductDefinitionShapeInstance != 0);
 	assert(sdaiGetInstanceType(sdaiProductDefinitionShapeInstance) == sdaiGetEntity(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE"));
 
-	auto pProductShape = new _ap242_product_shape(pProductDefinition, sdaiProductDefinitionShapeInstance);
+	auto pProductShape = new _ap242_product_shape(pProductDefinition, sdaiProductDefinitionShapeInstance, 0);
 	pProductDefinition->setProductShape(pProductShape);
 	addGeometry(pProductShape);
 
@@ -179,7 +179,7 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 			sdaiGetAttrBN(sdaiProductShapeDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiRepresentationInstance);
 			assert(sdaiRepresentationInstance != 0);
 
-			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance);
+			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance, 0);
 			pProductShape->addProductShapeRepresentation(pProductShapeRepresentation);
 			addGeometry(pProductShapeRepresentation);
 
@@ -255,7 +255,7 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
 		if (owlInstance) {
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
-				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance);
+				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
 				addGeometry(pProductShapeRepresentationItem);
 
 				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
@@ -270,7 +270,7 @@ _ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdai
 	if (!m_bLoadProductRepresentationItems) {
 		owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
 	}
-	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance);
+	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance, 0);
 	addGeometry(pGeometry);
 
 	return pGeometry;
@@ -457,7 +457,7 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
-	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
 	auto pInstance = new _ap_instance(
@@ -475,7 +475,7 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
-	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
 	auto pInstance = new _ap_instance(

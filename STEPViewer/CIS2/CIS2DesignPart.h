@@ -10,7 +10,7 @@ class CCIS2DesignPart
 
 public: // Methods
 	
-	CCIS2DesignPart(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+	CCIS2DesignPart(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~CCIS2DesignPart();
 };
 

@@ -104,13 +104,13 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	{
 		case enumCIS2GeometryType::DesignPart:
 		{
-			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance);			
+			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance, 0);			
 		}
 		break;
 
 		case enumCIS2GeometryType::Reperesentation:
 		{
-			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance);
+			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance, 0);
 		}
 		break;
 

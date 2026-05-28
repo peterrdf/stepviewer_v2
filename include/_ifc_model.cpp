@@ -385,7 +385,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 				} // for (auto pMappedItem : ...
 
 				// Owner
-				auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries);
+				auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries, 0);
 				pGeometry->setDefaultShowState();
 				addGeometry(pGeometry);
 
@@ -873,7 +873,7 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 		pProduct = nullptr;
 
 		// Owner
-		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
+		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries, 0);
 		pGeometry->setDefaultShowState();
 		addGeometry(pGeometry);
 

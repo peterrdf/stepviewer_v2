@@ -13,12 +13,14 @@ class _ap_geometry : public _geometry
 private: // Members
 
     SdaiInstance m_sdaiInstance;
+    MultiThreadOwlModelWrapper m_multiThreadOwlModelWrapper;
 
 public: // Methods
 
-    _ap_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+    _ap_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
         : _geometry(owlInstance)
         , m_sdaiInstance(sdaiInstance)
+		, m_multiThreadOwlModelWrapper(multiThreadOwlModelWrapper)
     {
         m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
     }
@@ -102,6 +104,7 @@ public: // Methods
 public: // Properties
 
     SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+    MultiThreadOwlModelWrapper getMultiThreadOwlModelWrapper() const { return m_multiThreadOwlModelWrapper; }
     ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
     SdaiModel getSdaiModel() const { return sdaiGetInstanceModel(m_sdaiInstance); }
     SdaiEntity getSdaiEntity() const { return getSdaiEntity(m_sdaiInstance); }
