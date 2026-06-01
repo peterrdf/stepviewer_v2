@@ -55,18 +55,17 @@ CController* CMySTEPViewerView::getController()
 	}
 
 	wchar_t szAppPath[_MAX_PATH];
-	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+	::GetModuleFileNameW(::GetModuleHandle(nullptr), szAppPath, _MAX_PATH);
 	fs::path pthExe = szAppPath;
 	auto pthRootFolder = pthExe.parent_path();
 	wstring strSettingsFile = pthRootFolder.wstring();
+	strSettingsFile += L"\\STEPViewer.settings";
+	pController->getSettingsStorage()->loadSettings(strSettingsFile);
 
 	switch (enAP)
 	{
 		case enumAP::STEP:
 		{
-			strSettingsFile += L"\\STEPViewer_STEP.settings";
-			pController->getSettingsStorage()->loadSettings(strSettingsFile);
-
 			m_pOpenGLView = new CAP242OpenGLView(this);
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();
@@ -75,9 +74,6 @@ CController* CMySTEPViewerView::getController()
 
 		case enumAP::IFC:
 		{
-			strSettingsFile += L"\\STEPViewer_IFC.settings";
-			pController->getSettingsStorage()->loadSettings(strSettingsFile);
-
 			m_pOpenGLView = new CIFCOpenGLView(this);
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();
@@ -86,9 +82,6 @@ CController* CMySTEPViewerView::getController()
 
 		case enumAP::CIS2:
 		{
-			strSettingsFile += L"\\STEPViewer_CIS2.settings";
-			pController->getSettingsStorage()->loadSettings(strSettingsFile);
-
 			m_pOpenGLView = new CCIS2OpenGLView(this);
 			m_pOpenGLView->setController(pController);
 			m_pOpenGLView->_load();

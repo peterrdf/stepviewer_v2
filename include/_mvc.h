@@ -304,6 +304,7 @@ public: // Methods
 	virtual void onInstancesEnabledStateChanged(_view* pSender);
 	virtual void onInstancesShowStateChanged(_view* pSender);
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+	virtual string getSettingsNamespace() const { return ""; }
 
 protected: // Methods
 

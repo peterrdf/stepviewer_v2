@@ -202,6 +202,33 @@ _ap_controller::_ap_controller()
 /*virtual*/ _ap_controller::~_ap_controller()
 {}
 
+/*virtual*/ string _ap_controller::getSettingsNamespace() const /*override*/
+{
+	string strNamespace = "STEP";
+	if (!getModels().empty()) {
+		_ptr<_ap_model> apModel(getModels().front());
+		assert(apModel);
+
+		if (apModel) {
+			switch (apModel->getAP()) {
+			case enumAP::STEP:
+				strNamespace = "STEP";
+				break;
+			case enumAP::IFC:
+				strNamespace = "IFC";
+				break;
+			case enumAP::CIS2:
+				strNamespace = "CIS2";
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		}
+	}
+	return strNamespace;
+}
+
 void _ap_controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
 {
 	auto itView = getViews().begin();
@@ -275,7 +302,7 @@ void _ap_controller::setFullDisplayName(bool bFullDisplayName)
 #endif
 	strSettingName += NAMEOFVAR(m_bFullDisplayName);
 
-	getSettingsStorage()->setSetting(strSettingName, bFullDisplayName ? "TRUE" : "FALSE");
+	getSettingsStorage()->setSetting(GLOBAL_NAMESPACE + "::" + strSettingName, bFullDisplayName ? "TRUE" : "FALSE");
 }
 
 void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
@@ -289,5 +316,5 @@ void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
 #endif
 	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
 
-	getSettingsStorage()->setSetting(strSettingName, bMultiThreadedLoad ? "TRUE" : "FALSE");
+	getSettingsStorage()->setSetting(GLOBAL_NAMESPACE + "::" + strSettingName, bMultiThreadedLoad ? "TRUE" : "FALSE");
 }

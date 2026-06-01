@@ -121,6 +121,9 @@ public: // Methods
     _ap_controller();
     virtual ~_ap_controller();
 
+	// _controller
+    virtual string getSettingsNamespace() const override;
+
     // Events
     void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
     void onViewRelations(_view* pSender, _entity* pEntity);

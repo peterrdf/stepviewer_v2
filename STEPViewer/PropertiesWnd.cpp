@@ -205,7 +205,7 @@ COLORREF CColorSelectorProperty::GetAutomaticColor() const
 		if (m_wndObjectCombo.GetCurSel() == 0) {
 			m_wndObjectCombo.SetCurSel(1 /*Properties*/);
 		}
-	} 
+	}
 	else {
 		m_wndObjectCombo.SetCurSel(0 /*Application*/);
 	}
@@ -875,7 +875,7 @@ void CPropertiesWnd::OnCalculateDerivedAttributes()
 void CPropertiesWnd::OnUpdateCalculateDerivedAttributes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_wndObjectCombo.GetCurSel() == 2/*Attributes*/);
-	pCmdUI->SetCheck((m_wndObjectCombo.GetCurSel() == 2/*Attributes*/) &&m_calculateDerivedAttributes ? 1 : 0);
+	pCmdUI->SetCheck((m_wndObjectCombo.GetCurSel() == 2/*Attributes*/) && m_calculateDerivedAttributes ? 1 : 0);
 }
 
 void CPropertiesWnd::OnFollowReference()
@@ -927,7 +927,49 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	if (pController->getModel() == nullptr) {
+#pragma region Global
+	{
+		auto pGlobalGroup = new CMFCPropertyGridProperty(_T("Global"));
+
+		// UI
+		{
+			auto pUI = new CMFCPropertyGridProperty(_T("UI"));
+			pGlobalGroup->AddSubItem(pUI);
+
+			_ptr<_ap_controller> apController(getController());
+
+			// Full Display Name
+			{
+				auto pProperty = new CApplicationProperty(_T("Full Display Name"),
+					apController->getFullDisplayName() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+					_T("Show Full Display Name"),
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::FullDisplayName));
+				pProperty->AddOption(TRUE_VALUE_PROPERTY);
+				pProperty->AddOption(FALSE_VALUE_PROPERTY);
+				pProperty->AllowEdit(FALSE);
+				pUI->AddSubItem(pProperty);
+			}
+		}
+
+		// Multi-threaded loading
+		{
+			_ptr<_ap_controller> apController(getController());
+
+			auto pProperty = new CApplicationProperty(_T("Multi-Threaded Load"),
+				apController->getMultiThreadedLoad() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Multi-Threaded Load"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::MultiThreadedLoad));
+			pProperty->AddOption(TRUE_VALUE_PROPERTY);
+			pProperty->AddOption(FALSE_VALUE_PROPERTY);
+			pProperty->AllowEdit(FALSE);
+
+			pGlobalGroup->AddSubItem(pProperty);
+		}
+
+		m_wndPropList.AddProperty(pGlobalGroup);
+	}
+#pragma endregion // Global
+
+	if (pController->getModels().empty()) {
 		return;
 	}
 
@@ -937,7 +979,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 #pragma region View
-	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));
+	CString strViewGroupName = _T("View (");
+	strViewGroupName += (const wchar_t*)CA2W(pController->getSettingsNamespace().c_str());
+	strViewGroupName += _T(")");
+	auto pViewGroup = new CMFCPropertyGridProperty(strViewGroupName);
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Ghost View"),
@@ -1077,7 +1122,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	// Background Color
 	{
 		auto pColor = pOGLRenderer->getBackgroundColor();
 		auto pProperty = new CColorSelectorProperty(L"Background Color",
@@ -1093,7 +1137,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	// Selection Material
 	{
 		auto pMaterial = pOGLRenderer->getSelectedInstanceMaterial();
 
@@ -1172,9 +1215,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pSelectedInstanceMateriaGroup);
 	}
-	// Selection Material
-
-	// Highlight Material
+	
 	{
 		auto pMaterial = pOGLRenderer->getPointedInstanceMaterial();
 
@@ -1253,8 +1294,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
 	}
-	// Highlight Material
-#pragma endregion
 
 #pragma region OpenGL
 	auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
@@ -1374,8 +1413,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().z,
 					_T("[0.0 - 1.0]"),
-						(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
-						pDiffuseLightWeighting->AddSubItem(pProperty);
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
 
 			pOpenGL->AddSubItem(pDiffuseLightWeighting);
@@ -1470,44 +1509,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 #pragma endregion
 	} // if (pBlinnPhongProgram != nullptr)
-#pragma endregion
-
-	// Multi-threaded load
-	{
-		_ptr<_ap_controller> apController(getController());
-
-		auto pProperty = new CApplicationProperty(_T("Multi-Threaded Load"),
-			apController->getMultiThreadedLoad() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Multi-Threaded Load"),
-			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::MultiThreadedLoad));
-		pProperty->AddOption(TRUE_VALUE_PROPERTY);
-		pProperty->AddOption(FALSE_VALUE_PROPERTY);
-		pProperty->AllowEdit(FALSE);
-
-		pViewGroup->AddSubItem(pProperty);
-	}
-
-#pragma region UI
-	{
-		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
-		pViewGroup->AddSubItem(pUI);
-
-		_ptr<_ap_controller> apController(getController());
-
-		// Full Display Name
-		{
-			auto pProperty = new CApplicationProperty(_T("Full Display Name"),
-				apController->getFullDisplayName() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-				_T("Show Full Display Name"),
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::FullDisplayName));
-			pProperty->AddOption(TRUE_VALUE_PROPERTY);
-			pProperty->AddOption(FALSE_VALUE_PROPERTY);
-			pProperty->AllowEdit(FALSE);
-			pUI->AddSubItem(pProperty);
-		}
-	}	
-#pragma endregion // UI
+#pragma endregion // OpenGL	
 
 	m_wndPropList.AddProperty(pViewGroup);
+#pragma endregion // View
 }
 
 void CPropertiesWnd::LoadInstanceProperties()
