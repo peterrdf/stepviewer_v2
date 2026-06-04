@@ -13,6 +13,9 @@ _ap242_model::_ap242_model(_log* pLog, bool bLoadProductRepresentationItems, boo
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_pModelStructure(nullptr)
 	, m_pPropertyProvider(nullptr)
+	, m_mapRepresentationItemsPendingLoad()
+	, m_mtxGeometriesPendingLoad()
+	, m_mtxUpdateModel()
 	, m_mapExpressID2Assembly()
 	, m_vecDraughtingModels()
 {}
@@ -83,6 +86,8 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 	}
 	m_mapExpressID2Assembly.clear();
 
+	m_mapRepresentationItemsPendingLoad.clear();
+
 	for (auto pDraughtingModel : m_vecDraughtingModels) {
 		delete pDraughtingModel;
 	}
@@ -92,11 +97,79 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 /*virtual*/ void _ap242_model::attachModelCore() /*override*/
 {
 	if (!m_bLoadInstancesOnDemand) {
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		loadProductDefinitions();
+
+		if (getMultiThreadedLoad()) {
+			unsigned int threadsCount = thread::hardware_concurrency() / 4;
+			InitializeMultiThreading(getSdaiModel(), threadsCount);
+
+			double arOffset[3] = { 0., 0., 0. };
+			GetVertexBufferOffset(getOwlModel(), arOffset);
+
+			vector<OwlModel> vecOwlModels;
+			vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecOwlModels.push_back(CreateModel());
+				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
+				vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			}
+
+			// Load geometries
+			vector<thread> vecThreads;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						AP242_REPRESENTATION_ITEM representationItem;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+							if (m_mapRepresentationItemsPendingLoad.empty()) {
+								return;
+							}
+							auto itRepresentationItem = m_mapRepresentationItemsPendingLoad.begin();
+							representationItem = itRepresentationItem->second;
+							m_mapRepresentationItemsPendingLoad.erase(itRepresentationItem);
+						}
+						
+						OwlInstance owlInstance = 0;
+						owlBuildInstanceInContext(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance, &owlInstance);
+						if (owlInstance) {
+							auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(
+								representationItem.pProductShapeRepresentation, 
+								owlInstance, 
+								representationItem.sdaiRepresentationItemInstance, 
+								vecMultiThreadOwlModelWrappers[i]);
+							{
+								lock_guard<mutex> lock(m_mtxUpdateModel);
+
+								representationItem.pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+
+								addGeometry(pProductShapeRepresentationItem);
+							}
+						}
+					}
+					});
+			}
+
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
+			}
+		}
+
 		loadAssemblies();
 		loadGeometry();
 
 		loadDraughtingModels();
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 
 		scale();
 	}
@@ -205,7 +278,7 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 	assert(sdaiRepresentationInstance != 0);
 
 	bool bAdded = false;
-	
+
 	SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
 	SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
 	if (shapeRepresentationRelationshipInstancesCnt) {
@@ -231,7 +304,7 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 			}
 		}
 	}
-	
+
 	if (!bAdded) {
 		loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 	}
@@ -251,14 +324,21 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		sdaiGetAggrByIndex(sdaiRepresentationItemsAggr, index, sdaiINSTANCE, &sdaiRepresentationItemInstance);
 		assert(sdaiRepresentationItemInstance);
 
-		OwlInstance owlInstance = 0;
-		owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
-		if (owlInstance) {
+		if (getMultiThreadedLoad()) {
+			if (m_mapRepresentationItemsPendingLoad.find(sdaiRepresentationItemInstance) == m_mapRepresentationItemsPendingLoad.end()) {
+				m_mapRepresentationItemsPendingLoad[sdaiRepresentationItemInstance] = { pProductShapeRepresentation, sdaiRepresentationInstance, sdaiRepresentationItemInstance };
+			}
+		}
+		else {
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
-				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
-				addGeometry(pProductShapeRepresentationItem);
+				OwlInstance owlInstance = 0;
+				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
+				if (owlInstance) {
+					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
+					addGeometry(pProductShapeRepresentationItem);
 
-				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+					pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+				}
 			}
 		}
 	}

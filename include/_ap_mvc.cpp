@@ -10,7 +10,7 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	: _model(pLog)
 	, m_sdaiModel(0)
 	, m_enAP(enAP)
-	, m_bMultiThreadedLoad(true)
+	, m_bMultiThreadedLoad(false)
 	, m_pEntityProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
 	, m_mapExpressID2Geometry()
@@ -273,7 +273,7 @@ void _ap_controller::loadSettings()
 #endif
 	strSettingName += NAMEOFVAR(m_bFullDisplayName);
 
-	string strValue = getSettingsStorage()->getSetting(strSettingName);
+	string strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
 	if (!strValue.empty()) {
 		m_bFullDisplayName = strValue == "TRUE";
 	}
@@ -285,7 +285,7 @@ void _ap_controller::loadSettings()
 #endif
 	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
 
-	strValue = getSettingsStorage()->getSetting(strSettingName);
+	strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
 	if (!strValue.empty()) {
 		m_bMultiThreadedLoad = strValue == "TRUE";
 	}

@@ -154,6 +154,7 @@ public: // Methods
 		else if (schemaName.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
 
 			pModel = new CCIS2Model(pController->getLog());
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 #endif // _CIS2_EXPERIMENTAL
 
@@ -162,6 +163,7 @@ public: // Methods
 		*/
 		else if (sdaiModel) {
 			pModel = new _ap242_model(pController->getLog(), true, bLoadInstancesOnDemand);
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
 		/*
