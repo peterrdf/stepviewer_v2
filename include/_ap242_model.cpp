@@ -159,7 +159,10 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 
 			// Display names
 			for (auto pGeometry : getGeometries()) {
-				_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
+				_ptr<_ap242_product_shape_representation_item> ptrProductShapeRepresentationItem(pGeometry, false);
+				if (ptrProductShapeRepresentationItem) {
+					ptrProductShapeRepresentationItem->loadDisplayString();
+				}
 			}
 		}
 
