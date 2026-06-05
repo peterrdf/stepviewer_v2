@@ -2098,14 +2098,16 @@ void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 
 void CIFCModelStructureView::ResetView()
 {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+	m_pTreeCtrl->DeleteAllItems();
+
 	for (auto pModelData : m_vecModelData) {
 		delete pModelData;
 	}
 	m_vecModelData.clear();
 
-	m_vecSelectedInstances.clear();
-
-	m_pTreeCtrl->DeleteAllItems();
+	m_vecSelectedInstances.clear();	
 
 	for (auto pModel : getController()->getModels()) {
 		if (!pModel->getEnable()) {
@@ -2114,4 +2116,7 @@ void CIFCModelStructureView::ResetView()
 
 		LoadModel(_ptr<_ifc_model>(pModel));
 	}
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** CIFCModelStructureView::ResetView(): %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 }

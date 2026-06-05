@@ -1510,6 +1510,8 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 
 void CAP242PModelStructureView::ResetView()
 {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	m_pTreeCtrl->DeleteAllItems();
 
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++) {
@@ -1524,6 +1526,9 @@ void CAP242PModelStructureView::ResetView()
 	m_pSearchDialog->Reset();
 
 	LoadModel();
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** CAP242PModelStructureView::ResetView(): %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 }
 
 // ************************************************************************************************
