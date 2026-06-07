@@ -554,7 +554,7 @@ void CRelationsView::AddInstanceAttribute(SdaiEntity sdaiEntity, SdaiInstance sd
 	auto szAttributeName = engiGetAttrName(sdaiAttribute);
 	bool bHasChildren = CreateAttributeLabel(sdaiInstance, sdaiAttribute, strLabel);
 	if (!bHasChildren) {
-		bInverse = engiGetAttrInverseBN(sdaiEntity, szAttributeName) != 0;
+		bInverse = engiIsAttrInverseBN(sdaiEntity, szAttributeName) != 0;
 	}
 
 	wstring strAttribute = CA2W(szAttributeName);
@@ -1343,7 +1343,7 @@ void CRelationsView::GetEntityHierarchy(SdaiEntity sdaiEntity, vector<wstring>& 
 	ASSERT(sdaiEntity != 0);
 
 	wstring strEntity = _entity::getName(sdaiEntity);
-	if (engiGetEntityIsAbstract(sdaiEntity)) {
+	if (engiIsEntityAbstract(sdaiEntity)) {
 		strEntity += L" (ABSTRACT)";
 	}
 
@@ -1352,7 +1352,7 @@ void CRelationsView::GetEntityHierarchy(SdaiEntity sdaiEntity, vector<wstring>& 
 	SdaiEntity sdaiParent = engiGetEntityParent(sdaiEntity);
 	while (sdaiParent != 0) {
 		strEntity = _entity::getName(sdaiParent);
-		if (engiGetEntityIsAbstract(sdaiParent)) {
+		if (engiIsEntityAbstract(sdaiParent)) {
 			strEntity += L" (ABSTRACT)";
 		}
 
@@ -1538,14 +1538,14 @@ void CRelationsView::OnTVNGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
 		auto pAttributeData = (CAttributeData*)m_treeCtrl.GetItemData(pNMTVGetInfoTip->hItem);
 		if (pAttributeData != nullptr) {
 			m_strTooltip = CA2W(pAttributeData->GetName());
-			if (engiGetAttrInverseBN(pAttributeData->GetSdaiEntity(), pAttributeData->GetName())) {
+			if (engiIsAttrInverseBN(pAttributeData->GetSdaiEntity(), pAttributeData->GetName())) {
 				m_strTooltip += L" (INVERSE)";
 			}
 
 			m_strTooltip += L"\n";
 
 			m_strTooltip += _entity::getName(pAttributeData->GetSdaiEntity());
-			if (engiGetEntityIsAbstract(pAttributeData->GetSdaiEntity())) {
+			if (engiIsEntityAbstract(pAttributeData->GetSdaiEntity())) {
 				m_strTooltip += L" (ABSTRACT)";
 			}
 		} // if (pAttributeData != nullptr)
