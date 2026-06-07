@@ -59,7 +59,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 
 	SdaiInstance sdaiIfcMapConversionInstance = 0;
-	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
+	sdaiGetAggrByIndex(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
 
 	// Default: no translation
 	double dEastings = 0.;
@@ -543,7 +543,7 @@ void _ifc_model::getObjectsReferencedState()
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
 	if (iMembersCount > 0) {
 		SdaiInstance sdaiProjectInstance = 0;
-		engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+		sdaiGetAggrByIndex(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
 		getObjectsReferencedStateIsDecomposedBy(sdaiProjectInstance);
 		getObjectsReferencedStateIsNestedBy(sdaiProjectInstance);
@@ -602,7 +602,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstan
 	SdaiInteger iIsDecomposedByMembersCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
 	for (SdaiInteger i = 0; i < iIsDecomposedByMembersCount; ++i) {
 		SdaiInstance sdaiIsDecomposedByInstance = 0;
-		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
+		sdaiGetAggrByIndex(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
 		}
@@ -613,7 +613,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstan
 		SdaiInteger iRelatedObjectsMembersCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
 		}
@@ -635,7 +635,7 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 	SdaiInteger iIsNestedByMembersCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
 	for (SdaiInteger i = 0; i < iIsNestedByMembersCount; ++i) {
 		SdaiInstance sdaiIsNestedByInstance = 0;
-		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
+		sdaiGetAggrByIndex(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
 		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity) {
 			continue;
 		}
@@ -646,7 +646,7 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 		SdaiInteger iRelatedObjectsMembersCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
 		} // for (SdaiInteger j = ...
@@ -668,7 +668,7 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInst
 	SdaiInteger iContainsElementsMembersCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsMembersCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		if (sdaiGetInstanceType(sdaiContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity) {
 			continue;
@@ -680,7 +680,7 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInst
 		SdaiInteger iRelatedElementsMembersCount = sdaiGetMemberCount(sdaiRelatedElementsAggr);
 		for (SdaiInteger j = 0; j < iRelatedElementsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
-			engiGetAggrElement(sdaiRelatedElementsAggr, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedElementsAggr, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedElementsInstance);
 		} // for (SdaiInteger j = ...
@@ -700,7 +700,7 @@ void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstan
 	SdaiInteger iContainsElementsMembersCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsMembersCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		SdaiInstance sdaiRelatingProductInstance = 0;
 		sdaiGetAttrBN(sdaiContainsElementsInstance, "RelatingProduct", sdaiINSTANCE, &sdaiRelatingProductInstance);
@@ -725,7 +725,7 @@ void _ifc_model::getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance)
 	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
 	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i) {
 		SdaiInstance sdaiBoundedByInstance = 0;
-		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+		sdaiGetAggrByIndex(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
 
 		if (sdaiIsKindOfBN(sdaiBoundedByInstance, "IFCRELSPACEBOUNDARY")) {
 			getObjectsReferencedStateRecursively(sdaiBoundedByInstance);
@@ -747,7 +747,7 @@ void _ifc_model::getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance)
 	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
 	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i) {
 		SdaiInstance sdaiHasOpeningsInstance = 0;
-		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+		sdaiGetAggrByIndex(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 
 		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
 		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
@@ -786,7 +786,7 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 
 	for (SdaiInteger i = 0; i < iMembersCount; ++i) {
 		SdaiInstance sdaiInstance = 0;
-		engiGetAggrElement(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
+		sdaiGetAggrByIndex(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
 
 		loadGeometry(sdaiInstance, false, iCircleSegements);
 	}
@@ -1003,8 +1003,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	SdaiInstance	ifcCartesianTransformationOperatorInstance = 0;
 	sdaiGetAttrBN(ifcMappedItemInstance, "MappingTarget", sdaiINSTANCE, &ifcCartesianTransformationOperatorInstance);
 
-	OwlInstance		owlInstanceCartesianTransformationOperatorMatrix = 0;
-	owlBuildInstance(getSdaiModel(), ifcCartesianTransformationOperatorInstance, &owlInstanceCartesianTransformationOperatorMatrix);
+	OwlInstance		owlInstanceCartesianTransformationOperatorMatrix = owlBuildInstanceMT(ifcCartesianTransformationOperatorInstance);
 
 	if (GetInstanceClass(owlInstanceCartesianTransformationOperatorMatrix) == GetClassByName(getOwlModel(), "Transformation"))
 		owlInstanceCartesianTransformationOperatorMatrix = GetObjectProperty(owlInstanceCartesianTransformationOperatorMatrix, GetPropertyByName(getOwlModel(), "matrix"));
@@ -1013,8 +1012,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	SdaiInstance	ifcAxis2PlacementInstance = 0;
 	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappingOrigin", sdaiINSTANCE, &ifcAxis2PlacementInstance);
 
-	OwlInstance		owlInstanceAxis2PlacementMatrix = 0;
-	owlBuildInstance(getSdaiModel(), ifcAxis2PlacementInstance, &owlInstanceAxis2PlacementMatrix);
+	OwlInstance		owlInstanceAxis2PlacementMatrix = owlBuildInstanceMT(ifcAxis2PlacementInstance);
 	assert((owlInstanceAxis2PlacementMatrix && GetInstanceClass(owlInstanceAxis2PlacementMatrix) == GetClassByName(getOwlModel(), "Matrix")) ||
 		!owlInstanceAxis2PlacementMatrix);
 
@@ -1117,8 +1115,7 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 		SdaiInstance	ifcObjectPlacementInstance = 0;
 		sdaiGetAttrBN(ifcProductInstance, "ObjectPlacement", sdaiINSTANCE, &ifcObjectPlacementInstance);
 
-		OwlInstance		owlInstanceObjectPlacementMatrix = 0;
-		owlBuildInstance(getSdaiModel(), ifcObjectPlacementInstance, &owlInstanceObjectPlacementMatrix);
+		OwlInstance		owlInstanceObjectPlacementMatrix = owlBuildInstanceMT(ifcObjectPlacementInstance);
 
 		assert(GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "Matrix") ||
 			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "InverseMatrix") ||

@@ -133,8 +133,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							m_mapRepresentationItemsPendingLoad.erase(itRepresentationItem);
 						}
 						
-						OwlInstance owlInstance = 0;
-						owlBuildInstanceInContext(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance, &owlInstance);
+						OwlInstance owlInstance = owlBuildInstanceInContextMT(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance);
 						if (owlInstance) {
 							auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(
 								representationItem.pProductShapeRepresentation, 
@@ -334,8 +333,7 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		}
 		else {
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
-				OwlInstance owlInstance = 0;
-				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
+				OwlInstance owlInstance = owlBuildInstanceInContextMT(sdaiRepresentationItemInstance, sdaiRepresentationInstance);
 				if (owlInstance) {
 					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
 					addGeometry(pProductShapeRepresentationItem);
@@ -437,8 +435,7 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 		auto pAssembly = itExpressID2Assembly->second;
 
 		if (pAssembly->getRelatingProductDefinition() == pProductDefinition) {
-			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(getSdaiModel(), internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->getExpressID()), &owlInstanceMatrix);
+			int64_t	owlInstanceMatrix = owlBuildInstanceMT(internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->getExpressID()));
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) {
 				owlInstanceMatrix = _model::getInstanceObjectProperty(owlInstanceMatrix, "matrix");

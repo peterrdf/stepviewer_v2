@@ -61,11 +61,7 @@ public: // Methods
     {
         assert(sdaiInstance != 0);
 
-        SdaiModel sdaiModel = sdaiGetInstanceModel(sdaiInstance);
-        assert(sdaiModel != 0);
-
-        OwlInstance owlInstance = 0;
-        owlBuildInstance(sdaiModel, sdaiInstance, &owlInstance);
+        OwlInstance owlInstance = owlBuildInstanceMT(sdaiInstance);
 
         return owlInstance;
     }
@@ -75,8 +71,7 @@ public: // Methods
         assert(sdaiInstance != 0);
 		assert(multiThreadOwlModelWrapper != 0);
 
-        OwlInstance owlInstance = 0;
-        owlBuildInstance(multiThreadOwlModelWrapper, sdaiInstance, &owlInstance);
+        OwlInstance owlInstance = owlBuildInstanceMT(sdaiInstance, multiThreadOwlModelWrapper);
 
         return owlInstance;
     }
