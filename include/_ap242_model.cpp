@@ -133,7 +133,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							m_mapRepresentationItemsPendingLoad.erase(itRepresentationItem);
 						}
 						
-						OwlInstance owlInstance = owlBuildInstanceInContextMT(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance);
+						OwlInstance owlInstance = owlBuildInstanceInContextMT(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance, vecMultiThreadOwlModelWrappers[i]);
 						if (owlInstance) {
 							auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(
 								representationItem.pProductShapeRepresentation, 
