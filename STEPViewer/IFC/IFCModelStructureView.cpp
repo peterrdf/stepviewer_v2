@@ -1093,7 +1093,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
 	if (iProjectInstancesCount > 0) {
 		SdaiInstance sdaiProjectInstance = 0;
-		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+		sdaiGetAggrByIndex(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
 		// Load
 		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
@@ -1175,7 +1175,7 @@ void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance
 	SdaiInteger iIsDecomposedByInstancesCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
 	for (SdaiInteger i = 0; i < iIsDecomposedByInstancesCount; ++i) {
 		SdaiInstance sdaiIsDecomposedByInstance = 0;
-		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
+		sdaiGetAggrByIndex(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
@@ -1196,7 +1196,7 @@ void CIFCModelStructureView::LoadIsDecomposedBy(_ifc_model* pModel, SdaiInstance
 		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			LoadInstance(pModel, sdaiRelatedObjectsInstance, hDecomposition, mapItems);
 		}
@@ -1223,7 +1223,7 @@ void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sda
 	SdaiInteger sdaiIsNestedByInstancesCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
 	for (SdaiInteger i = 0; i < sdaiIsNestedByInstancesCount; ++i) {
 		SdaiInstance sdaiIsNestedByInstance = 0;
-		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
+		sdaiGetAggrByIndex(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
 
 		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity) {
 			continue;
@@ -1244,7 +1244,7 @@ void CIFCModelStructureView::LoadIsNestedBy(_ifc_model* pModel, SdaiInstance sda
 		SdaiInteger sdaiRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < sdaiRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			LoadInstance(pModel, sdaiRelatedObjectsInstance, hDecomposition, mapItems);
 		}
@@ -1271,7 +1271,7 @@ void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstan
 	SdaiInteger iContainsElementsInstancesCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsInstancesCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		if (sdaiGetInstanceType(sdaiContainsElementsInstance) != sdaiRelContainedInSpatialStructureEntity) {
 			continue;
@@ -1292,7 +1292,7 @@ void CIFCModelStructureView::LoadContainsElements(_ifc_model* pModel, SdaiInstan
 		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(sdaiRelatedElementsInstances);
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
-			engiGetAggrElement(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			LoadInstance(pModel, sdaiRelatedElementsInstance, hContains, mapItems);
 		}
@@ -1319,7 +1319,7 @@ void CIFCModelStructureView::LoadBoundedBy(_ifc_model* pModel, SdaiInstance sdai
 	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
 	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i) {
 		SdaiInstance sdaiBoundedByInstance = 0;
-		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+		sdaiGetAggrByIndex(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
 
 		if (sdaiGetInstanceType(sdaiBoundedByInstance) != sdaiRelSpaceBoundaryEntity) {
 			continue;
@@ -1343,7 +1343,7 @@ void CIFCModelStructureView::LoadHasOpenings(_ifc_model* pModel, SdaiInstance sd
 	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
 	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i) {
 		SdaiInstance sdaiHasOpeningsInstance = 0;
-		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+		sdaiGetAggrByIndex(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 
 		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
 		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
