@@ -33,11 +33,13 @@ private: // Classes
 
     struct AP242_ANNOTATION_PLANE
     {
+        _ap242_draughting_model* pDraughtingModel = nullptr;
         SdaiInstance sdaiInstance = 0;
     };
 
     struct AP242_DRAUGHTING_CALLOUT
     {
+        _ap242_draughting_model* pDraughtingModel = nullptr;
         SdaiInstance sdaiInstance = 0;
     };
 
@@ -88,8 +90,8 @@ private: // Methods
     void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
 
     void loadDraughtingModels();
-    _ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
-    _ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);
+    _ap242_annotation_plane* loadAnnotationPlane(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance);
+    _ap242_draughting_callout* loadDraughtingCallout(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance);
 
     void save(const wchar_t* szPath);
 

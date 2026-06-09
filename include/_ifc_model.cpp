@@ -329,6 +329,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 					});
 			}			
 
+			// Wait for threads to end
 			for (auto& thread : vecThreads) {
 				thread.join();
 			}
@@ -362,6 +363,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 					});
 			}
 
+			// Wait for threads to end
 			for (auto& thread : vecThreads) {
 				thread.join();
 			}
