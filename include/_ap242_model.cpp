@@ -376,16 +376,17 @@ _ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance sdaiP
 		return apProductDefinition;
 	} // if (pGeometry != nullptr)
 
-	auto pDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
+	auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
+	
 	if (bRelatingProduct) {
-		pDefinition->m_iRelatingProducts++;
+		pProductDefinition->m_iRelatingProducts++;
 	}
 
 	if (bRelatedProduct) {
-		pDefinition->m_iRelatedProducts++;
+		pProductDefinition->m_iRelatedProducts++;
 	}
 
-	return pDefinition;
+	return pProductDefinition;
 }
 
 void _ap242_model::loadAssemblies()
@@ -479,7 +480,7 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 		pParentMatrix));
 
 	// Create instances for product shape representation items
-	if (m_bLoadProductRepresentationItems) {
+	if (m_bLoadProductRepresentationItems && (pProductDefinition->getProductShape() != nullptr)) {
 		for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
 			for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 				addInstance(new _ap242_product_shape_representation_item_instance(
