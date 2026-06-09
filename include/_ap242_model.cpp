@@ -552,7 +552,7 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
-	auto pInstance = new _ap_instance(
+	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);
@@ -577,7 +577,7 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
-	auto pInstance = new _ap_instance(
+	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);
