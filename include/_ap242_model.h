@@ -31,6 +31,16 @@ private: // Classes
         SdaiInstance sdaiRepresentationItemInstance = 0;
     };
 
+    struct AP242_ANNOTATION_PLANE
+    {
+        SdaiInstance sdaiInstance = 0;
+    };
+
+    struct AP242_DRAUGHTING_CALLOUT
+    {
+        SdaiInstance sdaiInstance = 0;
+    };
+
 private: // Members
 
     bool m_bLoadProductRepresentationItems;
@@ -40,6 +50,8 @@ private: // Members
     _ap242_property_provider* m_pPropertyProvider;
 
 	map <SdaiInstance, AP242_REPRESENTATION_ITEM> m_mapRepresentationItemsPendingLoad; // SDAI Instance : Representation Item
+	map<SdaiInstance, AP242_ANNOTATION_PLANE> m_mapAnnotationPlanesPendingLoad; // SDAI Instance : Annotation Plane
+	map<SdaiInstance, AP242_DRAUGHTING_CALLOUT> m_mapDraughtingCalloutsPendingLoad; // SDAI Instance : Draughting Callout
     mutex m_mtxGeometriesPendingLoad;
     mutex m_mtxUpdateModel;
 

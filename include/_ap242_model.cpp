@@ -14,6 +14,8 @@ _ap242_model::_ap242_model(_log* pLog, bool bLoadProductRepresentationItems, boo
 	, m_pModelStructure(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_mapRepresentationItemsPendingLoad()
+	, m_mapAnnotationPlanesPendingLoad()
+	, m_mapDraughtingCalloutsPendingLoad()
 	, m_mtxGeometriesPendingLoad()
 	, m_mtxUpdateModel()
 	, m_mapExpressID2Assembly()
@@ -100,6 +102,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 		loadProductDefinitions();
+		loadDraughtingModels();
 
 		if (getMultiThreadedLoad()) {
 			unsigned int threadsCount = thread::hardware_concurrency() / 4;
@@ -162,13 +165,13 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 				if (ptrProductShapeRepresentationItem) {
 					ptrProductShapeRepresentationItem->loadDisplayString();
 				}
-			}
+			}			
+
+			// Load Annotation Planes
 		}
 
 		loadAssemblies();
-		loadGeometry();
-
-		loadDraughtingModels();
+		loadGeometry();		
 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
@@ -537,6 +540,13 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 {
 	assert(sdaiInstance != 0);
 
+	if (getMultiThreadedLoad()) {
+		if (m_mapAnnotationPlanesPendingLoad.find(sdaiInstance) == m_mapAnnotationPlanesPendingLoad.end()) {
+			m_mapAnnotationPlanesPendingLoad[sdaiInstance] = { sdaiInstance };
+		}
+		return nullptr;
+	}
+
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
 	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance, 0);
@@ -554,6 +564,13 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdaiInstance)
 {
 	assert(sdaiInstance != 0);
+
+	if (getMultiThreadedLoad()) {
+		if (m_mapDraughtingCalloutsPendingLoad.find(sdaiInstance) == m_mapDraughtingCalloutsPendingLoad.end()) {
+			m_mapDraughtingCalloutsPendingLoad[sdaiInstance] = { sdaiInstance };
+		}
+		return nullptr;
+	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
