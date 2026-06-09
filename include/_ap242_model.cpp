@@ -333,7 +333,8 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		}
 		else {
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
-				OwlInstance owlInstance = owlBuildInstanceInContextMT(sdaiRepresentationItemInstance, sdaiRepresentationInstance);
+				OwlInstance owlInstance = 0;
+				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
 				if (owlInstance) {
 					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
 					addGeometry(pProductShapeRepresentationItem);

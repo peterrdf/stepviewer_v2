@@ -7304,6 +7304,18 @@ void						DECL STDC	setBRepProperties(
 												double					epsilon,
 												int_t					maxVerticesSize
 											);
+/*
+void						DECL STDC	getSchemaRecognition(
+												SdaiModel				model,
+												char					** schemaName,
+												bool					* loadedEmbeddedSchema
+											);
+
+void						DECL STDC	getSchemaRecognitionW(
+												SdaiModel				model,
+												wchar_t					** schemaName,
+												bool					* loadedEmbeddedSchema
+											);	//	*/
 
 //
 //		cleanMemory                                             (https://rdf.bg/ifcdoc/CP64/cleanMemory.html)
@@ -8116,6 +8128,30 @@ void						DECL STDC	owlGetModel(
 												OwlModel				* owlModel
 											);
 
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	OwlModel	owlGetModel(
+									SdaiModel				model
+								)
+{
+	OwlModel	owlModel = 0;
+
+	owlGetModel(
+					model,
+					&owlModel
+				);
+
+	return owlModel;
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
 //
 //		owlConnectModel                                         (https://rdf.bg/ifcdoc/CP64/owlConnectModel.html)
 //				SdaiModel				model								IN
@@ -8190,6 +8226,11 @@ void						DECL STDC	owlBuildInstance(
 												OwlInstance				* owlInstance
 											);
 
+OwlInstance					DECL STDC	owlBuildInstanceMT(
+												SdaiInstance			instance,
+												SdaiModel				model				= 0
+											);
+
 //
 //		owlBuildInstanceInContext                               (https://rdf.bg/ifcdoc/CP64/owlBuildInstanceInContext.html)
 //				SdaiInstance			instanceBase						IN
@@ -8209,6 +8250,12 @@ void						DECL STDC	owlBuildInstanceInContext(
 												SdaiInstance			instanceBase,
 												SdaiInstance			instanceContext,
 												OwlInstance				* owlInstance
+											);
+
+OwlInstance					DECL STDC	owlBuildInstanceInContextMT(
+												SdaiInstance			instanceBase,
+												SdaiInstance			instanceContext,
+												SdaiModel				model				= 0
 											);
 
 //
