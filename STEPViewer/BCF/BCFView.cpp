@@ -613,7 +613,7 @@ _model* CBCFView::GetBimModel(BCFBimFile& file)
 			}
 
 			if (fs::exists(ToUTF8(path))) {
-				model = _ap_model_factory::load(m_doc.getLog(), path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
+				model = _ap_model_factory::load(&m_doc, path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
 				//model may be NULL, assume message was shown while load
 				if (model) {
 					_ptr<_ap_model> apModel(model);

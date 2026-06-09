@@ -2568,7 +2568,7 @@ namespace _ap2gltf
 			SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
 			if (iMembersCount > 0) {
 				SdaiInstance sdaiProjectInstance = 0;
-				engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+				sdaiGetAggrByIndex(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiUNICODE, &szProjectGlobalId);
 				assert(szProjectGlobalId != nullptr);
 			}

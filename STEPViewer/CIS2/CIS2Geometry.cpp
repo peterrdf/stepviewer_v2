@@ -2,8 +2,8 @@
 #include "CIS2Geometry.h"
 
 // ************************************************************************************************
-CCIS2Geometry::CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType)
-	: _ap_geometry(owlInstance, sdaiInstance)
+CCIS2Geometry::CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, enumCIS2GeometryType enCIS2GeometryType, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+	: _ap_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 	, m_enCIS2GeometryType(enCIS2GeometryType)
 {
 	calculate();

@@ -718,7 +718,7 @@ void CCIS2ModelStructureView::LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstanc
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
 	{
 		SdaiInstance iIFCIsDecomposedByInstance = 0;
-		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+		sdaiGetAggrByIndex(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelAggregatesEntity)
 		{
@@ -745,7 +745,7 @@ void CCIS2ModelStructureView::LoadIsDecomposedBy(CCIS2Model* pModel, SdaiInstanc
 		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
 		{
 			SdaiInstance iIFCRelatedObjectsInstance = 0;
-			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+			sdaiGetAggrByIndex(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
 			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
 		}
@@ -774,7 +774,7 @@ void CCIS2ModelStructureView::LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iI
 	for (SdaiInteger i = 0; i < iIFCIsDecomposedByInstancesCount; ++i)
 	{
 		SdaiInstance iIFCIsDecomposedByInstance = 0;
-		engiGetAggrElement(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
+		sdaiGetAggrByIndex(piIsDecomposedByInstances, i, sdaiINSTANCE, &iIFCIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(iIFCIsDecomposedByInstance) != iIFCRelNestsEntity)
 		{
@@ -801,7 +801,7 @@ void CCIS2ModelStructureView::LoadIsNestedBy(CCIS2Model* pModel, SdaiInstance iI
 		for (SdaiInteger j = 0; j < iIFCRelatedObjectsInstancesCount; ++j)
 		{
 			SdaiInstance iIFCRelatedObjectsInstance = 0;
-			engiGetAggrElement(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
+			sdaiGetAggrByIndex(piIFCRelatedObjectsInstances, j, sdaiINSTANCE, &iIFCRelatedObjectsInstance);
 
 			LoadInstance(pModel, iIFCRelatedObjectsInstance, hDecomposition);
 		}
@@ -831,7 +831,7 @@ void CCIS2ModelStructureView::LoadContainsElements(CCIS2Model* pModel, SdaiInsta
 	for (SdaiInteger i = 0; i < iIFCContainsElementsInstancesCount; ++i)
 	{
 		SdaiInstance iIFCContainsElementsInstance = 0;
-		engiGetAggrElement(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
+		sdaiGetAggrByIndex(piContainsElementsInstances, i, sdaiINSTANCE, &iIFCContainsElementsInstance);
 
 		if (sdaiGetInstanceType(iIFCContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity)
 		{
@@ -858,7 +858,7 @@ void CCIS2ModelStructureView::LoadContainsElements(CCIS2Model* pModel, SdaiInsta
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j)
 		{
 			SdaiInstance iIFCRelatedElementsInstance = 0;
-			engiGetAggrElement(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
+			sdaiGetAggrByIndex(piIFCRelatedElementsInstances, j, sdaiINSTANCE, &iIFCRelatedElementsInstance);
 
 			LoadInstance(pModel, iIFCRelatedElementsInstance, hContains);
 		}

@@ -14,7 +14,7 @@ CController::CController()
 	auto pthRootFolder = pthExe.parent_path();
 
 	wstring strSettingsFile = pthRootFolder.wstring();
-	strSettingsFile += L"\\STEPViewer_STEP.settings";
+	strSettingsFile += L"\\STEPViewer.settings";
 
 	getSettingsStorage()->loadSettings(strSettingsFile);
 

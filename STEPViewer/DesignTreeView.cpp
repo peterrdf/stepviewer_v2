@@ -629,8 +629,7 @@ void CDesignTreeView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 		ASSERT(itInstances != m_mapSelectedInstances.end());
 
 		for (auto sdaiInstance : itInstances->second) {
-			OwlInstance owlInstance = 0;
-			owlBuildInstance(itInstances->first->getSdaiModel(), sdaiInstance, &owlInstance);
+			OwlInstance owlInstance = owlBuildInstanceMT(sdaiInstance);
 
 			if (owlInstance == 0) {
 				continue;

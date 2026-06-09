@@ -94,23 +94,23 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 		preLoadInstance(owlInstance);
 	}
 
-	// Set up circleSegments()
+	// Set up segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
 	{
-		circleSegments(iCircleSegments, 5);
+		setSegmentation(getSdaiModel(), iCircleSegments, 5);
 	}
 
 	switch (enCIS2GeometryType)
 	{
 		case enumCIS2GeometryType::DesignPart:
 		{
-			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance);			
+			pGeometry = new CCIS2DesignPart(owlInstance, sdaiInstance, 0);			
 		}
 		break;
 
 		case enumCIS2GeometryType::Reperesentation:
 		{
-			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance);
+			pGeometry = new CCIS2Representation(owlInstance, sdaiInstance, 0);
 		}
 		break;
 
@@ -126,10 +126,10 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	auto pInstance = new CCIS2Instance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
-	// Restore circleSegments()
+	// Restore segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
 	{
-		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+		setSegmentation(getSdaiModel(), DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
 	return pGeometry;
