@@ -196,12 +196,13 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							lock_guard<mutex> lock(m_mtxUpdateModel);
 
 							addGeometry(pGeometry);
+							annotationPlane.pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
+
 							auto pInstance = new _ap242_instance(
 								_model::getNextInstanceID(),
 								pGeometry,
 								nullptr);
-							addInstance(pInstance);
-							annotationPlane.pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
+							addInstance(pInstance);							
 						}
 					}
 					});
@@ -244,12 +245,13 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							lock_guard<mutex> lock(m_mtxUpdateModel);
 
 							addGeometry(pGeometry);
+							draughtingCallout.pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
+
 							auto pInstance = new _ap242_instance(
 								_model::getNextInstanceID(),
 								pGeometry,
 								nullptr);
-							addInstance(pInstance);
-							draughtingCallout.pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
+							addInstance(pInstance);							
 						}
 					}
 					});
@@ -655,14 +657,13 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(_ap242_draughting_mod
 
 	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
+	pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
 
 	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);
 	addInstance(pInstance);
-
-	pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
 
 	return pGeometry;
 }
@@ -683,14 +684,13 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(_ap242_draughting
 
 	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
+	pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
 
 	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);
 	addInstance(pInstance);
-
-	pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
 
 	return pGeometry;
 }
