@@ -16,6 +16,9 @@ using namespace RDF::IDS;
 
 #include <regex>
 
+#include <climits>
+#include <cfloat>
+
 /// <summary>
 /// 
 /// </summary>
@@ -66,7 +69,7 @@ using namespace RDF::IDS;
             }
 
 #define END_CHILDREN \
-            else { ctx.LogMsg(MsgLevel::Warning, "Unknown child element <%s> in " __FUNCTION__, tag.c_str()); } } }
+            else { ctx.LogMsg(MsgLevel::Warning, "Unknown child element <%s> in %s", tag.c_str(), __FUNCTION__); } } }
 
 
 /// <summary>
@@ -300,7 +303,11 @@ private:
 /// </summary>
 static int StrICmp(const char* s1, const char* s2)
 {
+#ifdef _WINDOWS
     return _stricmp(s1, s2);
+#else
+    return strcasecmp(s1, s2);
+#endif
 }
 
 /// <summary>
@@ -363,7 +370,7 @@ static Cardinality GetCardinality(
         return Cardinality::Required;
     }
 
-    SdaiInteger max_ = MAXINT;
+    SdaiInteger max_ = INT_MAX;
     const char* max__ = nullptr;
     maxOccur.Get(&max__);
     if (*max__) {
@@ -3015,7 +3022,7 @@ void MultiTypeValueCache::Get(SdaiInteger* pval)
         m_iVal = strtol(m_strVal.c_str(), &end, 10);
 
         if (!end || *end) {
-            m_iVal = MAXLONG;
+            m_iVal = LONG_MAX;
         }
     }
     

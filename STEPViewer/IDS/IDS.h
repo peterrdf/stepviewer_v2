@@ -493,7 +493,7 @@ namespace RDF
         class Console
         {
         public:
-            virtual void out(const char* sz) = NULL;
+            virtual void out(const char* sz) = 0;
         };
 
         /// <summary>
