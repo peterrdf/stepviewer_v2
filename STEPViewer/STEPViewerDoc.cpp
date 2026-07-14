@@ -124,7 +124,10 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 			vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
 		}
 		else {
-			vecModels.push_back(_ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false));
+			auto pModel = _ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false);
+			if (pModel) {
+				vecModels.push_back(pModel);
+			}
 		}
 
 		if (!vecModels.empty()) {
