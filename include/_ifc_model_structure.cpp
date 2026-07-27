@@ -372,8 +372,9 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sda
 		assert(pGeometry->getInstances().size() == 1);
 
 		_ifc_node* pInstanceNode = new _ifc_node(sdaiInstance, pParentNode);
-		assert(m_mapInstance2Node.find(sdaiInstance) == m_mapInstance2Node.end());
-		m_mapInstance2Node[sdaiInstance] = pInstanceNode;
+		if (m_mapInstance2Node.find(sdaiInstance) == m_mapInstance2Node.end()) {
+			m_mapInstance2Node[sdaiInstance] = pInstanceNode;
+		}
 
 		pParentNode->children().push_back(pInstanceNode);
 
