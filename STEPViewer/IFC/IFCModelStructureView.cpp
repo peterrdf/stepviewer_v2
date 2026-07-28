@@ -549,13 +549,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	* TVHT_ONITEMLABEL
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL)) {
-		auto pSelectedInstance = m_pTreeCtrl->GetItemData(hItem) != NULL ?
-			(_ifc_instance*)m_pTreeCtrl->GetItemData(hItem) :
+		auto pSelectedNode = m_pTreeCtrl->GetItemData(hItem) != NULL ?
+			(_ifc_node*)m_pTreeCtrl->GetItemData(hItem) :
 			nullptr;
 
 		pController->selectInstance(
 			this,
-			pSelectedInstance,
+			pSelectedNode->getIfcInstance(),
 			GetKeyState(VK_CONTROL) & 0x8000);
 	}
 }
@@ -571,10 +571,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	auto pIfcNode = (_ifc_node*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
-	ASSERT(pIfcNode != nullptr);
+	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
+	ASSERT(pNode != nullptr);
 
-	auto pIfcInstance = pIfcNode->getIfcInstance();
+	auto pIfcInstance = pNode->getIfcInstance();
 
 	// Geometry
 	if (pIfcInstance != nullptr) {
@@ -593,7 +593,12 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 	_ptr<_ap_controller> apController(getController());
 
-	for (auto pChildNode : pIfcNode->children()) {
+	auto pModelData = Model_GetData(pNMTreeView->itemNew.hItem);
+	ASSERT(pModelData != nullptr);
+
+	ITEMS& mapItems = pModelData->GetItems(pNMTreeView->itemNew.hItem);
+
+	for (auto pChildNode : pNode->children()) {
 		auto pChildIfcInstance = pChildNode->getIfcInstance();
 
 		wstring strItemName;
@@ -614,6 +619,14 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		tvInsertStruct.item.lParam = (LPARAM)pChildNode;
 		tvInsertStruct.item.cChildren = (pChildNode->children().size() > 0 || pChildIfcInstance != nullptr) ? 1 : 0;
 		HTREEITEM hChildItem = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		auto itItems = mapItems.find(pChildIfcInstance);
+		if (itItems != mapItems.end()) {
+			itItems->second.push_back(hChildItem);
+		}
+		else {
+			mapItems[pChildIfcInstance] = vector<HTREEITEM>{ hChildItem };
+		}
 
 		// Show
 		if (pChildIfcInstance != nullptr) {
@@ -645,8 +658,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}
 
-	auto pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
-	if (pInstance == nullptr) {
+	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+	if (pNode == nullptr) {
 		return false;
 	}
 
@@ -655,7 +668,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}
 
-	return find(vecSelectedInstances.begin(), vecSelectedInstances.end(), pInstance) != vecSelectedInstances.end();
+	return find(vecSelectedInstances.begin(), vecSelectedInstances.end(), pNode->getIfcInstance()) != vecSelectedInstances.end();
 }
 
 /*virtual*/ CTreeCtrlEx* CIFCModelStructureView::GetTreeView() /*override*/
