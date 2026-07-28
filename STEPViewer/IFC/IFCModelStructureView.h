@@ -11,6 +11,7 @@ using namespace std;
 
 // ************************************************************************************************
 class _ifc_model;
+class _ifc_model_structure;
 
 // ************************************************************************************************
 // IFC Model Structure
@@ -32,6 +33,7 @@ private: // Classes
 	private: // Members
 
 		_ifc_model* m_pModel;
+		_ifc_model_structure* m_pModelStructure;
 
 		CTreeCtrlEx* m_pTreeCtrl;
 		HTREEITEM m_hModel;
@@ -59,6 +61,7 @@ private: // Classes
 	public: // Properties
 
 		_ifc_model* GetModel() const { return m_pModel; }
+		_ifc_model_structure* GetModelStructure() const { return m_pModelStructure; }
 
 		HTREEITEM GetModelItem() const;
 		void SetProjectItem(HTREEITEM hItem);

@@ -17,18 +17,19 @@ class _ifc_node
 
 private: // Members
 
-	SdaiInstance m_sdaiInstance;
+	_ifc_instance* m_pIfcInstance;
 	_ifc_node* m_pParent;
 	std::vector<_ifc_node*> m_vecChildren;
 
 public: // Methods
 
-	_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode);
+	_ifc_node(_ifc_instance* pIfcInstance, _ifc_node* pParentNode);
 	virtual ~_ifc_node();
 
 public: // Properties
 
-	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	_ifc_instance* getIfcInstance() const { return m_pIfcInstance; }
+	SdaiInstance getSdaiInstance() const { return m_pIfcInstance != nullptr ? m_pIfcInstance->getSdaiInstance() : 0; }
 	_ifc_node* getParent() const { return m_pParent; }
 	virtual const wchar_t* getGlobalId() const;
 	std::vector<_ifc_node*>& children() { return m_vecChildren; }

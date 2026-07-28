@@ -3,11 +3,12 @@
 #include "_ifc_geometry.h"
 
 // ************************************************************************************************
-_ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
-	: m_sdaiInstance(sdaiInstance)
+_ifc_node::_ifc_node(_ifc_instance* pIfcInstance, _ifc_node* pParentNode)
+	: m_pIfcInstance(pIfcInstance)
 	, m_pParent(pParentNode)
 	, m_vecChildren()
-{}
+{
+}
 
 /*virtual*/ _ifc_node::~_ifc_node()
 {
@@ -19,7 +20,7 @@ _ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
 const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;
-	sdaiGetAttrBN(m_sdaiInstance, "GlobalId", sdaiUNICODE, &szGlobalId);
+	sdaiGetAttrBN(getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 	assert(szGlobalId != nullptr);
 
 	return szGlobalId;
@@ -176,17 +177,17 @@ void _ifc_model_structure::build()
 void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 {
 	assert(sdaiProjectInstance != 0);
-	assert(m_pProjectNode == nullptr);
-
-	m_pProjectNode = new _ifc_node(sdaiProjectInstance, nullptr);
-	assert(m_mapInstance2Node.find(sdaiProjectInstance) == m_mapInstance2Node.end());
-	m_mapInstance2Node[sdaiProjectInstance] = m_pProjectNode;
+	assert(m_pProjectNode == nullptr);	
 
 	auto pGeometry = m_pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr) {
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 		assert(!ifcGeometry->getIsMappedItem());
 		assert(pGeometry->getInstances().size() == 1);
+
+		m_pProjectNode = new _ifc_node(_ptr<_ifc_instance>(ifcGeometry->getInstances()[0]), nullptr);
+		assert(m_mapInstance2Node.find(sdaiProjectInstance) == m_mapInstance2Node.end());
+		m_mapInstance2Node[sdaiProjectInstance] = m_pProjectNode;		
 
 		// decomposition/contains
 		loadIsDecomposedBy(m_pProjectNode, sdaiProjectInstance);
@@ -371,11 +372,10 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sda
 		assert(!ifcGeometry->getIsMappedItem());
 		assert(pGeometry->getInstances().size() == 1);
 
-		_ifc_node* pInstanceNode = new _ifc_node(sdaiInstance, pParentNode);
+		_ifc_node* pInstanceNode = new _ifc_node(_ptr<_ifc_instance>(ifcGeometry->getInstances()[0]), pParentNode);
 		if (m_mapInstance2Node.find(sdaiInstance) == m_mapInstance2Node.end()) {
 			m_mapInstance2Node[sdaiInstance] = pInstanceNode;
 		}
-
 		pParentNode->children().push_back(pInstanceNode);
 
 		// decomposition/contains
