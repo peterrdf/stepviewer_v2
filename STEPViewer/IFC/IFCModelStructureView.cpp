@@ -373,7 +373,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		case IMAGE_SEMI_SELECTED:
 			{
 				bool bGeometryItem = false;
-				_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
+				auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+				_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 				if ((pInstance == nullptr) &&
 					(iImage == IMAGE_SELECTED) &&
 					!m_pTreeCtrl->ItemHasChildren(hItem) &&
@@ -381,7 +382,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 					ASSERT(hParent != NULL);
 
-					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
+					pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
+					pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 
 					bGeometryItem = true;
 				}
@@ -456,14 +458,16 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		case IMAGE_NOT_SELECTED:
 			{
 				bool bGeometryItem = false;
-				_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
+				auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+				_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 				if ((pInstance == nullptr) &&
 					!m_pTreeCtrl->ItemHasChildren(hItem) &&
 					(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
 					HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 					ASSERT(hParent != NULL);
 
-					pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hParent);
+					pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
+					pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 
 					bGeometryItem = true;
 				}
@@ -574,7 +578,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
 	ASSERT(pNode != nullptr);
 
-	auto pIfcInstance = pNode->getIfcInstance();
+	auto pIfcInstance = pNode ? pNode->getIfcInstance() : nullptr;
 
 	// Geometry
 	if (pIfcInstance != nullptr) {
@@ -746,7 +750,11 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pTreeCtrl->SelectItem(hItem);
 	m_pTreeCtrl->SetFocus();
 
-	auto pTargetInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hItem);
+	auto pTargetNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+	ASSERT(pTargetNode != nullptr);
+
+	auto pTargetInstance = pTargetNode ? pTargetNode->getIfcInstance() : nullptr;
+	ASSERT(pTargetInstance != nullptr);
 
 	auto pModelData = Model_GetData(hItem);
 	ASSERT(pModelData != nullptr);
@@ -1731,7 +1739,8 @@ void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, bool bEnabledOnl
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr) {
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
+		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
+		_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 		if (pInstance != nullptr) {
 			if (bEnabledOnly) {
 				if (pInstance->getEnable()) {
@@ -1763,7 +1772,8 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable,
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != nullptr) {
-		_ifc_instance* pInstance = (_ifc_instance*)m_pTreeCtrl->GetItemData(hChild);
+		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
+		_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
 		if (pInstance != nullptr) {
 			pInstance->setEnable(bEnable);
 
