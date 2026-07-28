@@ -604,6 +604,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			strItemName = pChildNode->getGlobalId();
 		}
 
+		// Instance
 		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = pNMTreeView->itemNew.hItem;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -613,6 +614,13 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		tvInsertStruct.item.lParam = (LPARAM)pChildNode;
 		tvInsertStruct.item.cChildren = (pChildNode->children().size() > 0 || pChildIfcInstance != nullptr) ? 1 : 0;
 		HTREEITEM hChildItem = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		// Show
+		if (pChildIfcInstance != nullptr) {
+			m_pTreeCtrl->SetItemState(
+				hChildItem,
+				pChildIfcInstance->getGeometry()->getShow() ? 0 : TVIS_CUT, TVIS_CUT);
+		}
 
 		// Geometry
 		if ((pChildIfcInstance != nullptr) && pChildNode->children().empty()) {			
