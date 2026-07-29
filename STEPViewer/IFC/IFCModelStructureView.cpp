@@ -2233,8 +2233,7 @@ int CIFCModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 		} // switch (iChildState)
 	} // for (auto pChildNode : ...
 
-	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/
-	{
+	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/	{
 		return IMAGE_NO_GEOMETRY;
 	}
 
@@ -2272,6 +2271,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 			IMAGE_NO_GEOMETRY;
 	}
 
+	// Instance
 	int iChildrenCount = (int)pNode->children().size() + ((pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0);
 	int iSelectedChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() && pIfcInstance->getEnable() ? 1 : 0;
 	int iSemiSelectedChildrenCount = 0;
