@@ -176,6 +176,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
 	, m_vecModelData()
+	, m_mapNodes()
 	, m_vecSelectedInstances()
 	, m_pSearchDialog(nullptr)
 {
@@ -267,7 +268,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -623,6 +623,9 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		tvInsertStruct.item.lParam = (LPARAM)pChildNode;
 		tvInsertStruct.item.cChildren = (pChildNode->children().size() > 0 || pChildIfcInstance != nullptr) ? 1 : 0;
 		HTREEITEM hChildItem = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+		ASSERT(m_mapNodes.find(pChildNode) == m_mapNodes.end());
+		m_mapNodes[pChildNode] = hChildItem;
 
 		auto itItems = mapItems.find(pChildIfcInstance);
 		if (itItems != mapItems.end()) {
@@ -1258,6 +1261,9 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 
 		ASSERT(mapItems.find(itInstance2Node->second->getIfcInstance()) == mapItems.end());
 		mapItems[itInstance2Node->second->getIfcInstance()] = vector<HTREEITEM>{ hProject };
+
+		ASSERT(m_mapNodes.find(itInstance2Node->second) == m_mapNodes.end());
+		m_mapNodes[itInstance2Node->second] = hProject;
 
 		m_pTreeCtrl->Expand(hProject, TVE_EXPAND);
 	} // if (itInstance != ...
@@ -2155,22 +2161,40 @@ bool CIFCModelStructureView::Tree_EnsureVisible(CModelData* pModelData, _ifc_ins
 	ASSERT(pModelData != nullptr);
 
 	return
-		Tree_EnsureVisible(pInstance, pModelData->GetProjectItems()) ||
-		Tree_EnsureVisible(pInstance, pModelData->GetGroupsItems()) ||
-		Tree_EnsureVisible(pInstance, pModelData->GetSpaceBoundariesItems()) ||
-		Tree_EnsureVisible(pInstance, pModelData->GetUnreferencedItems());
+		Tree_EnsureVisible(pModelData, pModelData->GetProjectItems(), pInstance) ||
+		Tree_EnsureVisible(pModelData, pModelData->GetGroupsItems(), pInstance) ||
+		Tree_EnsureVisible(pModelData, pModelData->GetSpaceBoundariesItems(), pInstance) ||
+		Tree_EnsureVisible(pModelData, pModelData->GetUnreferencedItems(), pInstance);
 }
 
-bool CIFCModelStructureView::Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems)
+bool CIFCModelStructureView::Tree_EnsureVisible(CModelData* pModelData, ITEMS& mapItems, _ifc_instance* pInstance)
 {
+	ASSERT(pModelData != nullptr);
+
 	if (pInstance == nullptr) {
 		return false;
 	}
 
 	auto itItems = mapItems.find(pInstance);
+
+	// Load branch
+	if (itItems == mapItems.end()) {		
+		auto pModelStructure = pModelData->GetModelStructure();
+
+		vector<_ifc_node*> vecPath;
+		pModelStructure->getInstancePath(pInstance->getSdaiInstance(), vecPath);
+
+		for (auto pNode : vecPath) {
+			auto itNode = m_mapNodes.find(pNode);
+			ASSERT(itNode != m_mapNodes.end());
+				
+			m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+		}
+	}
+
+	itItems = mapItems.find(pInstance);
 	if (itItems != mapItems.end()) {
 		m_pTreeCtrl->EnsureVisible(itItems->second.front());
-
 		return true;
 	}
 
@@ -2362,6 +2386,8 @@ void CIFCModelStructureView::ResetView()
 		delete pModelData;
 	}
 	m_vecModelData.clear();
+
+	m_mapNodes.clear();
 
 	m_vecSelectedInstances.clear();
 

@@ -26,6 +26,7 @@ private: // Classes
 
 	// ********************************************************************************************
 	typedef map<_ifc_instance*, vector<HTREEITEM>> ITEMS;
+	typedef map<_ifc_node*, HTREEITEM> NODES;
 
 	// ********************************************************************************************
 	class CModelData
@@ -94,6 +95,7 @@ private: // Members
 
 	// Cache
 	vector<CModelData*> m_vecModelData;
+	NODES m_mapNodes;
 	vector<_instance*> m_vecSelectedInstances;
 	
 	// Search
@@ -158,7 +160,7 @@ private: // Methods
 	void Tree_Show(const set<_ifc_instance*>& setInstances);
 	void Tree_Show(_ifc_instance* pInstance, ITEMS& mapItems);
 	bool Tree_EnsureVisible(CModelData* pModelData, _ifc_instance* pInstance);
-	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
+	bool Tree_EnsureVisible(CModelData* pModelData, ITEMS& mapItems, _ifc_instance* pInstance);
 
 	int Tree_GetItemState(HTREEITEM hItem);
 	int InMemoryTree_GetItemState(_ifc_node* pNode);
