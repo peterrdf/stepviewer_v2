@@ -559,7 +559,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 		pController->selectInstance(
 			this,
-			pSelectedNode->getIfcInstance(),
+			pSelectedNode != nullptr ? pSelectedNode->getIfcInstance() : nullptr,
 			GetKeyState(VK_CONTROL) & 0x8000);
 	}
 }
@@ -757,7 +757,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	ASSERT(pTargetNode != nullptr);
 
 	auto pTargetInstance = pTargetNode ? pTargetNode->getIfcInstance() : nullptr;
-	ASSERT(pTargetInstance != nullptr);
 
 	auto pModelData = Model_GetData(hItem);
 	ASSERT(pModelData != nullptr);
