@@ -1920,12 +1920,11 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEM
 
 			int iImage, iSelectedImage = -1;
 			m_pTreeCtrl->GetItemImage(hGeometry, iImage, iSelectedImage);
-
 			ASSERT(iImage == iSelectedImage);
-			if (iImage == IMAGE_NO_GEOMETRY) {
-				ASSERT(!pInstance->hasGeometry());
 
+			if (iImage == IMAGE_NO_GEOMETRY) {
 				// Keep the image
+				ASSERT(!pInstance->hasGeometry());				
 				continue;
 			}
 
