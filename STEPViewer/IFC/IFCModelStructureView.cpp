@@ -1956,7 +1956,6 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 {
 	if (hItem == NULL) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -1967,20 +1966,24 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 	int iParentImage = -1;
 	int iParentSelectedImage = -1;
 	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
-
 	ASSERT(iParentImage == iParentSelectedImage);
+	ASSERT(iParentImage == IMAGE_SELECTED || iParentImage == IMAGE_NOT_SELECTED);
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
+	if (hChild == NULL) {
+		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+		InMemoryTree_UpdateChildren(pNode, iParentImage == IMAGE_SELECTED);
+		return;
+	}
+
 	while (hChild != NULL) {
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
 			// skip the properties, items without a geometry, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
 			continue;
 		}
 
@@ -1990,6 +1993,19 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != NULL)
+}
+
+void CIFCModelStructureView::InMemoryTree_UpdateChildren(_ifc_node* pNode, bool bEnable)
+{
+	ASSERT(pNode != nullptr);
+
+	for (auto pChild : pNode->children()) {
+		if (pChild->getIfcInstance() != nullptr) {
+			pChild->getIfcInstance()->setEnable(bEnable);
+		}
+		
+		InMemoryTree_UpdateChildren(pChild, bEnable);
+	}
 }
 
 void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)

@@ -150,6 +150,7 @@ private: // Methods
 	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
 	void Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);
 	void Tree_UpdateChildren(HTREEITEM hItem);
+	void InMemoryTree_UpdateChildren(_ifc_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
 	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Tree_Select(bool bEnable);
