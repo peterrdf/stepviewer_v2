@@ -1921,23 +1921,24 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEM
 
 		for (auto hInstance : itItems->second) {
 			HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
-			ASSERT((hGeometry != NULL) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
+			if (hGeometry != NULL) {
+				ASSERT(!m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
-			int iImage, iSelectedImage = -1;
-			m_pTreeCtrl->GetItemImage(hGeometry, iImage, iSelectedImage);
-			ASSERT(iImage == iSelectedImage);
+				int iImage, iSelectedImage = -1;
+				m_pTreeCtrl->GetItemImage(hGeometry, iImage, iSelectedImage);
+				ASSERT(iImage == iSelectedImage);
 
-			if (iImage == IMAGE_NO_GEOMETRY) {
-				// Keep the image
-				ASSERT(!pInstance->hasGeometry());				
-				continue;
+				if (iImage == IMAGE_NO_GEOMETRY) {
+					// Keep the image
+					ASSERT(!pInstance->hasGeometry());
+					continue;
+				}
+
+				iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+				m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
+
+				vecItems.push_back(hGeometry);
 			}
-
-			iImage = pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-
-			m_pTreeCtrl->SetItemImage(hGeometry, iImage, iImage);
-
-			vecItems.push_back(hGeometry);
 		}
 	} // for (auto pInstance : ...	
 
