@@ -1807,8 +1807,12 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 {
 	ASSERT(hItem != nullptr);
 
-	int iChildrenCount = 0;
-	int iSelectedChildrenCount = 0;
+	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+	_ifc_instance* pIfcInstance = pNode ? pNode->getIfcInstance() : nullptr;
+
+	// Instance
+	int iChildrenCount = pNode != nullptr ? (int)pNode->children().size() + ((pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0) : 0;
+	int iSelectedChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() && pIfcInstance->getEnable() ? 1 : 0;
 	int iSemiSelectedChildrenCount = 0;
 	int iNoGeometryChildrenCount = 0;
 
@@ -1820,8 +1824,8 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 	}
 
 	while (hChild != NULL) {
-		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
-		if (pNode == nullptr) {
+		auto pChildNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
+		if (pChildNode == nullptr) {
 			// skip the properties, items without a geometry, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 			continue;
@@ -2029,7 +2033,6 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	while (hChild != nullptr) {
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
