@@ -11,6 +11,7 @@ using namespace std;
 
 // ************************************************************************************************
 class _ifc_model;
+class _ifc_node;
 class _ifc_model_structure;
 
 // ************************************************************************************************
@@ -157,6 +158,9 @@ private: // Methods
 	void Tree_Show(_ifc_instance* pInstance, ITEMS& mapItems);
 	bool Tree_EnsureVisible(CModelData* pModelData, _ifc_instance* pInstance);
 	bool Tree_EnsureVisible(_ifc_instance* pInstance, ITEMS& mapItems);
+
+	int Tree_GetItemState(HTREEITEM hItem);
+	int InMemoryTree_GetItemState(_ifc_node* pNode);
 
 	void ResetView();
 };
