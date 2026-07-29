@@ -2014,7 +2014,6 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
 			// skip the properties, items without a geometry, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
 			continue;
 		}
 
@@ -2066,7 +2065,6 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	}
 	else {
 		ASSERT(iSelectedChildrenCount < iChildrenCount);
-
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
@@ -2264,15 +2262,18 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 {
 	ASSERT(pNode != nullptr);
 
+	auto pIfcInstance = pNode->getIfcInstance();
+
 	// Leaf
 	if (pNode->children().empty()) {		
-		ASSERT(pNode->getIfcInstance() != nullptr);
-		return pNode->getIfcInstance()->hasGeometry() ?
-			(pNode->getIfcInstance()->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+		ASSERT(pIfcInstance != nullptr);
+		return pIfcInstance->hasGeometry() ?
+			(pIfcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 			IMAGE_NO_GEOMETRY;
 	}
 
-	int iSelectedChildrenCount = 0;
+	int iChildrenCount = (int)pNode->children().size() + ((pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0);
+	int iSelectedChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() && pIfcInstance->getEnable() ? 1 : 0;
 	int iSemiSelectedChildrenCount = 0;
 	int iNoGeometryChildrenCount = 0;
 
@@ -2311,7 +2312,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 		} // switch (iChildState)
 	} // for (auto pChild : ...
 
-	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/
+	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
 	{
 		return IMAGE_NO_GEOMETRY;
 	}
@@ -2324,15 +2325,15 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 		return IMAGE_NOT_SELECTED;
 	}
 
-	if ((int)pNode->children().size() == iSelectedChildrenCount) {
+	if (iChildrenCount == iSelectedChildrenCount) {
 		return IMAGE_SELECTED;
 	}
 
-	if (((int)pNode->children().size() - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
+	if ((iChildrenCount - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
 		return IMAGE_SELECTED;
 	}
 
-	ASSERT((int)pNode->children().size() > iSelectedChildrenCount);
+	ASSERT(iChildrenCount > iSelectedChildrenCount);
 	return IMAGE_SEMI_SELECTED;
 }
 
