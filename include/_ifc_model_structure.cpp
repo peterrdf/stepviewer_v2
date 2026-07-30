@@ -311,7 +311,7 @@ void _ifc_model_structure::loadUnreferencedNode()
 
 	m_pUnreferencedNode = new _ifc_node(nullptr, nullptr);
 
-	auto& itUnreferencedItems = mapUnreferencedItems.begin();
+	auto itUnreferencedItems = mapUnreferencedItems.begin();
 	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++) {
 		vector<_ifc_instance*>& vecInstances = itUnreferencedItems->second;
 		auto pEntityNode = new _ifc_entity_node(itUnreferencedItems->first, m_pUnreferencedNode);
