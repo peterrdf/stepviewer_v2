@@ -1701,7 +1701,7 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 	_ifc_instance* pIfcInstance = pNode ? pNode->getIfcInstance() : nullptr;
 
 	// Instance
-	int iChildrenCount = pNode != nullptr ? (int)pNode->children().size() + ((pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0) : 0;
+	int iChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0;
 	int iSelectedChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() && pIfcInstance->getEnable() ? 1 : 0;
 	int iSemiSelectedChildrenCount = 0;
 	int iNoGeometryChildrenCount = 0;
