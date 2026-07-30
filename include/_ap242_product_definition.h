@@ -98,7 +98,7 @@ class _ap242_product_shape_representation_item : public _ap242_geometry
 	friend class _ap242_model;
 
 private: // Members
-	SdaiInstance m_sdaiRepresentationInstance;
+	
 	_ap242_product_shape_representation* m_pProductShapeRepresentation;
 
 public: // Methods
@@ -108,7 +108,6 @@ public: // Methods
 
 public: // Properties
 
-	SdaiInstance& representationInstance() { return m_sdaiRepresentationInstance; }
 	_ap242_product_shape_representation* getProductShapeRepresentation() const { return m_pProductShapeRepresentation; }
 	_ap242_product_definition* getProductDefinition() const { return m_pProductShapeRepresentation->getProductDefinition(); }
 };

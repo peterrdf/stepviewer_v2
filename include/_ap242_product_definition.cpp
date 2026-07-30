@@ -73,7 +73,6 @@ void _ap242_product_shape_representation::addRepresentationItem(_ap242_product_s
 // ************************************************************************************************
 _ap242_product_shape_representation_item::_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
     : _ap242_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
-	, m_sdaiRepresentationInstance(0)
     , m_pProductShapeRepresentation(pProductShapeRepresentation)
 {
     assert(m_pProductShapeRepresentation != nullptr);
