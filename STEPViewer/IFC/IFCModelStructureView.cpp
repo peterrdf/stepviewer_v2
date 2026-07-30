@@ -1269,7 +1269,7 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 	} // if (itInstance != ...
 }
 
-void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
+void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& /*mapItems*/)
 {
 	ASSERT(pModelData != nullptr);
 	ASSERT(pModelData->GetModelStructure() != nullptr);
@@ -1295,7 +1295,7 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 	m_mapNodes[pGroupsNode] = hGroups;
 }
 
-void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
+void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& /*mapItems*/)
 {
 	ASSERT(pModelData != nullptr);
 	ASSERT(pModelData->GetModelStructure() != nullptr);
