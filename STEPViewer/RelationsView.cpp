@@ -229,10 +229,9 @@ static char THIS_FILE[]=__FILE__;
 			return FALSE;
 		}
 
-		auto pModel = pController->getModel();
+		auto pModel = GetModel();
 		if (pModel == nullptr) {
 			ASSERT(FALSE);
-
 			return FALSE;
 		}
 
