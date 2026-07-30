@@ -291,7 +291,7 @@ _ap_model* CRelationsView::GetModel() const
 		return nullptr;
 	}
 
-	auto pModel = pController->getModel();
+	auto pModel = !pController->getModels().empty() ? pController->getModels().front() : nullptr;
 	if (pModel == nullptr) {
 		return nullptr;
 	}
