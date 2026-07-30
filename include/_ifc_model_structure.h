@@ -70,6 +70,7 @@ private: // Members
 
 	_ifc_model* m_pModel;
 	_ifc_node* m_pProjectNode;
+	_ifc_node* m_pGroupsNode;
 	std::map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
 
 public: // Methods
@@ -90,17 +91,20 @@ public: // Methods
 protected: // Methods
 
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
+	void loadGroupsNode(SdaiInstance sdaiProjectInstance);
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadBoundedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadHasOpenings(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+
 	void clean();
 
 public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
+	_ifc_node* getGroupsNode() const { return m_pGroupsNode; }
 	const std::map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
 };
