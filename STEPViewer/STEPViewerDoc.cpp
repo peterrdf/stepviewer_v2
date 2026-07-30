@@ -78,7 +78,7 @@
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
 	else if ((strExtension == ".bin") || (strExtension == ".ttl")) {
-		auto pModel = getModelByInstance(pAPInstance->getOwlModel());
+		auto pModel = getOwlModelByInstance(pAPInstance->getOwlModel());
 		_ptr<_ifc_model> ifcModel(pModel, false);
 		if (ifcModel) {
 			OwlInstance owlMapConversionTransformationInstance = ifcModel->createMapConversionTransformation();

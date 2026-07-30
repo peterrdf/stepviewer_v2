@@ -246,7 +246,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 	_ptr<_ifc_instance> ifcInstance(pInstance);
 
-	auto pModel = getController()->getModelByInstance(ifcInstance->getOwlModel());
+	auto pModel = getController()->getOwlModelByInstance(ifcInstance->getOwlModel());
 	ASSERT(pModel != nullptr);
 
 	auto pModelData = Model_GetData(pModel);
@@ -278,7 +278,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	if (!m_vecSelectedInstances.empty()) {
 		_ptr<_ifc_instance> ifcInstance(m_vecSelectedInstances.back());
 
-		auto pModel = pController->getModelByInstance(ifcInstance->getOwlModel());
+		auto pModel = pController->getOwlModelByInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
@@ -1726,7 +1726,7 @@ void CIFCModelStructureView::Tree_Select(bool bEnable)
 	for (auto pInstance : m_vecSelectedInstances) {
 		_ptr<_ifc_instance> ifcInstance(pInstance);
 
-		auto pModel = getController()->getModelByInstance(ifcInstance->getOwlModel());
+		auto pModel = getController()->getOwlModelByInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
@@ -1756,7 +1756,7 @@ void CIFCModelStructureView::Tree_Select(_ifc_instance* pInstance, ITEMS& mapIte
 void CIFCModelStructureView::Tree_Show(const set<_ifc_instance*>& setInstances)
 {
 	for (auto pInstance : setInstances) {
-		auto pModel = getController()->getModelByInstance(pInstance->getOwlModel());
+		auto pModel = getController()->getOwlModelByInstance(pInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);

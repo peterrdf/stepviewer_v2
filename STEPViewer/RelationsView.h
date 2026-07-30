@@ -216,8 +216,6 @@ public: // Methods
 	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;	
 
 private: // Methods
-
-	_ap_model* GetModel() const;
 	
 	void LoadInstances(const vector<SdaiInstance>& vecInstances, bool bResetView, HTREEITEM hInsertAfter);
 	HTREEITEM LoadInstance(SdaiInstance sdaiInstance, HTREEITEM hParent, HTREEITEM hInsertAfter);

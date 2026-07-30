@@ -225,32 +225,29 @@ static char THIS_FILE[]=__FILE__;
 		auto pController = getAPController();
 		if (pController == nullptr) {
 			ASSERT(FALSE);
-
 			return FALSE;
 		}
 
-		auto pModel = GetModel();
+		HTREEITEM hModel = m_treeCtrl.GetRootItem();
+		if (hModel == NULL) {
+			return FALSE;
+		}
+
+		auto pModel = (_ap_model*)m_treeCtrl.GetItemData(hModel);
 		if (pModel == nullptr) {
-			ASSERT(FALSE);
 			return FALSE;
 		}
 
-		_ptr<_ap_model> apModel(pModel);
-		if (apModel) {
-			int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
+		int64_t iExpressID = _wtoi64((LPCTSTR)strSearchText);
 
-			SdaiInstance sdaiInstance = internalGetInstanceFromP21Line(apModel->getSdaiModel(), iExpressID);
-			if (sdaiInstance != 0) {
-				pController->onViewRelations(
-					nullptr,  /*Attributes View will be updated also*/
-					sdaiInstance);
-			}
-			else {
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
-			}
+		SdaiInstance sdaiInstance = internalGetInstanceFromP21Line(pModel->getSdaiModel(), iExpressID);
+		if (sdaiInstance != 0) {
+			pController->onViewRelations(
+				nullptr,  /*Attributes View will be updated also*/
+				sdaiInstance);
 		}
 		else {
-			ASSERT(FALSE); // Unknown
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid Express ID.", L"Search", MB_ICONERROR | MB_OK);
 		}
 
 		return TRUE;
@@ -281,26 +278,22 @@ static char THIS_FILE[]=__FILE__;
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-_ap_model* CRelationsView::GetModel() const
-{
-	auto pController = getController();
-	if (pController == nullptr) {
-		ASSERT(FALSE);
-		return nullptr;
-	}
-
-	auto pModel = !pController->getModels().empty() ? pController->getModels().front() : nullptr;
-	if (pModel == nullptr) {
-		return nullptr;
-	}
-
-	return _ptr<_ap_model>(pModel);
-}
-
 void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances, bool bResetView, HTREEITEM hInsertAfter)
 {
-	auto pModel = GetModel();
+	if (vecInstances.empty()) {
+		ResetView();
+		return;
+	}
+
+	auto pController = getAPController();
+	if (pController == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pModel = pController->getSdaiModelByInstance(sdaiGetInstanceModel(vecInstances.front()));
 	if (pModel == nullptr) {
+		ASSERT(FALSE);
 		return;
 	}
 
@@ -314,7 +307,7 @@ void CRelationsView::LoadInstances(const vector<SdaiInstance>& vecInstances, boo
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 		tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_MODEL;
-		tvInsertStruct.item.lParam = NULL;
+		tvInsertStruct.item.lParam = (LPARAM)pModel;
 
 		hModel = m_treeCtrl.InsertItem(&tvInsertStruct);
 	}

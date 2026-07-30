@@ -229,6 +229,23 @@ _ap_controller::_ap_controller()
 	return strNamespace;
 }
 
+_ap_model* _ap_controller::getSdaiModelByInstance(SdaiModel sdaiModel) const
+{
+	assert(sdaiModel != 0);
+
+	auto itModel = getModels().begin();
+	for (; itModel != getModels().end(); itModel++) {
+		_ptr<_ap_model> apModel(*itModel, false);
+		if (apModel) {
+			if (apModel->getSdaiModel() == sdaiModel) {
+				return apModel;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 void _ap_controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
 {
 	auto itView = getViews().begin();
