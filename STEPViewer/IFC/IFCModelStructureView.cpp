@@ -1933,7 +1933,10 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 
 	// Leaf
 	if (pNode->children().empty()) {		
-		ASSERT(pIfcInstance != nullptr);
+		if (pIfcInstance == nullptr) {
+			return IMAGE_NO_GEOMETRY;
+		}
+
 		return pIfcInstance->hasGeometry() ?
 			(pIfcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 			IMAGE_NO_GEOMETRY;
