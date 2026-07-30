@@ -21,6 +21,8 @@
 #define ITEM_PROPERTIES			L"properties"
 #define EMPTY_INSTANCE			L"---<EMPTY>---"
 
+#define ITEM_GROUPS				L"Groups"
+
 // ************************************************************************************************
 #define IMAGE_SELECTED		0
 #define IMAGE_SEMI_SELECTED 1

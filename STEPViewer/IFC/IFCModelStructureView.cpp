@@ -1215,7 +1215,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 
 		// Load
 		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		//LoadGroups(pModelData, hModel, pModelData->GetGroupsItems()); //#todo
+		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());
 		//LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems()); //#todo
 
 		// Update UI
@@ -1233,14 +1233,15 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 		return;
 	}
 
+	_ptr<_ap_controller> apController(pController);
+
 	ASSERT(pModelData != nullptr);
 	ASSERT(pModelData->GetModelStructure() != nullptr);
 
 	const auto& mapInstance2Node = pModelData->GetModelStructure()->getInstance2Node();
 
 	auto pGeometry = pModelData->GetModel()->getGeometryByInstance(sdaiProjectInstance);
-	if (pGeometry != nullptr) {
-		_ptr<_ap_controller> apController(getController());
+	if (pGeometry != nullptr) {		
 		wstring strItem = _ap_geometry::getDisplayString(sdaiProjectInstance, apController->getFullDisplayName());
 
 		const auto& itInstance2Node = mapInstance2Node.find(sdaiProjectInstance);
@@ -1535,76 +1536,27 @@ HTREEITEM CIFCModelStructureView::LoadInstance(_ifc_model* pModel, SdaiInstance 
 void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
 {
 	ASSERT(pModelData != nullptr);
+	ASSERT(pModelData->GetModelStructure() != nullptr);
 
-	vector<_ap_geometry*> vecGeometries;
-	pModelData->GetModel()->getGeometriesByType("IFCGROUP", vecGeometries);
-
-	if (vecGeometries.empty()) {
+	auto pGroupsNode = pModelData->GetModelStructure()->getGroupsNode();
+	if (pGroupsNode == nullptr) {
 		return;
 	}
 
-	_ptr<_ap_controller> apController(getController());
-
-	// Groups
+	// Project
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hModel;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = L"Groups";
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-	tvInsertStruct.item.lParam = NULL;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+	tvInsertStruct.item.pszText = (LPWSTR)ITEM_GROUPS;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = InMemoryTree_GetItemState(pGroupsNode);
+	tvInsertStruct.item.lParam = (LPARAM)pGroupsNode;
+	tvInsertStruct.item.cChildren = 1;
 	HTREEITEM hGroups = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	pModelData->SetGroupsItem(hGroups);
 
-	for (auto pGeometry : vecGeometries) {
-		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-		ASSERT(!ifcGeometry->getIsMappedItem());
-		ASSERT(pGeometry->getInstances().size() == 1);
-		_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-		wstring strItem = _ap_geometry::getDisplayString(ifcInstance->getSdaiInstance(), apController->getFullDisplayName());
-
-		// Instance
-		tvInsertStruct.hParent = hGroups;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-		tvInsertStruct.item.lParam = (LPARAM)ifcInstance.p();
-		HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-		// Geometry
-		tvInsertStruct.hParent = hInstance;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = ITEM_GEOMETRY;
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-			ifcInstance->hasGeometry() ? (ifcInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-		tvInsertStruct.item.lParam = NULL;
-		m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-		if (mapItems.find(ifcInstance) == mapItems.end()) {
-			mapItems[ifcInstance] = vector<HTREEITEM>{ hInstance };
-		}
-		else {
-			mapItems.at(ifcInstance).push_back(hInstance);
-		}
-
-		SdaiInstance sdaiIsGroupedByInstance = 0;
-		sdaiGetAttrBN(ifcInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
-		if (sdaiIsGroupedByInstance != 0) {
-			SdaiAggr sdaiRelatedObjectsAggr = nullptr;
-			sdaiGetAttrBN(sdaiIsGroupedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
-
-			SdaiInteger iRelatedObjectsCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
-			for (SdaiInteger i = 0; i < iRelatedObjectsCount; i++) {
-				SdaiInstance sdaiRelatedObject = 0;
-				sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, i, sdaiINSTANCE, &sdaiRelatedObject);
-
-				LoadInstance(pModelData->GetModel(), sdaiRelatedObject, hInstance, mapItems);
-			} // for (SdaiInteger i = ...
-		} // if (sdaiIsGroupedByInstance != 0)
-	} // for (SdaiInteger iGroupInstance = ...
+	ASSERT(m_mapNodes.find(pGroupsNode) == m_mapNodes.end());
+	m_mapNodes[pGroupsNode] = hGroups;
 }
 
 void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
