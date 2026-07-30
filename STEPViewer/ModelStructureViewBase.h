@@ -22,6 +22,7 @@
 #define EMPTY_INSTANCE			L"---<EMPTY>---"
 
 #define ITEM_GROUPS				L"Groups"
+#define ITEM_UNREFERENCED		L"Unreferenced"
 
 // ************************************************************************************************
 #define IMAGE_SELECTED		0

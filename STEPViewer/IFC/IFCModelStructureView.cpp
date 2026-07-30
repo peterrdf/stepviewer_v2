@@ -1216,7 +1216,7 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 		// Load
 		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
 		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());
-		//LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems()); //#todo
+		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
 
 		// Update UI
 		Tree_Update(hModel);
@@ -1543,7 +1543,7 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 		return;
 	}
 
-	// Project
+	// Groups
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hModel;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
@@ -1562,89 +1562,27 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems)
 {
 	ASSERT(pModelData != nullptr);
+	ASSERT(pModelData->GetModelStructure() != nullptr);
 
-	map<wstring, vector<_ifc_instance*>> mapUnreferencedItems;
-	for (auto pGeometry : pModelData->GetModel()->getGeometries()) {
-		if (!pGeometry->hasGeometry()) {
-			continue;
-		}
-
-		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-		if (!ifcGeometry->getIsReferenced()) {
-			ASSERT(pGeometry->getInstances().size() == 1);
-			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
-
-			const wchar_t* szEntity = ifcGeometry->getEntityName();
-
-			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
-			if (itUnreferencedItems == mapUnreferencedItems.end()) {
-				vector<_ifc_instance*> veCIFCInstances;
-				veCIFCInstances.push_back(ifcInstance.p());
-
-				mapUnreferencedItems[szEntity] = veCIFCInstances;
-			}
-			else {
-				itUnreferencedItems->second.push_back(ifcInstance.p());
-			}
-		}
-	} // for (auto pGeometry : ...
-
-	if (mapUnreferencedItems.empty()) {
+	auto pUnreferencedNode = pModelData->GetModelStructure()->getUnreferencedNode();
+	if (pUnreferencedNode == nullptr) {
 		return;
 	}
 
-	_ptr<_ap_controller> apController(getController());
-
-	// Unreferenced
+	// Unreferenced Items
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = hModel;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-	tvInsertStruct.item.pszText = L"Unreferenced";
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-	tvInsertStruct.item.lParam = NULL;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+	tvInsertStruct.item.pszText = (LPWSTR)ITEM_UNREFERENCED;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = InMemoryTree_GetItemState(pUnreferencedNode);
+	tvInsertStruct.item.lParam = (LPARAM)pUnreferencedNode;
+	tvInsertStruct.item.cChildren = 1;
 	HTREEITEM hUnreferenced = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 	pModelData->SetUnreferencedItem(hUnreferenced);
 
-	map<wstring, vector<_ifc_instance*>>::iterator itUnreferencedItems = mapUnreferencedItems.begin();
-	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++) {
-		// Entity
-		tvInsertStruct.hParent = hUnreferenced;
-		tvInsertStruct.hInsertAfter = TVI_LAST;
-		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-		tvInsertStruct.item.pszText = (LPWSTR)itUnreferencedItems->first.c_str();
-		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-		tvInsertStruct.item.lParam = NULL;
-		HTREEITEM hEntity = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-		for (size_t iInstance = 0; iInstance < itUnreferencedItems->second.size(); iInstance++) {
-			auto pInstance = itUnreferencedItems->second[iInstance];
-
-			wstring strItem = _ap_geometry::getDisplayString(pInstance->getSdaiInstance(), apController->getFullDisplayName());
-
-			// Instance
-			tvInsertStruct.hParent = hEntity;
-			tvInsertStruct.hInsertAfter = TVI_LAST;
-			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
-			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-			tvInsertStruct.item.lParam = (LPARAM)pInstance;
-			HTREEITEM hInstance = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-			// Geometry
-			tvInsertStruct.hParent = hInstance;
-			tvInsertStruct.hInsertAfter = TVI_LAST;
-			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
-			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
-			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-				pInstance->hasGeometry() ? (pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) : IMAGE_NO_GEOMETRY;
-			tvInsertStruct.item.lParam = NULL;
-			m_pTreeCtrl->InsertItem(&tvInsertStruct);
-
-			assert(mapItems.find(pInstance) == mapItems.end());
-			mapItems[pInstance] = vector<HTREEITEM>{ hInstance };
-		} // for (size_t iInstance = ...
-	} // for (; itUnreferencedItems != ...
+	ASSERT(m_mapNodes.find(pUnreferencedNode) == m_mapNodes.end());
+	m_mapNodes[pUnreferencedNode] = hUnreferenced;
 }
 
 CIFCModelStructureView::CModelData* CIFCModelStructureView::Model_GetData(HTREEITEM hItem)

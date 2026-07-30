@@ -12,8 +12,7 @@
 #define CONTAINS_NODE		L"contains"
 
 // ************************************************************************************************
-class _ifc_node
-{
+class _ifc_node {
 
 private: // Members
 
@@ -36,8 +35,8 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ifc_decomposition_node : public _ifc_node
-{
+class _ifc_decomposition_node : public _ifc_node {
+
 public: // Methods
 
 	_ifc_decomposition_node(_ifc_node* pParentNode);
@@ -49,8 +48,7 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ifc_contains_node : public _ifc_node
-{
+class _ifc_contains_node : public _ifc_node {
 
 public: // Methods
 
@@ -63,14 +61,31 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ifc_model_structure
-{
+class _ifc_entity_node : public _ifc_node {
+
+private: // Members
+
+	wstring m_strEntityName;
+
+public: // Methods
+
+	_ifc_entity_node(const wstring& strEntityName, _ifc_node* pParentNode);
+	virtual ~_ifc_entity_node();
+
+public: // Properties
+
+	virtual const wchar_t* getGlobalId() const override { return m_strEntityName.c_str(); }
+};
+
+// ************************************************************************************************
+class _ifc_model_structure {
 
 private: // Members
 
 	_ifc_model* m_pModel;
 	_ifc_node* m_pProjectNode;
 	_ifc_node* m_pGroupsNode;
+	_ifc_node* m_pUnreferencedNode;
 	std::map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
 
 public: // Methods
@@ -91,7 +106,8 @@ public: // Methods
 protected: // Methods
 
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
-	void loadGroupsNode(SdaiInstance sdaiProjectInstance);
+	void loadGroupsNode();
+	void loadUnreferencedNode();
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
@@ -106,5 +122,6 @@ public: // Properties
 	_ifc_model* getModel() const { return m_pModel; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
 	_ifc_node* getGroupsNode() const { return m_pGroupsNode; }
+	_ifc_node* getUnreferencedNode() const { return m_pUnreferencedNode; }
 	const std::map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
 };

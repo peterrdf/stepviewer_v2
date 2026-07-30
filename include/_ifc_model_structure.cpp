@@ -47,10 +47,22 @@ _ifc_contains_node::_ifc_contains_node(_ifc_node* pParentNode)
 }
 
 // ************************************************************************************************
+_ifc_entity_node::_ifc_entity_node(const wstring& strEntityName, _ifc_node* pParentNode)
+	: _ifc_node(0, pParentNode)
+	, m_strEntityName(strEntityName)
+{
+}
+
+/*virtual*/ _ifc_entity_node::~_ifc_entity_node()
+{
+}
+
+// ************************************************************************************************
 _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 	: m_pModel(pModel)
 	, m_pProjectNode(nullptr)
 	, m_pGroupsNode(nullptr)
+	, m_pUnreferencedNode(nullptr)
 	, m_mapInstance2Node()
 {
 	assert(m_pModel != nullptr);
@@ -174,8 +186,8 @@ void _ifc_model_structure::build()
 		assert(sdaiProjectInstance != 0);
 
 		loadProjectNode(sdaiProjectInstance);
-		loadGroupsNode(sdaiProjectInstance);
-		//LoadUnreferencedItems(m_pModel, m_pModel->GetUnreferencedItems()); //#todo
+		loadGroupsNode();
+		loadUnreferencedNode();
 	} // if (iProjectInstancesCount > 0)
 }
 
@@ -203,7 +215,7 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 	}
 }
 
-void _ifc_model_structure::loadGroupsNode(SdaiInstance sdaiProjectInstance)
+void _ifc_model_structure::loadGroupsNode()
 {
 	assert(m_pGroupsNode == nullptr);
 
@@ -261,6 +273,58 @@ void _ifc_model_structure::loadGroupsNode(SdaiInstance sdaiProjectInstance)
 			} // for (SdaiInteger i = ...
 		} // if (sdaiIsGroupedByInstance != 0)
 	} // for (auto pGeometry : ...
+}
+
+void _ifc_model_structure::loadUnreferencedNode()
+{
+	assert(m_pUnreferencedNode == nullptr);
+
+	map<wstring, vector<_ifc_instance*>> mapUnreferencedItems;
+	for (auto pGeometry : m_pModel->getGeometries()) {
+		if (!pGeometry->hasGeometry()) {
+			continue;
+		}
+
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		if (!ifcGeometry->getIsReferenced()) {
+			ASSERT(pGeometry->getInstances().size() == 1);
+			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
+
+			const wchar_t* szEntity = ifcGeometry->getEntityName();
+
+			auto itUnreferencedItems = mapUnreferencedItems.find(szEntity);
+			if (itUnreferencedItems == mapUnreferencedItems.end()) {
+				vector<_ifc_instance*> veCIFCInstances;
+				veCIFCInstances.push_back(ifcInstance.p());
+
+				mapUnreferencedItems[szEntity] = veCIFCInstances;
+			}
+			else {
+				itUnreferencedItems->second.push_back(ifcInstance.p());
+			}
+		}
+	} // for (auto pGeometry : ...
+
+	if (mapUnreferencedItems.empty()) {
+		return;
+	}
+
+	m_pUnreferencedNode = new _ifc_node(nullptr, nullptr);
+
+	auto& itUnreferencedItems = mapUnreferencedItems.begin();
+	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++) {
+		vector<_ifc_instance*>& vecInstances = itUnreferencedItems->second;
+		auto pEntityNode = new _ifc_entity_node(itUnreferencedItems->first, m_pUnreferencedNode);
+		m_pUnreferencedNode->children().push_back(pEntityNode);
+
+		for (auto pIfcInstance : vecInstances) {
+			auto pInstanceNode = new _ifc_node(pIfcInstance, pEntityNode);
+			pEntityNode->children().push_back(pInstanceNode);
+
+			assert(m_mapInstance2Node.find(pIfcInstance->getSdaiInstance()) == m_mapInstance2Node.end());
+			m_mapInstance2Node[pIfcInstance->getSdaiInstance()] = pInstanceNode;
+		}
+	} // for (; itUnreferencedItems != ...
 }
 
 void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
@@ -462,6 +526,11 @@ void _ifc_model_structure::clean()
 	if (m_pGroupsNode != nullptr) {
 		delete m_pGroupsNode;
 		m_pGroupsNode = nullptr;
+	}
+
+	if (m_pUnreferencedNode != nullptr) {
+		delete m_pUnreferencedNode;
+		m_pUnreferencedNode = nullptr;
 	}
 
 	m_mapInstance2Node.clear();
