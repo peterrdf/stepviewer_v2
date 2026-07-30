@@ -348,15 +348,19 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstan
 
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
-		}
-
-		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
-		pParentNode->children().push_back(pDecompositioNode);
+		}		
 
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
 		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
 		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+		if (iRelatedObjectsInstancesCount == 0) {
+			continue;
+		}
+
+		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
+		pParentNode->children().push_back(pDecompositioNode);
+
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
 			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
@@ -425,13 +429,17 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInst
 			continue;
 		}
 
-		auto pContainsNode = new _ifc_contains_node(pParentNode);
-		pParentNode->children().push_back(pContainsNode);
-
 		SdaiAggr sdaiRelatedElementsInstances = 0;
 		sdaiGetAttrBN(sdaiContainsElementsInstance, "RelatedElements", sdaiAGGR, &sdaiRelatedElementsInstances);
 
 		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(sdaiRelatedElementsInstances);
+		if (iIFCRelatedElementsInstancesCount == 0) {
+			continue;
+		}
+
+		auto pContainsNode = new _ifc_contains_node(pParentNode);
+		pParentNode->children().push_back(pContainsNode);
+
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
 			sdaiGetAggrByIndex(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
