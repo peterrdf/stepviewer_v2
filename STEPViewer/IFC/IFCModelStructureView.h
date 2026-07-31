@@ -133,8 +133,8 @@ private: // Methods
 
 	void LoadModel(_ifc_model* pModel);
 	void LoadProject(CModelData* pModelData, HTREEITEM hModel, SdaiInstance sdaiProjectInstance, ITEMS& mapItems);
-	void LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
-	void LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& mapItems);
+	void LoadGroups(CModelData* pModelData, HTREEITEM hModel);
+	void LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel);
 
 	CModelData* Model_GetData(HTREEITEM hItem);
 	CModelData* Model_GetData(_model* pModel);

@@ -1215,8 +1215,8 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 
 		// Load
 		LoadProject(pModelData, hModel, sdaiProjectInstance, pModelData->GetProjectItems());
-		LoadGroups(pModelData, hModel, pModelData->GetGroupsItems());
-		LoadUnreferencedItems(pModelData, hModel, pModelData->GetUnreferencedItems());
+		LoadGroups(pModelData, hModel);
+		LoadUnreferencedItems(pModelData, hModel);
 
 		// Update UI
 		Tree_Update(hModel);
@@ -1269,7 +1269,7 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 	} // if (itInstance != ...
 }
 
-void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel, ITEMS& /*mapItems*/)
+void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel)
 {
 	ASSERT(pModelData != nullptr);
 	ASSERT(pModelData->GetModelStructure() != nullptr);
@@ -1295,7 +1295,7 @@ void CIFCModelStructureView::LoadGroups(CModelData* pModelData, HTREEITEM hModel
 	m_mapNodes[pGroupsNode] = hGroups;
 }
 
-void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel, ITEMS& /*mapItems*/)
+void CIFCModelStructureView::LoadUnreferencedItems(CModelData* pModelData, HTREEITEM hModel)
 {
 	ASSERT(pModelData != nullptr);
 	ASSERT(pModelData->GetModelStructure() != nullptr);
