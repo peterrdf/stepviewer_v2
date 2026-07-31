@@ -16,7 +16,7 @@ class _ifc_node {
 
 private: // Members
 
-	_ifc_instance* m_pIfcInstance;
+	_ifc_instance* m_pInstance;
 	_ifc_node* m_pParent;
 	std::vector<_ifc_node*> m_vecChildren;
 
@@ -27,8 +27,8 @@ public: // Methods
 
 public: // Properties
 
-	_ifc_instance* getIfcInstance() const { return m_pIfcInstance; }
-	SdaiInstance getSdaiInstance() const { return m_pIfcInstance != nullptr ? m_pIfcInstance->getSdaiInstance() : 0; }
+	_ifc_instance* getInstance() const { return m_pInstance; }
+	SdaiInstance getSdaiInstance() const { return m_pInstance != nullptr ? m_pInstance->getSdaiInstance() : 0; }
 	_ifc_node* getParent() const { return m_pParent; }
 	virtual const wchar_t* getGlobalId() const;
 	std::vector<_ifc_node*>& children() { return m_vecChildren; }

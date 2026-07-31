@@ -374,7 +374,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				{
 					bool bGeometryItem = false;
 					auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-					_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+					_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
 					if ((pInstance == nullptr) &&
 						(iImage == IMAGE_SELECTED) &&
 						!m_pTreeCtrl->ItemHasChildren(hItem) &&
@@ -383,7 +383,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						ASSERT(hParent != NULL);
 
 						pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
-						pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+						pInstance = pNode ? pNode->getInstance() : nullptr;
 
 						bGeometryItem = true;
 					}
@@ -459,7 +459,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 				{
 					bool bGeometryItem = false;
 					auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-					_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+					_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
 					if ((pInstance == nullptr) &&
 						!m_pTreeCtrl->ItemHasChildren(hItem) &&
 						(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
@@ -467,7 +467,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 						ASSERT(hParent != NULL);
 
 						pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
-						pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+						pInstance = pNode ? pNode->getInstance() : nullptr;
 
 						bGeometryItem = true;
 					}
@@ -559,7 +559,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 		pController->selectInstance(
 			this,
-			pSelectedNode != nullptr ? pSelectedNode->getIfcInstance() : nullptr,
+			pSelectedNode != nullptr ? pSelectedNode->getInstance() : nullptr,
 			GetKeyState(VK_CONTROL) & 0x8000);
 	}
 }
@@ -578,7 +578,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(pNMTreeView->itemNew.hItem);
 	ASSERT(pNode != nullptr);
 
-	auto pIfcInstance = pNode ? pNode->getIfcInstance() : nullptr;
+	auto pIfcInstance = pNode ? pNode->getInstance() : nullptr;
 
 	// Geometry
 	if (pIfcInstance != nullptr) {
@@ -603,7 +603,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	ITEMS& mapItems = pModelData->GetItems(pNMTreeView->itemNew.hItem);
 
 	for (auto pChildNode : pNode->children()) {
-		auto pChildIfcInstance = pChildNode->getIfcInstance();
+		auto pChildIfcInstance = pChildNode->getInstance();
 
 		wstring strItemName;
 		if (pChildIfcInstance != nullptr) {
@@ -649,8 +649,8 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 			tvInsertStruct.item.pszText = ITEM_GEOMETRY;
 			tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage =
-				pChildNode->getIfcInstance()->hasGeometry() ?
-				(pChildNode->getIfcInstance()->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+				pChildNode->getInstance()->hasGeometry() ?
+				(pChildNode->getInstance()->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 				IMAGE_NO_GEOMETRY;
 			tvInsertStruct.item.lParam = NULL;
 			m_pTreeCtrl->InsertItem(&tvInsertStruct);
@@ -675,7 +675,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}
 
-	return find(vecSelectedInstances.begin(), vecSelectedInstances.end(), pNode->getIfcInstance()) != vecSelectedInstances.end();
+	return find(vecSelectedInstances.begin(), vecSelectedInstances.end(), pNode->getInstance()) != vecSelectedInstances.end();
 }
 
 /*virtual*/ CTreeCtrlEx* CIFCModelStructureView::GetTreeView() /*override*/
@@ -756,7 +756,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pTargetNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
 	ASSERT(pTargetNode != nullptr);
 
-	auto pTargetInstance = pTargetNode ? pTargetNode->getIfcInstance() : nullptr;
+	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;
 
 	auto pModelData = Model_GetData(hItem);
 	ASSERT(pModelData != nullptr);
@@ -1259,8 +1259,8 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 		HTREEITEM hProject = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 		pModelData->SetProjectItem(hProject);
 
-		ASSERT(mapItems.find(itInstance2Node->second->getIfcInstance()) == mapItems.end());
-		mapItems[itInstance2Node->second->getIfcInstance()] = vector<HTREEITEM>{ hProject };
+		ASSERT(mapItems.find(itInstance2Node->second->getInstance()) == mapItems.end());
+		mapItems[itInstance2Node->second->getInstance()] = vector<HTREEITEM>{ hProject };
 
 		ASSERT(m_mapNodes.find(itInstance2Node->second) == m_mapNodes.end());
 		m_mapNodes[itInstance2Node->second] = hProject;
@@ -1371,7 +1371,7 @@ void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, bool bEnabledOnl
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != NULL) {
 		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
-		_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+		_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
 		if (pInstance != nullptr) {
 			if (bEnabledOnly) {
 				if (pInstance->getEnable()) {
@@ -1404,7 +1404,7 @@ void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable,
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != NULL) {
 		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
-		_ifc_instance* pInstance = pNode ? pNode->getIfcInstance() : nullptr;
+		_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
 		if (pInstance != nullptr) {
 			pInstance->setEnable(bEnable);
 
@@ -1434,7 +1434,7 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 	ASSERT(hItem != nullptr);
 
 	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-	_ifc_instance* pIfcInstance = pNode ? pNode->getIfcInstance() : nullptr;
+	_ifc_instance* pIfcInstance = pNode ? pNode->getInstance() : nullptr;
 
 	// Instance
 	int iChildrenCount = (pIfcInstance != nullptr) && pIfcInstance->hasGeometry() ? 1 : 0;
@@ -1635,8 +1635,8 @@ void CIFCModelStructureView::InMemoryTree_UpdateChildren(_ifc_node* pNode, bool 
 	ASSERT(pNode != nullptr);
 
 	for (auto pChild : pNode->children()) {
-		if (pChild->getIfcInstance() != nullptr) {
-			pChild->getIfcInstance()->setEnable(bEnable);
+		if (pChild->getInstance() != nullptr) {
+			pChild->getInstance()->setEnable(bEnable);
 		}
 		
 		InMemoryTree_UpdateChildren(pChild, bEnable);
@@ -1929,7 +1929,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 {
 	ASSERT(pNode != nullptr);
 
-	auto pIfcInstance = pNode->getIfcInstance();
+	auto pIfcInstance = pNode->getInstance();
 
 	// Leaf
 	if (pNode->children().empty()) {		

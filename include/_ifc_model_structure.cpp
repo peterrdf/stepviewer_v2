@@ -3,8 +3,8 @@
 #include "_ifc_geometry.h"
 
 // ************************************************************************************************
-_ifc_node::_ifc_node(_ifc_instance* pIfcInstance, _ifc_node* pParentNode)
-	: m_pIfcInstance(pIfcInstance)
+_ifc_node::_ifc_node(_ifc_instance* pInstance, _ifc_node* pParentNode)
+	: m_pInstance(pInstance)
 	, m_pParent(pParentNode)
 	, m_vecChildren()
 {
