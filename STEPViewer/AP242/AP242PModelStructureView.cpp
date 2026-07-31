@@ -19,6 +19,8 @@ using namespace std;
 CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
 	, m_pImageList(nullptr)
+	, m_pModelStructure(nullptr)
+	, m_mapNodes()
 	, m_mapInstanceIterators()
 	, m_mapInstanceItems()
 	, m_vecItemData()
@@ -69,6 +71,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 {
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;
+
+	delete m_pModelStructure;
 
 	for (auto itInstanceIterator : m_mapInstanceIterators) {
 		delete itInstanceIterator.second;
@@ -773,46 +777,50 @@ void CAP242PModelStructureView::LoadModel()
 		return;
 	}
 
+	_ptr<_ap_controller> apController(pController);
+
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+	m_pModelStructure = new _ap242_model_structure(pModel);
+	m_pModelStructure->build();
 
 	m_bInitInProgress = true;
 
-	/*
-	* Model
-	*/
-	auto pModelItemData = new CAP242ItemData(nullptr, (int64_t*)pModel.p(), enumAP242ItemDataType::Model);
-	m_vecItemData.push_back(pModelItemData);
-
+	//
+	// Model
+	//
 	TV_INSERTSTRUCT tvInsertStruct;
 	tvInsertStruct.hParent = nullptr;
 	tvInsertStruct.hInsertAfter = TVI_LAST;
-	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-	tvInsertStruct.item.cChildren = !pModel->getGeometries().empty() ? 1 : 0;
-	tvInsertStruct.item.lParam = (LPARAM)pModelItemData;
-
+	tvInsertStruct.item.lParam = NULL;
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
-	pModelItemData->TreeItem() = hModel;
 
+	//
 	// Header
+	//
 	LoadHeader(pModel, hModel);
 
 	//
 	// Roots
 	//
+	for (auto pRootProduct : m_pModelStructure->getRootProducts()) {
+		wstring strItem = _ap_geometry::getDisplayString(pRootProduct->getSdaiInstance(), apController->getFullDisplayName());
 
-	// Product definitions
-	for (auto pGeometry : pModel->getGeometries()) {
-		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);
-		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {
-			LoadProduct(pModel, pProduct, hModel);
-		}
-	}
+		TV_INSERTSTRUCT tvInsertStruct;
+		tvInsertStruct.hParent = hModel;
+		tvInsertStruct.hInsertAfter = TVI_LAST;
+		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+		tvInsertStruct.item.pszText = (LPWSTR)strItem.c_str();
+		tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = InMemoryTree_GetItemState(pRootProduct);
+		tvInsertStruct.item.lParam = (LPARAM)pRootProduct;
+		tvInsertStruct.item.cChildren = pRootProduct->children().size() > 0 ? 1 : 0;
+		HTREEITEM hProduct = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
-	// Draughitng models
-	for (auto pDraughtingModel : pModel->getDraughtingModels()) {
-		LoadDraughtingModel(pDraughtingModel, hModel);
+		ASSERT(m_mapNodes.find(pRootProduct) == m_mapNodes.end());
+		m_mapNodes[pRootProduct] = hProduct;
 	}
 
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
@@ -1508,11 +1516,99 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	}
 }
 
+int CAP242PModelStructureView::InMemoryTree_GetItemState(_ap242_node* pNode)
+{
+	ASSERT(pNode != nullptr);
+
+	auto pInstance = pNode->getInstance();
+
+	// Leaf
+	if (pNode->children().empty()) {
+		if (pInstance == nullptr) {
+			return IMAGE_NO_GEOMETRY;
+		}
+
+		return pInstance->hasGeometry() ?
+			(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+			IMAGE_NO_GEOMETRY;
+	}
+
+	// Instance
+	int iChildrenCount = (int)pNode->children().size() + ((pInstance != nullptr) && pInstance->hasGeometry() ? 1 : 0);
+	int iSelectedChildrenCount = (pInstance != nullptr) && pInstance->hasGeometry() && pInstance->getEnable() ? 1 : 0;
+	int iSemiSelectedChildrenCount = 0;
+	int iNoGeometryChildrenCount = 0;
+
+	for (auto pChild : pNode->children()) {
+		int iChildState = InMemoryTree_GetItemState(pChild);
+		switch (iChildState) {
+			case IMAGE_SELECTED:
+				{
+					iSelectedChildrenCount++;
+				}
+				break;
+
+			case IMAGE_SEMI_SELECTED:
+				{
+					iSemiSelectedChildrenCount++;
+				}
+				break;
+
+			case IMAGE_NOT_SELECTED:
+				{
+					// NA
+				}
+				break;
+
+			case IMAGE_NO_GEOMETRY:
+				{
+					iNoGeometryChildrenCount++;
+				}
+				break;
+
+			default:
+				{
+					ASSERT(FALSE); // unexpected
+				}
+				break;
+		} // switch (iChildState)
+	} // for (auto pChild : ...
+
+	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
+	{
+		return IMAGE_NO_GEOMETRY;
+	}
+
+	if (iSemiSelectedChildrenCount > 0) {
+		return IMAGE_SEMI_SELECTED;
+	}
+
+	if (iSelectedChildrenCount == 0) {
+		return IMAGE_NOT_SELECTED;
+	}
+
+	if (iChildrenCount == iSelectedChildrenCount) {
+		return IMAGE_SELECTED;
+	}
+
+	if ((iChildrenCount - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
+		return IMAGE_SELECTED;
+	}
+
+	ASSERT(iChildrenCount > iSelectedChildrenCount);
+	return IMAGE_SEMI_SELECTED;
+}
+
 void CAP242PModelStructureView::ResetView()
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	m_pTreeCtrl->DeleteAllItems();
+
+	delete m_pModelStructure;
+	m_pModelStructure = nullptr;
+
+	m_mapNodes.clear();
 
 	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++) {
 		delete m_vecItemData[iItemData];

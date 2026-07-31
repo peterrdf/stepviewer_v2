@@ -1,7 +1,7 @@
 #pragma once
 
 #include "_ap242_model.h"
-#include "_ap242_geometry.h"
+#include "_ap242_instance.h"
 
 #include <string>
 #include <vector>
@@ -32,6 +32,7 @@ private: // Members
 
 	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
+	_ap242_instance* m_pInstance;
 	int64_t m_iId;
 	std::string m_strId;
 	_ap242_node* m_pParent;
@@ -39,13 +40,14 @@ private: // Members
 
 public: // Methods
 
-	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const std::string& strId, _ap242_node* pParentNode);
+	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap242_instance* pInstance, const std::string& strId, _ap242_node* pParentNode);
 	virtual ~_ap242_node();
 
 public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }
-	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance != 0 ? m_sdaiInstance : (m_pInstance != nullptr ? m_pInstance->getSdaiInstance() : 0); }
+	_ap242_instance* getInstance() const { return m_pInstance; }	
 	int64_t& id() { return m_iId; }
 	const std::string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
