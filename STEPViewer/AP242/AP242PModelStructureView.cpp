@@ -500,15 +500,13 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}
 
-	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	if ((pItemData != nullptr) &&
-		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShape) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentation) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
-			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
-			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
-		return pItemData->GetInstance<_instance>() == pController->getSelectedInstance();
+	if (pController->getSelectedInstance() == nullptr) {
+		return false;
+	}
+
+	auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+	if (pNode != nullptr) {
+		return pNode->getInstance() == dynamic_cast<_ap242_instance*>(pController->getSelectedInstance());
 	}
 
 	return false;
