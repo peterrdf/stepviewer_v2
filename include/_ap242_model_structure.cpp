@@ -32,6 +32,7 @@ _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap24
 _ap242_model_structure::_ap242_model_structure(_ap242_model* pModel)
 	: m_pModel(pModel)
 	, m_vecRootProducts()
+	, m_mapInstance2Node()
 	, m_mapInstanceIterators()
 
 {
@@ -97,6 +98,10 @@ void _ap242_model_structure::build()
 			_string::format("#%lld", pDraughtingModel->getExpressID()),
 			nullptr);
 		m_vecRootProducts.push_back(pDraughtingModelNode);
+
+		ASSERT(m_mapInstance2Node.find(pDraughtingModel->getSdaiInstance()) == m_mapInstance2Node.end());
+		m_mapInstance2Node[pDraughtingModel->getSdaiInstance()] = pDraughtingModelNode;
+
 		for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
 			ASSERT(pAnnotationPlane->getInstances().size() == 1);
 			_ptr<_ap242_instance> apAnnotationPlaneInstance(pAnnotationPlane->getInstances().front());
@@ -108,6 +113,9 @@ void _ap242_model_structure::build()
 				_string::format("#%lld:0", pAnnotationPlane->getExpressID()),
 				pDraughtingModelNode));
 			pDraughtingModelNode->children().back()->id() = pAnnotationPlane->getInstances().front()->getID();
+
+			ASSERT(m_mapInstance2Node.find(apAnnotationPlaneInstance->getSdaiInstance()) == m_mapInstance2Node.end());
+			m_mapInstance2Node[apAnnotationPlaneInstance->getSdaiInstance()] = pDraughtingModelNode->children().back();
 		}
 
 		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
@@ -121,8 +129,26 @@ void _ap242_model_structure::build()
 				_string::format("#%lld:0", pDraughtingCallout->getExpressID()),
 				pDraughtingModelNode));
 			pDraughtingModelNode->children().back()->id() = pDraughtingCallout->getInstances().front()->getID();
+
+			ASSERT(m_mapInstance2Node.find(apDraughtingCalloutInstance->getSdaiInstance()) == m_mapInstance2Node.end());
+			m_mapInstance2Node[apDraughtingCalloutInstance->getSdaiInstance()] = pDraughtingModelNode->children().back();
 		}
 	}
+}
+
+void _ap242_model_structure::getInstancePath(SdaiInstance sdaiInstance, std::vector<_ap242_node*>& vecPath)
+{
+	vecPath.clear();
+	auto it = m_mapInstance2Node.find(sdaiInstance);
+	if (it == m_mapInstance2Node.end()) {
+		return;
+	}
+	_ap242_node* pNode = it->second;
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+	std::reverse(vecPath.begin(), vecPath.end());
 }
 
 void _ap242_model_structure::getNodeChildren(_ap242_node* pNode, vector<_ap242_node*>& vecChildren, bool bRecursive)
@@ -180,6 +206,10 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 			pParentNode));
 		vecChildren.back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
 
+		if (m_mapInstance2Node.find(apProductInstance->getSdaiInstance()) == m_mapInstance2Node.end()) {
+			m_mapInstance2Node[apProductInstance->getSdaiInstance()] = vecChildren.back();
+		}
+
 		pParentNode = vecChildren.back();
 
 		if (pProduct->getProductShape()) {
@@ -195,6 +225,10 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 				pParentNode);
 			pParentNode->children().push_back(pProductShapeNode);
 
+			if (m_mapInstance2Node.find(apProductShapeInstance->getSdaiInstance()) == m_mapInstance2Node.end()) {
+				m_mapInstance2Node[apProductShapeInstance->getSdaiInstance()] = pProductShapeNode;
+			}
+
 			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
 				ASSERT(pProductShapeRepresentation->getInstances().size() == 1);
 				_ptr<_ap242_instance> apProductShapeRepresentationInstance(pProductShapeRepresentation->getInstances().front());
@@ -206,6 +240,10 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 					_string::format("#%lld", pProductShapeRepresentation->getExpressID()),
 					pProductShapeNode);
 					pProductShapeNode->children().push_back(pProductShapeRepresentationNode);
+
+					if (m_mapInstance2Node.find(apProductShapeRepresentationInstance->getSdaiInstance()) == m_mapInstance2Node.end()) {
+						m_mapInstance2Node[apProductShapeRepresentationInstance->getSdaiInstance()] = pProductShapeRepresentationNode;
+					}
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
@@ -227,6 +265,10 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 							_string::format("#%lld:%lld", apRepresentationItemInstance->getExpressID(), pInstanceIterator->index()),
 							pProductShapeRepresentationNode));
 						pProductShapeRepresentationNode->children().back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
+
+						if (m_mapInstance2Node.find(apRepresentationItemInstance->getSdaiInstance()) == m_mapInstance2Node.end()) {
+							m_mapInstance2Node[apRepresentationItemInstance->getSdaiInstance()] = pProductShapeRepresentationNode->children().back();
+						}
 					}
 					else {
 						assert(false);
@@ -248,6 +290,11 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 				nullptr,
 				_string::format("#%lld", itExpressID2Assembly.second->getExpressID()),
 				pParentNode));
+
+			if (m_mapInstance2Node.find(itExpressID2Assembly.second->getSdaiInstance()) == m_mapInstance2Node.end()) {
+				m_mapInstance2Node[itExpressID2Assembly.second->getSdaiInstance()] = pParentNode->children().back();
+			}
+
 			loadProductNode(pParentNode->children().back(), itExpressID2Assembly.second->getRelatedProductDefinition());
 		}
 	}
@@ -259,6 +306,8 @@ void _ap242_model_structure::clean()
 		delete pRoot;
 	}
 	m_vecRootProducts.clear();
+
+	m_mapInstance2Node.clear();
 
 	for (auto itInstanceIterator : m_mapInstanceIterators) {
 		delete itInstanceIterator.second;

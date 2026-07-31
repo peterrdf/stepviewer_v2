@@ -99,24 +99,23 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 	_ptr<_ap242_instance> apProductInstance(pInstance);
 
-	auto itInstanceItems = m_mapItems.find(pInstance);
-	if (itInstanceItems == m_mapItems.end()) {
+	auto itItems = m_mapItems.find(pInstance);
+	if (itItems == m_mapItems.end()) {
 		ASSERT(FALSE);
 		return;
 	}
 
-	if (itInstanceItems->second.empty()) {
+	if (itItems->second.empty()) {
 		ASSERT(FALSE);
 		return;
 	}
 
-	HTREEITEM hItem = itInstanceItems->second.front();
+	HTREEITEM hItem = itItems->second.front();
 	ASSERT(hItem != NULL);
 
 	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
 	if (pItemData == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -152,25 +151,35 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	}
 
 	auto pSelectedInstance = pController->getSelectedInstance() != nullptr ? dynamic_cast<_ap242_instance*>(getController()->getSelectedInstance()) : nullptr;
+
+	//
+	// Select the Model by default
+	//
 	if (pSelectedInstance == nullptr) {
-		/*
-		* Select the Model by default
-		*/
 		HTREEITEM hModel = m_pTreeCtrl->GetRootItem();
 		ASSERT(hModel != nullptr);
 
 		m_pTreeCtrl->SelectItem(hModel);
-
 		return;
 	}
 
-	auto itInstanceItems = m_mapItems.find(pSelectedInstance);
-	if (itInstanceItems == m_mapItems.end()) {
-		ASSERT(FALSE);
-		return;
+	auto itItems = m_mapItems.find(pSelectedInstance);
+
+	// Load branch
+	if (itItems == m_mapItems.end()) {
+		vector<_ap242_node*> vecPath;
+		m_pModelStructure->getInstancePath(pSelectedInstance->getSdaiInstance(), vecPath);
+
+		for (auto pNode : vecPath) {
+			auto itNode = m_mapNodes.find(pNode);
+			ASSERT(itNode != m_mapNodes.end());
+
+			m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+		}
 	}
 
-	if (itInstanceItems->second.empty()) {
+	itItems = m_mapItems.find(pSelectedInstance);
+	if (itItems == m_mapItems.end()) {
 		ASSERT(FALSE);
 		return;
 	}
@@ -180,7 +189,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	*/
 	m_pTreeCtrl->SendMessage(WM_SETREDRAW, 0, 0);
 
-	m_hSelectedItem = itInstanceItems->second.front();
+	m_hSelectedItem = itItems->second.front();
 
 	m_pTreeCtrl->SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
 	m_pTreeCtrl->EnsureVisible(m_hSelectedItem);
@@ -433,8 +442,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		auto pChildInstance = pChildNode->getInstance();
 
 		wstring strItemName;
-		if (pChildInstance != nullptr) {
-			strItemName = _ap_geometry::getDisplayString(pChildInstance->getSdaiInstance(), apController->getFullDisplayName());
+		if (pChildNode->getSdaiInstance() != 0) {
+			strItemName = _ap_geometry::getDisplayString(pChildNode->getSdaiInstance(), apController->getFullDisplayName());
 		}
 		else {
 			strItemName = (LPCWSTR)CA2W(pChildNode->getId().c_str());
@@ -755,12 +764,12 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 					Tree_Reset(false);
 
-					auto itInstanceItems = m_mapItems.find(pTargetInstance);
-					ASSERT(itInstanceItems != m_mapItems.end());
-					ASSERT(!itInstanceItems->second.empty());
+					auto itItems = m_mapItems.find(pTargetInstance);
+					ASSERT(itItems != m_mapItems.end());
+					ASSERT(!itItems->second.empty());
 
-					for (size_t iItem = 0; iItem < itInstanceItems->second.size(); iItem++) {
-						HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(itInstanceItems->second[iItem]);
+					for (size_t iItem = 0; iItem < itItems->second.size(); iItem++) {
+						HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(itItems->second[iItem]);
 						ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
 
 						m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
@@ -967,9 +976,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 		pParentItemData->Children().push_back(pProductItemData);
 		m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pProductItemData);
 
-		auto itInstanceItems = m_mapItems.find(apProductInstance);
-		if (itInstanceItems != m_mapItems.end()) {
-			itInstanceItems->second.push_back(hProduct);
+		auto itItems = m_mapItems.find(apProductInstance);
+		if (itItems != m_mapItems.end()) {
+			itItems->second.push_back(hProduct);
 		}
 		else {
 			m_mapItems[apProductInstance] = { hProduct };
@@ -994,9 +1003,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 			iGeometryImage = pProductShape->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShape);
 
-			itInstanceItems = m_mapItems.find(pProductShape->getInstances().front());
-			if (itInstanceItems != m_mapItems.end()) {
-				itInstanceItems->second.push_back(hProductShape);
+			itItems = m_mapItems.find(pProductShape->getInstances().front());
+			if (itItems != m_mapItems.end()) {
+				itItems->second.push_back(hProductShape);
 			}
 			else {
 				m_mapItems[pProductShape->getInstances().front()] = { hProductShape };
@@ -1020,9 +1029,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
 				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
 
-				itInstanceItems = m_mapItems.find(pProductShapeRepresentation->getInstances().front());
-				if (itInstanceItems != m_mapItems.end()) {
-					itInstanceItems->second.push_back(hProductShapeRepresentation);
+				itItems = m_mapItems.find(pProductShapeRepresentation->getInstances().front());
+				if (itItems != m_mapItems.end()) {
+					itItems->second.push_back(hProductShapeRepresentation);
 				}
 				else {
 					m_mapItems[pProductShapeRepresentation->getInstances().front()] = { hProductShapeRepresentation };
@@ -1057,9 +1066,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 						m_pTreeCtrl->SetItemData(hProductShapeRepresentationItem, (DWORD_PTR)pProductShapeRepresentationItemData);
 						m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentationItem);
 
-						itInstanceItems = m_mapItems.find(apRepresentationItemInstance);
-						if (itInstanceItems != m_mapItems.end()) {
-							itInstanceItems->second.push_back(hProductShapeRepresentationItem);
+						itItems = m_mapItems.find(apRepresentationItemInstance);
+						if (itItems != m_mapItems.end()) {
+							itItems->second.push_back(hProductShapeRepresentationItem);
 						}
 						else {
 							m_mapItems[apRepresentationItemInstance] = { hProductShapeRepresentationItem };
@@ -1185,9 +1194,9 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 
 	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
 
-	auto itInstanceItems = m_mapItems.find(pInstance);
-	if (itInstanceItems != m_mapItems.end()) {
-		itInstanceItems->second.push_back(hInstance);
+	auto itItems = m_mapItems.find(pInstance);
+	if (itItems != m_mapItems.end()) {
+		itItems->second.push_back(hInstance);
 	}
 	else {
 		m_mapItems[pInstance] = { hInstance };
@@ -1258,9 +1267,9 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 
 	m_pTreeCtrl->SetItemData(hAnnotationPlane, (DWORD_PTR)pItemData);
 
-	auto itInstanceItems = m_mapItems.find(pInstance);
-	if (itInstanceItems != m_mapItems.end()) {
-		itInstanceItems->second.push_back(hAnnotationPlane);
+	auto itItems = m_mapItems.find(pInstance);
+	if (itItems != m_mapItems.end()) {
+		itItems->second.push_back(hAnnotationPlane);
 	}
 	else {
 		m_mapItems[pInstance] = { hAnnotationPlane };
@@ -1296,9 +1305,9 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 
 	m_pTreeCtrl->SetItemData(hDraugthingCallout, (DWORD_PTR)pItemData);
 
-	auto itInstanceItems = m_mapItems.find(pInstance);
-	if (itInstanceItems != m_mapItems.end()) {
-		itInstanceItems->second.push_back(hDraugthingCallout);
+	auto itItems = m_mapItems.find(pInstance);
+	if (itItems != m_mapItems.end()) {
+		itItems->second.push_back(hDraugthingCallout);
 	}
 	else {
 		m_mapItems[pInstance] = { hDraugthingCallout };
