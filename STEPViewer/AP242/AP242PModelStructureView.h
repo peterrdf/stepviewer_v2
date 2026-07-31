@@ -51,7 +51,7 @@ private: // Members
 	_ap242_model_structure* m_pModelStructure;
 	NODES m_mapNodes;
 	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
-	ITEMS m_mapInstanceItems;
+	ITEMS m_mapItems;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
 		
