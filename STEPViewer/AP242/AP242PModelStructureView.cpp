@@ -384,23 +384,20 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		m_pTreeCtrl->SetItemState(hItem, TVIS_BOLD, TVIS_BOLD);
 		m_hSelectedItem = hItem;
 
-		auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-		if ((pItemData == nullptr) ||
-			((pItemData->GetType() != enumAP242ItemDataType::ProductInstance) &&
-				(pItemData->GetType() != enumAP242ItemDataType::ProductShape) &&
-				(pItemData->GetType() != enumAP242ItemDataType::ProductShapeRepresentation) &&
-				(pItemData->GetType() != enumAP242ItemDataType::ProductShapeRepresentationItem) &&
-				(pItemData->GetType() != enumAP242ItemDataType::AnnotationPlane) &&
-				(pItemData->GetType() != enumAP242ItemDataType::DraughtingCallout))) {
+		auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+		if ((pNode == nullptr) ||
+			((pNode->getType() != _ap242_node_type::ProductInstance) &&
+				(pNode->getType() != _ap242_node_type::ProductShape) &&
+				(pNode->getType() != _ap242_node_type::ProductShapeRepresentation) &&
+				(pNode->getType() != _ap242_node_type::ProductShapeRepresentationItem) &&
+				(pNode->getType() != _ap242_node_type::AnnotationPlane) &&
+				(pNode->getType() != _ap242_node_type::DraughtingCallout))) {
 			getController()->selectInstance(this, nullptr);
-
 			return;
 		}
 
-		auto pInstance = pItemData->GetInstance<_ap242_instance>();
-		ASSERT(pInstance != nullptr);
-
-		getController()->selectInstance(this, pInstance);
+		ASSERT(pNode->getInstance() != nullptr);
+		getController()->selectInstance(this, pNode->getInstance());
 	} // if ((hItem != nullptr) && ...
 }
 
