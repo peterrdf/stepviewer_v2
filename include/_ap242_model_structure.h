@@ -64,7 +64,7 @@ private: // Members
 
 	// Cache
 	std::vector<_ap242_node*> m_vecRootProducts;
-	std::map<SdaiInstance, _ap242_node*> m_mapInstance2Node;
+	std::map<_ap242_instance*, _ap242_node*> m_mapInstance2Node;
 	std::map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 
 public: // Methods
@@ -79,7 +79,7 @@ public: // Methods
 	void print(int iLevel, _ap242_node* pNode);
 #endif
 
-	void getInstancePath(SdaiInstance sdaiInstance, std::vector<_ap242_node*>& vecPath);
+	void getInstancePath(_ap242_instance* pInstance, std::vector<_ap242_node*>& vecPath);
 	void getNodeChildren(_ap242_node* pNode, vector<_ap242_node*>& vecChildren, bool bRecursive);
 	bool hasChild(_ap242_node* pParentNode, int64_t iId);
 
@@ -92,6 +92,6 @@ public: // Properties
 
 	_ap242_model* getModel() const { return m_pModel; }
 	const std::vector<_ap242_node*>& getRootProducts() { return m_vecRootProducts; }
-	const std::map<SdaiInstance, _ap242_node*>& getInstance2NodeMap() const { return m_mapInstance2Node; }
+	const std::map<_ap242_instance*, _ap242_node*>& getInstance2NodeMap() const { return m_mapInstance2Node; }
 };
 

@@ -146,7 +146,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -168,7 +167,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	// Load branch
 	if (itItems == m_mapItems.end()) {
 		vector<_ap242_node*> vecPath;
-		m_pModelStructure->getInstancePath(pSelectedInstance->getSdaiInstance(), vecPath);
+		m_pModelStructure->getInstancePath(pSelectedInstance, vecPath);
 
 		for (auto pNode : vecPath) {
 			auto itNode = m_mapNodes.find(pNode);
