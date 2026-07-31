@@ -823,9 +823,6 @@ void CAP242PModelStructureView::LoadModel()
 		m_mapNodes[pRootProduct] = hProduct;
 	}
 
-	//#todo
-	//int iModelItemState = Tree_GetItemState(hModel);
-	//m_pTreeCtrl->SetItemImage(hModel, iModelItemState, iModelItemState);
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 
 	m_bInitInProgress = false;
