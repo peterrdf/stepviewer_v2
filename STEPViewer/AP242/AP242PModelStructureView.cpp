@@ -978,8 +978,8 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 		auto pProductShape = pProduct->getProductShape();
 		if (pProductShape) {
 			ASSERT(pProductShape->getInstances().size() == 1);
-			auto pProductShapeData = new CAP242ItemData(pProductItemData, 
-				(int64_t*)pProductShape->getInstances().front(), 
+			auto pProductShapeData = new CAP242ItemData(pProductItemData,
+				(int64_t*)pProductShape->getInstances().front(),
 				enumAP242ItemDataType::ProductShape);
 			pProductItemData->Children().push_back(pProductShapeData);
 
@@ -1004,7 +1004,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 
 			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
 				ASSERT(pProductShapeRepresentation->getInstances().size() == 1);
-				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData, 
+				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData,
 					(int64_t*)pProductShapeRepresentation->getInstances().front(),
 					enumAP242ItemDataType::ProductShapeRepresentation);
 				pProductShapeData->Children().push_back(pProductShapeRepresentationData);
@@ -1027,7 +1027,7 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 				else {
 					m_mapItems[pProductShapeRepresentation->getInstances().front()] = { hProductShapeRepresentation };
 				}
-				
+
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
 					itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
@@ -1041,9 +1041,9 @@ void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product
 
 					_ptr<_ap242_product_shape_representation_item_instance> apRepresentationItemInstance(pInstanceIterator->getNextItem());
 					if (apRepresentationItemInstance) {
-						auto pProductShapeRepresentationItemData = 
-							new CAP242ItemData(pProductShapeRepresentationData, 
-								(int64_t*)apRepresentationItemInstance.p(), 
+						auto pProductShapeRepresentationItemData =
+							new CAP242ItemData(pProductShapeRepresentationData,
+								(int64_t*)apRepresentationItemInstance.p(),
 								enumAP242ItemDataType::ProductShapeRepresentationItem);
 						pProductShapeRepresentationData->Children().push_back(pProductShapeRepresentationItemData);
 
@@ -1188,7 +1188,8 @@ void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instan
 	auto itInstanceItems = m_mapItems.find(pInstance);
 	if (itInstanceItems != m_mapItems.end()) {
 		itInstanceItems->second.push_back(hInstance);
-	} else {
+	}
+	else {
 		m_mapItems[pInstance] = { hInstance };
 	}
 }
@@ -1260,7 +1261,8 @@ void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAn
 	auto itInstanceItems = m_mapItems.find(pInstance);
 	if (itInstanceItems != m_mapItems.end()) {
 		itInstanceItems->second.push_back(hAnnotationPlane);
-	} else {
+	}
+	else {
 		m_mapItems[pInstance] = { hAnnotationPlane };
 	}
 }
@@ -1297,7 +1299,8 @@ void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout*
 	auto itInstanceItems = m_mapItems.find(pInstance);
 	if (itInstanceItems != m_mapItems.end()) {
 		itInstanceItems->second.push_back(hDraugthingCallout);
-	} else {
+	}
+	else {
 		m_mapItems[pInstance] = { hDraugthingCallout };
 	}
 }
@@ -1644,7 +1647,7 @@ int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 		} // switch (iChildState)
 	} // for (auto pChildNode : ...
 
-	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/ {
+	if ((int)pNode->children().size() == iNoGeometryChildrenCount) {
 		return IMAGE_NO_GEOMETRY;
 	}
 
@@ -1726,8 +1729,7 @@ int CAP242PModelStructureView::InMemoryTree_GetItemState(_ap242_node* pNode)
 		} // switch (iChildState)
 	} // for (auto pChild : ...
 
-	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
-	{
+	if (iChildrenCount == iNoGeometryChildrenCount) {
 		return IMAGE_NO_GEOMETRY;
 	}
 
