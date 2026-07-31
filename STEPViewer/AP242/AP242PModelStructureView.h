@@ -112,6 +112,7 @@ private: // Methods
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void Tree_UpdateParents(HTREEITEM hItem);
 
+	int Tree_GetItemState(HTREEITEM hItem);
 	int InMemoryTree_GetItemState(_ap242_node* pNode);
 	
 	void ResetView();

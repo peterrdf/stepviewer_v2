@@ -823,6 +823,9 @@ void CAP242PModelStructureView::LoadModel()
 		m_mapNodes[pRootProduct] = hProduct;
 	}
 
+	//#todo
+	//int iModelItemState = Tree_GetItemState(hModel);
+	//m_pTreeCtrl->SetItemImage(hModel, iModelItemState, iModelItemState);
 	m_pTreeCtrl->Expand(hModel, TVE_EXPAND);
 
 	m_bInitInProgress = false;
@@ -1514,6 +1517,74 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 
 		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 	}
+}
+
+int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
+{
+	auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+	ASSERT(pNode != nullptr);
+
+	int iSelectedChildrenCount = 0;
+	int iSemiSelectedChildrenCount = 0;
+	int iNoGeometryChildrenCount = 0;
+
+	for (auto pChildNode : pNode->children()) {
+		int iChildState = InMemoryTree_GetItemState(pChildNode);
+		switch (iChildState) {
+			case IMAGE_SELECTED:
+				{
+					iSelectedChildrenCount++;
+				}
+				break;
+
+			case IMAGE_SEMI_SELECTED:
+				{
+					iSemiSelectedChildrenCount++;
+				}
+				break;
+
+			case IMAGE_NOT_SELECTED:
+				{
+					// NA
+				}
+				break;
+
+			case IMAGE_NO_GEOMETRY:
+				{
+					iNoGeometryChildrenCount++;
+				}
+				break;
+
+			default:
+				{
+					ASSERT(FALSE); // unexpected
+				}
+				break;
+		} // switch (iChildState)
+	} // for (auto pChildNode : ...
+
+	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/ {
+		return IMAGE_NO_GEOMETRY;
+	}
+
+	if (iSemiSelectedChildrenCount > 0) {
+		return IMAGE_SEMI_SELECTED;
+	}
+
+	if (iSelectedChildrenCount == 0) {
+		return IMAGE_NOT_SELECTED;
+	}
+
+	if ((int)pNode->children().size() == iSelectedChildrenCount) {
+		return IMAGE_SELECTED;
+	}
+
+	if (((int)pNode->children().size() - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
+		return IMAGE_SELECTED;
+	}
+
+	ASSERT((int)pNode->children().size() > iSelectedChildrenCount);
+	return IMAGE_SEMI_SELECTED;
 }
 
 int CAP242PModelStructureView::InMemoryTree_GetItemState(_ap242_node* pNode)

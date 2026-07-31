@@ -17,6 +17,7 @@ _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap24
 	, m_pParent(pParentNode)
 	, m_vecChildren()
 {
+	assert(m_sdaiInstance != 0);
 	assert(!m_strId.empty());
 }
 
