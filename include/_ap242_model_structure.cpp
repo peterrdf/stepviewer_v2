@@ -223,8 +223,9 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 				pParentNode);
 			pParentNode->children().push_back(pProductShapeNode);
 
-			//assert(m_mapInstance2Node.find(apProductShapeInstance) == m_mapInstance2Node.end());
-			m_mapInstance2Node[apProductShapeInstance] = pProductShapeNode;
+			if (m_mapInstance2Node.find(apProductShapeInstance) == m_mapInstance2Node.end()) {
+				m_mapInstance2Node[apProductShapeInstance] = pProductShapeNode;
+			}
 
 			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
 				assert(pProductShapeRepresentation->getInstances().size() == 1);
@@ -238,8 +239,9 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 					pProductShapeNode);
 				pProductShapeNode->children().push_back(pProductShapeRepresentationNode);
 
-				//assert(m_mapInstance2Node.find(apProductShapeRepresentationInstance) == m_mapInstance2Node.end());
-				m_mapInstance2Node[apProductShapeRepresentationInstance] = pProductShapeRepresentationNode;
+				if (m_mapInstance2Node.find(apProductShapeRepresentationInstance) == m_mapInstance2Node.end()) {
+					m_mapInstance2Node[apProductShapeRepresentationInstance] = pProductShapeRepresentationNode;
+				}
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
