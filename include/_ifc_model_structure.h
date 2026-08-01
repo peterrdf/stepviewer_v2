@@ -25,6 +25,8 @@ public: // Methods
 	_ifc_node(_ifc_instance* pIfcInstance, _ifc_node* pParentNode);
 	virtual ~_ifc_node();
 
+	bool hasChild(SdaiInstance sdaiInstance);
+
 public: // Properties
 
 	_ifc_instance* getInstance() const { return m_pInstance; }

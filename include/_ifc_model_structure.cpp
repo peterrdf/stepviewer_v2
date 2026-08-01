@@ -17,6 +17,19 @@ _ifc_node::_ifc_node(_ifc_instance* pInstance, _ifc_node* pParentNode)
 	}
 }
 
+bool _ifc_node::hasChild(SdaiInstance sdaiInstance)
+{
+	for (auto pChildNode : children()) {
+		if (pChildNode->getSdaiInstance() == sdaiInstance) {
+			return true;
+		}
+		if (pChildNode->hasChild(sdaiInstance)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;
