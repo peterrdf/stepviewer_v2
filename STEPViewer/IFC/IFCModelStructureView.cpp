@@ -1114,6 +1114,9 @@ void CIFCModelStructureView::LoadModel(_ifc_model* pModel)
 	tvInsertStruct.item.lParam = (LPARAM)pModel->getModelStructure()->getModelNode();
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
 
+	ASSERT(m_mapNodes.find(pModel->getModelStructure()->getModelNode()) == m_mapNodes.end());
+	m_mapNodes[pModel->getModelStructure()->getModelNode()] = hModel;
+
 	auto pModelData = new CModelData(pModel, m_pTreeCtrl, hModel);
 	m_vecModelData.push_back(pModelData);
 
