@@ -256,11 +256,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	// UI
 	//
 
-	set<_ifc_instance*> setInstances{ ifcInstance };
-	Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
-	Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
-	Tree_Update(pModelData->GetModelItem(), pModelData->GetSpaceBoundariesItem(), pModelData->GetSpaceBoundariesItems(), setInstances);
-	Tree_Update(pModelData->GetModelItem(), pModelData->GetUnreferencedItem(), pModelData->GetUnreferencedItems(), setInstances);
+	Tree_Update(pModelData->GetModelItem());
 }
 
 /*virtual*/ void CIFCModelStructureView::onInstanceSelected(_view* pSender) /*override*/
@@ -669,8 +665,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pTreeCtrl->SetFocus();
 
 	auto pTargetNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-	ASSERT(pTargetNode != nullptr);
-
 	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;
 
 	auto pModelData = Model_GetData(hItem);
