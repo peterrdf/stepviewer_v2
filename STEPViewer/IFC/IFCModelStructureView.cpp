@@ -350,7 +350,6 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -366,173 +365,89 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		auto pModelData = Model_GetData(hItem);
 		ASSERT(pModelData != nullptr);
 
-		ITEMS& mapItems = pModelData->GetItems(hItem);
-
 		switch (iImage) {
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
-				{
-					bool bGeometryItem = false;
-					auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-					_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
-					if ((pInstance == nullptr) &&
-						(iImage == IMAGE_SELECTED) &&
-						!m_pTreeCtrl->ItemHasChildren(hItem) &&
-						(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
-						HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
-						ASSERT(hParent != NULL);
-
-						pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
-						pInstance = pNode ? pNode->getInstance() : nullptr;
-
-						bGeometryItem = true;
-					}
-
-					//
-					// Model
-					//
-
-					set<_ifc_instance*> setInstances;
-					if (pInstance != nullptr) {
-						pInstance->setEnable(false);
-
-						setInstances.insert(pInstance);
-					}
-
-					if (!bGeometryItem) {
-						Model_EnableChildren(hItem, false, setInstances);
-					}
-
-					//
-					// UI
-					//
-
-					if (pInstance != nullptr) {
-						//
-						// Instance
-						//
-
-						auto itItems = mapItems.find(pInstance);
-						ASSERT(itItems != mapItems.end());
-
-						for (auto hInstance : itItems->second) {
-							if (bGeometryItem) {
-								HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
-								ASSERT((hGeometry != NULL) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
-
-								m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-
-								Tree_UpdateChildren(hGeometry);
-								Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
-							}
-							else {
-								m_pTreeCtrl->SetItemImage(hInstance, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-
-								Tree_UpdateChildren(hInstance);
-								Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
-							}
-						}
-					}
-					else {
-						//
-						// Item
-						//
-
-						m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-
-						Tree_UpdateChildren(hItem);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
-					}
-
-					if (pModelData->IsProjectItem(hItem)) {
-						Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
-					}
-					else if (pModelData->IsGroupsItem(hItem)) {
-						Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
-					}
-
-					pController->onInstancesEnabledStateChanged(this);
-				}
-				break;
-
 			case IMAGE_NOT_SELECTED:
 				{
 					bool bGeometryItem = false;
 					auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
 					_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
 					if ((pInstance == nullptr) &&
+						((iImage == IMAGE_SELECTED) || (iImage == IMAGE_NOT_SELECTED)) &&
 						!m_pTreeCtrl->ItemHasChildren(hItem) &&
 						(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
 						HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 						ASSERT(hParent != NULL);
 
 						pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
+						ASSERT(pNode != nullptr);
 						pInstance = pNode ? pNode->getInstance() : nullptr;
+						ASSERT(pInstance != nullptr);
 
 						bGeometryItem = true;
 					}
 
 					//
-					// Model
+					// Instance
 					//
 
-					set<_ifc_instance*> setInstances;
 					if (pInstance != nullptr) {
-						pInstance->setEnable(true);
-
-						setInstances.insert(pInstance);
+						pInstance->setEnable(iImage == IMAGE_NOT_SELECTED);
 					}
 
+					//
+					// In Memory Tree
+					//
+
 					if (!bGeometryItem) {
-						Model_EnableChildren(hItem, true, setInstances);
+						if (pNode != nullptr) {
+							InMemoryTree_EnableChildren(pNode, iImage == IMAGE_NOT_SELECTED);
+						}
+						else {
+							ASSERT(hItem == pModelData->GetModelItem());
+
+							if (pModelData->GetModelStructure()->getProjectNode() != nullptr) {
+								InMemoryTree_EnableChildren(pModelData->GetModelStructure()->getProjectNode(), iImage == IMAGE_NOT_SELECTED);
+							}
+							if (pModelData->GetModelStructure()->getGroupsNode() != nullptr) {
+								InMemoryTree_EnableChildren(pModelData->GetModelStructure()->getGroupsNode(), iImage == IMAGE_NOT_SELECTED);
+							}
+							if (pModelData->GetModelStructure()->getUnreferencedNode() != nullptr) {
+								InMemoryTree_EnableChildren(pModelData->GetModelStructure()->getUnreferencedNode(), iImage == IMAGE_NOT_SELECTED);
+							}
+						}
 					}
 
 					//
 					// UI
 					//
 
-					if (pInstance != nullptr) {
-						//
-						// Instance/Geometry
-						//
-
-						auto itItems = mapItems.find(pInstance);
-						ASSERT(itItems != mapItems.end());
-
-						for (auto hInstance : itItems->second) {
-							if (bGeometryItem) {
-								HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(hInstance);
-								ASSERT((hGeometry != NULL) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
-
-								m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
-
-								Tree_UpdateChildren(hGeometry);
-								Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
-							}
-							else {
-								m_pTreeCtrl->SetItemImage(hInstance, IMAGE_SELECTED, IMAGE_SELECTED);
-
-								Tree_UpdateChildren(hInstance);
-								Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hInstance));
-							}
-						} // for (auto hInstance : ...
-					}
-					else {
-						//
-						// Item
-						//
-
-						m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
-
-						Tree_UpdateChildren(hItem);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
-					}
-
 					if (pModelData->IsProjectItem(hItem)) {
-						Tree_Update(pModelData->GetModelItem(), pModelData->GetGroupsItem(), pModelData->GetGroupsItems(), setInstances);
+						Tree_Update(pModelData->GetProjectItem());
+						if (pModelData->GetGroupsItem() != NULL) {
+							Tree_Update(pModelData->GetGroupsItem());
+						}
+
+						Tree_Update(pModelData->GetModelItem(), false);
 					}
 					else if (pModelData->IsGroupsItem(hItem)) {
-						Tree_Update(pModelData->GetModelItem(), pModelData->GetProjectItem(), pModelData->GetProjectItems(), setInstances);
+						Tree_Update(pModelData->GetGroupsItem());
+						if (pModelData->GetProjectItem()) {
+							Tree_Update(pModelData->GetProjectItem());
+						}
+
+						Tree_Update(pModelData->GetModelItem(), false);
+					}
+					else if (pModelData->IsUnreferencedItem(hItem)) {
+						Tree_Update(pModelData->GetUnreferencedItem());
+
+						Tree_Update(pModelData->GetModelItem(), false);
+					}
+					else {
+						ASSERT(hItem == pModelData->GetModelItem());
+
+						Tree_Update(pModelData->GetModelItem());
 					}
 
 					pController->onInstancesEnabledStateChanged(this);
@@ -541,7 +456,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			default:
 				{
-					// skip the properties, items without a geometry, etc.
+					// skip Items without a Geometry, Header, etc.
 					return;
 				}
 		} // switch (iImage)		
@@ -1241,7 +1156,7 @@ void CIFCModelStructureView::LoadProject(CModelData* pModelData, HTREEITEM hMode
 	const auto& mapInstance2Node = pModelData->GetModelStructure()->getInstance2Node();
 
 	auto pGeometry = pModelData->GetModel()->getGeometryByInstance(sdaiProjectInstance);
-	if (pGeometry != nullptr) {		
+	if (pGeometry != nullptr) {
 		wstring strItem = _ap_geometry::getDisplayString(sdaiProjectInstance, apController->getFullDisplayName());
 
 		const auto& itInstance2Node = mapInstance2Node.find(sdaiProjectInstance);
@@ -1389,34 +1304,6 @@ void CIFCModelStructureView::Model_GetChildren(HTREEITEM hItem, bool bEnabledOnl
 	} // while (hChild != NULL)
 }
 
-void CIFCModelStructureView::Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren)
-{
-	if (hItem == NULL) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (!m_pTreeCtrl->ItemHasChildren(hItem)) {
-		return;
-	}
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
-	while (hChild != NULL) {
-		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
-		_ifc_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
-		if (pInstance != nullptr) {
-			pInstance->setEnable(bEnable);
-
-			setChildren.insert(pInstance);
-		}
-
-		Model_EnableChildren(hChild, bEnable, setChildren);
-
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
-}
-
 HTREEITEM CIFCModelStructureView::Tree_GetModelItem(HTREEITEM hItem) const
 {
 	ASSERT(hItem != NULL);
@@ -1450,9 +1337,12 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 	}
 
 	while (hChild != NULL) {
-		auto pChildNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hChild);
-		if (pChildNode == nullptr) {
-			// skip the properties, items without a geometry, etc.
+		int iImage, iSelectedImage = -1;
+		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
+
+		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
+			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 			continue;
 		}
@@ -1462,7 +1352,7 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 		}
 
 		int iItemState = Tree_GetItemState(hChild);
-		iChildrenCount++;		
+		iChildrenCount++;
 
 		switch (iItemState) {
 			case IMAGE_SELECTED:
@@ -1499,14 +1389,12 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = tr
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != NULL)
 
-	if (iChildrenCount == 0) /*Instance*/
-	{
+	if (iChildrenCount == 0) {
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 		return;
 	}
 
-	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
-	{
+	if (iChildrenCount == iNoGeometryChildrenCount) {
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY);
 		return;
 	}
@@ -1542,10 +1430,18 @@ void CIFCModelStructureView::Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEM
 		return;
 	}
 
+	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
+
 	vector<HTREEITEM> vecItems;
 	for (auto pInstance : setInstances) {
 		auto itItems = mapItems.find(pInstance);
 		if (itItems == mapItems.end()) {
+			if ((pNode != nullptr) && pNode->hasChild(pInstance->getSdaiInstance())) {
+				// The item is not loaded
+				Tree_Update(hItem);
+				Tree_Update(hModel, false);
+				return;
+			}
 			continue;
 		}
 
@@ -1607,7 +1503,7 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	if (hChild == NULL) {
 		auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-		InMemoryTree_UpdateChildren(pNode, iParentImage == IMAGE_SELECTED);
+		InMemoryTree_EnableChildren(pNode, iParentImage == IMAGE_SELECTED);
 		return;
 	}
 
@@ -1617,7 +1513,7 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
-			// skip the properties, items without a geometry, etc.
+			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 			continue;
 		}
@@ -1630,16 +1526,19 @@ void CIFCModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 	} // while (hChild != NULL)
 }
 
-void CIFCModelStructureView::InMemoryTree_UpdateChildren(_ifc_node* pNode, bool bEnable)
+void CIFCModelStructureView::InMemoryTree_EnableChildren(_ifc_node* pNode, bool bEnable)
 {
-	ASSERT(pNode != nullptr);
+	if (pNode == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
 
-	for (auto pChild : pNode->children()) {
-		if (pChild->getInstance() != nullptr) {
-			pChild->getInstance()->setEnable(bEnable);
+	for (auto pChildNode : pNode->children()) {
+		if (pChildNode->getInstance() != nullptr) {
+			pChildNode->getInstance()->setEnable(bEnable);
 		}
-		
-		InMemoryTree_UpdateChildren(pChild, bEnable);
+
+		InMemoryTree_EnableChildren(pChildNode, bEnable);
 	}
 }
 
@@ -1662,7 +1561,7 @@ void CIFCModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
-			// skip the properties, items without a geometry, etc.
+			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 			continue;
 		}
@@ -1807,7 +1706,7 @@ bool CIFCModelStructureView::Tree_EnsureVisible(CModelData* pModelData, ITEMS& m
 	auto itItems = mapItems.find(pInstance);
 
 	// Load branch
-	if (itItems == mapItems.end()) {		
+	if (itItems == mapItems.end()) {
 		auto pModelStructure = pModelData->GetModelStructure();
 
 		vector<_ifc_node*> vecPath;
@@ -1816,7 +1715,7 @@ bool CIFCModelStructureView::Tree_EnsureVisible(CModelData* pModelData, ITEMS& m
 		for (auto pNode : vecPath) {
 			auto itNode = m_mapNodes.find(pNode);
 			ASSERT(itNode != m_mapNodes.end());
-				
+
 			m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
 		}
 	}
@@ -1841,7 +1740,6 @@ void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
 	while (hChild != NULL) {
 		Tree_Reset(hChild, bEnable);
-
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	}
 
@@ -1860,7 +1758,25 @@ void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 int CIFCModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 {
 	auto pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hItem);
-	ASSERT(pNode != nullptr);
+	if (pNode == nullptr) {
+		if (m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY) {
+			// The geometry item of an instance
+			HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+			ASSERT(hParent != NULL);
+
+			pNode = (_ifc_node*)m_pTreeCtrl->GetItemData(hParent);
+			auto pInstance = pNode ? pNode->getInstance() : nullptr;
+			ASSERT(pInstance != nullptr);
+
+			return pInstance->hasGeometry() ?
+				(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+				IMAGE_NO_GEOMETRY;
+		}
+		else {
+			ASSERT(FALSE); // Unexpected
+			return IMAGE_NO_GEOMETRY;
+		}
+	}
 
 	int iSelectedChildrenCount = 0;
 	int iSemiSelectedChildrenCount = 0;
@@ -1901,7 +1817,7 @@ int CIFCModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 		} // switch (iChildState)
 	} // for (auto pChildNode : ...
 
-	if ((int)pNode->children().size() == iNoGeometryChildrenCount) /*contains/decomposition*/	{
+	if ((int)pNode->children().size() == iNoGeometryChildrenCount) {
 		return IMAGE_NO_GEOMETRY;
 	}
 
@@ -1932,7 +1848,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 	auto pInstance = pNode->getInstance();
 
 	// Leaf
-	if (pNode->children().empty()) {		
+	if (pNode->children().empty()) {
 		if (pInstance == nullptr) {
 			return IMAGE_NO_GEOMETRY;
 		}
@@ -1983,8 +1899,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 		} // switch (iChildState)
 	} // for (auto pChild : ...
 
-	if (iChildrenCount == iNoGeometryChildrenCount) /*contains/decomposition*/
-	{
+	if (iChildrenCount == iNoGeometryChildrenCount) {
 		return IMAGE_NO_GEOMETRY;
 	}
 
