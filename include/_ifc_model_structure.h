@@ -103,7 +103,7 @@ public: // Methods
 
 	void getInstancePath(SdaiInstance sdaiInstance, std::vector<_ifc_node*>& vecPath);
 	void getInstanceChildren(SdaiInstance sdaiInstance, std::vector<SdaiInstance>& vecChildren, bool bRecursive);
-	bool hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	bool hasChild(_ifc_node* pNode, SdaiInstance sdaiInstance);
 
 protected: // Methods
 

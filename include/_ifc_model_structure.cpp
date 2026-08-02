@@ -167,19 +167,11 @@ void _ifc_model_structure::getInstanceChildren(SdaiInstance sdaiInstance, vector
 	}
 }
 
-bool _ifc_model_structure::hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
+bool _ifc_model_structure::hasChild(_ifc_node* pNode, SdaiInstance sdaiInstance)
 {
-	assert(pParentNode != nullptr);
+	assert(pNode != nullptr);
 
-	for (auto pChildNode : pParentNode->children()) {
-		if (pChildNode->getSdaiInstance() == sdaiInstance) {
-			return true;
-		}
-		if (hasChild(pChildNode, sdaiInstance)) {
-			return true;
-		}
-	}
-	return false;
+	return pNode->hasChild(sdaiInstance);
 }
 
 void _ifc_model_structure::build()
