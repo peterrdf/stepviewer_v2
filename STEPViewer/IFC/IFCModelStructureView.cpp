@@ -951,7 +951,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 							pInstance->setEnable(true);
 						}
 
-						Tree_Reset(pModelData->GetModelItem(), true);
+						Tree_Update(pModelData->GetModelItem());
 
 						pController->onInstancesEnabledStateChanged(this);
 					}
@@ -1599,32 +1599,6 @@ bool CIFCModelStructureView::Tree_EnsureVisible(CModelData* pModelData, ITEMS& m
 	}
 
 	return false;
-}
-
-void CIFCModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
-{
-	if (hItem == NULL) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
-	while (hChild != NULL) {
-		Tree_Reset(hChild, bEnable);
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	}
-
-	int iParentImage = -1;
-	int iParentSelectedImage = -1;
-	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
-
-	ASSERT(iParentImage == iParentSelectedImage);
-
-	if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) || (iParentImage == IMAGE_NOT_SELECTED)) {
-		int iImage = bEnable ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
-	}
 }
 
 int CIFCModelStructureView::Tree_GetItemState(HTREEITEM hItem)

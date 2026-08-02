@@ -145,7 +145,6 @@ private: // Methods
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void InMemoryTree_EnableChildren(_ifc_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
-	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Tree_Select(bool bEnable);
 	void Tree_Select(_ifc_instance* pInstance, ITEMS& mapItems, bool bEnable);
 	void Tree_Show(const set<_ifc_instance*>& setInstances);
