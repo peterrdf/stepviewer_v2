@@ -40,6 +40,16 @@ const wchar_t* _ifc_node::getGlobalId() const
 }
 
 // ************************************************************************************************
+_ifc_model_node::_ifc_model_node()
+	: _ifc_node(nullptr, nullptr)
+{
+}
+
+/*virtual*/ _ifc_model_node::~_ifc_model_node()
+{
+}
+
+// ************************************************************************************************
 _ifc_decomposition_node::_ifc_decomposition_node(_ifc_node* pParentNode)
 	: _ifc_node(0, pParentNode)
 {
@@ -73,6 +83,7 @@ _ifc_entity_node::_ifc_entity_node(const wstring& strEntityName, _ifc_node* pPar
 // ************************************************************************************************
 _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 	: m_pModel(pModel)
+	, m_pModelNode(nullptr)
 	, m_pProjectNode(nullptr)
 	, m_pGroupsNode(nullptr)
 	, m_pUnreferencedNode(nullptr)
@@ -180,8 +191,11 @@ void _ifc_model_structure::build()
 	clean();
 
 	//
-	// Root
+	// Model
 	// 
+
+	ASSERT(m_pModelNode == nullptr);
+	m_pModelNode = new _ifc_model_node();
 
 	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_pModel->getSdaiModel(), "IFCPROJECT");
 	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
@@ -207,7 +221,9 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 		assert(!ifcGeometry->getIsMappedItem());
 		assert(pGeometry->getInstances().size() == 1);
 
-		m_pProjectNode = new _ifc_node(_ptr<_ifc_instance>(ifcGeometry->getInstances()[0]), nullptr);
+		m_pProjectNode = new _ifc_node(_ptr<_ifc_instance>(ifcGeometry->getInstances()[0]), m_pModelNode);
+		m_pModelNode->children().push_back(m_pProjectNode);
+
 		assert(m_mapInstance2Node.find(sdaiProjectInstance) == m_mapInstance2Node.end());
 		m_mapInstance2Node[sdaiProjectInstance] = m_pProjectNode;
 
@@ -231,7 +247,8 @@ void _ifc_model_structure::loadGroupsNode()
 		return;
 	}
 
-	m_pGroupsNode = new _ifc_node(nullptr, nullptr);
+	m_pGroupsNode = new _ifc_node(nullptr, m_pModelNode);
+	m_pModelNode->children().push_back(m_pGroupsNode);
 
 	for (auto pGeometry : vecGeometries) {
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
@@ -314,7 +331,8 @@ void _ifc_model_structure::loadUnreferencedNode()
 		return;
 	}
 
-	m_pUnreferencedNode = new _ifc_node(nullptr, nullptr);
+	m_pUnreferencedNode = new _ifc_node(nullptr, m_pModelNode);
+	m_pModelNode->children().push_back(m_pUnreferencedNode);
 
 	auto itUnreferencedItems = mapUnreferencedItems.begin();
 	for (; itUnreferencedItems != mapUnreferencedItems.end(); itUnreferencedItems++) {
@@ -531,19 +549,9 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sda
 
 void _ifc_model_structure::clean()
 {
-	if (m_pProjectNode != nullptr) {
-		delete m_pProjectNode;
-		m_pProjectNode = nullptr;
-	}
-
-	if (m_pGroupsNode != nullptr) {
-		delete m_pGroupsNode;
-		m_pGroupsNode = nullptr;
-	}
-
-	if (m_pUnreferencedNode != nullptr) {
-		delete m_pUnreferencedNode;
-		m_pUnreferencedNode = nullptr;
+	if (m_pModelNode != nullptr) {
+		delete m_pModelNode;
+		m_pModelNode = nullptr;
 	}
 
 	m_mapInstance2Node.clear();

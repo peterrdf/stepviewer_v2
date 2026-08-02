@@ -8,6 +8,7 @@
 #include <map>
 
 // ************************************************************************************************
+#define MODEL_NODE	L"model"
 #define DECOMPOSITION_NODE	L"decomposition"
 #define CONTAINS_NODE		L"contains"
 
@@ -34,6 +35,19 @@ public: // Properties
 	_ifc_node* getParent() const { return m_pParent; }
 	virtual const wchar_t* getGlobalId() const;
 	std::vector<_ifc_node*>& children() { return m_vecChildren; }
+};
+
+// ************************************************************************************************
+class _ifc_model_node : public _ifc_node {
+
+public: // Methods
+
+	_ifc_model_node();
+	virtual ~_ifc_model_node();
+
+public: // Properties
+
+	virtual const wchar_t* getGlobalId() const override { return MODEL_NODE; }
 };
 
 // ************************************************************************************************
@@ -85,6 +99,7 @@ class _ifc_model_structure {
 private: // Members
 
 	_ifc_model* m_pModel;
+	_ifc_node* m_pModelNode;
 	_ifc_node* m_pProjectNode;
 	_ifc_node* m_pGroupsNode;
 	_ifc_node* m_pUnreferencedNode;
@@ -122,6 +137,7 @@ protected: // Methods
 public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
+	_ifc_node* getModelNode() const { return m_pModelNode; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
 	_ifc_node* getGroupsNode() const { return m_pGroupsNode; }
 	_ifc_node* getUnreferencedNode() const { return m_pUnreferencedNode; }
