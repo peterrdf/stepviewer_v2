@@ -90,42 +90,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	}
 
 	//
-	// Model
+	// UI
 	//
 
-	_ptr<_ap242_instance> apProductInstance(pInstance);
-
-	auto itItems = m_mapItems.find(pInstance);
-	if (itItems == m_mapItems.end()) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	if (itItems->second.empty()) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	HTREEITEM hItem = itItems->second.front();
-	ASSERT(hItem != NULL);
-
-	//auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	//if (pItemData == nullptr) {
-	//	ASSERT(FALSE);
-	//	return;
-	//}
-
-	////
-	//// UI
-	////
-
-	//int iImage = apProductInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-	//m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
-
-	////Model_EnableChildren(pItemData, apProductInstance->getEnable()); #todo: Enable/Disable children recursively
-
-	//Tree_UpdateChildren(hItem);
-	//Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+	Tree_Update(GetModelItem());
 }
 
 /*virtual*/ void CAP242PModelStructureView::onInstanceSelected(_view* pSender) /*override*/
