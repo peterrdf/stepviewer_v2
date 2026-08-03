@@ -1430,9 +1430,8 @@ void CAP242PModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 
 void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 {
-	if (hItem == nullptr) {
+	if (hItem == NULL) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -1443,20 +1442,24 @@ void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 	int iParentImage = -1;
 	int iParentSelectedImage = -1;
 	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
-
 	ASSERT(iParentImage == iParentSelectedImage);
+	ASSERT(iParentImage == IMAGE_SELECTED || iParentImage == IMAGE_NOT_SELECTED);
 
 	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
-	while (hChild != nullptr) {
+	if (hChild == NULL) {
+		auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+		InMemoryTree_EnableChildren(pNode, iParentImage == IMAGE_SELECTED);
+		return;
+	}
+
+	while (hChild != NULL) {
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
 			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
 			continue;
 		}
 
@@ -1465,7 +1468,7 @@ void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 		Tree_UpdateChildren(hChild);
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != nullptr)
+	} // while (hChild != NULL)
 }
 
 void CAP242PModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = true*/)
@@ -1518,7 +1521,7 @@ void CAP242PModelStructureView::InMemoryTree_EnableChildren(_ap242_node* pNode, 
 
 void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 {
-	if (hItem == nullptr) {
+	if (hItem == NULL) {
 		return;
 	}
 
@@ -1532,13 +1535,11 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	while (hChild != nullptr) {
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
-
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
 			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-
 			continue;
 		}
 
@@ -1590,7 +1591,6 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	}
 	else {
 		ASSERT(iSelectedChildrenCount < iChildrenCount);
-
 		m_pTreeCtrl->SetItemImage(hItem, IMAGE_SEMI_SELECTED, IMAGE_SEMI_SELECTED);
 
 		Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
