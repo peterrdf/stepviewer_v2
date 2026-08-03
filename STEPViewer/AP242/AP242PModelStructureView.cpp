@@ -91,10 +91,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 /*virtual*/ void CAP242PModelStructureView::onInstanceSelected(_view* pSender) /*override*/
 {
-	if (pSender == this) {
-		return;
-	}
-
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
@@ -367,16 +363,17 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return false;
 	}
 
-	if (pController->getSelectedInstance() == nullptr) {
-		return false;
-	}
-
 	auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
-	if ((pNode == nullptr) || (pNode->getInstance() == nullptr)) {
+	if (pNode == nullptr) {
 		return false;
 	}
 
-	return pNode->getInstance() == dynamic_cast<_ap242_instance*>(pController->getSelectedInstance());
+	auto pSelectedInstance = pController->getSelectedInstance();
+	if (pSelectedInstance == nullptr) {
+		return false;
+	}
+
+	return pNode->getInstance() == pSelectedInstance;
 }
 
 /*virtual*/ CTreeCtrlEx* CAP242PModelStructureView::GetTreeView() /*override*/
@@ -547,7 +544,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	*/
 	auto pTargetNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
 	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;	
-	if ((pTargetInstance != nullptr) && (pTargetInstance != nullptr) &&
+	if ((pTargetNode != nullptr) && (pTargetInstance != nullptr) &&
 		((pTargetNode->getType() == _ap242_node_type::ProductInstance) ||
 			(pTargetNode->getType() == _ap242_node_type::ProductShape) ||
 			(pTargetNode->getType() == _ap242_node_type::ProductShapeRepresentation) ||
