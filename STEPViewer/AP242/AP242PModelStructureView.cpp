@@ -397,36 +397,14 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 /*virtual*/ void CAP242PModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
-	if (hItem == NULL) {
-		ASSERT(FALSE);
+	ASSERT(hItem != NULL);
 
+	if (m_pTreeCtrl->GetChildItem(hItem) != NULL) {
+		// it is loaded already
 		return;
 	}
 
-	TVITEMW tvItem = {};
-	tvItem.hItem = hItem;
-	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
-
-	if (!GetTreeView()->GetItem(&tvItem)) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (tvItem.cChildren != 1) {
-		return;
-	}
-
-	HTREEITEM hChild = GetTreeView()->GetChildItem(hItem);
-	if (hChild == NULL) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	if (GetTreeView()->GetItemText(hChild) == ITEM_PENDING_LOAD) {
-		GetTreeView()->Expand(hItem, TVE_EXPAND);
-	}
+	m_pTreeCtrl->Expand(hItem, TVE_EXPAND);
 }
 
 /*virtual*/ BOOL CAP242PModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/

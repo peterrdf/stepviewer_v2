@@ -603,8 +603,16 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	};
 }
 
-/*virtual*/ void CIFCModelStructureView::LoadChildrenIfNeeded(HTREEITEM /*hItem*/) /*override*/
+/*virtual*/ void CIFCModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
+	ASSERT(hItem != NULL);
+
+	if (m_pTreeCtrl->GetChildItem(hItem) != NULL) {
+		// it is loaded already
+		return;
+	}
+
+	m_pTreeCtrl->Expand(hItem, TVE_EXPAND);
 }
 
 /*virtual*/ BOOL CIFCModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
