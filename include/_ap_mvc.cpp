@@ -10,12 +10,13 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	: _model(pLog)
 	, m_sdaiModel(0)
 	, m_enAP(enAP)
-	, m_bMultiThreadedLoad(false)
+	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
 	, m_pEntityProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
 	, m_mapExpressID2Geometry()
 	, m_mapGeometries()
-{}
+{
+}
 
 /*virtual*/ _ap_model::~_ap_model()
 {
@@ -182,10 +183,12 @@ _attribute_provider* _ap_model::getAttributeProvider()
 // ************************************************************************************************
 _ap_view::_ap_view()
 	: _view()
-{}
+{
+}
 
 /*virtual*/ _ap_view::~_ap_view()
-{}
+{
+}
 
 _ap_controller* _ap_view::getAPController() const
 {
@@ -196,11 +199,13 @@ _ap_controller* _ap_view::getAPController() const
 _ap_controller::_ap_controller()
 	: _controller()
 	, m_bFullDisplayName(true)
-	, m_bMultiThreadedLoad(false)
-{}
+	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
+{
+}
 
 /*virtual*/ _ap_controller::~_ap_controller()
-{}
+{
+}
 
 /*virtual*/ string _ap_controller::getSettingsNamespace() const /*override*/
 {
@@ -211,18 +216,18 @@ _ap_controller::_ap_controller()
 
 		if (apModel) {
 			switch (apModel->getAP()) {
-			case enumAP::STEP:
-				strNamespace = "STEP";
-				break;
-			case enumAP::IFC:
-				strNamespace = "IFC";
-				break;
-			case enumAP::CIS2:
-				strNamespace = "CIS2";
-				break;
-			default:
-				assert(false);
-				break;
+				case enumAP::STEP:
+					strNamespace = "STEP";
+					break;
+				case enumAP::IFC:
+					strNamespace = "IFC";
+					break;
+				case enumAP::CIS2:
+					strNamespace = "CIS2";
+					break;
+				default:
+					assert(false);
+					break;
 			}
 		}
 	}
@@ -295,16 +300,23 @@ void _ap_controller::loadSettings()
 		m_bFullDisplayName = strValue == "TRUE";
 	}
 
+	if (InitializeMultiThreading(0, 0) == 0) {
+		// Multi-threaded load is supported
 #ifdef _WINDOWS
-	strSettingName = typeid(this).raw_name();
+		strSettingName = typeid(this).raw_name();
 #else
-	strSettingName = typeid(this).name();
+		strSettingName = typeid(this).name();
 #endif
-	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
+		strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
 
-	strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
-	if (!strValue.empty()) {
-		m_bMultiThreadedLoad = strValue == "TRUE";
+		strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
+		if (!strValue.empty()) {
+			m_bMultiThreadedLoad = strValue == "TRUE";
+		}
+	}
+	else {
+		// Multi-threaded load is not supported
+		m_bMultiThreadedLoad = false;
 	}
 }
 

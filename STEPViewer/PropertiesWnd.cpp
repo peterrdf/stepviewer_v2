@@ -952,6 +952,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		// Multi-threaded loading
+		if (InitializeMultiThreading(0, 0) == 0)
 		{
 			_ptr<_ap_controller> apController(getController());
 
