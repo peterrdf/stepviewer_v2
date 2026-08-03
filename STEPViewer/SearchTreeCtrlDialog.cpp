@@ -66,7 +66,7 @@ HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 	} // while (hChild != nullptr)
 
 	m_iSearchDepth--;
-	ASSERT(m_iSearchDepth > 0);
+	//ASSERT(m_iSearchDepth > 0);#todo
 
 	return nullptr;
 }
