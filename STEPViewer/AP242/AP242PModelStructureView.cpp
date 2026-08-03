@@ -22,9 +22,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	, m_pModelStructure(nullptr)
 	, m_pImageList(nullptr)
 	, m_mapNodes()
-	, m_mapInstanceIterators()
 	, m_mapItems()
-	, m_hSelectedItem(nullptr)
+	, m_pSelectedInstance(nullptr)
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
 {
@@ -72,12 +71,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	m_pImageList->DeleteImageList();
 	delete m_pImageList;
 
-	delete m_pModelStructure;
-
-	for (auto itInstanceIterator : m_mapInstanceIterators) {
-		delete itInstanceIterator.second;
-	}
-
 	m_pTreeCtrl->SetItemStateProvider(nullptr);
 
 	delete m_pSearchDialog;
@@ -102,66 +95,35 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return;
 	}
 
-	if (m_hSelectedItem != nullptr) {
-		m_pTreeCtrl->SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-		m_hSelectedItem = nullptr;
-	}
-
 	auto pController = getController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
 		return;
 	}
 
-	auto pSelectedInstance = pController->getSelectedInstance() != nullptr ? dynamic_cast<_ap242_instance*>(getController()->getSelectedInstance()) : nullptr;
+	Tree_Select(false);
 
-	//
-	// Select the Model by default
-	//
-	if (pSelectedInstance == nullptr) {
-		HTREEITEM hModel = m_pTreeCtrl->GetRootItem();
-		ASSERT(hModel != nullptr);
+	m_pSelectedInstance = pController->getSelectedInstance();
 
-		m_pTreeCtrl->SelectItem(hModel);
-		return;
+	if (m_pSelectedInstance != nullptr) {
+		_ptr<_ap242_instance> ap242Instance(m_pSelectedInstance);
+
+		if (pSender != this) {
+			Tree_EnsureVisible(ap242Instance);
+		}
 	}
+	else {
+		if (pSender != this) {
+			HTREEITEM hChild = m_pTreeCtrl->GetNextItem(GetModelItem(), TVGN_CHILD);
+			while (hChild != NULL) {
+				m_pTreeCtrl->Expand(hChild, TVE_COLLAPSE);
 
-	auto itItems = m_mapItems.find(pSelectedInstance);
-
-	// Load branch
-	if (itItems == m_mapItems.end()) {
-		vector<_ap242_node*> vecPath;
-		m_pModelStructure->getInstancePath(pSelectedInstance, vecPath);
-
-		for (auto pNode : vecPath) {
-			auto itNode = m_mapNodes.find(pNode);
-			ASSERT(itNode != m_mapNodes.end());
-
-			m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+				hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+			}
 		}
 	}
 
-	itItems = m_mapItems.find(pSelectedInstance);
-	if (itItems == m_mapItems.end()) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	/*
-	* Disable the drawing
-	*/
-	m_pTreeCtrl->SendMessage(WM_SETREDRAW, 0, 0);
-
-	m_hSelectedItem = itItems->second.front();
-
-	m_pTreeCtrl->SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
-	m_pTreeCtrl->EnsureVisible(m_hSelectedItem);
-	m_pTreeCtrl->SelectItem(m_hSelectedItem);
-
-	/*
-	* Enable the drawing
-	*/
-	m_pTreeCtrl->SendMessage(WM_SETREDRAW, 1, 0);
+	Tree_Select(true);
 }
 
 /*virtual*/ void CAP242PModelStructureView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
@@ -211,19 +173,16 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	UINT uFlags = 0;
 	HTREEITEM hItem = m_pTreeCtrl->HitTest(point, &uFlags);
 
-	ASSERT(getController() != nullptr);
+	auto pController = getController();
+	if (pController == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
 
 	/*
 	* TVHT_ONITEMICON
 	*/
 	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMICON) == TVHT_ONITEMICON)) {
-		auto pController = getController();
-		if (pController == nullptr) {
-			ASSERT(FALSE);
-
-			return;
-		}
-
 		int iImage, iSelectedImage = -1;
 		m_pTreeCtrl->GetItemImage(hItem, iImage, iSelectedImage);
 
@@ -300,23 +259,16 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	/*
 	* TVHT_ONITEMLABEL
 	*/
-	if ((hItem != nullptr) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL)) {
-		if (m_pTreeCtrl->GetParentItem(m_hSelectedItem) != nullptr) {
-			// keep the roots always bold
-			m_pTreeCtrl->SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-		}
+	if ((hItem != NULL) && ((uFlags & TVHT_ONITEMLABEL) == TVHT_ONITEMLABEL)) {
+		auto pSelectedNode = m_pTreeCtrl->GetItemData(hItem) != NULL ?
+			(_ap242_node*)m_pTreeCtrl->GetItemData(hItem) :
+			nullptr;
 
-		m_pTreeCtrl->SetItemState(hItem, TVIS_BOLD, TVIS_BOLD);
-		m_hSelectedItem = hItem;
-
-		auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
-		if ((pNode == nullptr) || (pNode->getInstance() == nullptr)) {
-			getController()->selectInstance(this, nullptr);
-		}
-		else {
-			getController()->selectInstance(this, pNode->getInstance());
-		}
-	} // if ((hItem != nullptr) && ...
+		pController->selectInstance(
+			this,
+			pSelectedNode != nullptr ? pSelectedNode->getInstance() : nullptr,
+			GetKeyState(VK_CONTROL) & 0x8000);
+	}
 }
 
 /*virtual*/ void CAP242PModelStructureView::OnTreeItemExpanding(NMHDR* pNMHDR, LRESULT* pResult) /*override*/
@@ -1017,6 +969,58 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 	}
 }
 
+void CAP242PModelStructureView::Tree_Select(bool bEnable)
+{
+	if (m_pSelectedInstance != nullptr) {
+		_ptr<_ap242_instance> ap242Instance(m_pSelectedInstance);
+		Tree_Select(ap242Instance, bEnable);
+	}
+}
+
+void CAP242PModelStructureView::Tree_Select(_ap242_instance* pInstance, bool bEnable)
+{
+	ASSERT(pInstance != nullptr);
+
+	auto itItems = m_mapItems.find(pInstance);
+	if (itItems == m_mapItems.end()) {
+		return;
+	}
+
+	for (auto hInstance : itItems->second) {
+		m_pTreeCtrl->SetItemState(hInstance, bEnable ? TVIS_BOLD : 0, TVIS_BOLD);
+	}
+}
+
+bool CAP242PModelStructureView::Tree_EnsureVisible(_ap242_instance* pInstance)
+{
+	if (pInstance == nullptr) {
+		return false;
+	}
+
+	auto itItems = m_mapItems.find(pInstance);
+
+	// Load branch
+	if (itItems == m_mapItems.end()) {
+		vector<_ap242_node*> vecPath;
+		GetModelStructure()->getInstancePath(pInstance, vecPath);
+
+		for (auto pNode : vecPath) {
+			auto itNode = m_mapNodes.find(pNode);
+			ASSERT(itNode != m_mapNodes.end());
+
+			m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+		}
+	}
+
+	itItems = m_mapItems.find(pInstance);
+	if (itItems != m_mapItems.end()) {
+		m_pTreeCtrl->EnsureVisible(itItems->second.front());
+		return true;
+	}
+
+	return false;
+}
+
 int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 {
 	auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
@@ -1204,9 +1208,8 @@ void CAP242PModelStructureView::ResetView()
 	m_pModelStructure = nullptr;
 
 	m_mapNodes.clear();
-	m_mapInstanceIterators.clear();
 	m_mapItems.clear();
-	m_hSelectedItem = nullptr;
+	m_pSelectedInstance = nullptr;
 
 	m_pSearchDialog->Reset();
 

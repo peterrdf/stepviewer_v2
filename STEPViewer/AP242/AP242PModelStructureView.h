@@ -38,7 +38,7 @@ private: // Classes
 	};
 
 	// ********************************************************************************************
-	typedef map<_instance*, vector<HTREEITEM>> ITEMS;
+	typedef map<_ap242_instance*, vector<HTREEITEM>> ITEMS;
 	typedef map<_ap242_node*, HTREEITEM> NODES;
 
 private: // Members
@@ -51,9 +51,8 @@ private: // Members
 
 	// Cache	
 	NODES m_mapNodes;
-	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 	ITEMS m_mapItems;
-	HTREEITEM m_hSelectedItem;
+	_instance* m_pSelectedInstance;
 
 	bool m_bInitInProgress; // don't send notifications while updating the view
 
@@ -101,6 +100,9 @@ private: // Methods
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void InMemoryTree_EnableChildren(_ap242_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
+	void Tree_Select(bool bEnable);
+	void Tree_Select(_ap242_instance* pInstance, bool bEnable);
+	bool Tree_EnsureVisible(_ap242_instance* pInstance);
 
 	int Tree_GetItemState(HTREEITEM hItem);
 	int InMemoryTree_GetItemState(_ap242_node* pNode);
