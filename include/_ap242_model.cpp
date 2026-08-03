@@ -330,8 +330,9 @@ void _ap242_model::loadProductDefinitionShapes(_ap242_product_definition* pProdu
 		}
 	}
 
-	assert(sdaiRelevantProductDefinitionShapeInstance);
-	loadProductDefinitionShape(pProductDefinition, sdaiRelevantProductDefinitionShapeInstance);
+	if (sdaiRelevantProductDefinitionShapeInstance != 0) {
+		loadProductDefinitionShape(pProductDefinition, sdaiRelevantProductDefinitionShapeInstance);
+	}
 }
 
 void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance)

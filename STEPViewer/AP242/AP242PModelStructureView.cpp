@@ -1097,8 +1097,7 @@ int CAP242PModelStructureView::InMemoryTree_GetItemState(_ap242_node* pNode)
 
 	// Leaf
 	if (pNode->children().empty()) {
-		ASSERT(pInstance != nullptr);
-		return pInstance->hasGeometry() ?
+		return pInstance != nullptr && pInstance->hasGeometry() ?
 			(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 			IMAGE_NO_GEOMETRY;
 	}
