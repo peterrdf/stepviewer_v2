@@ -105,6 +105,15 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 	if ((vecPaths.size() == 1) && m_wndBCFView.IsBCF(vecPaths[0])) {
 		m_wndBCFView.Open(vecPaths[0]);
+
+		// Title
+		CString strTitle = AfxGetAppName();
+		strTitle += L" - ";
+		strTitle += vecPaths[0];
+		AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(vecPaths[0]);
 		return;
 	}
 
@@ -133,6 +142,15 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		if (!vecModels.empty()) {
 			setModels(vecModels);
 		}
+
+		// Title
+		CString strTitle = AfxGetAppName();
+		strTitle += L" - ";
+		strTitle += vecPaths[0];
+		AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(vecPaths[0]);
 		return;
 	}
 
@@ -159,6 +177,16 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 	if (!vecModels.empty()) {
 		setModels(vecModels);
+
+		// Title
+		CString strTitle = AfxGetAppName();
+		strTitle += L" - ";
+		strTitle += vecIfcPaths[0];
+		strTitle += vecModels.size() > 1 ? L", ..." : L"";
+		AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+		// MRU
+		AfxGetApp()->AddToRecentFileList(vecIfcPaths[0]);
 	}
 }
 
