@@ -522,13 +522,9 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	*/
 	auto pTargetNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
 	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;	
-	if ((pTargetNode != nullptr) && (pTargetInstance != nullptr) &&
-		((pTargetNode->getType() == _ap242_node_type::ProductInstance) ||
-			(pTargetNode->getType() == _ap242_node_type::ProductShape) ||
-			(pTargetNode->getType() == _ap242_node_type::ProductShapeRepresentation) ||
-			(pTargetNode->getType() == _ap242_node_type::ProductShapeRepresentationItem) ||
-			(pTargetNode->getType() == _ap242_node_type::AnnotationPlane) ||
-			(pTargetNode->getType() == _ap242_node_type::DraughtingCallout))) {
+	if ((pTargetNode != nullptr) && 
+		(pTargetInstance != nullptr) &&
+		(pTargetInstance->hasGeometry())) {
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
@@ -576,8 +572,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			case ID_INSTANCES_ENABLE:
 				{
 					//
-						// Instance
-						//
+					// Instance
+					//
 
 					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
