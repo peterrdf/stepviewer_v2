@@ -40,9 +40,13 @@ public: // Properties
 // ************************************************************************************************
 class _ifc_model_node : public _ifc_node {
 
+private: // Members
+
+	_ifc_model* m_pModel;
+
 public: // Methods
 
-	_ifc_model_node();
+	_ifc_model_node(_ifc_model* pModel);
 	virtual ~_ifc_model_node();
 
 public: // Properties

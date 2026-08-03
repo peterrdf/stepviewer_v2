@@ -40,8 +40,9 @@ const wchar_t* _ifc_node::getGlobalId() const
 }
 
 // ************************************************************************************************
-_ifc_model_node::_ifc_model_node()
+_ifc_model_node::_ifc_model_node(_ifc_model* pModel)
 	: _ifc_node(nullptr, nullptr)
+	, m_pModel(pModel)
 {
 }
 
@@ -195,7 +196,7 @@ void _ifc_model_structure::build()
 	// 
 
 	ASSERT(m_pModelNode == nullptr);
-	m_pModelNode = new _ifc_model_node();
+	m_pModelNode = new _ifc_model_node(m_pModel);
 
 	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_pModel->getSdaiModel(), "IFCPROJECT");
 	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
@@ -371,7 +372,7 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstan
 
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
-		}		
+		}
 
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
 		sdaiGetAttrBN(sdaiIsDecomposedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);

@@ -20,11 +20,10 @@ class _ap242_draughting_callout;
 class CAP242ItemData;
 
 // ************************************************************************************************
-class CAP242PModelStructureView 
+class CAP242PModelStructureView
 	: public CModelStructureViewBase
 	, public CItemStateProvider
-	, public CSearchTreeCtrlDialogSite
-{
+	, public CSearchTreeCtrlDialogSite {
 
 private: // Classes
 
@@ -45,16 +44,19 @@ private: // Classes
 
 private: // Members
 
+	// Model
+	_ap242_model* m_pModel;
+	_ap242_model_structure* m_pModelStructure;
+
 	CImageList* m_pImageList;
 
-	// Cache
-	_ap242_model_structure* m_pModelStructure;
+	// Cache	
 	NODES m_mapNodes;
 	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 	ITEMS m_mapItems;
 	vector<CAP242ItemData*> m_vecItemData;
 	HTREEITEM m_hSelectedItem;
-		
+
 	bool m_bInitInProgress; // don't send notifications while updating the view
 
 	// Search
@@ -63,7 +65,7 @@ private: // Members
 public: // Methods
 
 	CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl);
-	virtual ~CAP242PModelStructureView();	
+	virtual ~CAP242PModelStructureView();
 
 	// _view
 	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag) override;
@@ -106,21 +108,25 @@ private: // Methods
 	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);
 	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
 
+	_ap242_model_structure* GetModelStructure() const { return m_pModelStructure; }
+
+	HTREEITEM GetModelItem() const;
+
 	void Tree_Reset(bool bEnable);
 	void Tree_Reset(HTREEITEM hItem, bool bEnable);
-	void Model_EnableChildren(CAP242ItemData* pParent, bool bEnable);
+	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
 	void Tree_UpdateChildren(HTREEITEM hItem);
+	void InMemoryTree_EnableChildren(_ap242_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
 
 	int Tree_GetItemState(HTREEITEM hItem);
 	int InMemoryTree_GetItemState(_ap242_node* pNode);
-	
+
 	void ResetView();
 };
 
 // ************************************************************************************************
-enum class enumAP242ItemDataType : int
-{
+enum class enumAP242ItemDataType : int {
 	Unknown = -1,
 	Model,
 	ProductDefinition,
@@ -135,12 +141,11 @@ enum class enumAP242ItemDataType : int
 };
 
 // ************************************************************************************************
-class CAP242ItemData
-{
+class CAP242ItemData {
 
 private: // Members	
 
-	CAP242ItemData* m_pParent;	
+	CAP242ItemData* m_pParent;
 	int64_t* m_pInstance; // Instance - C++ wrapper class
 	enumAP242ItemDataType m_enAP242ItemDataType;
 	HTREEITEM m_hItem;
@@ -157,7 +162,7 @@ public: // Properties
 	vector<CAP242ItemData*>& Children() { return m_vecChildren; }
 	enumAP242ItemDataType GetType() const { return m_enAP242ItemDataType; }
 	HTREEITEM& TreeItem() { return m_hItem; }
-	 
+
 	template<typename T>
 	T* GetInstance() const
 	{

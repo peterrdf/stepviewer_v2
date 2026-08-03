@@ -11,9 +11,9 @@
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
 
 // ************************************************************************************************
-enum class _ap242_node_type : int
-{
-	ProductDefinition = 0,
+enum class _ap242_node_type : int {
+	Model = 0,
+	ProductDefinition,
 	ProductShape,
 	ProductShapeRepresentation,
 	ProductShapeRepresentationItem,
@@ -25,8 +25,7 @@ enum class _ap242_node_type : int
 };
 
 // ************************************************************************************************
-class _ap242_node
-{
+class _ap242_node {
 
 private: // Members
 
@@ -47,7 +46,7 @@ public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance != 0 ? m_sdaiInstance : (m_pInstance != nullptr ? m_pInstance->getSdaiInstance() : 0); }
-	_ap242_instance* getInstance() const { return m_pInstance; }	
+	_ap242_instance* getInstance() const { return m_pInstance; }
 	int64_t& id() { return m_iId; }
 	const std::string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
@@ -55,14 +54,27 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _ap242_model_structure
-{
+class _ap242_model_node : public _ap242_node {
 
 private: // Members
 
-	_ap242_model* m_pModel;	
+	_ap242_model* m_pModel;
+
+public: // Methods
+
+	_ap242_model_node(_ap242_model* pModel);
+	virtual ~_ap242_model_node();
+};
+
+// ************************************************************************************************
+class _ap242_model_structure {
+
+private: // Members
+
+	_ap242_model* m_pModel;
 
 	// Cache
+	_ap242_model_node* m_pModelNode;
 	std::vector<_ap242_node*> m_vecRootProducts;
 	std::map<_ap242_instance*, _ap242_node*> m_mapInstance2Node;
 	std::map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
@@ -91,6 +103,7 @@ protected: // Methods
 public: // Properties
 
 	_ap242_model* getModel() const { return m_pModel; }
+	_ap242_model_node* getModelNode() const { return m_pModelNode; }
 	const std::vector<_ap242_node*>& getRootProducts() { return m_vecRootProducts; }
 	const std::map<_ap242_instance*, _ap242_node*>& getInstance2NodeMap() const { return m_mapInstance2Node; }
 };

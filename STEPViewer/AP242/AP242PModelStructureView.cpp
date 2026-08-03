@@ -18,8 +18,9 @@ using namespace std;
 // ************************************************************************************************
 CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	: CModelStructureViewBase(pTreeCtrl)
-	, m_pImageList(nullptr)
+	, m_pModel(nullptr)
 	, m_pModelStructure(nullptr)
+	, m_pImageList(nullptr)
 	, m_mapNodes()
 	, m_mapInstanceIterators()
 	, m_mapItems()
@@ -126,7 +127,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	int iImage = apProductInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 	m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
-	Model_EnableChildren(pItemData, apProductInstance->getEnable());
+	//Model_EnableChildren(pItemData, apProductInstance->getEnable()); #todo: Enable/Disable children recursively
 
 	Tree_UpdateChildren(hItem);
 	Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
@@ -268,95 +269,56 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		switch (iImage) {
 			case IMAGE_SELECTED:
 			case IMAGE_SEMI_SELECTED:
-				{
-					bool bGeometryItem = false;
-					auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-					if ((pItemData == nullptr) &&
-						(iImage == IMAGE_SELECTED) &&
-						!m_pTreeCtrl->ItemHasChildren(hItem) &&
-						(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
-						HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
-						ASSERT(hParent != NULL);
-
-						pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-
-						bGeometryItem = true;
-					}
-
-					//
-					// Model
-					//
-
-					if ((pItemData != nullptr) &&
-						((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
-							(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
-							(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
-							(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
-						pItemData->GetInstance<_instance>()->setEnable(false);
-					}
-					else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel) {
-						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(false);
-					}
-
-					if (!bGeometryItem) {
-						Model_EnableChildren(pItemData, false);
-					}
-
-					//
-					// UI
-					//
-
-					m_pTreeCtrl->SetItemImage(hItem, IMAGE_NOT_SELECTED, IMAGE_NOT_SELECTED);
-
-					Tree_UpdateChildren(hItem);
-					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
-
-					pController->onInstancesEnabledStateChanged(this);
-				}
-				break;
-
 			case IMAGE_NOT_SELECTED:
 				{
 					bool bGeometryItem = false;
-					auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-					if ((pItemData == nullptr) &&
+					auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+					_ap242_instance* pInstance = pNode ? pNode->getInstance() : nullptr;
+					if ((pInstance == nullptr) &&
+						((iImage == IMAGE_SELECTED) || (iImage == IMAGE_NOT_SELECTED)) &&
 						!m_pTreeCtrl->ItemHasChildren(hItem) &&
 						(m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY)) {
 						HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
 						ASSERT(hParent != NULL);
 
-						pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
+						pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hParent);
+						ASSERT(pNode != nullptr);
+						pInstance = pNode ? pNode->getInstance() : nullptr;
+						ASSERT(pInstance != nullptr);
 
 						bGeometryItem = true;
 					}
 
 					//
-					// Model
+					// Instance
 					//
 
-					if ((pItemData != nullptr) &&
-						((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
-							(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
-							(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
-							(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
-						pItemData->GetInstance<_instance>()->setEnable(true);
-					}
-					else if (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel) {
-						pItemData->GetInstance<_ap242_draughting_model>()->enableInstances(true);
+					if (pInstance != nullptr) {
+						pInstance->setEnable(iImage == IMAGE_NOT_SELECTED);
 					}
 
+					//
+					// In Memory Tree
+					//
+
 					if (!bGeometryItem) {
-						Model_EnableChildren(pItemData, true);
+						if (pNode != nullptr) {
+							InMemoryTree_EnableChildren(pNode, iImage == IMAGE_NOT_SELECTED);
+						}
+						else {
+							ASSERT(hItem == GetModelItem());
+
+							for (auto pRootProduct : m_pModelStructure->getRootProducts()) {
+								InMemoryTree_EnableChildren(pRootProduct, iImage == IMAGE_NOT_SELECTED);
+							}
+						}
 					}
 
 					//
 					// UI
 					//
 
-					m_pTreeCtrl->SetItemImage(hItem, IMAGE_SELECTED, IMAGE_SELECTED);
-
-					Tree_UpdateChildren(hItem);
-					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+					Tree_Update(GetModelItem());
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
@@ -364,7 +326,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			default:
 				{
-					// skip the properties, items without a geometry, etc.
+					// skip Items without a Geometry, Header, etc.
 					return;
 				}
 		} // switch (iImage)
@@ -732,7 +694,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
 					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
-					Model_EnableChildren(pItemData, pTargetInstance->getEnable());
+					//Model_EnableChildren(pItemData, pTargetInstance->getEnable()); #todo: Enable/Disable children recursively
 
 					Tree_UpdateChildren(hItem);
 					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
@@ -857,12 +819,12 @@ void CAP242PModelStructureView::LoadModel()
 		return;
 	}
 
+	m_pModel = pModel;
+	m_pModelStructure = pModel->getModelStructure();
+
 	_ptr<_ap_controller> apController(pController);
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-	m_pModelStructure = new _ap242_model_structure(pModel);
-	m_pModelStructure->build();
 
 	m_bInitInProgress = true;
 
@@ -875,8 +837,11 @@ void CAP242PModelStructureView::LoadModel()
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM;
 	tvInsertStruct.item.pszText = (LPWSTR)pModel->getPath();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_SELECTED;
-	tvInsertStruct.item.lParam = NULL;
+	tvInsertStruct.item.lParam = (LPARAM)m_pModelStructure->getModelNode();
 	HTREEITEM hModel = m_pTreeCtrl->InsertItem(&tvInsertStruct);
+
+	ASSERT(m_mapNodes.find(m_pModelStructure->getModelNode()) == m_mapNodes.end());
+	m_mapNodes[m_pModelStructure->getModelNode()] = hModel;
 
 	//
 	// Header
@@ -1407,6 +1372,13 @@ bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_draughting_mod
 	return false;
 }
 
+HTREEITEM CAP242PModelStructureView::GetModelItem() const
+{
+	ASSERT(m_pTreeCtrl != nullptr);
+
+	return m_pTreeCtrl->GetRootItem();
+}
+
 void CAP242PModelStructureView::Tree_Reset(bool bEnable)
 {
 	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
@@ -1456,28 +1428,6 @@ void CAP242PModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
 	}
 }
 
-void CAP242PModelStructureView::Model_EnableChildren(CAP242ItemData* pParent, bool bEnable)
-{
-	if (pParent == nullptr) {
-		return;
-	}
-
-	for (size_t iChild = 0; iChild < pParent->Children().size(); iChild++) {
-		auto pChild = pParent->Children()[iChild];
-		if ((pChild->GetType() == enumAP242ItemDataType::ProductInstance) ||
-			(pChild->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
-			(pChild->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
-			(pChild->GetType() == enumAP242ItemDataType::DraughtingCallout)) {
-			pChild->GetInstance<_instance>()->setEnable(bEnable);
-		}
-		else if (pChild->GetType() == enumAP242ItemDataType::DraughtingModel) {
-			pChild->GetInstance<_ap242_draughting_model>()->enableInstances(bEnable);
-		}
-
-		Model_EnableChildren(pChild, bEnable);
-	} // for (size_t iChild = ...
-}
-
 void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 {
 	if (hItem == nullptr) {
@@ -1504,7 +1454,7 @@ void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
-			// skip the properties, items without a geometry, etc.
+			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 
 			continue;
@@ -1516,6 +1466,54 @@ void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)
 
 		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
+}
+
+void CAP242PModelStructureView::Tree_Update(HTREEITEM hItem, bool bRecursive/* = true*/)
+{
+	ASSERT(hItem != nullptr);
+
+	int iItemState = Tree_GetItemState(hItem);
+	m_pTreeCtrl->SetItemImage(hItem, iItemState, iItemState);
+
+	if (!bRecursive) {
+		return;
+	}
+
+	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
+	while (hChild != NULL) {
+		int iImage, iSelectedImage = -1;
+		m_pTreeCtrl->GetItemImage(hChild, iImage, iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
+
+		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
+			// skip Items without a Geometry, Header, etc.
+			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+			continue;
+		}
+
+		iItemState = Tree_GetItemState(hChild);
+		m_pTreeCtrl->SetItemImage(hChild, iItemState, iItemState);
+
+		Tree_Update(hChild);
+
+		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
+	}
+}
+
+void CAP242PModelStructureView::InMemoryTree_EnableChildren(_ap242_node* pNode, bool bEnable)
+{
+	if (pNode == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	for (auto pChildNode : pNode->children()) {
+		if (pChildNode->getInstance() != nullptr) {
+			pChildNode->getInstance()->setEnable(bEnable);
+		}
+
+		InMemoryTree_EnableChildren(pChildNode, bEnable);
+	}
 }
 
 void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
@@ -1538,7 +1536,7 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
-			// skip the properties, items without a geometry, etc.
+			// skip Items without a Geometry, Header, etc.
 			hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
 
 			continue;
@@ -1602,9 +1600,39 @@ void CAP242PModelStructureView::Tree_UpdateParents(HTREEITEM hItem)
 int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 {
 	auto pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
-	ASSERT(pNode != nullptr);
+	if (pNode == nullptr) {
+		if (m_pTreeCtrl->GetItemText(hItem) == ITEM_GEOMETRY) {
+			// The Geometry Item of an Instance
+			HTREEITEM hParent = m_pTreeCtrl->GetParentItem(hItem);
+			ASSERT(hParent != NULL);
 
-	int iSelectedChildrenCount = 0;
+			pNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hParent);
+			auto pInstance = pNode ? pNode->getInstance() : nullptr;
+			ASSERT(pInstance != nullptr);
+
+			return pInstance->hasGeometry() ?
+				(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+				IMAGE_NO_GEOMETRY;
+		}
+		else {
+			ASSERT(FALSE); // Unexpected
+			return IMAGE_NO_GEOMETRY;
+		}
+	}
+
+	if (pNode->children().empty()) {
+		auto pInstance = pNode->getInstance();
+		ASSERT(pInstance != nullptr);
+
+		return pInstance->hasGeometry() ?
+			(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
+			IMAGE_NO_GEOMETRY;
+	}
+
+	auto pInstance = pNode->getInstance();
+
+	int iChildrenCount = (int)pNode->children().size() + ((pInstance != nullptr) && pInstance->hasGeometry() ? 1 : 0);
+	int iSelectedChildrenCount = (pInstance != nullptr) && pInstance->hasGeometry() && pInstance->getEnable() ? 1 : 0;
 	int iSemiSelectedChildrenCount = 0;
 	int iNoGeometryChildrenCount = 0;
 
@@ -1643,7 +1671,7 @@ int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 		} // switch (iChildState)
 	} // for (auto pChildNode : ...
 
-	if ((int)pNode->children().size() == iNoGeometryChildrenCount) {
+	if (iChildrenCount == iNoGeometryChildrenCount) {
 		return IMAGE_NO_GEOMETRY;
 	}
 
@@ -1655,15 +1683,15 @@ int CAP242PModelStructureView::Tree_GetItemState(HTREEITEM hItem)
 		return IMAGE_NOT_SELECTED;
 	}
 
-	if ((int)pNode->children().size() == iSelectedChildrenCount) {
+	if (iChildrenCount == iSelectedChildrenCount) {
 		return IMAGE_SELECTED;
 	}
 
-	if (((int)pNode->children().size() - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
+	if ((iChildrenCount - iNoGeometryChildrenCount) == iSelectedChildrenCount) {
 		return IMAGE_SELECTED;
 	}
 
-	ASSERT((int)pNode->children().size() > iSelectedChildrenCount);
+	ASSERT(iChildrenCount > iSelectedChildrenCount);
 	return IMAGE_SEMI_SELECTED;
 }
 
@@ -1675,10 +1703,7 @@ int CAP242PModelStructureView::InMemoryTree_GetItemState(_ap242_node* pNode)
 
 	// Leaf
 	if (pNode->children().empty()) {
-		if (pInstance == nullptr) {
-			return IMAGE_NO_GEOMETRY;
-		}
-
+		ASSERT(pInstance != nullptr);
 		return pInstance->hasGeometry() ?
 			(pInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED) :
 			IMAGE_NO_GEOMETRY;
@@ -1755,7 +1780,7 @@ void CAP242PModelStructureView::ResetView()
 
 	m_pTreeCtrl->DeleteAllItems();
 
-	delete m_pModelStructure;
+	m_pModel = nullptr;
 	m_pModelStructure = nullptr;
 
 	m_mapNodes.clear();

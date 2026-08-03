@@ -29,8 +29,21 @@ _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap24
 }
 
 // ************************************************************************************************
+_ap242_model_node::_ap242_model_node(_ap242_model* pModel)
+	: _ap242_node(_ap242_node_type::Model, pModel->getSdaiModel(), nullptr, (LPCSTR)CW2A(pModel->getPath()), nullptr)
+	, m_pModel(pModel)
+{
+	assert(m_pModel != nullptr);
+}
+
+/*virtual*/ _ap242_model_node::~_ap242_model_node()
+{
+}
+
+// ************************************************************************************************
 _ap242_model_structure::_ap242_model_structure(_ap242_model* pModel)
 	: m_pModel(pModel)
+	, m_pModelNode(nullptr)
 	, m_vecRootProducts()
 	, m_mapInstance2Node()
 	, m_mapInstanceIterators()
@@ -79,6 +92,12 @@ void _ap242_model_structure::build()
 	clean();
 
 	//
+	// Model
+	//
+	assert(m_pModelNode == nullptr);
+	m_pModelNode = new _ap242_model_node(m_pModel);
+
+	//
 	// Roots
 	// 
 
@@ -98,6 +117,7 @@ void _ap242_model_structure::build()
 			_string::format("#%lld", pDraughtingModel->getExpressID()),
 			nullptr);
 		m_vecRootProducts.push_back(pDraughtingModelNode);
+		m_pModelNode->children().push_back(pDraughtingModelNode);
 
 		for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
 			assert(pAnnotationPlane->getInstances().size() == 1);
@@ -204,6 +224,9 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 			_string::format("#%lld:%lld", apProductInstance->getExpressID(), pInstanceIterator->index()),
 			pParentNode));
 		vecChildren.back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
+		if (pParentNode == nullptr) {
+			m_pModelNode->children().push_back(vecChildren.back());
+		}
 
 		assert(m_mapInstance2Node.find(apProductInstance) == m_mapInstance2Node.end());
 		m_mapInstance2Node[apProductInstance] = vecChildren.back();
@@ -295,10 +318,8 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 
 void _ap242_model_structure::clean()
 {
-	for (auto pRoot : m_vecRootProducts) {
-		delete pRoot;
-	}
-	m_vecRootProducts.clear();
+	delete m_pModelNode;
+	m_pModelNode = nullptr;
 
 	m_mapInstance2Node.clear();
 
