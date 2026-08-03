@@ -24,7 +24,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	, m_mapNodes()
 	, m_mapInstanceIterators()
 	, m_mapItems()
-	, m_vecItemData()
 	, m_hSelectedItem(nullptr)
 	, m_bInitInProgress(false)
 	, m_pSearchDialog(nullptr)
@@ -79,10 +78,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		delete itInstanceIterator.second;
 	}
 
-	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++) {
-		delete m_vecItemData[iItemData];
-	}
-
 	m_pTreeCtrl->SetItemStateProvider(nullptr);
 
 	delete m_pSearchDialog;
@@ -114,23 +109,23 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	HTREEITEM hItem = itItems->second.front();
 	ASSERT(hItem != NULL);
 
-	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	if (pItemData == nullptr) {
-		ASSERT(FALSE);
-		return;
-	}
+	//auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
+	//if (pItemData == nullptr) {
+	//	ASSERT(FALSE);
+	//	return;
+	//}
 
-	//
-	// UI
-	//
+	////
+	//// UI
+	////
 
-	int iImage = apProductInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-	m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
+	//int iImage = apProductInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
+	//m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
 
-	//Model_EnableChildren(pItemData, apProductInstance->getEnable()); #todo: Enable/Disable children recursively
+	////Model_EnableChildren(pItemData, apProductInstance->getEnable()); #todo: Enable/Disable children recursively
 
-	Tree_UpdateChildren(hItem);
-	Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+	//Tree_UpdateChildren(hItem);
+	//Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
 }
 
 /*virtual*/ void CAP242PModelStructureView::onInstanceSelected(_view* pSender) /*override*/
@@ -525,70 +520,72 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 		return FALSE;
 	}
 
-	CString strItemText = GetTreeView()->GetItemText(hItem);
-	strItemText.MakeLower();
+	//CString strItemText = GetTreeView()->GetItemText(hItem);
+	//strItemText.MakeLower();
 
-	CString strTextLower = strText;
-	strTextLower.MakeLower();
+	//CString strTextLower = strText;
+	//strTextLower.MakeLower();
 
-	auto pItemData = (CAP242ItemData*)GetTreeView()->GetItemData(hItem);
+	//auto pItemData = (CAP242ItemData*)GetTreeView()->GetItemData(hItem);
 
-	// Product Definitions
-	if (iFilter == (int)enumSearchFilter::ProductDefitions) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductDefinition)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Product Definitions
+	//if (iFilter == (int)enumSearchFilter::ProductDefitions) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductDefinition)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// Assemblies
-	if (iFilter == (int)enumSearchFilter::Assemblies) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::Assembly)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Assemblies
+	//if (iFilter == (int)enumSearchFilter::Assemblies) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::Assembly)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// Product Instance
-	if (iFilter == (int)enumSearchFilter::ProductInstances) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductInstance)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Product Instance
+	//if (iFilter == (int)enumSearchFilter::ProductInstances) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductInstance)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// Draughting Model
-	if (iFilter == (int)enumSearchFilter::DraughtingModel) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Draughting Model
+	//if (iFilter == (int)enumSearchFilter::DraughtingModel) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// Annotation Plane
-	if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Annotation Plane
+	//if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// Draughting Callout
-	if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
-		if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)) {
-			return strItemText.Find(strText, 0) != -1;
-		}
+	//// Draughting Callout
+	//if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
+	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)) {
+	//		return strItemText.Find(strText, 0) != -1;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	// All
-	return strItemText.Find(strTextLower, 0) != -1;
+	//// All
+	//return strItemText.Find(strTextLower, 0) != -1;
+
+	return FALSE;
 }
 
 /*virtual*/ void CAP242PModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
@@ -877,502 +874,6 @@ void CAP242PModelStructureView::LoadModel()
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** CAP242PModelStructureView::LoadModel() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-}
-
-void CAP242PModelStructureView::LoadProduct(_ap242_model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent)
-{
-	if ((pModel == nullptr) || (pProduct == nullptr)) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	// 
-	// Product
-	//
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pProduct->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_PRODUCT_DEFINION);
-
-	int iGeometryImage = pProduct->hasGeometry() || HasDescendantsWithGeometry(pModel, pProduct) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hProduct = m_pTreeCtrl->InsertItem(strName, iGeometryImage, iGeometryImage, hParent);
-	iGeometryImage = pProduct->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProduct);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	//
-	// I) Do not show Instances
-	//
-
-	//
-	// Instance
-	//
-
-	// Iterator
-	_instance_iterator* pInstanceIterator = nullptr;
-	auto itInstanceIterator = m_mapInstanceIterators.find(pProduct);
-	if (itInstanceIterator == m_mapInstanceIterators.end()) {
-		pInstanceIterator = new _instance_iterator(pProduct->getInstances());
-		m_mapInstanceIterators[pProduct] = pInstanceIterator;
-	}
-	else {
-		pInstanceIterator = itInstanceIterator->second;
-	}
-
-	// Load
-	_ptr<_ap242_instance> apProductInstance(pInstanceIterator->getNextItem());
-	if (apProductInstance) {
-		auto pProductItemData = new CAP242ItemData(pParentItemData, (int64_t*)apProductInstance.p(), enumAP242ItemDataType::ProductInstance);
-		pParentItemData->Children().push_back(pProductItemData);
-		m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pProductItemData);
-
-		auto itItems = m_mapItems.find(apProductInstance);
-		if (itItems != m_mapItems.end()) {
-			itItems->second.push_back(hProduct);
-		}
-		else {
-			m_mapItems[apProductInstance] = { hProduct };
-		}
-
-		auto pProductShape = pProduct->getProductShape();
-		if (pProductShape) {
-			ASSERT(pProductShape->getInstances().size() == 1);
-			auto pProductShapeData = new CAP242ItemData(pProductItemData,
-				(int64_t*)pProductShape->getInstances().front(),
-				enumAP242ItemDataType::ProductShape);
-			pProductItemData->Children().push_back(pProductShapeData);
-
-			strDisplayString = _ap_geometry::getDisplayString(pProductShape->getSdaiInstance(), apController->getFullDisplayName());
-			strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_SHAPE);
-			iGeometryImage = pProductShape->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShape) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-			HTREEITEM hProductShape = m_pTreeCtrl->InsertItem(
-				strName,
-				iGeometryImage, iGeometryImage,
-				hProduct);
-			m_pTreeCtrl->SetItemData(hProductShape, (DWORD_PTR)pProductShapeData);
-			iGeometryImage = pProductShape->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-			m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShape);
-
-			itItems = m_mapItems.find(pProductShape->getInstances().front());
-			if (itItems != m_mapItems.end()) {
-				itItems->second.push_back(hProductShape);
-			}
-			else {
-				m_mapItems[pProductShape->getInstances().front()] = { hProductShape };
-			}
-
-			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
-				ASSERT(pProductShapeRepresentation->getInstances().size() == 1);
-				auto pProductShapeRepresentationData = new CAP242ItemData(pProductShapeData,
-					(int64_t*)pProductShapeRepresentation->getInstances().front(),
-					enumAP242ItemDataType::ProductShapeRepresentation);
-				pProductShapeData->Children().push_back(pProductShapeRepresentationData);
-
-				strDisplayString = _ap_geometry::getDisplayString(pProductShapeRepresentation->getSdaiInstance(), apController->getFullDisplayName());
-				strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_REPRESENTATION);
-				iGeometryImage = pProductShapeRepresentation->hasGeometry() || HasDescendantsWithGeometry(pModel, pProductShapeRepresentation) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-				HTREEITEM hProductShapeRepresentation = m_pTreeCtrl->InsertItem(
-					strName,
-					iGeometryImage, iGeometryImage,
-					hProductShape);
-				m_pTreeCtrl->SetItemData(hProductShapeRepresentation, (DWORD_PTR)pProductShapeRepresentationData);
-				iGeometryImage = pProductShapeRepresentation->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-				m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentation);
-
-				itItems = m_mapItems.find(pProductShapeRepresentation->getInstances().front());
-				if (itItems != m_mapItems.end()) {
-					itItems->second.push_back(hProductShapeRepresentation);
-				}
-				else {
-					m_mapItems[pProductShapeRepresentation->getInstances().front()] = { hProductShapeRepresentation };
-				}
-
-				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
-					pInstanceIterator = nullptr;
-					itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
-					if (itInstanceIterator == m_mapInstanceIterators.end()) {
-						pInstanceIterator = new _instance_iterator(pRepresentationItem->getInstances());
-						m_mapInstanceIterators[pRepresentationItem] = pInstanceIterator;
-					}
-					else {
-						pInstanceIterator = itInstanceIterator->second;
-					}
-
-					_ptr<_ap242_product_shape_representation_item_instance> apRepresentationItemInstance(pInstanceIterator->getNextItem());
-					if (apRepresentationItemInstance) {
-						auto pProductShapeRepresentationItemData =
-							new CAP242ItemData(pProductShapeRepresentationData,
-								(int64_t*)apRepresentationItemInstance.p(),
-								enumAP242ItemDataType::ProductShapeRepresentationItem);
-						pProductShapeRepresentationData->Children().push_back(pProductShapeRepresentationItemData);
-
-						strDisplayString = _ap_geometry::getDisplayString(apRepresentationItemInstance->getSdaiInstance(), apController->getFullDisplayName());
-						strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ITEM);
-						iGeometryImage = apRepresentationItemInstance->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-						HTREEITEM hProductShapeRepresentationItem = m_pTreeCtrl->InsertItem(
-							strName,
-							iGeometryImage, iGeometryImage,
-							hProductShapeRepresentation);
-						m_pTreeCtrl->SetItemData(hProductShapeRepresentationItem, (DWORD_PTR)pProductShapeRepresentationItemData);
-						m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hProductShapeRepresentationItem);
-
-						itItems = m_mapItems.find(apRepresentationItemInstance);
-						if (itItems != m_mapItems.end()) {
-							itItems->second.push_back(hProductShapeRepresentationItem);
-						}
-						else {
-							m_mapItems[apRepresentationItemInstance] = { hProductShapeRepresentationItem };
-						}
-					}
-				}
-			}
-		}
-	}
-	else {
-		ASSERT(FALSE);
-	}
-
-	// Assemblies
-	for (auto itExpressID2Assembly : pModel->getExpressID2Assembly()) {
-		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct) {
-			LoadAssembly(pModel, itExpressID2Assembly.second, hProduct);
-		}
-	}
-
-	//
-	// II) Show Instances
-	//
-
-	/*auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pProduct, enumAP242ItemDataType::ProductDefinition);
-	pParentItemData->children().push_back(pItemData);
-
-	m_vecItemData.push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hProduct, (DWORD_PTR)pItemData);
-
-	// Assemblies
-	for (auto itAssembly : pModel->GetAssemblies())
-	{
-		if (itAssembly.second->GetRelatingProductDefinition() == pProduct)
-		{
-			LoadAssembly(pModel, itAssembly.second, hProduct);
-		}
-	}
-
-	//
-	// Instances
-	//
-
-	// Iterator
-	_instance_iterator* pInstanceIterator = nullptr;
-	auto itInstanceIterator = m_mapInstanceIterators.find(pProduct);
-	if (itInstanceIterator == m_mapInstanceIterators.end())
-	{
-		pInstanceIterator = new _instance_iterator(pProduct->getInstances());
-		m_mapInstanceIterators[pProduct] = pInstanceIterator;
-	}
-	else
-	{
-		pInstanceIterator = itInstanceIterator->second;
-	}
-
-	// Load
-	_ptr<_ap242_instance> apProductInstance(pInstanceIterator->getNextItem());
-	if (apProductInstance)
-	{
-		LoadInstance(pModel, apProductInstance, hProduct);
-	}
-	else
-	{
-		ASSERT(FALSE);
-	}*/
-}
-
-void CAP242PModelStructureView::LoadAssembly(_ap242_model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent)
-{
-	if ((pModel == nullptr) || (pAssembly == nullptr)) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pAssembly->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ASSEMBLY);
-
-	int iAssemblyImage = HasDescendantsWithGeometry(pModel, pAssembly) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hAssembly = m_pTreeCtrl->InsertItem(strName, iAssemblyImage, iAssemblyImage, hParent);
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hAssembly);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pAssembly, enumAP242ItemDataType::Assembly);
-	pParentItemData->Children().push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hAssembly, (DWORD_PTR)pItemData);
-
-	LoadProduct(pModel, pAssembly->getRelatedProductDefinition(), hAssembly);
-}
-
-void CAP242PModelStructureView::LoadInstance(_ap242_model* pModel, _ap242_instance* pInstance, HTREEITEM hParent)
-{
-	if ((pModel == nullptr) || (pInstance == nullptr)) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pInstance->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s (%lld)", strDisplayString.c_str(), ITEM_PRODUCT_INSTANCE, pInstance->getID());
-
-	HTREEITEM hInstance = m_pTreeCtrl->InsertItem(strName, IMAGE_SELECTED, IMAGE_SELECTED, hParent);
-
-	int iGeometryImage = pInstance->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iGeometryImage, iGeometryImage, hInstance);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::ProductInstance);
-	pParentItemData->Children().push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hInstance, (DWORD_PTR)pItemData);
-
-	auto itItems = m_mapItems.find(pInstance);
-	if (itItems != m_mapItems.end()) {
-		itItems->second.push_back(hInstance);
-	}
-	else {
-		m_mapItems[pInstance] = { hInstance };
-	}
-}
-
-void CAP242PModelStructureView::LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent)
-{
-	if (pDraugthingModel == nullptr) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pDraugthingModel->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_DRAUGHTING_MODEL);
-
-	int iImage = HasDescendantsWithGeometry(pDraugthingModel) ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hDraugthingModel = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, IMAGE_NO_GEOMETRY, IMAGE_NO_GEOMETRY, hDraugthingModel);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pDraugthingModel, enumAP242ItemDataType::DraughtingModel);
-	pParentItemData->Children().push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hDraugthingModel, (DWORD_PTR)pItemData);
-
-	for (auto pAnnotationPlane : pDraugthingModel->getAnnotationPlanes()) {
-		LoadAnnotationPlane(pAnnotationPlane, hDraugthingModel);
-	}
-
-	for (auto pDraughtingCallout : pDraugthingModel->getDraughtingCallouts()) {
-		LoadDraughtingCallout(pDraughtingCallout, hDraugthingModel);
-	}
-}
-
-void CAP242PModelStructureView::LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent)
-{
-	if (pAnnotationPlane == nullptr) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pAnnotationPlane->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_ANNOTATION_PLANE);
-
-	int iImage = pAnnotationPlane->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hAnnotationPlane = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hAnnotationPlane);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	ASSERT(pAnnotationPlane->getInstances().size() == 1);
-	auto pInstance = pAnnotationPlane->getInstances()[0];
-
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::AnnotationPlane);
-	pParentItemData->Children().push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hAnnotationPlane, (DWORD_PTR)pItemData);
-
-	auto itItems = m_mapItems.find(pInstance);
-	if (itItems != m_mapItems.end()) {
-		itItems->second.push_back(hAnnotationPlane);
-	}
-	else {
-		m_mapItems[pInstance] = { hAnnotationPlane };
-	}
-}
-
-void CAP242PModelStructureView::LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent)
-{
-	if (pDraugthingCallout == nullptr) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	_ptr<_ap_controller> apController(getController());
-
-	CString strName;
-	wstring strDisplayString = _ap_geometry::getDisplayString(pDraugthingCallout->getSdaiInstance(), apController->getFullDisplayName());
-	strName.Format(L"%s %s", strDisplayString.c_str(), ITEM_DRAUGHTING_CALLOUT);
-
-	int iImage = pDraugthingCallout->hasGeometry() ? IMAGE_SELECTED : IMAGE_NO_GEOMETRY;
-	HTREEITEM hDraugthingCallout = m_pTreeCtrl->InsertItem(strName, iImage, iImage, hParent);
-	m_pTreeCtrl->InsertItem(ITEM_GEOMETRY, iImage, iImage, hDraugthingCallout);
-
-	auto* pParentItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hParent);
-	ASSERT(pParentItemData != nullptr);
-
-	ASSERT(pDraugthingCallout->getInstances().size() == 1);
-	auto pInstance = pDraugthingCallout->getInstances()[0];
-
-	auto pItemData = new CAP242ItemData(pParentItemData, (int64_t*)pInstance, enumAP242ItemDataType::DraughtingCallout);
-	pParentItemData->Children().push_back(pItemData);
-
-	m_pTreeCtrl->SetItemData(hDraugthingCallout, (DWORD_PTR)pItemData);
-
-	auto itItems = m_mapItems.find(pInstance);
-	if (itItems != m_mapItems.end()) {
-		itItems->second.push_back(hDraugthingCallout);
-	}
-	else {
-		m_mapItems[pInstance] = { hDraugthingCallout };
-	}
-}
-
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_definition* pProduct)
-{
-	if ((pModel == nullptr) || (pProduct == nullptr)) {
-		ASSERT(FALSE);
-		return false;
-	}
-
-	if (pProduct->hasGeometry()) {
-		return true;
-	}
-
-	if (auto pProductShape = pProduct->getProductShape()) {
-		if (HasDescendantsWithGeometry(pModel, pProductShape)) {
-			return true;
-		}
-	}
-
-	bool bHasDescendantWithGeometry = false;
-	HasDescendantsWithGeometryRecursively(pModel, pProduct, bHasDescendantWithGeometry);
-
-	return bHasDescendantWithGeometry;
-}
-
-void CAP242PModelStructureView::HasDescendantsWithGeometryRecursively(_ap242_model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry)
-{
-	if ((pModel == nullptr) || (pProduct == nullptr)) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	for (auto itExpressID2Assembly : pModel->getExpressID2Assembly()) {
-		if (itExpressID2Assembly.second->getRelatingProductDefinition() == pProduct) {
-			if (auto pProductShape = pProduct->getProductShape()) {
-				bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, pProductShape);
-				if (bHasDescendantWithGeometry) {
-					break;
-				}
-			}
-
-			bHasDescendantWithGeometry = HasDescendantsWithGeometry(pModel, itExpressID2Assembly.second->getRelatedProductDefinition());
-			if (bHasDescendantWithGeometry) {
-				break;
-			}
-		}
-	}
-}
-
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape* pProductShape)
-{
-	if ((pModel == nullptr) || (pProductShape == nullptr)) {
-		ASSERT(FALSE);
-		return false;
-	}
-
-	for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
-		if (HasDescendantsWithGeometry(pModel, pProductShapeRepresentation)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape_representation* pProductShapeRepresentation)
-{
-	if ((pModel == nullptr) || (pProductShapeRepresentation == nullptr)) {
-		ASSERT(FALSE);
-		return false;
-	}
-
-	for (auto pProductShapeRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
-		if (pProductShapeRepresentationItem->hasGeometry()) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_assembly* pAssembly)
-{
-	if ((pModel == nullptr) || (pAssembly == nullptr)) {
-		ASSERT(FALSE);
-		return false;
-	}
-	return HasDescendantsWithGeometry(pModel, pAssembly->getRelatedProductDefinition());
-}
-
-bool CAP242PModelStructureView::HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel)
-{
-	if (pDraughtingModel == nullptr) {
-		ASSERT(FALSE);
-		return false;
-	}
-
-	for (auto pAnnotationPlane : pDraughtingModel->getAnnotationPlanes()) {
-		if (pAnnotationPlane->hasGeometry()) {
-			return true;
-		}
-	}
-	for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
-		if (pDraughtingCallout->hasGeometry()) {
-			return true;
-		}
-	}
-	return false;
 }
 
 HTREEITEM CAP242PModelStructureView::GetModelItem() const
@@ -1738,12 +1239,6 @@ void CAP242PModelStructureView::ResetView()
 	m_pModelStructure = nullptr;
 
 	m_mapNodes.clear();
-
-	for (size_t iItemData = 0; iItemData < m_vecItemData.size(); iItemData++) {
-		delete m_vecItemData[iItemData];
-	}
-	m_vecItemData.clear();
-
 	m_mapInstanceIterators.clear();
 	m_mapItems.clear();
 	m_hSelectedItem = nullptr;
@@ -1754,23 +1249,4 @@ void CAP242PModelStructureView::ResetView()
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** CAP242PModelStructureView::ResetView(): %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
-}
-
-// ************************************************************************************************
-CAP242ItemData::CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumAP242ItemDataType enItemDataType)
-	: m_pParent(pParent)
-	, m_pInstance(pInstance)
-	, m_enAP242ItemDataType(enItemDataType)
-	, m_hItem(nullptr)
-	, m_vecChildren()
-{
-	ASSERT(m_pInstance != nullptr);
-	ASSERT(m_enAP242ItemDataType != enumAP242ItemDataType::Unknown);
-}
-
-CAP242ItemData::~CAP242ItemData()
-{
-	for (auto pItemData : m_vecChildren) {
-		delete pItemData;
-	}
 }
