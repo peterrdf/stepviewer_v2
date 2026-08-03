@@ -516,76 +516,73 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 {
 	if (hItem == NULL) {
 		ASSERT(FALSE);
+		return FALSE;
+	}
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	auto pNode = (_ap242_node*)GetTreeView()->GetItemData(hItem);
+
+	// Product Definitions
+	if (iFilter == (int)enumSearchFilter::ProductDefitions) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductDefinition)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
 		return FALSE;
 	}
 
-	//CString strItemText = GetTreeView()->GetItemText(hItem);
-	//strItemText.MakeLower();
+	// Assemblies
+	if (iFilter == (int)enumSearchFilter::Assemblies) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::Assembly)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
-	//CString strTextLower = strText;
-	//strTextLower.MakeLower();
+		return FALSE;
+	}
 
-	//auto pItemData = (CAP242ItemData*)GetTreeView()->GetItemData(hItem);
+	// Product Instance
+	if (iFilter == (int)enumSearchFilter::ProductInstances) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductInstance)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
-	//// Product Definitions
-	//if (iFilter == (int)enumSearchFilter::ProductDefitions) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductDefinition)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
+		return FALSE;
+	}
 
-	//	return FALSE;
-	//}
+	// Draughting Model
+	if (iFilter == (int)enumSearchFilter::DraughtingModel) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingModel)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
-	//// Assemblies
-	//if (iFilter == (int)enumSearchFilter::Assemblies) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::Assembly)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
+		return FALSE;
+	}
 
-	//	return FALSE;
-	//}
+	// Annotation Plane
+	if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::AnnotationPlane)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
-	//// Product Instance
-	//if (iFilter == (int)enumSearchFilter::ProductInstances) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::ProductInstance)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
+		return FALSE;
+	}
 
-	//	return FALSE;
-	//}
+	// Draughting Callout
+	if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
+		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingCallout)) {
+			return strItemText.Find(strText, 0) != -1;
+		}
 
-	//// Draughting Model
-	//if (iFilter == (int)enumSearchFilter::DraughtingModel) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingModel)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
+		return FALSE;
+	}
 
-	//	return FALSE;
-	//}
-
-	//// Annotation Plane
-	//if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
-
-	//	return FALSE;
-	//}
-
-	//// Draughting Callout
-	//if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
-	//	if ((pItemData != nullptr) && (pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout)) {
-	//		return strItemText.Find(strText, 0) != -1;
-	//	}
-
-	//	return FALSE;
-	//}
-
-	//// All
-	//return strItemText.Find(strTextLower, 0) != -1;
-
-	return FALSE;
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
 }
 
 /*virtual*/ void CAP242PModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
