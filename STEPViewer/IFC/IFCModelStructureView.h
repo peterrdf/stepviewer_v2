@@ -138,17 +138,13 @@ private: // Methods
 
 	CModelData* Model_GetData(HTREEITEM hItem);
 	CModelData* Model_GetData(_model* pModel);
-	void Model_GetChildren(HTREEITEM hItem, bool bEnabledOnly, set<_instance*>& setChildren);
-	void Model_EnableChildren(HTREEITEM hItem, bool bEnable, set<_ifc_instance*>& setChildren);	
+	void Model_GetChildren(HTREEITEM hItem, bool bEnabledOnly, set<_instance*>& setChildren);	
 
 	HTREEITEM Tree_GetModelItem(HTREEITEM hItem) const;
-
 	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
-	void Tree_Update(HTREEITEM hModel, HTREEITEM hItem, ITEMS& mapItems, const set<_ifc_instance*>& setInstances);
 	void Tree_UpdateChildren(HTREEITEM hItem);
-	void InMemoryTree_UpdateChildren(_ifc_node* pNode, bool bEnable);
+	void InMemoryTree_EnableChildren(_ifc_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
-	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Tree_Select(bool bEnable);
 	void Tree_Select(_ifc_instance* pInstance, ITEMS& mapItems, bool bEnable);
 	void Tree_Show(const set<_ifc_instance*>& setInstances);

@@ -4,6 +4,7 @@
 
 #include "ModelStructureViewBase.h"
 #include "SearchTreeCtrlDialog.h"
+#include "_ap242_model_structure.h"
 
 // ************************************************************************************************
 class _ap242_model;
@@ -16,20 +17,16 @@ class _ap242_assembly;
 class _ap242_draughting_model;
 class _ap242_annotation_plane;
 class _ap242_draughting_callout;
-class CAP242ItemData;
 
 // ************************************************************************************************
-typedef _vector_sequential_iterator<_instance> _instance_iterator;
-
-// ************************************************************************************************
-class CAP242PModelStructureView 
+class CAP242PModelStructureView
 	: public CModelStructureViewBase
 	, public CItemStateProvider
-	, public CSearchTreeCtrlDialogSite
-{
+	, public CSearchTreeCtrlDialogSite {
 
 private: // Classes
 
+	// ********************************************************************************************
 	enum class enumSearchFilter : int {
 		All = 0,
 		ProductDefitions = 1,
@@ -40,18 +37,23 @@ private: // Classes
 		DraughtingCallout = 6
 	};
 
-	typedef map<_instance*, vector<HTREEITEM>> ITEMS;
+	// ********************************************************************************************
+	typedef map<_ap242_instance*, vector<HTREEITEM>> ITEMS;
+	typedef map<_ap242_node*, HTREEITEM> NODES;
 
 private: // Members
+
+	// Model
+	_ap242_model* m_pModel;
+	_ap242_model_structure* m_pModelStructure;
 
 	CImageList* m_pImageList;
 
 	// Cache	
-	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
-	ITEMS m_mapInstanceItems;
-	vector<CAP242ItemData*> m_vecItemData;
-	HTREEITEM m_hSelectedItem;
-		
+	NODES m_mapNodes;
+	ITEMS m_mapItems;
+	_instance* m_pSelectedInstance;
+
 	bool m_bInitInProgress; // don't send notifications while updating the view
 
 	// Search
@@ -60,7 +62,7 @@ private: // Members
 public: // Methods
 
 	CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl);
-	virtual ~CAP242PModelStructureView();	
+	virtual ~CAP242PModelStructureView();
 
 	// _view
 	virtual void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag) override;
@@ -88,73 +90,22 @@ public: // Methods
 private: // Methods	
 
 	void LoadModel();
-	void LoadProduct(_ap242_model* pModel, _ap242_product_definition* pProduct, HTREEITEM hParent);
-	void LoadAssembly(_ap242_model* pModel, _ap242_assembly* pAssembly, HTREEITEM hParent);
-	void LoadInstance(_ap242_model* pModel, _ap242_instance* pInstance, HTREEITEM hParent);
 
-	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_definition* pProduct);
-	void HasDescendantsWithGeometryRecursively(_ap242_model* pModel, _ap242_product_definition* pProduct, bool& bHasDescendantWithGeometry);
-	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape* pProductShape);
-	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_product_shape_representation* pProductShapeRepresentation);
-	bool HasDescendantsWithGeometry(_ap242_model* pModel, _ap242_assembly* pAssembly);
-	bool HasDescendantsWithGeometry(_ap242_draughting_model* pDraughtingModel);
+	_ap242_model* GetModel() const { return m_pModel; }
+	_ap242_model_structure* GetModelStructure() const { return m_pModelStructure; }
 
-	void LoadDraughtingModel(_ap242_draughting_model* pDraugthingModel, HTREEITEM hParent);
-	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);
-	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
+	HTREEITEM GetModelItem() const;
 
-	void Tree_Reset(bool bEnable);
-	void Tree_Reset(HTREEITEM hItem, bool bEnable);
-	void Model_EnableChildren(CAP242ItemData* pParent, bool bEnable);
+	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
 	void Tree_UpdateChildren(HTREEITEM hItem);
+	void InMemoryTree_EnableChildren(_ap242_node* pNode, bool bEnable);
 	void Tree_UpdateParents(HTREEITEM hItem);
-	
+	void Tree_Select(bool bEnable);
+	void Tree_Select(_ap242_instance* pInstance, bool bEnable);
+	bool Tree_EnsureVisible(_ap242_instance* pInstance);
+
+	int Tree_GetItemState(HTREEITEM hItem);
+	int InMemoryTree_GetItemState(_ap242_node* pNode);
+
 	void ResetView();
-};
-
-// ************************************************************************************************
-enum class enumAP242ItemDataType : int
-{
-	Unknown = -1,
-	Model,
-	ProductDefinition,
-	ProductShape,
-	ProductShapeRepresentation,
-	ProductShapeRepresentationItem,
-	Assembly,
-	ProductInstance,
-	DraughtingModel,
-	AnnotationPlane,
-	DraughtingCallout,
-};
-
-// ************************************************************************************************
-class CAP242ItemData
-{
-
-private: // Members	
-
-	CAP242ItemData* m_pParent;	
-	int64_t* m_pInstance; // Instance - C++ wrapper class
-	enumAP242ItemDataType m_enAP242ItemDataType;
-	HTREEITEM m_hItem;
-	vector<CAP242ItemData*> m_vecChildren;
-
-public: // Methods
-
-	CAP242ItemData(CAP242ItemData* pParent, int64_t* pInstance, enumAP242ItemDataType enItemDataType);
-	virtual ~CAP242ItemData();
-
-public: // Properties
-
-	CAP242ItemData* GetParent() const { return m_pParent; }
-	vector<CAP242ItemData*>& Children() { return m_vecChildren; }
-	enumAP242ItemDataType GetType() const { return m_enAP242ItemDataType; }
-	HTREEITEM& TreeItem() { return m_hItem; }
-	 
-	template<typename T>
-	T* GetInstance() const
-	{
-		return (T*)m_pInstance;
-	}
 };

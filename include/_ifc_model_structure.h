@@ -8,6 +8,7 @@
 #include <map>
 
 // ************************************************************************************************
+#define MODEL_NODE	L"model"
 #define DECOMPOSITION_NODE	L"decomposition"
 #define CONTAINS_NODE		L"contains"
 
@@ -16,7 +17,7 @@ class _ifc_node {
 
 private: // Members
 
-	_ifc_instance* m_pIfcInstance;
+	_ifc_instance* m_pInstance;
 	_ifc_node* m_pParent;
 	std::vector<_ifc_node*> m_vecChildren;
 
@@ -25,13 +26,32 @@ public: // Methods
 	_ifc_node(_ifc_instance* pIfcInstance, _ifc_node* pParentNode);
 	virtual ~_ifc_node();
 
+	bool hasChild(SdaiInstance sdaiInstance);
+
 public: // Properties
 
-	_ifc_instance* getIfcInstance() const { return m_pIfcInstance; }
-	SdaiInstance getSdaiInstance() const { return m_pIfcInstance != nullptr ? m_pIfcInstance->getSdaiInstance() : 0; }
+	_ifc_instance* getInstance() const { return m_pInstance; }
+	SdaiInstance getSdaiInstance() const { return m_pInstance != nullptr ? m_pInstance->getSdaiInstance() : 0; }
 	_ifc_node* getParent() const { return m_pParent; }
 	virtual const wchar_t* getGlobalId() const;
 	std::vector<_ifc_node*>& children() { return m_vecChildren; }
+};
+
+// ************************************************************************************************
+class _ifc_model_node : public _ifc_node {
+
+private: // Members
+
+	_ifc_model* m_pModel;
+
+public: // Methods
+
+	_ifc_model_node(_ifc_model* pModel);
+	virtual ~_ifc_model_node();
+
+public: // Properties
+
+	virtual const wchar_t* getGlobalId() const override { return MODEL_NODE; }
 };
 
 // ************************************************************************************************
@@ -83,6 +103,7 @@ class _ifc_model_structure {
 private: // Members
 
 	_ifc_model* m_pModel;
+	_ifc_node* m_pModelNode;
 	_ifc_node* m_pProjectNode;
 	_ifc_node* m_pGroupsNode;
 	_ifc_node* m_pUnreferencedNode;
@@ -101,7 +122,7 @@ public: // Methods
 
 	void getInstancePath(SdaiInstance sdaiInstance, std::vector<_ifc_node*>& vecPath);
 	void getInstanceChildren(SdaiInstance sdaiInstance, std::vector<SdaiInstance>& vecChildren, bool bRecursive);
-	bool hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	bool hasChild(_ifc_node* pNode, SdaiInstance sdaiInstance);
 
 protected: // Methods
 
@@ -120,6 +141,7 @@ protected: // Methods
 public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
+	_ifc_node* getModelNode() const { return m_pModelNode; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
 	_ifc_node* getGroupsNode() const { return m_pGroupsNode; }
 	_ifc_node* getUnreferencedNode() const { return m_pUnreferencedNode; }
