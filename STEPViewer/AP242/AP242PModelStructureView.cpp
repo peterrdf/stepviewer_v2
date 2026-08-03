@@ -631,16 +631,15 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	/*
 	* Instances
 	*/
-	auto pItemData = (CAP242ItemData*)m_pTreeCtrl->GetItemData(hItem);
-	if ((pItemData != nullptr) &&
-		((pItemData->GetType() == enumAP242ItemDataType::ProductInstance) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShape) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentation) ||
-			(pItemData->GetType() == enumAP242ItemDataType::ProductShapeRepresentationItem) ||
-			(pItemData->GetType() == enumAP242ItemDataType::AnnotationPlane) ||
-			(pItemData->GetType() == enumAP242ItemDataType::DraughtingCallout))) {
-		auto pTargetInstance = pItemData->GetInstance<_ap_instance>();
-
+	auto pTargetNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
+	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;	
+	if ((pTargetInstance != nullptr) && (pTargetInstance != nullptr) &&
+		((pTargetNode->getType() == _ap242_node_type::ProductInstance) ||
+			(pTargetNode->getType() == _ap242_node_type::ProductShape) ||
+			(pTargetNode->getType() == _ap242_node_type::ProductShapeRepresentation) ||
+			(pTargetNode->getType() == _ap242_node_type::ProductShapeRepresentationItem) ||
+			(pTargetNode->getType() == _ap242_node_type::AnnotationPlane) ||
+			(pTargetNode->getType() == _ap242_node_type::DraughtingCallout))) {
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
@@ -666,8 +665,6 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			return;
 		}
 
-		auto& vecInstances = pModel->getInstances();
-
 		switch (uiCommand) {
 			case ID_INSTANCES_ZOOM_TO:
 				{
@@ -689,43 +686,49 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			case ID_INSTANCES_ENABLE:
 				{
+					//
+						// Instance
+						//
+
 					pTargetInstance->setEnable(!pTargetInstance->getEnable());
 
-					int iImage = pTargetInstance->getEnable() ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-					m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
+					//
+					// In Memory Tree
+					//
 
-					//Model_EnableChildren(pItemData, pTargetInstance->getEnable()); #todo: Enable/Disable children recursively
+					InMemoryTree_EnableChildren(pTargetNode, !pTargetInstance->getEnable());
 
-					Tree_UpdateChildren(hItem);
-					Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hItem));
+					//
+					// UI
+					//
 
-					pController->onInstancesEnabledStateChanged(this);
+					Tree_Update(GetModelItem());
+
+					pController->onInstanceEnabledStateChanged(this, pTargetInstance, 0);
 				}
 				break;
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 				{
-					for (auto pInstance : vecInstances) {
+					//
+						// Model
+						//
+
+					for (auto pInstance : GetModel()->getInstances()) {
 						pInstance->setEnable(pTargetInstance == pInstance);
 					}
 
-					ASSERT(pTargetInstance->getEnable());
+					//
+					// In Memory Tree
+					//
 
-					Tree_Reset(false);
+					InMemoryTree_EnableChildren(pTargetNode, pTargetInstance->getEnable());
 
-					auto itItems = m_mapItems.find(pTargetInstance);
-					ASSERT(itItems != m_mapItems.end());
-					ASSERT(!itItems->second.empty());
+					//
+					// UI
+					//
 
-					for (size_t iItem = 0; iItem < itItems->second.size(); iItem++) {
-						HTREEITEM hGeometry = m_pTreeCtrl->GetChildItem(itItems->second[iItem]);
-						ASSERT((hGeometry != nullptr) && !m_pTreeCtrl->ItemHasChildren(hGeometry) && (m_pTreeCtrl->GetItemText(hGeometry) == ITEM_GEOMETRY));
-
-						m_pTreeCtrl->SetItemImage(hGeometry, IMAGE_SELECTED, IMAGE_SELECTED);
-
-						Tree_UpdateChildren(hGeometry);
-						Tree_UpdateParents(m_pTreeCtrl->GetParentItem(hGeometry));
-					}
+					Tree_Update(GetModelItem());
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
@@ -733,11 +736,11 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 			case ID_INSTANCES_ENABLE_ALL:
 				{
-					for (auto pInstance : vecInstances) {
+					for (auto pInstance : GetModel()->getInstances()) {
 						pInstance->setEnable(true);
 					}
 
-					Tree_Reset(true);
+					Tree_Update(GetModelItem());
 
 					pController->onInstancesEnabledStateChanged(this);
 				}
@@ -1377,55 +1380,6 @@ HTREEITEM CAP242PModelStructureView::GetModelItem() const
 	ASSERT(m_pTreeCtrl != nullptr);
 
 	return m_pTreeCtrl->GetRootItem();
-}
-
-void CAP242PModelStructureView::Tree_Reset(bool bEnable)
-{
-	HTREEITEM hRoot = m_pTreeCtrl->GetRootItem();
-	while (hRoot != nullptr) {
-		int iImage, iSelectedImage = -1;
-		m_pTreeCtrl->GetItemImage(hRoot, iImage, iSelectedImage);
-
-		ASSERT(iImage == iSelectedImage);
-
-		if ((iImage != IMAGE_SELECTED) && (iImage != IMAGE_SEMI_SELECTED) && (iImage != IMAGE_NOT_SELECTED)) {
-			// skip the Header and unreferenced items
-			hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
-
-			continue;
-		}
-
-		Tree_Reset(hRoot, bEnable);
-
-		hRoot = m_pTreeCtrl->GetNextSiblingItem(hRoot);
-	}
-}
-
-void CAP242PModelStructureView::Tree_Reset(HTREEITEM hItem, bool bEnable)
-{
-	if (hItem == nullptr) {
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	HTREEITEM hChild = m_pTreeCtrl->GetNextItem(hItem, TVGN_CHILD);
-	while (hChild != nullptr) {
-		Tree_Reset(hChild, bEnable);
-
-		hChild = m_pTreeCtrl->GetNextSiblingItem(hChild);
-	} // while (hChild != nullptr)
-
-	int iParentImage = -1;
-	int iParentSelectedImage = -1;
-	m_pTreeCtrl->GetItemImage(hItem, iParentImage, iParentSelectedImage);
-
-	ASSERT(iParentImage == iParentSelectedImage);
-
-	if ((iParentImage == IMAGE_SELECTED) || (iParentImage == IMAGE_SEMI_SELECTED) || (iParentImage == IMAGE_NOT_SELECTED)) {
-		int iImage = bEnable ? IMAGE_SELECTED : IMAGE_NOT_SELECTED;
-		m_pTreeCtrl->SetItemImage(hItem, iImage, iImage);
-	}
 }
 
 void CAP242PModelStructureView::Tree_UpdateChildren(HTREEITEM hItem)

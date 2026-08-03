@@ -108,12 +108,11 @@ private: // Methods
 	void LoadAnnotationPlane(_ap242_annotation_plane* pAnnotationPlane, HTREEITEM hParent);
 	void LoadDraughtingCallout(_ap242_draughting_callout* pDraugthingCallout, HTREEITEM hParent);
 
+	_ap242_model* GetModel() const { return m_pModel; }
 	_ap242_model_structure* GetModelStructure() const { return m_pModelStructure; }
 
 	HTREEITEM GetModelItem() const;
 
-	void Tree_Reset(bool bEnable);
-	void Tree_Reset(HTREEITEM hItem, bool bEnable);
 	void Tree_Update(HTREEITEM hItem, bool bRecursive = true);
 	void Tree_UpdateChildren(HTREEITEM hItem);
 	void InMemoryTree_EnableChildren(_ap242_node* pNode, bool bEnable);
