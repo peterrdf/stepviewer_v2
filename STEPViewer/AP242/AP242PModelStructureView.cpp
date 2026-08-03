@@ -76,7 +76,7 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	delete m_pSearchDialog;
 }
 
-/*virtual*/ void CAP242PModelStructureView::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int /*iFlag*/) /*override*/
+/*virtual*/ void CAP242PModelStructureView::onInstanceEnabledStateChanged(_view* pSender, _instance* /*pInstance*/, int /*iFlag*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -742,7 +742,6 @@ void CAP242PModelStructureView::LoadModel()
 	for (auto pRootProduct : m_pModelStructure->getRootProducts()) {
 		wstring strItem = _ap_geometry::getDisplayString(pRootProduct->getSdaiInstance(), apController->getFullDisplayName());
 
-		TV_INSERTSTRUCT tvInsertStruct;
 		tvInsertStruct.hParent = hModel;
 		tvInsertStruct.hInsertAfter = TVI_LAST;
 		tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
