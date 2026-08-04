@@ -140,7 +140,7 @@ void CIFCOpenGLView::DrawBoundingBoxes(_model* pModel)
 		if (!pInstance->getEnable()) {
 			continue;
 		}
-		
+
 		float fXmin = FLT_MAX;
 		float fXmax = -FLT_MAX;
 		float fYmin = FLT_MAX;
@@ -153,22 +153,39 @@ void CIFCOpenGLView::DrawBoundingBoxes(_model* pModel)
 			for (auto pMappedItemGeometry : ifcGeometry->getMappedGeometries()) {
 				for (auto pMappedItemInstance : pMappedItemGeometry->getInstances()) {
 					if (pMappedItemInstance->getOwner() == pInstance) {
-						//pMappedItemGeometry->calculateBB(
-						pMappedItemGeometry->calculateBB_Faces(
-							pMappedItemInstance,
-							fXmin, fXmax,
-							fYmin, fYmax,
-							fZmin, fZmax);
+						if (pMappedItemGeometry->getTriangles().empty()) {
+							pMappedItemGeometry->calculateBB(
+								pMappedItemInstance,
+								fXmin, fXmax,
+								fYmin, fYmax,
+								fZmin, fZmax);
+						}
+						else {
+							pMappedItemGeometry->calculateBB_Faces(
+								pMappedItemInstance,
+								fXmin, fXmax,
+								fYmin, fYmax,
+								fZmin, fZmax);
+						}
 					}
 				}
 			}
 		} // if (pGeometry->isPlaceholder())
 		else {
-			pGeometry->calculateBB(
-				pInstance,
-				fXmin, fXmax,
-				fYmin, fYmax,
-				fZmin, fZmax);
+			if (pGeometry->getTriangles().empty()) {
+				pGeometry->calculateBB(
+					pInstance,
+					fXmin, fXmax,
+					fYmin, fYmax,
+					fZmin, fZmax);
+			}
+			else {
+				pGeometry->calculateBB_Faces(
+					pInstance,
+					fXmin, fXmax,
+					fYmin, fYmax,
+					fZmin, fZmax);
+			}
 		}
 
 		if ((fXmin == FLT_MAX) ||

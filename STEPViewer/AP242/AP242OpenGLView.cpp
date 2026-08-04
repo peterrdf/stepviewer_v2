@@ -148,11 +148,20 @@ void CAP242OpenGLView::DrawBoundingBoxes(_model* pModel)
 			float fYmax = -FLT_MAX;
 			float fZmin = FLT_MAX;
 			float fZmax = -FLT_MAX;
-			pGeometry->calculateBB(
-				pInstance,
-				fXmin, fXmax,
-				fYmin, fYmax,
-				fZmin, fZmax);
+			if (pGeometry->getTriangles().empty()) {
+				pGeometry->calculateBB(
+					pInstance,
+					fXmin, fXmax,
+					fYmin, fYmax,
+					fZmin, fZmax);
+			}
+			else {
+				pGeometry->calculateBB_Faces(
+					pInstance,
+					fXmin, fXmax,
+					fYmin, fYmax,
+					fZmin, fZmax);
+			}
 
 			if ((fXmin == FLT_MAX) ||
 				(fXmax == -FLT_MAX) ||
