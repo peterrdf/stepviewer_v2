@@ -195,7 +195,7 @@ void _ifc_model_structure::build()
 	// Model
 	// 
 
-	ASSERT(m_pModelNode == nullptr);
+	assert(m_pModelNode == nullptr);
 	m_pModelNode = new _ifc_model_node(m_pModel);
 
 	SdaiAggr sdaiProjectAggr = sdaiGetEntityExtentBN(m_pModel->getSdaiModel(), "IFCPROJECT");
@@ -310,7 +310,7 @@ void _ifc_model_structure::loadUnreferencedNode()
 
 		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
 		if (!ifcGeometry->getIsReferenced()) {
-			ASSERT(pGeometry->getInstances().size() == 1);
+			assert(pGeometry->getInstances().size() == 1);
 			_ptr<_ifc_instance> ifcInstance(pGeometry->getInstances()[0]);
 
 			const wchar_t* szEntity = ifcGeometry->getEntityName();
