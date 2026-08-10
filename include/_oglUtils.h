@@ -1509,6 +1509,7 @@ public: // Methods
 
 		glDebugMessageCallbackARB(&_oglContext::debugCallback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 #else
 		glDisable(GL_DEBUG_OUTPUT);
 		glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
@@ -1562,6 +1563,11 @@ public: // Methods
 				strcpy(debSev, "Medium");
 			else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
 				strcpy(debSev, "Low");
+			else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+				strcpy(debSev, "Notification");
+			else {
+				strcpy(debSev, "Unknown");
+			}
 
 			fprintf(f, "Source:%s\tType:%s\tID:%d\tSeverity:%s\tMessage:%s\n", debSource, debType, id, debSev, message);
 
