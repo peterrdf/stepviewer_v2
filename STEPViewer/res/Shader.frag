@@ -1,4 +1,4 @@
-#version 130
+#version 330
 
 in highp vec3 _EyespaceNormal;
 in lowp vec3 _Diffuse;
