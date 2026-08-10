@@ -382,14 +382,20 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstan
 			continue;
 		}
 
-		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
-		pParentNode->children().push_back(pDecompositioNode);
+		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);		
 
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
 			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
+		}
+
+		if (!pDecompositioNode->children().empty()) {
+			pParentNode->children().push_back(pDecompositioNode);
+		}
+		else {
+			delete pDecompositioNode;
 		}
 	} // for (SdaiInteger i = ...	
 }
@@ -416,18 +422,28 @@ void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance s
 			continue;
 		}
 
-		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
-		pParentNode->children().push_back(pDecompositioNode);
-
 		SdaiAggr sdaiRelatedObjectsAggr = 0;
 		sdaiGetAttrBN(sdaiIsNestedByInstance, "RelatedObjects", sdaiAGGR, &sdaiRelatedObjectsAggr);
 
 		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
+		if (iRelatedObjectsInstancesCount == 0) {
+			continue;
+		}
+
+		auto pDecompositioNode = new _ifc_decomposition_node(pParentNode);
+		
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
 			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
+		}
+
+		if (!pDecompositioNode->children().empty()) {
+			pParentNode->children().push_back(pDecompositioNode);
+		}
+		else {
+			delete pDecompositioNode;
 		}
 	} // for (SdaiInteger i = ...	
 }
@@ -461,14 +477,20 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInst
 			continue;
 		}
 
-		auto pContainsNode = new _ifc_contains_node(pParentNode);
-		pParentNode->children().push_back(pContainsNode);
+		auto pContainsNode = new _ifc_contains_node(pParentNode);		
 
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
 			sdaiGetAggrByIndex(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			loadInstance(pContainsNode, sdaiRelatedElementsInstance);
+		}
+
+		if (!pContainsNode->children().empty()) {
+			pParentNode->children().push_back(pContainsNode);
+		}
+		else {
+			delete pContainsNode;
 		}
 	} // for (SdaiInteger i = ...
 }
