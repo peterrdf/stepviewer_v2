@@ -2406,6 +2406,7 @@ void _oglView::_drawFaces()
 
 					if (pTexture != nullptr) {
 						m_pOGLProgram->_enableTexture(false);
+						glBindTexture(GL_TEXTURE_2D, 0);
 					}
 				}
 
