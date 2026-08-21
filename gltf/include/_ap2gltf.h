@@ -125,6 +125,7 @@ namespace _ap2gltf
 		void writeStartArrayTag(bool bNewLine = true);
 		void writeEndArrayTag();
 		void writeStringProperty(const string& strName, const string& strValue);
+		void writeNullableStringProperty(const string& strName, const string& strValue);
 		void writeIntProperty(const string& strName, int iValue);
 		void writeUIntProperty(const string& strName, uint32_t iValue);
 		void writeFloatProperty(const string& strName, float fValue);
