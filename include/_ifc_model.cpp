@@ -1163,8 +1163,15 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 			InferenceInstance(owlInstanceMatrixMultiplication);
 
 			double* values = nullptr;
-			int64_t	card = 0;
+			int64_t card = 0;
 			GetDatatypeProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "coordinates"), (void**)&values, &card);
+
+			_matrix4x3 localMatrix;
+			memset(&localMatrix, 0, sizeof(_matrix4x3));
+			bool bHasValidMatrix = (card == sizeof(_matrix4x3) / sizeof(double));
+			if (bHasValidMatrix) {
+				memcpy(&localMatrix, values, sizeof(_matrix4x3));
+			}
 
 			// Clean up
 			if ((*mappedItemData)->bDeleteInstanceMatrix) {
@@ -1175,16 +1182,16 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 			RemoveInstance(owlInstanceMatrixMultiplication);
 			owlInstanceMatrixMultiplication = 0;
 
-			if (card == sizeof(_matrix4x3) / sizeof(double)) {
+			if (bHasValidMatrix) {
 				STRUCT_MAPPED_ITEM* myMappedItem = new STRUCT_MAPPED_ITEM;
 				myMappedItem->ifcRepresentationInstance = (*mappedItemData)->ifcRepresentationInstance;
-				memcpy(&myMappedItem->matrix, values, sizeof(_matrix4x3));
+				myMappedItem->matrix = localMatrix;
 				myIfcProduct->mappedItems.push_back(myMappedItem);
 			}
 			else {
 				assert(false);
-				delete	myIfcProduct;
-				return	nullptr;
+				delete myIfcProduct;
+				return nullptr;
 			}
 
 			delete* mappedItemData;
