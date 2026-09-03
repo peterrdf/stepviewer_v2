@@ -189,6 +189,9 @@ public: // Methods
 	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
 	virtual void postModelLoaded() {}
+	virtual void preModelDeleted() {}
+	virtual void onModelDeleted() {}
+	virtual void postModelDeleted() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}
 	virtual void onInstanceSelected(_view* /*pSender*/) {}
@@ -244,6 +247,7 @@ public: // Methods
 
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);
+	void removeModelByInstance(OwlModel owlModel);
 	void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
 
 	virtual void loadDecorationModels() {}

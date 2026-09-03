@@ -747,6 +747,43 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
+void _controller::removeModelByInstance(OwlModel owlModel)
+{
+	assert(owlModel != 0);
+
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel) {
+		return pModel->getOwlModel() == owlModel;
+		});
+
+	if (itModel == m_vecModels.end()) {
+		return;
+	}
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelDeleted();
+	}
+
+	m_vecModels.erase(itModel);
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelDeleted();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelDeleted();
+	}
+
+	m_bUpdatingModel = false;
+}
+
 void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 {
 	m_bUpdatingModel = true;

@@ -16,6 +16,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	: _ap_model(pLog, enumAP::IFC)
 	, m_bUseWorldCoordinates(bUseWorldCoordinates)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
+	, m_sdaiObjectEntity(0)
 	, m_sdaiSpaceEntity(0)
 	, m_sdaiOpeningElementEntity(0)
 	, m_sdaiDistributionElementEntity(0)
@@ -44,6 +45,273 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 /*virtual*/ _ifc_model::~_ifc_model()
 {
 	clean();
+}
+
+void _ifc_model::loadInstances(bool bClean /*= true*/)
+{
+	if (bClean) {
+		clean(false);
+	}
+
+	m_bUpdateVertexBuffers = true;
+
+#ifdef _WINDOWS
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
+
+	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
+	retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
+	retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+
+	if (getMultiThreadedLoad()) {
+		unsigned int threadsCount = thread::hardware_concurrency() / 4;
+		InitializeMultiThreading(getSdaiModel(), threadsCount);
+
+		double arOffset[3] = { 0., 0., 0. };
+		GetVertexBufferOffset(getOwlModel(), arOffset);
+
+		vector<OwlModel> vecOwlModels;
+		vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
+		for (unsigned int i = 0; i < threadsCount; i++) {
+			vecOwlModels.push_back(CreateModel());
+			SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
+			vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+		}
+
+		// Load geometries
+		vector<thread> vecThreads;
+		for (unsigned int i = 0; i < threadsCount; i++) {
+			vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+				while (true) {
+					IFC_GEOMETRY geometry;
+					{
+						lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+						if (m_mapGeometriesPendingLoad.empty()) {
+							return;
+						}
+						auto itGeometry = m_mapGeometriesPendingLoad.begin();
+						geometry = itGeometry->second;
+						m_mapGeometriesPendingLoad.erase(itGeometry);
+					}
+					loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
+				}
+				});
+		}
+
+		// Wait for threads to end
+		for (auto& thread : vecThreads) {
+			thread.join();
+		}
+
+		// Display names
+		for (auto pGeometry : getGeometries()) {
+			_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
+		}
+
+		// Load mapped items
+		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
+
+		vecThreads.clear();
+		for (unsigned int i = 0; i < threadsCount; i++) {
+			SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
+
+			vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+				while (true) {
+					IFC_GEOMETRY geometry;
+					{
+						lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+						if (m_mapMappedGeometriesPendingLoad.empty()) {
+							return;
+						}
+						auto itGeometry = m_mapMappedGeometriesPendingLoad.begin();
+						geometry = itGeometry->second;
+						m_mapMappedGeometriesPendingLoad.erase(itGeometry);
+					}
+					loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
+				}
+				});
+		}
+
+		// Wait for threads to end
+		for (auto& thread : vecThreads) {
+			thread.join();
+		}
+
+		// Mapped items: post-processing
+		for (auto pProduct : m_vecIfcProducts) {
+			int64_t iParenInstanceID = _model::getNextInstanceID();
+
+			vector<_ifc_geometry*> vecMappedGeometries;
+			vector<_ifc_instance*> vecMappedInstances;
+
+			for (auto pMappedItem : pProduct->mappedItems) {
+				auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
+				assert(pMappedGeometry != nullptr);
+
+				vecMappedGeometries.push_back(pMappedGeometry);
+
+				auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, nullptr);
+				pMappedInstance->setEnable(true);
+				addInstance(pMappedInstance);
+
+				vecMappedInstances.push_back(pMappedInstance);
+
+				// Pending update
+				m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });
+			} // for (auto pMappedItem : ...
+
+			// Owner
+			auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries, 0);
+			pGeometry->setDefaultShowState();
+			addGeometry(pGeometry);
+
+			// Owner
+			auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
+			pInstance->setDefaultEnableState();
+			addInstance(pInstance);
+
+			for (auto pMappedInstance : vecMappedInstances) {
+				pMappedInstance->m_pOwner = pInstance;
+			}
+
+			delete pProduct;
+		}
+
+		SetVertexBufferOffset(getOwlModel(), arOffset);
+
+		for (auto& owlModel : vecOwlModels) {
+			CloseModel(owlModel);
+		}
+	}
+
+#ifdef _WINDOWS
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+#endif
+
+	getObjectsReferencedState();
+
+	// Post-processing
+	if (!m_vecMappedItemPendingUpdate.empty()) {
+		double arOffset[3] = { 0., 0., 0. };
+		GetVertexBufferOffset(getOwlModel(), arOffset);
+
+		double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+
+		if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
+			for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
+				auto pMappedItem = pMappedItemPendingUpdate.second;
+
+				pMappedItem->matrix._41 += arOffset[0];
+				pMappedItem->matrix._42 += arOffset[1];
+				pMappedItem->matrix._43 += arOffset[2];
+
+				pMappedItem->matrix._41 /= dScaleFactor;
+				pMappedItem->matrix._42 /= dScaleFactor;
+				pMappedItem->matrix._43 /= dScaleFactor;
+
+				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+				delete pMappedItem;
+			}
+		} // if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
+		else {
+			// Special case: only mapped items without offset
+			float fXmin = FLT_MAX;
+			float fXmax = -FLT_MAX;
+			float fYmin = FLT_MAX;
+			float fYmax = -FLT_MAX;
+			float fZmin = FLT_MAX;
+			float fZmax = -FLT_MAX;
+
+			for (auto pGeometry : getGeometries()) {
+				if (!pGeometry->hasGeometry() ||
+					pGeometry->ignoreBB()) {
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances()) {
+					if (pGeometry->getTriangles().empty()) {
+						pGeometry->calculateBB(
+							pInstance,
+							fXmin, fXmax,
+							fYmin, fYmax,
+							fZmin, fZmax);
+					}
+					else {
+						pGeometry->calculateBB_Faces(
+							pInstance,
+							fXmin, fXmax,
+							fYmin, fYmax,
+							fZmin, fZmax);
+					}
+				}
+			} // for (auto pGeometry : ...
+
+			for (auto pGeometry : getGeometries()) {
+				if (!pGeometry->hasGeometry()) {
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances()) {
+					pInstance->translate(
+						-fXmin,
+						-fYmin,
+						-fZmin);
+				}
+			}
+
+			for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
+				auto pMappedItem = pMappedItemPendingUpdate.second;
+
+				pMappedItem->matrix._41 += -fXmin;
+				pMappedItem->matrix._42 += -fYmin;
+				pMappedItem->matrix._43 += -fZmin;
+
+				pMappedItem->matrix._41 /= dScaleFactor;
+				pMappedItem->matrix._42 /= dScaleFactor;
+				pMappedItem->matrix._43 /= dScaleFactor;
+
+				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+				delete pMappedItem;
+			}
+		} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
+	} // if (!m_vecMappedItemPendingUpdate.empty())
+
+	scale();
+
+#ifdef _DEBUG
+	int64_t iGeometriesCount = 0;
+	int64_t iMappedItemsCount = 0;
+	int64_t iMappedInstancesCount = 0;
+
+	for (auto pGeometry : getGeometries()) {
+		if (!pGeometry->hasGeometry() || pGeometry->isPlaceholder()) {
+			continue;
+		}
+
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		if (ifcGeometry->getIsMappedItem()) {
+			iMappedItemsCount++;
+			iMappedInstancesCount += (int64_t)pGeometry->getInstances().size();
+		}
+		else {
+			iGeometriesCount++;
+		}
+	}
+#ifdef _WINDOWS
+	TRACE(L"\n*** _ifc_model *** Geometries: %lld", iGeometriesCount);
+	TRACE(L"\n*** _ifc_model *** Mapped Items: %lld", iMappedItemsCount);
+	TRACE(L"\n*** _ifc_model *** Mapped Instances: %lld", iMappedInstancesCount);
+#endif
+#endif // _DEBUG
+}
+
+void _ifc_model::deleteInstances()
+{
+	clean(false);
 }
 
 OwlInstance _ifc_model::createMapConversionTransformation()
@@ -289,7 +557,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	setBRepProperties(getSdaiModel(), 7, 0.9, 0., 20000);
 
 	// Entities
-	SdaiEntity sdaiObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
+	m_sdaiObjectEntity = sdaiGetEntity(getSdaiModel(), "IFCOBJECT");
 	m_sdaiSpaceEntity = sdaiGetEntity(getSdaiModel(), "IFCSPACE");
 	m_sdaiOpeningElementEntity = sdaiGetEntity(getSdaiModel(), "IFCOPENINGELEMENT");
 	m_sdaiDistributionElementEntity = sdaiGetEntity(getSdaiModel(), "IFCDISTRIBUTIONELEMENT");
@@ -304,260 +572,8 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	m_sdaiTransportElementEntity = sdaiGetEntity(getSdaiModel(), "IFCTRANSPORTELEMENT");
 	m_sdaiVirtualElementEntity = sdaiGetEntity(getSdaiModel(), "IFCVIRTUALELEMENT");
 
-	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand) {
-#ifdef _WINDOWS
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-#endif
-
-		retrieveGeometryRecursively(sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
-
-		if (getMultiThreadedLoad()) {
-			unsigned int threadsCount = thread::hardware_concurrency() / 4;
-			InitializeMultiThreading(getSdaiModel(), threadsCount);
-
-			double arOffset[3] = { 0., 0., 0. };
-			GetVertexBufferOffset(getOwlModel(), arOffset);
-
-			vector<OwlModel> vecOwlModels;
-			vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
-			for (unsigned int i = 0; i < threadsCount; i++) {
-				vecOwlModels.push_back(CreateModel());
-				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
-
-				vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
-			}
-
-			// Load geometries
-			vector<thread> vecThreads;
-			for (unsigned int i = 0; i < threadsCount; i++) {
-				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
-					while (true) {
-						IFC_GEOMETRY geometry;
-						{
-							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
-							if (m_mapGeometriesPendingLoad.empty()) {
-								return;
-							}
-							auto itGeometry = m_mapGeometriesPendingLoad.begin();
-							geometry = itGeometry->second;
-							m_mapGeometriesPendingLoad.erase(itGeometry);
-						}
-						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
-					}
-					});
-			}
-
-			// Wait for threads to end
-			for (auto& thread : vecThreads) {
-				thread.join();
-			}
-
-			// Display names
-			for (auto pGeometry : getGeometries()) {
-				_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
-			}
-
-			// Load mapped items
-			SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
-
-			vecThreads.clear();
-			for (unsigned int i = 0; i < threadsCount; i++) {
-				SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
-
-				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
-					while (true) {
-						IFC_GEOMETRY geometry;
-						{
-							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
-							if (m_mapMappedGeometriesPendingLoad.empty()) {
-								return;
-							}
-							auto itGeometry = m_mapMappedGeometriesPendingLoad.begin();
-							geometry = itGeometry->second;
-							m_mapMappedGeometriesPendingLoad.erase(itGeometry);
-						}
-						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
-					}
-					});
-			}
-
-			// Wait for threads to end
-			for (auto& thread : vecThreads) {
-				thread.join();
-			}
-
-			// Mapped items: post-processing
-			for (auto pProduct : m_vecIfcProducts) {
-				int64_t iParenInstanceID = _model::getNextInstanceID();
-
-				vector<_ifc_geometry*> vecMappedGeometries;
-				vector<_ifc_instance*> vecMappedInstances;
-
-				for (auto pMappedItem : pProduct->mappedItems) {
-					auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
-					assert(pMappedGeometry != nullptr);
-
-					vecMappedGeometries.push_back(pMappedGeometry);
-
-					auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, nullptr);
-					pMappedInstance->setEnable(true);
-					addInstance(pMappedInstance);
-
-					vecMappedInstances.push_back(pMappedInstance);
-
-					// Pending update
-					m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });
-				} // for (auto pMappedItem : ...
-
-				// Owner
-				auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries, 0);
-				pGeometry->setDefaultShowState();
-				addGeometry(pGeometry);
-
-				// Owner
-				auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
-				pInstance->setDefaultEnableState();
-				addInstance(pInstance);
-
-				for (auto pMappedInstance : vecMappedInstances) {
-					pMappedInstance->m_pOwner = pInstance;
-				}
-
-				delete pProduct;
-			}
-
-			SetVertexBufferOffset(getOwlModel(), arOffset);
-
-			for (auto& owlModel : vecOwlModels) {
-				CloseModel(owlModel);
-			}
-		}
-
-#ifdef _WINDOWS
-		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
-#endif
-
-		getObjectsReferencedState();
-
-		// Post-processing
-		if (!m_vecMappedItemPendingUpdate.empty()) {
-			double arOffset[3] = { 0., 0., 0. };
-			GetVertexBufferOffset(getOwlModel(), arOffset);
-
-			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
-
-			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
-				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
-					auto pMappedItem = pMappedItemPendingUpdate.second;
-
-					pMappedItem->matrix._41 += arOffset[0];
-					pMappedItem->matrix._42 += arOffset[1];
-					pMappedItem->matrix._43 += arOffset[2];
-
-					pMappedItem->matrix._41 /= dScaleFactor;
-					pMappedItem->matrix._42 /= dScaleFactor;
-					pMappedItem->matrix._43 /= dScaleFactor;
-
-					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
-
-					delete pMappedItem;
-				}
-			} // if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
-			else {
-				// Special case: only mapped items without offset
-				float fXmin = FLT_MAX;
-				float fXmax = -FLT_MAX;
-				float fYmin = FLT_MAX;
-				float fYmax = -FLT_MAX;
-				float fZmin = FLT_MAX;
-				float fZmax = -FLT_MAX;
-
-				for (auto pGeometry : getGeometries()) {
-					if (!pGeometry->hasGeometry() ||
-						pGeometry->ignoreBB()) {
-						continue;
-					}
-
-					for (auto pInstance : pGeometry->getInstances()) {
-						if (pGeometry->getTriangles().empty()) {
-							pGeometry->calculateBB(
-								pInstance,
-								fXmin, fXmax,
-								fYmin, fYmax,
-								fZmin, fZmax);
-						}
-						else {
-							pGeometry->calculateBB_Faces(
-								pInstance,
-								fXmin, fXmax,
-								fYmin, fYmax,
-								fZmin, fZmax);
-						}
-					}
-				} // for (auto pGeometry : ...
-
-				for (auto pGeometry : getGeometries()) {
-					if (!pGeometry->hasGeometry()) {
-						continue;
-					}
-
-					for (auto pInstance : pGeometry->getInstances()) {
-						pInstance->translate(
-							-fXmin,
-							-fYmin,
-							-fZmin);
-					}
-				}
-
-				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
-					auto pMappedItem = pMappedItemPendingUpdate.second;
-
-					pMappedItem->matrix._41 += -fXmin;
-					pMappedItem->matrix._42 += -fYmin;
-					pMappedItem->matrix._43 += -fZmin;
-
-					pMappedItem->matrix._41 /= dScaleFactor;
-					pMappedItem->matrix._42 /= dScaleFactor;
-					pMappedItem->matrix._43 /= dScaleFactor;
-
-					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
-
-					delete pMappedItem;
-				}
-			} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
-		} // if (!m_vecMappedItemPendingUpdate.empty())
-
-		scale();
-
-#ifdef _DEBUG
-		int64_t iGeometriesCount = 0;
-		int64_t iMappedItemsCount = 0;
-		int64_t iMappedInstancesCount = 0;
-
-		for (auto pGeometry : getGeometries()) {
-			if (!pGeometry->hasGeometry() || pGeometry->isPlaceholder()) {
-				continue;
-			}
-
-			_ptr<_ifc_geometry> ifcGeometry(pGeometry);
-			if (ifcGeometry->getIsMappedItem()) {
-				iMappedItemsCount++;
-				iMappedInstancesCount += (int64_t)pGeometry->getInstances().size();
-			}
-			else {
-				iGeometriesCount++;
-			}
-		}
-#ifdef _WINDOWS
-		TRACE(L"\n*** _ifc_model *** Geometries: %lld", iGeometriesCount);
-		TRACE(L"\n*** _ifc_model *** Mapped Items: %lld", iMappedItemsCount);
-		TRACE(L"\n*** _ifc_model *** Mapped Instances: %lld", iMappedInstancesCount);
-#endif
-#endif // _DEBUG		 
+		loadInstances(false);	 
 	}
 }
 
