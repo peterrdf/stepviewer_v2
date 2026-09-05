@@ -1927,10 +1927,12 @@ namespace _ap2gltf
 		*getOutputStream() << COMMA;
 		writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
 #endif
-		*getOutputStream() << COMMA;
-		*getOutputStream() << getNewLine();
-		writeIndent();
-		*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		if (!vecChildren.empty()) {
+			*getOutputStream() << COMMA;
+			*getOutputStream() << getNewLine();
+			writeIndent();
+			*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		}
 		indent()--;
 		writeEndObjectTag();
 		indent()--;
