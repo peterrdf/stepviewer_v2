@@ -88,7 +88,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	for (auto pInstance : getController()->getSelectedInstances()) {
 		_ptr<_ap_instance> apInstance(pInstance);
 
-		auto pModel = dynamic_cast<_ap_model*>(pController->getOwlModelByInstance(apInstance->getOwlModel()));
+		auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(apInstance->getOwlModel()));
 		if (pModel == nullptr) {
 			ASSERT(FALSE);
 
@@ -278,7 +278,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, OwlInstance owlInstance)
 		return;
 	}
 
-	auto pModel = dynamic_cast<_ap_model*>(pController->getOwlModelByInstance(GetModel(owlInstance)));
+	auto pModel = dynamic_cast<_ap_model*>(pController->getModelByInstance(GetModel(owlInstance)));
 	if (pModel == nullptr) {
 		ASSERT(FALSE);
 

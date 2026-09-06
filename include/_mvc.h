@@ -247,7 +247,8 @@ public: // Methods
 
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);
-	void removeModelByInstance(OwlModel owlModel);
+	void addModel(_model* pModel);
+	bool removeModelByInstance(OwlModel owlModel);
 	void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
 
 	virtual void loadDecorationModels() {}
@@ -259,7 +260,7 @@ public: // Methods
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float getWorldBoundingSphereDiameter() const;
 
-	_model* getOwlModelByInstance(OwlModel owlModel) const;	
+	_model* getModelByInstance(OwlModel owlModel) const;	
 	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events

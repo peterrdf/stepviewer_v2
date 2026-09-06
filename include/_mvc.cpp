@@ -747,7 +747,37 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::removeModelByInstance(OwlModel owlModel)
+void _controller::addModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelLoaded();
+	}
+
+	m_vecModels.push_back(pModel);
+	logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+bool _controller::removeModelByInstance(OwlModel owlModel)
 {
 	assert(owlModel != 0);
 
@@ -756,7 +786,7 @@ void _controller::removeModelByInstance(OwlModel owlModel)
 		});
 
 	if (itModel == m_vecModels.end()) {
-		return;
+		return false;
 	}
 
 	m_bUpdatingModel = true;
@@ -782,6 +812,8 @@ void _controller::removeModelByInstance(OwlModel owlModel)
 	}
 
 	m_bUpdatingModel = false;
+
+	return true;
 }
 
 void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
@@ -921,7 +953,7 @@ float _controller::getWorldBoundingSphereDiameter() const
 	return fWorldBoundingSphereDiameter;
 }
 
-_model* _controller::getOwlModelByInstance(OwlModel owlModel) const
+_model* _controller::getModelByInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
@@ -997,7 +1029,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 		return;
 	}
 
-	auto pModel = getOwlModelByInstance((*setInstances.begin())->getOwlModel());
+	auto pModel = getModelByInstance((*setInstances.begin())->getOwlModel());
 	if (pModel == nullptr) {
 		assert(false);
 
