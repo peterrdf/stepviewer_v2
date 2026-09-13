@@ -1,0 +1,1 @@
+Source: OpenGL	Type: Performance	ID: 131218	Severity: Medium	Message: Program/shader state performance warning: Vertex shader in program 1 is being recompiled based on GL state.

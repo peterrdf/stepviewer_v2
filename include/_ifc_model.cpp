@@ -59,28 +59,47 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
 
-	// Progress #todo
-	_progress* pProgress = getProgress();
+	// Progress
+	int iTotal = 0; // #todo
 	auto pEntityProvider = getEntityProvider();
-	if ((pEntityProvider != nullptr)) {
+	if (pEntityProvider != nullptr) {
 		SdaiEntity sdaiProjectEntity = sdaiGetEntity(getSdaiModel(), "IfcProject");
 		SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(getSdaiModel(), "IfcRelSpaceBoundary");
-		SdaiEntity sdaiMappedItemEntity = sdaiGetEntity(getSdaiModel(), "IfcMappedItem");
+		//SdaiEntity sdaiMappedItemEntity = sdaiGetEntity(getSdaiModel(), "IfcMappedItem");
 		//SdaiEntity sdaiRepresentationEntity = sdaiGetEntity(getSdaiModel(), "IfcGeometricRepresentationItem");
-
-		int iTotal = 0;
+		
 		auto& mapEntities = pEntityProvider->getEntities();
 		for (const auto& itEntity : mapEntities) {
-			if (engiIsParentOf(m_sdaiObjectEntity, itEntity.first) || 
+			if (engiIsParentOf(m_sdaiObjectEntity, itEntity.first) ||
 				engiIsParentOf(sdaiProjectEntity, itEntity.first) ||
-				engiIsParentOf(sdaiRelSpaceBoundaryEntity, itEntity.first) ||
-				engiIsParentOf(sdaiMappedItemEntity, itEntity.first)/**/) {// ||
+				engiIsParentOf(sdaiRelSpaceBoundaryEntity, itEntity.first)/* ||
+				engiIsParentOf(sdaiMappedItemEntity, itEntity.first)*/) {// ||
 				//engiIsParentOf(sdaiRepresentationEntity, itEntity.first)) {
 				iTotal += (int)(itEntity.second->getInstances().size());
+
+				for (const auto& itInstance : itEntity.second->getInstances()) {
+					SdaiInstance sdaiRepresentationInstance = 0;
+					sdaiGetAttrBN(itInstance, "Representation", sdaiINSTANCE, &sdaiRepresentationInstance);
+
+					SdaiAggr sdaiRepresentationsAggr = nullptr;
+					sdaiGetAttrBN(sdaiRepresentationInstance, "Representations", sdaiAGGR, &sdaiRepresentationsAggr);
+
+					SdaiInteger	iRepresentationsCount = sdaiGetMemberCount(sdaiRepresentationsAggr);
+					for (SdaiInteger i = 0; i < iRepresentationsCount; i++) {
+						SdaiInstance sdaiRepresentationInstance = 0;
+						sdaiGetAggrByIndex(sdaiRepresentationsAggr, i, sdaiINSTANCE, &sdaiRepresentationInstance);
+
+						char* szRepresentationIdentifier = nullptr;
+						sdaiGetAttrBN(sdaiRepresentationInstance, "RepresentationIdentifier", sdaiSTRING, &szRepresentationIdentifier);
+						if (!Equals(szRepresentationIdentifier, "Box")) {
+							iTotal++;
+						}
+					}
+				}
 			}
 		}
-		progressInit(iTotal, "Loading instances");
-	}
+	} // if (pEntityProvider != nullptr)
+	progressInit(iTotal, "Loading instances");
 
 	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 	retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
@@ -596,7 +615,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	m_sdaiVirtualElementEntity = sdaiGetEntity(getSdaiModel(), "IFCVIRTUALELEMENT");
 
 	if (!m_bLoadInstancesOnDemand) {
-		loadInstances(false);	 
+		loadInstances(false);
 	}
 }
 
@@ -860,7 +879,7 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 {
 	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)szEntityName);
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
-	if (iMembersCount == 0) {		
+	if (iMembersCount == 0) {
 		return;
 	}
 
