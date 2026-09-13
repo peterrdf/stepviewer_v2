@@ -61,11 +61,17 @@ class _progress_client
 private: // Members
 
 	_progress* m_pProgress;
+	int m_iCurrent;
+	int m_iTotal;
+	std::string m_strStage;
 
 public: // Methods
 
 	_progress_client()
 		: m_pProgress(nullptr)
+		, m_iCurrent(0)
+		, m_iTotal(0)
+		, m_strStage("")
 	{}
 
 	virtual ~_progress_client()
@@ -74,8 +80,24 @@ public: // Methods
 	void setProgress(_progress* pProgress) { m_pProgress = pProgress; }
 	_progress* getProgress() { return m_pProgress; }
 
+	void progressInit(int iTotal, const std::string& strStage)
+	{
+		m_iCurrent = 0;
+		m_iTotal = iTotal;
+		m_strStage = strStage;
+	}
+
+	void progressStep()
+	{
+		m_iCurrent++;
+		report(m_iCurrent, m_iTotal, m_strStage.c_str());
+	}
+
 	void report(int iCurrent, int iTotal, const char* szStage)
 	{
+#ifdef _WINDOWS
+		TRACE("|-----> Progress: %d/%d - %s\n", iCurrent, iTotal, szStage);
+#endif
 		if (m_pProgress != nullptr) {
 			m_pProgress->report(iCurrent, iTotal, szStage);
 		}

@@ -128,6 +128,7 @@ protected: // Methods
 
     // _ap_model
     virtual void attachModelCore() override;
+    virtual void addGeometry(_geometry* pGeometry) override;
 
 protected: // Methods
 

@@ -59,6 +59,29 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
 
+	// Progress #todo
+	_progress* pProgress = getProgress();
+	auto pEntityProvider = getEntityProvider();
+	if ((pEntityProvider != nullptr)) {
+		SdaiEntity sdaiProjectEntity = sdaiGetEntity(getSdaiModel(), "IfcProject");
+		SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(getSdaiModel(), "IfcRelSpaceBoundary");
+		SdaiEntity sdaiMappedItemEntity = sdaiGetEntity(getSdaiModel(), "IfcMappedItem");
+		//SdaiEntity sdaiRepresentationEntity = sdaiGetEntity(getSdaiModel(), "IfcGeometricRepresentationItem");
+
+		int iTotal = 0;
+		auto& mapEntities = pEntityProvider->getEntities();
+		for (const auto& itEntity : mapEntities) {
+			if (engiIsParentOf(m_sdaiObjectEntity, itEntity.first) || 
+				engiIsParentOf(sdaiProjectEntity, itEntity.first) ||
+				engiIsParentOf(sdaiRelSpaceBoundaryEntity, itEntity.first) ||
+				engiIsParentOf(sdaiMappedItemEntity, itEntity.first)/**/) {// ||
+				//engiIsParentOf(sdaiRepresentationEntity, itEntity.first)) {
+				iTotal += (int)(itEntity.second->getInstances().size());
+			}
+		}
+		progressInit(iTotal, "Loading instances");
+	}
+
 	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 	retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 	retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
@@ -577,6 +600,13 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 }
 
+/*virtual*/ void  _ifc_model::addGeometry(_geometry* pGeometry) /*override*/
+{
+	_ap_model::addGeometry(pGeometry);
+
+	progressStep();
+}
+
 /*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper/* = 0*/)
 {
 	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>(), multiThreadOwlModelWrapper);
@@ -830,7 +860,7 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 {
 	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)szEntityName);
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
-	if (iMembersCount == 0) {
+	if (iMembersCount == 0) {		
 		return;
 	}
 
