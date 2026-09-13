@@ -622,6 +622,8 @@
     <ClInclude Include="..\include\_dateTime.h" />
     <ClInclude Include="..\include\_host.h" />
     <ClInclude Include="..\include\_ifc_model_structure.h" />
+    <ClInclude Include="..\include\_progress.h" />
+    <ClInclude Include="..\include\_progress_hub.h" />
     <ClInclude Include="..\include\_rdf_class.h" />
     <ClInclude Include="..\include\_rdf_mvc.h" />
     <ClInclude Include="..\include\_rdf_property.h" />

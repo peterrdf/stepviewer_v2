@@ -4,6 +4,7 @@
 #include "_oglScene.h"
 #include "_texture.h"
 #include "_log_hub.h"
+#include "_progress_hub.h"
 #include "_settings_storage.h"
 
 #include <cfloat>
@@ -61,7 +62,9 @@ class _controller;
 static int64_t s_iInstanceID = 1;
 
 // ************************************************************************************************
-class _model : public _log_client
+class _model 
+	: public _log_client
+	, public _progress_client
 {
 	friend class _controller;
 
@@ -218,12 +221,15 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _controller : public _log_client
+class _controller 
+	: public _log_client
+	, public _progress_client
 {
 
 private: // Fields
 
 	_log_hub* m_pLogHub;
+	_progress_hub* m_pProgressHub;
 	vector<_model*> m_vecModels;
 	vector<_model*> m_vecDecorationModels;
 	set<_view*> m_setViews;
@@ -321,6 +327,7 @@ protected: // Methods
 public: // Properties
 
 	_log_hub* getLogHub() const { return m_pLogHub; }
+	_progress_hub* getProgressHub() const { return m_pProgressHub; }
 	_model* getModel() const; // kept for backward compatibility
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }

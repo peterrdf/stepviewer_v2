@@ -10,6 +10,7 @@ using namespace std;
 // ************************************************************************************************
 _model::_model(_log* pLog)
 	: _log_client()
+	, _progress_client()
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
@@ -686,6 +687,7 @@ void _model::setDimensions(_model* pSource)
 _controller::_controller()
 	: _log_client()
 	, m_pLogHub(new _log_hub())
+	, m_pProgressHub(new _progress_hub())
 	, m_vecModels()
 	, m_vecDecorationModels()
 	, m_setViews()
@@ -695,6 +697,7 @@ _controller::_controller()
 	, m_pTargetInstance(nullptr)
 {
 	setLog(m_pLogHub);
+	setProgress(m_pProgressHub);
 }
 
 /*virtual*/ _controller::~_controller()
@@ -702,6 +705,7 @@ _controller::_controller()
 	clean();
 
 	delete m_pLogHub;
+	delete m_pProgressHub;
 	delete m_pSettingsStorage;
 }
 
