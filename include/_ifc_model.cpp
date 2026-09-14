@@ -59,45 +59,97 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
 
+	//
 	// Progress
-	int iTotal = 0; // #todo
+	//
+	int iTotal = 0;
 	auto pEntityProvider = getEntityProvider();
 	if (pEntityProvider != nullptr) {
 		SdaiEntity sdaiProjectEntity = sdaiGetEntity(getSdaiModel(), "IfcProject");
 		SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(getSdaiModel(), "IfcRelSpaceBoundary");
-		//SdaiEntity sdaiMappedItemEntity = sdaiGetEntity(getSdaiModel(), "IfcMappedItem");
-		//SdaiEntity sdaiRepresentationEntity = sdaiGetEntity(getSdaiModel(), "IfcGeometricRepresentationItem");
-		
+		SdaiEntity sdaiMappedItemEntity = sdaiGetEntity(getSdaiModel(), "IfcMappedItem");
+
+		set<SdaiInstance> setMappedInstances;
 		auto& mapEntities = pEntityProvider->getEntities();
 		for (const auto& itEntity : mapEntities) {
 			if (engiIsParentOf(m_sdaiObjectEntity, itEntity.first) ||
 				engiIsParentOf(sdaiProjectEntity, itEntity.first) ||
-				engiIsParentOf(sdaiRelSpaceBoundaryEntity, itEntity.first)/* ||
-				engiIsParentOf(sdaiMappedItemEntity, itEntity.first)*/) {// ||
-				//engiIsParentOf(sdaiRepresentationEntity, itEntity.first)) {
+				engiIsParentOf(sdaiRelSpaceBoundaryEntity, itEntity.first)) {
 				iTotal += (int)(itEntity.second->getInstances().size());
 
+				// IfcMappedItem-s
 				for (const auto& itInstance : itEntity.second->getInstances()) {
+					// If this object has opening elements mapped items should be ignored
+					SdaiAggr sdaiOpeningsAggr = nullptr;
+					sdaiGetAttrBN(itInstance, "HasOpenings", sdaiAGGR, &sdaiOpeningsAggr);
+					if (sdaiOpeningsAggr && sdaiGetMemberCount(sdaiOpeningsAggr)) {
+						continue;
+					}
+
 					SdaiInstance sdaiRepresentationInstance = 0;
 					sdaiGetAttrBN(itInstance, "Representation", sdaiINSTANCE, &sdaiRepresentationInstance);
+					if (sdaiRepresentationInstance == 0) {
+						continue;
+					}
 
 					SdaiAggr sdaiRepresentationsAggr = nullptr;
 					sdaiGetAttrBN(sdaiRepresentationInstance, "Representations", sdaiAGGR, &sdaiRepresentationsAggr);
 
 					SdaiInteger	iRepresentationsCount = sdaiGetMemberCount(sdaiRepresentationsAggr);
 					for (SdaiInteger i = 0; i < iRepresentationsCount; i++) {
-						SdaiInstance sdaiRepresentationInstance = 0;
-						sdaiGetAggrByIndex(sdaiRepresentationsAggr, i, sdaiINSTANCE, &sdaiRepresentationInstance);
+						SdaiInstance sdaiRepresentationsInstance = 0;
+						sdaiGetAggrByIndex(sdaiRepresentationsAggr, i, sdaiINSTANCE, &sdaiRepresentationsInstance);
 
 						char* szRepresentationIdentifier = nullptr;
-						sdaiGetAttrBN(sdaiRepresentationInstance, "RepresentationIdentifier", sdaiSTRING, &szRepresentationIdentifier);
+						sdaiGetAttrBN(sdaiRepresentationsInstance, "RepresentationIdentifier", sdaiSTRING, &szRepresentationIdentifier);
 						if (!Equals(szRepresentationIdentifier, "Box")) {
-							iTotal++;
+							SdaiAggr	ifcRepresentationItemInstanceAGGR = nullptr;
+							sdaiGetAttrBN(sdaiRepresentationsInstance, "Items", sdaiAGGR, &ifcRepresentationItemInstanceAGGR);
+
+							SdaiInteger	noIfcRepresentationItemInstanceAGGR = sdaiGetMemberCount(ifcRepresentationItemInstanceAGGR);
+							for (SdaiInteger i = 0; i < noIfcRepresentationItemInstanceAGGR; i++) {
+								SdaiInstance	ifcRepresentationItemInstance = 0;
+								sdaiGetAggrByIndex(ifcRepresentationItemInstanceAGGR, i, sdaiINSTANCE, &ifcRepresentationItemInstance);
+
+								if (sdaiGetInstanceType(ifcRepresentationItemInstance) != sdaiMappedItemEntity) {
+									continue;
+								}
+
+								SdaiInstance	ifcRepresentationMapInstance = 0;
+								sdaiGetAttrBN(ifcRepresentationItemInstance, "MappingSource", sdaiINSTANCE, &ifcRepresentationMapInstance);
+
+								SdaiInstance	ifcCartesianTransformationOperatorInstance = 0;
+								sdaiGetAttrBN(ifcRepresentationMapInstance, "MappingTarget", sdaiINSTANCE, &ifcCartesianTransformationOperatorInstance);
+
+								SdaiInstance	ifcAxis2PlacementInstance = 0;
+								sdaiGetAttrBN(ifcRepresentationMapInstance, "MappingOrigin", sdaiINSTANCE, &ifcAxis2PlacementInstance);
+
+								SdaiInstance	ifcRepresentationInstance = 0;
+								sdaiGetAttrBN(ifcRepresentationMapInstance, "MappedRepresentation", sdaiINSTANCE, &ifcRepresentationInstance);
+
+								SdaiAggr	itemsAGGR = nullptr;
+								sdaiGetAttrBN(ifcRepresentationInstance, "Items", sdaiAGGR, &itemsAGGR);
+								SdaiInteger	noItemsAGGR = sdaiGetMemberCount(itemsAGGR);
+								if (noItemsAGGR) {
+									for (SdaiInteger index = 0; index < noItemsAGGR; index++) {
+										SdaiInstance ifcRepresentationItemInstance = 0;
+										sdaiGetAggrByIndex(itemsAGGR, index, sdaiINSTANCE, &ifcRepresentationItemInstance);
+										setMappedInstances.insert(ifcRepresentationItemInstance);
+									}
+								}
+								else {
+#ifdef _WINDOWS
+									TRACE("\nWarning: Mapped item has no representation items.");
+#endif
+									setMappedInstances.insert(ifcRepresentationInstance);
+								}
+							}
 						}
 					}
 				}
 			}
-		}
+		} // for (const auto& itEntity : mapEntities)
+		iTotal += (int)(setMappedInstances.size());
 	} // if (pEntityProvider != nullptr)
 	progressInit(iTotal, "Loading instances");
 
