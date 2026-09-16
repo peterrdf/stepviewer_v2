@@ -371,6 +371,9 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
 	} // if (!m_vecMappedItemPendingUpdate.empty())
 
+	// Progress
+	progressEnd();
+
 	scale();
 
 #ifdef _DEBUG
@@ -672,6 +675,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 {
 	_ap_model::addGeometry(pGeometry);
 
+	// Progress
 	progressStep();
 }
 
