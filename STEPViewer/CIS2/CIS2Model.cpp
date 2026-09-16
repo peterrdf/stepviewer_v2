@@ -3,10 +3,6 @@
 #include "CIS2Instance.h"
 
 // ************************************************************************************************
-//#todo???
-#define DEFAULT_CIRCLE_SEGMENTS 36
-
-// ************************************************************************************************
 CCIS2Model::CCIS2Model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
 	: _ap_model(pLog, enumAP::CIS2)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
@@ -62,7 +58,7 @@ void CCIS2Model::LodDesignParts()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		LoadGeometry(iInstance, enumCIS2GeometryType::DesignPart, DEFAULT_CIRCLE_SEGMENTS);
+		LoadGeometry(iInstance, enumCIS2GeometryType::DesignPart, DEFAULT_SEGMENTATION_PARTS);
 	}
 }
 
@@ -76,7 +72,7 @@ void CCIS2Model::LoadRepresentations()
 		sdaiGetAggrByIndex(piInstances, i, sdaiINSTANCE, &iInstance);
 		ASSERT(iInstance != 0);
 
-		LoadGeometry(iInstance, enumCIS2GeometryType::Reperesentation, DEFAULT_CIRCLE_SEGMENTS);
+		LoadGeometry(iInstance, enumCIS2GeometryType::Reperesentation, DEFAULT_SEGMENTATION_PARTS);
 	}
 }
 
@@ -95,7 +91,7 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	}
 
 	// Set up segmentation
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS)
 	{
 		setSegmentation(getSdaiModel(), iCircleSegments, 5);
 	}
@@ -127,9 +123,9 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	addInstance(pInstance);
 
 	// Restore segmentation
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS)
+	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS)
 	{
-		setSegmentation(getSdaiModel(), DEFAULT_CIRCLE_SEGMENTS, 5);
+		setSegmentation(getSdaiModel(), DEFAULT_SEGMENTATION_PARTS, 5);
 	}
 
 	return pGeometry;

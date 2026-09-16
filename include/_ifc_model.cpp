@@ -9,9 +9,6 @@
 #include <cfloat>
 
 // ************************************************************************************************
-#define DEFAULT_CIRCLE_SEGMENTS 36
-
-// ************************************************************************************************
 _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool bLoadInstancesOnDemand /*= false*/)
 	: _ap_model(pLog, enumAP::IFC)
 	, m_bUseWorldCoordinates(bUseWorldCoordinates)
@@ -150,9 +147,9 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 	} // if (pEntityProvider != nullptr)
 	progressInit(iTotal, "Loading instances");
 
-	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
-	retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
-	retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_SEGMENTATION_PARTS);
+	retrieveGeometry("IFCPROJECT", DEFAULT_SEGMENTATION_PARTS);
+	retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_SEGMENTATION_PARTS);
 
 	if (getMultiThreadedLoad()) {
 		unsigned int threadsCount = thread::hardware_concurrency() / 4;
@@ -1067,7 +1064,7 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 	}
 
 	// Set up segmentation
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS) {
 		setSegmentation(getSdaiModel(), iCircleSegments, 5);
 	}
 
@@ -1087,8 +1084,8 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 	}
 
 	// Restore segmentation
-	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		setSegmentation(getSdaiModel(), DEFAULT_CIRCLE_SEGMENTS, 5);
+	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS) {
+		setSegmentation(getSdaiModel(), DEFAULT_SEGMENTATION_PARTS, 5);
 	}
 
 	return pGeometry;
@@ -1097,7 +1094,7 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
 {
 	// Set up segmentation
-	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+	if (ifcGeometry.iCircleSegments != DEFAULT_SEGMENTATION_PARTS) {
 		setSegmentation(multiThreadOwlModelWrapper, ifcGeometry.iCircleSegments, 5);
 	}
 
@@ -1120,8 +1117,8 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThread
 	}
 
 	// Restore segmentation
-	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		setSegmentation(multiThreadOwlModelWrapper, DEFAULT_CIRCLE_SEGMENTS, 5);
+	if (ifcGeometry.iCircleSegments != DEFAULT_SEGMENTATION_PARTS) {
+		setSegmentation(multiThreadOwlModelWrapper, DEFAULT_SEGMENTATION_PARTS, 5);
 	}
 
 	return pGeometry;
