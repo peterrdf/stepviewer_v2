@@ -140,6 +140,7 @@
 #define IDI_ICON_INFO                   368
 #define IDI_ICON_WARN                   369
 #define IDD_DIALOG_LOG                  370
+#define IDD_DIALOG_PROGRESS             372
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -199,6 +200,8 @@
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
 #define IDC_EDIT_MESSAGES               1057
+#define IDC_EDIT_PROGRESS               1058
+#define IDC_PROGRESS_CTRL               1059
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -254,9 +257,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        372
+#define _APS_NEXT_RESOURCE_VALUE        374
 #define _APS_NEXT_COMMAND_VALUE         32858
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           323
 #endif
 #endif

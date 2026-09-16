@@ -363,6 +363,15 @@
     <ClInclude Include="LogDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_progress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_progress_hub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="STEPViewer.cpp">

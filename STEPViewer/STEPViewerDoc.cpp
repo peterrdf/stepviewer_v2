@@ -14,6 +14,8 @@
 
 #include "IDSCheckerDialog.h"
 
+#include "ProgressDialog.h"
+
 #include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
 #include "_ap2gltf.h"
@@ -251,6 +253,8 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return TRUE;
 	}
 
+	m_wndBCFView.Close();
+
 	fs::path pathModel = lpszPathName;
 	string strExtension = pathModel.extension().string();
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
@@ -267,8 +271,6 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		auto pModel = _ap_model_factory::load(this, lpszPathName, false, nullptr, false);
 		setModel(pModel);
 	}
-
-	m_wndBCFView.Close();
 
 	// Title
 	CString strTitle = AfxGetAppName();
