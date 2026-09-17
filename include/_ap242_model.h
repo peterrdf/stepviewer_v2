@@ -79,6 +79,8 @@ protected: // Methods
 
 private: // Methods
 
+    int calculateGeometriesCount();
+
     void loadProductDefinitions();
     void loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition);
     void loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance);
