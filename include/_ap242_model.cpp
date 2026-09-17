@@ -101,6 +101,119 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 
 /*virtual*/ void _ap242_model::attachModelCore() /*override*/
 {
+	//
+	// Progress
+	//
+	int iTotal = 0;
+	set<SdaiInstance> setRepresentationItemInstances;
+
+	std::function<void(SdaiInstance)> funcLoadRepresentationItems =
+		[&setRepresentationItemInstances](auto sdaiRepresentationInstance) {
+		assert(sdaiRepresentationInstance != 0);
+
+		SdaiAggr sdaiRepresentationItemsAggr = nullptr;
+		sdaiGetAttrBN(sdaiRepresentationInstance, "items", sdaiAGGR, &sdaiRepresentationItemsAggr);
+
+		SdaiInteger representationItemInstancesCnt = sdaiGetMemberCount(sdaiRepresentationItemsAggr);
+		for (SdaiInteger index = 0; index < representationItemInstancesCnt; index++) {
+			SdaiInstance sdaiRepresentationItemInstance = 0;
+			sdaiGetAggrByIndex(sdaiRepresentationItemsAggr, index, sdaiINSTANCE, &sdaiRepresentationItemInstance);
+			assert(sdaiRepresentationItemInstance);
+
+			setRepresentationItemInstances.insert(sdaiRepresentationItemInstance);
+		}
+		};
+
+	SdaiAggr sdaiProductDefinitionAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
+	SdaiInteger iProductDefinitionsCount = sdaiGetMemberCount(sdaiProductDefinitionAggr);
+	for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++) {
+		SdaiInstance sdaiProductDefinitionInstance = 0;
+		sdaiGetAggrByIndex(sdaiProductDefinitionAggr, i, sdaiINSTANCE, &sdaiProductDefinitionInstance);
+		assert(sdaiProductDefinitionInstance != 0);
+		iTotal++;		
+
+		SdaiInstance sdaiRelevantProductDefinitionShapeInstance = 0;
+
+		SdaiAggr sdaiProductDefinitionShapeAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE");
+		SdaiInteger sdaiProductDefinitionShapeInstancesCnt = sdaiGetMemberCount(sdaiProductDefinitionShapeAggr);
+		for (SdaiInteger index = 0; index < sdaiProductDefinitionShapeInstancesCnt; index++) {
+			SdaiInstance sdaiProductDefinitionShapeInstance = 0;
+			sdaiGetAggrByIndex(sdaiProductDefinitionShapeAggr, index, sdaiINSTANCE, &sdaiProductDefinitionShapeInstance);
+			assert(sdaiProductDefinitionShapeInstance != 0);
+
+			SdaiInstance sdaiCharacterizedDefinitionInstance = 0;
+			sdaiGetAttrBN(sdaiProductDefinitionShapeInstance, "definition", sdaiINSTANCE, &sdaiCharacterizedDefinitionInstance);
+			assert(sdaiCharacterizedDefinitionInstance != 0);
+
+			if (sdaiCharacterizedDefinitionInstance == sdaiProductDefinitionInstance) {
+				assert(sdaiRelevantProductDefinitionShapeInstance == 0);
+				sdaiRelevantProductDefinitionShapeInstance = sdaiProductDefinitionShapeInstance;
+				iTotal++;
+
+				SdaiAggr sdaiProductShapeDefinitionRepresentationAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_DEFINITION_REPRESENTATION");
+				SdaiInteger sdaiProductShapeDefinitionRepresentationInstancesCnt = sdaiGetMemberCount(sdaiProductShapeDefinitionRepresentationAggr);
+				for (SdaiInteger index = 0; index < sdaiProductShapeDefinitionRepresentationInstancesCnt; index++) {
+					SdaiInstance sdaiProductShapeDefinitionRepresentationInstance = 0;
+					sdaiGetAggrByIndex(sdaiProductShapeDefinitionRepresentationAggr, index, sdaiINSTANCE, &sdaiProductShapeDefinitionRepresentationInstance);
+					assert(sdaiProductShapeDefinitionRepresentationInstance != 0);
+
+					SdaiInstance sdaiRepresentedDefinitionInstance = 0;
+					sdaiGetAttrBN(sdaiProductShapeDefinitionRepresentationInstance, "definition", sdaiINSTANCE, &sdaiRepresentedDefinitionInstance);
+					assert(sdaiRepresentedDefinitionInstance != 0);
+
+					if (sdaiRepresentedDefinitionInstance != sdaiProductDefinitionShapeInstance) {
+						continue;
+					}
+
+					SdaiInstance sdaiRepresentationInstance = 0;
+					sdaiGetAttrBN(sdaiProductShapeDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiRepresentationInstance);
+					assert(sdaiRepresentationInstance != 0);
+					iTotal++;
+
+					if (sdaiGetInstanceType(sdaiRepresentationInstance) == sdaiGetEntity(getSdaiModel(), "SHAPE_REPRESENTATION")) {
+						bool bAdded = false;
+
+						SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
+						SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
+						if (shapeRepresentationRelationshipInstancesCnt) {
+							for (SdaiInteger index = 0; index < shapeRepresentationRelationshipInstancesCnt; index++) {
+								SdaiInstance sdaiShapeRepresentationRelationshipInstance = 0;
+								sdaiGetAggrByIndex(sdaiShapeRepresentationRelationshipAggr, index, sdaiINSTANCE, &sdaiShapeRepresentationRelationshipInstance);
+
+								SdaiInstance sdaiRep_1Instance = 0;
+								sdaiGetAttrBN(sdaiShapeRepresentationRelationshipInstance, "rep_1", sdaiINSTANCE, &sdaiRep_1Instance);
+
+								SdaiInstance sdaiRep_2Instance = 0;
+								sdaiGetAttrBN(sdaiShapeRepresentationRelationshipInstance, "rep_2", sdaiINSTANCE, &sdaiRep_2Instance);
+								if (sdaiRep_2Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
+									sdaiRep_1Instance == sdaiRepresentationInstance) {
+									funcLoadRepresentationItems(sdaiRep_2Instance);
+									bAdded = true;
+								}
+
+								if (sdaiRep_1Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
+									sdaiRep_2Instance == sdaiRepresentationInstance) {
+									funcLoadRepresentationItems(sdaiRep_1Instance);
+									bAdded = true;
+								}
+							}
+						}
+
+						if (!bAdded) {
+							funcLoadRepresentationItems(sdaiRepresentationInstance);
+						}
+					}
+					else {
+						funcLoadRepresentationItems(sdaiRepresentationInstance);
+					}
+				} // for (SdaiInteger index = 0; index < sdaiProductShapeDefinitionRepresentationInstancesCnt; index++)
+			} // if (sdaiCharacterizedDefinitionInstance == sdaiProductDefinitionInstance)
+		} // for (SdaiInteger index = 0; index < sdaiProductDefinitionShapeInstancesCnt; index++)
+	} // for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++)
+
+	iTotal += (int)(setRepresentationItemInstances.size());
+	progressInit(iTotal, "Loading instances");
+
 	if (!m_bLoadInstancesOnDemand) {
 #ifdef _WINDOWS
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -285,8 +398,19 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 #endif
+		// Progress
+		progressEnd();
+
 		scale();
 	}
+}
+
+/*virtual*/ void  _ap242_model::addGeometry(_geometry* pGeometry) /*override*/
+{
+	_ap_model::addGeometry(pGeometry);
+
+	// Progress
+	progressStep();
 }
 
 void _ap242_model::loadProductDefinitions()
@@ -448,13 +572,12 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
 				OwlInstance owlInstance = 0;
 				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
-				if (owlInstance) {
-					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
-					pProductShapeRepresentationItem->setSdaiBuildContextInstance(sdaiRepresentationInstance);
-					addGeometry(pProductShapeRepresentationItem);
 
-					pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
-				}
+				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
+				pProductShapeRepresentationItem->setSdaiBuildContextInstance(sdaiRepresentationInstance);
+				addGeometry(pProductShapeRepresentationItem);
+
+				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
 			}
 		}
 	}
