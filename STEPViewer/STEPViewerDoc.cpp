@@ -153,7 +153,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		string strExtension = pathModel.extension().string();
 		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-		function<void(void)> funcRun = [this, &strExtension, &vecModels, &vecPaths](void) {
+		function<void(void)> funcLoadSTEPModel = [this, &strExtension, &vecModels, &vecPaths](void) {
 			if (strExtension == ".ifczip") {
 				vecModels = _ap_model_factory::loadIFCZip(this, (LPCWSTR)vecPaths[0]);
 			}
@@ -168,7 +168,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 			}			
 			};
 
-		CLoadTask loadTask(funcRun);
+		CLoadTask loadTask(funcLoadSTEPModel);
 #ifdef _PROGRESS_UI_SUPPORT
 		if (getShowProgressDialog()) {
 			CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
@@ -217,10 +217,31 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		return;
 	}
 
-	for (auto strPath : vecIfcPaths) {
-		auto pModel = _ap_model_factory::load(this, strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
-		vecModels.push_back(pModel);
+	function<void(void)> funcLoadIFCModels = [this, &vecModels, &vecIfcPaths](void) {
+		for (auto strPath : vecIfcPaths) {
+			auto pModel = _ap_model_factory::load(this, strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+			vecModels.push_back(pModel);
+		}
+		};
+
+	CLoadTask loadTask(funcLoadIFCModels);
+#ifdef _PROGRESS_UI_SUPPORT
+	if (getShowProgressDialog()) {
+		CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+		getLogHub()->addLogView(&progressDlg);
+		getProgressHub()->addProgressView(&progressDlg);
+
+		progressDlg.DoModal();
+
+		getLogHub()->removeLogView(&progressDlg);
+		getProgressHub()->removeProgressView(&progressDlg);
 	}
+	else {
+#endif
+		loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
+	}
+#endif
 
 	if (!vecModels.empty()) {
 		setModels(vecModels);
