@@ -556,6 +556,14 @@ _ap_model* CPropertiesWnd::GetModelByInstance(SdaiModel sdaiModel)
 					}
 					break;
 
+				case enumApplicationProperty::ShowProgressDialog:
+					{
+						getController()->setShowProgressDialog(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowProgressDialog);
+					}
+					break;
+
 				default:
 					ASSERT(FALSE);
 					break;
@@ -927,15 +935,12 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-#pragma region Global
+#pragma region UI
 	{
-		auto pGlobalGroup = new CMFCPropertyGridProperty(_T("Global"));
+		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
 
 		// UI
 		{
-			auto pUI = new CMFCPropertyGridProperty(_T("UI"));
-			pGlobalGroup->AddSubItem(pUI);
-
 			_ptr<_ap_controller> apController(getController());
 
 			// Full Display Name
@@ -963,12 +968,24 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
 
-			pGlobalGroup->AddSubItem(pProperty);
+			pUI->AddSubItem(pProperty);
 		}
 
-		m_wndPropList.AddProperty(pGlobalGroup);
+		// Show Progress UI
+		{
+			auto pProperty = new CApplicationProperty(_T("Show Progress Dialog"),
+				pController->getShowProgressDialog() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+				_T("Show Progress UI"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowProgressDialog));
+			pProperty->AddOption(TRUE_VALUE_PROPERTY);
+			pProperty->AddOption(FALSE_VALUE_PROPERTY);
+			pProperty->AllowEdit(FALSE);
+			pUI->AddSubItem(pProperty);
+		}
+
+		m_wndPropList.AddProperty(pUI);
 	}
-#pragma endregion // Global
+#pragma endregion // UI
 
 	if (pController->getModels().empty()) {
 		return;

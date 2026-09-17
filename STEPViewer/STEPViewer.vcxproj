@@ -1342,6 +1342,7 @@
     <ClCompile Include="IFC\IFCModelStructureView.cpp" />
     <ClCompile Include="LogDialog.cpp" />
     <ClCompile Include="ModelCheckDlg.cpp" />
+    <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="RelationsView.cpp" />
     <ClCompile Include="SchemaView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />

@@ -144,6 +144,7 @@ public: // Methods
 		*/
 		if (schemaName.find(L"IFC") == 0) {
 			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -163,6 +164,7 @@ public: // Methods
 		*/
 		else if (sdaiModel) {
 			pModel = new _ap242_model(pController->getLog(), true, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -171,6 +173,7 @@ public: // Methods
 		*/
 		else {
 			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -219,6 +222,7 @@ public: // Methods
 		auto vecSdaiModels = openIFCZip(szIFCZIP);
 		for (auto prSdaiModel : vecSdaiModels) {
 			auto pModel = new _ifc_model(pController->getLog(), vecSdaiModels.size() > 1, false);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 			pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
 
@@ -238,6 +242,7 @@ public: // Methods
 		}
 
 		auto pModel = new _ap242_model(pController->getLog(), true, false);
+		pModel->setProgress(pController->getProgress());
 		pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
 		vecModels.push_back(pModel);

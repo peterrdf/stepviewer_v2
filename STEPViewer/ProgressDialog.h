@@ -7,7 +7,9 @@
 using namespace std;
 
 // ************************************************************************************************
-class CTask {
+class CTask 
+{
+
 public: // Methods
 
 	CTask()

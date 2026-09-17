@@ -101,6 +101,31 @@
 #endif
 }
 
+// ************************************************************************************************
+class CLoadTask : public CTask {
+
+private: // Fields
+
+	const function<void(void)>& m_funcRun;
+
+public: // Methods
+
+	CLoadTask(const function<void(void)>& funcRun)
+		: CTask()
+		, m_funcRun(funcRun)
+	{
+	}
+
+	virtual ~CLoadTask()
+	{
+	}
+
+	virtual void Run() override
+	{
+		m_funcRun();
+	}
+};
+
 void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
 	setModel(nullptr);
@@ -128,19 +153,39 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		string strExtension = pathModel.extension().string();
 		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-		if (strExtension == ".ifczip") {
-			vecModels = _ap_model_factory::loadIFCZIP(this, (LPCWSTR)vecPaths[0]);
-		}
-		else if (strExtension == ".stpz") {
-			vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
+		function<void(void)> funcRun = [this, &strExtension, &vecModels, &vecPaths](void) {
+			if (strExtension == ".ifczip") {
+				vecModels = _ap_model_factory::loadIFCZIP(this, (LPCWSTR)vecPaths[0]);
+			}
+			else if (strExtension == ".stpz") {
+				vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
+			}
+			else {
+				auto pModel = _ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false);
+				if (pModel) {
+					vecModels.push_back(pModel);
+				}
+			}			
+			};
+
+		CLoadTask loadTask(funcRun);
+#ifdef _PROGRESS_UI_SUPPORT
+		if (getShowProgressDialog()) {
+			CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+			getLogHub()->addLogView(&progressDlg);
+			getProgressHub()->addProgressView(&progressDlg);
+
+			progressDlg.DoModal();
+
+			getLogHub()->removeLogView(&progressDlg);
+			getProgressHub()->removeProgressView(&progressDlg);
 		}
 		else {
-			auto pModel = _ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false);
-			if (pModel) {
-				vecModels.push_back(pModel);
-			}
+#endif
+			loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
 		}
-
+#endif
 		if (!vecModels.empty()) {
 			setModels(vecModels);
 		}
@@ -226,10 +271,12 @@ END_MESSAGE_MAP()
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
 	: m_wndBCFView(*this)
-{}
+{
+}
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{}
+{
+}
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
