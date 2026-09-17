@@ -1058,14 +1058,14 @@ _geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem,
 		return nullptr;
 	}
 
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
-	if (!bMappedItem && owlInstance != 0) {
-		preLoadInstance(owlInstance);
-	}
-
 	// Set up segmentation
 	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS) {
 		setSegmentation(getSdaiModel(), iCircleSegments, 5);
+	}
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+	if (!bMappedItem && owlInstance != 0) {
+		preLoadInstance(owlInstance);
 	}
 
 	pGeometry = createGeometry(owlInstance, sdaiInstance);
