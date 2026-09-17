@@ -309,6 +309,10 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 int _ap242_model::calculateGeometriesCount()
 {
 	int iTotal = 0;
+
+	//
+	// Products
+	//
 	set<SdaiInstance> setRepresentationItemInstances;
 
 	std::function<void(SdaiInstance)> funcLoadRepresentationItems =
@@ -415,6 +419,44 @@ int _ap242_model::calculateGeometriesCount()
 		} // for (SdaiInteger index = 0; index < sdaiProductDefinitionShapeInstancesCnt; index++)
 	} // for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++)
 	iTotal += (int)(setRepresentationItemInstances.size());
+
+	//
+	// Draughting Models
+	//
+	set<SdaiInstance> setDraughtingInstances;
+
+	SdaiAggr sdaiDraughtingModelAggr = xxxxGetEntityAndSubTypesExtentBN(getSdaiModel(), "DRAUGHTING_MODEL");
+	assert(sdaiDraughtingModelAggr != nullptr);
+
+	SdaiInteger iDraughtingModelsCount = sdaiGetMemberCount(sdaiDraughtingModelAggr);
+	for (SdaiInteger i = 0; i < iDraughtingModelsCount; i++) {
+		SdaiInstance sdaiDraughtingModelInstance = 0;
+		sdaiGetAggrByIndex(sdaiDraughtingModelAggr, i, sdaiINSTANCE, &sdaiDraughtingModelInstance);
+		assert(sdaiDraughtingModelInstance != 0);
+
+		//auto pDraughtingModel = new _ap242_draughting_model(sdaiDraughtingModelInstance);
+		//m_vecDraughtingModels.push_back(pDraughtingModel);
+
+		SdaiAttr sdaiItemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(getSdaiModel(), "REPRESENTATION"), "items");
+		assert(sdaiItemsAttr != nullptr);
+
+		SdaiAggr sdaiItemsAggr = nullptr;
+		sdaiGetAttr(sdaiDraughtingModelInstance, sdaiItemsAttr, sdaiAGGR, &sdaiItemsAggr);
+
+		SdaiInteger iItemsCount = sdaiGetMemberCount(sdaiItemsAggr);
+		for (SdaiInteger j = 0; j < iItemsCount; j++) {
+			SdaiInstance sdaiItemInstance = 0;
+			sdaiGetAggrByIndex(sdaiItemsAggr, j, sdaiINSTANCE, &sdaiItemInstance);
+
+			if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "ANNOTATION_PLANE")) {
+				setDraughtingInstances.insert(sdaiItemInstance);
+			}
+			else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "DRAUGHTING_CALLOUT")) {
+				setDraughtingInstances.insert(sdaiItemInstance);
+			}
+		}
+	} // for (SdaiInteger i = 0; i < iDraughtingModelsCount; i++)
+	iTotal += (int)setDraughtingInstances.size();
 
 	return iTotal;
 }
