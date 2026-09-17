@@ -188,16 +188,16 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 #endif
 		if (!vecModels.empty()) {
 			setModels(vecModels);
-		}
 
-		// Title
-		CString strTitle = AfxGetAppName();
-		strTitle += L" - ";
-		strTitle += vecPaths[0];
-		AfxGetMainWnd()->SetWindowTextW(strTitle);
+			// Title
+			CString strTitle = AfxGetAppName();
+			strTitle += L" - ";
+			strTitle += vecPaths[0];
+			AfxGetMainWnd()->SetWindowTextW(strTitle);
 
-		// MRU
-		AfxGetApp()->AddToRecentFileList(vecPaths[0]);
+			// MRU
+			AfxGetApp()->AddToRecentFileList(vecPaths[0]);
+		}		
 		return;
 	}
 
@@ -242,7 +242,6 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 #ifdef _PROGRESS_UI_SUPPORT
 	}
 #endif
-
 	if (!vecModels.empty()) {
 		setModels(vecModels);
 
@@ -327,27 +326,53 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	string strExtension = pathModel.extension().string();
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-	if (strExtension == ".ifczip") {
-		auto vecModels = _ap_model_factory::loadIFCZip(this, lpszPathName);
-		setModels(vecModels);
-	}
-	else if (strExtension == ".stpz") {
-		auto vecModels = _ap_model_factory::loadSTEPGZip(this, lpszPathName);
-		setModels(vecModels);
+	vector<_model*> vecModels;
+
+	function<void(void)> funcLoadSTEPModel = [this, &strExtension, &vecModels, &lpszPathName](void) {
+		if (strExtension == ".ifczip") {
+			vecModels = _ap_model_factory::loadIFCZip(this, lpszPathName);			
+		}
+		else if (strExtension == ".stpz") {
+			vecModels = _ap_model_factory::loadSTEPGZip(this, lpszPathName);
+		}
+		else {
+			auto pModel = _ap_model_factory::load(this, lpszPathName, false, nullptr, false);
+			if (pModel) {
+				vecModels.push_back(pModel);
+			}
+		}
+		};
+
+	CLoadTask loadTask(funcLoadSTEPModel);
+#ifdef _PROGRESS_UI_SUPPORT
+	if (getShowProgressDialog()) {
+		CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+		getLogHub()->addLogView(&progressDlg);
+		getProgressHub()->addProgressView(&progressDlg);
+
+		progressDlg.DoModal();
+
+		getLogHub()->removeLogView(&progressDlg);
+		getProgressHub()->removeProgressView(&progressDlg);
 	}
 	else {
-		auto pModel = _ap_model_factory::load(this, lpszPathName, false, nullptr, false);
-		setModel(pModel);
+#endif
+		loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
 	}
+#endif
+	if (!vecModels.empty()) {
+		setModels(vecModels);
 
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += lpszPathName;
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
+		// Title
+		CString strTitle = AfxGetAppName();
+		strTitle += L" - ";
+		strTitle += lpszPathName;
+		AfxGetMainWnd()->SetWindowTextW(strTitle);
 
-	// MRU
-	AfxGetApp()->AddToRecentFileList(lpszPathName);
+		// MRU
+		AfxGetApp()->AddToRecentFileList(lpszPathName);
+	}
 
 	return TRUE;
 }
