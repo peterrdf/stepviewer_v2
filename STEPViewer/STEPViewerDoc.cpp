@@ -155,7 +155,7 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 		function<void(void)> funcRun = [this, &strExtension, &vecModels, &vecPaths](void) {
 			if (strExtension == ".ifczip") {
-				vecModels = _ap_model_factory::loadIFCZIP(this, (LPCWSTR)vecPaths[0]);
+				vecModels = _ap_model_factory::loadIFCZip(this, (LPCWSTR)vecPaths[0]);
 			}
 			else if (strExtension == ".stpz") {
 				vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
@@ -307,7 +307,7 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
 	if (strExtension == ".ifczip") {
-		auto vecModels = _ap_model_factory::loadIFCZIP(this, lpszPathName);
+		auto vecModels = _ap_model_factory::loadIFCZip(this, lpszPathName);
 		setModels(vecModels);
 	}
 	else if (strExtension == ".stpz") {
