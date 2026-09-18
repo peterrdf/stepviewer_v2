@@ -1810,5 +1810,7 @@ void CIFCModelStructureView::ResetView()
 	}
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** CIFCModelStructureView::ResetView(): %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+	getController()->getLog()->logWrite(enumLogEvent::info,
+		_string::format("Loading Model Structure View: %lld [ms]",
+			std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()));
 }
