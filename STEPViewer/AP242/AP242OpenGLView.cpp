@@ -29,6 +29,8 @@ CAP242OpenGLView::CAP242OpenGLView(CWnd* pWnd)
 
 	// Default settings
 	m_strCullFaces = CULL_FACES_FRONT;
+	m_bShowLines = FALSE;
+	m_bShowPoints = FALSE;
 }
 
 CAP242OpenGLView::~CAP242OpenGLView()
