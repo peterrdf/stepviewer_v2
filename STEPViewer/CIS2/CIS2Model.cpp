@@ -93,7 +93,7 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	// Set up segmentation
 	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS)
 	{
-		setSegmentation(getSdaiModel(), iCircleSegments, 5);
+		setSegmentation(getSdaiModel(), iCircleSegments, 0.);
 	}
 
 	switch (enCIS2GeometryType)
@@ -125,7 +125,7 @@ _geometry* CCIS2Model::LoadGeometry(SdaiInstance sdaiInstance, enumCIS2GeometryT
 	// Restore segmentation
 	if (iCircleSegments != DEFAULT_SEGMENTATION_PARTS)
 	{
-		setSegmentation(getSdaiModel(), DEFAULT_SEGMENTATION_PARTS, 5);
+		setSegmentation(getSdaiModel(), DEFAULT_SEGMENTATION_PARTS, 0.);
 	}
 
 	return pGeometry;

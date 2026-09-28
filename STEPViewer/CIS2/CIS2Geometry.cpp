@@ -20,5 +20,5 @@ CCIS2Geometry::CCIS2Geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 	// Extra settings
 	const int_t flagbit1 = 2;
 	setFilter(getSdaiModel(), flagbit1, flagbit1);
-	setSegmentation(getSdaiModel(), 16, 0.);
+	setSegmentation(getSdaiModel(), 36, 0.);
 }
