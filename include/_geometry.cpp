@@ -191,27 +191,36 @@ void _geometry::calculateBB_Faces(
         return;
     }
 
-    if (pInstance->getTransformationMatrix() != nullptr) {
-        _vector3 vecMin = { fBBXmin, fBBYmin, fBBZmin };
-        _transform(&vecMin, pInstance->getTransformationMatrix(), &vecMin);
-        fXmin = fmin(fXmin, (float)vecMin.x);
-        fYmin = fmin(fYmin, (float)vecMin.y);
-        fZmin = fmin(fZmin, (float)vecMin.z);
+    const _matrix4x4* pMatrix = pInstance->getTransformationMatrix();
+    if (pMatrix != nullptr) {
+        const double arX[2] = { fBBXmin, fBBXmax };
+        const double arY[2] = { fBBYmin, fBBYmax };
+        const double arZ[2] = { fBBZmin, fBBZmax };
 
-        _vector3 vecMax = { fBBXmax, fBBYmax, fBBZmax };
-        _transform(&vecMax, pInstance->getTransformationMatrix(), &vecMax);
-        fXmax = fmax(fXmax, (float)vecMax.x);
-        fYmax = fmax(fYmax, (float)vecMax.y);
-        fZmax = fmax(fZmax, (float)vecMax.z);
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 2; k++) {
+                    _vector3 vecPoint = { arX[i], arY[j], arZ[k] };
+                    _transform(&vecPoint, pMatrix, &vecPoint);
+
+                    fXmin = fmin(fXmin, (float)vecPoint.x);
+                    fXmax = fmax(fXmax, (float)vecPoint.x);
+                    fYmin = fmin(fYmin, (float)vecPoint.y);
+                    fYmax = fmax(fYmax, (float)vecPoint.y);
+                    fZmin = fmin(fZmin, (float)vecPoint.z);
+                    fZmax = fmax(fZmax, (float)vecPoint.z);
+                }
+            }
+        }
     }
     else {
         fXmin = fmin(fXmin, fBBXmin);
-        fXmax = fmin(fXmax, fBBXmax);
+        fXmax = fmax(fXmax, fBBXmax);
         fYmin = fmin(fYmin, fBBYmin);
-        fYmax = fmax(fXmax, fBBYmax);
-        fZmin = fmax(fYmax, fBBZmin);
+        fYmax = fmax(fYmax, fBBYmax);
+        fZmin = fmin(fZmin, fBBZmin);
         fZmax = fmax(fZmax, fBBZmax);
-	}
+    }
 }
 
 void _geometry::calculateBB_Faces(
