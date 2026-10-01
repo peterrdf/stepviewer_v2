@@ -302,6 +302,8 @@ void CSchemaView::OnTVNItemexpandingTree(NMHDR* pNMHDR, LRESULT* pResult)
 	if ((iImage == IMAGE_MODEL_SCHEMA_VIEW) &&
 		(m_treeCtrl.GetNextItem(pNMTreeView->itemNew.hItem, TVGN_CHILD) == NULL))
 	{
+		CWaitCursor waitCursor;
+
 		HTREEITEM hModel = pNMTreeView->itemNew.hItem;
 
 		auto itModel = m_mapModels.find(hModel);
@@ -421,6 +423,8 @@ void CSchemaView::OnSize(UINT nType, int cx, int cy)
 
 void CSchemaView::ResetView()
 {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	m_mapModels.clear();
 
 	m_treeCtrl.DeleteAllItems();	
@@ -461,6 +465,11 @@ void CSchemaView::ResetView()
 	{
 		m_treeCtrl.Expand(hFirstModel, TVE_EXPAND);
 	}
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	getController()->getLog()->logWrite(enumLogEvent::info,
+		_string::format("Loading Schema View: %lld [ms]",
+			std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()));
 }
 
 void CSchemaView::AdjustLayout()
