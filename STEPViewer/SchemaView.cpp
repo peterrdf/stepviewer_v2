@@ -442,7 +442,6 @@ void CSchemaView::ResetView()
 		return;
 	}
 
-	HTREEITEM hFirstModel = NULL;
 	for (auto pModel : pController->getModels())
 	{
 		if (!pModel->getEnable())
@@ -454,16 +453,6 @@ void CSchemaView::ResetView()
 		HTREEITEM hModel = LoadModel(apModel);
 
 		m_mapModels[hModel] = apModel;
-
-		if (hFirstModel == NULL)
-		{
-			hFirstModel = hModel;
-		}
-	}
-
-	if (hFirstModel != NULL)
-	{
-		m_treeCtrl.Expand(hFirstModel, TVE_EXPAND);
 	}
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
