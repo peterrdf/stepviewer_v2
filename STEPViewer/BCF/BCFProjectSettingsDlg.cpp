@@ -217,8 +217,10 @@ CBCFProjectSettingsDlg::CBCFProjectSettingsDlg(
 
 bool CBCFProjectSettingsDlg::LoadEnumerationProfile(BCFProject& project)
 {
-	CWinApp* app = AfxGetApp();
 	BCFExtensions& extensions = project.GetExtensions();
+#if 0
+	//read from profile
+	CWinApp* app = AfxGetApp();
 	for (const EnumerationPage& definition : ENUMERATION_PAGES) {
 		const int count = app->GetProfileInt(
 			ENUMERATION_PROFILE_SECTION, GetProfileCountKey(definition), -1);
@@ -244,6 +246,10 @@ bool CBCFProjectSettingsDlg::LoadEnumerationProfile(BCFProject& project)
 			}
 		}
 	}
+#else
+	extensions.AddElement(BCFEnumeration::BCFTopicTypes, "Topic");
+	extensions.AddElement(BCFEnumeration::BCFTopicStatuses, "New");
+#endif
 	return true;
 }
 
