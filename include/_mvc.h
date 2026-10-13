@@ -319,8 +319,9 @@ protected: // Methods
 public: // Properties
 
 	_log_hub* getLogHub() const { return m_pLogHub; }
-	_model* getModel() const; // kept for backward compatibility
+	_model* getModel(bool assertOnlyOneModel = true) const; // kept for backward compatibility
 	_model* getModel(const wchar_t* pathName);
+	_model* getFirtsModel()  const { return getModel(false); };
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }

@@ -832,13 +832,11 @@ bool CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPo
 	if (pRenderer != nullptr)
 	{
 		double dLengthConversionFactor = -1;
-		for (auto model : getController()->getModels()) {
-			auto ap_model = _ptr<_ap_model>(getController()->getModel());
-			if (ap_model) {
-				dLengthConversionFactor = getProjectUnitConversionFactor(ap_model->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
-				break;
-			}
+		auto ap_model = _ptr<_ap_model>(getController()->getFirtsModel());
+		if (ap_model) {
+			dLengthConversionFactor = getProjectUnitConversionFactor(ap_model->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
 		}
+
 		if (dLengthConversionFactor < FLT_MIN) {
 			dLengthConversionFactor = 1.0;
 		}

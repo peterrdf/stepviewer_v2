@@ -184,8 +184,7 @@ void CBCFView::NewProject()
 		if (auto doc = GetDocument()) {
 			if (auto comment = topic->AddComment()) {
 				comment->SetText("My view");
-				const bool ok = CBCFViewPointMgr(*doc)
-					.SaveCurrentViewToComent(*comment);
+				CBCFViewPointMgr(*doc).SaveCurrentViewToComent(*comment);
 			}
 		}
 	}
@@ -296,7 +295,6 @@ bool CBCFView::SaveProject()
 	if (ok) {
 		m_filePath = path;
 		UpdateCaption();
-		m_projectForm->Load();
 	}
 	return ok;
 }

@@ -1323,10 +1323,12 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 	m_pTargetInstance = nullptr;
 }
 
-_model* _controller::getModel() const
+_model* _controller::getModel(bool assertOnlyOneModel) const
 {
+	UNREFERENCED_PARAMETER(assertOnlyOneModel);
+
 	if (!m_vecModels.empty()) {
-		assert(m_vecModels.size() == 1);
+		assert(!assertOnlyOneModel || m_vecModels.size() == 1);
 
 		return m_vecModels.front();
 	}
