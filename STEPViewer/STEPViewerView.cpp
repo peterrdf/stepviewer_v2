@@ -758,7 +758,7 @@ void CMySTEPViewerView::SetBCFView(
 {
 	if (auto pRenderer = dynamic_cast<_oglRenderer*>(m_pOpenGLView)) {
 		if (auto ctrl = getController()) {
-			if (auto model = ctrl->getModel()) {
+			for (auto& model : ctrl->getModels()) {
 				if (auto apmodel = _ptr<_ap_model>(model)) {
 					if (auto sdaiModel = apmodel->getSdaiModel()) {
 
@@ -809,6 +809,8 @@ void CMySTEPViewerView::SetBCFView(
 #endif
 					}
 				}
+
+				break; //call for 1st model id enough
 			}
 		}
 	}

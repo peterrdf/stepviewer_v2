@@ -25,10 +25,19 @@ static void ASSERT_ARRAY_VALID(double* arr, int size)
 		ASSERT_REAL_VALID(arr[i]);
 }
 
+static void ASSERT_UNIT_DIR(double* v)
+{
+	double l = 0;
+	for (int i = 0; i < 3; i++)
+		l += v[i] * v[i];
+	assert(fabs(1 - l) < 1e-4);
+}
+
 #else
 #define ASSERT_REAL_VALID(v) /*noop*/
 #define ASSERT_MATRIX_VALID(m) /*noop*/
 #define ASSERT_ARRAY_VALID(arr, size) /*noop*/
+#define ASSERT_UNIT_DIR(v) /*noop*/
 #endif
 
 // ************************************************************************************************
@@ -1237,6 +1246,16 @@ void _oglRenderer::_setCameraSettings(
 	double dAspectRatio,
 	double dLengthConversionFactor)
 {
+	ASSERT_ARRAY_VALID(arViewPoint, 3);
+	ASSERT_ARRAY_VALID(arDirection, 3);
+	ASSERT_ARRAY_VALID(arUpVector, 3);
+	ASSERT_UNIT_DIR(arUpVector);
+	ASSERT_UNIT_DIR(arDirection);
+	ASSERT_REAL_VALID(dViewToWorldScale);
+	ASSERT_REAL_VALID(dFieldOfView);
+	ASSERT_REAL_VALID(dAspectRatio);
+	ASSERT_REAL_VALID(dLengthConversionFactor);
+
 	auto pWorld = _getController()->getModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
@@ -1343,6 +1362,8 @@ bool _oglRenderer::_getCameraSettings(
 	ASSERT_ARRAY_VALID(arViewPoint, 3);
 	ASSERT_ARRAY_VALID(arDirection, 3);
 	ASSERT_ARRAY_VALID(arUpVector, 3);
+	ASSERT_UNIT_DIR(arUpVector);
+	ASSERT_UNIT_DIR(arDirection);
 	ASSERT_REAL_VALID(dViewToWorldScale);
 	ASSERT_REAL_VALID(dFieldOfView);
 	ASSERT_REAL_VALID(dAspectRatio);
