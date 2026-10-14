@@ -1256,7 +1256,7 @@ void _oglRenderer::_setCameraSettings(
 	ASSERT_REAL_VALID(dAspectRatio);
 	ASSERT_REAL_VALID(dLengthConversionFactor);
 
-	auto pWorld = _getController()->getFirtsModel();
+	auto pWorld = _getController()->getFirstModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
 	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
@@ -1301,7 +1301,7 @@ bool _oglRenderer::_getCameraSettings(
 	double& dAspectRatio,
 	double dLengthConversionFactor)
 {
-	auto pWorld = _getController()->getModel();
+	auto pWorld = _getController()->getFirstModel();
 	if (!pWorld)
 		return false;
 
