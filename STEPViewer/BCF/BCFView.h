@@ -26,13 +26,15 @@ public:
 	void DeleteTopic();
 	void ShowTopicDetails();
 	bool AskAndSaveModified();
-	void CloseProject(bool prompt);
+	bool CloseProject(bool prompt);
 	void OnCloseMainDocument();
 	void ShowProject();
 	void ShowTopic(BCFTopic* topic);
 	void ShowComment(BCFComment* comment);
 
 	BCFProject* GetProject() const { return m_project; }
+    CString GetBCFFilePath() const { return m_filePath; }
+
 	CMySTEPViewerDoc* GetDocument() const { return m_stepViewerDoc; }
 	CString GetBimFilePath(BCFBimFile& file);
 	void SetBimFilesToView(BCFTopic& topic);

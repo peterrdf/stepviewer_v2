@@ -8,6 +8,8 @@
 #include "Controller.h"
 #include "ModelCheckDlg.h"
 
+class CBCFView;
+
 // ************d************************************************************************************
 static TCHAR BCF_PACKAGES_FILTER[] = _T("BCF Packages (*.bcf; *.bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
 static TCHAR DESIGN_MODELS_FILTER[] = _T("Design Models (*.stp; *.step; *.stpz; *.ifc; *.ifczip)|*.stp; *.step; *.stpz; *.ifc; *.ifczip|All Files (*.*)|*.*||");
@@ -38,6 +40,8 @@ public:
 
 // Operations
 public:
+	void UpdateTitle();
+	bool ReadyToOpenOrNewDoc();
 
 // Overrides
 public:
@@ -71,6 +75,11 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+
+protected:
+	CBCFView* GetBCFView();
+	bool OpenBCFFile(CString filePath);
+	
 public:
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileNewBCF();

@@ -37,12 +37,6 @@ namespace
 			(length >= 7 && _wcsicmp(filePath + length - 7, L".bcfzip") == 0);
 	}
 
-	bool OpenBCFFile(LPCTSTR filePath)
-	{
-		auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-		return frame && frame->GetBCFView().OpenProject(filePath);
-	}
-
 	CString GetOpenFileFilter()
 	{
 		CString filter(DESIGN_MODELS_FILTER);
@@ -55,6 +49,18 @@ namespace
 		filter += BCF_PACKAGES_FILTER;
 
 		return filter;
+	}
+
+	CString GetFileTitle(LPCTSTR filePath)
+	{
+		if (!filePath || !*filePath) {
+			CString s;
+			s.LoadString(IDS_UNTITLED);
+			return s;
+		}
+
+		const fs::path path(filePath);
+		return path.filename().c_str();
 	}
 }
 
@@ -133,22 +139,25 @@ namespace
 #endif
 }
 
+class UpdateTitleGuard
+{
+public:
+	UpdateTitleGuard(CMySTEPViewerDoc* pDoc) : m_pDoc(pDoc) {}
+	~UpdateTitleGuard() { if (m_pDoc) m_pDoc->UpdateTitle(); }
+private:
+	CMySTEPViewerDoc* m_pDoc;
+};
+
 void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 {
+    UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
 	setModel(nullptr);
 
 	if (vecPaths.size() == 1 && IsBCFFile(vecPaths[0])) {
-		if (!OpenBCFFile(vecPaths[0])) {
+		if (OpenBCFFile(vecPaths[0])) {
 			return;
 		}
-
-		// Title
-		CString strTitle = AfxGetAppName();
-		strTitle += L" - ";
-		strTitle += vecPaths[0];
-		AfxGetMainWnd()->SetWindowTextW(strTitle);
-
-		return;
 	}
 
 	vector<_model*> vecModels;
@@ -174,12 +183,6 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		if (!vecModels.empty()) {
 			setModels(vecModels);
 		}
-
-		// Title
-		CString strTitle = AfxGetAppName();
-		strTitle += L" - ";
-		strTitle += vecPaths[0];
-		AfxGetMainWnd()->SetWindowTextW(strTitle);
 
 		// MRU
 		AfxGetApp()->AddToRecentFileList(vecPaths[0]);
@@ -209,18 +212,27 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 
 	if (!vecModels.empty()) {
 		setModels(vecModels);
-
-		// Title
-		CString strTitle = AfxGetAppName();
-		strTitle += L" - ";
-		strTitle += vecIfcPaths[0];
-		strTitle += vecModels.size() > 1 ? L", ..." : L"";
-		AfxGetMainWnd()->SetWindowTextW(strTitle);
-
 		// MRU
 		AfxGetApp()->AddToRecentFileList(vecIfcPaths[0]);
 	}
 }
+
+CBCFView* CMySTEPViewerDoc::GetBCFView()
+{
+	if (auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd())) {
+		return &frame->GetBCFView();
+	}
+    return nullptr;
+}
+
+bool CMySTEPViewerDoc::OpenBCFFile(CString filePath)
+{
+    if (auto view = GetBCFView()) {
+        return view->OpenProject(filePath);
+	}
+	return false;
+}
+
 
 
 // ************************************************************************************************
@@ -262,21 +274,37 @@ CMySTEPViewerDoc::~CMySTEPViewerDoc()
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (!ReadyToOpenOrNewDoc()) {
 		return FALSE;
+    }
+
+	if (!CDocument::OnNewDocument()) {
+		return FALSE;
+	}
 
 	setModel(nullptr);
-
+	
 	return TRUE;
 }
 
 BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (!ReadyToOpenOrNewDoc()) {
+		return FALSE;
+	}
+
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
 	if (IsBCFFile(lpszPathName)) {
-		return OpenBCFFile(lpszPathName);
+		if (OpenBCFFile(lpszPathName)) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	fs::path pathModel = lpszPathName;
@@ -296,17 +324,12 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		setModel(pModel);
 	}
 
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += lpszPathName;
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
-
 	// MRU
 	AfxGetApp()->AddToRecentFileList(lpszPathName);
 
 	return TRUE;
 }
+
 
 // CMySTEPViewerDoc serialization
 
@@ -390,6 +413,12 @@ void CMySTEPViewerDoc::Dump(CDumpContext& dc) const
 
 void CMySTEPViewerDoc::OnFileOpen()
 {
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (!ReadyToOpenOrNewDoc()) {
+		return;
+    }
+
 	const CString filter = GetOpenFileFilter();
 	CFileDialog dlgFile(TRUE, nullptr, _T(""),
 		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, filter);
@@ -421,51 +450,66 @@ void CMySTEPViewerDoc::OnFileOpen()
 
 	AfxGetApp()->AddToRecentFileList(vecModels[0]);
 	OpenModels(vecModels);
-
-	// Title
-	CString strTitle = AfxGetAppName();
-	strTitle += L" - ";
-	strTitle += vecModels[0];
-	strTitle += vecModels.size() > 1 ? L", ..." : L"";
-	AfxGetMainWnd()->SetWindowTextW(strTitle);
 }
 
 void CMySTEPViewerDoc::OnFileNewBCF()
 {
-	if (auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd())) {
-		frame->GetBCFView().NewProject();
+    UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (!ReadyToOpenOrNewDoc()) {
+		return;
+	}
+
+	if (auto view = GetBCFView()) {
+		view->NewProject();
 	}
 }
 
 void CMySTEPViewerDoc::OnFileOpenBCF()
 {
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (!ReadyToOpenOrNewDoc()) {
+		return;
+	}
+
 	OpenBCFFile(NULL);
 }
 
 void CMySTEPViewerDoc::OnFileSaveBCF()
 {
-	if (auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd())) {
-		frame->GetBCFView().SaveProject();
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (auto view = GetBCFView()) {
+		view->SaveProject();
 	}
 }
 
 void CMySTEPViewerDoc::OnUpdateFileSaveBCF(CCmdUI* commandUI)
 {
-	auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-	commandUI->Enable(frame && frame->GetBCFView().GetProject());
+	bool enable = false;
+	if (auto view = GetBCFView()) {
+		enable = view->GetProject();
+	}
+	commandUI->Enable(enable);
 }
 
 void CMySTEPViewerDoc::OnFileCloseBCF()
 {
-	if (auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd())) {
-		frame->GetBCFView().CloseProject(true);
+	UpdateTitleGuard _updateTitleGuard(this);//update title at the end of this function
+
+	if (auto view = GetBCFView()) {
+		view->CloseProject(true);
 	}
 }
 
 void CMySTEPViewerDoc::OnUpdateFileCloseBCF(CCmdUI* commandUI)
 {
-	auto frame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-	commandUI->Enable(frame && frame->GetBCFView().GetProject());
+    bool enable = false;
+	if (auto view = GetBCFView()) {
+		enable = view->GetProject();
+	}
+	commandUI->Enable(enable);
 }
 
 void CMySTEPViewerDoc::OnViewZoomOut()
@@ -635,4 +679,51 @@ void CMySTEPViewerDoc::OnUpdateViewIdsChecker(CCmdUI* pCmdUI)
 		bEnable = _ptr<_ap_model>(getModels()[0])->getAP() == enumAP::IFC;
 	}
 	pCmdUI->Enable(bEnable);
+}
+
+void CMySTEPViewerDoc::UpdateTitle()
+{
+	CString title;
+	CString path;
+
+	auto bcfView = GetBCFView();
+	if (bcfView && bcfView->GetProject()) {
+
+		path = bcfView->GetBCFFilePath();
+		title = L"BCF: " + GetFileTitle(path);
+	}
+	else {
+		for (auto model : getModels()) {
+
+			auto modelPath = model->getPath();
+
+			if (!title.IsEmpty()) {
+				title += L"; ";
+			}
+			title += GetFileTitle(modelPath);
+		}
+
+		if (getModels().size() == 1) {
+			path = getModels()[0]->getPath();
+        }
+
+		if (title.IsEmpty()) {
+			title.LoadString(IDS_EMPTY);
+		}
+	}
+
+	if (!path.IsEmpty())
+		SetPathName(path, FALSE);
+	else
+		m_strPathName.Empty();
+
+    SetTitle(title);
+}
+
+bool CMySTEPViewerDoc::ReadyToOpenOrNewDoc()
+{
+	if (auto bcfView = GetBCFView()) {
+		return bcfView->AskAndSaveModified();
+	}
+    return true;
 }

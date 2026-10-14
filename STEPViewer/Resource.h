@@ -7,6 +7,8 @@
 #define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
+#define IDS_EMPTY                       101
+#define IDS_UNTITLED                    102
 #define IDR_POPUP_EDIT                  119
 #define ID_STATUSBAR_PANE1              120
 #define ID_STATUSBAR_PANE2              121
@@ -52,7 +54,6 @@
 #define IDI_CLASS_VIEW_HC               164
 #define IDI_PROPERTIES_WND              167
 #define IDI_PROPERTIES_WND_HC           168
-#define IDI_BCF_VIEW                    375
 #define IDR_EXPLORER                    169
 #define IDB_EXPLORER_24                 170
 #define IDR_SORT                        171
@@ -140,8 +141,9 @@
 #define IDI_ICON_INFO                   368
 #define IDI_ICON_WARN                   369
 #define IDD_DIALOG_LOG                  370
-#define ID_VIEW_BCF_PROJECT_PANE       374
-#define IDD_BCF_TOPIC_LABELS           376
+#define ID_VIEW_BCF_PROJECT_PANE        374
+#define IDI_BCF_VIEW                    375
+#define IDD_BCF_TOPIC_LABELS            376
 #define IDD_BCF_SETTINGS_USER           377
 #define IDD_BCF_SETTINGS_ENUMERATION    378
 #define IDD_BCF_SETTINGS_VALUE          379

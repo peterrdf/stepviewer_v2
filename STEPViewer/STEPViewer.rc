@@ -941,6 +941,8 @@ IDR_TEXTFILE_FRAGMENT_SHADER3 312                     "res\\Shader.frag"
 STRINGTABLE
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
+    IDS_EMPTY               "Empty"
+    IDS_UNTITLED            "Unititled"
 END
 
 STRINGTABLE

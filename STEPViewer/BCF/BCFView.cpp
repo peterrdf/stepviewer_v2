@@ -301,23 +301,29 @@ bool CBCFView::SaveProject()
 
 bool CBCFView::AskAndSaveModified()
 {
+	if (!m_project) {
+		return true;
+    }
 	if (!CommitCurrent()) {
 		return false;
 	}
-	if (!m_project || !m_project->IsModified()) {
+	if (!m_project->IsModified()) {
 		return true;
 	}
+
 	int answer = AfxMessageBox(L"BCF pane project is modified. Do you want to save it?",
 		MB_YESNOCANCEL | MB_ICONQUESTION);
 	return answer == IDYES ? SaveProject() : answer == IDNO;
 }
 
-void CBCFView::CloseProject(bool prompt)
+bool CBCFView::CloseProject(bool prompt)
 {
 	if (!prompt || AskAndSaveModified()) {
 		ReleaseProject();
 		ShowProject();
+		return true;
 	}
+	return false;
 }
 
 void CBCFView::OnCloseMainDocument()
