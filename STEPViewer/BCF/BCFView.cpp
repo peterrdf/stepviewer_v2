@@ -728,8 +728,6 @@ void CBCFView::AdjustLayout()
 		return;
 	}
 
-	const int settingsLeft = client.right - margin - settingsWidth;
-
 	int left = margin;
 	m_projectIdLabel.MoveWindow(
 		left, headerTop + labelOffset, idLabelWidth, textHeight);
@@ -740,12 +738,25 @@ void CBCFView::AdjustLayout()
 	m_projectNameLabel.MoveWindow(
 		left, headerTop + labelOffset, nameLabelWidth, textHeight);
 	left += nameLabelWidth;
+
+	const int availableWidth = max(
+		2, static_cast<int>(client.right) - margin - left);
+	const int controlSpacing = min(margin, max(0, availableWidth - 2));
+	const int minimumNameWidth = min(
+		rowHeight, max(1, availableWidth - controlSpacing - 1));
+	const int fittedSettingsWidth = min(
+		settingsWidth,
+		max(1, availableWidth - controlSpacing - minimumNameWidth));
+	const int projectNameWidth = max(
+		1, availableWidth - controlSpacing - fittedSettingsWidth);
+	const int settingsLeft = left + projectNameWidth + controlSpacing;
+
 	m_projectName->MoveWindow(
 		left, headerTop + labelOffset,
-		max(rowHeight, settingsLeft - margin - left), rowHeight - labelOffset);
+		projectNameWidth, rowHeight - labelOffset);
 
 	m_projectSettings.MoveWindow(
-		settingsLeft, headerTop, settingsWidth, rowHeight);
+		settingsLeft, headerTop, fittedSettingsWidth, rowHeight);
 
 	CRect formRect(client.left,
 		headerTop + rowHeight + margin, client.right, client.bottom);

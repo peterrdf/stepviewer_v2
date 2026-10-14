@@ -984,19 +984,6 @@ void CBCFTopicForm::AdjustLayout()
 	};
 
 	if (m_tabs.GetCurSel() == 0) {
-		const int titleWidth = max(rowHeight, (page.Width() - rowSpacing) / 2);
-		const int commentsLeft = page.left + titleWidth + rowSpacing;
-		const int commentsWidth = max(rowHeight,
-			static_cast<int>(page.right) - commentsLeft);
-		m_title.MoveWindow(page.left, page.top + labelOffset,
-			titleWidth, rowHeight - labelOffset);
-
-		const int descriptionLabelTop = page.top + rowHeight + rowSpacing;
-		m_descriptionLabel.MoveWindow(page.left, descriptionLabelTop,
-			getLabelWidth(m_descriptionLabel), textHeight);
-		const int descriptionTop = descriptionLabelTop + textHeight + rowSpacing;
-		m_description.MoveWindow(page.left, descriptionTop, titleWidth,
-			max(rowHeight, static_cast<int>(page.bottom) - descriptionTop));
 		CString newCommentText;
 		CString detailsText;
 		CString deleteCommentText;
@@ -1009,19 +996,58 @@ void CBCFTopicForm::AdjustLayout()
 			static_cast<int>(dc.GetTextExtent(detailsText).cx) + 2 * margin;
 		const int deleteCommentWidth =
 			static_cast<int>(dc.GetTextExtent(deleteCommentText).cx) + 2 * margin;
-		const int commentButtonsTop = page.bottom - rowHeight;
+		const int naturalButtonsWidth = newCommentWidth + detailsWidth +
+			deleteCommentWidth + 2 * rowSpacing;
+		const int minimumTitleWidth = 6 * rowHeight;
+		const int preferredCommentsWidth = max(
+			(page.Width() - rowSpacing) / 2, naturalButtonsWidth);
+		const int commentsWidth = min(
+			preferredCommentsWidth,
+			max(rowHeight, page.Width() - rowSpacing - minimumTitleWidth));
+		const int titleWidth = max(
+			rowHeight, page.Width() - rowSpacing - commentsWidth);
+		const int commentsLeft = page.right - commentsWidth;
+
+		m_title.MoveWindow(page.left, page.top + labelOffset,
+			titleWidth, rowHeight - labelOffset);
+
+		const int descriptionLabelTop = page.top + rowHeight + rowSpacing;
+		m_descriptionLabel.MoveWindow(page.left, descriptionLabelTop,
+			getLabelWidth(m_descriptionLabel), textHeight);
+		const int descriptionTop = descriptionLabelTop + textHeight + rowSpacing;
+		m_description.MoveWindow(page.left, descriptionTop, titleWidth,
+			max(rowHeight, static_cast<int>(page.bottom) - descriptionTop));
+
+		const int commentButtonsTop = max(
+			static_cast<int>(page.bottom) - rowHeight,
+			page.top + 4 * rowHeight + 3 * rowSpacing);
 		m_comments.MoveWindow(commentsLeft, page.top, commentsWidth,
 			max(rowHeight, static_cast<int>(commentButtonsTop - page.top - rowSpacing)));
-		int commentButtonLeft = page.right -
-			newCommentWidth - detailsWidth - deleteCommentWidth - 2 * rowSpacing;
+
+		int fittedNewWidth = newCommentWidth;
+		int fittedDetailsWidth = detailsWidth;
+		int fittedDeleteWidth = deleteCommentWidth;
+		const int availableButtonWidth = max(
+			3, commentsWidth - 2 * rowSpacing);
+		const int naturalButtonWidth =
+			newCommentWidth + detailsWidth + deleteCommentWidth;
+		if (naturalButtonWidth > availableButtonWidth) {
+			fittedNewWidth = max(
+				1, availableButtonWidth * newCommentWidth / naturalButtonWidth);
+			fittedDetailsWidth = max(
+				1, availableButtonWidth * detailsWidth / naturalButtonWidth);
+			fittedDeleteWidth = max(
+				1, availableButtonWidth - fittedNewWidth - fittedDetailsWidth);
+		}
+		int commentButtonLeft = commentsLeft;
 		m_newComment.MoveWindow(
-			commentButtonLeft, commentButtonsTop, newCommentWidth, rowHeight);
-		commentButtonLeft += newCommentWidth + rowSpacing;
+			commentButtonLeft, commentButtonsTop, fittedNewWidth, rowHeight);
+		commentButtonLeft += fittedNewWidth + rowSpacing;
 		m_showCommentDetails.MoveWindow(
-			commentButtonLeft, commentButtonsTop, detailsWidth, rowHeight);
-		commentButtonLeft += detailsWidth + rowSpacing;
+			commentButtonLeft, commentButtonsTop, fittedDetailsWidth, rowHeight);
+		commentButtonLeft += fittedDetailsWidth + rowSpacing;
 		m_deleteComment.MoveWindow(
-			commentButtonLeft, commentButtonsTop, deleteCommentWidth, rowHeight);
+			commentButtonLeft, commentButtonsTop, fittedDeleteWidth, rowHeight);
 	}
 	else if (m_tabs.GetCurSel() == 1) {
 		const int columnWidth = max(rowHeight, (page.Width() - 2 * rowSpacing) / 3);
@@ -1154,17 +1180,33 @@ void CBCFTopicForm::AdjustLayout()
 			rowHeight, static_cast<int>(dc.GetTextExtent(L"Remove...").cx) + 2 * margin);
 		const int bimFilesContentLeft = rightColumn + margin;
 		const int bimFilesContentTop = page.top + rowHeight;
+		const int bimFilesButtonsTop = max(
+			static_cast<int>(page.bottom) - rowHeight - margin,
+			bimFilesContentTop + 3 * rowHeight + 2 * rowSpacing);
+		const int bimFilesContentWidth = max(
+			1, rightColumnWidth - 2 * margin);
+		int fittedAddWidth = addButtonWidth;
+		int fittedRemoveWidth = removeButtonWidth;
+		const int availableButtonWidth = max(
+			2, bimFilesContentWidth - rowSpacing);
+		const int naturalButtonWidth = addButtonWidth + removeButtonWidth;
+		if (naturalButtonWidth > availableButtonWidth) {
+			fittedAddWidth = max(
+				1, availableButtonWidth * addButtonWidth / naturalButtonWidth);
+			fittedRemoveWidth = max(
+				1, availableButtonWidth - fittedAddWidth);
+		}
 		m_addBimFiles.MoveWindow(
-			bimFilesContentLeft, page.bottom - rowHeight - margin,
-			addButtonWidth, rowHeight);
+			bimFilesContentLeft, bimFilesButtonsTop,
+			fittedAddWidth, rowHeight);
 		m_removeBimFile.MoveWindow(
-			bimFilesContentLeft + addButtonWidth + rowSpacing,
-			page.bottom - rowHeight - margin, removeButtonWidth, rowHeight);
+			bimFilesContentLeft + fittedAddWidth + rowSpacing,
+			bimFilesButtonsTop, fittedRemoveWidth, rowHeight);
 		m_bimFiles.MoveWindow(
 			bimFilesContentLeft, bimFilesContentTop,
-			max(rowHeight, rightColumnWidth - 2 * margin),
-			max(rowHeight, static_cast<int>(page.bottom) -
-				bimFilesContentTop - rowHeight - 2 * margin));
+			bimFilesContentWidth,
+			max(rowHeight, bimFilesButtonsTop -
+				bimFilesContentTop - margin));
 	}
 	else if (m_tabs.GetCurSel() == 2) {
 		const int columnWidth = max(rowHeight, (page.Width() - 2 * rowSpacing) / 3);
@@ -1187,16 +1229,28 @@ void CBCFTopicForm::AdjustLayout()
 				static_cast<int>(dc.GetTextExtent(addText).cx) + 2 * margin);
 			const int removeWidth = max(rowHeight,
 				static_cast<int>(dc.GetTextExtent(removeText).cx) + 2 * margin);
-			const int removeLeft = left + width - removeWidth;
-			addButtons[i]->MoveWindow(
-				removeLeft - rowSpacing - addWidth, page.bottom - rowHeight,
-				addWidth, rowHeight);
-			removeButtons[i]->MoveWindow(
-				removeLeft, page.bottom - rowHeight, removeWidth, rowHeight);
+			int fittedAddWidth = addWidth;
+			int fittedRemoveWidth = removeWidth;
+			const int availableButtonWidth = max(2, width - rowSpacing);
+			const int naturalButtonWidth = addWidth + removeWidth;
+			if (naturalButtonWidth > availableButtonWidth) {
+				fittedAddWidth = max(
+					1, availableButtonWidth * addWidth / naturalButtonWidth);
+				fittedRemoveWidth = max(
+					1, availableButtonWidth - fittedAddWidth);
+			}
+			const int removeLeft = left + width - fittedRemoveWidth;
 			const int listTop = page.top + rowHeight;
+			const int buttonsTop = max(
+				static_cast<int>(page.bottom) - rowHeight,
+				listTop + 3 * rowHeight + 2 * rowSpacing);
+			addButtons[i]->MoveWindow(
+				removeLeft - rowSpacing - fittedAddWidth, buttonsTop,
+				fittedAddWidth, rowHeight);
+			removeButtons[i]->MoveWindow(
+				removeLeft, buttonsTop, fittedRemoveWidth, rowHeight);
 			lists[i]->MoveWindow(left, listTop, width,
-				max(rowHeight, static_cast<int>(page.bottom) -
-					listTop - rowHeight - rowSpacing));
+				max(rowHeight, buttonsTop - listTop - rowSpacing));
 		}
 	}
 	if (oldFont) {
