@@ -2,31 +2,32 @@
 
 #include <string>
 #include <stdexcept>
+using namespace std;
 
 namespace _err
 {
 	// Arguments
-	const std::string _pointer = "Invalid pointer.";
-	const std::string _std_object = "Invalid std object.";
-	const std::string _argument = "Invalid argument.";
-	const std::string _expression = "Expression is FALSE.";
+	const string _pointer = "Invalid pointer.";
+	const string _std_object = "Invalid std object.";
+	const string _argument = "Invalid argument.";
+	const string _expression = "Expression is FALSE.";
 
 	// File
-	const std::string _file = "Invalid file.";
-	const std::string _format = "Invalid format.";
+	const string _file = "Invalid file.";
+	const string _format = "Invalid format.";
 	
 	// Instances
-	const std::string _instance = "Invalid instance.";
+	const string _instance = "Invalid instance.";
 
 	// Functionality
-	const std::string _not_supported = "Not supported.";
+	const string _not_supported = "Not supported.";
 
 	// Unknown
-	const std::string _internal = "Internal error.";
+	const string _internal = "Internal error.";
 };
 
 #define THROW_ERROR(message) \
-	throw std::runtime_error(message)
+	throw runtime_error(message)
 
 #define VERIFY_EXPRESSION(expr) \
 	if (!(expr)) THROW_ERROR(_err::_expression)
@@ -57,8 +58,8 @@ namespace _err
 
 #define LOG_THROW_ERROR(message) \
 	logErr(message); \
-	throw std::runtime_error(message)
+	throw runtime_error(message)
 
 #define LOG_THROW_ERROR_F(message, ...) \
 	logErrf(message, __VA_ARGS__); \
-	throw std::runtime_error(_string::format(message, __VA_ARGS__))
+	throw runtime_error(_string::format(message, __VA_ARGS__))

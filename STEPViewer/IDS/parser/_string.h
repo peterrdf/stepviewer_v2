@@ -26,27 +26,27 @@ class _string
 {
 
 public: //  Methods
-
-	static inline void ltrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+		
+	static inline void ltrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
 	static inline void ltrim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
-	static inline void rtrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+	static inline void rtrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
 
 	static inline void rtrim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
@@ -59,15 +59,16 @@ public: //  Methods
 
 	static inline void trim(vector<string>& vecInput)
 	{
-		for (auto& strInput : vecInput) {
+		for (auto& strInput : vecInput)
+		{
 			rtrim(strInput);
 			ltrim(strInput);
-		}
+		}		
 	}
 
 	static inline void trim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		rtrim(strInput, fnTrim);
 		ltrim(strInput, fnTrim);
@@ -108,7 +109,8 @@ public: //  Methods
 
 	static inline bool equal(const string& strInput1, const string& strInput2, bool bIgnoreCase)
 	{
-		if (bIgnoreCase) {
+		if (bIgnoreCase)
+		{
 			string strInput1Copy = strInput1;
 			toUpper(strInput1Copy);
 
@@ -123,7 +125,8 @@ public: //  Methods
 
 	static inline bool contains(const string& strInput, const string& strValue, bool bIgnoreCase = true)
 	{
-		if (bIgnoreCase) {
+		if (bIgnoreCase)
+		{
 			string strInputCopy = strInput;
 			toUpper(strInputCopy);
 
@@ -136,28 +139,31 @@ public: //  Methods
 		return strInput.find(strValue) != string::npos;
 	}
 
-	static inline bool startsWith(const string& strInput, const string& strValue, bool bIgnoreCase = true)
+	static inline bool startsWith(const string& strInput, const string& strValue, bool bIgnoreCase= true)
 	{
-		if (bIgnoreCase) {
+		if (bIgnoreCase)
+		{
 			string strInputCopy = strInput;
-			toUpper(strInputCopy);
+			toUpper(strInputCopy);			
 
 			string strValueCopy = strValue;
 			toUpper(strValueCopy);
 
 			return strInputCopy.find(strValueCopy) == 0;
-		}
+		}		
 
 		return strInput.find(strValue) == 0;
 	}
 
 	static inline bool endsWith(const string& strInput, const string& strValue, bool bIgnoreCase = true)
 	{
-		if (strValue.size() > strInput.size()) {
+		if (strValue.size() > strInput.size())
+		{
 			return false;
 		}
 
-		if (bIgnoreCase) {
+		if (bIgnoreCase)
+		{
 			string strInputCopy = strInput;
 			toUpper(strInputCopy);
 
@@ -172,19 +178,22 @@ public: //  Methods
 
 	static inline bool startsEndsWith(const string& strInput, const string& strStartValue, const string& strEndValue, bool bIgnoreCase)
 	{
-		if ((strStartValue.size() > strInput.size()) ||
-			(strEndValue.size() > strInput.size())) {
+		if ((strStartValue.size() > strInput.size()) || 
+			(strEndValue.size() > strInput.size()))
+		{
 			return false;
 		}
 
-		if (bIgnoreCase) {
+		if (bIgnoreCase)
+		{
 			string strInputCopy = strInput;
 			toUpper(strInputCopy);
 
 			string strStartValueCopy = strStartValue;
 			toUpper(strStartValueCopy);
 
-			if (strInputCopy.find(strStartValueCopy) != 0) {
+			if (strInputCopy.find(strStartValueCopy) != 0)
+			{
 				return false;
 			}
 
@@ -205,14 +214,16 @@ public: //  Methods
 		string strInputCopy = strInput;
 		trim(strInputCopy);
 
-		size_t iPos = 0;
-		while ((iPos = strInputCopy.find(strDelimter)) != string::npos) {
+		size_t iPos = 0;		
+		while ((iPos = strInputCopy.find(strDelimter)) != string::npos)
+		{
 			string strToken = strInputCopy.substr(0, iPos);
 			vecTokens.push_back(strToken);
 
 			strInputCopy.erase(0, iPos + strDelimter.length());
 
-			if (bFirstOnly) {
+			if (bFirstOnly)
+			{
 				break;
 			}
 		}
@@ -230,23 +241,28 @@ public: //  Methods
 		trim(strInputCopy);
 
 		size_t iPos = 0;
-		while ((iPos = strInputCopy.find(strDelimter)) != string::npos) {
+		while ((iPos = strInputCopy.find(strDelimter)) != string::npos)
+		{
 			string strToken = strInputCopy.substr(0, iPos);
 			vecTokens.push_back(strToken);
 
 			strInputCopy.erase(0, iPos + strDelimter.length());
 
-			if ((int)vecTokens.size() == iTokensCount) {
+			if ((int)vecTokens.size() == iTokensCount)
+			{
 				break;
 			}
 		}
 
-		if (!strInputCopy.empty()) {
-			if ((int)vecTokens.size() == iTokensCount) {
+		if (!strInputCopy.empty())
+		{
+			if ((int)vecTokens.size() == iTokensCount)
+			{
 				vecTokens[vecTokens.size() - 1] += strDelimter;
 				vecTokens[vecTokens.size() - 1] += strInputCopy;
 			}
-			else {
+			else
+			{
 				vecTokens.push_back(strInputCopy);
 			}
 		}
@@ -256,23 +272,26 @@ public: //  Methods
 	{
 		tokenize(strInput, strDelimter, vecTokens);
 
-		if (bRemoveEmpty) {
+		if (bRemoveEmpty)
+		{
 			trim(vecTokens);
 
 			auto isEmptyOrBlank = [](const string& s) {
 				return s.find_first_not_of(" \t") == string::npos;
-				};
+			};
 
 			vecTokens.erase(remove_if(vecTokens.begin(), vecTokens.end(), isEmptyOrBlank), vecTokens.end());
-		}
+		}		
 	}
 
 	static inline void replace(string& strInput, const string& strOldValue, const string& strNewValue)
 	{
 		size_t iIndex = 0;
-		while (true) {
+		while (true) 
+		{
 			iIndex = strInput.find(strOldValue, iIndex);
-			if (iIndex == string::npos) {
+			if (iIndex == string::npos)
+			{
 				break;
 			}
 
@@ -282,7 +301,7 @@ public: //  Methods
 		} // while (true)
 	}
 
-	template<typename... Arguments>
+	template<typename... Arguments> 
 	static inline string format(const char* szInput, Arguments... args)
 	{
 		char szBuffer[1024];
@@ -310,10 +329,10 @@ public: //  Methods
 
 	static inline bool isInteger(const string& strInput)
 	{
-		return !strInput.empty() &&
+		return !strInput.empty() && 
 			find_if(strInput.begin(),
-				strInput.end(),
-				[](unsigned char c) { return !isdigit(c); }) == strInput.end();
+			strInput.end(), 
+			[](unsigned char c) { return !isdigit(c); }) == strInput.end();
 	}
 
 	static inline bool isXInteger(const string& strInput)
@@ -322,6 +341,136 @@ public: //  Methods
 			find_if(strInput.begin(),
 				strInput.end(),
 				[](unsigned char c) { return !isxdigit(c); }) == strInput.end();
+	}
+
+	// Escapes characters that are not allowed as-is in XML text/attribute values.
+	static inline string escapeXml(const string& strInput)
+	{
+		string strOutput;
+		strOutput.reserve(strInput.size());
+
+		for (char ch : strInput)
+		{
+			switch (ch)
+			{
+			case '&':  strOutput += "&amp;";  break;
+			case '<':  strOutput += "&lt;";   break;
+			case '>':  strOutput += "&gt;";   break;
+			case '"':  strOutput += "&quot;"; break;
+			case '\'': strOutput += "&apos;"; break;
+			default:   strOutput += ch;       break;
+			}
+		}
+
+		return strOutput;
+	}
+
+	// Decodes XML character/entity references (&amp; &lt; &gt; &quot; &apos; &#NN; &#xHH;) back to plain text.
+	static inline string unescapeXml(const string& strInput)
+	{
+		if (strInput.find('&') == string::npos)
+		{
+			return strInput;
+		}
+
+		string strOutput;
+		strOutput.reserve(strInput.size());
+
+		size_t iPos = 0;
+		while (iPos < strInput.size())
+		{
+			char ch = strInput[iPos];
+			if (ch == '&')
+			{
+				size_t iSemicolon = strInput.find(';', iPos + 1);
+				if (iSemicolon != string::npos)
+				{
+					string strEntity = strInput.substr(iPos + 1, iSemicolon - iPos - 1);
+
+					if (strEntity == "amp")
+					{
+						strOutput += '&';
+						iPos = iSemicolon + 1;
+						continue;
+					}
+					else if (strEntity == "lt")
+					{
+						strOutput += '<';
+						iPos = iSemicolon + 1;
+						continue;
+					}
+					else if (strEntity == "gt")
+					{
+						strOutput += '>';
+						iPos = iSemicolon + 1;
+						continue;
+					}
+					else if (strEntity == "quot")
+					{
+						strOutput += '"';
+						iPos = iSemicolon + 1;
+						continue;
+					}
+					else if (strEntity == "apos")
+					{
+						strOutput += '\'';
+						iPos = iSemicolon + 1;
+						continue;
+					}
+					else if (!strEntity.empty() && (strEntity[0] == '#'))
+					{
+						try
+						{
+							unsigned long iCode = 0;
+							if ((strEntity.size() > 1) && ((strEntity[1] == 'x') || (strEntity[1] == 'X')))
+							{
+								iCode = stoul(strEntity.substr(2), nullptr, 16);
+							}
+							else
+							{
+								iCode = stoul(strEntity.substr(1), nullptr, 10);
+							}
+
+							// Encode code point as UTF-8
+							if (iCode <= 0x7F)
+							{
+								strOutput += (char)iCode;
+							}
+							else if (iCode <= 0x7FF)
+							{
+								strOutput += (char)(0xC0 | (iCode >> 6));
+								strOutput += (char)(0x80 | (iCode & 0x3F));
+							}
+							else if (iCode <= 0xFFFF)
+							{
+								strOutput += (char)(0xE0 | (iCode >> 12));
+								strOutput += (char)(0x80 | ((iCode >> 6) & 0x3F));
+								strOutput += (char)(0x80 | (iCode & 0x3F));
+							}
+							else
+							{
+								strOutput += (char)(0xF0 | (iCode >> 18));
+								strOutput += (char)(0x80 | ((iCode >> 12) & 0x3F));
+								strOutput += (char)(0x80 | ((iCode >> 6) & 0x3F));
+								strOutput += (char)(0x80 | (iCode & 0x3F));
+							}
+
+							iPos = iSemicolon + 1;
+							continue;
+						}
+						catch (...)
+						{
+							// Not a valid numeric reference - fall through and copy '&' as-is
+						}
+					}
+				} // if (iSemicolon != string::npos)
+			} // if (ch == '&')
+
+			strOutput += ch;
+			iPos++;
+		} // while (iPos < strInput.size())
+
+		return strOutput;
 	}
 };
 
@@ -334,39 +483,12 @@ static wstring utf8_to_wstring(const char* szInput)
 }
 
 // ************************************************************************************************
-#ifdef _WINDOWS
 static string wstring_to_utf8(const wchar_t* szInput)
 {
-	if ((szInput == nullptr) || (*szInput == L'\0')) {
-		return std::string();
-	}
+	assert(szInput != nullptr);
 
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, szInput, -1,
-		NULL, 0, NULL, NULL);
-	if (size_needed <= 0) {
-		return std::string();
-	}
-
-	std::string strTo(size_needed - 1, 0);
-	WideCharToMultiByte(CP_UTF8, 0, szInput, -1,
-		&strTo[0], size_needed, NULL, NULL);
-	return strTo;
+	return wstring_convert<codecvt_utf8_utf16<wchar_t>>().to_bytes(szInput);
 }
-#else
-static string wstring_to_utf8(const wchar_t* szInput)
-{
-	if ((szInput == nullptr) || (*szInput == L'\0')) {
-		return std::string();
-	}
-
-	try {
-		return wstring_convert<codecvt_utf8_utf16<wchar_t>>().to_bytes(szInput);
-	}
-	catch (const std::range_error&) {
-		return std::string();
-	}
-}
-#endif
 
 // ************************************************************************************************
 typedef string u8string;
