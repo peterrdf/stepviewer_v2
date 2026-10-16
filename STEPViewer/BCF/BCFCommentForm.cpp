@@ -445,26 +445,7 @@ void CBCFCommentForm::ReloadColoring()
 
 CString CBCFCommentForm::GetComponentText(BCFComponent& component) const
 {
-	CString text;
-	const char* ifcGuid = component.GetIfcGuid();
-	if (ifcGuid && *ifcGuid && m_pane->GetDocument()) {
-		const std::wstring displayName =
-			CBCFViewPointMgr(*m_pane->GetDocument()).GetIfcComponentDisplayName(ifcGuid);
-		text = displayName.c_str();
-	}
-	if (text.IsEmpty()) {
-		text = FromUTF8(ifcGuid);
-	}
-	if (text.IsEmpty()) {
-		text = FromUTF8(component.GetAuthoringToolId());
-	}
-	if (text.IsEmpty()) {
-		text = FromUTF8(component.GetOriginatingSystem());
-	}
-	if (text.IsEmpty()) {
-		text = L"(Unidentified component)";
-	}
-	return text;
+	return CBCFViewPointMgr(*m_pane->GetDocument()).GetComponentDisplayName(component).c_str();
 }
 
 void CBCFCommentForm::OnVisibleFromSelection()

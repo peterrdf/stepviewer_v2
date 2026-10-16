@@ -20,7 +20,14 @@ public:
 	void SetVisibilityFromComment(BCFComment& comment);
 	bool SaveCurrentVisibilityToComment(BCFComment& comment);
 	bool SaveSelectedAsVisibleToComment(BCFComment& comment);
-	std::wstring GetIfcComponentDisplayName(const char* ifcGuid);
+	std::wstring GetComponentDisplayName(BCFComponent& comp);
+
+private:
+	struct InstanceIDs
+	{
+		const char* ifcGuid = nullptr;
+		std::string authoringToolId;
+	};
 
 private:
 	void ApplySelectionToViewer(BCFViewPoint* vp);
@@ -35,11 +42,13 @@ private:
 	CMySTEPViewerView* GetViewerView();
 
 	_instance* SearchComponent(BCFComponent& comp);
-	_instance* SearchIfcComponent(const char* ifcGuid);
+	_instance* SearchIfcGuid(const char* ifcGuid);
+	_instance* SearchAuthoringToolId(const char* authoringToolId);
+	void GetExpressIdPath(std::string& path, _instance* inst);
 
 	bool IsSpaceBoundary(SdaiInstance /*inst*/) { return false; /*TODO*/ }
 
-	const char* GetGlobalId(_instance* inst);
+	InstanceIDs GetInstanceIDs(_instance* inst);
 
 	COLORREF GetColorRef(const char* strcolor);
 	std::string GetColorStr(COLORREF clr);

@@ -4,14 +4,18 @@
 #include "STEPViewerView.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_ifc_model_structure.h"
+#include "_ap242_instance.h"
+#include "_ap242_model.h"
+#include "_ap242_model_structure.h"
 #include "_oglUtils.h"
 
 #include <unordered_set>
 
-#define IFC_ROOT "IfcRoot"
 #define IFC_SPACE "IfcSpace"
 #define IFC_OPENING "IfcOpeningElement"
-#define GLOBAL_ID "GlobalId"
+
+#define EXPRESS_ID_PATH_PREFIX "ExpressIdPath:"
 
 CBCFViewPointMgr::CBCFViewPointMgr(CMySTEPViewerDoc& document)
 	: m_document(document)
@@ -176,8 +180,10 @@ bool CBCFViewPointMgr::SaveSelectedAsVisibleToComment(BCFComment& comment)
 		}
 	}
 	for (_instance* instance : GetViewerDoc().getSelectedInstances()) {
-		if (const char* globalId = GetGlobalId(instance)) {
-			ok = viewPoint->AddException(globalId) && ok;
+		const InstanceIDs ids = GetInstanceIDs(instance);
+		if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+			ok = viewPoint->AddException(
+				ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
 		}
 	}
 	return ok;
@@ -205,58 +211,129 @@ _instance* CBCFViewPointMgr::SearchComponent(BCFComponent& comp)
 {
 	auto ifcGuid = comp.GetIfcGuid();
 	if (ifcGuid && *ifcGuid) {
-		if (auto inst = SearchIfcComponent(ifcGuid)) {
-			return inst;
-		}
+		return SearchIfcGuid(ifcGuid);
 	}
 
-	auto appId = comp.GetAuthoringToolId();
-	if (appId && *appId) {
-		//...
+	auto authoringToolId = comp.GetAuthoringToolId();
+	if (authoringToolId && *authoringToolId) {
+		return SearchAuthoringToolId(authoringToolId);
 	}
 
 	return NULL;
 }
 
-_instance* CBCFViewPointMgr::SearchIfcComponent(const char* ifcGuid)
+_instance* CBCFViewPointMgr::SearchIfcGuid(const char* ifcGuid)
 {
 	for (auto model : GetViewerDoc().getModels()) {
-		if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-			if (auto sdaiModel = ifcModel->getSdaiModel()) {
-				if (auto rootEntity = sdaiGetEntity(sdaiModel, IFC_ROOT)) {
-					if (auto globalIdAttr = sdaiGetAttrDefinition(rootEntity, GLOBAL_ID)) {
-
-						for (auto inst : ifcModel->getInstances()) {
-							if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
-								if (auto sdaiInst = apInst->getSdaiInstance()) {
-
-									const char* globalId = NULL;
-									if (sdaiGetAttr(sdaiInst, globalIdAttr, sdaiSTRING, &globalId) && globalId) {
-
-										if (0 == strcmp(ifcGuid, globalId)) {
-											return inst;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+		if (!dynamic_cast<_ifc_model*>(model)) {
+			continue;
+		}
+		for (auto instance : model->getInstances()) {
+			auto ifcInstance = dynamic_cast<_ifc_instance*>(instance);
+			const char* globalId =
+				ifcInstance ? ifcInstance->getGlobalId() : nullptr;
+			if (globalId && strcmp(ifcGuid, globalId) == 0) {
+				return instance;
 			}
 		}
 	}
 	return NULL;
 }
 
-std::wstring CBCFViewPointMgr::GetIfcComponentDisplayName(const char* ifcGuid)
+_instance* CBCFViewPointMgr::SearchAuthoringToolId(
+	const char* authoringToolId)
 {
-	if (!ifcGuid || !*ifcGuid) {
-		return {};
+	if (!authoringToolId) {
+		return nullptr;
 	}
-	auto instance = dynamic_cast<_ap_instance*>(SearchIfcComponent(ifcGuid));
-	return instance
-		? _ap_geometry::getDisplayString(instance->getSdaiInstance(), m_document.getFullDisplayName())
-		: std::wstring();
+
+	const size_t prefixLength = strlen(EXPRESS_ID_PATH_PREFIX);
+	if (strncmp(authoringToolId, EXPRESS_ID_PATH_PREFIX, prefixLength) != 0) {
+		return nullptr;
+	}
+
+	const char* searchPath = authoringToolId + prefixLength;
+
+	for (auto model : GetViewerDoc().getModels()) {
+		for (auto instance : model->getInstances()) {
+			std::string instPath;
+			GetExpressIdPath(instPath, instance);
+			if (instPath == searchPath) {
+				return instance;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+template <class TNode> void GetInstances(std::vector<_ap_instance*>& instances, std::vector<TNode*>& nodes)
+{
+	for (auto node : nodes) {
+		if (auto inst = node->getInstance()) {
+			instances.push_back(inst);
+        }
+	}
+}
+
+void CBCFViewPointMgr::GetExpressIdPath(std::string& path, _instance* inst)
+{
+	std::vector<_ap_instance*> instance_path;
+
+	auto model = GetViewerDoc().getOwlModelByInstance(inst->getOwlModel());
+
+	if (auto ap_model = dynamic_cast<_ap242_model*>(model)) {
+		if (auto structure = ap_model->getModelStructure()) {
+			if (auto ap_instance = dynamic_cast<_ap242_instance*>(inst)) {
+
+				std::vector<_ap242_node*> nodes;
+				structure->getInstancePath(ap_instance, nodes);
+
+				GetInstances(instance_path, nodes);
+			}
+		}
+	}
+	else if (auto ifc_model = dynamic_cast<_ifc_model*>(model)) {
+		if (auto structure = ifc_model->getModelStructure()) {
+			if (auto ifc_instance = dynamic_cast<_ifc_instance*>(inst)) {
+
+				std::vector<_ifc_node*> nodes;
+				structure->getInstancePath(ifc_instance->getSdaiInstance(), nodes);
+
+				GetInstances(instance_path, nodes);
+			}
+		}
+	}
+
+	for (auto instance : instance_path) {
+		if (instance) {
+			if (!path.empty()) {
+				path.push_back('.');
+			}
+			path += std::to_string(instance->getExpressID());
+		}
+	}
+}
+
+std::wstring CBCFViewPointMgr::GetComponentDisplayName(BCFComponent& comp)
+{
+	auto instance = dynamic_cast<_ap_instance*>(SearchComponent(comp));
+
+	if (instance) {
+		return _ap_geometry::getDisplayString(instance->getSdaiInstance(), true);
+	}
+	else {
+        auto ifcGuid = comp.GetIfcGuid();
+		if (ifcGuid && *ifcGuid) {
+			return (const wchar_t*)FromUTF8(ifcGuid);
+		}
+		auto authoringToolId = comp.GetAuthoringToolId();
+		if (authoringToolId && *authoringToolId) {
+			return (const wchar_t*)FromUTF8(authoringToolId);
+		}
+	}
+
+	return L"(Unidentified component)";
 }
 
 bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
@@ -272,25 +349,34 @@ bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 	}
 
 	for (auto inst : GetViewerDoc().getSelectedInstances()) {
-		if (auto globalId = GetGlobalId(inst)) {
-			ok = vp.AddSelection(globalId) && ok;
+		const InstanceIDs ids = GetInstanceIDs(inst);
+		if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+			ok = vp.AddSelection(
+				ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
 		}
 	}
 	
 	return ok;
 }
 
-const char* CBCFViewPointMgr::GetGlobalId(_instance* inst)
+CBCFViewPointMgr::InstanceIDs CBCFViewPointMgr::GetInstanceIDs(
+	_instance* inst)
 {
+	InstanceIDs ids;
+
 	if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
-		if (auto sdaiInst = ifcInst->getSdaiInstance()) {
-			const char* globalId = NULL;
-			if (sdaiGetAttrBN(sdaiInst, GLOBAL_ID, sdaiSTRING, &globalId) && globalId && *globalId) {
-				return globalId;
-			}
+		ids.ifcGuid = ifcInst->getGlobalId();
+	}
+
+    if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
+		std::string idPath;
+		GetExpressIdPath(idPath, apInst);
+		if (!idPath.empty()) {
+			ids.authoringToolId = EXPRESS_ID_PATH_PREFIX + idPath;
 		}
 	}
-	return NULL;
+
+	return ids;
 }
 
 void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint* vp)
@@ -373,8 +459,10 @@ bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 		if (auto bcfcoloring = vp.AddColoring(clr.c_str())) {
 
 			for (auto inst : coloring.second) {
-				if (auto globalId = GetGlobalId(inst)) {
-					ok = bcfcoloring->AddComponent(globalId) && ok;
+				const InstanceIDs ids = GetInstanceIDs(inst);
+				if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+					ok = bcfcoloring->AddComponent(
+						ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
 				}
 			}
 		}
@@ -535,8 +623,8 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 			SdaiEntity space = NULL;
 			SdaiEntity opening = NULL;
-			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+			if (auto apModel = dynamic_cast<_ap_model*>(model)) {
+				if (auto sdaiModel = apModel->getSdaiModel()) {
 					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
 					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
 				}
@@ -552,6 +640,7 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 				allInstances[ind]++;
 
+                //calculate IFC Space, Opening and Space Boundary instances
 				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
 					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
 						if (sdaiIsInstanceOf(sdaiInst, space)) {
@@ -590,14 +679,10 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 		if (model) {
 			SdaiEntity space = NULL;
 			SdaiEntity opening = NULL;
-			SdaiAttr attrGlobalId = NULL;
-			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+			if (auto apModel = dynamic_cast<_ap_model*>(model)) {
+				if (auto sdaiModel = apModel->getSdaiModel()) {
 					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
 					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
-
-					if (auto root = sdaiGetEntity(sdaiModel, IFC_ROOT))
-						attrGlobalId = sdaiGetAttrDefinition(root, GLOBAL_ID);
 				}
 			}
 
@@ -609,8 +694,9 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 				bool visible = vp.GetDefaultVisibility();
 
-				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
-					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+				if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
+
+					if (auto sdaiInst = apInst->getSdaiInstance()) {
 						if (sdaiIsInstanceOf(sdaiInst, space)) {
 							visible = vp.GetSpaceVisible();
 						}
@@ -622,9 +708,11 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 						}
 
 						if (visible != inst->getEnable()) {
-							const char* globalId = NULL;
-							if (sdaiGetAttr(sdaiInst, attrGlobalId, sdaiSTRING, &globalId) && globalId && *globalId)
-								ok = vp.AddException(globalId) && ok;
+							const InstanceIDs ids = GetInstanceIDs(inst);
+							if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+								ok = vp.AddException(
+									ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
+							}
 						}
 					}
 				}
