@@ -492,6 +492,28 @@ namespace _ap2gltf
 		*getOutputStream() << DOULE_QUOT_MARK;
 	}
 
+	void _exporter::writeNullableStringProperty(const string& strName, const string& strValue)
+	{
+		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
+
+		*getOutputStream() << getNewLine();
+		writeIndent();
+
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << escapeJsonString(strName).c_str();
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+		if (strValue != "null") {
+			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << escapeJsonString(strValue).c_str();
+			*getOutputStream() << DOULE_QUOT_MARK;
+		}
+		else {
+			*getOutputStream() << strValue.c_str();
+		}
+	}
+
 	void _exporter::writeIntProperty(const string& strName, int iValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
@@ -1905,10 +1927,12 @@ namespace _ap2gltf
 		*getOutputStream() << COMMA;
 		writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
 #endif
-		*getOutputStream() << COMMA;
-		*getOutputStream() << getNewLine();
-		writeIndent();
-		*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		if (!vecChildren.empty()) {
+			*getOutputStream() << COMMA;
+			*getOutputStream() << getNewLine();
+			writeIndent();
+			*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		}
 		indent()--;
 		writeEndObjectTag();
 		indent()--;
@@ -3288,7 +3312,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", "null");
+			writeNullableStringProperty("parent", "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3392,7 +3416,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", wstring_to_utf8(strParentGlobalId.c_str()));
+			writeNullableStringProperty("parent", wstring_to_utf8(strParentGlobalId.c_str()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("ObjectType", strObjectType);
 			*getOutputStream() << COMMA;
@@ -3567,7 +3591,7 @@ namespace _ap2gltf
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;
-				writeStringProperty("parent", "null");
+				writeNullableStringProperty("parent", "null");
 				*getOutputStream() << COMMA;
 				// propertySetIds
 				{
@@ -3641,7 +3665,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3700,7 +3724,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3759,7 +3783,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3816,7 +3840,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3877,7 +3901,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			indent()--;
 
 			writeEndObjectTag();
@@ -3908,7 +3932,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{
@@ -3967,7 +3991,7 @@ namespace _ap2gltf
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			writeNullableStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
 			// propertySetIds
 			{

@@ -10,6 +10,7 @@ using namespace std;
 // ************************************************************************************************
 _model::_model(_log* pLog)
 	: _log_client()
+	, _progress_client()
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
@@ -23,6 +24,8 @@ _model::_model(_log* pLog)
 	, m_fZmin(-1.f)
 	, m_fZmax(1.f)
 	, m_fBoundingSphereDiameter(2.f)
+	, m_vecBBMin({-1.f, -1.f, -1.f})
+	, m_vecBBMax({1.f, 1.f, 1.f })
 	, m_vecGeometries()
 	, m_vecInstances()
 	, m_mapID2Instance()
@@ -41,6 +44,8 @@ _model::_model(_log* pLog)
 	// World
 	m_dOriginalBoundingSphereDiameter = 2.;
 	m_fBoundingSphereDiameter = 2.f;
+	m_vecBBMin = { -1.f, -1.f, -1.f };
+	m_vecBBMax = { 1.f, 1.f, 1.f };
 
 	if (m_pWorld == nullptr) {
 		// Min/Max
@@ -81,8 +86,7 @@ _model::_model(_log* pLog)
 			(m_fYmax == -FLT_MAX) ||
 			(m_fZmin == FLT_MAX) ||
 			(m_fZmax == -FLT_MAX)) {
-			// TODO: new status bar for messages
-
+			logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 			return;
 		}
 
@@ -90,6 +94,9 @@ _model::_model(_log* pLog)
 		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		m_vecBBMin = { m_fXmin, m_fYmin, m_fZmin };
+		m_vecBBMax = { m_fXmax, m_fYmax, m_fZmax };
 
 		m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
@@ -194,8 +201,7 @@ _model::_model(_log* pLog)
 		(m_fYmax == -FLT_MAX) ||
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX)) {
-		// TODO: new status bar for messages
-
+		logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 		return;
 	}
 
@@ -203,6 +209,9 @@ _model::_model(_log* pLog)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_vecBBMin = { m_fXmin, m_fYmin, m_fZmin };
+	m_vecBBMax = { m_fXmax, m_fYmax, m_fZmax };
 
 #ifdef _WINDOWS
 	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
@@ -686,15 +695,18 @@ void _model::setDimensions(_model* pSource)
 _controller::_controller()
 	: _log_client()
 	, m_pLogHub(new _log_hub())
+	, m_pProgressHub(new _progress_hub())
 	, m_vecModels()
 	, m_vecDecorationModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
+	, m_bShowProgressDialog(true)
 	, m_bUpdatingModel(false)
 	, m_vecSelectedInstances()
 	, m_pTargetInstance(nullptr)
 {
 	setLog(m_pLogHub);
+	setProgress(m_pProgressHub);
 }
 
 /*virtual*/ _controller::~_controller()
@@ -702,6 +714,7 @@ _controller::_controller()
 	clean();
 
 	delete m_pLogHub;
+	delete m_pProgressHub;
 	delete m_pSettingsStorage;
 }
 
@@ -747,13 +760,83 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModel(_model* model)
+void _controller::addModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelLoaded();
+	}
+
+	m_vecModels.push_back(pModel);
+	logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+void _controller::addModelDisabled(_model* model)
 {
 	if (model) {
 		model->setEnable(false);
 		m_vecModels.push_back(model);
 	}
 }
+
+bool _controller::removeModelByInstance(OwlModel owlModel)
+{
+	assert(owlModel != 0);
+
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel) {
+		return pModel->getOwlModel() == owlModel;
+		});
+
+	if (itModel == m_vecModels.end()) {
+		return false;
+	}
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelDeleted();
+	}
+
+	m_vecModels.erase(itModel);
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelDeleted();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelDeleted();
+	}
+
+	m_bUpdatingModel = false;
+
+	return true;
+}
+
 
 void _controller::enableModels(const std::vector<std::wstring>* enableModelsByPath)
 {
@@ -962,7 +1045,7 @@ float _controller::getWorldBoundingSphereDiameter() const
 	return fWorldBoundingSphereDiameter;
 }
 
-_model* _controller::getOwlModelByInstance(OwlModel owlModel) const
+_model* _controller::getModelByOwlInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
@@ -1038,7 +1121,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 		return;
 	}
 
-	auto pModel = getOwlModelByInstance((*setInstances.begin())->getOwlModel());
+	auto pModel = getModelByOwlInstance((*setInstances.begin())->getOwlModel());
 	if (pModel == nullptr) {
 		assert(false);
 
@@ -1323,6 +1406,22 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 	m_pTargetInstance = nullptr;
 }
 
+/*virtual*/ void _controller::loadSettings()
+{
+	{
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
+		strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+		string strValue = getSettingsStorage()->getSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_bShowProgressDialog = strValue == "TRUE";
+		}
+	}
+}
+
 _model* _controller::getModel(bool assertOnlyOneModel) const
 {
 	UNREFERENCED_PARAMETER(assertOnlyOneModel);
@@ -1346,6 +1445,20 @@ _model* _controller::getModel(const wchar_t* pathName)
 	return nullptr;
 }
 
+
+void _controller::setShowProgressDialog(bool bNewValue)
+{
+	m_bShowProgressDialog = bNewValue;
+
+#ifdef _WINDOWS
+	string strSettingName(typeid(this).raw_name());
+#else
+	string strSettingName(typeid(this).name());
+#endif
+	strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+
+	getSettingsStorage()->setSetting(strSettingName, m_bShowProgressDialog ? "TRUE" : "FALSE");
+}
 
 // ************************************************************************************************
 _decoration::_decoration()

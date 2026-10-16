@@ -81,6 +81,7 @@ private: // Fields
     bool m_bLoadInstancesOnDemand;
 
     // Entities
+    SdaiEntity m_sdaiObjectEntity;
     SdaiEntity m_sdaiSpaceEntity;
     SdaiEntity m_sdaiOpeningElementEntity;
     SdaiEntity m_sdaiDistributionElementEntity;
@@ -112,6 +113,9 @@ public: // Methods
     _ifc_model(_log* pLog, bool bUseWorldCoordinates = false, bool bLoadInstancesOnDemand = false);
     virtual ~_ifc_model();
 
+	void loadInstances(bool bClean = true);
+    void deleteInstances();
+
     OwlInstance createMapConversionTransformation();
 
 protected: // Methods
@@ -124,6 +128,7 @@ protected: // Methods
 
     // _ap_model
     virtual void attachModelCore() override;
+    virtual void addGeometry(_geometry* pGeometry) override;
 
 protected: // Methods
 
@@ -131,6 +136,8 @@ protected: // Methods
     virtual _ifc_instance* createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 
 private: // Methods
+
+	int calculateGeometriesCount();
 
     void getObjectsReferencedState();
     void getObjectsReferencedStateGroups();

@@ -4,6 +4,7 @@
 #include "_oglScene.h"
 #include "_texture.h"
 #include "_log_hub.h"
+#include "_progress_hub.h"
 #include "_settings_storage.h"
 
 #include <cfloat>
@@ -61,7 +62,9 @@ class _controller;
 static int64_t s_iInstanceID = 1;
 
 // ************************************************************************************************
-class _model : public _log_client
+class _model 
+	: public _log_client
+	, public _progress_client
 {
 	friend class _controller;
 
@@ -85,6 +88,10 @@ protected: // Fields
 	float m_fZmin;
 	float m_fZmax;
 	float m_fBoundingSphereDiameter;
+
+	// BB
+	vector<float> m_vecBBMin;
+	vector<float> m_vecBBMax;
 
 private: // Fields
 
@@ -189,6 +196,9 @@ public: // Methods
 	virtual void onModelLoaded() {}
 	virtual void onModelUpdated() {}
 	virtual void postModelLoaded() {}
+	virtual void preModelDeleted() {}
+	virtual void onModelDeleted() {}
+	virtual void postModelDeleted() {}
 	virtual void onWorldDimensionsChanged() {}
 	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}
 	virtual void onInstanceSelected(_view* /*pSender*/) {}
@@ -215,16 +225,22 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _controller : public _log_client
+class _controller 
+	: public _log_client
+	, public _progress_client
 {
 
 private: // Fields
 
 	_log_hub* m_pLogHub;
+	_progress_hub* m_pProgressHub;
 	vector<_model*> m_vecModels;
 	vector<_model*> m_vecDecorationModels;
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;
+
+	// Progress
+	bool m_bShowProgressDialog;
 
 protected:
 
@@ -244,9 +260,10 @@ public: // Methods
 
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);
-	void addModel(_model* model);//it will not update views, use enableModels() after adding all models
+	void addModel(_model* model);
+	void addModelDisabled(_model* model);//it will not update views, use enableModels() after adding all models
 	void removeModels(const std::set<const _model*>& models, bool enableRemaining);
-
+	bool removeModelByInstance(OwlModel owlModel);
 	void enableModels (const std::vector<std::wstring>* enableModelsByPath = nullptr); //enable all if NULL
 
 	virtual void loadDecorationModels() {}
@@ -258,7 +275,7 @@ public: // Methods
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float getWorldBoundingSphereDiameter() const;
 
-	_model* getOwlModelByInstance(OwlModel owlModel) const;	
+	_model* getModelByOwlInstance(OwlModel owlModel) const;
 	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events
@@ -316,15 +333,21 @@ protected: // Methods
     virtual void clean();
 	virtual void cleanSelection();
 
+	virtual void loadSettings();
+
 public: // Properties
 
 	_log_hub* getLogHub() const { return m_pLogHub; }
 	_model* getModel(bool assertOnlyOneModel = true) const; // kept for backward compatibility
 	_model* getModel(const wchar_t* pathName);
 	_model* getFirstModel()  const { return getModel(false); };
+	_progress_hub* getProgressHub() const { return m_pProgressHub; }
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
+
+	bool getShowProgressDialog() const { return m_bShowProgressDialog; }
+	void setShowProgressDialog(bool bNewValue);
 };
 
 // ************************************************************************************************

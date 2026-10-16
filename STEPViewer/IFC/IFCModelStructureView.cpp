@@ -246,7 +246,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 
 	_ptr<_ifc_instance> ifcInstance(pInstance);
 
-	auto pModel = getController()->getOwlModelByInstance(ifcInstance->getOwlModel());
+	auto pModel = getController()->getModelByOwlInstance(ifcInstance->getOwlModel());
 	ASSERT(pModel != nullptr);
 
 	auto pModelData = Model_GetData(pModel);
@@ -274,7 +274,7 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	if (!m_vecSelectedInstances.empty()) {
 		_ptr<_ifc_instance> ifcInstance(m_vecSelectedInstances.back());
 
-		auto pModel = pController->getOwlModelByInstance(ifcInstance->getOwlModel());
+		auto pModel = pController->getModelByOwlInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
@@ -1505,7 +1505,7 @@ void CIFCModelStructureView::Tree_Select(bool bEnable)
 	for (auto pInstance : m_vecSelectedInstances) {
 		_ptr<_ifc_instance> ifcInstance(pInstance);
 
-		auto pModel = getController()->getOwlModelByInstance(ifcInstance->getOwlModel());
+		auto pModel = getController()->getModelByOwlInstance(ifcInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
@@ -1535,7 +1535,7 @@ void CIFCModelStructureView::Tree_Select(_ifc_instance* pInstance, ITEMS& mapIte
 void CIFCModelStructureView::Tree_Show(const set<_ifc_instance*>& setInstances)
 {
 	for (auto pInstance : setInstances) {
-		auto pModel = getController()->getOwlModelByInstance(pInstance->getOwlModel());
+		auto pModel = getController()->getModelByOwlInstance(pInstance->getOwlModel());
 		ASSERT(pModel != nullptr);
 
 		auto pModelData = Model_GetData(pModel);
@@ -1810,5 +1810,7 @@ void CIFCModelStructureView::ResetView()
 	}
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** CIFCModelStructureView::ResetView(): %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+	getController()->getLog()->logWrite(enumLogEvent::info,
+		_string::format("Loading Model Structure View: %lld [ms]",
+			std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()));
 }

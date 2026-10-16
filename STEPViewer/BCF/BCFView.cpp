@@ -633,7 +633,7 @@ CString CBCFView::GetBimFilePath(BCFBimFile& file)
 			false);
 
 		if (model) {
-			m_stepViewerDoc->addModel(model);
+			m_stepViewerDoc->addModelDisabled(model);
 		}
 
 	}

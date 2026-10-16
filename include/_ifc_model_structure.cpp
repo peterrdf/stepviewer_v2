@@ -275,6 +275,10 @@ void _ifc_model_structure::loadGroupsNode()
 				sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, i, sdaiINSTANCE, &sdaiRelatedObject);
 
 				auto pChildGeometry = m_pModel->getGeometryByInstance(sdaiRelatedObject);
+				if (pChildGeometry == nullptr) {
+					continue;
+				}
+
 				_ptr<_ifc_geometry> ifcChildGeometry(pChildGeometry);
 				assert(!ifcChildGeometry->getIsMappedItem());
 				assert(ifcChildGeometry->getInstances().size() == 1);

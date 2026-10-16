@@ -6,15 +6,6 @@
 #include <string>
 
 // ************************************************************************************************
-#ifndef STDCALL
-#ifdef _WINDOWS
-#define STDCALL __stdcall
-#else
-#define STDCALL /*nothing*/
-#endif // _WINDOWS
-#endif // STDCALL
-
-// ************************************************************************************************
 enum class enumLogEvent : int
 {
 	info = 0,
@@ -23,7 +14,11 @@ enum class enumLogEvent : int
 };
 
 // ************************************************************************************************
-typedef void(STDCALL* _log_callback)(enumLogEvent enLogEvent, const char* szEvent);
+#ifdef _WINDOWS
+typedef void(__stdcall* _log_callback)(enumLogEvent enLogEvent, const char* szEvent);
+#else
+typedef void(*_log_callback)(enumLogEvent enLogEvent, const char* szEvent);
+#endif
 
 // ************************************************************************************************
 class _log
@@ -64,8 +59,7 @@ public: // Methods
 
 	virtual void logWrite(enumLogEvent enLogEvent, const std::string& strEvent)
 	{
-		if (m_pLogCallback != nullptr)
-		{
+		if (m_pLogCallback != nullptr) {
 			(*m_pLogCallback)(enLogEvent, strEvent.c_str());
 		}
 	}
@@ -81,7 +75,7 @@ private: // Members
 
 public: // Methods
 
-	_log_client() 
+	_log_client()
 		: m_pLog(nullptr)
 	{}
 
@@ -91,57 +85,58 @@ public: // Methods
 	void setLog(_log* pLog) { m_pLog = pLog; }
 	_log* getLog() { return m_pLog; }
 
-	void logInfo(const std::string& strEvent) 
-	{ 
-		if (m_pLog != nullptr)
-		{
-			m_pLog->logWrite(enumLogEvent::info, _time::addDateTimeStamp(strEvent));
+	void logWrite(enumLogEvent level, const std::string& strEvent)
+	{
+		if (m_pLog != nullptr) {
+			m_pLog->logWrite(level, strEvent);
+		}
+	}
+
+	void logInfo(const std::string& strEvent)
+	{
+		if (m_pLog != nullptr) {
+			m_pLog->logWrite(enumLogEvent::info, strEvent);
 		}
 	}
 
 	template<typename... Arguments>
 	void logInfof(const std::string& strEvent, Arguments... args)
 	{
-		if (m_pLog != nullptr)
-		{
+		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::info, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::info, strFormattedEvent);
 		}
 	}
 
 	void logWarn(const std::string& strEvent)
 	{
-		if (m_pLog != nullptr)
-		{
-			m_pLog->logWrite(enumLogEvent::warning, _time::addDateTimeStamp(strEvent));
+		if (m_pLog != nullptr) {
+			m_pLog->logWrite(enumLogEvent::warning, strEvent);
 		}
 	}
 
 	template<typename... Arguments>
 	void logWarnf(const std::string& strEvent, Arguments... args)
 	{
-		if (m_pLog != nullptr)
-		{
+		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::warning, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::warning, strFormattedEvent);
 		}
 	}
 
 	void logErr(const std::string& strEvent)
 	{
-		if (m_pLog != nullptr)
-		{
-			m_pLog->logWrite(enumLogEvent::error, _time::addDateTimeStamp(strEvent));
+		if (m_pLog != nullptr) {
+			m_pLog->logWrite(enumLogEvent::error, strEvent);
 		}
 	}
 
 	template<typename... Arguments>
 	void logErrf(const std::string& strEvent, Arguments... args)
 	{
-		if (m_pLog != nullptr)
-		{
+		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::error, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::error, strFormattedEvent);
 		}
 	}
 };

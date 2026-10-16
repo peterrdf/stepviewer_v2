@@ -280,7 +280,7 @@ void CBCFViewPointMgr::GetExpressIdPath(std::string& path, _instance* inst)
 {
 	std::vector<_ap_instance*> instance_path;
 
-	auto model = GetViewerDoc().getOwlModelByInstance(inst->getOwlModel());
+	auto model = GetViewerDoc().getModelByOwlInstance(inst->getOwlModel());
 
 	if (auto ap_model = dynamic_cast<_ap242_model*>(model)) {
 		if (auto structure = ap_model->getModelStructure()) {

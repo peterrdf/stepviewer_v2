@@ -15,6 +15,8 @@
 
 #include "IDSCheckerDialog.h"
 
+#include "ProgressDialog.h"
+
 #include "_ap_model_factory.h"
 #ifdef _GLTF_SUPPORT
 #include "_ap2gltf.h"
@@ -118,7 +120,7 @@ namespace
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
 	else if ((strExtension == ".bin") || (strExtension == ".ttl")) {
-		auto pModel = getOwlModelByInstance(pAPInstance->getOwlModel());
+		auto pModel = getModelByOwlInstance(pAPInstance->getOwlModel());
 		_ptr<_ifc_model> ifcModel(pModel, false);
 		if (ifcModel) {
 			OwlInstance owlMapConversionTransformationInstance = ifcModel->createMapConversionTransformation();
@@ -138,6 +140,31 @@ namespace
 	pAPInstance->saveInstance((LPCWSTR)dlgFile.GetPathName());
 #endif
 }
+
+// ************************************************************************************************
+class CLoadTask : public CTask {
+
+private: // Fields
+
+	const function<void(void)>& m_funcRun;
+
+public: // Methods
+
+	CLoadTask(const function<void(void)>& funcRun)
+		: CTask()
+		, m_funcRun(funcRun)
+	{
+	}
+
+	virtual ~CLoadTask()
+	{
+	}
+
+	virtual void Run() override
+	{
+		m_funcRun();
+	}
+};
 
 class UpdateTitleGuard
 {
@@ -167,25 +194,45 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		string strExtension = pathModel.extension().string();
 		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-		if (strExtension == ".ifczip") {
-			vecModels = _ap_model_factory::loadIFCZIP(this, (LPCWSTR)vecPaths[0]);
-		}
-		else if (strExtension == ".stpz") {
-			vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
+		function<void(void)> funcLoadSTEPModel = [this, &strExtension, &vecModels, &vecPaths](void) {
+			if (strExtension == ".ifczip") {
+				vecModels = _ap_model_factory::loadIFCZip(this, (LPCWSTR)vecPaths[0]);
+			}
+			else if (strExtension == ".stpz") {
+				vecModels = _ap_model_factory::loadSTEPGZip(this, (LPCWSTR)vecPaths[0]);
+			}
+			else {
+				auto pModel = _ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false);
+				if (pModel) {
+					vecModels.push_back(pModel);
+				}
+			}			
+			};
+
+		CLoadTask loadTask(funcLoadSTEPModel);
+#ifdef _PROGRESS_UI_SUPPORT
+		if (getShowProgressDialog()) {
+			CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+			getLogHub()->addLogView(&progressDlg);
+			getProgressHub()->addProgressView(&progressDlg);
+
+			progressDlg.DoModal();
+
+			getLogHub()->removeLogView(&progressDlg);
+			getProgressHub()->removeProgressView(&progressDlg);
 		}
 		else {
-			auto pModel = _ap_model_factory::load(this, (LPCWSTR)vecPaths[0], false, nullptr, false);
-			if (pModel) {
-				vecModels.push_back(pModel);
-			}
+#endif
+			loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
 		}
-
+#endif
 		if (!vecModels.empty()) {
 			setModels(vecModels);
+			// MRU
+			AfxGetApp()->AddToRecentFileList(vecPaths[0]);
 		}
 
-		// MRU
-		AfxGetApp()->AddToRecentFileList(vecPaths[0]);
 		return;
 	}
 
@@ -205,11 +252,31 @@ void CMySTEPViewerDoc::OpenModels(const vector<CString>& vecPaths)
 		return;
 	}
 
-	for (auto strPath : vecIfcPaths) {
-		auto pModel = _ap_model_factory::load(this, strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
-		vecModels.push_back(pModel);
-	}
+	function<void(void)> funcLoadIFCModels = [this, &vecModels, &vecIfcPaths](void) {
+		for (auto strPath : vecIfcPaths) {
+			auto pModel = _ap_model_factory::load(this, strPath, vecIfcPaths.size() > 1, !vecModels.empty() ? vecModels.front() : nullptr, false);
+			vecModels.push_back(pModel);
+		}
+		};
 
+	CLoadTask loadTask(funcLoadIFCModels);
+#ifdef _PROGRESS_UI_SUPPORT
+	if (getShowProgressDialog()) {
+		CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+		getLogHub()->addLogView(&progressDlg);
+		getProgressHub()->addProgressView(&progressDlg);
+
+		progressDlg.DoModal();
+
+		getLogHub()->removeLogView(&progressDlg);
+		getProgressHub()->removeProgressView(&progressDlg);
+	}
+	else {
+#endif
+		loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
+	}
+#endif
 	if (!vecModels.empty()) {
 		setModels(vecModels);
 		// MRU
@@ -267,10 +334,12 @@ END_MESSAGE_MAP()
 // CMySTEPViewerDoc construction/destruction
 
 CMySTEPViewerDoc::CMySTEPViewerDoc()
-{}
+{
+}
 
 CMySTEPViewerDoc::~CMySTEPViewerDoc()
-{}
+{
+}
 
 BOOL CMySTEPViewerDoc::OnNewDocument()
 {
@@ -311,21 +380,47 @@ BOOL CMySTEPViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	string strExtension = pathModel.extension().string();
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-	if (strExtension == ".ifczip") {
-		auto vecModels = _ap_model_factory::loadIFCZIP(this, lpszPathName);
-		setModels(vecModels);
-	}
-	else if (strExtension == ".stpz") {
-		auto vecModels = _ap_model_factory::loadSTEPGZip(this, lpszPathName);
-		setModels(vecModels);
+	vector<_model*> vecModels;
+
+	function<void(void)> funcLoadSTEPModel = [this, &strExtension, &vecModels, &lpszPathName](void) {
+		if (strExtension == ".ifczip") {
+			vecModels = _ap_model_factory::loadIFCZip(this, lpszPathName);			
+		}
+		else if (strExtension == ".stpz") {
+			vecModels = _ap_model_factory::loadSTEPGZip(this, lpszPathName);
+		}
+		else {
+			auto pModel = _ap_model_factory::load(this, lpszPathName, false, nullptr, false);
+			if (pModel) {
+				vecModels.push_back(pModel);
+			}
+		}
+		};
+
+	CLoadTask loadTask(funcLoadSTEPModel);
+#ifdef _PROGRESS_UI_SUPPORT
+	if (getShowProgressDialog()) {
+		CProgressDialog progressDlg(::AfxGetMainWnd(), &loadTask);
+		getLogHub()->addLogView(&progressDlg);
+		getProgressHub()->addProgressView(&progressDlg);
+
+		progressDlg.DoModal();
+
+		getLogHub()->removeLogView(&progressDlg);
+		getProgressHub()->removeProgressView(&progressDlg);
 	}
 	else {
-		auto pModel = _ap_model_factory::load(this, lpszPathName, false, nullptr, false);
-		setModel(pModel);
+#endif
+		loadTask.Run();
+#ifdef _PROGRESS_UI_SUPPORT
 	}
+#endif
+	if (!vecModels.empty()) {
+		setModels(vecModels);
 
-	// MRU
-	AfxGetApp()->AddToRecentFileList(lpszPathName);
+		// MRU
+		AfxGetApp()->AddToRecentFileList(lpszPathName);
+	}
 
 	return TRUE;
 }
