@@ -1,976 +1,796 @@
-// BCF\BCFView.cpp : implementation file
-//
-
 #include "stdafx.h"
 
-#include "STEPViewer.h"
+#include "BCFViewPointMgr.h"
+#include "BCFCommentForm.h"
+#include "BCFProjectSettingsDlg.h"
+#include "BCFProjectForm.h"
+#include "BCFTopicForm.h"
+#include "BCFView.h"
+#include "BCFViewControls.h"
+#include "UriDownloader.h"
 #include "STEPViewerDoc.h"
-#include "STEPViewerView.h"
+#include "Resource.h"
 #include "_ap_model_factory.h"
-#include "BCF\BCFProjInfo.h"
-#include "BCF\BCFView.h"
-#include "BCF\BCFAddLabel.h"
-#include "BCF\BCFAddRelatedTopic.h"
-#include "BCF\BCFAddReferenceLink.h"
-#include "BCF\BCFAddDocumentReference.h"
-#include "BCF\BCFBimFiles.h"
+#include "_ptr.h"
 
 #include <experimental/filesystem>
+
 namespace fs = std::experimental::filesystem;
- 
-#define TAB_Labels			3
-#define TAB_Related			2
-#define TAB_Links			1
-#define TAB_Documents		0
 
-// CBCFView dialog
-
-IMPLEMENT_DYNAMIC(CBCFView, CDialogEx)
-
-BEGIN_MESSAGE_MAP(CBCFView, CDialogEx)
-	ON_WM_CLOSE()
-	ON_CBN_SELCHANGE(IDC_TOPICS, &CBCFView::OnSelchangeTopic)
-	ON_WM_SHOWWINDOW()
-	ON_LBN_SELCHANGE(IDC_COMMENTS_LIST, &CBCFView::OnSelchangeCommentsList)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CBCFView::OnSelchangeTab)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CBCFView::OnClickedButtonAddMulti)
-	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CBCFView::OnClickedButtonRemoveMulti)
-	ON_LBN_SELCHANGE(IDC_MULTI_LIST, &CBCFView::OnSelchangeMultiList)
-	ON_BN_CLICKED(IDC_PROJECT_INFO, &CBCFView::OnClickedProjectInfo)
-	ON_EN_KILLFOCUS(IDC_TOPIC_TITLE, &CBCFView::OnKillfocusEdit)
-	ON_EN_KILLFOCUS(IDC_TOPIC_DESCRIPTION, &CBCFView::OnKillfocusEdit)
-	ON_CBN_KILLFOCUS(IDC_TOPIC_TYPE, &CBCFView::OnKillfocusEdit)
-	ON_CBN_KILLFOCUS(IDC_TOPIC_STAGE, &CBCFView::OnKillfocusEdit)
-	ON_CBN_KILLFOCUS(IDC_TOPIC_STATUS, &CBCFView::OnKillfocusEdit)
-	ON_CBN_KILLFOCUS(IDC_TOPIC_ASSIGNED, &CBCFView::OnKillfocusEdit)
-	ON_CBN_KILLFOCUS(IDC_TOPIC_PRIORITY, &CBCFView::OnKillfocusEdit)
-	ON_EN_KILLFOCUS(IDC_TOPIC_DUE, &CBCFView::OnKillfocusEdit)
-	ON_EN_KILLFOCUS(IDC_TOPIC_INDEX, &CBCFView::OnKillfocusEdit)
-	ON_EN_KILLFOCUS(IDC_TOPIC_SERVER_ID, &CBCFView::OnKillfocusEdit)
-	ON_EN_KILLFOCUS(IDC_TOPIC_COMMENT_TEXT, &CBCFView::OnKillfocusTopicCommentText)
-	ON_BN_CLICKED(IDC_SAVE, &CBCFView::OnClickedSave)
-	ON_BN_CLICKED(IDC_UPDATE_VIEWPOINT, &CBCFView::OnClickedUpdateViewpoint)
-	ON_BN_CLICKED(IDC_BUTTON_BIMS, &CBCFView::OnClickedButtonBims)
+BEGIN_MESSAGE_MAP(CBCFView, CDockablePane)
+	ON_WM_CREATE()
+	ON_WM_ERASEBKGND()
+	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
+	ON_BN_CLICKED(IDC_PANE_PROJECT_SETTINGS, &CBCFView::OnProjectSettings)
+	ON_UPDATE_COMMAND_UI(IDC_PANE_PROJECT_SETTINGS, &CBCFView::OnUpdateProjectSettings)
 END_MESSAGE_MAP()
 
-
-CBCFView::CBCFView(CMySTEPViewerDoc& doc)
-	: CDialogEx(IDD_BCF_VIEW, AfxGetMainWnd())
-	, m_doc (doc)
-	, m_viewPointMgr(*this)
-	, m_bcfProject(NULL)
+CBCFView::CBCFView()
+	: m_stepViewerDoc(nullptr)
+	, m_project(nullptr)
+	, m_activeForm(ProjectForm)
+	, m_projectId(new CBCFEdit)
+	, m_projectName(new CBCFEdit)
+	, m_projectForm(new CBCFProjectForm)
+	, m_topicForm(new CBCFTopicForm)
+	, m_commentForm(new CBCFCommentForm)
 {
 }
 
 CBCFView::~CBCFView()
 {
-	Close();
+	ReleaseProject();
+	delete m_commentForm;
+	delete m_topicForm;
+	delete m_projectForm;
+	delete m_projectName;
+	delete m_projectId;
 }
 
-bool CBCFView::IsBCF(LPCTSTR filePath)
+int CBCFView::OnCreate(LPCREATESTRUCT createStruct)
 {
-	auto len = wcslen(filePath);
+	if (CDockablePane::OnCreate(createStruct) == -1) {
+		return -1;
+	}
 
-	if (len >= 4 && 0 == wcscmp(filePath + len - 4, L".bcf"))
-		return true;
+	SetFont(m_dialogFont.CreatePointFont(80, L"MS Shell Dlg")
+		? &m_dialogFont
+		: &afxGlobalData.fontRegular);
 
-	if (len >= 4 && 0 == wcscmp(filePath + len - 7, L".bcfzip"))
-		return true;
+	if (!m_emptyMessage.Create(L"Use File menu to open or create BCF file",
+			WS_CHILD | SS_CENTER | SS_CENTERIMAGE, CRect(), this,
+			IDC_PANE_EMPTY_MESSAGE)) {
+		return -1;
+	}
+	SetBCFControlFont(m_emptyMessage, this);
+	CreateBCFStaticLabel(m_projectIdLabel, L"BCF Project Id:", this);
+	CreateBCFStaticLabel(m_projectNameLabel, L"Name:", this);
+	m_projectSettings.Create(L"Settings",
+		WS_CHILD | WS_VISIBLE | WS_DISABLED | WS_TABSTOP | BS_PUSHBUTTON,
+		CRect(), this, IDC_PANE_PROJECT_SETTINGS);
+	SetBCFControlFont(m_projectSettings, this);
+	
+	m_projectId->Create(WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY,
+		CRect(), this, IDC_PANE_PROJECT_ID);
+	m_projectName->Create(WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
+		CRect(), this, IDC_PANE_PROJECT_NAME);
 
-	return false;
-}
-
-void CBCFView::Close()
-{
-	//close project
-	if (m_bcfProject) {
-		ShowLog(false);
-		if (!m_bcfProject->Delete()) {
-			ShowLog(true);
-		}
-		m_bcfProject = NULL;
+	SetBCFControlFont(*m_projectId, this);
+	SetBCFControlFont(*m_projectName, this);
+	
+	if (!m_projectForm->Create(this) || !m_topicForm->Create(this) || !m_commentForm->Create(this)) {
+		return -1;
 	}
 	
-	//hide window
-	if (GetSafeHwnd()) {
-		ShowWindow(SW_HIDE);
-	}
+	LoadProjectInfo();
+	ShowForm(ProjectForm);
+	return 0;
 }
 
-bool CBCFView::SaveModified()
+BOOL CBCFView::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	if (m_bcfProject && m_bcfProject->IsModified()) {
-		auto answer = AfxMessageBox(L"BCF data are modified. Do you want to save before continue?", MB_YESNOCANCEL);
-		if (IDNO != answer) {
-			if (IDYES == answer) {
-				PostMessage(WM_COMMAND, IDC_SAVE);
-			}
-			return false;
+	const BOOL handled = CDockablePane::OnCommand(wParam, lParam);
+	if (HIWORD(wParam) == EN_KILLFOCUS &&
+		LOWORD(wParam) == IDC_PANE_PROJECT_NAME &&
+		m_projectName->GetModify()) {
+		if (CommitProjectInfo()) {
+			m_projectName->SetModify(FALSE);
 		}
 	}
+	return handled;
+}
+
+BOOL CBCFView::OnEraseBkgnd(CDC* dc)
+{
+	CRect client;
+	GetClientRect(client);
+	dc->FillRect(client, CBrush::FromHandle(::GetSysColorBrush(COLOR_3DFACE)));
+	return TRUE;
+}
+
+void CBCFView::Activate()
+{
+	ShowPane(TRUE, FALSE, TRUE);
+	SetFocus();
+}
+
+void CBCFView::NewProject()
+{
+	if (!CloseActiveProjectForOperation(L"create a new BCF project")) {
+		return;
+	}
+
+	m_project = BCFProject::Create();
+	if (!m_project) {
+		AfxMessageBox(L"Failed to initialize BCF project.", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	m_email = AfxGetApp()->GetProfileString(L"BCF", L"User");
+	m_project->SetOptions(ToUTF8(m_email).c_str(), true, true);
+
+	if (!CBCFProjectSettingsDlg::LoadEnumerationProfile(*m_project)) {
+		AfxMessageBox(L"Failed to load saved BCF project enumerations.", MB_OK | MB_ICONERROR);
+	}
+
+	CBCFProjectSettingsDlg dialog(*m_project, m_email, this);
+	if (dialog.DoModal() != IDOK) {
+		ReleaseProject();
+		ShowProject();
+		return;
+	}
+
+	m_email = dialog.GetUser();
+	AfxGetApp()->WriteProfileString(L"BCF", L"User", m_email);
+	if (!m_project->SetOptions(ToUTF8(m_email).c_str(), true, true) ||
+		!CBCFProjectSettingsDlg::SaveEnumerationProfile(*m_project)) {
+		AfxMessageBox(L"Failed to save new BCF project settings.", MB_OK | MB_ICONERROR);
+	}
+
+	m_filePath.Empty();
+	LoadProjectInfo();
+	UpdateCaption();
+
+	BCFTopic* topic = CreateTopic();
+	if (!topic) {
+		ShowProject();
+		Activate();
+		return;
+	}
+
+	bool filesAdded = true;
+	if (m_stepViewerDoc) {
+		std::vector<CString> files;
+		for (_model* model : m_stepViewerDoc->getModels()) {
+			if (model) {
+				files.push_back(model->getPath());
+			}
+		}
+		if (!files.empty()) {
+			CBCFIncudeLoadedModels includeDialog(files, this);
+			if (includeDialog.DoModal() == IDOK) {
+				for (_model* model : m_stepViewerDoc->getModels()) {
+					if (model && !topic->AddBimFile(
+							ToUTF8(model->getPath()).c_str(), includeDialog.IsExternal())) {
+						filesAdded = false;
+					}
+				}
+			}
+		}
+	}
+
+	if (topic) {
+		if (auto doc = GetDocument()) {
+			if (auto comment = topic->AddComment()) {
+				comment->SetText("My view");
+				CBCFViewPointMgr(*doc).SaveCurrentViewToComent(*comment);
+			}
+		}
+	}
+
+	m_projectForm->Load(topic);
+	ShowTopic(topic);
+	Activate();
+	m_topicForm->FocusInitialControl(true);
+
+	ShowLog(!filesAdded || !topic);
+}
+
+bool CBCFView::OpenProject(LPCTSTR filePath)
+{
+	if (!CloseActiveProjectForOperation(L"open another BCF project")) {
+		return false;
+	}
+
+	CString filePathDlg;
+	if (!filePath || !*filePath) {
+		CFileDialog dialog(TRUE, nullptr, L"", OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, BCF_PACKAGES_FILTER);
+		if (dialog.DoModal() != IDOK) {
+			return false;
+		}
+		filePathDlg = dialog.GetPathName();
+		filePath = filePathDlg;
+    }
+
+	m_project = BCFProject::Create();
+	if (!m_project) {
+		AfxMessageBox(L"Failed to initialize BCF project.", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	m_filePath = filePath;
+	if (!m_project->ReadFile(ToUTF8(m_filePath).c_str(), true)) {
+		ShowLog(true);
+		ReleaseProject();
+		return false;
+	}
+
+	m_email = AfxGetApp()->GetProfileString(L"BCF", L"User");
+	m_project->SetOptions(ToUTF8(m_email).c_str(), true, true);
+
+	AfxGetApp()->AddToRecentFileList(m_filePath);
+
+	LoadProjectInfo();
+	UpdateCaption();
+	ShowProject();
+	Activate();
+
+    //show topic if only one topic exists in project
+	if (auto topic1 = m_project->GetTopic(0)) {
+		if (!m_project->GetTopic(1)) {
+			m_projectForm->Load(topic1);
+			ShowTopic(topic1);
+		}
+	}
+
 	return true;
 }
 
-
-void CBCFView::Open(LPCTSTR filePath)
+bool CBCFView::CloseActiveProjectForOperation(LPCTSTR operation)
 {
-	//clean old data
-	Close();
-
-	m_bcfFilePath = filePath ? filePath : L"";
-
-	//
-	//open BCF project
-	//
-	m_bcfProject = BCFProject::Create();
-	if (!m_bcfProject) {
-		AfxMessageBox(L"Failed to initialize BCF Project");
-		Close();
-		return;
+	if (!m_project) {
+		return true;
 	}
 
-	if (!m_bcfFilePath.IsEmpty()) {
-		CWaitCursor wait;
-		if (!m_bcfProject->ReadFile(ToUTF8(m_bcfFilePath).c_str(), true))
-		{
-			ShowLog(true);
-			Close();
+	CString message;
+	message.Format(
+		L"The active BCF project must be closed before you %s.\n\nClose it now?",
+		operation);
+	if (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) != IDYES) {
+		return false;
+	}
+
+	CloseProject(true);
+	return m_project == nullptr;
+}
+
+bool CBCFView::CommitCurrent()
+{
+	if (!CommitProjectInfo()) {
+		return false;
+	}
+	if (m_activeForm == ProjectForm) {
+		return true;
+	}
+	if (m_activeForm == TopicForm) {
+		return m_topicForm->Commit();
+	}
+	return m_commentForm->Commit();
+}
+
+bool CBCFView::SaveProject()
+{
+	if (!m_project || !CommitCurrent()) {
+		return false;
+	}
+	CFileDialog dialog(FALSE, L"bcf", m_filePath, OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY,
+		L"BCF files (*.bcf)|*.bcf|BCF packages (*.bcfzip)|*.bcfzip|All Files (*.*)|*.*||");
+	if (dialog.DoModal() != IDOK) {
+		return false;
+	}
+	CString path = dialog.GetPathName();
+	bool ok = m_project->WriteFile(ToUTF8(path).c_str(), BCFVer_3_0);
+	ShowLog(!ok);
+	if (ok) {
+		m_filePath = path;
+		UpdateCaption();
+	}
+	return ok;
+}
+
+bool CBCFView::AskAndSaveModified()
+{
+	if (!m_project) {
+		return true;
+    }
+	if (!CommitCurrent()) {
+		return false;
+	}
+	if (!m_project->IsModified()) {
+		return true;
+	}
+
+	int answer = AfxMessageBox(L"BCF pane project is modified. Do you want to save it?",
+		MB_YESNOCANCEL | MB_ICONQUESTION);
+	return answer == IDYES ? SaveProject() : answer == IDNO;
+}
+
+bool CBCFView::CloseProject(bool prompt)
+{
+	if (!prompt || AskAndSaveModified()) {
+		ReleaseProject();
+		ShowProject();
+		return true;
+	}
+	return false;
+}
+
+void CBCFView::OnCloseMainDocument()
+{
+	CloseProject(false);
+	m_stepViewerDoc = nullptr;
+}
+
+void CBCFView::ReleaseProject()
+{
+	//close project
+	if (m_project) {
+		ShowLog(false);
+		m_project->Delete();
+		m_project = nullptr;
+	}
+	m_filePath.Empty();
+
+	//cleanup models loaded from topics
+	if (m_stepViewerDoc) {
+		std::set<const _model*> removeModels;
+		for (auto& pair : m_bimRef2Path) {
+			if (pair.second) {
+				if (auto model = m_stepViewerDoc->getModel(pair.second)) {
+					removeModels.insert(model);
+				}
+			}
+		}
+		if (!removeModels.empty()) {
+			m_stepViewerDoc->removeModels(removeModels, true);
+        }
+	}
+	m_bimRef2Path.clear();
+
+    //load empty project info
+	LoadProjectInfo();
+	UpdateCaption();
+	m_topicForm->Load(nullptr);
+	m_commentForm->Load(nullptr);
+}
+
+void CBCFView::ShowProject()
+{
+	if (!CommitProjectInfo()) {
+		return;
+	}
+	if (m_activeForm == TopicForm && !m_topicForm->Commit()) {
+		return;
+	}
+	if (m_activeForm == CommentForm) {
+		if (!m_commentForm->Commit()) {
+			return;
+		}
+		m_topicForm->ReloadComments(m_commentForm->GetComment());
+	}
+	m_projectForm->Load();
+	ShowForm(ProjectForm);
+}
+
+void CBCFView::ShowTopic(BCFTopic* topic)
+{
+	if (!topic || !CommitProjectInfo()) {
+		return;
+	}
+	if (m_activeForm == ProjectForm) {
+		if (!m_projectForm->Commit()) {
 			return;
 		}
 	}
+	else if (m_activeForm == CommentForm) {
+		BCFComment* comment = m_commentForm->GetComment();
+		if (!m_commentForm->Commit()) {
+			return;
+		}
+		if (m_topicForm->GetTopic() == topic) {
+			m_topicForm->ReloadComments(comment);
+			ShowForm(TopicForm);
+			return;
+		}
+	}
+	m_topicForm->Load(topic);
+	ShowForm(TopicForm);
+}
 
-	//
-	CBCFProjInfo projInfo(*m_bcfProject, AfxGetMainWnd());
-	if (IDOK != projInfo.DoModal()) {
-		Close();
+void CBCFView::ShowComment(BCFComment* comment)
+{
+	if (!comment || !CommitProjectInfo() || !m_topicForm->Commit()) {
+		return;
+	}
+	m_commentForm->Load(comment);
+	ShowForm(CommentForm);
+}
+
+void CBCFView::ShowForm(Form form)
+{
+	m_activeForm = form;
+	const bool hasProject = m_project != nullptr;
+	if (IsWindow(m_projectForm->GetSafeHwnd()))
+		m_projectForm->ShowWindow (hasProject && form == ProjectForm ? SW_SHOW : SW_HIDE);
+	if (IsWindow(m_topicForm->GetSafeHwnd()))
+		m_topicForm->ShowWindow (hasProject && form == TopicForm ? SW_SHOW : SW_HIDE);
+	if (IsWindow (m_commentForm->GetSafeHwnd()))
+		m_commentForm->ShowWindow (hasProject && form == CommentForm ? SW_SHOW : SW_HIDE);
+	if (IsWindow (GetSafeHwnd ()))	{
+		AdjustLayout ();
+		if (hasProject && form == TopicForm) {
+			m_topicForm->FocusInitialControl();
+		}
+		else if (hasProject && form == CommentForm) {
+			m_commentForm->FocusInitialControl();
+		}
+		}
+}
+
+void CBCFView::LoadProjectInfo()
+{
+	if (!m_projectId->GetSafeHwnd()) {
+		return;
+	}
+	m_projectId->SetWindowText(m_project ? FromUTF8(m_project->GetProjectId()) : CString());
+	m_projectName->SetWindowText(m_project ? FromUTF8(m_project->GetName()) : CString());
+	m_projectName->SetModify(FALSE);
+	const int projectCommand = m_project ? SW_SHOW : SW_HIDE;
+	m_projectIdLabel.ShowWindow(projectCommand);
+	m_projectId->ShowWindow(projectCommand);
+	m_projectNameLabel.ShowWindow(projectCommand);
+	m_projectName->ShowWindow(projectCommand);
+	m_projectSettings.ShowWindow(projectCommand);
+	m_emptyMessage.ShowWindow(m_project ? SW_HIDE : SW_SHOW);
+	if (!m_project) {
+		m_projectForm->ShowWindow(SW_HIDE);
+		m_topicForm->ShowWindow(SW_HIDE);
+		m_commentForm->ShowWindow(SW_HIDE);
+	}
+	AdjustLayout();
+}
+
+bool CBCFView::CommitProjectInfo()
+{
+	if (!m_project) {
+		return true;
+	}
+	CString name;
+	m_projectName->GetWindowText(name);
+	name.Trim();
+	if (name == FromUTF8(m_project->GetName())) {
+		return true;
+	}
+	bool ok = m_project->SetName(ToUTF8(name).c_str());
+	ShowLog(!ok);
+	return ok;
+}
+
+void CBCFView::UpdateCaption()
+{
+	if (!GetSafeHwnd()) {
 		return;
 	}
 
-	//show view
-	if (!IsWindow(GetSafeHwnd())) {
-		Create(IDD_BCF_VIEW, AfxGetMainWnd());
+	CString caption(L"BCF View");
+	if (!m_filePath.IsEmpty()) {
+		fs::path path(ToUTF8(m_filePath));
+		caption.AppendFormat(L" - %s", FromUTF8(path.filename().string().c_str()).GetString());
 	}
-	ShowWindow(SW_SHOW);
-
-	LoadProjectToView();
+	SetWindowText(caption);
 }
 
-BCFBimFile* CBCFView::FindBimFileByPath(BCFTopic* topic, const char* searchPath)
+void CBCFView::AddTopic()
 {
+	if (!m_project) {
+		return;
+	}
+	if (!m_projectForm->Commit()) {
+		return;
+	}
+	BCFTopic* topic = CreateTopic();
 	if (topic) {
-		int i = 0;
-		while (auto file = topic->GetBimFile(i++)) {
-			auto refPath = file->GetReference();
-			if (0 == strcmp(searchPath, refPath)) {
-				return file;
-			}
+		m_projectForm->Load(topic);
+		ShowTopic(topic);
+		m_topicForm->FocusInitialControl(true);
+	}
+}
+
+BCFTopic* CBCFView::CreateTopic()
+{
+	if (!m_project) {
+		return nullptr;
+	}
+	BCFExtensions& extensions = m_project->GetExtensions();
+	const char* topicType = extensions.GetElement(BCFTopicTypes, 0);
+	const char* topicStatus = extensions.GetElement(BCFTopicStatuses, 0);
+	if (!topicType || !topicStatus) {
+		AfxMessageBox(
+			L"Topic Types and Topic Statuses must contain at least one value.",
+			MB_OK | MB_ICONERROR);
+		return nullptr;
+	}
+	BCFTopic* topic = m_project->AddTopic(
+		topicType, "<< Enter topic title >>", topicStatus);
+	
+	ShowLog(!topic);
+	return topic;
+}
+
+void CBCFView::DeleteTopic()
+{
+	BCFTopic* topic = m_projectForm->GetSelectedTopic();
+	if (!topic) {
+		return;
+	}
+	CString question;
+	question.Format(L"Delete topic \"%s\"?", FromUTF8(topic->GetTitle()).GetString());
+	if (AfxMessageBox(question, MB_YESNO | MB_ICONWARNING) == IDYES) {
+		bool ok = topic->Remove();
+		ShowLog(!ok);
+		if (ok) {
+			m_projectForm->Load();
 		}
 	}
-	return NULL;
 }
 
-void CBCFView::DoDataExchange(CDataExchange* pDX)
+void CBCFView::ShowTopicDetails()
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TOPICS, m_wndTopics);
-	DDX_Control(pDX, IDC_TOPIC_TYPE, m_wndTopicType);
-	DDX_CBString(pDX, IDC_TOPIC_TYPE, m_strTopicType);
-	DDX_Control(pDX, IDC_TOPIC_STAGE, m_wndTopicStage);
-	DDX_CBString(pDX, IDC_TOPIC_STAGE, m_strTopicStage);
-	DDX_Control(pDX, IDC_TOPIC_STATUS, m_wndTopicStatus);
-	DDX_CBString(pDX, IDC_TOPIC_STATUS, m_strTopicStatus);
-	DDX_Control(pDX, IDC_TOPIC_ASSIGNED, m_wndAssigned);
-	DDX_CBString(pDX, IDC_TOPIC_ASSIGNED, m_strAssigned);
-	DDX_Control(pDX, IDC_TOPIC_PRIORITY, m_wndPriority);
-	DDX_CBString(pDX, IDC_TOPIC_PRIORITY, m_strPriority);
-	DDX_Control(pDX, IDC_SNIPPET_TYPE, m_wndSnippetType);
-	DDX_CBString(pDX, IDC_SNIPPET_TYPE, m_strSnippetType);
-	DDX_Control(pDX, IDC_TAB, m_wndTab);
-	DDX_Control(pDX, IDC_AUTHOR, m_wndAuthor);
-	DDX_Control(pDX, IDC_TOPIC_DUE, m_wndDue);
-	DDX_Text(pDX, IDC_TOPIC_DUE, m_strDue);
-	DDX_Control(pDX, IDC_TOPIC_DESCRIPTION, m_wndDescription);
-	DDX_Text(pDX, IDC_TOPIC_DESCRIPTION, m_strDescription);
-	DDX_Control(pDX, IDC_TOPIC_TITLE, m_wndTitle);
-	DDX_Text(pDX, IDC_TOPIC_TITLE, m_strTitle);
-	DDX_Control(pDX, IDC_SNIPPET_REFERENCE, m_wndSnippetReference);
-	DDX_Text(pDX, IDC_SNIPPET_REFERENCE, m_strSnippetReference);
-	DDX_Control(pDX, IDC_SNIPPET_SCHEMA, m_wndSnippetSchema);
-	DDX_Text(pDX, IDC_SNIPPET_SCHEMA, m_strSnippetSchema);
-	DDX_Control(pDX, IDC_TOPIC_INDEX, m_wndIndex);
-	DDX_Text(pDX, IDC_TOPIC_INDEX, m_strIndex);
-	DDX_Control(pDX, IDC_TOPIC_SERVER_ID, m_wndServerIndex);
-	DDX_Text(pDX, IDC_TOPIC_SERVER_ID, m_strServerId);
-	DDX_Control(pDX, IDC_TOPIC_COMMENT_TEXT, m_wndCommentText);
-	DDX_Control(pDX, IDC_COMMENTS_LIST, m_wndCommentsList);
-	DDX_Control(pDX, IDC_MULTI_LIST, m_wndMultiList);
-	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAddMulti);
-	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemoveMulti);
-	DDX_Control(pDX, IDC_UPDATE_VIEWPOINT, m_wndUpdateViewPoint);
-}
-
-void CBCFView::OnClose()
-{
-	m_wndCommentsList.SetFocus(); //to last upate from edit field
-
-	if (SaveModified()) {
-		CDialogEx::OnClose();
-		Close();
-	}
-}
-
-
-void CBCFView::OnCancel()
-{
-	//CDialogEx::OnCancel();
-}
-
-
-void CBCFView::OnOK()
-{
-	//CDialogEx::OnOK();
-}
-
-BOOL CBCFView::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	m_wndTab.InsertItem(0, L"Labels");
-	m_wndTab.InsertItem(0, L"Related topic");
-	m_wndTab.InsertItem(0, L"Links");
-	m_wndTab.InsertItem(0, L"Documents");
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-
-void CBCFView::LoadProjectToView()
-{
-	CWaitCursor wait;
-
-	//
-	CString title;
-	title.Format(L"BCF-XML %s", m_bcfFilePath.IsEmpty() ? L"<New>" : m_bcfFilePath);
-	SetWindowText(title);
-
-	//load extensions
-	//
-	LoadExtensions();
-
-	// load topics
-	//
-	m_wndTopics.ResetContent();
-
-	BCFTopic* topic = NULL;
-	for (uint16_t i = 0; (topic = m_bcfProject->GetTopic(i)); i++) {
-		InsertTopicToList(i, topic);
-	}
-	m_wndTopics.AddString(L"<New>");
-	m_wndTopics.SetCurSel(0);
-
-	OnSelchangeTopic();
-}
-
-void CBCFView::InsertTopicToList(int item, BCFTopic* topic)
-{
-	CString guid = FromUTF8((topic->GetGuid()));
-	CString text;
-	text.Format(L"#%d: %s", item + 1, guid.GetString());
-	m_wndTopics.InsertString(item, text);
-	m_wndTopics.SetItemData(item, (DWORD_PTR)topic);
-}
-
-void CBCFView::LoadExtensions()
-{
-	LoadExtension(m_wndTopicType, BCFTopicTypes);
-	LoadExtension(m_wndTopicStatus, BCFTopicStatuses);
-	LoadExtension(m_wndPriority, BCFPriorities);
-	LoadExtension(m_wndAssigned, BCFUsers);
-	LoadExtension(m_wndSnippetType, BCFSnippetTypes);
-	LoadExtension(m_wndTopicStage, BCFStages);
-}
-
-void CBCFView::LoadExtension(CComboBox& wnd, BCFEnumeration enumeraion)
-{
-	CString txt;
-	wnd.GetWindowText(txt);
-
-	wnd.ResetContent();
-
-	if (m_bcfProject) {
-		auto& extensions = m_bcfProject->GetExtensions();
-
-		uint16_t ind = 0;
-		while (auto elem = extensions.GetElement(enumeraion, ind++)) {
-			wnd.AddString(FromUTF8(elem));
-		}
-	}
-
-	wnd.SetWindowText(txt);
+	ShowTopic(m_projectForm->GetSelectedTopic());
 }
 
 void CBCFView::ShowLog(bool knownError)
 {
-	const char* msg = NULL;
-	if (m_bcfProject) {
-		msg = m_bcfProject->GetErrors();
+	const char* message = m_project ? m_project->GetErrors() : nullptr;
+	if (knownError && (!message || !*message)) {
+		message = "Unknown BCF error";
+	}
+	if (message && *message) {
+		AfxMessageBox(FromUTF8(message), knownError ? MB_ICONERROR : MB_ICONWARNING);
+	}
+}
+
+CString CBCFView::GetBimFilePath(BCFBimFile& file)
+{
+	if (!m_stepViewerDoc) {
+		return L"";
 	}
 
-	if (knownError) {
-		if (!msg || !*msg) {
-			msg = "Unknown BCF error";
+	//
+	//get local path to the BIM file, include resolving URI or ask user to locate it
+	//
+	auto refPath8 = file.GetReference();
+	if (!refPath8 || !*refPath8) {
+		refPath8 = file.GetFilename();
+	}
+
+	CString refPath = FromUTF8(refPath8);
+
+	auto found = m_bimRef2Path.find(refPath);
+	if (found != m_bimRef2Path.end()) {
+
+		if (found->second.IsEmpty()) {
+			//assume user already asked No to "Do you want to locate the file manually?"
+			return L"";
 		}
-	}
 
-	if (msg && *msg) {
-		AfxMessageBox(FromUTF8(msg), knownError ? MB_ICONERROR : MB_ICONEXCLAMATION);
-	}
-}
-
-
-void CBCFView::OnSelchangeTopic()
-{
-	if (!m_bcfProject) {
-		return;
-	}
-	auto index = m_wndTopics.GetCurSel();
-	auto topic = (BCFTopic*)m_wndTopics.GetItemData(index);
-
-	if (!topic) {
-		if (!m_bcfProject->GetTopic(0) //at least one topic must exist
-			|| IDYES == AfxMessageBox(L"Do you want to create new topic?", MB_ICONQUESTION | MB_YESNO)) {
-			topic = CreateNewTopic();
-			if (topic) {
-				InsertTopicToList(index, topic);
-				PostMessage(WM_COMMAND, IDC_BUTTON_BIMS);
-			}
+		//check if the model is in the Viewer
+		if (m_stepViewerDoc->getModel(found->second)) {
+			return found->second;
 		}
-		else {
-			index = 0;
+
+		//something is not sync, below will re-load it to viewer
+		m_bimRef2Path.erase(found); 
+	}
+
+	//
+	// locate and load
+	CString filePath = refPath;
+
+	if (CUriDownloader::IsUri(filePath)) {
+		filePath = CUriDownloader(this).GetLocalPath(refPath);
+	}
+
+	if (filePath.IsEmpty() || !fs::exists(ToUTF8(filePath))) {
+		CString message;
+		message.Format(L"Can not locate BIM file assigned to the topic: '%s'\n\nDo you want to locate the file manually?", refPath.GetString());
+
+		if (AfxMessageBox(message, MB_YESNO | MB_ICONEXCLAMATION) != IDYES) {
+			m_bimRef2Path[refPath] = L""; //avoid repeated asking
+			return L"";
 		}
-		m_wndTopics.SetCurSel(index);
-		topic = (BCFTopic*)m_wndTopics.GetItemData(index);
+
+        //user asked to locate the file manually
+		CFileDialog dialog(TRUE, nullptr, L"", OFN_FILEMUSTEXIST, BIM_MODELS_FILTER);
+		if (dialog.DoModal() != IDOK) {
+			return L"";
+		}
+
+		filePath = dialog.GetPathName();
 	}
 
-	LoadActiveTopic();
+	//
+	//
+	m_bimRef2Path[refPath] = filePath;
 
-	m_wndTitle.SetFocus();
+    //check if the model is already loaded in the Viewer
+	if (!m_stepViewerDoc->getModel(filePath)) {
+
+		auto model = _ap_model_factory::load(
+			m_stepViewerDoc, filePath, false,
+			m_stepViewerDoc->getModels().empty() ? nullptr : m_stepViewerDoc->getModels()[0],
+			false);
+
+		if (model) {
+			m_stepViewerDoc->addModelDisabled(model);
+		}
+
+	}
+
+	return filePath;
 }
 
-BCFTopic* CBCFView::GetActiveTopic()
+void CBCFView::SetBimFilesToView(BCFTopic& topic)
 {
-	if (m_bcfProject) {
-		auto index = m_wndTopics.GetCurSel();
-		auto topic = (BCFTopic*)m_wndTopics.GetItemData(index);
-		return topic;
-	}
-	return NULL;
-}
-
-void CBCFView::FillTopicAuthor(BCFTopic* topic)
-{
-	CString strAuthor;
-
-	strAuthor.Format(L"Created by %s at %s", FromUTF8(topic->GetCreationAuthor()).GetString(), FromUTF8(topic->GetCreationDate()).GetString());
-	if (*topic->GetModifiedAuthor()) {
-		CString modifier;
-		modifier.Format(L", modified by %s at %s", FromUTF8(topic->GetModifiedAuthor()).GetString(), FromUTF8(topic->GetModifiedDate()).GetString());
-		strAuthor.Append(modifier);
-	}
-
-	m_wndAuthor.SetWindowText(strAuthor);
-}
-
-BCFTopic* CBCFView::CreateNewTopic()
-{
-	if (!m_bcfProject) {
-		return NULL;
-	}
-
-	auto topic = m_bcfProject->AddTopic(NULL, NULL, NULL);
-
-	ShowLog(!topic);
-
-	return topic;
-}
-
-void CBCFView::LoadActiveTopic()
-{
-	auto topic = GetActiveTopic();
-	if (!topic) {
-		return;
-	}
-
-	ViewTopicModels(topic);
-
-	FillTopicAuthor(topic);
-
-	m_strTitle = FromUTF8(topic->GetTitle());
-	m_strDescription = FromUTF8(topic->GetDescription());
-
-	m_strTopicType = FromUTF8(topic->GetTopicType());
-	m_strTopicStage = FromUTF8(topic->GetStage());
-	m_strTopicStatus = FromUTF8(topic->GetTopicStatus());
-	m_strAssigned = FromUTF8(topic->GetAssignedTo());
-	m_strPriority = FromUTF8(topic->GetPriority());
-	m_strDue = FromUTF8(topic->GetDueDate());
-
-	m_strIndex = FromUTF8(topic->GetIndexStr());
-	m_strServerId = FromUTF8(topic->GetServerAssignedId());
-
-	auto snippet = topic->GetBimSnippet(false);
-	m_wndSnippetType.EnableWindow(snippet != NULL);
-	m_wndSnippetReference.EnableWindow(snippet!=NULL);
-	m_wndSnippetSchema.EnableWindow(snippet != NULL);
-	if (snippet) {
-		m_strSnippetType = FromUTF8(snippet->GetSnippetType());
-		fs::path path = snippet->GetReference();
-		m_strSnippetReference = FromUTF8(path.filename().string().c_str());
-		path = snippet->GetReferenceSchema();
-		m_strSnippetSchema = FromUTF8(path.filename().string().c_str());
-	}
-	else {
-		m_strSnippetType.Empty();
-		m_strSnippetReference.Empty();
-		m_strSnippetSchema.Empty();
-	}
-
-	UpdateData(FALSE);
-
-	LoadComments(topic);
-	FillMultiList();
-}
-
-
-void CBCFView::UpdateActiveTopic()
-{
-	auto topic = GetActiveTopic();
-	if (!topic) {
+	if (!m_stepViewerDoc) {
 		return;
 	}
 
-	UpdateData();
-
-	bool ok = topic->SetTitle(ToUTF8(m_strTitle).c_str());
-	ok = topic->SetDescription(ToUTF8(m_strDescription).c_str());
-	ok = topic->SetTopicType(ToUTF8(m_strTopicType).c_str()) && ok;
-	ok = topic->SetStage(ToUTF8(m_strTopicStage).c_str()) && ok;
-	ok = topic->SetTopicStatus(ToUTF8(m_strTopicStatus).c_str()) && ok;
-	ok = topic->SetAssignedTo(ToUTF8(m_strAssigned).c_str()) && ok;
-	ok = topic->SetPriority(ToUTF8(m_strPriority).c_str()) && ok;
-	ok = topic->SetDueDate(ToUTF8(m_strDue).c_str()) && ok;
-	if (m_strIndex.IsEmpty()) {
-		ok = topic->SetIndexStr(ToUTF8(m_strIndex).c_str()) && ok;
-	}
-	else {
-		ok = topic->SetIndex(_wtoi(m_strIndex)) && ok;
-	}
-	ok = topic->SetServerAssignedId(ToUTF8(m_strServerId).c_str()) && ok;
-
-	ShowLog(!ok);
-	if (!ok) {
-		LoadActiveTopic(); //restore data was not set
+	std::vector<std::wstring> activeModels;
+	std::vector<_model*> newModels;
+	for (uint16_t i = 0; BCFBimFile * file = topic.GetBimFile(i); ++i) {
+		std::wstring modelPath = GetBimFilePath(*file);
+		activeModels.push_back(modelPath);
 	}
 
-	FillTopicAuthor(topic);
-	LoadExtensions();
+	m_stepViewerDoc->enableModels(&activeModels);
 }
 
-
-void CBCFView::LoadComments(BCFTopic* topic, int select)
+void CBCFView::OnUpdateProjectSettings(CCmdUI* commandUI)
 {
-	m_wndCommentsList.ResetContent();
-
-	uint16_t i = 0;
-	while (auto comment = topic->GetComment(i++)) {
-		CString text;
-		text.Format(L"#%d created by %s at %s",
-			(int)i,
-			(LPCWSTR)FromUTF8(comment->GetAuthor()),
-			(LPCWSTR)FromUTF8(comment->GetDate())
-		);
-		if (*comment->GetModifiedAuthor()) {
-			CString modifier;
-			modifier.Format(L", modified by %s at %s",
-				(LPCWSTR)FromUTF8(comment->GetModifiedAuthor()),
-				(LPCWSTR)FromUTF8(comment->GetModifiedDate()));
-			text.Append(modifier);
-		}
-		auto item = m_wndCommentsList.AddString(text);
-		m_wndCommentsList.SetItemDataPtr(item, comment);
-	}
-	m_wndCommentsList.AddString(L"<My new comment>");
-
-	m_wndCommentsList.SetCurSel(select);
-	OnSelchangeCommentsList();
+	commandUI->Enable(m_project != nullptr);
 }
 
-void CBCFView::UpateActiveComment()
+void CBCFView::OnProjectSettings()
 {
-	auto topic = GetActiveTopic();
-	if (!topic) {
+	if (!m_project) {
 		return;
 	}
+	CBCFProjectSettingsDlg dialog(*m_project, m_email, this);
+	if (dialog.DoModal() == IDOK) {
 
-	auto indComment = m_wndCommentsList.GetCurSel();
-	auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment);
+		m_email = dialog.GetUser();
+		AfxGetApp()->WriteProfileString(L"BCF", L"User", m_email);
+		const bool ok = m_project->SetOptions(ToUTF8(m_email).c_str(), true, true);
 
-	CString newText;
-	m_wndCommentText.GetWindowText(newText);
-	newText.Trim();
-
-	bool ok = true;
-
-	if (!comment && !newText.IsEmpty()) {
-		comment = topic->AddComment();
-		if (comment)
-			ok = m_viewPointMgr.SaveCurrentViewToComent(*comment) && ok;
-		else
-			ok = false;
-	}
-
-	if (comment) {
-		ok = comment->SetText(ToUTF8(newText).c_str()) && ok;
-	}
-
-	ShowLog(!ok);
-
-	LoadComments(topic, indComment);
-}
-
-
-void CBCFView::OnSelchangeCommentsList()
-{
-	BCFComment* comment = NULL;
-	if (m_bcfProject) {
-
-		auto item = m_wndCommentsList.GetCurSel();
-		comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(item);
-
-		if (comment) {
-			CString strCommentText = FromUTF8(comment->GetText());
-			m_wndCommentText.SetWindowText(strCommentText);
-
-			m_viewPointMgr.SetViewFromComment(*comment);
-		}
-		else {
-			m_wndCommentText.SetWindowText(L""); //new comment
-		}
-	}
-
-	m_wndUpdateViewPoint.EnableWindow(comment != NULL);
-	
-	ShowLog(false);
-}
-
-_model* CBCFView::GetBimModel(BCFBimFile& file)
-{
-	_model* model = nullptr;
-
-	auto it = m_mapBimFiles.find(&file);
-	if (it != m_mapBimFiles.end()) {
-
-		model = it->second;
-	}
-	else {
-		auto path = FromUTF8(file.GetReference());
-		
-		for (auto pModel : m_doc.getModels()) {
-			if (pModel->getPath() == path) {
-				model = pModel;
-				break;
-			}
-		}
-
-		if (!model) {
-			if (!fs::exists(ToUTF8(path)))
-			{
-				//we have to ask user to search the BIM file
-				CString msg(L"Can not locate BIM file assigned to the topic.\n\n");
-				if (!path.IsEmpty()) {
-					msg += L"Reference: '" + path + L"'\n";
-				}
-				auto name = FromUTF8(file.GetFilename());
-				if (!name.IsEmpty()) {
-					msg += L"Name: '" + name + L"'\n";
-				}
-				auto ifcProjectGuid = FromUTF8(file.GetIfcProject());
-				if (!ifcProjectGuid.IsEmpty()) {
-					msg += L"IfcProject.GlobalId: '" + ifcProjectGuid + L"'\n";
-				}
-				msg += L"\nDo you want to locate the file manually?";
-
-				if (IDNO != AfxMessageBox(msg, MB_YESNO | MB_ICONEXCLAMATION)) {
-
-					CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_FILEMUSTEXIST, BIM_MODELS_FILTER);
-					if (dlgFile.DoModal() != IDOK)
-					{
-						return nullptr;
-					}
-					path = dlgFile.GetPathName();
-				}
-			}
-
-			if (fs::exists(ToUTF8(path))) {
-				model = _ap_model_factory::load(&m_doc, path, false, !m_doc.getModels().empty() ? m_doc.getModels()[0] : nullptr, false);
-				//model may be NULL, assume message was shown while load
-				if (model) {
-					_ptr<_ap_model> apModel(model);
-					if (apModel->getAP() == enumAP::IFC) {
-						m_mapBimFiles[&file] = model;
-					}
-					else {
-						delete model;
-						model = nullptr;
-					}
-				}
-			}
-		}
-	}
-
-	return model;
-}
-
-void CBCFView::ViewTopicModels(BCFTopic* topic)
-{
-	std::vector<_model*> activeModels;
-
-	if (topic) {
-		uint16_t i = 0;
-		while (BCFBimFile* file = topic->GetBimFile(i++)) {
-
-			_model* model = GetBimModel(*file);
-
-			if (model) {
-				activeModels.push_back(model);
-			}
-		}
-	}
-
-	m_doc.enableModelsAddIfNeeded(activeModels);
-}
-
-CMySTEPViewerView* CBCFView::GetViewerView()
-{
-	auto pos = m_doc.GetFirstViewPosition();
-	while (auto view = m_doc.GetNextView(pos)) {
-		auto stview = dynamic_cast<CMySTEPViewerView*>(view);
-		if (stview) {
-			return stview;
-		}
-	}
-	return NULL;
-}
-
-void CBCFView::OnSelchangeTab(NMHDR* /*pNMHDR*/, LRESULT* pResult)
-{
-	FillMultiList();
-	*pResult = 0;
-}
-
-void CBCFView::FillMultiList()
-{
-	auto sel = m_wndMultiList.GetCurSel();
-	m_wndMultiList.ResetContent();
-
-	auto topic = GetActiveTopic();
-	
-	if (topic) {
-		switch (m_wndTab.GetCurSel()) {
-		case TAB_Labels:
-			FillLabels(topic);
-			break;
-		case TAB_Related:
-			FillRelated(topic);
-			break;
-		case TAB_Links:
-			FillLinks(topic);
-			break;
-		case TAB_Documents:
-			FillDocuments(topic);
-			break;
-		default:
-			ASSERT(FALSE);
-		}
-	}
-
-	m_wndAddMulti.EnableWindow(topic != NULL);
-	
-	if (sel != LB_ERR) {
-		m_wndMultiList.SetCurSel(sel);
-	}
-	OnSelchangeMultiList();
-}
-
-void CBCFView::FillLabels(BCFTopic* topic)
-{
-	m_wndMultiList.ResetContent();
-	int i = 0;
-	while (auto label = topic->GetLabel(i++)) {
-		m_wndMultiList.AddString(FromUTF8(label));
-	}
-}
-
-void CBCFView::FillRelated(BCFTopic* topic)
-{
-	int i = 0;
-	while (auto related = topic->GetRelatedTopic(i++)) {
-		auto text = GetTopicDisplayName(*related);
-		auto item = m_wndMultiList.AddString(text);
-		m_wndMultiList.SetItemDataPtr(item, related);
-	}
-}
-
-void CBCFView::FillLinks(BCFTopic* topic)
-{
-	int i = 0;
-	while (auto link = topic->GetReferenceLink(i++)) {
-		m_wndMultiList.AddString(FromUTF8(link));
-	}
-}
-
-static CString GetDocumentText(BCFDocumentReference* doc)
-{
-	CString text = FromUTF8(doc->GetDescription());
-	if (!text.IsEmpty()) {
-		text.Append(L": ");
-	}
-	fs::path path = doc->GetFilePath();
-	text += FromUTF8(path.filename().string().c_str());
-
-	return text;
-}
-
-void CBCFView::FillDocuments(BCFTopic* topic)
-{
-	int i = 0;
-	while (auto doc = topic->GetDocumentReference(i++)) {
-		auto item = m_wndMultiList.AddString(GetDocumentText(doc));
-		m_wndMultiList.SetItemDataPtr(item, doc);
-	}
-}
-
-void CBCFView::OnClickedButtonAddMulti()
-{
-	auto item = m_wndTopics.GetCurSel();
-	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
-
-	if (topic) {
-		switch (m_wndTab.GetCurSel()) {
-		case TAB_Labels:
-			AddLabel(topic);
-			break;
-		case TAB_Related:
-			AddRelated(topic);
-			break;
-		case TAB_Links:
-			AddLink(topic);
-			break;
-		case TAB_Documents:
-			AddDocument(topic);
-			break;
-		default:
-			ASSERT(FALSE);
-		}
-
-		FillMultiList();
-	}
-}
-
-void CBCFView::AddLabel(BCFTopic* /*topic*/)
-{
-	CBCFAddLabel dlg(*this);
-	dlg.DoModal();
-}
-
-void CBCFView::AddRelated(BCFTopic* /*topic*/)
-{
-	CBCFAddRelatedTopic dlg(*this);
-	dlg.DoModal();
-}
-
-void CBCFView::AddLink(BCFTopic* /*topic*/)
-{
-	CBCFAddReferenceLink dlg(*this);
-	dlg.DoModal();
-}
-
-void CBCFView::AddDocument(BCFTopic* /*topic*/)
-{
-	CBCFAddDocumentReference dlg(*this);
-	dlg.DoModal();
-}
-
-void CBCFView::OnClickedButtonRemoveMulti()
-{
-	auto item = m_wndTopics.GetCurSel();
-	auto topic = (BCFTopic*)m_wndTopics.GetItemData(item);
-
-	if (topic) {
-		switch (m_wndTab.GetCurSel()) {
-		case TAB_Labels:
-			RemoveLabel(topic);
-			break;
-		case TAB_Related:
-			RemoveRelated(topic);
-			break;
-		case TAB_Links:
-			RemoveLink(topic);
-			break;
-		case TAB_Documents:
-			RemoveDocument(topic);
-			break;
-		default:
-			ASSERT(FALSE);
-		}
-
-		FillMultiList();
-	}
-}
-
-void CBCFView::RemoveLabel(BCFTopic* topic)
-{
-	auto sel = m_wndMultiList.GetCurSel();
-	if (sel != LB_ERR) {
-		CString label;
-		m_wndMultiList.GetText(sel, label);
-		if (IDYES == AfxMessageBox(L"Do you want to delete label " + label + L"?", MB_YESNO)) {
-			if (!topic->RemoveLabel(ToUTF8(label).c_str())) {
-				ShowLog(true);
-			}
-		}
-	}
-}
-
-void CBCFView::RemoveRelated(BCFTopic* topic)
-{
-	auto sel = m_wndMultiList.GetCurSel();
-	if (sel != LB_ERR) {
-		auto t = (BCFTopic*)m_wndMultiList.GetItemDataPtr(sel);
-		if (t) {
-			if (!topic->RemoveRelatedTopic(t)) {
-				ShowLog(true);
-			}
-		}
-	}
-}
-
-void CBCFView::RemoveLink(BCFTopic* topic)
-{
-	auto sel = m_wndMultiList.GetCurSel();
-	if (sel != LB_ERR) {
-		CString link;
-		m_wndMultiList.GetText(sel, link);
-		if (IDYES == AfxMessageBox(L"Do you want to delete reference link '" + link + L"'?", MB_YESNO)) {
-			if (!topic->RemoveReferenceLink(ToUTF8(link).c_str())) {
-				ShowLog(true);
-			}
-		}
-	}
-}
-
-void CBCFView::RemoveDocument(BCFTopic* /*topic*/)
-{
-	auto sel = m_wndMultiList.GetCurSel();
-	if (sel != LB_ERR) {
-		auto doc = (BCFDocumentReference*)m_wndMultiList.GetItemDataPtr(sel);
-		if (doc) {
-			CString quest;
-			quest.Format(L"Do you want to remove reference to document '%s'?", GetDocumentText(doc).GetString());
-			if (IDYES == AfxMessageBox(quest, MB_YESNO)) {
-				if (!doc->Remove()) {
-					ShowLog(true);
-				}
-			}
-		}
-	}
-}
-
-
-
-void CBCFView::OnSelchangeMultiList()
-{
-	m_wndRemoveMulti.EnableWindow(m_wndMultiList.GetCurSel() != LB_ERR);
-}
-
-
-void CBCFView::OnClickedProjectInfo()
-{
-	if (m_bcfProject) {
-		CBCFProjInfo projInfo(*m_bcfProject, this);
-		projInfo.DoModal();
-	}
-}
-
-void CBCFView::OnKillfocusEdit()
-{
-	UpdateActiveTopic();
-}
-
-void CBCFView::OnKillfocusTopicCommentText()
-{
-	UpateActiveComment();
-}
-
-
-void CBCFView::OnClickedSave()
-{
-	SaveBCFFile();
-}
-
-void CBCFView::SaveBCFFile()
-{
-	if (!m_bcfProject) {
-		return;
-	}
-
-	LPCTSTR fileTypes = _T("BCF files (*.bcf)|*.bcf|All Files (*.*)|*.*||");
-
-	CFileDialog dlgFile(FALSE, L"bcf", _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, fileTypes);
-	if (dlgFile.DoModal() != IDOK)
-	{
-		return;
-	}
-
-	m_bcfFilePath = dlgFile.GetPathName();
-
-	bool ok = m_bcfProject->WriteFile(ToUTF8(m_bcfFilePath).c_str(), BCFVer_3_0);
-
-	ShowLog(!ok);
-}
-
-void CBCFView::OnClickedUpdateViewpoint()
-{
-	auto indComment = m_wndCommentsList.GetCurSel();
-	if (auto comment = (BCFComment*)m_wndCommentsList.GetItemDataPtr(indComment)) {
-		bool ok = m_viewPointMgr.SaveCurrentViewToComent(*comment);
 		ShowLog(!ok);
-	}
-}
 
-CString CBCFView::GetTopicDisplayName(BCFTopic& topic)
-{
-	int i = 0;
-	auto& bcfProject = topic.GetProject();
-	while (auto t = bcfProject.GetTopic(i++)) {
-		if (t == &topic) {
-			break;
+		if (ok) {
+			if (m_filePath.IsEmpty() &&
+				!CBCFProjectSettingsDlg::SaveEnumerationProfile(*m_project)) {
+				AfxMessageBox(L"Failed to save BCF project enumeration defaults.",
+					MB_OK | MB_ICONERROR);
+			}
+			if (m_topicForm->GetTopic()) {
+				m_topicForm->Load(m_topicForm->GetTopic());
+			}
 		}
 	}
-
-	auto guid = FromUTF8(topic.GetGuid());
-	auto title = FromUTF8(topic.GetTitle());
-
-	CString text;
-	text.Format(L"#%d: %s - %s", i, guid.GetString(), title.GetString());
-
-	return text;
 }
 
-
-void CBCFView::OnClickedButtonBims()
+void CBCFView::AdjustLayout()
 {
-	CBCFBimFiles dlg(*this);
-	dlg.DoModal();
+	if (!GetSafeHwnd()) {
+		return;
+	}
+	CRect client;
+	GetClientRect(client);
+
+	CClientDC dc(this);
+	CFont* font = m_projectIdLabel.GetFont();
+	CFont* oldFont = font ? dc.SelectObject(font) : nullptr;
+	TEXTMETRIC textMetrics = {};
+	dc.GetTextMetrics(&textMetrics);
+	const int textHeight = textMetrics.tmAscent + textMetrics.tmDescent + textMetrics.tmExternalLeading;
+	const int rowHeight = textHeight + textHeight / 5;
+	const int margin = rowHeight / 3;
+	const int labelOffset = (rowHeight - textHeight) / 2;
+	const int headerTop = client.top + margin;
+
+	CString idLabelText;
+	CString nameLabelText;
+	CString projectIdText;
+	CString settingsText;
+	m_projectIdLabel.GetWindowText(idLabelText);
+	m_projectNameLabel.GetWindowText(nameLabelText);
+	m_projectId->GetWindowText(projectIdText);
+	m_projectSettings.GetWindowText(settingsText);
+	const int idLabelWidth = dc.GetTextExtent(idLabelText).cx + margin;
+	const int nameLabelWidth = dc.GetTextExtent(nameLabelText).cx + margin;
+	const DWORD projectIdMargins = m_projectId->GetMargins();
+	const int projectIdWidth = max(rowHeight,
+		static_cast<int>(dc.GetTextExtent(projectIdText).cx) +
+		LOWORD(projectIdMargins) + HIWORD(projectIdMargins));
+	const int settingsWidth = static_cast<int>(dc.GetTextExtent(settingsText).cx) + 2 * margin;
+	if (oldFont) {
+		dc.SelectObject(oldFont);
+	}
+
+	if (!m_project) {
+		m_emptyMessage.MoveWindow(client);
+		RedrawWindow(nullptr, nullptr,
+			RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+		return;
+	}
+
+	int left = margin;
+	m_projectIdLabel.MoveWindow(
+		left, headerTop + labelOffset, idLabelWidth, textHeight);
+	left += idLabelWidth;
+	m_projectId->MoveWindow(
+		left, headerTop + labelOffset, projectIdWidth, rowHeight - labelOffset);
+	left += projectIdWidth + margin;
+	m_projectNameLabel.MoveWindow(
+		left, headerTop + labelOffset, nameLabelWidth, textHeight);
+	left += nameLabelWidth;
+
+	const int availableWidth = max(
+		2, static_cast<int>(client.right) - margin - left);
+	const int controlSpacing = min(margin, max(0, availableWidth - 2));
+	const int minimumNameWidth = min(
+		rowHeight, max(1, availableWidth - controlSpacing - 1));
+	const int fittedSettingsWidth = min(
+		settingsWidth,
+		max(1, availableWidth - controlSpacing - minimumNameWidth));
+	const int projectNameWidth = max(
+		1, availableWidth - controlSpacing - fittedSettingsWidth);
+	const int settingsLeft = left + projectNameWidth + controlSpacing;
+
+	m_projectName->MoveWindow(
+		left, headerTop + labelOffset,
+		projectNameWidth, rowHeight - labelOffset);
+
+	m_projectSettings.MoveWindow(
+		settingsLeft, headerTop, fittedSettingsWidth, rowHeight);
+
+	CRect formRect(client.left,
+		headerTop + rowHeight + margin, client.right, client.bottom);
+	m_projectForm->MoveWindow(formRect);
+	m_topicForm->MoveWindow(formRect);
+	if (IsWindow(m_commentForm->GetSafeHwnd()))
+		m_commentForm->MoveWindow(formRect);
+	RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+}
+
+void CBCFView::OnSize(UINT type, int cx, int cy)
+{
+	CDockablePane::OnSize(type, cx, cy);
+	AdjustLayout();
+}
+
+void CBCFView::OnSetFocus(CWnd*)
+{
+	if (!m_project) {
+		return;
+	}
+	if (m_activeForm == ProjectForm) {
+		m_projectForm->SetFocus();
+	}
+	else if (m_activeForm == TopicForm) {
+		m_topicForm->FocusInitialControl();
+	}
+	else {
+		m_commentForm->FocusInitialControl();
+	}
 }

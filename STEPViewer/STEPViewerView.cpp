@@ -756,41 +756,63 @@ void CMySTEPViewerView::SetBCFView(
 	double fieldOfView,
 	double aspectRatio)
 {
-	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
-	if (pRenderer != nullptr)
-	{
-		double dLengthConversionFactor = getProjectUnitConversionFactor(
-			_ptr<_ap_model>(getController()->getModel())->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+	if (auto pRenderer = dynamic_cast<_oglRenderer*>(m_pOpenGLView)) {
+		if (auto ctrl = getController()) {
+			for (auto& model : ctrl->getModels()) {
+				if (auto apmodel = _ptr<_ap_model>(model)) {
+					if (auto sdaiModel = apmodel->getSdaiModel()) {
 
-		pRenderer->_setCameraSettings(
-			camera == BCFCamera::BCFCameraPerspective,
-			viewpoint.xyz,
-			direction.xyz,
-			upVector.xyz,
-			viewToWorldScale,
-			fieldOfView,
-			aspectRatio,
-			dLengthConversionFactor);
+						double dLengthConversionFactor = getProjectUnitConversionFactor(
+							sdaiModel, "LENGTHUNIT", nullptr, nullptr, nullptr);
 
-//#ifdef _DEBUG
-//		// TBD:
-//		// Igor: Set/GetBCFView must be complementary
-// 		// Svilen: OpenGL SDK always center the model
-//
-//		BCFCamera camera_;
-//		BCFPoint viewpoint_, direction_, upVector_;
-//		double viewToWorldScale_, fieldOfView_, aspectRatio_;
-//		
-//		GetBCFView(camera_, viewpoint_, direction_, upVector_, viewToWorldScale_, fieldOfView_, aspectRatio_);
-//
-//		ASSERT(camera == camera_);
-//		ASSERT_EQ(viewpoint,viewpoint_);
-//		ASSERT_EQ(direction, direction_);
-//		ASSERT_EQ(upVector, upVector_);
-//		ASSERT_EQ(viewToWorldScale, viewToWorldScale_);
-//		ASSERT_EQ(fieldOfView, fieldOfView_);
-//		ASSERT_EQ(aspectRatio, aspectRatio_);
-//#endif // _DEBUG
+						pRenderer->_setCameraSettings(
+							camera == BCFCamera::BCFCameraPerspective,
+							viewpoint.xyz,
+							direction.xyz,
+							upVector.xyz,
+							viewToWorldScale,
+							fieldOfView,
+							aspectRatio,
+							dLengthConversionFactor);
+
+#ifdef _DEBUG
+						bool getPerspective = false;
+                        BCFPoint getViewpoint;
+                        BCFPoint getDirection;
+                        BCFPoint getUpVector;
+                        double getViewToWorldScale = 0.0;
+                        double getFieldOfView = 0.0;
+                        double getAspectRatio = 0.0;
+						pRenderer->_getCameraSettings(
+							getPerspective,
+							getViewpoint.xyz,
+							getDirection.xyz,
+							getUpVector.xyz,
+							getViewToWorldScale,
+							getFieldOfView,
+							getAspectRatio,
+							dLengthConversionFactor
+						);
+#if 1
+                        ASSERT(getPerspective == (camera == BCFCamera::BCFCameraPerspective));
+						ASSERT_EQ(getViewpoint, viewpoint);
+                        ASSERT_EQ(getDirection, direction);
+                        ASSERT_EQ(getUpVector, upVector);
+						if (getPerspective) {
+							ASSERT_EQ(getFieldOfView, fieldOfView);
+						}
+						else {
+							ASSERT_EQ(getViewToWorldScale, viewToWorldScale);
+						}
+                        ASSERT_EQ(getAspectRatio, aspectRatio);
+#endif
+#endif
+					}
+				}
+
+				break; //call for 1st model id enough
+			}
+		}
 	}
 }
 
@@ -804,16 +826,23 @@ void CMySTEPViewerView::ResetBCFView()
 	}
 }
 
-void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio)
+bool CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio)
 {
 	auto pRenderer = m_pOpenGLView != nullptr ? dynamic_cast<_oglRenderer*>(m_pOpenGLView) : nullptr;
 	if (pRenderer != nullptr)
 	{
-		double dLengthConversionFactor = getProjectUnitConversionFactor(
-			_ptr<_ap_model>(getController()->getModel())->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+		double dLengthConversionFactor = -1;
+		auto ap_model = _ptr<_ap_model>(getController()->getFirstModel());
+		if (ap_model) {
+			dLengthConversionFactor = getProjectUnitConversionFactor(ap_model->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+		}
+
+		if (dLengthConversionFactor < FLT_MIN) {
+			dLengthConversionFactor = 1.0;
+		}
 
 		bool bPerspective = false;
-		pRenderer->_getCameraSettings(
+		if (pRenderer->_getCameraSettings(
 			bPerspective,
 			viewPoint.xyz,
 			direction.xyz,
@@ -821,8 +850,12 @@ void CMySTEPViewerView::GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPo
 			viewToWorldScale,
 			fieldOfView,
 			aspectRatio,
-			dLengthConversionFactor);
+			dLengthConversionFactor)) {
 
 		camera = bPerspective ? BCFCamera::BCFCameraPerspective : BCFCamera::BCFCameraOrthogonal;
+
+			return true;
+		}
 	}
+	return false;
 }

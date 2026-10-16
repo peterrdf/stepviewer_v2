@@ -3,19 +3,19 @@
 
 #include "stdafx.h"
 #include "STEPViewer.h"
-#include "BCFView.h"
 #include "BCFAddReferenceLink.h"
+#include "BCFView.h"
 
 
 // CBCFAddReferenceLink dialog
 
 IMPLEMENT_DYNAMIC(CBCFAddReferenceLink, CDialogEx)
 
-CBCFAddReferenceLink::CBCFAddReferenceLink(CBCFView& view)
+CBCFAddReferenceLink::CBCFAddReferenceLink(CBCFView& view, BCFTopic& topic)
 	: CDialogEx(IDD_BCF_ADDREFERENCELINK, &view)
-	, m_view(view)
+	, m_topic(&topic)
+	, m_paneView(&view)
 {
-
 }
 
 CBCFAddReferenceLink::~CBCFAddReferenceLink()
@@ -42,13 +42,11 @@ void CBCFAddReferenceLink::OnOK()
 	text.Trim();
 	if (!text.IsEmpty())
 	{
-		if (auto topic = m_view.GetActiveTopic()) {
-			if (topic->AddReferenceLink(ToUTF8(text).c_str())) {
-				CDialogEx::OnOK();
-			}
-			else {
-				m_view.ShowLog(true);
-			}
+		if (m_topic->AddReferenceLink(ToUTF8(text).c_str())) {
+			CDialogEx::OnOK();
+		}
+		else {
+			m_paneView->ShowLog(true);
 		}
 	}
 }

@@ -204,11 +204,9 @@ namespace _xml
 	protected: // Methods
 
 		virtual void onElementLoaded(_element* pElement) = 0;
-#ifdef _LOAD_SCHEMAS
 		virtual void loadNamespaceSchemas(const string& strNamespace) = 0;
 		virtual _schema* loadSchema(const string& strNamespace, const string& strLocation) = 0;
 		virtual void loadSchemas() = 0;
-#endif // _LOAD_SCHEMAS
 	};
 
 	// ********************************************************************************************
@@ -257,9 +255,7 @@ namespace _xml
 		void load(const char* szFile);
 		void load(istream* pStream);
 
-#ifdef _LOAD_SCHEMAS
 		virtual void loadSchemas();
-#endif // _LOAD_SCHEMAS
 
 		virtual void clean();
 			
@@ -284,11 +280,9 @@ namespace _xml
 		
 		virtual void load();
 
-#ifdef _LOAD_SCHEMAS
 		_schema* loadSchema(const string& strNamespace, const string& strLocation);
 		void loadNamespaceSchemas(const string& strNamespace);
 		void loadNamespaces();
-#endif // _LOAD_SCHEMAS
 
 	private: // Methods
 
@@ -318,9 +312,7 @@ namespace _xml
 		virtual void deserialize(_srln::_archive* /*pArchive*/) override;
 
 		// _document
-#ifdef _LOAD_SCHEMAS		
 		virtual void loadSchemas() override;
-#endif // _LOAD_SCHEMAS
 		virtual void clean() override;
 
 	protected: // Methods

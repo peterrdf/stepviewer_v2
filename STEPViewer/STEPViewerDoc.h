@@ -7,7 +7,8 @@
 
 #include "Controller.h"
 #include "ModelCheckDlg.h"
-#include "BCF\BCFView.h"
+
+class CBCFView;
 
 // ************d************************************************************************************
 static TCHAR BCF_PACKAGES_FILTER[] = _T("BCF Packages (*.bcf; *.bcfzip)|*.bcf; *.bcfzip|All Files (*.*)|*.*||");
@@ -39,6 +40,8 @@ public:
 
 // Operations
 public:
+	void UpdateTitle();
+	bool ReadyToOpenOrNewDoc();
 
 // Overrides
 public:
@@ -63,7 +66,6 @@ public:
 
 protected:
 	CModelCheckDlg		m_wndModelChecker;
-	CBCFView            m_wndBCFView;
 
 // Generated message map functions
 protected:
@@ -73,8 +75,19 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+
+protected:
+	CBCFView* GetBCFView();
+	bool OpenBCFFile(CString filePath);
+	
 public:
 	afx_msg void OnFileOpen();
+	afx_msg void OnFileNewBCF();
+	afx_msg void OnFileOpenBCF();
+	afx_msg void OnFileSaveBCF();
+	afx_msg void OnUpdateFileSaveBCF(CCmdUI* commandUI);
+	afx_msg void OnFileCloseBCF();
+	afx_msg void OnUpdateFileCloseBCF(CCmdUI* commandUI);
 	afx_msg void OnViewZoomOut();
 	afx_msg void OnViewModelChecker();
 	afx_msg void OnUpdateViewModelChecker(CCmdUI* pCmdUI);
@@ -82,12 +95,6 @@ public:
 	afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
 	afx_msg void OnFileSaveAs();
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
-	afx_msg void OnBcfAddbim();
-	afx_msg void OnUpdateBcfAddbim(CCmdUI* pCmdUI);
-	afx_msg void OnBcfNew();
-	afx_msg void OnUpdateBcfNew(CCmdUI* pCmdUI);
-	afx_msg void OnBcfOpen();
-	afx_msg void OnUpdateBcfOpen(CCmdUI* pCmdUI);
 	afx_msg void OnExportAsGltf();
 	afx_msg void OnUpdateExportAsGltf(CCmdUI* pCmdUI);
 	afx_msg void OnViewIdsChecker();
