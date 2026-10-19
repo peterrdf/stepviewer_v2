@@ -1424,8 +1424,9 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 
 _model* _controller::getModel(bool assertOnlyOneModel) const
 {
+#ifdef _WINDOWS
 	UNREFERENCED_PARAMETER(assertOnlyOneModel);
-
+#endif
 	if (!m_vecModels.empty()) {
 		assert(!assertOnlyOneModel || m_vecModels.size() == 1);
 

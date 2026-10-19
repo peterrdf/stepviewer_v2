@@ -258,8 +258,9 @@ static char THIS_FILE[]=__FILE__;
 
 /*virtual*/ BOOL CRelationsView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
+#ifdef _WINDOWS
 	UNREFERENCED_PARAMETER(iFilter);
-
+#endif
 	if (hItem == NULL) {
 		ASSERT(FALSE);
 
