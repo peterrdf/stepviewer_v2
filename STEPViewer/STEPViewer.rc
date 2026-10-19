@@ -258,9 +258,9 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTI
 CAPTION "Progress"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Close", IDCANCEL, 180, 174, 50, 14, WS_DISABLED
-    EDITTEXT        IDC_EDIT_PROGRESS, 7, 7, 395, 143, ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
-    CONTROL         "", IDC_PROGRESS_CTRL, "msctls_progress32", WS_BORDER, 7, 153, 395, 14
+    PUSHBUTTON      "Close",IDCANCEL,180,174,50,14,WS_DISABLED
+    EDITTEXT        IDC_EDIT_PROGRESS,7,7,395,143,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+    CONTROL         "",IDC_PROGRESS_CTRL,"msctls_progress32",WS_BORDER,7,153,395,14
 END
 
 
@@ -648,12 +648,6 @@ BEGIN
     BEGIN
         MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "New BCF...",                  ID_FILE_NEW_BCF
-        MENUITEM "Open BCF...",                 ID_FILE_OPEN_BCF
-        MENUITEM "Save BCF...",                 ID_FILE_SAVE_BCF
-        MENUITEM "Close BCF",                   ID_FILE_CLOSE_BCF
-        MENUITEM SEPARATOR
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
         POPUP "Export As..."
@@ -661,6 +655,11 @@ BEGIN
             MENUITEM "glTF",                        ID_EXPORT_AS_GLTF
             MENUITEM "glTF Binary",                 ID_EXPORT_AS_GLTF_BINARY
         END
+        MENUITEM SEPARATOR
+        MENUITEM "New BCF...",                  ID_FILE_NEW_BCF
+        MENUITEM "Open BCF...",                 ID_FILE_OPEN_BCF
+        MENUITEM "Save BCF...",                 ID_FILE_SAVE_BCF
+        MENUITEM "Close BCF",                   ID_FILE_CLOSE_BCF
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW

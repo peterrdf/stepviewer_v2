@@ -1677,11 +1677,9 @@ void _oglRenderer::_prepare(
 	// zFar     - The far clipping distance
 	const bool useCameraSettings = m_bCameraSettings && bTranslate;
 	const GLdouble fovY = useCameraSettings ? m_dFieldOfView : 45.;
-	GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
-	if (useCameraSettings) {
-		aspect = m_dAspectRatio;
-	}
-	else if (!m_bCameraSettings) {
+	const GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	if (bTranslate && !m_bDrawSelectInstanceBufferInProgress) {
+		// #tbd: Keep the current viewport aspect, so it is exported to BCF correctly
 		m_dAspectRatio = aspect;
 	}
 
