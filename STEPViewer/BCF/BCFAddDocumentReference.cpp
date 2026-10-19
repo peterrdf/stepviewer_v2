@@ -10,14 +10,14 @@
 
 IMPLEMENT_DYNAMIC(CBCFAddDocumentReference, CDialogEx)
 
-CBCFAddDocumentReference::CBCFAddDocumentReference(CBCFView& view)
+CBCFAddDocumentReference::CBCFAddDocumentReference(CBCFView& view, BCFTopic& topic)
 	: CDialogEx(IDD_BCF_ADDOCUMENT, &view)
-	, m_view(view)
 	, m_strPath(_T(""))
 	, m_strDescription(_T(""))
 	, m_isExternal(TRUE)
+	, m_topic(&topic)
+	, m_paneView(&view)
 {
-
 }
 
 CBCFAddDocumentReference::~CBCFAddDocumentReference()
@@ -43,13 +43,6 @@ END_MESSAGE_MAP()
 
 void CBCFAddDocumentReference::OnOK()
 {
-	auto topic = m_view.GetActiveTopic();
-	if (!topic) {
-		ASSERT(0);
-		EndDialog(IDCANCEL);
-		return;
-	}
-
 	UpdateData();
 
 	m_strPath.Trim();
@@ -60,15 +53,15 @@ void CBCFAddDocumentReference::OnOK()
 		return;
 	}
 
-	auto doc = topic->AddDocumentReference(ToUTF8(m_strPath).c_str(), m_isExternal);
+	auto doc = m_topic->AddDocumentReference(ToUTF8(m_strPath).c_str(), m_isExternal);
 	if (!doc) {
-		m_view.ShowLog(true);
+		m_paneView->ShowLog(true);
 		return;
 	}
 
 	if (!m_strDescription.IsEmpty()) {
 		if (!doc->SetDescription(ToUTF8(m_strDescription).c_str())) {
-			m_view.ShowLog(true);
+			m_paneView->ShowLog(true);
 		}
 	}
 

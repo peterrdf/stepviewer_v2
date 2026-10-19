@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include "bcfAPI.h"
 #include "_mvc.h"
 #include "_oglUtils.h"
-
 #include "Controller.h"
 
 // ************************************************************************************************
@@ -40,7 +40,7 @@ public:
 public:
 	void SetBCFView(BCFCamera camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double viewToWorldScale, double fieldOfView, double aspectRatio);
 	void ResetBCFView();
-	void GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio);
+	bool GetBCFView(BCFCamera& camera, BCFPoint& viewPoint, BCFPoint& direction, BCFPoint& upVector, double& viewToWorldScale, double& fieldOfView, double& aspectRatio);
 
 // Overrides
 public:

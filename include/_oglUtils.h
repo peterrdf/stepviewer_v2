@@ -2412,9 +2412,11 @@ protected: // Fields
 
 	// Camera
 	bool m_bCameraSettings;
+	bool m_bCameraSettingsChanged;
 	_vector3d m_vecViewPoint;
 	_vector3d m_vecDirection;
 	_vector3d m_vecUpVector;
+	double m_dViewToWorldScale;
 	double m_dFieldOfView;
 	double m_dAspectRatio;
 
@@ -2465,7 +2467,7 @@ public: // Methods
 		double dAspectRatio,
 		double dLengthConversionFactor);
 
-	void _getCameraSettings(
+	bool _getCameraSettings(
 		bool& bPerspective,
 		double arViewPoint[3],
 		double arDirection[3],

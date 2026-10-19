@@ -2,17 +2,42 @@
 #include "BCFViewPointMgr.h"
 #include "STEPViewerDoc.h"
 #include "STEPViewerView.h"
-#include "BCFView.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_ifc_model_structure.h"
+#include "_ap242_instance.h"
+#include "_ap242_model.h"
+#include "_ap242_model_structure.h"
 #include "_oglUtils.h"
 
 #include <unordered_set>
 
-#define IFC_ROOT "IfcRoot"
 #define IFC_SPACE "IfcSpace"
 #define IFC_OPENING "IfcOpeningElement"
-#define GLOBAL_ID "GlobalId"
+
+#define EXPRESS_ID_PATH_PREFIX "ExpressIdPath:"
+
+CBCFViewPointMgr::CBCFViewPointMgr(CMySTEPViewerDoc& document)
+	: m_document(document)
+{
+}
+
+CMySTEPViewerDoc& CBCFViewPointMgr::GetViewerDoc()
+{
+	return m_document;
+}
+
+CMySTEPViewerView* CBCFViewPointMgr::GetViewerView()
+{
+	auto& doc = GetViewerDoc();
+	auto position = doc.GetFirstViewPosition();
+	while (auto view = doc.GetNextView(position)) {
+		if (auto viewerView = dynamic_cast<CMySTEPViewerView*>(view)) {
+			return viewerView;
+		}
+	}
+	return NULL;
+}
 
 void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 {
@@ -28,14 +53,18 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 		double viewToWorldScale = commentViewPoint->GetViewToWorldScale();
 		double fieldOfView = commentViewPoint->GetFieldOfView();
 		double aspectRatio = commentViewPoint->GetAspectRatio();
-		m_view.GetViewerView()->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+		if (auto view = GetViewerView()) {
+			view->SetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
+		}
 		
 		ApplySelectionToViewer(commentViewPoint);
 		ApplyColoringToViewer(commentViewPoint);
 		ApplyVisibilityToViewer(commentViewPoint);
 	}
 	else {
-		m_view.GetViewerView()->ResetBCFView();
+		if (auto view = GetViewerView()) {
+			view->ResetBCFView();
+		}
 
 		ApplySelectionToViewer(nullptr);
 		ApplyColoringToViewer(nullptr);
@@ -45,42 +74,43 @@ void CBCFViewPointMgr::SetViewFromComment(BCFComment& comment)
 
 bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 {
-	bool ok = true;
+	auto view = GetViewerView();
+	if (!view) {
+		return false;
+	}
+
+	//save camera
+	BCFCamera camera = BCFCameraOrthogonal;
+	BCFPoint viewPoint;
+	BCFPoint direction;
+	BCFPoint upVector;
+	double viewToWorldScale = 1;
+	double fieldOfView = 90;
+	double aspectRatio = 1;
+
+	if (!view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio)) {
+		return false;
+	}
 
 	auto vp = comment.GetViewPoint();
 	if (!vp) {
 		vp = comment.GetTopic().AddViewPoint();
 		if (vp) {
-			ok = comment.SetViewPoint(vp) && ok;
-		}
-		else {
-			ok = false;
+			if (!comment.SetViewPoint(vp)) {
+				return false;
+			}
 		}
 	}
 
+	bool ok = true;
 	if (vp) {
-
-		if (auto view = m_view.GetViewerView()) {
-
-			//save camera
-			BCFCamera camera = BCFCameraOrthogonal;
-			BCFPoint viewPoint;
-			BCFPoint direction;
-			BCFPoint upVector;
-			double viewToWorldScale = 1;
-			double fieldOfView = 90;
-			double aspectRatio = 1;
-
-			view->GetBCFView(camera, viewPoint, direction, upVector, viewToWorldScale, fieldOfView, aspectRatio);
-
-			ok = vp->SetCameraType(camera) && ok;
-			ok = vp->SetCameraViewPoint(&viewPoint) && ok;
-			ok = vp->SetCameraDirection(&direction) && ok;
-			ok = vp->SetCameraUpVector(&upVector) && ok;
-			ok = vp->SetViewToWorldScale(viewToWorldScale) && ok;
-			ok = vp->SetFieldOfView(fieldOfView) && ok;
-			ok = vp->SetAspectRatio(aspectRatio) && ok;
-		}
+		ok = vp->SetCameraType(camera) && ok;
+		ok = vp->SetCameraViewPoint(&viewPoint) && ok;
+		ok = vp->SetCameraDirection(&direction) && ok;
+		ok = vp->SetCameraUpVector(&upVector) && ok;
+		ok = vp->SetViewToWorldScale(viewToWorldScale) && ok;
+		ok = vp->SetFieldOfView(fieldOfView) && ok;
+		ok = vp->SetAspectRatio(aspectRatio) && ok;
 
 		ok = SaveSelection(*vp) && ok;
 		ok = SaveColoring(*vp) && ok;
@@ -89,6 +119,74 @@ bool CBCFViewPointMgr::SaveCurrentViewToComent(BCFComment&comment)
 
 	return ok;
 
+}
+
+void CBCFViewPointMgr::SetSelectionFromComment(BCFComment& comment)
+{
+	ApplySelectionToViewer(comment.GetViewPoint());
+}
+
+bool CBCFViewPointMgr::SaveCurrentSelectionToComment(BCFComment& comment)
+{
+	BCFViewPoint* viewPoint = comment.GetViewPoint();
+	if (!viewPoint) {
+		viewPoint = comment.GetTopic().AddViewPoint();
+		if (!viewPoint || !comment.SetViewPoint(viewPoint)) {
+			return false;
+		}
+	}
+	return SaveSelection(*viewPoint);
+}
+
+void CBCFViewPointMgr::SetVisibilityFromComment(BCFComment& comment)
+{
+	ApplyVisibilityToViewer(comment.GetViewPoint());
+}
+
+bool CBCFViewPointMgr::SaveCurrentVisibilityToComment(BCFComment& comment)
+{
+	BCFViewPoint* viewPoint = comment.GetViewPoint();
+	if (!viewPoint) {
+		viewPoint = comment.GetTopic().AddViewPoint();
+		if (!viewPoint || !comment.SetViewPoint(viewPoint)) {
+			return false;
+		}
+	}
+	return SaveVisibility(*viewPoint);
+}
+
+bool CBCFViewPointMgr::SaveSelectedAsVisibleToComment(BCFComment& comment)
+{
+	BCFViewPoint* viewPoint = comment.GetViewPoint();
+	if (!viewPoint) {
+		viewPoint = comment.GetTopic().AddViewPoint();
+		if (!viewPoint || !comment.SetViewPoint(viewPoint)) {
+			return false;
+		}
+	}
+
+	bool ok = viewPoint->SetDefaultVisibility(false);
+	ok = viewPoint->SetSpaceVisible(false) && ok;
+	ok = viewPoint->SetSpaceBoundariesVisible(false) && ok;
+	ok = viewPoint->SetOpeningsVisible(false) && ok;
+	for (uint16_t i = 0; BCFComponent* exception = viewPoint->GetException(0);) {
+		if (!exception->Remove()) {
+			ok = false;
+			++i;
+			exception = viewPoint->GetException(i);
+		}
+		else {
+			exception = viewPoint->GetException(0);
+		}
+	}
+	for (_instance* instance : GetViewerDoc().getSelectedInstances()) {
+		const InstanceIDs ids = GetInstanceIDs(instance);
+		if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+			ok = viewPoint->AddException(
+				ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
+		}
+	}
+	return ok;
 }
 
 void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint* vp)
@@ -106,54 +204,136 @@ void CBCFViewPointMgr::ApplySelectionToViewer(BCFViewPoint* vp)
 		}
 	}
 
-	m_view.GetViewerDoc().selectInstances(nullptr, vecInstances);
+	GetViewerDoc().selectInstances(nullptr, vecInstances);
 }
 
 _instance* CBCFViewPointMgr::SearchComponent(BCFComponent& comp)
 {
 	auto ifcGuid = comp.GetIfcGuid();
 	if (ifcGuid && *ifcGuid) {
-		if (auto inst = SearchIfcComponent(ifcGuid)) {
-			return inst;
-		}
+		return SearchIfcGuid(ifcGuid);
 	}
 
-	auto appId = comp.GetAuthoringToolId();
-	if (appId && *appId) {
-		//...
+	auto authoringToolId = comp.GetAuthoringToolId();
+	if (authoringToolId && *authoringToolId) {
+		return SearchAuthoringToolId(authoringToolId);
 	}
 
 	return NULL;
 }
 
-_instance* CBCFViewPointMgr::SearchIfcComponent(const char* ifcGuid)
+_instance* CBCFViewPointMgr::SearchIfcGuid(const char* ifcGuid)
 {
-	for (auto model : m_view.GetViewerDoc().getModels()) {
-		if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-			if (auto sdaiModel = ifcModel->getSdaiModel()) {
-				if (auto rootEntity = sdaiGetEntity(sdaiModel, IFC_ROOT)) {
-					if (auto globalIdAttr = sdaiGetAttrDefinition(rootEntity, GLOBAL_ID)) {
-
-						for (auto inst : ifcModel->getInstances()) {
-							if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
-								if (auto sdaiInst = apInst->getSdaiInstance()) {
-
-									const char* globalId = NULL;
-									if (sdaiGetAttr(sdaiInst, globalIdAttr, sdaiSTRING, &globalId) && globalId) {
-
-										if (0 == strcmp(ifcGuid, globalId)) {
-											return inst;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+	for (auto model : GetViewerDoc().getModels()) {
+		if (!dynamic_cast<_ifc_model*>(model)) {
+			continue;
+		}
+		for (auto instance : model->getInstances()) {
+			auto ifcInstance = dynamic_cast<_ifc_instance*>(instance);
+			const char* globalId =
+				ifcInstance ? ifcInstance->getGlobalId() : nullptr;
+			if (globalId && strcmp(ifcGuid, globalId) == 0) {
+				return instance;
 			}
 		}
 	}
 	return NULL;
+}
+
+_instance* CBCFViewPointMgr::SearchAuthoringToolId(
+	const char* authoringToolId)
+{
+	if (!authoringToolId) {
+		return nullptr;
+	}
+
+	const size_t prefixLength = strlen(EXPRESS_ID_PATH_PREFIX);
+	if (strncmp(authoringToolId, EXPRESS_ID_PATH_PREFIX, prefixLength) != 0) {
+		return nullptr;
+	}
+
+	const char* searchPath = authoringToolId + prefixLength;
+
+	for (auto model : GetViewerDoc().getModels()) {
+		for (auto instance : model->getInstances()) {
+			std::string instPath;
+			GetExpressIdPath(instPath, instance);
+			if (instPath == searchPath) {
+				return instance;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+template <class TNode> void GetInstances(std::vector<_ap_instance*>& instances, std::vector<TNode*>& nodes)
+{
+	for (auto node : nodes) {
+		if (auto inst = node->getInstance()) {
+			instances.push_back(inst);
+        }
+	}
+}
+
+void CBCFViewPointMgr::GetExpressIdPath(std::string& path, _instance* inst)
+{
+	std::vector<_ap_instance*> instance_path;
+
+	auto model = GetViewerDoc().getModelByOwlInstance(inst->getOwlModel());
+
+	if (auto ap_model = dynamic_cast<_ap242_model*>(model)) {
+		if (auto structure = ap_model->getModelStructure()) {
+			if (auto ap_instance = dynamic_cast<_ap242_instance*>(inst)) {
+
+				std::vector<_ap242_node*> nodes;
+				structure->getInstancePath(ap_instance, nodes);
+
+				GetInstances(instance_path, nodes);
+			}
+		}
+	}
+	else if (auto ifc_model = dynamic_cast<_ifc_model*>(model)) {
+		if (auto structure = ifc_model->getModelStructure()) {
+			if (auto ifc_instance = dynamic_cast<_ifc_instance*>(inst)) {
+
+				std::vector<_ifc_node*> nodes;
+				structure->getInstancePath(ifc_instance->getSdaiInstance(), nodes);
+
+				GetInstances(instance_path, nodes);
+			}
+		}
+	}
+
+	for (auto instance : instance_path) {
+		if (instance) {
+			if (!path.empty()) {
+				path.push_back('.');
+			}
+			path += std::to_string(instance->getExpressID());
+		}
+	}
+}
+
+std::wstring CBCFViewPointMgr::GetComponentDisplayName(BCFComponent& comp)
+{
+	auto instance = dynamic_cast<_ap_instance*>(SearchComponent(comp));
+
+	if (instance) {
+		return _ap_geometry::getDisplayString(instance->getSdaiInstance(), true);
+	}
+	else {
+        auto ifcGuid = comp.GetIfcGuid();
+		if (ifcGuid && *ifcGuid) {
+			return (const wchar_t*)FromUTF8(ifcGuid);
+		}
+		auto authoringToolId = comp.GetAuthoringToolId();
+		if (authoringToolId && *authoringToolId) {
+			return (const wchar_t*)FromUTF8(authoringToolId);
+		}
+	}
+
+	return L"(Unidentified component)";
 }
 
 bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
@@ -168,31 +348,40 @@ bool CBCFViewPointMgr::SaveSelection(BCFViewPoint& vp)
 		}
 	}
 
-	for (auto inst : m_view.GetViewerDoc().getSelectedInstances()) {
-		if (auto globalId = GetGlobalId(inst)) {
-			ok = vp.AddSelection(globalId) && ok;
+	for (auto inst : GetViewerDoc().getSelectedInstances()) {
+		const InstanceIDs ids = GetInstanceIDs(inst);
+		if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+			ok = vp.AddSelection(
+				ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
 		}
 	}
 	
 	return ok;
 }
 
-const char* CBCFViewPointMgr::GetGlobalId(_instance* inst)
+CBCFViewPointMgr::InstanceIDs CBCFViewPointMgr::GetInstanceIDs(
+	_instance* inst)
 {
+	InstanceIDs ids;
+
 	if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
-		if (auto sdaiInst = ifcInst->getSdaiInstance()) {
-			const char* globalId = NULL;
-			if (sdaiGetAttrBN(sdaiInst, GLOBAL_ID, sdaiSTRING, &globalId) && globalId && *globalId) {
-				return globalId;
-			}
+		ids.ifcGuid = ifcInst->getGlobalId();
+	}
+
+    if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
+		std::string idPath;
+		GetExpressIdPath(idPath, apInst);
+		if (!idPath.empty()) {
+			ids.authoringToolId = EXPRESS_ID_PATH_PREFIX + idPath;
 		}
 	}
-	return NULL;
+
+	return ids;
 }
 
 void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint* vp)
 {
-	auto pOGLView = m_view.GetViewerDoc().getViewAs<_oglView>();
+	auto pOGLView = GetViewerDoc().getViewAs<_oglView>();
 	if (pOGLView == nullptr)
 	{
 		ASSERT(FALSE);
@@ -226,7 +415,7 @@ void CBCFViewPointMgr::ApplyColoringToViewer(BCFViewPoint* vp)
 
 bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 {
-	auto pOGLView = m_view.GetViewerDoc().getViewAs<_oglView>();
+	auto pOGLView = GetViewerDoc().getViewAs<_oglView>();
 	if (pOGLView == nullptr)
 	{
 		ASSERT(FALSE);
@@ -270,8 +459,10 @@ bool CBCFViewPointMgr::SaveColoring(BCFViewPoint& vp)
 		if (auto bcfcoloring = vp.AddColoring(clr.c_str())) {
 
 			for (auto inst : coloring.second) {
-				if (auto globalId = GetGlobalId(inst)) {
-					ok = bcfcoloring->AddComponent(globalId) && ok;
+				const InstanceIDs ids = GetInstanceIDs(inst);
+				if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+					ok = bcfcoloring->AddComponent(
+						ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
 				}
 			}
 		}
@@ -370,7 +561,7 @@ void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint* vp)
 			}
 		}
 
-		for (auto model : m_view.GetViewerDoc().getModels()) {
+		for (auto model : GetViewerDoc().getModels()) {
 			if (model) {
 
 				SdaiEntity space = NULL;
@@ -409,10 +600,10 @@ void CBCFViewPointMgr::ApplyVisibilityToViewer(BCFViewPoint* vp)
 			}
 		}
 
-		m_view.GetViewerDoc().onInstancesEnabledStateChanged(nullptr);
+		GetViewerDoc().onInstancesEnabledStateChanged(nullptr);
 	}
 	else {
-		m_view.GetViewerDoc().resetInstancesEnabledState(nullptr);
+		GetViewerDoc().resetInstancesEnabledState(nullptr);
 	}
 }
 
@@ -427,13 +618,13 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 	// calculate visible/invisible instances
 	//
-	for (auto model : m_view.GetViewerDoc().getModels()) {
+	for (auto model : GetViewerDoc().getModels()) {
 		if (model) {
 
 			SdaiEntity space = NULL;
 			SdaiEntity opening = NULL;
-			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+			if (auto apModel = dynamic_cast<_ap_model*>(model)) {
+				if (auto sdaiModel = apModel->getSdaiModel()) {
 					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
 					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
 				}
@@ -441,10 +632,15 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 
 			for (auto inst : model->getInstances()) {
 
+				if (!inst->hasGeometry()) {
+					continue;
+				}
+
 				int ind = inst->getEnable() ? 0 : 1;
 
 				allInstances[ind]++;
 
+                //calculate IFC Space, Opening and Space Boundary instances
 				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
 					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
 						if (sdaiIsInstanceOf(sdaiInst, space)) {
@@ -479,27 +675,28 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 		}
 	}
 
-	for (auto model : m_view.GetViewerDoc().getModels()) {
+	for (auto model : GetViewerDoc().getModels()) {
 		if (model) {
 			SdaiEntity space = NULL;
 			SdaiEntity opening = NULL;
-			SdaiAttr attrGlobalId = NULL;
-			if (auto ifcModel = dynamic_cast<_ifc_model*>(model)) {
-				if (auto sdaiModel = ifcModel->getSdaiModel()) {
+			if (auto apModel = dynamic_cast<_ap_model*>(model)) {
+				if (auto sdaiModel = apModel->getSdaiModel()) {
 					space = sdaiGetEntity(sdaiModel, IFC_SPACE);
 					opening = sdaiGetEntity(sdaiModel, IFC_OPENING);
-
-					if (auto root = sdaiGetEntity(sdaiModel, IFC_ROOT))
-						attrGlobalId = sdaiGetAttrDefinition(root, GLOBAL_ID);
 				}
 			}
 
 			for (auto inst : model->getInstances()) {
 
+				if (!inst->hasGeometry()) {
+					continue;
+				}
+
 				bool visible = vp.GetDefaultVisibility();
 
-				if (auto ifcInst = dynamic_cast<_ifc_instance*>(inst)) {
-					if (auto sdaiInst = ifcInst->getSdaiInstance()) {
+				if (auto apInst = dynamic_cast<_ap_instance*>(inst)) {
+
+					if (auto sdaiInst = apInst->getSdaiInstance()) {
 						if (sdaiIsInstanceOf(sdaiInst, space)) {
 							visible = vp.GetSpaceVisible();
 						}
@@ -511,9 +708,11 @@ bool CBCFViewPointMgr::SaveVisibility(BCFViewPoint& vp)
 						}
 
 						if (visible != inst->getEnable()) {
-							const char* globalId = NULL;
-							if (sdaiGetAttr(sdaiInst, attrGlobalId, sdaiSTRING, &globalId) && globalId && *globalId)
-								ok = vp.AddException(globalId) && ok;
+							const InstanceIDs ids = GetInstanceIDs(inst);
+							if (ids.ifcGuid || !ids.authoringToolId.empty()) {
+								ok = vp.AddException(
+									ids.ifcGuid, ids.authoringToolId.c_str()) && ok;
+							}
 						}
 					}
 				}

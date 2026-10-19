@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "STEPViewer.h"
+#include "STEPViewerDoc.h"
 
 #include "MainFrm.h"
 
@@ -185,6 +186,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_propertiesView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_propertiesView);
 
+	m_bcfView.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&m_bcfView);
+
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
 
@@ -213,9 +217,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_FILE_SAVE_AS);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_GLTF);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_GLTF_BINARY);
-	lstBasicCommands.AddTail(ID_BCF_NEW);
-	lstBasicCommands.AddTail(ID_BCF_OPEN);
-	lstBasicCommands.AddTail(ID_BCF_ADDBIM);
 	lstBasicCommands.AddTail(ID_APP_EXIT);
 	lstBasicCommands.AddTail(ID_EDIT_CUT);
 	lstBasicCommands.AddTail(ID_EDIT_PASTE);
@@ -386,6 +387,19 @@ BOOL CMainFrame::CreateDockingWindows()
 	}
 	// ********************************************************************************************
 
+	m_bcfView.SetDocument(dynamic_cast<CMySTEPViewerDoc*>(pController));
+	if (!m_bcfView.Create(
+		L"BCF View",
+		this,
+		CRect(0, 0, 640, 600),
+		TRUE,
+		ID_VIEW_BCF_PROJECT_PANE,
+		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+	{
+		ASSERT(FALSE);
+		return FALSE;
+	}
+
 	SetDockingWindowIcons(theApp.m_bHiColorIcons);
 	return TRUE;
 }
@@ -436,6 +450,15 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 		::GetSystemMetrics(SM_CYSMICON), 
 		0);
 	m_propertiesView.SetIcon(hPropertiesViewIcon, FALSE);
+
+	HICON hBCFViewIcon = (HICON)::LoadImage(
+		::AfxGetResourceHandle(),
+		MAKEINTRESOURCE(IDI_BCF_VIEW),
+		IMAGE_ICON,
+		::GetSystemMetrics(SM_CXSMICON),
+		::GetSystemMetrics(SM_CYSMICON),
+		0);
+	m_bcfView.SetIcon(hBCFViewIcon, FALSE);
 }
 
 // CMainFrame diagnostics
@@ -583,4 +606,3 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	return TRUE;
 }
-

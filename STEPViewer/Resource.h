@@ -2,8 +2,13 @@
 // Microsoft Visual C++ generated include file.
 // Used by STEPViewer.rc
 //
+#define VERSION_MINOR                   0
+#define VERSION_MAJOR                   1
+#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
+#define IDS_EMPTY                       101
+#define IDS_UNTITLED                    102
 #define IDR_POPUP_EDIT                  119
 #define ID_STATUSBAR_PANE1              120
 #define ID_STATUSBAR_PANE2              121
@@ -128,18 +133,21 @@
 #define IDR_POPUP_META_DATA             348
 #define IDR_TEXTFILE_VERTEX_SHADER3     349
 #define IDR_TEXTFILE_FRAGMENT_SHADER3   350
-#define IDD_BCF_VIEW                    351
-#define IDD_BCF_PROJINFO                353
-#define IDD_BCF_ADDLABEL                355
 #define IDD_BCF_ADDRELATEDTOPIC         357
 #define IDD_BCF_ADDREFERENCELINK        359
 #define IDD_BCF_ADDOCUMENT              361
-#define IDD_BCF_TOPICFILES              363
 #define IDD_DIALOG_IDS_CHECKER          365
 #define IDI_ICON_ERR                    367
 #define IDI_ICON_INFO                   368
 #define IDI_ICON_WARN                   369
 #define IDD_DIALOG_LOG                  370
+#define ID_VIEW_BCF_PROJECT_PANE        374
+#define IDI_BCF_VIEW                    375
+#define IDD_BCF_TOPIC_LABELS            376
+#define IDD_BCF_SETTINGS_USER           377
+#define IDD_BCF_SETTINGS_ENUMERATION    378
+#define IDD_BCF_SETTINGS_VALUE          379
+#define IDD_BCF_INCLUDE_LOADED_MODELS   380
 #define IDD_DIALOG_PROGRESS             372
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
@@ -153,7 +161,6 @@
 #define IDC_EDIT_SEARCH_TEXT            1007
 #define IDC_COMBO_SEARCH_FILTER         1008
 #define IDC_COMBO_INSTANCES             1009
-#define IDC_TOPICS                      1012
 #define IDC_TOPIC_TYPE                  1013
 #define IDC_TOPIC_STAGE                 1014
 #define IDC_TOPIC_TITLE                 1015
@@ -169,24 +176,18 @@
 #define IDC_SNIPPET_REFERENCE_BROWSE    1026
 #define IDC_SNIPPET_SCHEMA_BROWSE       1027
 #define IDC_TOPIC_COMMENTS              1028
-#define IDC_TOPIC_COMMENT_TEXT          1028
 #define IDC_COMMENT_ADD                 1029
 #define IDC_TAB                         1031
 #define IDC_MULTI_LIST                  1032
 #define IDC_BUTTON_ADD                  1033
 #define IDC_BUTTON_REMOVE               1034
-#define IDC_SAVE                        1035
-#define IDC_PROJECT_INFO                1037
 #define IDC_EDIT7                       1038
-#define IDC_AUTHOR                      1039
+#define IDC_TOPIC_INFO                  1039
 #define IDC_LIST1                       1042
 #define IDC_COMMENTS_LIST               1042
 #define IDC_LIST_TOPIC                  1042
 #define IDC_FILE_LIST                   1042
-#define IDC_USERNAME                    1043
-#define IDC_PROJECTID                   1044
 #define IDC_EDIT3                       1045
-#define IDC_PROJECTNAME                 1045
 #define IDC_COMBO_LABELS                1046
 #define IDC_EDIT1                       1047
 #define IDC_EDIT_PATH                   1048
@@ -200,6 +201,17 @@
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
 #define IDC_EDIT_MESSAGES               1057
+#define IDC_BCF_TOPIC_LABELS            1068
+#define IDC_BCF_SETTINGS_USER           1069
+#define IDC_BCF_SETTINGS_LIST           1070
+#define IDC_BCF_SETTINGS_ADD            1071
+#define IDC_BCF_SETTINGS_REMOVE         1072
+#define IDC_BCF_SETTINGS_UP             1073
+#define IDC_BCF_SETTINGS_DOWN           1074
+#define IDC_BCF_SETTINGS_VALUE          1075
+#define IDC_BCF_LOADED_MODELS           1076
+#define IDC_BCF_LOADED_MODELS_EXTERNAL  1077
+#define IDC_BCF_LOADED_MODELS_EMBEDDED  1078
 #define IDC_EDIT_PROGRESS               1058
 #define IDC_PROGRESS_CTRL               1059
 #define ID_INSTANCES_ZOOM_TO            32772
@@ -245,21 +257,22 @@
 #define ID_3DVIEW_RESET_MATERIALS       32838
 #define ID_VIEW_RESET                   32839
 #define ID_FILE_BCF                     32843
-#define ID_BCF_NEW                      32845
-#define ID_BCF_ADDBIM                   32847
-#define ID_BCF_OPEN                     32849
 #define ID_FILE_EXPORT_AS               32851
 #define ID_EXPORT_AS_GLTF               32853
 #define ID_VIEW_IDS_CHECKER             32855
 #define ID_EXPORT_AS_GLTF_BINARY        32857
+#define ID_FILE_NEW_BCF                 32858
+#define ID_FILE_OPEN_BCF                32859
+#define ID_FILE_CLOSE_BCF               32860
+#define ID_FILE_SAVE_BCF                32861
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        374
-#define _APS_NEXT_COMMAND_VALUE         32858
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_RESOURCE_VALUE        381
+#define _APS_NEXT_COMMAND_VALUE         32862
+#define _APS_NEXT_CONTROL_VALUE         1079
 #define _APS_NEXT_SYMED_VALUE           323
 #endif
 #endif

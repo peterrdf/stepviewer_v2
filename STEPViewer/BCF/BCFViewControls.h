@@ -1,0 +1,141 @@
+#pragma once
+
+#include "bcfAPI.h"
+
+#include <vector>
+
+enum BCFViewControlId
+{
+	IDC_PANE_EMPTY_MESSAGE = 2100,
+	IDC_PANE_PROJECT_ID,
+	IDC_PANE_PROJECT_NAME,
+	IDC_PANE_PROJECT_SETTINGS,
+	IDC_PANE_TOPICS,
+	IDC_PANE_NEW_TOPIC,
+	IDC_PANE_TOPIC_DETAILS,
+	IDC_PANE_DELETE_TOPIC,
+	IDC_PANE_TABS,
+	IDC_PANE_SHOW_BCF_CONTENT,
+	IDC_PANE_TOPIC_TITLE,
+	IDC_PANE_TOPIC_DESCRIPTION,
+	IDC_PANE_TOPIC_TYPE,
+	IDC_PANE_TOPIC_STAGE,
+	IDC_PANE_TOPIC_STATUS,
+	IDC_PANE_TOPIC_ASSIGNED,
+	IDC_PANE_TOPIC_PRIORITY,
+	IDC_PANE_TOPIC_DUE,
+	IDC_PANE_TOPIC_SNIPPET,
+	IDC_PANE_TOPIC_REFERENCE,
+	IDC_PANE_TOPIC_SCHEMA,
+	IDC_PANE_TOPIC_INDEX,
+	IDC_PANE_TOPIC_SERVER_ID,
+	IDC_PANE_SELECT_SNIPPET_FILE,
+	IDC_PANE_SELECT_TOPIC_LABELS,
+	IDC_PANE_BIM_FILES,
+	IDC_PANE_ADD_BIM_FILES,
+	IDC_PANE_REMOVE_BIM_FILE,
+	IDC_PANE_COMMENTS,
+	IDC_PANE_NEW_COMMENT,
+	IDC_PANE_SHOW_COMMENT_DETAILS,
+	IDC_PANE_DELETE_COMMENT,
+	IDC_PANE_DOCUMENTS,
+	IDC_PANE_ADD_DOCUMENT,
+	IDC_PANE_REMOVE_DOCUMENT,
+	IDC_PANE_LINKS,
+	IDC_PANE_ADD_LINK,
+	IDC_PANE_REMOVE_LINK,
+	IDC_PANE_RELATED_TOPICS,
+	IDC_PANE_ADD_RELATED_TOPIC,
+	IDC_PANE_REMOVE_RELATED_TOPIC,
+	IDC_PANE_COMMENT_VIEW_TOPIC,
+	IDC_PANE_COMMENT_TABS,
+	IDC_PANE_COMMENT_TEXT
+	, IDC_PANE_COMMENT_SNAPSHOT_SELECT
+	, IDC_PANE_COMMENT_GET_FROM_VIEW
+	, IDC_PANE_COMMENT_APPLY_VIEW
+	, IDC_PANE_COMMENT_GRAB_SELECTED
+	, IDC_PANE_COMMENT_SELECT_COMPONENTS
+	, IDC_PANE_COMMENT_GRAB_VISIBLE
+	, IDC_PANE_COMMENT_VISIBLE_FROM_SELECTION
+	, IDC_PANE_COMMENT_SET_VISIBLE
+	, IDC_PANE_COMMENT_VISIBILITY_MODE
+};
+
+LPCTSTR RegisterBCFPaneClass();
+void SetBCFControlFont(CWnd& control, CWnd* owner);
+void SetBCFComboValue(CComboBox& combo, const CString& value);
+BOOL CreateBCFStaticLabel(CStatic& label, LPCTSTR text, CWnd* parent);
+CString FormatBCFCommentCreated(BCFComment& comment);
+CString FormatBCFCommentModified(BCFComment& comment);
+CString FormatBCFDateTime(const char* value);
+CString GetBCFTopicDisplayName(BCFTopic& topic);
+
+class CBCFCommentsListBox : public CListBox
+{
+public:
+	int AddComment(BCFComment& comment);
+	int AddAction(LPCTSTR text);
+
+protected:
+	virtual void DrawItem(LPDRAWITEMSTRUCT drawItem) override;
+	virtual void MeasureItem(LPMEASUREITEMSTRUCT measureItem) override;
+
+	afx_msg void OnSize(UINT type, int cx, int cy);
+	DECLARE_MESSAGE_MAP()
+
+private:
+	int MeasureCommentHeight(BCFComment* comment) const;
+	int MeasureActionHeight() const;
+	void UpdateItemHeights();
+};
+
+class CBCFSelectFileDlg : public CFileDialog
+{
+public:
+	CBCFSelectFileDlg(LPCTSTR filePath, bool external, CWnd* parent,
+		LPCTSTR filter = L"All files (*.*)|*.*||",
+		DWORD flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY);
+
+	bool IsExternal() const { return m_external; }
+
+protected:
+	virtual BOOL OnFileNameOK() override;
+
+private:
+	enum
+	{
+		ModeControl = 1,
+		ExternalFileMode,
+		EmbedFileMode
+	};
+
+	bool m_external;
+};
+
+class CBCFIncudeLoadedModels : public CDialogEx
+{
+public:
+	CBCFIncudeLoadedModels(const std::vector<CString>& files, CWnd* parent);
+
+	bool IsExternal() const { return m_mode == 0; }
+
+protected:
+	virtual void DoDataExchange(CDataExchange* dataExchange) override;
+	virtual BOOL OnInitDialog() override;
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	const std::vector<CString>& m_files;
+	CListBox m_fileList;
+	int m_mode;
+};
+
+class CBCFEdit : public CEdit
+{
+protected:
+	afx_msg void OnPaint();
+	afx_msg void OnSetFocus(CWnd* oldWnd);
+	afx_msg void OnKillFocus(CWnd* newWnd);
+	DECLARE_MESSAGE_MAP()
+};

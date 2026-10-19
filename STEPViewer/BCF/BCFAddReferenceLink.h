@@ -1,13 +1,14 @@
 #pragma once
 
 class CBCFView;
+struct BCFTopic;
 
 class CBCFAddReferenceLink : public CDialogEx
 {
 	DECLARE_DYNAMIC(CBCFAddReferenceLink)
 
 public:
-	CBCFAddReferenceLink(CBCFView& view);
+	CBCFAddReferenceLink(CBCFView& view, BCFTopic& topic);
 	virtual ~CBCFAddReferenceLink();
 
 // Dialog Data
@@ -23,7 +24,10 @@ protected:
 	afx_msg void OnChangeEdit();
 
 public:
-	CBCFView& m_view;
 	CEdit m_wndEdit;
 	CButton m_wndOK;
+
+private:
+	BCFTopic* m_topic;
+	CBCFView* m_paneView;
 };

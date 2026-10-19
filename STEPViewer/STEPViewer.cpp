@@ -298,6 +298,34 @@ void CMySTEPViewerApp::SaveCustomState()
 {
 }
 
+CDocument* CMySTEPViewerApp::OpenDocumentFile(LPCTSTR lpszFileName, BOOL bAddToMRU)
+{
+    //ready to open or new document?
+	POSITION posTemplate = GetFirstDocTemplatePosition();
+	while (posTemplate)
+	{
+		if (CDocTemplate* tpl = GetNextDocTemplate(posTemplate)) {
+			POSITION posDoc = tpl->GetFirstDocPosition();
+			while (posDoc) {
+				if (auto doc = dynamic_cast<CMySTEPViewerDoc*>(tpl->GetNextDoc(posDoc))) {
+					if (!doc->ReadyToOpenOrNewDoc()) {
+						return NULL;
+					}
+				}
+			}
+		}
+	}
+
+	//
+	auto doc = __super::OpenDocumentFile(lpszFileName, bAddToMRU);
+
+	if (auto mydoc = dynamic_cast<CMySTEPViewerDoc*>(doc)) {
+		mydoc->UpdateTitle();
+	}
+	
+	return doc;
+}
+
 // CMySTEPViewerApp message handlers
 
 

@@ -3,17 +3,31 @@
 #include "bcfAPI.h"
 #include <string>
 
-class CBCFView;
+class CMySTEPViewerDoc;
+class CMySTEPViewerView;
 class _instance;
 
 class CBCFViewPointMgr
 {
 public:
-	CBCFViewPointMgr(CBCFView& view) : m_view(view){}
+	explicit CBCFViewPointMgr(CMySTEPViewerDoc& document);
 
 	void SetViewFromComment(BCFComment& comment);
 
 	bool SaveCurrentViewToComent(BCFComment& comment);
+	void SetSelectionFromComment(BCFComment& comment);
+	bool SaveCurrentSelectionToComment(BCFComment& comment);
+	void SetVisibilityFromComment(BCFComment& comment);
+	bool SaveCurrentVisibilityToComment(BCFComment& comment);
+	bool SaveSelectedAsVisibleToComment(BCFComment& comment);
+	std::wstring GetComponentDisplayName(BCFComponent& comp);
+
+private:
+	struct InstanceIDs
+	{
+		const char* ifcGuid = nullptr;
+		std::string authoringToolId;
+	};
 
 private:
 	void ApplySelectionToViewer(BCFViewPoint* vp);
@@ -24,17 +38,21 @@ private:
 
 	void ApplyVisibilityToViewer(BCFViewPoint* vp);
 	bool SaveVisibility(BCFViewPoint& vp);
+	CMySTEPViewerDoc& GetViewerDoc();
+	CMySTEPViewerView* GetViewerView();
 
 	_instance* SearchComponent(BCFComponent& comp);
-	_instance* SearchIfcComponent(const char* ifcGuid);
+	_instance* SearchIfcGuid(const char* ifcGuid);
+	_instance* SearchAuthoringToolId(const char* authoringToolId);
+	void GetExpressIdPath(std::string& path, _instance* inst);
 
 	bool IsSpaceBoundary(SdaiInstance /*inst*/) { return false; /*TODO*/ }
 
-	const char* GetGlobalId(_instance* inst);
+	InstanceIDs GetInstanceIDs(_instance* inst);
 
 	COLORREF GetColorRef(const char* strcolor);
 	std::string GetColorStr(COLORREF clr);
 
 private:
-	CBCFView& m_view;
+	CMySTEPViewerDoc& m_document;
 };

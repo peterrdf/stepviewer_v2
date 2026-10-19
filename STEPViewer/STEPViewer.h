@@ -33,6 +33,10 @@ public:
 	virtual void LoadCustomState();
 	virtual void SaveCustomState();
 
+	virtual CDocument* OpenDocumentFile(LPCTSTR lpszFileName) override { return OpenDocumentFile(lpszFileName, TRUE); }
+	virtual CDocument* OpenDocumentFile(LPCTSTR lpszFileName, BOOL bAddToMRU) override;
+
+
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 };

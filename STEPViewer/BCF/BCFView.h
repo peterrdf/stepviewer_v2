@@ -1,152 +1,81 @@
 #pragma once
 
 #include "bcfAPI.h"
-#include "BCFViewPointMgr.h"
 
 #include <map>
-#include <vector>
-using namespace std;
 
 class CMySTEPViewerDoc;
-class CMySTEPViewerView;
 class _model;
+class CBCFCommentForm;
+class CBCFEdit;
+class CBCFProjectForm;
+class CBCFTopicForm;
 
-
-class CBCFView : public CDialogEx
+class CBCFView : public CDockablePane
 {
-	DECLARE_DYNAMIC(CBCFView)
-
 public:
-	CBCFView(CMySTEPViewerDoc& doc);
+	CBCFView();
 	virtual ~CBCFView();
 
-public:
-/// <summary>
-/// API
-/// </summary>
-	bool IsBCF(LPCTSTR filePath);
+	void SetDocument(CMySTEPViewerDoc* document) { m_stepViewerDoc = document; }
+	void Activate();
+	void NewProject();
+	bool OpenProject(LPCTSTR filePath= NULL);
+	bool SaveProject();
+	void AddTopic();
+	void DeleteTopic();
+	void ShowTopicDetails();
+	bool AskAndSaveModified();
+	bool CloseProject(bool prompt);
+	void OnCloseMainDocument();
+	void ShowProject();
+	void ShowTopic(BCFTopic* topic);
+	void ShowComment(BCFComment* comment);
 
-	//activates BCF view with the BCF file or new when NULL
-	void Open(LPCTSTR filePath);
+	BCFProject* GetProject() const { return m_project; }
+    CString GetBCFFilePath() const { return m_filePath; }
 
-	bool SaveModified();
-
-	void Close();
-
-public:
-	//services for other dialogs
-	CMySTEPViewerDoc& GetViewerDoc() { return m_doc; }
-
-	CMySTEPViewerView* GetViewerView();
-
-	BCFTopic* GetActiveTopic();
-	
-	void ShowLog(bool knownError); //false: show log if any, not neccessary error
-
-	_model* GetBimModel(BCFBimFile& file);
-
-	void ViewTopicModels(BCFTopic* topic);
-
-	CString GetTopicDisplayName(BCFTopic& topic);
-
-public:
-// Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_BCF_VIEW };
-#endif
+	CMySTEPViewerDoc* GetDocument() const { return m_stepViewerDoc; }
+	CString GetBimFilePath(BCFBimFile& file);
+	void SetBimFilesToView(BCFTopic& topic);
+	void ShowLog(bool knownError);
+	void LoadProjectInfo();
+	bool CommitProjectInfo();
 
 protected:
-	virtual BOOL OnInitDialog();
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnCancel();
-	virtual void OnOK();
-
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	afx_msg int OnCreate(LPCREATESTRUCT createStruct);
+	afx_msg BOOL OnEraseBkgnd(CDC* dc);
+	afx_msg void OnSize(UINT type, int cx, int cy);
+	afx_msg void OnSetFocus(CWnd* oldWnd);
+	afx_msg void OnProjectSettings();
+	afx_msg void OnUpdateProjectSettings(CCmdUI* commandUI);
 	DECLARE_MESSAGE_MAP()
-	afx_msg void OnClose();
-	afx_msg void OnSelchangeTopic();
-	afx_msg void OnSelchangeCommentsList();
-	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnClickedButtonAddMulti();
-	afx_msg void OnClickedButtonRemoveMulti();
-	afx_msg void OnSelchangeMultiList();
-	afx_msg void OnClickedProjectInfo();
-	afx_msg void OnKillfocusEdit();
-	afx_msg void OnKillfocusTopicCommentText();
-	afx_msg void OnClickedSave();
-	afx_msg void OnClickedUpdateViewpoint();
-	afx_msg void OnClickedButtonBims();
 
 private:
-	void LoadProjectToView();
-	void InsertTopicToList(int item, BCFTopic* topic);
-	void LoadExtensions();
-	void LoadExtension(CComboBox& wnd, BCFEnumeration enumeraion);
-	void LoadActiveTopic();
-	BCFTopic* CreateNewTopic();
-	void UpdateActiveTopic();
-	void LoadComments(BCFTopic* topic, int select = 0);
-	void UpateActiveComment();
-	void FillMultiList();
-	void FillLabels(BCFTopic* topic);
-	void FillRelated(BCFTopic* topic);
-	void FillLinks(BCFTopic* topic);
-	void FillDocuments(BCFTopic* topic);
-	void AddLabel(BCFTopic* topic);
-	void AddRelated(BCFTopic* topic);
-	void AddLink(BCFTopic* topic);
-	void AddDocument(BCFTopic* topic);
-	void RemoveLabel(BCFTopic* topic);
-	void RemoveRelated(BCFTopic* topic);
-	void RemoveLink(BCFTopic* topic);
-	void RemoveDocument(BCFTopic* topic);
-	BCFBimFile* FindBimFileByPath(BCFTopic* topic, const char* searchPath);
-	void FillTopicAuthor(BCFTopic* topic);
-	void SaveBCFFile();
+	enum Form { ProjectForm, TopicForm, CommentForm };
+	bool CommitCurrent();
+	void ReleaseProject();
+	void ShowForm(Form form);
+	void AdjustLayout();
+	void UpdateCaption();
+	BCFTopic* CreateTopic();
+	bool CloseActiveProjectForOperation(LPCTSTR operation);
 
-private:
-	CMySTEPViewerDoc&				m_doc;
-	CString							m_bcfFilePath;
-
-	BCFProject*						m_bcfProject;
-
-	CBCFViewPointMgr				m_viewPointMgr;
-	std::map<BCFBimFile*, _model*>	m_mapBimFiles;
-
-private:
-	CComboBox m_wndTopics;
-	CComboBox m_wndTopicType;
-	CString m_strTopicType;
-	CComboBox m_wndTopicStage;
-	CString m_strTopicStage;
-	CComboBox m_wndTopicStatus;
-	CString m_strTopicStatus;
-	CComboBox m_wndAssigned;
-	CString m_strAssigned;
-	CComboBox m_wndPriority;
-	CString m_strPriority;
-	CComboBox m_wndSnippetType;
-	CString m_strSnippetType;
-	CTabCtrl m_wndTab;
-	CStatic m_wndAuthor;
-	CEdit m_wndDue;
-	CString m_strDue;
-	CEdit m_wndDescription;
-	CString m_strDescription;
-	CEdit m_wndTitle;
-	CString m_strTitle;
-	CEdit m_wndSnippetReference;
-	CString m_strSnippetReference;
-	CEdit m_wndSnippetSchema;
-	CString m_strSnippetSchema;
-	CEdit m_wndIndex;
-	CString m_strIndex;
-	CEdit m_wndServerIndex;
-	CString m_strServerId;
-	CListBox m_wndCommentsList;
-	CEdit m_wndCommentText;
-	CListBox m_wndMultiList;
-	CButton m_wndAddMulti;
-	CButton m_wndRemoveMulti;
-	CButton m_wndUpdateViewPoint;
+	CMySTEPViewerDoc* m_stepViewerDoc;
+	BCFProject* m_project;
+	CString m_filePath;
+	CString m_email;
+    std::map<CString, CString> m_bimRef2Path; //maps BIM files references to local file paths of loaded models (may differ for URI and manually located files)
+	Form m_activeForm;
+	CFont m_dialogFont;
+	CStatic m_emptyMessage;
+	CStatic m_projectIdLabel;
+	CStatic m_projectNameLabel;
+	CButton m_projectSettings;
+	CBCFEdit* m_projectId;
+	CBCFEdit* m_projectName;
+	CBCFProjectForm* m_projectForm;
+	CBCFTopicForm* m_topicForm;
+	CBCFCommentForm* m_commentForm;
 };
-

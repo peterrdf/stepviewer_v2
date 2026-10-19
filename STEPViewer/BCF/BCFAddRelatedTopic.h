@@ -1,6 +1,7 @@
 #pragma once
 
 class CBCFView;
+struct BCFTopic;
 
 class CBCFAddRelatedTopic : public CDialogEx
 {
@@ -8,7 +9,7 @@ public:
 	DECLARE_DYNAMIC(CBCFAddRelatedTopic)
 
 public:
-	CBCFAddRelatedTopic(CBCFView& bcfView);   // standard constructor
+	CBCFAddRelatedTopic(CBCFView& view, BCFTopic& topic);
 	virtual ~CBCFAddRelatedTopic();
 
 // Dialog Data
@@ -25,7 +26,8 @@ protected:
 	afx_msg void OnSelchangeListTopic();
 
 private:
-	CBCFView&	m_view;
+	BCFTopic* m_topic;
+	CBCFView* m_paneView;
 	CListBox	m_wndListTopic;
 	CButton		m_wndOK;
 };

@@ -1,9 +1,5 @@
-#include "_host.h"
-
 #include "_serialization.h"
-#ifdef _LOAD_SCHEMAS
 #include "_net.h"
-#endif // _LOAD_SCHEMAS
 
 namespace _srln
 {
@@ -88,7 +84,6 @@ namespace _srln
 		}
 	}
 
-#ifdef _LOAD_SCHEMAS
 	_archive* _namespace::getArchive(const string& strArchive, bool bCreateNewIfNeeded)
 	{
 		string strNPArchive = _net::_url::removeProtocol(strArchive);
@@ -105,7 +100,6 @@ namespace _srln
 
 		return m_mapArchives.at(strNPArchive);
 	}
-#endif // _LOAD_SCHEMAS
 
 	// ********************************************************************************************
 	_storage::_storage(const string& strName)
@@ -130,7 +124,6 @@ namespace _srln
 		}
 	}
 
-#if _LOAD_SCHEMAS
 	_namespace* _storage::getNamespace(const string& strNamespace)
 	{
 		string strNPNamespace = _net::_url::removeProtocol(strNamespace);
@@ -153,7 +146,6 @@ namespace _srln
 
 		return pNamespace->getArchive(strNPArchive, bCreateNewIfNeeded);
 	}
-#endif // _LOAD_SCHEMAS
 
 	void _storage::deserialize()
 	{

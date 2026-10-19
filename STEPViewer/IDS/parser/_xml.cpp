@@ -1,5 +1,3 @@
-#include "_host.h"
-
 #include "_xml.h"
 #include "_net.h"
 #include "_string.h"
@@ -310,6 +308,7 @@ namespace _xml
 				if (strTag == END_TAG)
 				{
 					_string::trim(m_strContent);
+					m_strContent = _string::unescapeXml(m_strContent);
 
 					m_pSite->onElementLoaded(this);
 
@@ -370,7 +369,7 @@ namespace _xml
 
 		string strName;
 		bool bValueStart = false;
-		char chValueEnd = DOUBLE_QUOT_MARK;
+		char chValueEnd = DOULE_QUOT_MARK;
 
 		string strBuffer;
 		while (ch != EOF)
@@ -398,7 +397,7 @@ namespace _xml
 					continue;
 				}
 			}
-			else if ((ch == SINGLE_QUOT_MARK) || (ch == DOUBLE_QUOT_MARK))
+			else if ((ch == SINGLE_QUOT_MARK) || (ch == DOULE_QUOT_MARK))
 			{
 				if (strName.empty())
 				{
@@ -421,12 +420,12 @@ namespace _xml
 					{
 						_string::trim(strBuffer);
 
-						m_vecAttributes.push_back(new _attribute(this, strName, strBuffer));
+						m_vecAttributes.push_back(new _attribute(this, strName, _string::unescapeXml(strBuffer)));
 						
 						strBuffer = "";
 						strName = "";
 						bValueStart = false;
-						chValueEnd = DOUBLE_QUOT_MARK;
+						chValueEnd = DOULE_QUOT_MARK;
 
 						ch = readerAttributes.getNextChar(false);
 
@@ -616,12 +615,11 @@ namespace _xml
 		load();
 	}	
 
-#ifdef _LOAD_SCHEMAS
 	/*virtual*/ void _document::loadSchemas()
 	{
 		if (m_pRoot == nullptr)
 		{
-			assert(false);
+			assert(FALSE);
 
 			return;
 		}
@@ -680,7 +678,6 @@ namespace _xml
 		
 		loadInfosets();
 	}
-#endif // _LOAD_SCHEMAS
 
 	/*virtual*/ void _document::clean()
 	{
@@ -790,7 +787,7 @@ namespace _xml
 
 		if (document.m_pRoot == nullptr)
 		{
-			assert(false);
+			assert(FALSE);
 
 			return "";
 		}
@@ -809,7 +806,7 @@ namespace _xml
 
 		if (document.m_pRoot == nullptr)
 		{
-			assert(false);
+			assert(FALSE);
 
 			return "";
 		}
@@ -920,12 +917,9 @@ namespace _xml
 			ch = m_pReader->getNextChar(false);
 		} // while (ch != EOF)
 
-#ifdef _LOAD_SCHEMAS
 		loadNamespaces();
-#endif // _LOAD_SCHEMAS
 	}
 
-#ifdef _LOAD_SCHEMAS
 	_schema* _document::loadSchema(const string& strNamespace, const string& strLocation)
 	{
 		VERIFY_POINTER(m_pSite);
@@ -944,7 +938,7 @@ namespace _xml
 	{
 		if (m_pRoot == nullptr)
 		{
-			assert(false);
+			assert(FALSE);
 
 			return;
 		}
@@ -987,7 +981,6 @@ namespace _xml
 			}
 		} // for (auto pAttribute ...
 	}
-#endif // _LOAD_SCHEMAS
 
 	void _document::loadInfosets()
 	{
@@ -1074,7 +1067,6 @@ namespace _xml
 		m_strNamespace = vecData[0];
 		m_strLocation = vecData[1];
 
-#ifdef _LOAD_SCHEMAS
 		vector<string> vecImports;
 		_string::split(vecData[2], "^|^", vecImports, false);
 
@@ -1102,10 +1094,8 @@ namespace _xml
 				m_vecIncludes.push_back(pSchema);
 			}
 		}
-#endif // _LOAD_SCHEMAS
 	}
 
-#ifdef _LOAD_SCHEMAS
 	/*virtual*/ void _schema::loadSchemas() /*override*/
 	{
 		if (getRoot() == nullptr)
@@ -1126,7 +1116,6 @@ namespace _xml
 			loadNamespaceSchemas(itPrefix2Namespace.second);
 		}
 	}
-#endif // _LOAD_SCHEMAS
 
 	/*virtual*/ void _schema::clean() /*override*/
 	{
@@ -1147,7 +1136,6 @@ namespace _xml
 				THROW_INTERNAL_ERROR();
 			}
 
-#ifdef _LOAD_SCHEMAS
 			auto strNamespace = pElement->getAttributeValue(namespace_attr);
 			auto strLocation = pElement->getAttributeValue(schemaLocation_attr);
 
@@ -1155,7 +1143,6 @@ namespace _xml
 				strNamespace,
 				strLocation);
 			m_vecImports.push_back(pSchema);
-#endif
 
 			return;
 		} // import_tag)
@@ -1163,19 +1150,12 @@ namespace _xml
 		// <include
 		if (pElement->getName() == include_tag)
 		{
-			if (!pElement->hasAttribute(schemaLocation_attr))
-			{
-				THROW_INTERNAL_ERROR();
-			}
-
-#ifdef _LOAD_SCHEMAS
 			auto strLocation = pElement->getAttributeValue(schemaLocation_attr);
 
 			auto pSchema = loadSchema(
 				m_strNamespace,
 				strLocation);
 			m_vecIncludes.push_back(pSchema);
-#endif // _LOAD_SCHEMAS
 
 			return;
 		} // include_tag
@@ -1294,7 +1274,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(false);
+			assert(FALSE);
 
 			return;
 		}
@@ -1337,7 +1317,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(false);
+			assert(FALSE);
 
 			return;
 		}
@@ -1375,7 +1355,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(false);
+			assert(FALSE);
 
 			return;
 		}
