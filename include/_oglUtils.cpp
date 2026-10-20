@@ -1699,11 +1699,14 @@ void _oglRenderer::_prepare(
 	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+	// The world is normalized to a diameter of ~2
+	const GLdouble WORLD_DIAMETER = 2.0;
+
 	// Zoom
 	m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
 	m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
 	m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
-	m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+	m_fZoomInterval = fmax(fBoundingSphereDiameter, WORLD_DIAMETER) * 4.f;
 
 	ASSERT_REAL_VALID(m_fZoomMin);
 	ASSERT_REAL_VALID(m_fZoomMax);
@@ -1784,9 +1787,13 @@ void _oglRenderer::_prepare(
 		const GLdouble dX = m_vecViewPoint.x - dCenterX;
 		const GLdouble dY = m_vecViewPoint.y - dCenterY;
 		const GLdouble dZ = m_vecViewPoint.z - dCenterZ;
-		dCameraDistance = sqrt(dX * dX + dY * dY + dZ * dZ);
+		// The camera distance is the distance from the view point to the center of the model, minus the Z translation (which is negative)
+		dCameraDistance = sqrt(dX * dX + dY * dY + dZ * dZ) - m_fZTranslation;
+		dCameraDistance = fmax(dCameraDistance, 0.);
 	}
-	GLdouble dEffectiveDiameter = fmax(fBoundingSphereDiameter, 0.001);
+
+	// The clip range must cover the whole model, not only the zoomed instances	
+	GLdouble dEffectiveDiameter = fmax(fmax(fBoundingSphereDiameter, WORLD_DIAMETER), 0.001);
 	GLdouble zNear = fmax(1e-6, fmin(dCameraDistance * 0.001, (dEffectiveDiameter / 2.0) * 0.01));
 	GLdouble zFar = dCameraDistance + dEffectiveDiameter * 2.0;
 	if (zFar < zNear * 1000.0) {
