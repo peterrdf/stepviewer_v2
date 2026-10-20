@@ -2266,7 +2266,7 @@ public: // Methods
 
 	virtual void _reset();
 
-	void _setView(enumView enView);
+	virtual void _setView(enumView enView);
 
 	virtual void saveSetting(const string& strName, const string& strValue);
 	virtual string loadSetting(const string& strName);
@@ -2428,8 +2428,9 @@ public: // Methods
 	_oglRenderer();
 	virtual ~_oglRenderer();
 
-	// _oglRendererSettings
+	// _oglRendererSettings	
 	virtual void _reset() override;
+	virtual void _setView(enumView enView) override;
 
 	// _oglScene
 	virtual void _getDimensions(int& iWidth, int& iHeight) override;
