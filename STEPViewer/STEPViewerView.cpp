@@ -804,7 +804,7 @@ void CMySTEPViewerView::SetBCFView(
 						else {
 							ASSERT_EQ(getViewToWorldScale, viewToWorldScale);
 						}
-						// #tbd: Aspect ratio is calculated from the window size, so it may not be exactly the same as the one set by SetBCFView
+						// BCF: aspect ratio is calculated from the window size, so it may not be exactly the same as the one set by SetBCFView
                         //ASSERT_EQ(getAspectRatio, aspectRatio);
 #endif
 #endif

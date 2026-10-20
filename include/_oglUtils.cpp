@@ -1772,7 +1772,7 @@ void _oglRenderer::_prepare(
 	const GLdouble fovY = useCameraSettings ? m_dFieldOfView : 45.;
 	const GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
 	if (bTranslate && !m_bDrawSelectInstanceBufferInProgress) {
-		// #tbd: Keep the current viewport aspect, so it is exported to BCF correctly
+		// BCF: keep the current viewport aspect, so it is exported to BCF correctly
 		m_dAspectRatio = aspect;
 	}
 
