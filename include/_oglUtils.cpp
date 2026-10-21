@@ -58,6 +58,13 @@ static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::v
 	return eulerAngles;
 }
 
+// Screen-space rotation -> world-space rotation for a given camera orientation
+static glm::mat4 toCameraSpaceRotation(const glm::mat4& matCamera, const glm::mat4& matRotation)
+{
+	const glm::mat4 matCameraRotation = glm::mat4(glm::mat3(matCamera)); // no translation
+	return glm::transpose(matCameraRotation) * matRotation * matCameraRotation;
+}
+
 #ifdef _WINDOWS
 // ************************************************************************************************
 _oglRendererSettings::_oglRendererSettings()
@@ -1830,6 +1837,8 @@ void _oglRenderer::_prepare(
 			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
 		ASSERT_MATRIX_VALID(m_matModelView);
 
+		const glm::mat4 matCamera = m_matModelView;
+
 		glm::mat4 interaction = glm::translate(
 			glm::identity<glm::mat4>(),
 			glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
@@ -1858,6 +1867,9 @@ void _oglRenderer::_prepare(
 			assert(false);
 		}
 
+		// The mouse rotation is defined in screen space
+		rotation = toCameraSpaceRotation(matCamera, rotation);
+
 		const glm::vec3 modelCenter(
 			(fXmin + fXmax) / 2.f,
 			(fYmin + fYmax) / 2.f,
@@ -1867,7 +1879,7 @@ void _oglRenderer::_prepare(
 		modelRotation *= rotation;
 		modelRotation = glm::translate(modelRotation, -modelCenter);
 
-		m_matModelView = interaction * m_matModelView * modelRotation;
+		m_matModelView = interaction * matCamera * modelRotation;
 		ASSERT_MATRIX_VALID(m_matModelView);
 	}
 	else if (m_bCameraSettings) {
