@@ -267,18 +267,20 @@ _instance* CBCFViewPointMgr::SearchAuthoringToolId(
 	return nullptr;
 }
 
-template <class TNode> void GetInstances(std::vector<_ap_instance*>& instances, std::vector<TNode*>& nodes)
+template <class TNode> void GetInstances(std::vector<ExpressID>& instances, std::vector<TNode*>& nodes)
 {
 	for (auto node : nodes) {
-		if (auto inst = node->getInstance()) {
-			instances.push_back(inst);
-        }
+		if (node->getSdaiInstance() == 0) {
+			continue;
+		}
+		ExpressID expressId = internalGetP21Line(node->getSdaiInstance());
+		instances.push_back(expressId);
 	}
 }
 
 void CBCFViewPointMgr::GetExpressIdPath(std::string& path, _instance* inst)
 {
-	std::vector<_ap_instance*> instance_path;
+	std::vector<ExpressID> instance_path;
 
 	auto model = GetViewerDoc().getModelByOwlInstance(inst->getOwlModel());
 
@@ -305,12 +307,12 @@ void CBCFViewPointMgr::GetExpressIdPath(std::string& path, _instance* inst)
 		}
 	}
 
-	for (auto instance : instance_path) {
-		if (instance) {
+	for (auto expressId : instance_path) {
+		if (expressId) {
 			if (!path.empty()) {
-				path.push_back('.');
+				path.push_back(';');
 			}
-			path += std::to_string(instance->getExpressID());
+			path += std::to_string(expressId);
 		}
 	}
 }
