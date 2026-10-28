@@ -63,14 +63,7 @@ _model::_model(_log* pLog)
 			}
 
 			for (auto pInstance : pGeometry->getInstances()) {
-				if (pGeometry->getTriangles().empty()) {
-					pGeometry->calculateBB(
-						pInstance,
-						m_fXmin, m_fXmax,
-						m_fYmin, m_fYmax,
-						m_fZmin, m_fZmax);
-				}
-				else {
+				if (!pGeometry->getTriangles().empty()) {
 					pGeometry->calculateBB_Faces(
 						pInstance,
 						m_fXmin, m_fXmax,
@@ -151,14 +144,7 @@ _model::_model(_log* pLog)
 
 			iEnabledInstances++;
 
-			if (pGeometry->getTriangles().empty()) {
-				pGeometry->calculateBB(
-					pInstance,
-					m_fXmin, m_fXmax,
-					m_fYmin, m_fYmax,
-					m_fZmin, m_fZmax);
-			}
-			else {
+			if (!pGeometry->getTriangles().empty()) {
 				pGeometry->calculateBB_Faces(
 					pInstance,
 					m_fXmin, m_fXmax,
