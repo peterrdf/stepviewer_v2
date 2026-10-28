@@ -30,6 +30,20 @@ bool _ifc_node::hasChild(SdaiInstance sdaiInstance)
 	return false;
 }
 
+void _ifc_node::getPath(std::vector<_ifc_node*>& vecPath)
+{
+	vecPath.clear();
+	vecPath.push_back(this);
+
+	_ifc_node* pNode = this->getParent();
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+
+	std::reverse(vecPath.begin(), vecPath.end());
+}
+
 const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;

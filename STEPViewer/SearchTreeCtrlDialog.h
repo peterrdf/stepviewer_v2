@@ -13,12 +13,17 @@ class CSearchTreeCtrlDialogSite
 
 public: // Methods
 
+	// v1
 	virtual CTreeCtrlEx* GetTreeView() PURE;
 	virtual vector<CString> GetSearchFilters() PURE;
 	virtual CString GetSearchFilterType(const CString& /*strFilter*/) { return L"Search"; } // Title
-	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) PURE;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) {};
 	virtual BOOL ProcessSearch(int /*iFilter*/, const CString& /*strSearchText*/) { return FALSE; }
-	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) PURE;
+	virtual BOOL ContainsText(int /*iFilter*/, HTREEITEM /*hItem*/, const CString& /*strText*/) { return FALSE; }
+
+	// v2
+	virtual void SearchFor(const CString& /*strSearchText*/, int /*iFilter*/, vector<void*>& /*vecSearchResults*/, int /*iLimit*/) {}
+	virtual HTREEITEM GetSearchResult(void* /*pSearchResult*/) { return nullptr; }
 };
 
 // ************************************************************************************************
@@ -33,6 +38,8 @@ private: // Members
 	HTREEITEM m_hSearchResult;
 	BOOL m_bEndOfSearch;
 	int m_iSearchDepth;
+
+	vector<void*> m_vecSearchResults;
 
 private: // Methods
 

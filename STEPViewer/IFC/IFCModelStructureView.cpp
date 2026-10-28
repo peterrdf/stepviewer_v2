@@ -603,42 +603,78 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	};
 }
 
-/*virtual*/ void CIFCModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CIFCModelStructureView::SearchFor(const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit) /*override*/
 {
-	ASSERT(hItem != NULL);
+	for (auto pModel : getController()->getModels()) {
+		if (!pModel->getEnable()) {
+			continue;
+		}
 
-	if (m_pTreeCtrl->GetChildItem(hItem) != NULL) {
-		// it is loaded already
+		_ptr<_ifc_model> ifcModel(pModel);
+		auto pModelStructure = ifcModel->getModelStructure();
+		if (pModelStructure == nullptr) {
+			continue;
+		}
+
+		SearchFor(pModelStructure->getProjectNode(), strSearchText, iFilter, vecSearchResults, iLimit);
+	}
+}
+
+/*virtual*/ HTREEITEM CIFCModelStructureView::GetSearchResult(void* pSearchResult) /*override*/
+{
+	ASSERT(pSearchResult != nullptr);
+
+	auto pNode = (_ifc_node*)pSearchResult;
+
+	vector<_ifc_node*> vecPath;
+	pNode->getPath(vecPath);
+	ASSERT(!vecPath.empty());
+	ASSERT(vecPath.back() == pNode);
+
+	for (auto pNode : vecPath) {
+		auto itNode = m_mapNodes.find(pNode);
+		ASSERT(itNode != m_mapNodes.end());
+
+		m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+	}
+
+	auto itLeafNode = m_mapNodes.find(vecPath.back());
+	ASSERT(itLeafNode != m_mapNodes.end());
+
+	return itLeafNode->second;
+}
+
+void CIFCModelStructureView::SearchFor(_ifc_node* pNode, const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit)
+{
+	if (pNode == nullptr) {
 		return;
 	}
 
-	m_pTreeCtrl->Expand(hItem, TVE_EXPAND);
-}
-
-/*virtual*/ BOOL CIFCModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
-{
-	if (hItem == NULL) {
-		ASSERT(FALSE);
-
-		return FALSE;
+	if (vecSearchResults.size() >= (size_t)iLimit) {
+		return;
 	}
 
-	CString strItemText = GetTreeView()->GetItemText(hItem);
-	strItemText.MakeLower();
+	_ptr<_ap_controller> apController(getController());
 
-	CString strTextLower = strText;
-	strTextLower.MakeLower();
+	if (pNode->getSdaiInstance()) {
+		CString strSearchTextLC = strSearchText;
+		strSearchTextLC.MakeLower();
 
-	// Express line number
-	if (iFilter == (int)enumSearchFilter::ExpressID) {
-		CString strExpressionLine = L"#";
-		strExpressionLine += strText;
+		if (iFilter == (int)enumSearchFilter::ExpressID) {
+			strSearchTextLC = L"#" + strSearchTextLC;
+		}
 
-		return strItemText.Find(strExpressionLine, 0) == 0;
+		CString strDisplayStringLC = _ap_geometry::getDisplayString(pNode->getSdaiInstance(), apController->getFullDisplayName()).c_str();
+		strDisplayStringLC.MakeLower();
+
+		if (strDisplayStringLC.Find(strSearchTextLC) != -1) {
+			vecSearchResults.push_back(pNode);
+		}
 	}
 
-	// All
-	return strItemText.Find(strTextLower, 0) != -1;
+	for (auto pChildNode : pNode->children()) {
+		SearchFor(pChildNode, strSearchText, iFilter, vecSearchResults, iLimit);
+	}
 }
 
 /*virtual*/ void CIFCModelStructureView::OnContextMenu(CWnd* pWnd, CPoint point) /*override*/
