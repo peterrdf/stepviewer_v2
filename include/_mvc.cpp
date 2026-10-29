@@ -47,7 +47,7 @@ _model::_model(_log* pLog)
 	m_vecBBMin = { -1.f, -1.f, -1.f };
 	m_vecBBMax = { 1.f, 1.f, 1.f };
 
-	bool bGeometriesHasFaces = true;
+	bool bGeometriesHaveFaces = true;
 	if (m_pWorld == nullptr) {
 		// Min/Max
 		m_fXmin = FLT_MAX;
@@ -86,7 +86,7 @@ _model::_model(_log* pLog)
 			}
 
 			// Special case: all geometries are lines/points
-			bGeometriesHasFaces = false;
+			bGeometriesHaveFaces = false;
 			for (auto pGeometry : m_vecGeometries) {
 				if (!pGeometry->hasGeometry() ||
 					pGeometry->ignoreBB()) {
@@ -164,7 +164,7 @@ _model::_model(_log* pLog)
 
 			iEnabledInstances++;
 
-			if (bGeometriesHasFaces) {
+			if (bGeometriesHaveFaces) {
 				if (!pGeometry->getTriangles().empty()) {
 					pGeometry->calculateBB_Faces(
 						pInstance,
