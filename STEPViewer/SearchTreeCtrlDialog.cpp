@@ -145,15 +145,16 @@ void CSearchTreeCtrlDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
-	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_btnSearch);
+	DDX_Control(pDX, IDC_BUTTON_CLOSE_SEARCH, m_btnCloseSearch);
 	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchFilter);
 }
 
 
 BEGIN_MESSAGE_MAP(CSearchTreeCtrlDialog, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH_TEXT, &CSearchTreeCtrlDialog::OnEnChangeEditSearchText)
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSearchTreeCtrlDialog::OnBnClickedButtonSearch)
+	ON_BN_CLICKED(IDC_BUTTON_CLOSE_SEARCH, &CSearchTreeCtrlDialog::OnBnClickedButtonCloseSearch)
 	ON_CBN_SELCHANGE(IDC_COMBO_SEARCH_FILTER, &CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter)
+	ON_BN_CLICKED(IDOK, &CSearchTreeCtrlDialog::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -165,10 +166,45 @@ void CSearchTreeCtrlDialog::OnEnChangeEditSearchText()
 
 	Reset();
 
-	m_btnSearch.EnableWindow(!m_strSearchText.IsEmpty());
+	m_btnCloseSearch.EnableWindow(!m_strSearchText.IsEmpty());
 }
 
-void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
+void CSearchTreeCtrlDialog::OnBnClickedButtonCloseSearch()
+{
+	EndDialog(IDOK);
+}
+
+BOOL CSearchTreeCtrlDialog::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	auto vecSearchFilters = m_pSite->GetSearchFilters();
+	ASSERT(!vecSearchFilters.empty());
+
+	for (auto strSearchFilter : vecSearchFilters) {
+		m_cmbSearchFilter.AddString(strSearchFilter);
+	}
+
+	m_cmbSearchFilter.SetCurSel(0);
+
+	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[0]));
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+// ------------------------------------------------------------------------------------------------
+void CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter()
+{
+	Reset();
+
+	auto vecSearchFilters = m_pSite->GetSearchFilters();
+	ASSERT(!vecSearchFilters.empty());
+
+	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[m_cmbSearchFilter.GetCurSel()]));
+}
+
+void CSearchTreeCtrlDialog::OnBnClickedOk()
 {
 	UpdateData();
 
@@ -206,7 +242,7 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 		m_hSearchResult = m_pSite->GetSearchResult(pSearchResult);
 		ASSERT(m_hSearchResult != nullptr);
 		SelectItem(m_hSearchResult);
-		
+
 		if (m_vecSearchResults.empty()) {
 			m_bEndOfSearch = TRUE;
 		}
@@ -269,34 +305,4 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	m_bEndOfSearch = TRUE;
 
 	::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"No more results found.", L"Search", MB_ICONINFORMATION | MB_OK);
-}
-
-BOOL CSearchTreeCtrlDialog::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	auto vecSearchFilters = m_pSite->GetSearchFilters();
-	ASSERT(!vecSearchFilters.empty());
-
-	for (auto strSearchFilter : vecSearchFilters) {
-		m_cmbSearchFilter.AddString(strSearchFilter);
-	}
-
-	m_cmbSearchFilter.SetCurSel(0);
-
-	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[0]));
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-// ------------------------------------------------------------------------------------------------
-void CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter()
-{
-	Reset();
-
-	auto vecSearchFilters = m_pSite->GetSearchFilters();
-	ASSERT(!vecSearchFilters.empty());
-
-	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[m_cmbSearchFilter.GetCurSel()]));
 }

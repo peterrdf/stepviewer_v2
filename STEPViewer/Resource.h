@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by STEPViewer.rc
 //
+#define VERSION_MINOR                   0
+#define VERSION_MAJOR                   1
+#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDS_EMPTY                       101
@@ -138,6 +141,7 @@
 #define IDI_ICON_INFO                   368
 #define IDI_ICON_WARN                   369
 #define IDD_DIALOG_LOG                  370
+#define IDD_DIALOG_PROGRESS             372
 #define ID_VIEW_BCF_PROJECT_PANE        374
 #define IDI_BCF_VIEW                    375
 #define IDD_BCF_TOPIC_LABELS            376
@@ -145,7 +149,6 @@
 #define IDD_BCF_SETTINGS_ENUMERATION    378
 #define IDD_BCF_SETTINGS_VALUE          379
 #define IDD_BCF_INCLUDE_LOADED_MODELS   380
-#define IDD_DIALOG_PROGRESS             372
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -154,7 +157,7 @@
 #define ID_APPLY_CHANGES                1004
 #define IDC_COMBO_CLASSES               1005
 #define IDC_VIEW_ALL_ISSUES             1005
-#define IDC_BUTTON_SEARCH               1006
+#define IDC_BUTTON_CLOSE_SEARCH         1006
 #define IDC_EDIT_SEARCH_TEXT            1007
 #define IDC_COMBO_SEARCH_FILTER         1008
 #define IDC_COMBO_INSTANCES             1009
@@ -198,6 +201,8 @@
 #define IDC_CHECK1                      1056
 #define IDC_CHECK_ERRORS_ONLY           1056
 #define IDC_EDIT_MESSAGES               1057
+#define IDC_EDIT_PROGRESS               1058
+#define IDC_PROGRESS_CTRL               1059
 #define IDC_BCF_TOPIC_LABELS            1068
 #define IDC_BCF_SETTINGS_USER           1069
 #define IDC_BCF_SETTINGS_LIST           1070
@@ -209,8 +214,7 @@
 #define IDC_BCF_LOADED_MODELS           1076
 #define IDC_BCF_LOADED_MODELS_EXTERNAL  1077
 #define IDC_BCF_LOADED_MODELS_EMBEDDED  1078
-#define IDC_EDIT_PROGRESS               1058
-#define IDC_PROGRESS_CTRL               1059
+#define VERSION_BUILD                   2407
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778

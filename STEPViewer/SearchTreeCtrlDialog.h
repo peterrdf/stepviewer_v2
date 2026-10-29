@@ -73,9 +73,10 @@ protected:
 public:
 	CString m_strSearchText;
 	afx_msg void OnEnChangeEditSearchText();
-	CButton m_btnSearch;
-	afx_msg void OnBnClickedButtonSearch();
+	CButton m_btnCloseSearch;
+	afx_msg void OnBnClickedButtonCloseSearch();
 	CComboBox m_cmbSearchFilter;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSelchangeComboSearchFilter();
+	afx_msg void OnBnClickedOk();
 };
