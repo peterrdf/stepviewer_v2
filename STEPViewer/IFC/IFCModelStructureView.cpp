@@ -634,10 +634,10 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 {
 	ASSERT(pSearchResult != nullptr);
 
-	auto pNode = (_ifc_node*)pSearchResult;
+	auto pTargetNode = (_ifc_node*)pSearchResult;
 
 	vector<_ifc_node*> vecPath;
-	pNode->getPath(vecPath);
+	pTargetNode->getPath(vecPath);
 	ASSERT(!vecPath.empty());
 	ASSERT(vecPath.back() == pNode);
 

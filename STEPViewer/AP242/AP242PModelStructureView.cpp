@@ -418,10 +418,10 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 {
 	ASSERT(pSearchResult != nullptr);
 
-	auto pNode = (_ap242_node*)pSearchResult;
+	auto pTargetNode = (_ap242_node*)pSearchResult;
 
 	vector<_ap242_node*> vecPath;
-	pNode->getPath(vecPath);
+	pTargetNode->getPath(vecPath);
 	ASSERT(!vecPath.empty());
 	ASSERT(vecPath.back() == pNode);
 

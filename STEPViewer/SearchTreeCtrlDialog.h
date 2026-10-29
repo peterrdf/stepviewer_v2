@@ -17,7 +17,7 @@ public: // Methods
 	virtual CTreeCtrlEx* GetTreeView() PURE;
 	virtual vector<CString> GetSearchFilters() PURE;
 	virtual CString GetSearchFilterType(const CString& /*strFilter*/) { return L"Search"; } // Title
-	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) {};
+	virtual void LoadChildrenIfNeeded(HTREEITEM /*hItem*/) {};
 	virtual BOOL ProcessSearch(int /*iFilter*/, const CString& /*strSearchText*/) { return FALSE; }
 	virtual BOOL ContainsText(int /*iFilter*/, HTREEITEM /*hItem*/, const CString& /*strText*/) { return FALSE; }
 
