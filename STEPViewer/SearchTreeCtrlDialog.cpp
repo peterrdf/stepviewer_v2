@@ -20,12 +20,15 @@ void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 	// Unselect
 	if (m_hSearchResult != nullptr) {
 		UnselectItem(m_hSearchResult);
+		m_hSearchResult = nullptr;
 	}
 
 	// Select
 	GetTreeView()->EnsureVisible(hItem);
 	GetTreeView()->SetItemState(hItem, TVIS_SELECTED, TVIS_SELECTED);
 	GetTreeView()->SetFocus();
+
+	m_hSearchResult = hItem;
 }
 
 void CSearchTreeCtrlDialog::UnselectItem(HTREEITEM hItem)
@@ -182,20 +185,31 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	}
 
 	if (!m_vecSearchResults.empty()) {
+		if (m_bEndOfSearch) {
+			if (m_hSearchResult != nullptr) {
+				UnselectItem(m_hSearchResult);
+				m_hSearchResult = nullptr;
+			}
+			m_bEndOfSearch = FALSE;
+
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Search has been reset. Starting from the first result.", L"Search", MB_ICONINFORMATION | MB_OK);
+		}
+
 		void* pSearchResult = m_vecSearchResults.front();
 		m_vecSearchResults.erase(m_vecSearchResults.begin());
 
 		if (m_hSearchResult != nullptr) {
 			UnselectItem(m_hSearchResult);
+			m_hSearchResult = nullptr;
 		}
 
 		m_hSearchResult = m_pSite->GetSearchResult(pSearchResult);
 		ASSERT(m_hSearchResult != nullptr);
 		SelectItem(m_hSearchResult);
 		
-		/*if (m_vecSearchResults.empty()) {
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"No more results found.", L"Search", MB_ICONINFORMATION | MB_OK);
-		}*/
+		if (m_vecSearchResults.empty()) {
+			m_bEndOfSearch = TRUE;
+		}
 
 		return;
 	}
@@ -212,6 +226,7 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	if (m_bEndOfSearch) {
 		if (m_hSearchResult != nullptr) {
 			UnselectItem(m_hSearchResult);
+			m_hSearchResult = nullptr;
 		}
 
 		Reset();
@@ -234,7 +249,6 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	HTREEITEM hSearchResult = SearchChildren(m_hSearchResult);
 	if (hSearchResult != nullptr) {
 		SelectItem(hSearchResult);
-		m_hSearchResult = hSearchResult;
 		return;
 	}
 
@@ -242,7 +256,6 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	hSearchResult = SearchSiblings(m_hSearchResult);
 	if (hSearchResult != nullptr) {
 		SelectItem(hSearchResult);
-		m_hSearchResult = hSearchResult;
 		return;
 	}
 
@@ -250,7 +263,6 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	hSearchResult = SearchParents(m_hSearchResult);
 	if (hSearchResult != nullptr) {
 		SelectItem(hSearchResult);
-		m_hSearchResult = hSearchResult;
 		return;
 	}
 
