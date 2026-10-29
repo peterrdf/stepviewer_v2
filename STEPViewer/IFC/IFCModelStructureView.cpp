@@ -660,15 +660,21 @@ void CIFCModelStructureView::SearchFor(_ifc_node* pNode, const CString& strSearc
 		CString strSearchTextLC = strSearchText;
 		strSearchTextLC.MakeLower();
 
-		if (iFilter == (int)enumSearchFilter::ExpressID) {
-			strSearchTextLC = L"#" + strSearchTextLC;
-		}
-
 		CString strDisplayStringLC = _ap_geometry::getDisplayString(pNode->getSdaiInstance(), apController->getFullDisplayName()).c_str();
 		strDisplayStringLC.MakeLower();
 
-		if (strDisplayStringLC.Find(strSearchTextLC) != -1) {
-			vecSearchResults.push_back(pNode);
+		if (iFilter == (int)enumSearchFilter::ExpressID) {
+			if (strSearchTextLC.Find(L"#") != 0) {
+				strSearchTextLC = L"#" + strSearchTextLC;
+			}			
+			if (strDisplayStringLC.Find(strSearchTextLC) == 0) {
+				vecSearchResults.push_back(pNode);
+			}
+		}
+		else {
+			if (strDisplayStringLC.Find(strSearchTextLC) != -1) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
 	}
 

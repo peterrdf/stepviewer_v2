@@ -114,6 +114,7 @@ void CSearchTreeCtrlDialog::Reset()
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 	m_iSearchDepth = 0;
+	m_vecSearchResults.clear();
 }
 
 IMPLEMENT_DYNAMIC(CSearchTreeCtrlDialog, CDialogEx)
@@ -186,6 +187,10 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 		m_hSearchResult = m_pSite->GetSearchResult(pSearchResult);
 		ASSERT(m_hSearchResult != nullptr);
 		SelectItem(m_hSearchResult);
+		
+		/*if (m_vecSearchResults.empty()) {
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"No more results found.", L"Search", MB_ICONINFORMATION | MB_OK);
+		}*/
 
 		return;
 	}
