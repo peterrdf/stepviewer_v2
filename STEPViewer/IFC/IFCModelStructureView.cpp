@@ -616,7 +616,17 @@ CIFCModelStructureView::CIFCModelStructureView(CTreeCtrlEx* pTreeCtrl)
 			continue;
 		}
 
-		SearchFor(pModelStructure->getProjectNode(), strSearchText, iFilter, vecSearchResults, iLimit);
+		if (pModelStructure->getProjectNode() != nullptr) {
+			SearchFor(pModelStructure->getProjectNode(), strSearchText, iFilter, vecSearchResults, iLimit);
+		}
+
+		if (pModelStructure->getGroupsNode() != nullptr) {
+			SearchFor(pModelStructure->getGroupsNode(), strSearchText, iFilter, vecSearchResults, iLimit);
+		}
+
+		if (pModelStructure->getUnreferencedNode() != nullptr) {
+			SearchFor(pModelStructure->getUnreferencedNode(), strSearchText, iFilter, vecSearchResults, iLimit);
+		}
 	}
 }
 
@@ -666,7 +676,7 @@ void CIFCModelStructureView::SearchFor(_ifc_node* pNode, const CString& strSearc
 		if (iFilter == (int)enumSearchFilter::ExpressID) {
 			if (strSearchTextLC.Find(L"#") != 0) {
 				strSearchTextLC = L"#" + strSearchTextLC;
-			}			
+			}
 			if (strDisplayStringLC.Find(strSearchTextLC) == 0) {
 				vecSearchResults.push_back(pNode);
 			}
@@ -1753,7 +1763,7 @@ int CIFCModelStructureView::InMemoryTree_GetItemState(_ifc_node* pNode)
 {
 	ASSERT(pNode != nullptr);
 
-	auto pInstance = pNode->getInstance();	
+	auto pInstance = pNode->getInstance();
 
 	// Leaf
 	if (pNode->children().empty()) {
