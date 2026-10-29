@@ -2,9 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by STEPViewer.rc
 //
-#define VERSION_MINOR                   0
-#define VERSION_MAJOR                   1
-#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDS_EMPTY                       101
@@ -214,7 +211,6 @@
 #define IDC_BCF_LOADED_MODELS           1076
 #define IDC_BCF_LOADED_MODELS_EXTERNAL  1077
 #define IDC_BCF_LOADED_MODELS_EMBEDDED  1078
-#define VERSION_BUILD                   2407
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
