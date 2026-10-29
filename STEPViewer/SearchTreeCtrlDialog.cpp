@@ -111,7 +111,10 @@ HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 
 void CSearchTreeCtrlDialog::Reset()
 {
-	m_hSearchResult = nullptr;
+	if (m_hSearchResult != nullptr) {
+		UnselectItem(m_hSearchResult);
+		m_hSearchResult = nullptr;
+	}	
 	m_bEndOfSearch = FALSE;
 	m_iSearchDepth = 0;
 	m_vecSearchResults.clear();
@@ -156,6 +159,8 @@ END_MESSAGE_MAP()
 void CSearchTreeCtrlDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
+
+	Reset();
 
 	m_btnSearch.EnableWindow(!m_strSearchText.IsEmpty());
 }
@@ -276,6 +281,8 @@ BOOL CSearchTreeCtrlDialog::OnInitDialog()
 // ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter()
 {
+	Reset();
+
 	auto vecSearchFilters = m_pSite->GetSearchFilters();
 	ASSERT(!vecSearchFilters.empty());
 
