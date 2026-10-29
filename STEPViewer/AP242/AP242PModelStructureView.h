@@ -84,10 +84,14 @@ public: // Methods
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<CString> GetSearchFilters() override;
-	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
-	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
+
+	// v2
+	virtual void SearchFor(const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit) override;
+	virtual HTREEITEM GetSearchResult(void* pSearchResult) override;
 
 private: // Methods	
+
+	void SearchFor(_ap242_node* pNode, const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit);
 
 	void LoadModel();
 

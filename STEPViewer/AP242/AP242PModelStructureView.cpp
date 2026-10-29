@@ -395,89 +395,114 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	};
 }
 
-/*virtual*/ void CAP242PModelStructureView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+/*virtual*/ void CAP242PModelStructureView::SearchFor(const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit) /*override*/
 {
-	ASSERT(hItem != NULL);
+	for (auto pModel : getController()->getModels()) {
+		if (!pModel->getEnable()) {
+			continue;
+		}
 
-	if (m_pTreeCtrl->GetChildItem(hItem) != NULL) {
-		// it is loaded already
+		_ptr<_ap242_model> ap242Model(pModel);
+		auto pModelStructure = ap242Model->getModelStructure();
+		if (pModelStructure == nullptr) {
+			continue;
+		}
+
+		for (auto pRootProduct : pModelStructure->getRootProducts()) {
+			SearchFor(pRootProduct, strSearchText, iFilter, vecSearchResults, iLimit);
+		}
+	}
+}
+
+/*virtual*/ HTREEITEM CAP242PModelStructureView::GetSearchResult(void* pSearchResult) /*override*/
+{
+	ASSERT(pSearchResult != nullptr);
+
+	auto pNode = (_ap242_node*)pSearchResult;
+
+	vector<_ap242_node*> vecPath;
+	pNode->getPath(vecPath);
+	ASSERT(!vecPath.empty());
+	ASSERT(vecPath.back() == pNode);
+
+	for (auto pNode : vecPath) {
+		auto itNode = m_mapNodes.find(pNode);
+		ASSERT(itNode != m_mapNodes.end());
+
+		m_pTreeCtrl->Expand(itNode->second, TVE_EXPAND);
+	}
+
+	auto itLeafNode = m_mapNodes.find(vecPath.back());
+	ASSERT(itLeafNode != m_mapNodes.end());
+
+	return itLeafNode->second;
+}
+
+void CAP242PModelStructureView::SearchFor(_ap242_node* pNode, const CString& strSearchText, int iFilter, vector<void*>& vecSearchResults, int iLimit)
+{
+	if (pNode == nullptr) {
 		return;
 	}
 
-	m_pTreeCtrl->Expand(hItem, TVE_EXPAND);
-}
-
-/*virtual*/ BOOL CAP242PModelStructureView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
-{
-	if (hItem == NULL) {
-		ASSERT(FALSE);
-		return FALSE;
+	if (vecSearchResults.size() >= (size_t)iLimit) {
+		return;
 	}
 
-	CString strItemText = GetTreeView()->GetItemText(hItem);
-	strItemText.MakeLower();
+	_ptr<_ap_controller> apController(getController());
 
-	CString strTextLower = strText;
-	strTextLower.MakeLower();
+	if (pNode->getSdaiInstance()) {
+		CString strSearchTextLC = strSearchText;
+		strSearchTextLC.MakeLower();
 
-	auto pNode = (_ap242_node*)GetTreeView()->GetItemData(hItem);
+		CString strDisplayStringLC = _ap_geometry::getDisplayString(pNode->getSdaiInstance(), apController->getFullDisplayName()).c_str();
+		strDisplayStringLC.MakeLower();
 
-	// Product Definitions
-	if (iFilter == (int)enumSearchFilter::ProductDefitions) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductDefinition)) {
-			return strItemText.Find(strText, 0) != -1;
+		if (iFilter == (int)enumSearchFilter::ProductDefitions) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductDefinition) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
-
-		return FALSE;
-	}
-
-	// Assemblies
-	if (iFilter == (int)enumSearchFilter::Assemblies) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::Assembly)) {
-			return strItemText.Find(strText, 0) != -1;
+		else if (iFilter == (int)enumSearchFilter::Assemblies) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::Assembly) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
-
-		return FALSE;
-	}
-
-	// Product Instance
-	if (iFilter == (int)enumSearchFilter::ProductInstances) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductInstance)) {
-			return strItemText.Find(strText, 0) != -1;
+		else if (iFilter == (int)enumSearchFilter::ProductInstances) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::ProductInstance) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
-
-		return FALSE;
-	}
-
-	// Draughting Model
-	if (iFilter == (int)enumSearchFilter::DraughtingModel) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingModel)) {
-			return strItemText.Find(strText, 0) != -1;
+		else if (iFilter == (int)enumSearchFilter::DraughtingModel) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingModel) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
-
-		return FALSE;
-	}
-
-	// Annotation Plane
-	if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::AnnotationPlane)) {
-			return strItemText.Find(strText, 0) != -1;
+		else if (iFilter == (int)enumSearchFilter::AnnotationPlane) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::AnnotationPlane) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
-
-		return FALSE;
-	}
-
-	// Draughting Callout
-	if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
-		if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingCallout)) {
-			return strItemText.Find(strText, 0) != -1;
+		else if (iFilter == (int)enumSearchFilter::DraughtingCallout) {
+			if ((pNode != nullptr) && (pNode->getType() == _ap242_node_type::DraughtingCallout) &&
+				(strDisplayStringLC.Find(strSearchTextLC, 0) != -1)) {
+				vecSearchResults.push_back(pNode);
+			}
 		}
+		else {
+			if (strDisplayStringLC.Find(strSearchTextLC) != -1) {
+				vecSearchResults.push_back(pNode);
+			}
+		}
+	} // if (pNode->getSdaiInstance())
 
-		return FALSE;
+	for (auto pChildNode : pNode->children()) {
+		SearchFor(pChildNode, strSearchText, iFilter, vecSearchResults, iLimit);
 	}
-
-	// All
-	return strItemText.Find(strTextLower, 0) != -1;
 }
 
 /*virtual*/ void CAP242PModelStructureView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) /*override*/
@@ -521,8 +546,8 @@ CAP242PModelStructureView::CAP242PModelStructureView(CTreeCtrlEx* pTreeCtrl)
 	* Instances
 	*/
 	auto pTargetNode = (_ap242_node*)m_pTreeCtrl->GetItemData(hItem);
-	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;	
-	if ((pTargetNode != nullptr) && 
+	auto pTargetInstance = pTargetNode ? pTargetNode->getInstance() : nullptr;
+	if ((pTargetNode != nullptr) &&
 		(pTargetInstance != nullptr) &&
 		(pTargetInstance->hasGeometry())) {
 		CMenu menu;
@@ -1185,7 +1210,7 @@ void CAP242PModelStructureView::ResetView()
 	LoadModel();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	getController()->getLog()->logWrite(enumLogEvent::info, 
-		_string::format("Loading Model Structure View: %lld [ms]", 
+	getController()->getLog()->logWrite(enumLogEvent::info,
+		_string::format("Loading Model Structure View: %lld [ms]",
 			std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()));
 }
