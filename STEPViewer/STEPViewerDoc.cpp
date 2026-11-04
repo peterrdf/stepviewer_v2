@@ -71,9 +71,9 @@ namespace
 {
 	if (pInstance == nullptr) {
 		return;
-	}
-
-	CString strValidFileName = validateFileName(dynamic_cast<_ap_instance*>(pInstance)->getName()).c_str();
+	}	
+	CString strValidFileName = validateFileName(
+		_ap_geometry::getDisplayString(dynamic_cast<_ap_instance*>(pInstance)->getSdaiInstance(), false).c_str()).c_str();
 
 #ifdef _GLTF_SUPPORT
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|TTL Files (*.ttl)|*.ttl|glTF Files (*.gltf)|*.gltf|glTF Binary Files (*.glb)|*.glb||");
@@ -93,7 +93,20 @@ namespace
 		return;
 	}
 
-	if (getModels().size() != 1) {
+	auto sdaiModel = sdaiGetInstanceModel(pAPInstance->getSdaiInstance());
+	if (sdaiModel == 0) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto owlModel = owlGetModel(sdaiModel);
+	if (owlModel == 0) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pModel = getModelByOwlInstance(owlModel);
+	if (pModel == nullptr) {
 		ASSERT(FALSE);
 		return;
 	}
@@ -106,7 +119,7 @@ namespace
 	if (strExtension == ".gltf") {
 		_c_log log(nullptr);
 
-		_ap2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+		_ap2gltf::_exporter exporter(pModel, (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 		exporter.setLog(&log);
 		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
@@ -114,7 +127,7 @@ namespace
 	else if (strExtension == ".glb") {
 		_c_log log(nullptr);
 
-		_ap2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
+		_ap2glb::_exporter exporter(pModel, (LPCSTR)CW2A(dlgFile.GetPathName()));
 		exporter.setLog(&log);
 		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
