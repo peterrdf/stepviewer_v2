@@ -561,7 +561,8 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 				double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
 				double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
 #ifdef _WINDOWS
-				TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+				TRACE(L"\n*** setVertexBufferOffset *** => '%s': %.16f, %.16f, %.16f",
+					getPath(),
 					dVertexBuffersOffsetX,
 					dVertexBuffersOffsetY,
 					dVertexBuffersOffsetZ);
@@ -587,7 +588,8 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 			double dVertexBuffersOffsetY = vecVertexBufferOffset.y;
 			double dVertexBuffersOffsetZ = vecVertexBufferOffset.z;
 #ifdef _WINDOWS
-			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+			TRACE(L"\n*** setVertexBufferOffset *** => '%s': %.16f, %.16f, %.16f",
+				getPath(),
 				dVertexBuffersOffsetX,
 				dVertexBuffersOffsetY,
 				dVertexBuffersOffsetZ);

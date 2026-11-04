@@ -81,9 +81,9 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
 		for (unsigned int i = 0; i < threadsCount; i++) {
 			vecOwlModels.push_back(CreateModel());
-			SetVertexBufferOffset(vecOwlModels.back(), arOffset);
-
+			
 			vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			SetVertexBufferOffset(vecMultiThreadOwlModelWrappers.back(), arOffset);
 		}
 
 		// Load geometries
@@ -117,11 +117,10 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		}
 
 		// Load mapped items
-		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
-
+		
 		vecThreads.clear();
 		for (unsigned int i = 0; i < threadsCount; i++) {
-			SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
+			SetVertexBufferOffset(vecMultiThreadOwlModelWrappers[i], 0., 0., 0.);
 
 			vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
 				while (true) {
@@ -184,8 +183,6 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 
 			delete pProduct;
 		}
-
-		SetVertexBufferOffset(getOwlModel(), arOffset);
 
 		for (auto& owlModel : vecOwlModels) {
 			CloseModel(owlModel);
