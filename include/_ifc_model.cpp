@@ -1127,7 +1127,7 @@ _geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThread
 		setSegmentation(multiThreadOwlModelWrapper, ifcGeometry.iCircleSegments, 0.);
 	}
 
-	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstanceMT(ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
 	auto pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
 	{
 		lock_guard<mutex> lock(m_mtxUpdateModel);

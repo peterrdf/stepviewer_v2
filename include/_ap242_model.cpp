@@ -211,7 +211,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							m_mapAnnotationPlanesPendingLoad.erase(itAnnotationPlane);
 						}
 
-						OwlInstance owlInstance = _ap_geometry::buildOwlInstance(annotationPlane.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+						OwlInstance owlInstance = _ap_geometry::buildOwlInstanceMT(annotationPlane.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
 						auto pGeometry = new _ap242_annotation_plane(owlInstance, annotationPlane.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
 
 						{
@@ -260,7 +260,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							m_mapDraughtingCalloutsPendingLoad.erase(itDraughtingCallout);
 						}
 
-						OwlInstance owlInstance = _ap_geometry::buildOwlInstance(draughtingCallout.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+						OwlInstance owlInstance = _ap_geometry::buildOwlInstanceMT(draughtingCallout.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
 						auto pGeometry = new _ap242_draughting_callout(owlInstance, draughtingCallout.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
 
 						{

@@ -70,7 +70,7 @@ public: // Methods
         return owlInstance;
     }
 
-    static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    static OwlInstance buildOwlInstanceMT(SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
     {
         assert(sdaiInstance != 0);
 		assert(multiThreadOwlModelWrapper != 0);
