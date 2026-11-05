@@ -81,8 +81,15 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
 		for (unsigned int i = 0; i < threadsCount; i++) {
 			vecOwlModels.push_back(CreateModel());
-			
+			if (m_bUseWorldCoordinates) {
+				SetBehavior(vecOwlModels.back(), FLAGBIT(10), FLAGBIT(10));
+			}
+			SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
 			vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			if (m_bUseWorldCoordinates) {
+				SetBehavior(vecMultiThreadOwlModelWrappers.back(), FLAGBIT(10), FLAGBIT(10));
+			}
 			SetVertexBufferOffset(vecMultiThreadOwlModelWrappers.back(), arOffset);
 		}
 
@@ -120,6 +127,7 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		
 		vecThreads.clear();
 		for (unsigned int i = 0; i < threadsCount; i++) {
+			SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
 			SetVertexBufferOffset(vecMultiThreadOwlModelWrappers[i], 0., 0., 0.);
 
 			vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
