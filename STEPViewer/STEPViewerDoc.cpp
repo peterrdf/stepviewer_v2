@@ -93,19 +93,7 @@ namespace
 		return;
 	}
 
-	auto sdaiModel = sdaiGetInstanceModel(pAPInstance->getSdaiInstance());
-	if (sdaiModel == 0) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	auto owlModel = owlGetModel(sdaiModel);
-	if (owlModel == 0) {
-		ASSERT(FALSE);
-		return;
-	}
-
-	auto pModel = getModelByOwlInstance(owlModel);
+	auto pModel = getModelByOwlInstance(pAPInstance->getOwlModel());
 	if (pModel == nullptr) {
 		ASSERT(FALSE);
 		return;
@@ -132,8 +120,7 @@ namespace
 		exporter.writeModelMetadataJSON() = false;
 		exporter.execute({ pAPInstance->getSdaiInstance() });
 	}
-	else if ((strExtension == ".bin") || (strExtension == ".ttl")) {
-		auto pModel = getModelByOwlInstance(pAPInstance->getOwlModel());
+	else if ((strExtension == ".bin") || (strExtension == ".ttl")) {		
 		_ptr<_ifc_model> ifcModel(pModel, false);
 		if (ifcModel) {
 			OwlInstance owlMapConversionTransformationInstance = ifcModel->createMapConversionTransformation();
