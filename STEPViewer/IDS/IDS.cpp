@@ -19,6 +19,9 @@ using namespace RDF::IDS;
 #include <climits>
 #include <cfloat>
 
+#include <cmath>
+#include <cstdlib>
+
 /// <summary>
 /// 
 /// </summary>
