@@ -103,6 +103,16 @@ _model::_model(_log* pLog)
 			} // for (auto pGeometry : ...
 		}
 
+		if ((m_fXmin == FLT_MAX) ||
+			(m_fXmax == -FLT_MAX) ||
+			(m_fYmin == FLT_MAX) ||
+			(m_fYmax == -FLT_MAX) ||
+			(m_fZmin == FLT_MAX) ||
+			(m_fZmax == -FLT_MAX)) {
+			logErrf("Scale: failed to calculate the bounding box for the model '%S'.", getPath());
+			return;
+		}
+
 		// World
 		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
