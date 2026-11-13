@@ -434,17 +434,6 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
 
-#ifdef _DEBUG_VERTEX_BUFFER
-    for (int64_t i = 0; i < pVertexBuffer->size(); i++) {
-		TRACE(
-			L"V %lld: %f, %f, %f\n",
-			i,
-			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 0],
-			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 1],
-			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 2]);
-	}
-#endif
-
     pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
     memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));
 
@@ -571,6 +560,81 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
             addPoints(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints, material, mapMaterial2ConcFacePoints);
         }
     } // for (int64_t iConceptualFaceIndex = ...
+
+#ifdef _DEBUG_VERTEX_BUFFER_FLOAT
+    const int VERTEX_LENGTH = getVertexLength();
+    for (auto& primitive : getTriangles()) {
+        for (int64_t i = primitive.getStartIndex(); i < primitive.getStartIndex() + primitive.getIndicesCount(); i++) {
+            int32_t iIndex = m_pIndexBuffer->data()[i];
+            assert((iIndex >= 0) && (iIndex < m_pVertexBuffer->size()));
+
+            TRACE(
+                L"V %lld: %f, %f, %f\n",
+                i,
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]);
+
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]));
+        }
+    }
+
+    for (auto& primitive : getLines()) {
+        for (int64_t i = primitive.getStartIndex(); i < primitive.getStartIndex() + primitive.getIndicesCount(); i++) {
+            int32_t iIndex = m_pIndexBuffer->data()[i];
+            assert((iIndex >= 0) && (iIndex < m_pVertexBuffer->size()));
+
+            TRACE(
+                L"V %lld: %f, %f, %f\n",
+                i,
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]);
+
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]));
+        }
+    }
+
+    for (auto& primitive : getPoints()) {
+        for (int64_t i = primitive.getStartIndex(); i < primitive.getStartIndex() + primitive.getIndicesCount(); i++) {
+            int32_t iIndex = m_pIndexBuffer->data()[i];
+            assert((iIndex >= 0) && (iIndex < m_pVertexBuffer->size()));
+
+            TRACE(
+                L"V %lld: %f, %f, %f\n",
+                i,
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]);
+
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]));
+        }
+    }
+
+    for (auto& primitive : getConcFacePolygons()) {
+        for (int64_t i = primitive.getStartIndex(); i < primitive.getStartIndex() + primitive.getIndicesCount(); i++) {
+            int32_t iIndex = m_pIndexBuffer->data()[i];
+            assert((iIndex >= 0) && (iIndex < m_pVertexBuffer->size()));
+
+            TRACE(
+                L"V %lld: %f, %f, %f\n",
+                i,
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1],
+                m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]);
+
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 0]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 1]));
+            assert(!isnan(m_pVertexBuffer->data()[(iIndex * VERTEX_LENGTH) + 2]));
+        }
+    }
+#endif // _DEBUG_VERTEX_BUFFER_FLOAT
 
     // Build the cohorts
     buildConcFacesCohorts(mapMaterial2ConcFaces, _oglUtils::getIndicesCountLimit());

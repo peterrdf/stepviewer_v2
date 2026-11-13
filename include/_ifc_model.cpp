@@ -7,6 +7,7 @@
 #include "_string.h"
 
 #include <cfloat>
+#include <cmath>
 
 // ************************************************************************************************
 _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool bLoadInstancesOnDemand /*= false*/)
@@ -124,7 +125,7 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		}
 
 		// Load mapped items
-		
+
 		vecThreads.clear();
 		for (unsigned int i = 0; i < threadsCount; i++) {
 			SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
@@ -604,7 +605,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		loadInstances(false);
 	}
 
-#ifdef _DEBUG_VERTEX_BUFFER_DOUBLE_PRECISION
+#ifdef _DEBUG_VERTEX_BUFFER_DOUBLE
 	uint64_t mask = 0;
 	mask += FORMAT_SIZE_VERTEX_DOUBLE;
 	mask += FORMAT_SIZE_INDEX_INT64;
@@ -648,21 +649,112 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 
 			UpdateInstanceVertexBuffer(owlInstance, pVertices);
 
-			for (int64_t i = 0; i < iVertexBufferSize; i++) {
-				TRACE(
-					L"V %lld: %f, %f, %f\n",
-					i,
-					pVertices[(i * VERTEX_LENGTH) + 0],
-					pVertices[(i * VERTEX_LENGTH) + 1],
-					pVertices[(i * VERTEX_LENGTH) + 2]);
-			}
+			int32_t* pIndices = new int32_t[iIndexBufferSize];
+			memset(pIndices, 0, iIndexBufferSize * sizeof(int32_t));
+
+			UpdateInstanceIndexBuffer(owlInstance, pIndices);
+
+			auto iConceptualFacesCount = GetConceptualFaceCnt(owlInstance);
+			for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < iConceptualFacesCount; iConceptualFaceIndex++) {
+				int64_t iStartIndexTriangles = 0;
+				int64_t iIndicesCountTriangles = 0;
+				int64_t iStartIndexLines = 0;
+				int64_t iIndicesCountLines = 0;
+				int64_t iStartIndexPoints = 0;
+				int64_t iIndicesCountPoints = 0;
+				int64_t iStartIndexConceptualFacePolygons = 0;
+				int64_t iIndicesCountConceptualFacePolygons = 0;
+				ConceptualFace iConceptualFace = GetConceptualFace(
+					owlInstance,
+					iConceptualFaceIndex,
+					&iStartIndexTriangles, &iIndicesCountTriangles,
+					&iStartIndexLines, &iIndicesCountLines,
+					&iStartIndexPoints, &iIndicesCountPoints,
+					0, 0,
+					&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
+
+				// Triangles
+				for (int64_t i = iStartIndexTriangles; i < iStartIndexTriangles + iIndicesCountTriangles; i++) {
+					int32_t iIndex = pIndices[i];
+					assert((iIndex >= 0) && (iIndex < iVertexBufferSize));
+
+					TRACE(
+						L"V %lld: %f, %f, %f\n",
+						i,
+						pVertices[(iIndex * VERTEX_LENGTH) + 0],
+						pVertices[(iIndex * VERTEX_LENGTH) + 1],
+						pVertices[(iIndex * VERTEX_LENGTH) + 2]);
+
+
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 0]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 1]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 2]));
+				}
+
+				// Lines
+				for (int64_t i = iStartIndexLines; i < iStartIndexLines + iIndicesCountLines; i++) {
+					int32_t iIndex = pIndices[i];
+					assert((iIndex >= 0) && (iIndex < iVertexBufferSize));
+
+					TRACE(
+						L"V %lld: %f, %f, %f\n",
+						i,
+						pVertices[(iIndex * VERTEX_LENGTH) + 0],
+						pVertices[(iIndex * VERTEX_LENGTH) + 1],
+						pVertices[(iIndex * VERTEX_LENGTH) + 2]);
+
+
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 0]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 1]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 2]));
+				}
+
+				// Points
+				for (int64_t i = iStartIndexPoints; i < iStartIndexPoints + iIndicesCountPoints; i++) {
+					int32_t iIndex = pIndices[i];
+					assert((iIndex >= 0) && (iIndex < iVertexBufferSize));
+
+					TRACE(
+						L"V %lld: %f, %f, %f\n",
+						i,
+						pVertices[(iIndex * VERTEX_LENGTH) + 0],
+						pVertices[(iIndex * VERTEX_LENGTH) + 1],
+						pVertices[(iIndex * VERTEX_LENGTH) + 2]);
+
+
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 0]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 1]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 2]));
+				}
+
+				// Conceptual Faces
+				for (int64_t i = iStartIndexConceptualFacePolygons; i < iStartIndexConceptualFacePolygons + iIndicesCountConceptualFacePolygons; i++) {
+					int32_t iIndex = pIndices[i];
+					assert((iIndex >= 0) && (iIndex < iVertexBufferSize));
+
+					TRACE(
+						L"V %lld: %f, %f, %f\n",
+						i,
+						pVertices[(iIndex * VERTEX_LENGTH) + 0],
+						pVertices[(iIndex * VERTEX_LENGTH) + 1],
+						pVertices[(iIndex * VERTEX_LENGTH) + 2]);
+
+
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 0]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 1]));
+					assert(!isnan(pVertices[(iIndex * VERTEX_LENGTH) + 2]));
+				}
+			} // for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < iConceptualFacesCount; iConceptualFaceIndex++)
 
 			delete[] pVertices;
+			delete[] pIndices;
 
 			cleanMemory(getSdaiModel(), 1);
 		}
-	}	
-#endif
+
+		ifcGeometry->setAPFormatSettings();
+	}
+#endif // _DEBUG_VERTEX_BUFFER_DOUBLE
 }
 
 /*virtual*/ void  _ifc_model::addGeometry(_geometry* pGeometry) /*override*/

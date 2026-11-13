@@ -36,7 +36,9 @@ public: // Methods
 public: // Properties
 
     int64_t& startIndex() { return m_iStartIndex; }
+    int64_t getStartIndex() const { return m_iStartIndex; }
     int64_t& indicesCount() { return m_iIndicesCount; }
+	int64_t getIndicesCount() const { return m_iIndicesCount; }
 };
 
 // ************************************************************************************************
