@@ -603,6 +603,66 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	if (!m_bLoadInstancesOnDemand) {
 		loadInstances(false);
 	}
+
+#ifdef _DEBUG_VERTEX_BUFFER_DOUBLE_PRECISION
+	uint64_t mask = 0;
+	mask += FORMAT_SIZE_VERTEX_DOUBLE;
+	mask += FORMAT_SIZE_INDEX_INT64;
+	mask += FORMAT_VERTEX_NORMAL;
+	mask += FORMAT_VERTEX_TEXTURE_UV;
+	mask += FORMAT_EXPORT_TRIANGLES;
+	mask += FORMAT_EXPORT_LINES;
+	mask += FORMAT_EXPORT_POINTS;
+	mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+	mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
+	uint64_t setting = 0;
+	setting += FORMAT_VERTEX_NORMAL;
+	setting += FORMAT_SIZE_VERTEX_DOUBLE;
+	setting += FORMAT_EXPORT_TRIANGLES;
+	setting += FORMAT_EXPORT_LINES;
+	setting += FORMAT_EXPORT_POINTS;
+	setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+	setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
+	SetFormat(getOwlModel(), setting, mask);
+	const uint64_t VERTEX_LENGTH = SetFormat(getOwlModel()) / sizeof(double);
+
+	for (auto pGeometry : getGeometries()) {
+		if (!pGeometry->hasGeometry()) {
+			continue;
+		}
+
+		_ptr<_ifc_geometry> ifcGeometry(pGeometry);
+		OwlInstance owlInstance = owlBuildInstanceMT(ifcGeometry->getSdaiInstance());
+		if (owlInstance == 0) {
+			continue;
+		}
+
+		int64_t iVertexBufferSize = 0;
+		int64_t iIndexBufferSize = 0;
+		CalculateInstance(owlInstance, &iVertexBufferSize, &iIndexBufferSize, nullptr);
+		if ((iVertexBufferSize != 0) && (iIndexBufferSize != 0)) {
+			double* pVertices = new double[(uint32_t)iVertexBufferSize * VERTEX_LENGTH];
+			memset(pVertices, 0, (uint32_t)iVertexBufferSize * VERTEX_LENGTH * sizeof(double));
+
+			UpdateInstanceVertexBuffer(owlInstance, pVertices);
+
+			for (int64_t i = 0; i < iVertexBufferSize; i++) {
+				TRACE(
+					L"V %lld: %f, %f, %f\n",
+					i,
+					pVertices[(i * VERTEX_LENGTH) + 0],
+					pVertices[(i * VERTEX_LENGTH) + 1],
+					pVertices[(i * VERTEX_LENGTH) + 2]);
+			}
+
+			delete[] pVertices;
+
+			cleanMemory(getSdaiModel(), 1);
+		}
+	}	
+#endif
 }
 
 /*virtual*/ void  _ifc_model::addGeometry(_geometry* pGeometry) /*override*/

@@ -434,12 +434,7 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
 
-#ifdef _PRINT_VERTEX_BUFFER
-	/*SdaiModel sdaiModel = sdaiGetInstanceModel(getOwlInstance());
-    if (sdaiModel != 0) {
-        cleanMemory(sdaiModel, 0);
-	}*/
-
+#ifdef _DEBUG_VERTEX_BUFFER
     for (int64_t i = 0; i < pVertexBuffer->size(); i++) {
 		TRACE(
 			L"V %lld: %f, %f, %f\n",
