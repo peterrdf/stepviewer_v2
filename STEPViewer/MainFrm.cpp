@@ -616,7 +616,7 @@ void CMainFrame::OnUpdateFrameTitle(BOOL /*bAddToTitle*/)
 	CString strProductName = L"STEPViewer";
 #if defined (_IFCVIEWER)
 	strProductName = L"IFCViewer";
-#elseif defined (_CIS2VIEWER)
+#elif defined (_CIS2VIEWER)
 	strProductName = L"CIS2Viewer";
 #endif
 
