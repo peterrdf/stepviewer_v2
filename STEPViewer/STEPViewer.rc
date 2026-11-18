@@ -1,7 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -92,7 +91,7 @@ CAPTION "Search"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Search",IDOK,126,73,50,14
-    PUSHBUTTON      "Close", IDC_BUTTON_CLOSE_SEARCH,7,73,50,14
+    PUSHBUTTON      "Close",IDC_BUTTON_CLOSE_SEARCH,7,73,50,14
     LTEXT           "Text:",IDC_STATIC,7,7,18,8
     EDITTEXT        IDC_EDIT_SEARCH_TEXT,7,17,169,14,ES_AUTOHSCROLL
     LTEXT           "Where:",IDC_STATIC,7,36,24,8
@@ -101,7 +100,7 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About STEPViewer"
+CAPTION "About"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
@@ -734,7 +733,7 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "&About STEPViewer...",        ID_APP_ABOUT
+        MENUITEM "&About...",                   ID_APP_ABOUT
     END
 END
 
@@ -909,8 +908,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
-PRODUCTVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
+ FILEVERSION 1,0,1,2417
+ PRODUCTVERSION 1,0,1,2417
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -927,12 +926,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "STEPViewer"
-            VALUE "FileVersion", VERSION_STRING
+            VALUE "FileVersion", "1.0.1.2417"
             VALUE "InternalName", "STEPViewer.exe"
             VALUE "LegalCopyright", "(c) RDF LTD. All rights reserved."
             VALUE "OriginalFilename", "STEPViewer.exe"
             VALUE "ProductName", "STEPViewer"
-            VALUE "ProductVersion", VERSION_STRING
+            VALUE "ProductVersion", "1.0.1.2417"
         END
     END
     BLOCK "VarFileInfo"

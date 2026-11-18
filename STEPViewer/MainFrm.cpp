@@ -610,3 +610,20 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	return TRUE;
 }
+
+void CMainFrame::OnUpdateFrameTitle(BOOL /*bAddToTitle*/)
+{
+	CString strProductName = L"STEPViewer";
+#if defined (_IFCVIEWER)
+	strProductName = L"IFCViewer";
+#elseif defined (_CIS2VIEWER)
+	strProductName = L"CIS2Viewer";
+#endif
+
+	CString strTitle = strProductName;
+	if (auto pDoc = GetActiveDocument()) {
+		strTitle += L" - " + pDoc->GetTitle();
+	}
+
+	SetWindowText(strTitle);
+}

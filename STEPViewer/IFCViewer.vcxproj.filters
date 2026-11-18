@@ -1,0 +1,786 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="IFC">
+      <UniqueIdentifier>{bcb4ea1c-4e42-472f-a4bd-94af3054d6c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AP242">
+      <UniqueIdentifier>{816011c2-4f42-4693-8a38-7441419df7f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CIS2">
+      <UniqueIdentifier>{d9ec8e66-6ad6-498e-b591-3e472df994a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{0d1797b7-09c2-402a-a806-a11cfd26efa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{267c8570-e195-4a20-a677-44a28b597ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\stb">
+      <UniqueIdentifier>{6c1cc022-5a9b-4dcb-980f-fd2e20b2da5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BCF">
+      <UniqueIdentifier>{cff48f62-afa3-4926-a12d-bf85abd51b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDS">
+      <UniqueIdentifier>{4e965967-2245-44b3-bb31-b2e4cb4bf234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDS\parser">
+      <UniqueIdentifier>{46f625b7-1d98-4fcb-8921-e77e6974c391}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glTF">
+      <UniqueIdentifier>{801dc855-158d-47db-9223-2048e9168414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zip">
+      <UniqueIdentifier>{c1235aa0-b05c-4c78-a4b2-0a095ccda9d0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+    <Text Include="res\fragment_shader2.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\vertex_shader2.txt">
+      <Filter>res</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="STEPViewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="STEPViewerDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="STEPViewerView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeCtrlEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertiesWnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\IFCOpenGLView.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelStructureViewBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RelationsView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchemaView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFC\IFCModelStructureView.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchTreeCtrlDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelCheckDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\AP242OpenGLView.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="AP242\AP242PModelStructureView.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_3DUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_material.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_oglUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_quaterniond.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_settings_storage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Model.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2OpenGLView.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Representation.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Instance.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2DesignPart.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2ModelStructureView.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="DesignTreeView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_entity.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CIS2\CIS2Geometry.h">
+      <Filter>CIS2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_draughting_model.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_geometry.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_instance.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_model.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_product_definition.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_geometry.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_instance.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_model.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_property.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_unit.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_attribute.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_model_factory.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_host.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_easy_font.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_image.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddDocumentReference.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddReferenceLink.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFAddRelatedTopic.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFCommentForm.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFProjectSettingsDlg.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFProjectForm.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFSnapshotCtrl.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFTopicForm.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFTopicLabelsDlg.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFView.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFViewControls.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\BCFViewPointMgr.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="BCF\UriDownloader.h">
+      <Filter>BCF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_class.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_errors.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_io.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_log.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_net.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_reader.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_schema_storage.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_serialization.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_string.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_time.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\parser\_xml.h">
+      <Filter>IDS\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\IDS.h">
+      <Filter>IDS</Filter>
+    </ClInclude>
+    <ClInclude Include="IDS\pch.h">
+      <Filter>IDS</Filter>
+    </ClInclude>
+    <ClInclude Include="IDSCheckerDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_node.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_ap2gltf.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_ap2glb.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\crc32.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\gzguts.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inffast.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inffixed.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inflate.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\inftrees.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\miniz.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zconf.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zip.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zlib.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zutil.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_dateTime.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ifc_model_structure.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_model_structure.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ap242_property.h">
+      <Filter>AP242</Filter>
+    </ClInclude>
+    <ClInclude Include="LogDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_progress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_progress_hub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="STEPViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="STEPViewerDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="STEPViewerView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeCtrlEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertiesWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCOpenGLView.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="SchemaView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RelationsView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IFC\IFCModelStructureView.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchTreeCtrlDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelCheckDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AP242\AP242OpenGLView.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="AP242\AP242PModelStructureView.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Model.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2OpenGLView.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Representation.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Instance.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2DesignPart.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2ModelStructureView.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="DesignTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StructureView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_entity.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="CIS2\CIS2Geometry.cpp">
+      <Filter>CIS2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_property.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_draughting_model.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_geometry.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_instance.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_model.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_product_definition.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_geometry.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_instance.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_model.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_property.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_unit.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_attribute.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image.cpp">
+      <Filter>include\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddDocumentReference.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddReferenceLink.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFAddRelatedTopic.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFCommentForm.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFProjectSettingsDlg.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFProjectForm.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFSnapshotCtrl.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFTopicForm.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFTopicLabelsDlg.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFView.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFViewControls.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\BCFViewPointMgr.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="BCF\UriDownloader.cpp">
+      <Filter>BCF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_class.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_instance.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_net.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_reader.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_serialization.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\parser\_xml.cpp">
+      <Filter>IDS\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\IDS.cpp">
+      <Filter>IDS</Filter>
+    </ClCompile>
+    <ClCompile Include="IDS\pch.cpp">
+      <Filter>IDS</Filter>
+    </ClCompile>
+    <ClCompile Include="IDSCheckerDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_node.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_ap2gltf.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_ap2glb.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\zutil.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\zip.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\adler32.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\crc32.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\gzread.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\inffast.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\inflate.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\inftrees.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\gzlib.c">
+      <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ifc_model_structure.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_model_structure.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_ap242_property.cpp">
+      <Filter>AP242</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomStatusBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="STEPViewer.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bcf_view.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_view.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_view_hc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\class_view.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\class_view_hc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\fileview.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\fileview_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\classview.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\classview_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\explorer.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\explorer_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sort.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sort_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\menuimages.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\menuimages_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_wnd.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_wnd_hc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UserImages.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\STEPViewerDoc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\STEPViewer.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar256.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bmp00001.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sort_24.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\none.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\property.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\propertySet.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\selectedAll.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\selectedNone.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\selectedPart.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\warning.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\information.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\tb_schema_view.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\tb_schema_view_hc.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MySTEPViewer.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Shader.frag">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\Shader.vert">
+      <Filter>res</Filter>
+    </None>
+    <None Include="..\include\stb\.editorconfig">
+      <Filter>include\stb</Filter>
+    </None>
+  </ItemGroup>
+</Project>

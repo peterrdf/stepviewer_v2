@@ -243,9 +243,15 @@ void CAboutDlg::UpdateVersionInfo()
 	wchar_t* szRevision = nullptr;
 	auto iRevision = GetRevisionW(&szRevision);
 	CString strProductVersion;
-	strProductVersion.Format(L"%d.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, iRevision);
+	strProductVersion.Format(L"%d.%d.%d.%lld", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, iRevision);
+	CString strProductName = L"STEPViewer";
+#if defined (_IFCVIEWER)
+	strProductName = L"IFCViewer";
+#else if defined (_CIS2VIEWER)
+	strProductName = L"CIS2Viewer";
+#endif
 	//CString strProductVersion = GetVersionInfo(_T("ProductVersion"));
-	CString strProductName = GetVersionInfo(_T("ProductName"));
+	//CString strProductName = GetVersionInfo(_T("ProductName"));
 	if (!strProductName.IsEmpty() && !strProductVersion.IsEmpty()) {
 		CString strVersionText;
 		strVersionText.Format(L"%s, Version %s", (LPCWSTR)strProductName, (LPCWSTR)strProductVersion);
